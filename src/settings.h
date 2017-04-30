@@ -7,12 +7,12 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -21,11 +21,11 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define GFX_DETAILS_NONE       0
+#define GFX_DETAILS_NONE 0
 #define GFX_DETAILS_MINIMALISTIC 1
-#define GFX_DETAILS_SIMPLE     2
-#define GFX_DETAILS_NORMAL     3
-#define GFX_DETAILS_EXTRA      4
+#define GFX_DETAILS_SIMPLE 2
+#define GFX_DETAILS_NORMAL 3
+#define GFX_DETAILS_EXTRA 4
 #define GFX_DETAILS_EVERYTHING 5
 
 class LevelSet {
@@ -45,9 +45,9 @@ class Settings {
   static void init();
   static Settings *settings;
 
-  double sfxVolume,musicVolume;
+  double sfxVolume, musicVolume;
   double mouseSensitivity;
-  int is_windowed,resolution,colorDepth;
+  int is_windowed, resolution, colorDepth;
   int gfx_details; /* 0 - 5 */
   int showFPS;
   int difficulty;
@@ -61,7 +61,7 @@ class Settings {
   void closeJoystick();
   int joystickRawX();
   double joystickX();
-  int joystickRawY(); 
+  int joystickRawY();
   double joystickY();
   int joystickButton(int n);
 
@@ -71,8 +71,8 @@ class Settings {
   int nLevelSets;
   class LevelSet levelSets[256];
   SDL_Joystick *joystick;
-  int joystickIndex,joy_left,joy_right,joy_up,joy_down,joy_center[2];
-  int lastJoyX,lastJoyY;
+  int joystickIndex, joy_left, joy_right, joy_up, joy_down, joy_center[2];
+  int lastJoyX, lastJoyY;
 
   int language;
   static char *languageNames[], *languageCodes[];

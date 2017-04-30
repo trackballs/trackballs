@@ -7,17 +7,16 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
 
 #ifndef EDITMODE_H
 #define EDITMODE_H
@@ -38,9 +37,9 @@ class EditMode : public GameMode {
 
   void display();
   void key(int);
-  void special(int,int,int);
+  void special(int, int, int);
   void idle(Real td);
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
 
   void activated();
   void deactivated();
@@ -60,18 +59,19 @@ class EditMode : public GameMode {
   double time;
 
   static EditMode *editMode;
+
  protected:
  private:
   void doCommand(int);
-  void doCellAction(int,int);
+  void doCellAction(int, int);
   void makeHill(int radius);
   void doSmooth(int radius);
 
-  int x,y;
+  int x, y;
   int mapIsWritable;
 
-  double scale;       /* This is the increment with which we modify heights etc. or scale textures */
-  double rotation;    /* Only for textures */
+  double scale; /* This is the increment with which we modify heights etc. or scale textures */
+  double rotation; /* Only for textures */
   Real raise;
   Real color[4];
   int menuChoise;

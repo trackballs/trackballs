@@ -7,12 +7,12 @@
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or
    (at your option) any later version.
-   
+
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
-   
+
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -26,15 +26,16 @@
 #endif
 
 class EMenuWindow : public MyWindow {
- public: 
-  EMenuWindow(); 
-  ~EMenuWindow(); 
+ public:
+  EMenuWindow();
+  ~EMenuWindow();
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
   void openSubMenu(int);
   void key(int key);
 
   int keyToMenuEntry(int);
+
  private:
   int spacing;
 
@@ -45,64 +46,70 @@ class EMenuWindow : public MyWindow {
 
 class ESubWindow : public MyWindow {
  public:
-  ESubWindow(int id,int x,int y); 
+  ESubWindow(int id, int x, int y);
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
+
  private:
-  int id,rows,fontSize;
+  int id, rows, fontSize;
 
   int countRows();
 };
 
 class EStatusWindow : public MyWindow {
  public:
-  EStatusWindow(); 
+  EStatusWindow();
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
+
  private:
 };
 
 class EQuitWindow : public MyWindow {
  public:
-  EQuitWindow(); 
+  EQuitWindow();
   void yes();
   void no();
 
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
+
  private:
 };
 
 class ESaveWindow : public MyWindow {
  public:
-  ESaveWindow(); 
+  ESaveWindow();
   void yes();
   void no();
 
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
+
  private:
   int saveCnt;
 };
 
 class ECloseWindow : public MyWindow {
  public:
-  ECloseWindow(); 
+  ECloseWindow();
   void yes();
   void no();
 
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
+
  private:
 };
 
 class EOpenWindow : public MyWindow {
  public:
-  EOpenWindow(); 
+  EOpenWindow();
 
   void draw();
-  void mouseDown(int state,int x,int y);
+  void mouseDown(int state, int x, int y);
   void refreshMapList();
+
  private:
   char names[200][256];
   int nNames, currPage;
@@ -110,11 +117,11 @@ class EOpenWindow : public MyWindow {
 
 class ENewWindow : public MyWindow {
  public:
-  ENewWindow(); 
+  ENewWindow();
 
   void draw();
-  void mouseDown(int state,int x,int y);
-  void key(int key,int x,int y);  
+  void mouseDown(int state, int x, int y);
+  void key(int key, int x, int y);
 
  private:
   char name[256];
