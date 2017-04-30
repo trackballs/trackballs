@@ -335,7 +335,7 @@ Map::Map(char* filename) {
 Map::~Map() {
   //  glDeleteLists(cache[0].lists[0],(width/4)*(height/4));
   glDeleteLists(displayLists, nLists);
-  delete cells;
+  delete[] cells;
 }
 
 /* Draws the map on the screen from current viewpoint */
