@@ -1,0 +1,70 @@
+;;; level 3
+
+(set-track-name "Nightime")
+(set-author "Mathias Broxvall")
+(set-start-position 253.5 253.5)
+(start-time (- 150 (* 15 (difficulty))))
+
+(add-modpill 228.5 230.5 *mod-extra-life* 30 -1)
+(add-flag 237 252 100 1 0.1)
+(add-flag 237 253 100 1 0.1)
+(add-flag 239 245 250 1 0.1)
+(define mr-black (new-mr-black 243.5 245.5))
+(cond
+ ((= (difficulty) *easy*) (set-acceleration mr-black 2.0))
+ ((= (difficulty) *normal*) (set-acceleration mr-black 3.0))
+ ((= (difficulty) *hard*) (set-acceleration mr-black 4.0)))
+
+(add-cyclic-platform 242 238 242 238 2.5 4.5 0. 0.4)
+(add-cyclic-platform 242 239 242 239 2.5 4.5 1. 0.4)
+(add-cyclic-platform 243 238 243 238 2.5 4.5 1. 0.4)
+(add-cyclic-platform 243 239 243 239 2.5 4.5 0. 0.4)
+(night)
+
+(diamond 229.5 240.5)
+
+;; Goto bonuslevel, again
+(smart-trigger 230.5 223.5 5.0 (lambda()(camera-angle 0.0 0.8))(lambda()(camera-angle 0.0 0.0)))
+(define bonus-goto "lv4")
+(add-goal 231 225 #t "bonus")
+(add-spike 228.5 223.5 0.2 -0.40)
+(add-spike 229.5 223.5 0.2 -0.80)
+(add-spike 230.5 223.5 0.2 -1.20)
+(add-spike 230.5 224.5 0.2 -1.60)
+(add-spike 230.5 225.5 0.2 -2.00)
+
+(define speed 0.3)
+(cond
+ ((= (difficulty) *easy*) (set! speed 0.20))
+ ((= (difficulty) *normal*) (set! speed 0.30))
+ ((= (difficulty) *hard*) (set! speed 0.40)))
+(add-spike 234.5 237.4 speed -0.00)
+(add-spike 233.5 237.4 speed -0.25)
+(add-spike 232.5 237.4 speed -0.50)
+(add-spike 231.5 237.4 speed -0.75)
+(add-spike 230.5 237.4 speed -1.00)
+(add-spike 229.5 237.4 speed -1.25)
+(add-spike 228.5 237.4 speed -1.50)
+(add-spike 227.5 237.4 speed -1.75)
+
+(add-spike 234.5 236.6 speed -0.00)
+(add-spike 233.5 236.6 speed -0.25)
+(add-spike 232.5 236.6 speed -0.50)
+(add-spike 231.5 236.6 speed -0.75)
+(add-spike 230.5 236.6 speed -1.00)
+(add-spike 229.5 236.6 speed -1.25)
+(add-spike 228.5 236.6 speed -1.50)
+(add-spike 227.5 236.6 speed -1.75)
+
+(add-spike 226.5 220.5 0.2 0.0)
+(add-flag 226 220 150 1 0.1)
+(add-flag 223 236 150 1 0.1)
+(add-flag 226 237 250 0 1.0)
+
+(add-flag 218 228 50 1 0.1)
+(add-goal 212 217 #f "lv4")
+(add-cyclic-platform 215 225 215 225 0.0 2.5 0. 0.4)
+(add-cyclic-platform 216 221 216 221 1.5 3.0 0. 0.4)
+(add-cyclic-platform 213 225 213 225 0.0 3.5 0. 0.3)
+(add-flag 218 224 150 1 0.1)
+(add-cyclic-platform 218 224 218 224 2.0 3.5 0.5 0.4)

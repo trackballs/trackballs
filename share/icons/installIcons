@@ -1,0 +1,44 @@
+#!/bin/bash
+binprefix=$1
+destdir=$2
+
+# Create the desktop file
+cp trackballs.desktop.in trackballs.desktop
+echo "Exec=$binprefix/trackballs" >> trackballs.desktop
+
+# Attempt to install the desktop file
+if [ -d /usr/share/applications ]; then
+    
+    # Install the desktop file in appropriate place
+    install trackballs.desktop /usr/share/applications
+elif [ -d $destdir/usr/share/applications ]; then
+
+    # Install the desktop file in appropriate place
+    install trackballs.desktop $destdir/usr/share/applications
+else
+
+    # Attempt to install the desktop file in the old way
+    for path in /usr/share /usr/local/share /opt/share /opt/kde/share /opt/kde3/share /opt/kde3.1/share ; do
+	if [ -d $path/applnk/Games/Arcade ]; then
+	    install trackballs.desktop $path/applnk/Games/Arcade
+	fi
+	if [ -d $destdir/$path/applnk/Games/Arcade ]; then
+	    install trackballs.desktop $path/applnk/Games/Arcade
+	fi
+    done
+fi
+    
+# Now install the icons everywhere they might be needed
+for path in /usr/share /usr/local/share /opt/share /opt/kde/share /opt/kde3/share /opt/kde3.1/share $destdir/usr/share $destdir/usr/local/share; do
+    if [ -d $path/icons/default.kde/32x32/apps ]; then
+	install trackballs-32x32.png $path/icons/default.kde/32x32/apps/trackballs.png
+    fi
+    
+    if [ -d $path/icons/default.kde/48x48/apps ]; then
+	install trackballs-48x48.png $path/icons/default.kde/48x48/apps/trackballs.png
+    fi
+    
+    if [ -d $path/icons/default.kde/64x64/apps ]; then
+	install trackballs-64x64.png $path/icons/default.kde/64x64/apps/trackballs.png
+    fi
+done

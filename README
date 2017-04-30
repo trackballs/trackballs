@@ -1,0 +1,66 @@
+                         
+                         /Trackballs/
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+1.		Introduction.
+
+Trackballs is a simple game similar to the classical game Marble Madness
+on the Amiga in the 80's. By steering a marble ball through a labyrinth
+filled with vicious hammers, pools of acid and other obstacles the player
+collects points. When the ball reaches the destination it continues
+at the next, more difficult level - unless the time runs out. 
+
+It should be noted that this game is not intended to be a replica of 
+marble madness but rather inspired by it. For instance the game uses 
+advanced 3D graphics even though the original game had no real use for 
+it. Also we aim at making the game highly configurable by a scripting 
+extension (Guile) and provide a simple editor by which new levels easily 
+can be created. The current status of the project is very early in 
+development and is thus barely playable.
+
+You start /Trackballs/ by giving the command 'trackballs' which
+instructs the game to load the first level. If you wish to cheat or simply
+are testing out a level you are currently designing you can give the command
+'trackballs -l foo' which jumps to level "foo". For more descriptions on how
+to play trackballs and documentation of the level editor see the homepage at:
+
+http://trackballs.sourceforge.net
+
+There now also exists a forum where you can ask practical questions 
+about getting started, share tips and tricks, upload your own creations or
+just hang around. You'll find it at:
+
+http://trackballs.theunix.org
+
+Have fun playing /Trackballs/ and if you make any levels please contact me 
+so I can include them in future releases.
+
+/ Mathias Broxvall  matbr@home.se
+
+
+
+
+
+2. 		ABOUT SECURITY
+
+Per default trackballs is not installed setuid or setgid and as such no serious security issues 
+should arise as long as trackballs is played only with the default levels. However, extra
+levels can be designed by users and upload/download from the internet.  Since the scripting 
+capabilities within maps are very powerfull it also means a security vulnerability if you are 
+running custom maps created by others. 
+
+*** Never run a track downloaded from internet unless you trust the creator or if you have carefully 
+read the corresponding .scm file of the track. ***
+
+This also means that trackballs must never be run with the setuid flag set and preferably 
+not with any setgui flags either unless you trust all your users compoletly (which still is a 
+bad security practise!)
+
+However, running trackballs without the setuid/setgid flags means that it might not be possible for 
+users to modify the highscores file (default installed at /usr/local/share/trackballs/highScores) unless
+you have setup the privileges of all users to allow this. Rather than setting trackballs setgid games
+it is therefore better to use local highscore files on a per user basis. To do so configure and compile 
+trackballs with the --with-highscores=~  argument and all highscores will be saved under the current
+users $HOME/.trackballs/highscores file instead.
+

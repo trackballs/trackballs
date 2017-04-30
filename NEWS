@@ -1,0 +1,7 @@
+News for trackballs v0.9.0 (freshmeat announcement)
+
+Created new levels and objects in game: cactus, birds, side spikes, teleporters, fountains.
+New calculations for visible cells. Added possibility for water and arbitrary 
+textures on maps and splash effect when in water or acid. Added Sparkles around 
+mouse in menus. Many new shortcuts in editor added and many bugs fixed. Also introduced extra features 
+such as pausing (press 'p'), taking screenshots (press 'print screen'), batch updating of old levels, etc.

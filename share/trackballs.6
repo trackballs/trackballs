@@ -1,0 +1,72 @@
+.\" This man page is a consise summary of Trackballs. Full documentation for the game and the editor can be found in the README.html file included in this package.
+.TH "trackballs" "6" "" "Mathias Broxwall" "Games"
+.SH "NAME"
+.LP 
+/trackballs/
+
+.br 
+A marble game for Linux that is similiar to the classic arcade game 'Marble Madness'.
+.SH "SYNTAX"
+.LP 
+trackballs [\-w, \-m] [\-e, \-l <level>] [\-r <width>] ...
+
+  \-h  \-\-help         Display this usage information.
+  \-e  \-\-edit         Start as level editor.
+  \-l  \-\-level        Start from level.
+  \-w  \-\-windowed     Run in window (Default is fullscreen)
+  \-m  \-\-mute         Mute sound.
+  \-r  \-\-resolution   Set resolution to 640, 800 or 1024
+  \-s  \-\-sensitivity  Mouse sensitivity, default 1.0
+  \-f  \-\-fps          Displays framerate
+
+The last 5 options are all but obsolete as these can now be accessed through the games menu system.
+.SH "DESCRIPTION"
+.LP 
+Trackballs is a simple game similar to the classic Atari 1980's arcade game 'Marble Madness' (later released by Electronic Arts for the Amiga and other platforms). 
+
+By steering a marble ball through a labyrinth filled with vicious hammers, pools of acid and other obstacles the player collects points. When the ball reaches the destination it continues to the next, more difficult track \- unless the time runs out. 
+
+It should be noted that this game is _not_ intended to be a replica of Marble Madness but rather merely inspired by it. For instance the game uses 3D graphics even though the original game had no real use for it. Also we aim at making the game highly configurable by a scripting extension (Guile) and provide a simple editor by which new levels easily can be created. 
+.SH "FILES"
+.LP 
+Binary:				/usr/local/bin/trackballs
+.br 
+Shared files directory:	/usr/local/share/trackballs/
+.br 
+Settings directory:		~/.trackballs/
+.SH "ENVIRONMENT VARIABLES"
+.LP 
+.TP 
+\fBGUILE_LOAD_PATH\fP
+Specifies the directory where the guile files are
+.SH "EXAMPLES"
+.LP 
+To run this program the standard way type:
+.LP 
+    trackballs
+.LP 
+Alternativly you edit a level using this command:
+.LP 
+    trackballs \-e steep
+.LP 
+Alternativly you can test a level with:
+.LP 
+    trackballs \-l steep
+.SH "AUTHOR"
+.LP 
+Mathias Broxvall <matbr@home.se>
+
+
+.SH "CONTRIBUTORS"
+Music and UI Graphics \- Dietrich Radel <radel@inet.net.nz>
+.br 
+Sound Effects \- Benoît Rouits <brouits@free.fr>
+
+Packagers:
+.br 
+Mandrake \- Guillaume Bedot <guillaume.bedot@wanadoo.fr>
+.br 
+Debian \- Ari Pollak <ari@debian.org>
+.SH "SEE ALSO"
+.LP 
+Full documentation for the game and the editor can be found in the README.html file included in this package.

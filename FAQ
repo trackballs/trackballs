@@ -1,0 +1,170 @@
+
+
+============= Problems compiling trackballs ===============
+
+
+Q:  Configure fails when looking for GLU, but I have openGL
+A:  Since you already have openGL you definitly *should* have GLU. Look for libGLU.so in
+	eg: /usr/lib or /usr/X11R6/lib. If you have it you can first try doing:
+
+      env LDFLAGS=-L/usr/X11R6/lib ./configure
+
+    If configure still doesn't find GLU you can instead replace lines 3652 - 3713
+    of ./configure with:
+
+	  LIBS="-lGLU $LIBS"
+
+	to make configure skip the GLU test. 
+
+
+Q:  How do you make a distribution independent linux binary?
+A:  Short answer, you don't. 
+    Long answer: Try statically linking all the non-standard libraries (but not X11/GL), 
+    do not use gcc 2.96 plus the most important thing; hold your thumbs!
+
+
+Q:  While compiling i get the following error
+		guile.cc.x:3: invalid conversion from `scm_unused_struct*(*)()' to `
+		    scm_unused_struct*(*)(...)'
+A:  This is caused by an error in guile-snarf on some boxes. You can get around it by
+	manually editing all functions calls in guile.cc.x to be like:
+			 scm_c_define_gsubr (s_new_mr_black, 2, 0, 0, (SCM (*)(...)) new_mr_black);
+
+
+Q:  When compiling i the following error message: "undefined reference to 'gzread'"
+A:  Try manually adding "-lz" to the LIBS variable in your Makefile (or Makefile.in) in the src directory.
+
+
+============= Problems with binary releases ============
+
+
+Q:  The binary doesn't work, it asks for libstdc++.so.5
+A:  The easiest way of getting it is to upgrade to gcc3.2. Otherwise, if you are
+    running debian you can point to Woody "testing" and do an "apt-get install libstdc++5"
+    which also installs gcc3.2-base (which is not the gcc 3.2 compiler).
+
+
+============= Graphic cards =============
+
+
+Q:  The gamegraphics is very slow even though I have a whizbang 3D graphics card
+A:  Do you have 3D acceleration working under X11? Make sure DRI is working properly
+    and that the game is compiled against the X11 openGL drivers if you have compiled it
+    yourself. To see if you have graphics acceleration working in your X-server use the 
+    'glxinfo' program and look for the line "direct rendering: Yes".
+
+
+Q:  The splashscreen, some background screens or the panel is only white.
+A:  This can be caused by too little texture memory. You can either try to replace on of the
+    image files (eg. ../share/trackballs/images/setupBackground.png) with a smaller one or
+    let GL fallback to software rendering with:
+
+		export LIBGL_ALWAYS_INDIRECT=x
+
+    Some other environment variables of interest.
+
+
+	LIBGL_DEBUG, if defined will cause libGL.so to print error and 
+	diagnostic messages. This can help to solve problems. 
+	Setting LIBGL_DEBUG to verbose may provide additional information.
+
+	LIBGL_ALWAYS_INDIRECT, if defined this will force libGL.so to always 
+	use indirect rendering instead of hardware acceleration. 
+	This can be useful to isolate rendering errors.
+
+	LIBGL_DRIVERS_PATH can be used to override the default directories 
+	which are searched for 3D drivers. The value is one or more 
+	paths separated by colons. In a typical XFree86 installation, the 
+	3D drivers should be in /usr/X11R6/lib/modules/dri/ and 
+	LIBGL_DRIVERS_PATH need not be defined. Note that this feature is
+	disabled for set-uid programs. This variable replaces the 
+	LIBGL_DRIVERS_DIR env var used in XFree86 4.0.
+	MESA_DEBUG, if defined, will cause Mesa-based 3D drivers to 
+	print user error messages to stderr. These are errors that 
+	you'd otherwise detect by calling glGetError.
+
+Q:  Bug when using ATI Radeon with DRI drivers: no textures are drawn anywhere
+A:  Do "export R200_NO_TCL=1" before running the game. It should now work.
+
+
+============= General problems using trackballs ==============
+
+
+Q:  Trackballs is leaking huge amounts of memory
+A:  This seem to be caused by faulty openGL drivers. Try disabling hardware accelleration.
+
+
+Q:  I have too little memory to run trackballs without swapping.
+A:  There are alot of things affecting the memory usage of trackballs. Try using the commandline option
+    '--low-memory' which uses 15megs less memory but makes switching screens slightly slower.
+
+
+Q:  Game crashes after message "Attempting to open mixer"
+A:  Try shutting down artsd (if you are running KDE) or esd (if you
+	are running GNOME). Alternativly you can start the game through
+	artsdsp or esddsp instead. If neither of this works, use the -m flag
+	to turn of sound.
+
+
+Q:  Sound is out of sync.
+A:	Shutdown any sound servers you are running (eg. artsd or esd) when playing.
+	Eg. run "skill artsd ; trackballs ; artswrapper"
+
+
+Q:  There's no background music when I'm playing
+A:  Download the music from the homepage (or any other mp3's or ogg's) and place them in the
+	$prefix/share/trackballs/music directory.
+
+
+Q:  I cannot change flags/colors in the editor as documented.
+A:  This might be caused by using keyboard layout which needs shift to get the numbers 
+   (eg. frensh). Try temporarily changing keyboard layout to Swedish or US.
+
+
+Q:  The fonts doesn't work for me
+A:  There seem to be a problem with the libs for rendering the fonts in some systems. Try
+    replacing share/trackballs/fonts/menuFont.ttf with some other TTF font on your system.
+
+
+Q:  I can't get trackballs to recognise my joystick
+A:  Have you setup joystick support properly for your distribution. You can test if you have it
+    working properly by using the command "jstest /dev/js0". Does it work? If not, some hints below:
+
+    Assuming you are using a analog gameport joystick (most people are!). Make sure you have loaded all the proper
+    joystick modules.
+	
+	modprobe ns558       # For the gameport
+	modprobe joydev      # For general joystick support
+	modprobe analog	     # The specific driver for this joystick
+
+	Now, does it work with jstest? If not, make sure you have /dev/js* devices setup properly.
+    
+	chmod 0644 /dev/js?
+	
+	Still doesn't work? Ok, we need to delete the actual device nodes and recreate them.
+
+	cd /dev
+	rm js?
+	mkdir input
+	mknod input/js0 c 13 0
+	mknod input/js1 c 13 1
+	mknod input/js2 c 13 2
+	mknod input/js3 c 13 3
+	ln -s input/js0 js0
+	ln -s input/js1 js1
+	ln -s input/js2 js2
+	ln -s input/js3 js3
+
+	Does it work now? If not you'll have to be satisfied with using the mouse or keyboard... sorry =(
+
+Q:  Sometimes when I'm playing with a joystick the ball just start rolling of in one direction
+A:  You might have a broken joystick which gives incorrect wrapover's on your axises. Try using the '--repair-joystick' 
+    option. Possibly in conjunction with '--debug-joystick'
+
+
+============= Trackballs and Solaris ==============
+
+Q:  The game takes very long to start.
+A:  This is caused by a bug in the highscores files which are not platform independent. Try deleting
+    the highscores file and trackballs will start on a new one automatically.
+

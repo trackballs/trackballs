@@ -1,0 +1,9 @@
+This level set was designed for experienced trackballs players.
+Created by Attila Boros in 2006.
+
+The Ice and Glass level (castle4) is tricky.
+You can't go through the maze without thinking.
+The digits of PI may help you to find the route out.
+
+If you couldn't go through the maze,
+you can find some help in the castle4.scm file.

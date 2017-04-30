@@ -1,0 +1,1138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>TRACKBALLS - Documentation</title>
+  <style>
+p, ul, body, td {
+    font-size: 14px ;
+    color: #DDFFFF;
+    scrollbar-face-color: #DAE3F3;
+    scrollbar-shadow-color:    #000000;
+    scrollbar-highlight-color: #cccccc;
+    scrollbar-3dlight-color:   #efefef;
+    scrollbar-darkshadow-color:#000000;
+    scrollbar-track-color:     tomato;
+    scrollbar-arrow-color:     red;
+}
+
+
+h3 { 
+    font: Verdana, Arial, Helvetica, sans-serif;
+    font-size: 18px ;
+    color: #FF9999;
+    font-weight: bold;
+}
+
+pre {
+   color: #FFCCCC;
+}
+A:link { color: #3333FF; text-decoration: underline; background: transparent; }
+A:active { color: #9999FF; text-decoration: underline; background: transparent; }
+A:visited { color: #FF33FF; text-decoration: underline; background: transparent; }
+A:hover { color: #9999FF; text-decoration: underline; background: transparent; }
+
+  </style>
+</head>
+<body bgcolor="BLACK">
+<center>
+<table width="750" border="1" cellpadding="10">
+  <tbody>
+    <tr>
+      <td valign="middle">
+      <center><img src="header.jpg" alt="title" border="0"> </center>
+      <h3>1.0 - What is Trackballs?</h3>
+      <table>
+        <tbody>
+          <tr>
+            <td width="600">
+            <p> Trackballs is a simple game similar to the classical
+game Marble Madness on the Amiga in the 80's. By steering a marble
+ball through a labyrinth filled with vicious hammers, pools of acid
+and other obstacles, the player collects points. When the ball reaches
+the destination it continues to the next, more difficult track -
+unless the time runs out. </p>
+            <p> It should be noted that this game is not intended to be
+a replica of marble madness but rather inspired by it. For instance
+the game uses advanced 3D graphics even though the original game had
+no real use for it. Also we aim at making the game highly configurable
+by a scripting extension (Guile) and provide a simple editor by which
+new levels easily can be created. </p>
+            </td>
+            <td align="right"><img src="screen.jpg" align="right"> </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <h3>2.0 - Playing Trackballs</h3>
+      <p> To start the game, simply give the command <font
+ color="#ffccff"><tt>trackballs</tt></font><sup>*</sup>. Playing
+Trackballs is fairly simple. You steer ball using the mouse and by
+pressing the left-mouse-button (or spacebar) you can jump a short
+distance. If you during gameplay suddenly feel the sudden urge to
+commit suicide (for instance, you are stuck on something) you can do
+so with the <font color="#ffccff"><tt>K</tt></font> key. If you wish
+to cheat or simply are testing out a level you are currently designing
+you can give the command <font color="#ffccff"><tt>trackballs -l foo</tt></font>
+which jumps to level <tt>foo</tt>. </p>
+      <p> It is now also possible to controll the ball using the
+keyboard instead. You can steer it with either the numpad or the
+keyboard arrows. If you hold down shift while pressing any of the
+directions the ball accelerates a little faster. Use the spacebar to
+jump when playing with the keyboard.<br>
+      </p>
+      <p>There now also exists a forum where you can ask practical
+questions&nbsp; about getting started, share tips and tricks, upload
+your own creations or just hang around. Please come and take a look,
+you'll find it at:<a href="http://trackballs.theunix.org">
+http://trackballs.theunix.org</a><br>
+      </p>
+      <hr>
+      <h3>3.0 - Creating your own tracks with the editor</h3>
+      <h4>3.1 - Overview</h4>
+      <p> Tracks consist of two files: a map file (<i>.map</i>) and a
+script file (<i>.scn</i>). Trackballs has a built-in map editor
+should you want to design new tracks. You can edit levels with the
+command <font color="#ffccff"><tt>trackballs -e foo</tt></font> which
+loads and lets you alter the <i>.map</i> file for track <tt>foo</tt>.
+If track <tt>foo</tt> does not exist, a new <i>.map</i> file will be
+created. Make sure you have read/write permisions to the file <tt>foo.map</tt>
+whereever the levels for trackballs are currently installed (default
+/usr/local/share/trackballs/levels).</p>
+      <p> Colors are in RGBA format (ie, Red, Green, Blue, Alpha) but
+instead of values from 0 - 255, color values are simplified to values
+in the range 0.0 - 1.0. Alpha transparency is now supported in
+Trackballs. However, it is not turned on by default. It is enabled in
+the level .scn file by using the (isTransparent) API call. Example
+colors: solid red = (1.0, 0.0, 0.0, 1.0), semi-transparent purple =
+(0.7, 0.0, 0.7, 0.7).</p>
+      <p>Map terrain can be flagged as normal, ice, acid, sand, kill,
+trampoline, no grid, or track. "Track" is a new feature, and is just
+like conveyor belt.</p>
+      <h4>3.2 - File types</h4>
+      <p> For every level there is also a corresponding <i>.scm</i>
+file
+which contains level parameters (eg. name, next-level, day/night),
+obstacles (enemy balls, sharp spikes), bonuses and even triggers which
+can alter parameters etc. when the player reaches certain points. As
+the editor will only create the <i>.map</i> file for you, you will
+need to manually create the script file yourself with a text editor.
+The language in this file is written is Scheme extended with
+functions to manipulate the game environment. The best way currently
+to understand this scripting is to look through the example levels
+(eg: lv1.scm for a complicated example, lv2.scm for easier) and build
+on them. Since the API is not yet finalized, some of these scheme
+functions *might* change in future releases. </p>
+      <h4>3.3 - Keyboard controls for the Editor</h4>
+      <table>
+        <tbody>
+          <tr>
+            <td width="600">
+            <table>
+              <tbody>
+                <tr>
+                  <td width="220" valign="top">
+                  <p><font color="#ffccff"><b>ESCAPE</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Exits the editor without saving changes (confirm
+dialog)<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>F1 - F6</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Toggles the through the the various MODES: <br>
+&nbsp;<font color="#ffcccc"><tt>Save Map</tt></font> - Press SPACE to
+save <br>
+&nbsp;<font color="#ffcccc"><tt>Edit Height</tt></font> - Edit terrain
+structure <br>
+&nbsp;<font color="#ffcccc"><tt>Set Color</tt></font> - Color and paint
+terrain <br>
+&nbsp;<font color="#ffcccc"><tt>Flags</tt></font> - Set cell attributes
+eg: sand, acid, kill, ice, etc <br>
+&nbsp;<font color="#ffcccc"><tt>Add Feature</tt></font> - Create hills
+quickly. Use 1-4 to select size <br>
+&nbsp;<font color="#ffcccc"><tt>Move Map</tt></font> - Shift entire map
+in direction you choose <br>
+&nbsp;<font color="#ffcccc"><tt>Track Velocity</tt></font> - Edit the
+speed of an area flagged as 'track' <br>
+&nbsp; </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>Q, E</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Increments or decreases the amount terrain is
+'raised' when altering terrain<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>W, A, S, D or ARROW
+KEYS/B&gt;</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Moves the cursor to another square on the grid. <br>
+&nbsp; </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+            <td><img src="editor.jpg" width="170" border="0"> </td>
+          </tr>
+        </tbody>
+      </table>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+            <table>
+              <tbody>
+                <tr>
+                  <td width="220" valign="top">
+                  <p><font color="#ffccff"><b>U, H, M, K, J</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Alter the current square. If in <font
+ color="#ffcccc"><tt>Edit Height</tt></font> mode the corresponding
+corner of the marked square/region is raised/lowered. Otherwise, if
+in <font color="#ffcccc"><tt>Set color</tt></font> mode the
+correponding corner is coloured with the current color. <br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>1,2,3,4,5,6,7,8,9</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>If in <font color="#ffcccc"><tt>Flags</tt></font>
+mode, these keys toggles the flag for the current square. If in <font
+ color="#ffcccc"><tt>Set color</tt></font> mode, keys <font
+ color="#ffccff">1,2,3</font> alter the red/green/blue component of the
+current color.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>C</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Toggles crosshair view.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>B</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Toggles <tt>Birds-Eye View</tt> mode.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>T</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Toggles wall <tt>Transparency</tt> mode.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>V</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Rotates camera viewpoint 180 degrees.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>R</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Used to mark and manipulate rectangular regions.
+Press once to turn on and then move cursor to opposite corner (region
+is highlighted during this operation). Press once again to turn off. <br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>SPACE</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Alters entire cell in one go - whether modifying
+terrain height or color.<br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>SHIFT</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>Holding down the <font color="#ffccff">SHIFT</font>
+key has a number of functions depending on what additional key is
+pressed. When in <font color="#ffcccc"><tt>Edit Height</tt></font>
+mode, holding down the <font color="#ffccff">SHIFT</font>
+key while using <font color="#ffccff">U, H, M, K, J </font>
+will lower the terrain instead of raising it. Holding <font
+ color="#ffccff">SHIFT</font> while moving the cursor, will make the
+cursor hop in the direction pressed. Holding <font color="#ffccff">SHIFT</font>
+while raising/lowering the amount to raise/lower with the <font
+ color="#ffccff">Q</font> and <font color="#ffccff">E</font> keys,
+while
+result in the values incrementing/decreasing in larger hops. When in <font
+ color="#ffcccc"><tt>Set Color</tt></font> mode, <font color="#ffccff">SHIFT-[U,H,M,K]</font>
+is a color picker. The color in
+your palette will be copied from the current cell.<br>
+&nbsp; </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>CTRL</b></font></p>
+                  </td>
+                  <td valign="top">
+                  <p>When in edit terrain mode, <font color="#ffccff">CTRL-J</font>
+will reset the cell (or selected terrain) to default heights. Useful
+when you've made a mess and need to start over. <font color="#ffccff">CTRL-[U,H,M,K]</font>
+paints the wall next to the corresponding corner. <br>
+&nbsp;</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td valign="top">
+                  <p><font color="#ffccff"><b>TAB</b></font></p>
+                  </td>
+                  <td valign="top">In 'Edit Heights' mode, <font
+ color="#ffccff">TAB<b> </b></font>smooth all the cells heights in the
+current area selected.<br>
+With the <font color="#ffccff">CTRL</font> modifier, it flatten the
+current cell. </td>
+                </tr>
+              </tbody>
+            </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h4>3.4 - LevelSets </h4>
+      <p> Most levels don't exists in a vacum. In order to make your
+level playable without special commandline instructions you should
+either make it the target of some <em>goal</em> in an existing level
+or create a new levelset which points to your level as start level. To
+do this, create a file <code> foo.set </code> where foo is the unix
+name of your new level set. This file should contain exactly three
+lines. The first is the as it should be presented to the user (eg.
+"Foo's exiting superlevel"), the second line should contain the
+filename of the starting level (eg. "foo-1") and the third line should
+conain the name of the starting level (eg. "Foo 1 - Almost there"). </p>
+      <h4>3.5 - API reference for the script language </h4>
+      <p> This is a preliminary and incomplete list of the guile
+functions available for level editors. </p>
+      <center>
+      <table border="1" cellpadding="3">
+        <tbody>
+          <tr>
+            <td width="45%" valign="top">
+            <p><font color="#ffccff"><tt>(set-track-name (string name))
+            </tt></font></p>
+            </td>
+            <td width="55%" valign="top">
+            <p>Sets the name of the track (displayed at start of level).<br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(start-time (int seconds)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets the timelimit for this level.<br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-start-position (real x) <br>
+&nbsp; &nbsp; (real y)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets starting position of player.<br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(difficulty) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Returns the current difficulty level as an int. Compare
+with *easy*, *normal*, *hard* <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-onoff (object o) (bool
+state)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Turns object on or off (if applicable).<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(day) (night) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets lightning to day or night. <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (fog) (thick-fog) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Turns on fog or thick-fog for current level. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(get-time) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Returns how much time the player has left.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-time (int t)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets the time left for the player.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(player) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Returns a reference to the player.<br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-score (int s)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets the score for the player.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-time (int t)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds time to player.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(new-mr-black (real x) (real
+y)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a new opponent with default paramters at
+specified position. Returns a reference to ball. <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(new-baby (real x) (real y)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates special "baby"-ball giving points when crushed.
+Returns a reference to ball.<br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-acceleration (mr-black b)
+            <br>
+&nbsp; &nbsp; (real accel)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets max acceleration of given mr-black (or baby) ball.
+Returns b.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>((set-horizon (mr-black b) <br>
+&nbsp; &nbsp; (real horizon)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets horizon of given mr-black (or baby) ball. Returns b.<br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-position (animated
+object) <br>
+&nbsp; &nbsp; (real x) (real y) [(real z)]) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets position of specified object to x,y (and optionaly
+z). Return unspecified. <br>
+            <br>
+&nbsp; </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-spike (real x) <br>
+&nbsp; &nbsp; (real y) (real speed) <br>
+&nbsp; &nbsp; (real phase)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a new spike with given speed and phase. Returns
+reference to it. <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-cyclic-platform (int x0)<br>
+&nbsp; &nbsp; (int y0) (int x1) (int y1)<br>
+&nbsp; &nbsp; (real low) (real high)<br>
+&nbsp; &nbsp; (real phase) (real cycle-length)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Makes a platform at region with corners (x0,y0), (x1,y1)<br>
+&nbsp; &nbsp; where x0 &lt; x1, y0 &lt; y1. Returns reference to
+platform. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-primary-color (animated
+object)<br>
+&nbsp; &nbsp; (real red) (real green) (real blue)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Alters primary color of object. Return object. <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-secondary-color (animated
+object)<br>
+&nbsp; &nbsp; (real red) (real green) (real blue)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Alters secondary color of object. Return object. <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-specular-color (animated
+object)<br>
+&nbsp; &nbsp; (real red) (real green) (real blue)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Alters specular color of object. Return object. <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-flag (int x) (int y) <br>
+&nbsp; &nbsp; (int visible) (int points) <br>
+&nbsp; &nbsp; (real radius)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds a flag at position (x,y). Radius affects how close
+player has to be to score. Returns reference to flag.<br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-goal (int x) (int y) <br>
+&nbsp; &nbsp; (bool rotate) (string next-level) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a goal at given position. Use empty string if
+this is the last level or otherwise unqualified level name. (Eg: foo,
+not foo.map). Returns reference to goal. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(sign (string text) (real
+scale)<br>
+&nbsp; &nbsp; (real rotation) (real duration)<br>
+&nbsp; &nbsp; (real x) (real y)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a new sign at given position. Duration &lt; 0
+means it last forever. Returns reference to sign. <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(trigger (real x) (real y) <br>
+&nbsp; &nbsp; (real radius) (lambda fn) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Calls fn repeatedly whenever player is within radius
+from (x,y). <br>
+            <br>
+&nbsp;</p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(add-modpill (real x) (real y)<br>
+&nbsp; &nbsp; (int kind) (int duration)<br>
+&nbsp; &nbsp; (int regenerate)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a new modpill at given position. Duration = how
+long the effect of the pill lasts, resurrection = how often the pill
+reappears. 0 means never, negative means on player death. Types = one
+of: *mod-speed*, *mod-jump*, *mod-spike*, *mod-glass*, *mod-dizzy*,
+*mod-frozen*, *mod-extra-life*. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(set-modtime (ball b) <br>
+&nbsp; &nbsp; (int modification) (real time)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Sets time left for ball to have specified modification.
+Modification should be one of: *mod-speed*, *mod-jump*, *mod-spike*,
+*mod-glass*, *mod-dizzy*, *mod-frozen*, *mod-extra-life*. Use
+negative time for unlimited modtime. Returns ball. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt>(forcefield (real x) (real y)
+(real z) <br>
+&nbsp; &nbsp; (real dx) (real dy) (real dz) <br>
+&nbsp; &nbsp; (real height) (int flags)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Creates a new forcefield at given position with
+direction dx,dy,dz and given height. Flags should be *ff-nothing*,
+*ff-kill1* or *ff-bounce1* plus *ff-nothing*, *ff-kill2* or
+*ff-bounce2*. For convinience there exists *ff-kill* and *ff-bounce*
+which kills (resp. bounces) balls coming from both directions. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (switch (real x) (real y) <br>
+&nbsp; &nbsp; (lambda () on) (lambda () off)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Creates a switch accepting two expressions called when
+player turns switch on/off. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (fog-color (real r) (real g)
+(real b)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the color of the fog (if any). </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (pipe (real x0) (real y0)
+(real z0) <br>
+&nbsp; &nbsp; (real x1) (real y1) (real z1) <br>
+&nbsp; &nbsp; (real radius)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Creates a new pipe object going from (x0,y0,z0) to
+(x1,y1,z1) and with given radius. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (pipe-connector (real x0)
+(real y0) <br>
+&nbsp; &nbsp; (real z0) (real radius)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Creates a new pipe connector object.Usefull between
+non-transparent pipes. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (set-wind (pipe object) (real
+forward) <br>
+&nbsp; &nbsp; (real backward)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the wind in pipe. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (diamond (real x0) (real y0)
+[(real z0)]) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Creates a new savepoint. Z-coordinate is optional. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (use-grid (bool on/off)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Turns on/off the grid on the map. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (jump (real v)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Scales maximum jump height. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (camera-angle x y z) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Rotates camera in the xy-plane and/or up/down.<br>
+Affects performance drastically. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (play-effect "die.wav") </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Play named effect if it exists in the 'sfx' share
+directory. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (set-cell-flag x0 y0 x1 y1
+flag on/off) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Turn on/off given cell flag in area. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (set-cell-velocity x0 y0 x1
+y1
+v0 v1) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the velocity for an area. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (set-cell-heights x0 y0 x1 y1
+            <br>
+&nbsp; &nbsp; v0 v1 v2 v3 v4) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the heights (in the corners) of cell. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> set-cell-colors x0 y0 x1 y1 <br>
+&nbsp; &nbsp; corner r g b [a]) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the cell color of a given area. Corner must be one
+of: 'cell-ne', 'cell-nw', 'cell-se', 'cell-sw', 'cell-center'. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (set-cell-wall-colors x0 y0
+x1
+y1 <br>
+&nbsp; &nbsp; corner r g b [a]) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets the wall color of a given area. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (is-transparent true/false) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Turns of alpha rendering. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (restart-time (real time)) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p> Sets how much bonus time you get when you die at a
+level. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-cactus x y radius) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds a cactus on cell (x,y), with the given radius
+(real). If touched, <br>
+the cactus kills balls, instead if &nbsp;balls got the Spike mod, in<br>
+which case the cactus is killed.<br>
+            </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-teleport x y dx dy
+radius) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds a teleport object on cell (x,y). If player is near
+enough (less than radius), he is teleported to cell (dx,dy). Speed of
+the ball is keep unchanged. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-bird x y dx dy size
+speed) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds a bird which will travel from cell (x,y) to cell
+(dx,dy) at given speed. Speed is in unit by seconde (unit is the size
+of a cell). When reaching destination, bird restart its travel.<br>
+If the bird touch a ball, it kills it, instead if the ball got spike
+mod, in which case the bird is killed (bird will restart later from
+(x,y)). </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-colormodifier comp x y
+min max freq phase) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Allows to modify the color of the (x,y) cell. Color will
+cycle between min and max with the given frequency (freq) and the
+given phase. 'comp' describes the color part to modify:<br>
+1 is RED, 2 is GREEN, 3 is BLUE, and 0 is all the three. </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-sidespike x y speed
+phase
+side) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Adds a side spike at position (x,y) (reals). A sidesipke
+is the same than spikes, but coming from side instead of ground.
+'side' indicates from which side it comes.<br>
+Map-builder have to add a wall on the corresponding side to prevent the
+spike to be "in the air". </p>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+            <p><font color="#ffccff"><tt> (add-heightmodifier corner x
+y
+min max freq phase [not1] [not2] [not3]) </tt></font></p>
+            </td>
+            <td valign="top">
+            <p>Allows to modify the height of the corner of the (x,y)
+cell. Adjacent corners to this corner will follow the same height. By
+default, center of the cell is not updated at all. Adding 10 to the
+'corner' value specify that center of the cell must be re-computed (as
+the average value of corners).<br>
+Corners are: 0: SW, 1: NW, 2:SE, 3:NE.<br>
+'not*' are optionnal and allow to prevent one or more adjacent corner
+to be updated. Use corners value, but in the opposite direction.
+Example:<br>
+you modify the NW corner, and you want to prevent the north cell to be
+updated. It is the SW corner of the north cell that would be updated.
+So use SW value for 'not' parameter.<br>
+            </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><font color="#ffccff"><tt>(set-flag
+anim flag status)<br>
+            </tt></font></td>
+            <td style="vertical-align: top;">Changes a status flag of
+an object, see section "Status flags" for effects.<br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><font color="#ffccff"><tt>(set-cell-water-heights
+x0 y0 x1 y1 h0 h1 h2 h3 h4)<br>
+            </tt></font></td>
+            <td style="vertical-align: top;">Sets the water height of
+cells in rectangle (x0,y0) -&gt; (x1,y1) to given&nbsp; values. <br>
+            </td>
+          </tr>
+          <tr>
+            <td style="vertical-align: top;"><font color="#ffccff"><tt>(set-cell-water-heights
+x0 y0 x1 y1 red green blue alpha)</tt></font></td>
+            <td style="vertical-align: top;">Sets the color of cells in
+rectangle (x0,y0) -&gt; (x1,y1) to given&nbsp; values (range 0.0 to
+1.0).<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </center>
+      <p><br>
+      </p>
+      <h4>3.6 - Status flags</h4>
+All animated objects (balls, cactuses, birds etc) are so called
+animated objects. All animated objects have a set of status flags built
+in to them which can be changed with the "set-flag" operation. The
+currently available flags are:<br>
+      <br>
+      <ul>
+        <li>*bird-constant-height* - If true bird will never change
+flight altitude, otherwise altitude will always be 0.5 above the ground
+of it's current position.<br>
+        </li>
+      </ul>
+      <br>
+      <h4>3.7 - Animator Objects</h4>
+      <p>These can be quite difficult to understand, so we shall
+describe these like this:</p>
+      <p>Imagine a slider together with a marker you can position
+anywhere on the slider. The has numbers on it, on the left end it
+starts with some number value <b>A</b> and ends with value <b>B</b>
+on the right end. Furthermore, the marker on the slider can have a
+speed moving it right (positive speed) or left (negative speed). </p>
+      <p>When the marker hits one of the left/right ends it can either:
+      <br>
+&nbsp; &nbsp;1) Bounce <br>
+&nbsp; &nbsp;2) Wrap over. ie. continue from the other end <br>
+&nbsp; &nbsp;3) Stop <br>
+&nbsp; &nbsp;4) Remove the slider and everything. </p>
+      <p>Now, connected to this virtual slider is a function which is
+called whenever the marker has moved with the *value* which the
+marker currently points at.</p>
+      <p>Ok, so that is how an "animator" object works. The slider
+analogy is just for the explanation, nothing is displayed in the
+game, but you can use it to make callbacks which alters the
+gameworld. For some examples of what you can do with it see lv8.scm. <font
+ color="#ffccff"> <tt> <br>
+&nbsp; &nbsp;(animator length position direction value0 value1
+behaviour (lambda (v) ..)) <br>
+&nbsp; &nbsp;(animator-value anim) ; Returns the current value of
+animator object <br>
+&nbsp; &nbsp;(set-animator-direction anim direction) </tt></font><tt>
+;
+Sets speed of animator object <font color="#ffccff"> <br>
+&nbsp; &nbsp;(set-animator-position anim postition) </font>&nbsp;;
+Sets position ((0 .. length for left to right <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; position) </tt></p>
+      <p> The behaviour can be the sum of <font color="#ffccff"> <br>
+&nbsp; &nbsp;<tt>*animator-0-{remove,stop,bounce,wrap}*</tt></font>
+&nbsp;and <font color="#ffccff"> <br>
+&nbsp; &nbsp;<tt>*animator-1-{remove,stop,bounce,wrap}* </tt></font>
+or simply <font color="#ffccff"> <br>
+&nbsp; &nbsp;<tt>*animator-{remove,stop,bounce,wrap}* </tt></font>
+&nbsp; &nbsp; which has the same effect on both sides.</p>
+      <p><br>
+      </p>
+      <h4>3.8 - A simple walk-through on creating your first track</h4>
+      <p>I will here try to go through the steps to make a new level
+which will be called "Foo". First, locate where all your levels is
+stored. If you are using the binary release this is probably under
+"path-to-game/share/trackballs/levels" and if you have compiled the
+game from the sources this is probably
+"/usr/local/share/trackballs/levels". Make sure you have write
+permission to this directory and open the file "foo.scm" and write the
+following: </p>
+      <pre>;;; Foo.scm<br>;;; A sample test level<br>;;; Made by your-name<br>(day)                            ;; Sets daylight for this level. <br>(set-track-name "Foo")           ;; The name of the level<br>(start-time 120)                 ;; We have two minutes to complete level<br>(set-start-position 251.5 251.5) ;; Where the player appears<br>(add-goal 200 200 #f "lv1")      ;; Where we should go (200,200) and which level "lv1" to<br>                                 ;; play when we are finished.<br></pre>
+Now we can launch the level editor and start designing the map. Do so
+with the command <font color="#ffccff"><tt>trackballs -e foo -w</tt></font>
+. You will now see and empty floor, some informational texts (yellow,
+left side), two menus (green) and some information (yellow, right
+side) about the square under the cursor (a black square near the
+center of the screen). <br>
+      <br>
+As you can see in the information ("Pos:252,252") you are currently
+editing the square on which the player will first appear. Press <font
+ color="#ffccff">SPACE</font> a few times to raise the ground at this
+position. By holding down <font color="#ffccff">SHIFT</font> while
+doing this you can lower the terrain. On the right side you can see
+the heights of the four corners and the center of this square. Now,
+press <font color="#ffccff">D</font> to move the cursor to the right.
+Alter this square so that it is only a little bit below the first
+square. Now, use the keys <font color="#ffccff">U</font> and <font
+ color="#ffccff">H</font> to alter the two leftmost corners so that
+they
+are at the same height as the first square. As you have seen, all the
+changes to the ground has been in incrmenets of 0.5, if you want to
+finetune some squares you can change this by pressing <font
+ color="#ffccff"> Q</font> and/or <font color="#ffccff">E</font> . The
+increment used when modifying terrain is written as "Raise: XXX" on the
+left side of the screen. <br>
+      <br>
+Now we will try to modify the color of the this square. First press the<font
+ color="#ffccff">DOWN</font> so that the menu <font color="#ffcccc"><tt>Set
+Color</tt></font> is highlighted. Now press the keys <font
+ color="#ffccff">1, 2</font> and/or <font color="#ffccff">3</font>
+until
+you have a pretty color next to the text "Color: R,G,B". By pressing <font
+ color="#ffccff">SPACE</font> you change the color of your current
+square to this color. If you only press one of <font color="#ffccff">U,
+H, M, K, J</font>, you only change the color of a corner/the center. <br>
+      <br>
+Press <font color="#ffccff">UP</font> so that <font color="#ffcccc"><tt>
+Edit height</tt></font> is higlighted again and place the cursor on the
+ground next to the floor you have edited this far. Now we will try to
+automatically alter a large section of floor. First press <font
+ color="#ffccff">SHIFT-<b> R</b></font> to mark this square and move
+cursor to some other square. As you can see a lot of squares is now
+highlighed (green in the middle). By pressing <font color="#ffccff">SPACE</font>
+you are adding to the high of all these
+squares. By selecting <font color="#ffcccc"><tt>Set Color</tt></font>
+and pressing <font color="#ffccff">SPACE</font> you are editing the
+color of all these squares. Press <font color="#ffccff">R</font>
+again to turn of the highlighting. <br>
+      <br>
+Now we want to make something special on your ground. First press <font
+ color="#ffccff">DOWN</font> until the menu <font color="#ffcccc"><tt>Flags</tt></font>
+is highlighted. By pressing <font color="#ffccff">1 - 9</font> you can
+turn on/off the flags ice, acid, sand, etc. Use this to make a region
+of ice (or acid/sand) which is difficult to pass and then make an
+elevated path of ground leading to the position (200,200). This is
+where the goal for this map will be. <br>
+      <br>
+You can exit the editor by pressing <font color="#ffccff">ESCAPE</font>
+and test your new map with the command <font color="#ffccff"><tt>trackballs
+-l foo</tt></font>. Does everything work, can you make it to the goal
+in only the two minutes allocated? <br>
+      <br>
+This far, the level is proably quite boring so we fire up the editor
+again. Go to one of the ice squares you've made and note which position
+this is (Pos: X, Y). Now add the line: <br>
+      <font color="#ffcccc"><tt>(add-flag X Y 50 1 0.1) </tt></font> <br>
+      <br>
+to "foo.scm" where X, Y is the position you noted. This will create a
+flag at the specified position worth 50 points and which is visible (1)
+and which are taken when the player is withing 0.1 distance from it.
+Now, we also want to add some kind of obstacle. Add the code: <font
+ color="#ffcccc"><tt>(new-mr-black 200.5 200.5)</tt></font> <br>
+      <br>
+Which will add an opponend just right at the goal. Exit the editor and
+try the game. Congratulations, you have now written your first level.
+To make more complex levels, examine the code for already existing
+levels and the documentation above.
+      <p></p>
+      <h4> 3.9 - Tips and tricks for levels </h4>
+      <p> To make your level look a little bit more polished it's a
+good
+idea to enhance the atmosphere by doing one of: </p>
+      <ul>
+        <li> Set daylight with the <code> (day) </code> command and
+color all unaccessible ground black. </li>
+        <li> Turn off global light with <code> (night&gt; </code> </li>
+        <li> Use day and fog with either <code> (fog) </code> or <code>(thick-fog)</code>
+. Note that you can also alter the fog color with the <code>
+(fog-color r g b) </code> command. </li>
+      </ul>
+      <p></p>
+      <hr>
+      <p><sup>*</sup>Currently the binary release does not have an
+install script, neither does it create a script in <tt>/usr/games</tt>
+as yet. To run the game/editor, navigate to the directory that
+contains Trackballs, and type <font color="#ffccff"><tt>./run-trackballs</tt></font>.
+You can still use the <font color="#ffccff"><tt>-l</tt></font> and <font
+ color="#ffccff"><tt>-e</tt></font> switches with this script.<br>
+&nbsp;</p>
+      <center><small><font color="#ddddff">[ Last modified 5 October
+2003 ]</font></small></center>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</center>
+<table>
+  <tbody>
+    <tr>
+      <td> matbr </td>
+      <td> @ </td>
+      <td> home.se </td>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
