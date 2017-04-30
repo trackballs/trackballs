@@ -1,0 +1,1239 @@
+# Hungarian translation of Trackballs.
+# Copyright (C) 2006 Mathias Broxvall
+# This file is distributed under the same license as the Trackballs package.
+# Attila Boros <wraith13 at gmail dot com>, 2006.
+# , fuzzy
+# 
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-05-25 16:50+0200\n"
+"PO-Revision-Date: 2006-08-27 12:24+0200\n"
+"Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/mmad.cc:106
+#, c-format
+msgid ""
+"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
+msgstr ""
+"Használat: %s [-w, -m] [-e, -l -t <pálya>] [-r <szélesség>] [-s "
+"<érzékenység>]\n"
+
+#: src/mmad.cc:107
+#, c-format
+msgid "   -h  --help            Display this usage information.\n"
+msgstr "   -h  --help            Megjeleníti ezt a használati útmutatót.\n"
+
+#: src/mmad.cc:108
+#, c-format
+msgid "   -e  --edit            Start as level editor.\n"
+msgstr "   -e  --edit            Pályaszerkesztõ indítása.\n"
+
+#: src/mmad.cc:109
+#, c-format
+msgid "   -l  --level           Start from level.\n"
+msgstr "   -l  --level           Indítás pályától.\n"
+
+#: src/mmad.cc:110
+#, c-format
+msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
+msgstr ""
+"   -w  --windowed        Ablakban futtatás (teljes képernyõs az "
+"alapértelmezett)\n"
+
+#: src/mmad.cc:111
+#, c-format
+msgid "   -m  --mute            Mute sound.\n"
+msgstr "   -m  --mute            Hang elnémítása.\n"
+
+#: src/mmad.cc:112
+#, c-format
+msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
+msgstr ""
+"   -r  --resolution      Felbontás beállítása 640, 800 vagy 1024 értékre.\n"
+
+#: src/mmad.cc:113
+#, c-format
+msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
+msgstr "   -s  --sensitivity     Egér érzékenység, 1.0 az alapértelmezett.\n"
+
+#: src/mmad.cc:114
+#, c-format
+msgid "   -f  --fps             Displays framerate\n"
+msgstr "   -f  --fps             Képfrissítési gyorsaság megjelenítése.\n"
+
+#: src/mmad.cc:115
+#, c-format
+msgid "   -q  --quiet           Do not print anything to stdout\n"
+msgstr "   -q  --quiet           Ne írjon ki semmit a standard kimenetre.\n"
+
+#: src/mmad.cc:116
+#, c-format
+msgid "   -v  --version         Prints current version number\n"
+msgstr "   -v  --version         Aktuális verziószám kiírása.\n"
+
+#: src/mmad.cc:117
+#, c-format
+msgid "   -t  --touch           Updates a map to the latest format\n"
+msgstr ""
+"   -t  --touch           Aktualizálja a pályát a legutóbbi formátumra.\n"
+
+#: src/mmad.cc:118
+#, c-format
+msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
+msgstr "   -y  --low-memory      Kevesebb memóriát használ.\n"
+
+#: src/mmad.cc:119
+#, c-format
+msgid "   -j  --repair-joystick Correct for bad joysticks\n"
+msgstr "   -j  --repair-joystick Hibás botkormány javítása.\n"
+
+#: src/mmad.cc:121
+#, c-format
+msgid "Important keyboard shortcuts\n"
+msgstr "Fontos gyorsbillentyûk\n"
+
+#: src/mmad.cc:122
+#, c-format
+msgid "   Escape     Soft quit\n"
+msgstr "   Escape     Kilépés\n"
+
+#: src/mmad.cc:123
+#, c-format
+msgid "   CapsLock   Unhide mouse pointer\n"
+msgstr "   Caps Lock   Egérmutató megjelenítése\n"
+
+#: src/mmad.cc:124
+#, c-format
+msgid "   CTRL-q     Quit the game immediatly\n"
+msgstr "   CTRL-q     Azonnali kilépés\n"
+
+#: src/mmad.cc:125
+#, c-format
+msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
+msgstr "   CTRL-f     Váltás teljes képernyõs/ablakos mód között\n"
+
+#: src/mmad.cc:126
+#, c-format
+msgid "   k          Kill the ball\n"
+msgstr "   k          Játék feladása\n"
+
+#: src/mmad.cc:208
+#, c-format
+msgid ""
+"Commandline switch -e is deprecated, use the editor button the main menu "
+"instead\n"
+msgstr ""
+"Az -e parancssori kapcsoló elavult, helyette a fõmenüben lévõ szerkesztõ "
+"gomb használható.\n"
+
+#: src/mmad.cc:228
+#, c-format
+msgid "Unknown screen resolution of width %d\n"
+msgstr "Ismeretlen képernyõfelbontás %d szélességgel\n"
+
+#: src/mmad.cc:253
+#, c-format
+msgid "Welcome to Trackballs. \n"
+msgstr "Üdvözöllek a Trackballs játékban. \n"
+
+#: src/mmad.cc:254
+#, c-format
+msgid "Using %s as gamedata directory.\n"
+msgstr "%s használata adatkönyvtárnak.\n"
+
+#: src/mmad.cc:259
+#, c-format
+msgid ""
+"Could not initialize libSDL.\n"
+"Error message: '%s'\n"
+msgstr ""
+"Nem sikerült beállítani a libSDL-t.\n"
+"Hibaüzenet: \"%s\"\n"
+
+#: src/mmad.cc:275
+#, c-format
+msgid ""
+"Could not initialize screen resolution.\n"
+"Error message: '%s'\n"
+msgstr ""
+"Nem sikerült beállítani a képernyõfelbontást.\n"
+"Hibaüzenet: \"%s\"\n"
+
+#: src/mainMode.cc:176
+msgid "Track:"
+msgstr "Pálya:"
+
+#: src/mainMode.cc:177
+msgid "Author:"
+msgstr "Szerzõ:"
+
+#: src/mainMode.cc:178
+msgid "Press spacebar to begin"
+msgstr "Kezdés a szóköz megnyomásával"
+
+#: src/mainMode.cc:194 src/mainMode.cc:203 src/mainMode.cc:243
+#: src/mainMode.cc:257
+#, c-format
+msgid "Press spacebar to continue"
+msgstr "Folytatás a szóköz megnyomásával"
+
+#: src/mainMode.cc:195
+msgid "Game over"
+msgstr "Vége a játéknak"
+
+#: src/mainMode.cc:203
+msgid "Oops"
+msgstr "Hopp!"
+
+#: src/mainMode.cc:236
+msgid "Paused"
+msgstr "Pillanatstop"
+
+#: src/mainMode.cc:243
+msgid "Bonus level complete"
+msgstr "Jutalompálya teljesítve"
+
+#: src/mainMode.cc:257
+msgid "Level complete"
+msgstr "Pálya teljesítve"
+
+#: src/mainMode.cc:264
+msgid "Congratulations"
+msgstr "Gratulálok"
+
+#: src/mainMode.cc:264
+msgid "You have completed the game!"
+msgstr "Teljesítetted a játékot"
+
+#: src/mainMode.cc:492 src/mainMode.cc:507
+msgid "Good luck!"
+msgstr "Sok szerencsét!"
+
+#: src/mainMode.cc:599
+#, c-format
+msgid "Level bonuses"
+msgstr "Pálya bónuszok"
+
+#: src/mainMode.cc:600
+#, c-format
+msgid "Lives left:"
+msgstr "Megmaradt életek:"
+
+#: src/mainMode.cc:600
+#, c-format
+msgid "%d x 100 = %d points"
+msgstr "%d x 100 = %d pont"
+
+#: src/mainMode.cc:601
+#, c-format
+msgid "Time left:"
+msgstr "Hátralévõ idõ:"
+
+#: src/mainMode.cc:601
+#, c-format
+msgid "%d minutes = %d points"
+msgstr "%d perc = %d pont"
+
+#: src/mainMode.cc:602
+#, c-format
+msgid "Difficulty:"
+msgstr "Nehézségi szint:"
+
+#: src/mainMode.cc:603
+msgid "easy"
+msgstr "könnyû"
+
+#: src/mainMode.cc:603 src/settingsMode.cc:168
+#, c-format
+msgid "normal"
+msgstr "normál"
+
+#: src/mainMode.cc:603
+msgid "hard"
+msgstr "nehéz"
+
+#: src/glHelp.cc:285
+#, c-format
+msgid "Warning: cannot allocate %d bytes for snapshot. Aborting.\n"
+msgstr "Figyelmeztetés: nem sikerült %d byte lefoglalása képernyõmentéshez.\n"
+
+#: src/glHelp.cc:317
+#, c-format
+msgid "Warning: cannot create file '%s'. Abort\n"
+msgstr "Figyelmeztetés: %s fájlt nem sikerült létrehozni.\n"
+
+#: src/glHelp.cc:454
+#, c-format
+msgid "Error creating surface from RGB file: %s\n"
+msgstr "Hiba lépett fel %s RGB fájlból való felületkészítés közben.\n"
+
+#: src/glHelp.cc:474
+#, c-format
+msgid ""
+"Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+msgstr ""
+"Figyelmeztetés: a textúrák száma elérte a maximumot (%d). %s textúra nem "
+"került betöltésre.\n"
+
+#: src/glHelp.cc:487 src/glHelp.cc:648
+#, c-format
+msgid "Warning: Failed to load texture %s\n"
+msgstr "Figyelmeztetés: %s textúra betöltése nem sikerült.\n"
+
+#: src/glHelp.cc:671
+#, c-format
+msgid "Warning: too fast framerate (%f)\n"
+msgstr "Figyelmeztetés: túl gyors képfrissítés (%f)\n"
+
+#: src/glHelp.cc:678
+#, c-format
+msgid "Framerate: %.1f"
+msgstr "Képfrissítés: %.1f"
+
+#: src/glHelp.cc:679
+#, c-format
+msgid "Framerate unknown"
+msgstr "Ismeretlen képfrissítés"
+
+#: src/glHelp.cc:941
+#, c-format
+msgid "Warning: Rescaling images before loading them as textures.\n"
+msgstr ""
+"Figyelmeztetés: Képátméretezés történt textúraként való betöltés elõtt.\n"
+
+#: src/map.cc:209
+#, c-format
+msgid "Unknown track"
+msgstr "Ismeretlen pálya"
+
+#: src/map.cc:210
+#, c-format
+msgid "Unknown author"
+msgstr "Ismeretlen szerzõ"
+
+#. TRANSLATORS: This is a list of all the menus in the map editor.
+#: src/editMode.cc:135
+msgid "File"
+msgstr "Fájl"
+
+#: src/editMode.cc:135
+msgid "Edit"
+msgstr "Szerkesztés"
+
+#: src/editMode.cc:135
+msgid "Color"
+msgstr "Szín"
+
+#: src/editMode.cc:135
+msgid "Flags"
+msgstr "Kapcsolók"
+
+#: src/editMode.cc:135
+msgid "Feature"
+msgstr "Tulajdonság"
+
+#: src/editMode.cc:135
+msgid "Move"
+msgstr "Mozgatás"
+
+#: src/editMode.cc:135
+msgid "Window"
+msgstr "Ablak"
+
+#: src/editMode.cc:135
+msgid "View"
+msgstr "Nézet"
+
+#. TRANSLATORS: This is a list of all the submenus in the map
+#. editor, if the initial character is * or / then that character
+#. must be perserved as it is.
+#: src/editMode.cc:143
+msgid "New"
+msgstr "Új"
+
+#: src/editMode.cc:143
+#, fuzzy
+msgid "Open..."
+msgstr "Megnyitás"
+
+#: src/editMode.cc:143
+msgid "Close"
+msgstr "Bezárás"
+
+#: src/editMode.cc:143
+msgid "Save"
+msgstr "Mentés"
+
+#: src/editMode.cc:143
+msgid "Exit"
+msgstr "Kilépés"
+
+#: src/editMode.cc:143
+msgid "Test level"
+msgstr "Pálya tesztelése"
+
+#: src/editMode.cc:144
+msgid "Edit height"
+msgstr "Magasság szerkesztése"
+
+#: src/editMode.cc:144
+msgid "Edit color"
+msgstr "Szín szerkesztése"
+
+#: src/editMode.cc:144
+msgid "Edit water"
+msgstr "Víz szerkesztése"
+
+#: src/editMode.cc:144
+msgid "Edit velocity"
+msgstr "Sebesség szerkesztése"
+
+#: src/editMode.cc:144
+msgid "Edit lines"
+msgstr "Vonalak szerkesztése"
+
+#: src/editMode.cc:145
+msgid "*<SPACE> Whole cell"
+msgstr "*<SPACE> Egész cella"
+
+#: src/editMode.cc:145
+msgid "Upper corner"
+msgstr "Felsõ sarok"
+
+#: src/editMode.cc:145
+msgid "Bottom corner"
+msgstr "Alsó sarok"
+
+#: src/editMode.cc:145
+msgid "Right corner"
+msgstr "Jobb sarok"
+
+#: src/editMode.cc:145
+msgid "Left corner"
+msgstr "Bal sarok"
+
+#: src/editMode.cc:145
+msgid "Center"
+msgstr "Közép"
+
+#: src/editMode.cc:146
+msgid "Raise increment"
+msgstr "Lépésköz növelése"
+
+#: src/editMode.cc:146
+msgid "Lower increment"
+msgstr "Lépésköz csökkentése"
+
+#: src/editMode.cc:146
+msgid "*<SHIFT> reversed"
+msgstr "*<SHIFT> fordított"
+
+#: src/editMode.cc:146
+msgid "*<CTRL> walls"
+msgstr "*<CTRL> falak"
+
+#: src/editMode.cc:147
+msgid "Inc. red"
+msgstr "vörös növ."
+
+#: src/editMode.cc:147
+msgid "Inc. green"
+msgstr "zöld növ."
+
+#: src/editMode.cc:147
+msgid "Inc. blue"
+msgstr "kék növ."
+
+#: src/editMode.cc:147
+msgid "Inc. alpha"
+msgstr "átlátszóság növ."
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "Ice"
+msgstr "Jég"
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "Acid"
+msgstr "Sav"
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "Sand"
+msgstr "Homok"
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "Kill"
+msgstr "Halál"
+
+#: src/editMode.cc:148
+msgid "Bounce"
+msgstr "Pattogás"
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "No grid"
+msgstr "Nincs rács"
+
+#: src/editMode.cc:148 src/editMode.cc:158
+msgid "Track"
+msgstr "Pálya"
+
+#: src/editMode.cc:148
+msgid "Texture"
+msgstr "Textúra"
+
+#: src/editMode.cc:148
+msgid "ch. texture"
+msgstr "Textúra váltás"
+
+#: src/editMode.cc:149 src/editMode.cc:161
+msgid "Spike"
+msgstr "Tüske"
+
+#: src/editMode.cc:149 src/editMode.cc:161
+msgid "Small hill"
+msgstr "Kis domb"
+
+#: src/editMode.cc:149 src/editMode.cc:161
+msgid "Medium hill"
+msgstr "Közepes domb"
+
+#: src/editMode.cc:149 src/editMode.cc:161
+msgid "Large hill"
+msgstr "Nagy domb"
+
+#: src/editMode.cc:149 src/editMode.cc:161
+msgid "Huge hill"
+msgstr "Óriási domb"
+
+#: src/editMode.cc:149
+msgid "Smooth small"
+msgstr "Kis simítás"
+
+#: src/editMode.cc:149
+msgid "Smooth large"
+msgstr "Nagy simítás"
+
+#: src/editMode.cc:150
+msgid "/UP Move up"
+msgstr "/UP Mozgás fel"
+
+#: src/editMode.cc:150
+msgid "/DOWN Move down"
+msgstr "/DOWN Mozgás le"
+
+#: src/editMode.cc:150
+msgid "/LEFT Move left"
+msgstr "/LEFT Mozgás balra"
+
+#: src/editMode.cc:150
+msgid "/RIGHT Move right"
+msgstr "/RIGHT Mozgás jobbra"
+
+#: src/editMode.cc:151
+msgid "Shift map up"
+msgstr "térkép fel"
+
+#: src/editMode.cc:151
+msgid "Shift map down"
+msgstr "térkép le"
+
+#: src/editMode.cc:151
+msgid "Shift map left"
+msgstr "térkép balra"
+
+#: src/editMode.cc:151
+msgid "Shift map right"
+msgstr "térkép jobbra"
+
+#: src/editMode.cc:151
+msgid "*<SHIFT> x5"
+msgstr "*<SHIFT> x5"
+
+#: src/editMode.cc:152
+msgid "Set region marker"
+msgstr "Terület kijelölése"
+
+#: src/editMode.cc:152
+msgid "Clear marker"
+msgstr "Kijelölés törlése"
+
+#: src/editMode.cc:152
+msgid "Copy region"
+msgstr "Terület másolása"
+
+#: src/editMode.cc:152
+msgid "Paste region"
+msgstr "Terület beszúrása"
+
+#: src/editMode.cc:153
+msgid "Editor"
+msgstr "Szerkesztõ"
+
+#: src/editMode.cc:153
+msgid "Toolbar"
+msgstr "Eszközsor"
+
+#: src/editMode.cc:153
+msgid "Status"
+msgstr "Állapot"
+
+#: src/editMode.cc:154
+msgid "Birds's eye"
+msgstr "Madártávlat"
+
+#: src/editMode.cc:154
+msgid "Rotate view"
+msgstr "Nézet forgatása"
+
+#: src/editMode.cc:158
+msgid "Trampoline"
+msgstr "Trambulin"
+
+#: src/editMode.cc:161
+msgid "Small smooth"
+msgstr "Kis simítás"
+
+#: src/editMode.cc:161
+msgid "Large smooth"
+msgstr "Nagy simítás"
+
+#: src/editMode.cc:269
+#, c-format
+msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
+msgstr "Hiba, %s/.trackballs egy hivatkozás. Nem menthetõ a pálya.\n"
+
+#: src/editMode.cc:275
+#, c-format
+msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
+msgstr "Hiba, %s/.trackballs/levels egy hivatkozás. Nem menthetõ a pálya.\n"
+
+#: src/editMode.cc:281
+#, fuzzy, c-format
+msgid ""
+"Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
+msgstr ""
+"Hiba, %s/.trackballs/levels/%s.map egy hivatkozás. Nem menthetõ a pálya.\n"
+
+#: src/editMode.cc:285
+#, c-format
+msgid "Saving map as '%s'\n"
+msgstr "Pálya mentése, mint '%s'\n"
+
+#: src/editMode.cc:298
+#, c-format
+msgid "Error, %s is a symbolic link. Cannot create default script file\n"
+msgstr ""
+"Hiba, %s egy hivatkozás. Az alapértelmezett script fájl nem hozható létre.\n"
+
+#: src/editMode.cc:303
+#, c-format
+msgid ";;; Track: %s\n"
+msgstr ";;; Pálya: %s\n"
+
+#: src/editMode.cc:304
+#, c-format
+msgid ";;; This is the default script file for this track.\n"
+msgstr ";;; Ez az alapértelmezett script fájl ehhez a pályához.\n"
+
+#: src/editMode.cc:305
+#, c-format
+msgid ";;; Read the documentation for the editor and look at the examples\n"
+msgstr ""
+";;; Olvasd el a pályaszerkesztõ dokumentációját és nézd meg a példákat,\n"
+
+#: src/editMode.cc:306
+#, c-format
+msgid ""
+";;; to learn how to customize it\n"
+"\n"
+msgstr ""
+"hogy megtanuld, hogyan kell testre szabni.\n"
+"\n"
+
+#: src/editMode.cc:425
+#, c-format
+msgid "Raise: %f"
+msgstr "Növelés: %f"
+
+#: src/editMode.cc:429
+#, c-format
+msgid "Pos: %d,%d"
+msgstr "Poz: %d,%d"
+
+#: src/editMode.cc:432
+#, c-format
+msgid "Feature: %s"
+msgstr "Tulajdonság: %s"
+
+#: src/editMode.cc:435
+#, c-format
+msgid "Color %1.1f %1.1f %1.1f %1.1f"
+msgstr "Szín %1.1f %1.1f %1.1f %1.1f"
+
+#: src/editMode.cc:450
+msgid "yes"
+msgstr "igen"
+
+#: src/editMode.cc:450
+msgid "no"
+msgstr "nem"
+
+#: src/editMode.cc:457
+msgid "Water height"
+msgstr "Vízszint"
+
+#: src/editMode.cc:497
+msgid "Cell height"
+msgstr "Cella magassága"
+
+#: src/editMode.cc:497
+msgid "Cell water height"
+msgstr "Cella vízszintje"
+
+#: src/editMode.cc:497
+msgid "Textures"
+msgstr "Textúrák"
+
+#: src/menuMode.cc:74
+msgid ""
+"Trackballs is a game similar to the classical game Marble Madness from the "
+"80's. By steering a marble ball through a labyrinth filled with sharp "
+"spikes, pools of acid and other obstacles the player collects points. When "
+"the ball reaches the destination you continue on the next, more difficult, "
+"level - unless, of course, the time runs "
+"out.                                               You steer the ball using "
+"the mouse and by pressing >spacebar< you can jump a short distance."
+msgstr ""
+"A Trackballs egy játék, amely hasonlít a '80-as évekbeli Marble Madness "
+"klasszikusra. A játékos egy labdát irányít a hegyes tüskékkel, savtavakkal "
+"és más veszélyekkel teli útvesztõn keresztül, ahol pontokat gyûjt. Mikor a "
+"labda eléri a célt, a játék a következõ, nehezebb pályán folytatódik, míg az "
+"idõ el nem fogy.A labda az egérrel irányítható, a szóköz billentyû "
+"megnyomására pedig ugrik."
+
+#: src/menuMode.cc:125
+msgid "New Game"
+msgstr "Új játék"
+
+#: src/menuMode.cc:126
+msgid "Quit"
+msgstr "Kilépés"
+
+#: src/menuMode.cc:127
+msgid "Settings"
+msgstr "Beállítások"
+
+#: src/menuMode.cc:128
+msgid "Hall of Fame"
+msgstr "Dicsõségtábla"
+
+#: src/menuMode.cc:129
+msgid "Help"
+msgstr "Súgó"
+
+#: src/menuMode.cc:130
+msgid "Map Editor"
+msgstr "Pályaszerkesztõ"
+
+#: src/highScore.cc:58 src/highScore.cc:101
+#, c-format
+msgid "Error, %s is a symbolic link. Cannot save highscores\n"
+msgstr "Hiba, %s egy hivatkozás. A toplista nem menthetõ.\n"
+
+#: src/hofMode.cc:109 src/setupMode.cc:164
+msgid "Level Set"
+msgstr "Pályacsoport"
+
+#: src/hofMode.cc:122
+#, c-format
+msgid "%d points"
+msgstr "%d pont"
+
+#: src/settingsMode.cc:89
+msgid "Game Settings"
+msgstr "Játék beállítások"
+
+#: src/settingsMode.cc:102
+#, c-format
+msgid "Is resolution %dx%dx%d ok?"
+msgstr "Rendben van a %dx%dx%d képernyõfelbontás?"
+
+#: src/settingsMode.cc:105
+msgid "Ok, use this resolution"
+msgstr "Rendben, használd ezt a felbontást"
+
+#: src/settingsMode.cc:106
+msgid "No, revert to old resolution"
+msgstr "Nem, visszatérés az elõzõ felbontáshoz"
+
+#: src/settingsMode.cc:108
+#, c-format
+msgid "Timeout in %d seconds"
+msgstr "Lejár az idõ %d másodperc múlva"
+
+#: src/settingsMode.cc:123
+msgid "Graphics"
+msgstr "Grafika"
+
+#: src/settingsMode.cc:127
+msgid "  Resolution"
+msgstr "  Felbontás"
+
+#: src/settingsMode.cc:128
+msgid "  Test this resolution"
+msgstr "  Ennek a felbontásnak a tesztelése"
+
+#: src/settingsMode.cc:131
+msgid "  Fullscreen"
+msgstr "  Teljes képernyõ"
+
+#: src/settingsMode.cc:131 src/settingsMode.cc:146 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:362 src/editWindows.cc:400
+msgid "No"
+msgstr "Nem"
+
+#: src/settingsMode.cc:131 src/settingsMode.cc:144 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:361 src/editWindows.cc:399
+msgid "Yes"
+msgstr "Igen"
+
+#: src/settingsMode.cc:135
+#, c-format
+msgid "None"
+msgstr "Nincs"
+
+#: src/settingsMode.cc:136
+#, c-format
+msgid "Minimalistic"
+msgstr "Minimális"
+
+#: src/settingsMode.cc:137
+#, c-format
+msgid "Simple"
+msgstr "Egyszerû"
+
+#: src/settingsMode.cc:138
+#, c-format
+msgid "Standard"
+msgstr "Általános"
+
+#: src/settingsMode.cc:139
+#, c-format
+msgid "Extra"
+msgstr "Extra"
+
+#: src/settingsMode.cc:140
+#, c-format
+msgid "Everything"
+msgstr "Minden"
+
+#: src/settingsMode.cc:142
+msgid "  Details"
+msgstr "  Részletek"
+
+#: src/settingsMode.cc:144 src/settingsMode.cc:146
+msgid "  Reflections (beta)"
+msgstr "  Tükrözõdés (beta)"
+
+#: src/settingsMode.cc:149
+msgid "  Show FPS"
+msgstr "  FPS mutatása"
+
+#: src/settingsMode.cc:155
+msgid "Controls"
+msgstr "Irányítás"
+
+#: src/settingsMode.cc:158
+msgid "  Use mouse"
+msgstr "  Egér használata"
+
+#: src/settingsMode.cc:164
+msgid "  Sensitivity"
+msgstr "  Érzékenység"
+
+#: src/settingsMode.cc:169
+#, c-format
+msgid "+%d degrees"
+msgstr "+%d fok"
+
+#: src/settingsMode.cc:170
+#, c-format
+msgid "-%d degrees"
+msgstr "-%d fok"
+
+#: src/settingsMode.cc:171
+msgid "  Steering"
+msgstr "  Kormányzás"
+
+#: src/settingsMode.cc:176
+#, c-format
+msgid "no joystick found"
+msgstr "Nem található botkormány"
+
+#: src/settingsMode.cc:179
+msgid "  Joystick:"
+msgstr "  Botkormány:"
+
+#: src/settingsMode.cc:189
+msgid "Other"
+msgstr "Egyebek"
+
+#: src/settingsMode.cc:193
+msgid "  Music volume"
+msgstr "  Zene hangereje"
+
+#: src/settingsMode.cc:195
+msgid "  Effects volume"
+msgstr "  Effektek hangereje"
+
+#: src/settingsMode.cc:197
+msgid "  Language"
+msgstr "  Nyelv"
+
+#: src/settingsMode.cc:201 src/helpMode.cc:208
+msgid "Back"
+msgstr "Vissza"
+
+#: src/settings.cc:188 src/settings.cc:195
+#, c-format
+msgid "Error, %s is a symbolic link. Cannot save settings\n"
+msgstr "Hiba, %s egy hivatkozás. Nem menthetõk a beállítások.\n"
+
+#: src/setupMode.cc:156
+msgid "Setup new game"
+msgstr "Új játék beállítása"
+
+#: src/setupMode.cc:160
+msgid "Player Name"
+msgstr "Játékos neve"
+
+#: src/setupMode.cc:166
+msgid "N/A"
+msgstr "Nincs"
+
+#: src/setupMode.cc:171
+msgid "Level"
+msgstr "Pálya"
+
+#: src/setupMode.cc:178
+msgid "Difficulty"
+msgstr "Nehézség"
+
+#: src/setupMode.cc:181
+msgid "Sandbox (Easy)"
+msgstr "Homokozó (Könnyû)"
+
+#: src/setupMode.cc:182
+msgid "Sandbox (Normal)"
+msgstr "Homokozó (Normál)"
+
+#: src/setupMode.cc:182
+msgid "Sandbox (Hard)"
+msgstr "Homokozó (Nehéz)"
+
+#: src/setupMode.cc:183
+msgid "Easy"
+msgstr "Könnyû"
+
+#: src/setupMode.cc:183
+msgid "Normal"
+msgstr "Normál"
+
+#: src/setupMode.cc:183
+msgid "Hard"
+msgstr "Nehéz"
+
+#: src/setupMode.cc:186
+msgid "Start Game"
+msgstr "Játék indítása"
+
+#: src/setupMode.cc:189
+#, c-format
+msgid "Total games played: %d"
+msgstr "Összes eddigi játék: %d"
+
+#: src/setupMode.cc:192
+#, c-format
+msgid "Average score: %d"
+msgstr "Átlagos pontszám: %d"
+
+#: src/setupMode.cc:194
+#, c-format
+msgid "Average score: N/A"
+msgstr "Átlagos pontszám: nincs"
+
+#: src/setupMode.cc:196
+#, c-format
+msgid "Levels completed: %d"
+msgstr "Teljesített pályák: %d"
+
+#: src/gamer.cc:94
+#, c-format
+msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
+msgstr "Hiba, %s/trackballs egy hivatkozás. Nem menthetõk a beállítások.\n"
+
+#: src/gamer.cc:101
+#, c-format
+msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
+msgstr ""
+"Hiba, %s/trackballs/%s.gmr egy hivatkozás. Nem menthetõk a beállítások.\n"
+
+#: src/helpMode.cc:73 src/helpMode.cc:86
+#, fuzzy, c-format
+msgid "Error: failed to load %s\n"
+msgstr "Hiba: nem sikerült %s-t betölteni\n"
+
+#: src/helpMode.cc:100
+msgid "MORE HELP"
+msgstr "További segítség"
+
+#: src/helpMode.cc:159
+msgid "Your marble:"
+msgstr "A labdád:"
+
+#: src/helpMode.cc:159
+msgid "Steer this with your mouse, numpad or arrows. "
+msgstr "Görgesd az egérrel, numerikus billentyûkkel vagy a nyilakkal. "
+
+#: src/helpMode.cc:160
+msgid "Left mouse or spacebar is jump."
+msgstr "Ugrás a bal egérgombbal vagy a szóközzel."
+
+#: src/helpMode.cc:161
+msgid "Shift gives top speed when using keyboard."
+msgstr "A Shift billentyû megnyomása max. sebességet eredményez."
+
+#: src/helpMode.cc:162
+msgid "Mr Black:"
+msgstr "Mr Black:"
+
+#: src/helpMode.cc:162
+msgid "Your enemy. Defeat with Modpill - Spike."
+msgstr "Az ellenség. Tüske módosítóval legyõzhetõ."
+
+#: src/helpMode.cc:163
+msgid "Modpill Speed:"
+msgstr "Sebesség módosító:"
+
+#: src/helpMode.cc:163
+msgid "Makes you go faster for short period of time."
+msgstr "Rövid ideig nagyobb sebesség."
+
+#: src/helpMode.cc:164
+msgid "Modpill Spikes:"
+msgstr "Tüske módosító:"
+
+#: src/helpMode.cc:164
+msgid "Weapon against Mr Black and grip for icy terrain."
+msgstr "Mr Black elleni fegyver és csúszásgátló jeges talajon."
+
+#: src/helpMode.cc:165
+msgid "Modpill Freeze:"
+msgstr "Fagyasztás módosító:"
+
+#: src/helpMode.cc:165
+msgid "This will freeze you - avoid it."
+msgstr "Lefagyaszt - óvakodj tõle."
+
+#: src/helpMode.cc:166
+msgid "Modpill Glass:"
+msgstr "Üveg módosító:"
+
+#: src/helpMode.cc:166
+msgid "Protects you from acid, but makes you more fragile."
+msgstr "Megvéd a savtól, de törékenyebbé tesz."
+
+#: src/helpMode.cc:167
+msgid "Modpill Nitro:"
+msgstr "Nitro módosító:"
+
+#: src/helpMode.cc:167
+msgid "Move really fast. Active nitro with second button."
+msgstr "Nagyon gyors mozgás. A második gombbal aktiválható."
+
+#: src/helpMode.cc:168
+msgid "Switch:"
+msgstr "Kapcsoló:"
+
+#: src/helpMode.cc:168
+msgid "Activates/deactivates some object/element in the level."
+msgstr "Bekacsol/kikapcsol valamilyen tárgyat a pályán."
+
+#: src/helpMode.cc:169
+msgid "Moving spike:"
+msgstr "Mozgó tüske:"
+
+#: src/helpMode.cc:169
+msgid "Obstacle to avoid."
+msgstr "Kerüld el."
+
+#: src/helpMode.cc:170
+msgid "Flag:"
+msgstr "Zászló:"
+
+#: src/helpMode.cc:170
+msgid "Collect for bonus points."
+msgstr "Bónusz pontokért gyûjthetõ."
+
+#: src/helpMode.cc:171
+msgid "Normal terrain:"
+msgstr "Normál talaj:"
+
+#: src/helpMode.cc:171
+msgid "Can be of any color and is safe to move on."
+msgstr "Bármilyen színû lehet, a rajta való mozgás biztonságos."
+
+#: src/helpMode.cc:172
+msgid "Acid terrain:"
+msgstr "Savas terület:"
+
+#: src/helpMode.cc:172
+msgid "Will kill your marble unless you have a glass modpill."
+msgstr "Üveg módosító nélkül elpusztítja a labdát."
+
+#: src/helpMode.cc:173
+msgid "Icy terrain:"
+msgstr "Jeges talaj:"
+
+#: src/helpMode.cc:173
+msgid "Slippery terrain unless you have a spikes modpill."
+msgstr "Csúszós tüske módosító nélkül "
+
+#: src/helpMode.cc:174
+msgid "Sandy terrain:"
+msgstr "Homokos talaj:"
+
+#: src/helpMode.cc:174
+msgid "Soft to land on but will slow you down."
+msgstr "Könnyû földet érést biztosít, de lelassít."
+
+#: src/helpMode.cc:175
+msgid "Goal:"
+msgstr "Cél:"
+
+#: src/helpMode.cc:175
+msgid "Will take you to the next level. "
+msgstr "A következõ pályára juttat. "
+
+#: src/helpMode.cc:176
+msgid "Get here before time runs out."
+msgstr "Ide kell jutni mielõtt az idõ letelik."
+
+#: src/helpMode.cc:177
+msgid "Force Field:"
+msgstr "Erõtér:"
+
+#: src/helpMode.cc:177
+msgid "You cannot pass this unless you switch it off."
+msgstr "Kikapcsolása nélkül nem lehet rajta áthaladni."
+
+#: src/helpMode.cc:178
+msgid "Some are lethal and some are one way."
+msgstr "Némelyik halálos, némelyik egyirányú."
+
+#: src/helpMode.cc:179
+msgid "Tunnel:"
+msgstr "Csõ:"
+
+#: src/helpMode.cc:179
+msgid "Takes you places, sometimes with great speed."
+msgstr "Más helyre juttat, idõnként nagy sebességgel."
+
+#: src/helpMode.cc:207
+msgid "More Help"
+msgstr "További segítség"
+
+#: src/calibrateJoystickMode.cc:91
+#, c-format
+msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
+msgstr "Hiba, CalibrateJoystickMode meghívása botkormány nélkül.\n"
+
+#: src/calibrateJoystickMode.cc:93
+msgid "Calibrating Joystick"
+msgstr "Botkormány beállítása"
+
+#: src/calibrateJoystickMode.cc:99
+msgid "Center joystick"
+msgstr "Botkormányt középre"
+
+#: src/calibrateJoystickMode.cc:102
+msgid "Move joystick left"
+msgstr "Botkormányt balra"
+
+#: src/calibrateJoystickMode.cc:105
+msgid "Move joystick right"
+msgstr "Botkormányt jobbra"
+
+#: src/calibrateJoystickMode.cc:108
+msgid "Move joystick up"
+msgstr "Botkormányt fel"
+
+#: src/calibrateJoystickMode.cc:111
+msgid "Move joystick down"
+msgstr "Botkormányt le"
+
+#: src/calibrateJoystickMode.cc:114
+msgid "Press any button to continue"
+msgstr "Folytatás bármely gomb megnyomásával"
+
+#: src/calibrateJoystickMode.cc:115
+msgid "Press escape to cancel"
+msgstr "Esc: Kilépés"
+
+#: src/calibrateJoystickMode.cc:117
+#, c-format
+msgid "now: %d %d"
+msgstr "most: %d %d"
+
+#: src/calibrateJoystickMode.cc:120
+#, c-format
+msgid "center: %d %d left: %d right: %d up: %d down: %d"
+msgstr "közép: %d %d bal: %d jobb: %d fel: %d le: %d"
+
+#: src/editWindows.cc:360
+msgid "Quit without saving?"
+msgstr "Kilépés mentés nélkül?"
+
+#: src/editWindows.cc:398
+msgid "Save map?"
+msgstr "Pálya mentése?"
+
+#: src/editWindows.cc:402
+msgid "Saving"
+msgstr "Mentés"
+
+#: src/editWindows.cc:477
+msgid "Name of map"
+msgstr "Pálya neve"
+
+#: src/editWindows.cc:479 src/editWindows.cc:530
+msgid "Cancel"
+msgstr "Mégse"
+
+#: src/editWindows.cc:480
+msgid "Open"
+msgstr "Megnyitás"
+
+#: src/editWindows.cc:522
+msgid "Open map"
+msgstr "Pálya megnyitása"
+
+#: src/editWindows.cc:528
+#, c-format
+msgid "page %d / %d"
+msgstr "oldal %d / %d"
+
+#~ msgid "Error: file %s is a symlink.\n"
+#~ msgstr "Hiba: %s fájl egy hivatkozás.\n"
+
+#~ msgid "Error: Failed to load font %s\n"
+#~ msgstr "Hiba: %s betûkészlet betöltése nem sikerült.\n"
+
+#~ msgid "Error: Failed to load fonts\n"
+#~ msgstr "Hiba: betûkészletek betöltése nem sikerült.\n"

@@ -620,7 +620,6 @@ v0.00 Nov 2002; Mathias Broxvall <matbr@home.se>, Initial release:
 7 March 2005; Mathias Broxvall:
         - Added new language (french) submitted by Guillaume Bedot. 
 
-
 2 April 2005; Mathias Broxvall
 	- Added checks against symlinks whenever opening/creating a file in write mode. I _believe_ that this fixes 
 	the security problem with symlinks and a trackballs that's GID'ed.
@@ -646,6 +645,13 @@ v0.00 Nov 2002; Mathias Broxvall <matbr@home.se>, Initial release:
 	- Fixed critical bug affecting gentoo + SDL 1.2.8
 	- Releasing as another minor release, Trackballs v1.1.1, just to get started again.
 
+15 November 2005; Ari Pollak <ari@debian.org>
+	- Fix crash and/or infinite loop if initializing the screen
+	  resolution has failed
+	- Disable useMipmaps since gluBuild2DMipmaps() currently segfaults
+	  using the X.org r200 DRI driver.
+	- Fix dimensions of screenResolutions[][] in settingsMode.cc
+
 16 July 2006; Mathias Broxvall
 	- (Re)moved level boxofun.* in favour for bx.*
 
@@ -660,3 +666,23 @@ v0.00 Nov 2002; Mathias Broxvall <matbr@home.se>, Initial release:
 	- Added support descriptive text for each levelset
 	- Added custom backgrounds in the setup game mode for each levelset
 	- New sandbox difficulty mode (no lives are lost)
+	- Releasing as trackballs v1.1.2
+
+18 August 2006; Mathias Broxvall
+	- Added two new songs by Attila Boros
+	- New script commands set-song-preference, force-next-song and 
+	clear-song-preferences to allow choosing specific songs for levels.
+
+23 September 2006; Mathias Broxvall
+	- General cleanup of guile.cc and adding a few new functions
+	- Updated level castle4 script from patch by Attila
+	
+17 May 2007; Mathias Broxvall
+	- Implemented event callbacks on arbitrary animated objects
+	triggering on death and tick events.
+	- Replaced depracated guile functions with the proper ones
+	- Implemented the "features" part of the map editor
+
+25 May 2007; Mathias Broxvall
+	- Added a general interface for score and time bonus when objects
+	are killed. 

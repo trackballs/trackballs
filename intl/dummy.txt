@@ -1,1 +1,0 @@
-I hate autoconf + i18n

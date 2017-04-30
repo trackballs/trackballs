@@ -55,9 +55,13 @@ Black::Black(double x, double y) : Ball() {
   likesPlayer = 1;
 
   setReflectivity(0.4, 0);
+
+  scoreOnDeath = Game::defaultScores[SCORE_BLACK][0];
+  timeOnDeath = Game::defaultScores[SCORE_BLACK][1];
 }
 void Black::die(int how) {
   int i, j;
+  Ball::die(how);
 
   if (alive) {
     Color color = {0.0, 0.0, 0.2};
@@ -74,13 +78,16 @@ void Black::die(int how) {
         vel[2] = velocity[2] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
         new Debris(this, pos, vel, 2.0 + 8.0 * frandom());
       }
-    position[2] += 1.0;
-    new ScoreSign(100, position);
+
+    /*    position[2] += 1.0;
+          new ScoreSign(100,position);*/
     remove();
     if (how == DIE_CRASH)
       playEffect(SFX_BLACK_DIE);
     else if (how == DIE_FF)
       playEffect(SFX_FF_DEATH);
+  } else {
+    /* This should not happen */
   }
 }
 void Black::tick(Real t) {

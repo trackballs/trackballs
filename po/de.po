@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-06 19:12+0200\n"
+"POT-Creation-Date: 2007-05-25 16:50+0200\n"
 "PO-Revision-Date: 2005-01-29 20:09+0100\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -200,110 +200,95 @@ msgstr ""
 msgid "You have completed the game!"
 msgstr ""
 
-#: src/mainMode.cc:493 src/mainMode.cc:508
+#: src/mainMode.cc:492 src/mainMode.cc:507
 msgid "Good luck!"
 msgstr ""
 
-#: src/mainMode.cc:600
+#: src/mainMode.cc:599
 #, c-format
 msgid "Level bonuses"
 msgstr ""
 
-#: src/mainMode.cc:601
+#: src/mainMode.cc:600
 #, c-format
 msgid "Lives left:"
 msgstr ""
 
-#: src/mainMode.cc:601
+#: src/mainMode.cc:600
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr ""
 
-#: src/mainMode.cc:602
+#: src/mainMode.cc:601
 #, c-format
 msgid "Time left:"
 msgstr ""
 
-#: src/mainMode.cc:602
+#: src/mainMode.cc:601
 #, c-format
 msgid "%d minutes = %d points"
 msgstr ""
 
-#: src/mainMode.cc:603
+#: src/mainMode.cc:602
 #, c-format
 msgid "Difficulty:"
 msgstr ""
 
-#: src/mainMode.cc:604
+#: src/mainMode.cc:603
 msgid "easy"
 msgstr ""
 
-#: src/mainMode.cc:604 src/settingsMode.cc:174
+#: src/mainMode.cc:603 src/settingsMode.cc:168
 #, c-format
 msgid "normal"
 msgstr ""
 
-#: src/mainMode.cc:604
+#: src/mainMode.cc:603
 msgid "hard"
 msgstr ""
 
-#: src/glHelp.cc:282
+#: src/glHelp.cc:285
 #, c-format
 msgid "Warning: cannot allocate %d bytes for snapshot. Aborting.\n"
 msgstr ""
 
-#: src/glHelp.cc:303
-#, c-format
-msgid "Error: file %s is a symlink.\n"
-msgstr ""
-
-#: src/glHelp.cc:314
+#: src/glHelp.cc:317
 #, c-format
 msgid "Warning: cannot create file '%s'. Abort\n"
 msgstr ""
 
-#: src/glHelp.cc:451
+#: src/glHelp.cc:454
 #, c-format
 msgid "Error creating surface from RGB file: %s\n"
 msgstr ""
 
-#: src/glHelp.cc:471
+#: src/glHelp.cc:474
 #, c-format
 msgid ""
 "Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
 msgstr ""
 
-#: src/glHelp.cc:484 src/glHelp.cc:650
+#: src/glHelp.cc:487 src/glHelp.cc:648
 #, c-format
 msgid "Warning: Failed to load texture %s\n"
 msgstr ""
 
-#: src/glHelp.cc:524 src/glHelp.cc:526 src/glHelp.cc:528 src/glHelp.cc:530
-#, c-format
-msgid "Error: Failed to load font %s\n"
-msgstr ""
-
-#: src/glHelp.cc:533
-#, c-format
-msgid "Error: Failed to load fonts\n"
-msgstr ""
-
-#: src/glHelp.cc:673
+#: src/glHelp.cc:671
 #, c-format
 msgid "Warning: too fast framerate (%f)\n"
 msgstr ""
 
-#: src/glHelp.cc:680
+#: src/glHelp.cc:678
 #, c-format
 msgid "Framerate: %.1f"
 msgstr ""
 
-#: src/glHelp.cc:681
+#: src/glHelp.cc:679
 #, c-format
 msgid "Framerate unknown"
 msgstr ""
 
-#: src/glHelp.cc:936
+#: src/glHelp.cc:941
 #, c-format
 msgid "Warning: Rescaling images before loading them as textures.\n"
 msgstr ""
@@ -351,344 +336,346 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#. TRANSLATORS: This is a list of all the submenus in the map editor, if the initial character is * or / it must be perserved as it is.
-#: src/editMode.cc:141
+#. TRANSLATORS: This is a list of all the submenus in the map
+#. editor, if the initial character is * or / then that character
+#. must be perserved as it is.
+#: src/editMode.cc:143
 msgid "New"
 msgstr ""
 
-#: src/editMode.cc:141 src/editWindows.cc:468
-msgid "Open"
+#: src/editMode.cc:143
+msgid "Open..."
 msgstr ""
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Close"
 msgstr ""
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Save"
 msgstr ""
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Exit"
 msgstr ""
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Test level"
 msgstr ""
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit height"
 msgstr ""
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit color"
 msgstr ""
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit water"
 msgstr ""
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit velocity"
 msgstr ""
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit lines"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "*<SPACE> Whole cell"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Upper corner"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Bottom corner"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Right corner"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Left corner"
 msgstr ""
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Center"
 msgstr ""
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "Raise increment"
 msgstr ""
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "Lower increment"
 msgstr ""
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "*<SHIFT> reversed"
 msgstr ""
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "*<CTRL> walls"
 msgstr ""
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. red"
 msgstr ""
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. green"
 msgstr ""
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. blue"
 msgstr ""
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. alpha"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Ice"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Acid"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Sand"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Kill"
 msgstr ""
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "Bounce"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "No grid"
 msgstr ""
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Track"
 msgstr ""
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "Texture"
 msgstr ""
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "ch. texture"
 msgstr ""
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Spike"
 msgstr ""
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Small hill"
 msgstr ""
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Medium hill"
 msgstr ""
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Large hill"
 msgstr ""
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Huge hill"
 msgstr ""
 
-#: src/editMode.cc:147
+#: src/editMode.cc:149
 msgid "Smooth small"
 msgstr ""
 
-#: src/editMode.cc:147
+#: src/editMode.cc:149
 msgid "Smooth large"
 msgstr ""
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/UP Move up"
 msgstr ""
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/DOWN Move down"
 msgstr ""
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/LEFT Move left"
 msgstr ""
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/RIGHT Move right"
 msgstr ""
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map up"
 msgstr ""
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map down"
 msgstr ""
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map left"
 msgstr ""
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map right"
 msgstr ""
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "*<SHIFT> x5"
 msgstr ""
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Set region marker"
 msgstr ""
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Clear marker"
 msgstr ""
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Copy region"
 msgstr ""
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Paste region"
 msgstr ""
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Editor"
 msgstr ""
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Toolbar"
 msgstr ""
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Status"
 msgstr ""
 
-#: src/editMode.cc:152
+#: src/editMode.cc:154
 msgid "Birds's eye"
 msgstr ""
 
-#: src/editMode.cc:152
+#: src/editMode.cc:154
 msgid "Rotate view"
 msgstr ""
 
-#: src/editMode.cc:156
+#: src/editMode.cc:158
 msgid "Trampoline"
 msgstr ""
 
-#: src/editMode.cc:159
+#: src/editMode.cc:161
 msgid "Small smooth"
 msgstr ""
 
-#: src/editMode.cc:159
+#: src/editMode.cc:161
 msgid "Large smooth"
 msgstr ""
 
-#: src/editMode.cc:267
+#: src/editMode.cc:269
 #, c-format
 msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:273
+#: src/editMode.cc:275
 #, c-format
 msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:279
+#: src/editMode.cc:281
 #, c-format
 msgid ""
-"Error, %s/.trackballs/levels%s.map is a symbolic link. Cannot save map\n"
+"Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:283
+#: src/editMode.cc:285
 #, c-format
 msgid "Saving map as '%s'\n"
 msgstr ""
 
-#: src/editMode.cc:296
+#: src/editMode.cc:298
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot create default script file\n"
 msgstr ""
 
-#: src/editMode.cc:301
+#: src/editMode.cc:303
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ""
 
-#: src/editMode.cc:302
+#: src/editMode.cc:304
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ""
 
-#: src/editMode.cc:303
+#: src/editMode.cc:305
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ""
 
-#: src/editMode.cc:304
+#: src/editMode.cc:306
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
 "\n"
 msgstr ""
 
-#: src/editMode.cc:404
+#: src/editMode.cc:425
 #, c-format
 msgid "Raise: %f"
 msgstr ""
 
-#: src/editMode.cc:408
+#: src/editMode.cc:429
 #, c-format
 msgid "Pos: %d,%d"
 msgstr ""
 
-#: src/editMode.cc:411
+#: src/editMode.cc:432
 #, c-format
 msgid "Feature: %s"
 msgstr ""
 
-#: src/editMode.cc:414
+#: src/editMode.cc:435
 #, c-format
 msgid "Color %1.1f %1.1f %1.1f %1.1f"
 msgstr ""
 
-#: src/editMode.cc:429
+#: src/editMode.cc:450
 msgid "yes"
 msgstr ""
 
-#: src/editMode.cc:429
+#: src/editMode.cc:450
 msgid "no"
 msgstr ""
 
-#: src/editMode.cc:436
+#: src/editMode.cc:457
 msgid "Water height"
 msgstr ""
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Cell height"
 msgstr ""
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Cell water height"
 msgstr ""
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Textures"
 msgstr ""
 
@@ -727,13 +714,6 @@ msgstr ""
 msgid "Map Editor"
 msgstr ""
 
-#: src/menuMode.cc:236 src/hofMode.cc:46 src/hofMode.cc:57 src/setupMode.cc:70
-#: src/setupMode.cc:312 src/helpMode.cc:45 src/helpMode.cc:57
-#: src/helpMode.cc:73 src/helpMode.cc:86
-#, c-format
-msgid "Error: Failed to load %s\n"
-msgstr ""
-
 #: src/highScore.cc:58 src/highScore.cc:101
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot save highscores\n"
@@ -748,152 +728,152 @@ msgstr ""
 msgid "%d points"
 msgstr ""
 
-#: src/settingsMode.cc:95
+#: src/settingsMode.cc:89
 msgid "Game Settings"
 msgstr ""
 
-#: src/settingsMode.cc:108
+#: src/settingsMode.cc:102
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr ""
 
-#: src/settingsMode.cc:111
+#: src/settingsMode.cc:105
 msgid "Ok, use this resolution"
 msgstr ""
 
-#: src/settingsMode.cc:112
+#: src/settingsMode.cc:106
 msgid "No, revert to old resolution"
 msgstr ""
 
-#: src/settingsMode.cc:114
+#: src/settingsMode.cc:108
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr ""
 
-#: src/settingsMode.cc:129
+#: src/settingsMode.cc:123
 msgid "Graphics"
 msgstr ""
 
-#: src/settingsMode.cc:133
+#: src/settingsMode.cc:127
 msgid "  Resolution"
 msgstr ""
 
-#: src/settingsMode.cc:134
+#: src/settingsMode.cc:128
 msgid "  Test this resolution"
 msgstr ""
 
-#: src/settingsMode.cc:137
+#: src/settingsMode.cc:131
 msgid "  Fullscreen"
 msgstr ""
 
-#: src/settingsMode.cc:137 src/settingsMode.cc:152 src/settingsMode.cc:155
-#: src/settingsMode.cc:165 src/editWindows.cc:350 src/editWindows.cc:388
+#: src/settingsMode.cc:131 src/settingsMode.cc:146 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:362 src/editWindows.cc:400
 msgid "No"
 msgstr ""
 
-#: src/settingsMode.cc:137 src/settingsMode.cc:150 src/settingsMode.cc:155
-#: src/settingsMode.cc:165 src/editWindows.cc:349 src/editWindows.cc:387
+#: src/settingsMode.cc:131 src/settingsMode.cc:144 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:361 src/editWindows.cc:399
 msgid "Yes"
 msgstr ""
 
-#: src/settingsMode.cc:141
+#: src/settingsMode.cc:135
 #, c-format
 msgid "None"
 msgstr ""
 
-#: src/settingsMode.cc:142
+#: src/settingsMode.cc:136
 #, c-format
 msgid "Minimalistic"
 msgstr ""
 
-#: src/settingsMode.cc:143
+#: src/settingsMode.cc:137
 #, c-format
 msgid "Simple"
 msgstr ""
 
-#: src/settingsMode.cc:144
+#: src/settingsMode.cc:138
 #, c-format
 msgid "Standard"
 msgstr ""
 
-#: src/settingsMode.cc:145
+#: src/settingsMode.cc:139
 #, c-format
 msgid "Extra"
 msgstr ""
 
-#: src/settingsMode.cc:146
+#: src/settingsMode.cc:140
 #, c-format
 msgid "Everything"
 msgstr ""
 
-#: src/settingsMode.cc:148
+#: src/settingsMode.cc:142
 msgid "  Details"
 msgstr ""
 
-#: src/settingsMode.cc:150 src/settingsMode.cc:152
+#: src/settingsMode.cc:144 src/settingsMode.cc:146
 msgid "  Reflections (beta)"
 msgstr ""
 
-#: src/settingsMode.cc:155
+#: src/settingsMode.cc:149
 msgid "  Show FPS"
 msgstr ""
 
-#: src/settingsMode.cc:161
+#: src/settingsMode.cc:155
 msgid "Controls"
 msgstr ""
 
-#: src/settingsMode.cc:164
+#: src/settingsMode.cc:158
 msgid "  Use mouse"
 msgstr ""
 
-#: src/settingsMode.cc:170
+#: src/settingsMode.cc:164
 msgid "  Sensitivity"
 msgstr ""
 
-#: src/settingsMode.cc:175
+#: src/settingsMode.cc:169
 #, c-format
 msgid "+%d degrees"
 msgstr ""
 
-#: src/settingsMode.cc:176
+#: src/settingsMode.cc:170
 #, c-format
 msgid "-%d degrees"
 msgstr ""
 
-#: src/settingsMode.cc:177
+#: src/settingsMode.cc:171
 msgid "  Steering"
 msgstr ""
 
-#: src/settingsMode.cc:182
+#: src/settingsMode.cc:176
 #, c-format
 msgid "no joystick found"
 msgstr ""
 
-#: src/settingsMode.cc:185
+#: src/settingsMode.cc:179
 msgid "  Joystick:"
 msgstr ""
 
-#: src/settingsMode.cc:195
+#: src/settingsMode.cc:189
 msgid "Other"
 msgstr ""
 
-#: src/settingsMode.cc:199
+#: src/settingsMode.cc:193
 msgid "  Music volume"
 msgstr ""
 
-#: src/settingsMode.cc:201
+#: src/settingsMode.cc:195
 msgid "  Effects volume"
 msgstr ""
 
-#: src/settingsMode.cc:203
+#: src/settingsMode.cc:197
 msgid "  Language"
 msgstr ""
 
-#: src/settingsMode.cc:207 src/helpMode.cc:208
+#: src/settingsMode.cc:201 src/helpMode.cc:208
 msgid "Back"
 msgstr ""
 
-#: src/settings.cc:187 src/settings.cc:194
+#: src/settings.cc:188 src/settings.cc:195
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot save settings\n"
 msgstr ""
@@ -974,6 +954,11 @@ msgstr ""
 #: src/gamer.cc:101
 #, c-format
 msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
+msgstr ""
+
+#: src/helpMode.cc:73 src/helpMode.cc:86
+#, c-format
+msgid "Error: failed to load %s\n"
 msgstr ""
 
 #: src/helpMode.cc:100
@@ -1183,31 +1168,35 @@ msgstr ""
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr ""
 
-#: src/editWindows.cc:348
+#: src/editWindows.cc:360
 msgid "Quit without saving?"
 msgstr ""
 
-#: src/editWindows.cc:386
+#: src/editWindows.cc:398
 msgid "Save map?"
 msgstr ""
 
-#: src/editWindows.cc:390
+#: src/editWindows.cc:402
 msgid "Saving"
 msgstr ""
 
-#: src/editWindows.cc:465
+#: src/editWindows.cc:477
 msgid "Name of map"
 msgstr ""
 
-#: src/editWindows.cc:467 src/editWindows.cc:518
+#: src/editWindows.cc:479 src/editWindows.cc:530
 msgid "Cancel"
 msgstr ""
 
-#: src/editWindows.cc:510
+#: src/editWindows.cc:480
+msgid "Open"
+msgstr ""
+
+#: src/editWindows.cc:522
 msgid "Open map"
 msgstr ""
 
-#: src/editWindows.cc:516
+#: src/editWindows.cc:528
 #, c-format
 msgid "page %d / %d"
 msgstr ""

@@ -77,7 +77,7 @@ class EditMode : public GameMode {
   int menuChoise;
   int doSave;
   int hill;
-  int currentEditMode;
+  int currentEditMode, currentFeature;
 
   class EMenuWindow *menuWindow;
   class EStatusWindow *statusWindow;

@@ -34,12 +34,15 @@ SDL_AudioSpec audioFormat;
 #define MAX_EFFECTS 1024
 const char *wavs[MAX_EFFECTS];
 Mix_Chunk *effects[MAX_EFFECTS];
-int n_effects = 0;  // YP: was not initialized !
+int n_effects = 0;
 
 #define MAX_SONGS 1024  // in case someone makes a symlink to his real music directory..
 Mix_Music *music[MAX_SONGS];
+char *songName[MAX_SONGS];
 int n_songs = 0;
 int mute = 1;
+char musicPreferences[MAX_SONGS];
+int hasMusicPreferences = 0;
 
 void soundInit() {
   mute = 0;
@@ -61,6 +64,8 @@ void soundInit() {
     return;
   }
   if (!silent) printf("successfull\n");
+
+  clearMusicPreferences();
 
   snprintf(str, sizeof(str), "%s/sfx", SHARE_DIR);
   dir = opendir(str);
@@ -90,6 +95,7 @@ void soundInit() {
            strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".mp3") == 0)) {
         snprintf(str, sizeof(str), "%s/music/%s", SHARE_DIR, dirent->d_name);
         music[n_songs] = Mix_LoadMUS(str);
+        songName[n_songs] = strdup(dirent->d_name);
         if (!music[n_songs++]) printf("Warning: Error when loading '%s'\n", str);
       }
     }
@@ -123,11 +129,40 @@ void soundIdle() {
     musicFade = min(1.0, musicFade + 0.3 / fps);
   Mix_VolumeMusic((int)(musicFade * 127.0 * Settings::settings->musicVolume));
 
-  /* TODO. Alternative songs... */
-  if (!Mix_PlayingMusic() && n_songs) {
-    i = (rand() >> 7) % n_songs;
-    if (music[i]) Mix_FadeInMusic(music[i], 1, 2000);
+  if (!Mix_PlayingMusic() && n_songs) { playNextSong(); }
+}
+
+void playNextSong() {
+  int i, tries, r;
+  static int oldSong = -1;
+
+  for (tries = 0; tries < 2; tries++) {
+    if (hasMusicPreferences) {
+      /* Pick one of the selected songs, with weights */
+      r = random() % hasMusicPreferences;
+      for (i = 0; i < n_songs; i++) {
+        r -= musicPreferences[i];
+        if (r <= 0) break;
+      }
+      if (i == n_songs) {
+        printf("Error, bad weights in music preferences\n");
+        i = 0;
+      }
+    } else {
+      /* Just pick any random song */
+      i = random() % n_songs;
+    }
+    /* This is to make sure we don't play the same song twice,
+       unless there realy isn't any alternative */
+    if (i != oldSong) {
+      oldSong = i;
+      break;
+    }
   }
+  if (music[i])
+    Mix_FadeInMusic(music[i], 1, 2000);
+  else
+    printf("Warning, bad song index %d selected\n", i);
 }
 
 void playEffect(int e, float vol) {
@@ -175,4 +210,24 @@ void volumeChanged() {
   if (mute) return;
   Mix_Volume(0, (int)(127.0 * Settings::settings->sfxVolume));
   Mix_VolumeMusic((int)(127.0 * Settings::settings->musicVolume));
+}
+
+void clearMusicPreferences() {
+  memset(musicPreferences, 0, sizeof(musicPreferences));
+  hasMusicPreferences = 0;
+}
+
+void setMusicPreference(char *name, int weight) {
+  int i;
+  for (i = 0; i < n_songs; i++) {
+    if (strcasecmp(songName[i], name) == 0) break;
+  }
+  if (i == n_songs) {
+    printf("setMusicPreference: failed to find song '%s'\nMake sr", name);
+    return;
+  } else {
+    hasMusicPreferences -= musicPreferences[i];
+    hasMusicPreferences += weight;
+    musicPreferences[i] = weight;
+  }
 }

@@ -42,13 +42,16 @@ Baby::Baby(double x, double y) : Black(x, y) {
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
   modTimeLeft[MOD_DIZZY] = -1.0;
   likesPlayer = -1;
+  scoreOnDeath = Game::defaultScores[SCORE_BABY][0];
+  timeOnDeath = Game::defaultScores[SCORE_BABY][1];
 
   setReflectivity(0.0, 1);
 }
 
-void Baby::die() {
+void Baby::die(int how) {
   if (alive) {
-    new ScoreSign(50, position);
+    Ball::die(how);
+    /*new ScoreSign(50,position);*/
     playEffect(SFX_BLACK_DIE);
     remove();
   }
@@ -58,7 +61,7 @@ Baby::~Baby() {}
 
 Boolean Baby::crash(Real speed, Ball *ball) {
   if (ball == (Ball *)Game::current->player1) {
-    die();
+    die(DIE_CRASH);
     return false;
   }
   return Ball::crash(speed);

@@ -33,7 +33,11 @@
 using namespace std;
 
 Flag::Flag(int x, int y, int points, int visible, Real radius) {
-  this->points = points;
+  scoreOnDeath = Game::defaultScores[SCORE_FLAG][0];
+  timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
+
+  scoreOnDeath = points;
+
   this->x = x;
   this->y = y;
   this->visible = visible;
@@ -154,8 +158,11 @@ void Flag::tick(Real t) {
 }
 
 void Flag::onGet() {
-  position[2] += 1.0;
+  /* Triggers any events and creates scores/time bonuses */
+  die(DIE_OTHER);
+  /* position[2] += 1.0;*/
+  /* Play the sound effect */
   playEffect(SFX_GOT_FLAG);
-  new ScoreSign(points, position);
+  /*new ScoreSign(points,position);*/
   remove();
 }

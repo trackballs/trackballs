@@ -28,10 +28,27 @@
 using namespace std;
 
 ScoreSign::ScoreSign(int points, Coord3d position) : Sign("++++", 4.0, 1.0, 100.0, position) {
+  init(points, position, SCORESIGN_SCORE);
+}
+
+ScoreSign::ScoreSign(int points, Coord3d position, int type)
+    : Sign("++++", 4.0, 1.0, 100.0, position) {
+  init(points, position, type);
+}
+
+void ScoreSign::init(int points, Coord3d position, int type) {
+  this->type = type;
   this->points = 0.0;
   pointsLeft = points;
   pointsPerSecond = points / 4.0;
   lastLife = life + 1.0;
+
+  if (type == SCORESIGN_SCORE) {
+  } else if (type == SCORESIGN_TIME) {
+    primaryColor[0] = 0.8;
+    primaryColor[1] = 0.8;
+    primaryColor[2] = 0.2;
+  }
 }
 
 void ScoreSign::tick(Real t) {
@@ -44,13 +61,30 @@ void ScoreSign::tick(Real t) {
   /* Limit number of recreated textures to 10 textures/second */
   if (life < lastLife - 0.1) {
     lastLife = life;
-    if (points >= 0)
-      snprintf(str, sizeof(str), "+%d", (int)points);
-    else
-      snprintf(str, sizeof(str), "%d", (int)points);
+
+    if (type == SCORESIGN_SCORE) {
+      if (points >= 0)
+        snprintf(str, sizeof(str), "+%d", (int)points);
+      else
+        snprintf(str, sizeof(str), "%d", (int)points);
+    } else if (type == SCORESIGN_TIME) {
+      if (points >= 0)
+        snprintf(str, sizeof(str), "+%ds", (int)points);
+      else
+        snprintf(str, sizeof(str), "%ds", (int)points);
+    }
     mkTexture(str);
   }
-  if (Game::current) Game::current->player1->score += p;
+  if (Game::current) {
+    switch (type) {
+    case SCORESIGN_SCORE:
+      Game::current->player1->score += p;
+      break;
+    case SCORESIGN_TIME:
+      Game::current->player1->timeLeft += p;
+      break;
+    }
+  }
 
   Sign::tick(t);
 }

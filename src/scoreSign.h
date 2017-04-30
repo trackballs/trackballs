@@ -25,14 +25,22 @@
 #include "sign.h"
 #endif
 
+#define SCORESIGN_SCORE 0
+#define SCORESIGN_TIME 1
+
 class ScoreSign : public Sign {
  public:
   ScoreSign(int points, Coord3d position);
+  ScoreSign(int points, Coord3d position, int type);
+  void init(int points, Coord3d position, int type);
+
   void tick(Real);
 
  private:
-  Real pointsLeft, points, pointsPerSecond;
-  Real lastLife;
+  /** If the bonus given is of another type than score */
+  int type;
+  double pointsLeft, points, pointsPerSecond;
+  double lastLife;
 };
 
 #endif

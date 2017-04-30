@@ -25,7 +25,7 @@ class Baby : public Black {
  public:
   Baby(double x, double y);
   ~Baby();
-  void die();
+  void die(int how);
 
   Boolean crash(Real speed,
                 Ball *);  // When we crash into another ball. Returns if we are still alive

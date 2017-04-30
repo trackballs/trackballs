@@ -49,6 +49,9 @@ Cactus::Cactus(int x, int y, Real radius) {
   this->killed = 0;
   this->killed_time = 1.;
   this->base_radius = radius;
+
+  scoreOnDeath = Game::defaultScores[SCORE_CACTUS][0];
+  timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
 
 void Cactus::draw() {
@@ -297,12 +300,15 @@ void Cactus::tick(Real t) {
     sub(position, ball->position, diff);
     if (length(diff) < ball->radius + radius) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
+        Animated::die(DIE_OTHER);
+
         // the ball kills the cactus !!!
         if (killed == 1) return;  // still killed
+
         killed = 1;
-        position[2] += 1.2;
-        new ScoreSign(100, position);
-        position[2] -= 1.2;
+        /*position[2] += 1.2;
+        new ScoreSign(100,position);
+        position[2] -= 1.2;*/
         playEffect(SFX_CACTUS_DIE);
         return;
       }

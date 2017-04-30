@@ -19,16 +19,24 @@
  ((= (difficulty) *easy*)   
     (start-time 480) 
     (add-modpill 27.5 26.5 *mod-extra-life* 10 0)
+    (diamond  6.0 30.0)
     (diamond 30.5 23.5)
+    (diamond 41.0 39.0)
+    (diamond 43.0 32.0)
  )
  ((= (difficulty) *normal*) 
     (start-time 360) 
     (add-modpill 27.5 26.5 *mod-extra-life* 10 0)
+    (diamond 30.5 23.5)
+    (diamond 41.0 39.0)
+    (diamond 43.0 32.0)
  )
  ((= (difficulty) *hard*)   
     (start-time 300)
  )
 )
+
+
 
 ;; Goal
 (add-goal 48 12 #f "")
@@ -53,6 +61,7 @@
 ;; Maze of PI
 (trigger  8.5 32.5 3.0  (lambda() (fog 1.0)))
 (trigger 38.5 35.5 1.0 (lambda() (fog 0.0)))
+(trigger  5.5  5.5 1.0 (lambda() (fog 0.0)))
 (sign "Maze of PI" 1.0 50.0 -10.0 9.5 33.5)
 (sign "Secret stairs somewhere" 1.0 50.0 -10.0 10.5 39.5)
 
@@ -99,7 +108,7 @@
 ))
 
 (trigger 11.5 51.5 1.5 (lambda() (diamond 11.5 51.5)))
-(trigger 16.5 41.5 1.5 (lambda() (add-flag 16 41 500 1 0.1)))
+(trigger 16.5 41.5 1.5 (lambda() (diamond 16.5 41.5)))
 
 
 ;; If you are lost in maze of PI, try this:

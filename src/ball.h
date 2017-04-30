@@ -40,12 +40,8 @@
 
 #define NUM_MODS 11
 
-#define DIE_CRASH 0
-#define DIE_FF 1
-#define DIE_ACID 2
-#define DIE_TIMEOUT 3
-#define DIE_OTHER 4
-
+/** This class is an ABSTRACT class from which specific balls
+    (player/opponents/babies) are inherited */
 class Ball : public Animated {
  public:
   Ball();
@@ -57,11 +53,10 @@ class Ball : public Animated {
   void doExpensiveComputations();
   void onRemove();
   void setReflectivity(double reflectivity, int metallic);
-  virtual Boolean crash(Real speed);  // Generic crash called when we hit ground etc. Returns
-                                      // if we are still alive
-  virtual Boolean crash(
-      Real speed, Ball *);  // When we crash into another ball. Returns if we are still alive
-  virtual void die(int how) = 0;
+  virtual Boolean crash(Real speed);
+  /* When we crash into another ball. Returns if we are still alive */
+  virtual Boolean crash(Real speed, Ball *);
+  virtual void die(int how);
 
   static void init();
   static void reset();
@@ -71,18 +66,20 @@ class Ball : public Animated {
   float modTimeLeft[NUM_MODS], modTimePhaseIn[NUM_MODS];
   float rotation[2];
 
-  // radius is the *effective* radius, realRadius the real one
+  /* radius is the *effective* radius, realRadius the real one */
   Real radius, realRadius;
   Real friction, gravity, bounceFactor;
   Real crashTolerance;
   int resolution, no_physics;
-  int ballResolution; /* 0 for low resolution balls (eg. debris), 1 for normal balls, 2 for
-                         high res balls (eg. player) */
+  /** 0 for low resolution balls (eg. debris), 1 for normal balls, 2
+       for high res balls (eg. player) */
+  int ballResolution;
 
   static const Real physicsResolution;
   static class std::set<Ball *> *balls;
 
-  double sink;  // how far the ball has sunk into acid / sand / etc.
+  /** how far the ball has sunk into acid / sand / etc. */
+  double sink;
   Matrix4d rotations;
 
   GLuint environmentTexture;

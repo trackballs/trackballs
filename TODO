@@ -1,3 +1,5 @@
+Fix "hills" in the map-editor. Currently not implemented those commands.
+
 TODO list for trackballs:
 
 This is a list of feature requests, bugs and known inconsistencies.
@@ -64,11 +66,7 @@ Make the friction etc. of ice and normal ground configurable.
 
 Fix the physics when entering pipes, rather than bouncing on entrance.
 
-1.11       Music not randomized properly (?)
-
-1.12       Compiling :: srpms etc. 
-
-Include a source spec file.
+1.12       Compiling :: srpms etc.                                  FIXED
 
 1.13       Binary distributions
 
@@ -257,15 +255,9 @@ May make it cost one life and half the points or so to skip a
 difficult level. 
 
 
-2.40       Level specific music
+2.40       Level specific music                       FIXED
 
-Add api function which changes to a specific song if available and not 
-already plaing. Add some default choises of songs in some levels. Maybe 
-area specific music also. Make transition between songs smooth.
-
-2.41       New music
-
-Add and use all the new music from Marco
+2.41       New music                                  FIXED
 
 2.42       "Now playing"
 
@@ -282,10 +274,7 @@ that it works and fall back it it doesn't. Fix crash between
 
 Add possibility to control the area the other balls are allowed to wander into.
 
-2.45       New main screen
-
-Create a new main screen (instead of scrolling starwars text) which
-is fading in/out a number of random screenshots on top of a background.
+2.45       New main screen                            FIXED
 
 2.46       Customized camera position
 
@@ -341,6 +330,10 @@ Many levels can be polished some more by fixing background colors etc.
 *******************************************************************
 
 4.0         Documentation
+
+	- New script commands set-song-preference, force-next-song and 
+	clear-song-preferences to allow choosing specific songs for levels.
+
 
 *******************************************************************
 

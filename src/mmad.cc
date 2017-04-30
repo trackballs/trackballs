@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-const char *SHARE_DIR_DEFAULT = SHARE_DIR;
+char *SHARE_DIR_DEFAULT = SHARE_DIR;
 #include "general.h"
 #include "gameMode.h"
 #include "mainMode.h"
@@ -315,15 +315,40 @@ void innerMain(void *closure, int argc, char **argv) {
   snprintf(str, sizeof(str), "%s/images/splashScreen.jpg", SHARE_DIR);
   SDL_Surface *splashScreen = IMG_Load(str);
   if (!splashScreen) {
-    printf("Error: Failed to load %s\n", str);
+    printf("Error: failed to load %s\n", str);
     exit(0);
   }
   glViewport(0, 0, screenWidth, screenHeight);
+
+  // Draw the splash screen
+  GLfloat texcoord[4];
+  GLfloat texMinX, texMinY;
+  GLfloat texMaxX, texMaxY;
+  GLuint splashTexture;
+  LoadTexture(splashScreen, texcoord, 0, &splashTexture);
+  SDL_FreeSurface(splashScreen);
+  texMinX = texcoord[0];
+  texMinY = texcoord[1];
+  texMaxX = texcoord[2];
+  texMaxY = texcoord[3];
   glColor3f(1.0, 1.0, 1.0);
-  drawSurface(splashScreen, 0, 0, screenWidth, screenHeight);
-  SDL_GL_SwapBuffers();
-  drawSurface(splashScreen, 0, 0, screenWidth, screenHeight);
-  SDL_GL_SwapBuffers();
+  for (i = 0; i < 2; i++) {
+    Enter2DMode();
+    glBindTexture(GL_TEXTURE_2D, splashTexture);
+    glBegin(GL_TRIANGLE_STRIP);
+    glTexCoord2f(texMinX, texMinY);
+    glVertex2i(0, 0);
+    glTexCoord2f(texMaxX, texMinY);
+    glVertex2i(screenWidth, 0);
+    glTexCoord2f(texMinX, texMaxY);
+    glVertex2i(0, screenHeight);
+    glTexCoord2f(texMaxX, texMaxY);
+    glVertex2i(screenWidth, screenHeight);
+    glEnd();
+    Leave2DMode();
+    glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
+    SDL_GL_SwapBuffers();
+  }
 
   // MB: Until here we are using 47 megs of memory.
   // splashscreen is using 5 megs but it is ok since we are freeing it before the real game
@@ -388,11 +413,24 @@ void innerMain(void *closure, int argc, char **argv) {
   /* Make sure splahsscreen has been shown for atleast 2.5 seconds */
   double timeNow = ((double)SDL_GetTicks()) / 1000.0;
   while (timeNow < bootStart + 2.5) {
-    drawSurface(splashScreen, 0, 0, screenWidth, screenHeight);
+    Enter2DMode();
+    glBindTexture(GL_TEXTURE_2D, splashTexture);
+    glBegin(GL_TRIANGLE_STRIP);
+    glTexCoord2f(texMinX, texMinY);
+    glVertex2i(0, 0);
+    glTexCoord2f(texMaxX, texMinY);
+    glVertex2i(screenWidth, 0);
+    glTexCoord2f(texMinX, texMaxY);
+    glVertex2i(0, screenHeight);
+    glTexCoord2f(texMaxX, texMaxY);
+    glVertex2i(screenWidth, screenHeight);
+    glEnd();
+    Leave2DMode();
+    glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
     SDL_GL_SwapBuffers();
     timeNow = ((double)SDL_GetTicks()) / 1000.0;
   }
-  SDL_FreeSurface(splashScreen);
+  glDeleteTextures(1, &splashTexture);
 
   /*                 */
   /* Main event loop */
@@ -467,7 +505,7 @@ void innerMain(void *closure, int argc, char **argv) {
         /* Prevent repeated keys */
         keyUpReceived = 1;
 
-        /* Use CapsLock key to determine if mouse should be hidden+grabbed */
+        /* Use Caps lock key to determine if mouse should be hidden+grabbed */
         if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
             SDL_WM_GrabInput(SDL_GRAB_OFF);
@@ -614,6 +652,8 @@ int main(int argc, char **argv) {
    * loaded */
   setlocale(LC_ALL, "");
   char localedir[512];
+
+  char *ret;
 
 #ifdef LOCALEDIR
   snprintf(localedir, 511, "%s", LOCALEDIR);

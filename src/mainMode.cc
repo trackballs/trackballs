@@ -331,7 +331,6 @@ void MainMode::key(int key) {
   case statusRestartPlayer:
     if (key == ' ') {
       restartPlayer();
-      player1->timeLeft += (int)Game::current->restartBonusTime;
       gameStatus = statusInGame;
     }
     break;

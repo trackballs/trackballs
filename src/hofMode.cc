@@ -45,7 +45,7 @@ void HallOfFameMode::init() {
     snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
     if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
+      printf("Error: failed to load %s\n", str);
       exit(0);
     }
   }
@@ -59,7 +59,7 @@ void HallOfFameMode::activated() {
     snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
     if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
+      printf("Error: failed to load %s\n", str);
       exit(0);
     }
   }

@@ -23,21 +23,38 @@
 #ifndef GAMEHOOK_H
 #define GAMEHOOK_H
 
+typedef enum {
+  GameHookEvent_Death = 0,
+  GameHookEvent_Spawn,
+  GameHookEvent_Tick,
+  GameHookEvent_MaxHooks
+} GameHookEvent;
+
 class GameHook {
  public:
   static void init();
 
   GameHook();
   virtual ~GameHook();
-  virtual void tick(Real) = 0;
+  virtual void tick(Real);
   virtual void doExpensiveComputations();
   virtual void onRemove();
   virtual void playerRestarted();
 
   static void deleteDeadObjects();
 
-  // Removes objects from the world. Is not deleted until end of level (to avoid
-  // stale references
+  /** Trigger any guile hooks which have been registered for this
+      event */
+  void triggerHook(GameHookEvent event, SCM arg);
+
+  /** Register a hook which can be triggered on various events */
+  void registerHook(GameHookEvent event, SCM hook);
+
+  /** Returns the hook currently registered to event, or NULL */
+  SCM getHook(GameHookEvent event);
+
+  /* Removes objects from the world. Is not deleted until end of level
+     (to avoid stale references) */
   void remove();
 
   int alive;
@@ -47,6 +64,7 @@ class GameHook {
  private:
   static int nextId;
   static class std::set<GameHook *> *deadObjects;
+  SCM hooks[GameHookEvent_MaxHooks];
 };
 
 #endif

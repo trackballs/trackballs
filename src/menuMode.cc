@@ -257,7 +257,7 @@ void MenuMode::loadSlide() {
   snprintf(str, sizeof(str), "%s/images/slide-%02d.jpg", SHARE_DIR, (rand() % NUM_SLIDES) + 1);
   slide = IMG_Load(str);
   if (!slide) {
-    printf(_("Error: Failed to load %s\n"), str);
+    printf("Error: failed to load %s\n", str);
     exit(0);
   }
 

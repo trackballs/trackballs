@@ -105,7 +105,8 @@
 #define EDITMODE_WATER 2
 #define EDITMODE_VELOCITY 3
 #define EDITMODE_NOLINES 4
-#define N_EDITMODES 5
+#define EDITMODE_FEATURES 5
+#define N_EDITMODES 6
 
 extern char *cMenuNames[N_SUBMENUS];
 extern char *cMenuEntries[N_SUBMENUS][MAX_MENU_ENTRIES];

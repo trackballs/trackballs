@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-06 19:12+0200\n"
+"POT-Creation-Date: 2007-05-25 16:50+0200\n"
 "PO-Revision-Date: 2002-01-01 02:04+0100\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -207,74 +207,69 @@ msgstr "Complimenti,"
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: src/mainMode.cc:493 src/mainMode.cc:508
+#: src/mainMode.cc:492 src/mainMode.cc:507
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: src/mainMode.cc:600
+#: src/mainMode.cc:599
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: src/mainMode.cc:601
+#: src/mainMode.cc:600
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: src/mainMode.cc:601
+#: src/mainMode.cc:600
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: src/mainMode.cc:602
+#: src/mainMode.cc:601
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: src/mainMode.cc:602
+#: src/mainMode.cc:601
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: src/mainMode.cc:603
+#: src/mainMode.cc:602
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: src/mainMode.cc:604
+#: src/mainMode.cc:603
 msgid "easy"
 msgstr "facile"
 
-#: src/mainMode.cc:604 src/settingsMode.cc:174
+#: src/mainMode.cc:603 src/settingsMode.cc:168
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: src/mainMode.cc:604
+#: src/mainMode.cc:603
 msgid "hard"
 msgstr "difficile"
 
-#: src/glHelp.cc:282
+#: src/glHelp.cc:285
 #, c-format
 msgid "Warning: cannot allocate %d bytes for snapshot. Aborting.\n"
 msgstr "Attenzione: impossibile allocare %d bytes per lo snapshot. Arresto.\n"
 
-#: src/glHelp.cc:303
-#, c-format
-msgid "Error: file %s is a symlink.\n"
-msgstr ""
-
-#: src/glHelp.cc:314
+#: src/glHelp.cc:317
 #, c-format
 msgid "Warning: cannot create file '%s'. Abort\n"
 msgstr "Attenzione: impossibile creare il file '%s'. Chiusura\n"
 
-#: src/glHelp.cc:451
+#: src/glHelp.cc:454
 #, c-format
 msgid "Error creating surface from RGB file: %s\n"
 msgstr "Errore nel creare una superficie dal file RGB: %s\n"
 
-#: src/glHelp.cc:471
+#: src/glHelp.cc:474
 #, c-format
 msgid ""
 "Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
@@ -282,37 +277,27 @@ msgstr ""
 "Attenzione: superato il massimo numero di textures (%d). Texture '%s' non "
 "caricata.\n"
 
-#: src/glHelp.cc:484 src/glHelp.cc:650
+#: src/glHelp.cc:487 src/glHelp.cc:648
 #, c-format
 msgid "Warning: Failed to load texture %s\n"
 msgstr "Attenzione: Impossibile caricare la texture %s\n"
 
-#: src/glHelp.cc:524 src/glHelp.cc:526 src/glHelp.cc:528 src/glHelp.cc:530
-#, c-format
-msgid "Error: Failed to load font %s\n"
-msgstr "Errore: Impossibile caricare il carattere %s\n"
-
-#: src/glHelp.cc:533
-#, c-format
-msgid "Error: Failed to load fonts\n"
-msgstr "Errore: Impossibile caricare i caratteri\n"
-
-#: src/glHelp.cc:673
+#: src/glHelp.cc:671
 #, c-format
 msgid "Warning: too fast framerate (%f)\n"
 msgstr "Attenzione: troppi fotogrammi al secondo (%f)\n"
 
-#: src/glHelp.cc:680
+#: src/glHelp.cc:678
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: src/glHelp.cc:681
+#: src/glHelp.cc:679
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: src/glHelp.cc:936
+#: src/glHelp.cc:941
 #, c-format
 msgid "Warning: Rescaling images before loading them as textures.\n"
 msgstr ""
@@ -361,297 +346,300 @@ msgstr "Finestra"
 msgid "View"
 msgstr "Visualizza"
 
-#. TRANSLATORS: This is a list of all the submenus in the map editor, if the initial character is * or / it must be perserved as it is.
-#: src/editMode.cc:141
+#. TRANSLATORS: This is a list of all the submenus in the map
+#. editor, if the initial character is * or / then that character
+#. must be perserved as it is.
+#: src/editMode.cc:143
 msgid "New"
 msgstr "Nuovo"
 
-#: src/editMode.cc:141 src/editWindows.cc:468
-msgid "Open"
+#: src/editMode.cc:143
+#, fuzzy
+msgid "Open..."
 msgstr "Apri"
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Close"
 msgstr "Chiudi"
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Save"
 msgstr "Salva"
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Exit"
 msgstr "Esci"
 
-#: src/editMode.cc:141
+#: src/editMode.cc:143
 msgid "Test level"
 msgstr "Prova livello"
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit height"
 msgstr "Modifica altezza"
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit color"
 msgstr "Modifica colore"
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit water"
 msgstr "Modifica acqua"
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit velocity"
 msgstr "Modifica velocità"
 
-#: src/editMode.cc:142
+#: src/editMode.cc:144
 msgid "Edit lines"
 msgstr "Modifica linee."
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "*<SPACE> Whole cell"
 msgstr "*<SPACE> Intera cella"
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Upper corner"
 msgstr "Angolo superiore"
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Bottom corner"
 msgstr "Angolo inferiore"
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Right corner"
 msgstr "Angolo destro"
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Left corner"
 msgstr "Angolo sinistro"
 
-#: src/editMode.cc:143
+#: src/editMode.cc:145
 msgid "Center"
 msgstr "Centro"
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "Raise increment"
 msgstr "Aumenta l'incremento"
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "Lower increment"
 msgstr "Diminuisci l'incremento"
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "*<SHIFT> reversed"
 msgstr "*<MAIUSC> invertito"
 
-#: src/editMode.cc:144
+#: src/editMode.cc:146
 msgid "*<CTRL> walls"
 msgstr "*<CTRL> pareti"
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. red"
 msgstr "Aumenta il Rosso"
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. green"
 msgstr "Aumenta il Verde"
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. blue"
 msgstr "Aumenta il Blu"
 
-#: src/editMode.cc:145
+#: src/editMode.cc:147
 msgid "Inc. alpha"
 msgstr "Aumenta la trasparenza"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Ice"
 msgstr "Ghiaccio"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Acid"
 msgstr "Acido"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Sand"
 msgstr "Sabbia"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Kill"
 msgstr "Assassino"
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "Bounce"
 msgstr "Rimbalzo"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "No grid"
 msgstr "Nascondi griglia"
 
-#: src/editMode.cc:146 src/editMode.cc:156
+#: src/editMode.cc:148 src/editMode.cc:158
 msgid "Track"
 msgstr "Traccia"
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "Texture"
 msgstr "Texture"
 
-#: src/editMode.cc:146
+#: src/editMode.cc:148
 msgid "ch. texture"
 msgstr "Cambia texture"
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Spike"
 msgstr "Aculeo"
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Small hill"
 msgstr "Collina piccola"
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Medium hill"
 msgstr "Collina media"
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Large hill"
 msgstr "Collina grande"
 
-#: src/editMode.cc:147 src/editMode.cc:159
+#: src/editMode.cc:149 src/editMode.cc:161
 msgid "Huge hill"
 msgstr "Collina enorme"
 
-#: src/editMode.cc:147
+#: src/editMode.cc:149
 msgid "Smooth small"
 msgstr "Arrotonda poco"
 
-#: src/editMode.cc:147
+#: src/editMode.cc:149
 msgid "Smooth large"
 msgstr "Arrotonda molto"
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/UP Move up"
 msgstr "/UP Sposta su"
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/DOWN Move down"
 msgstr "/DOWN Sposta giù"
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/LEFT Move left"
 msgstr "/LEFT Sposta a sinistra"
 
-#: src/editMode.cc:148
+#: src/editMode.cc:150
 msgid "/RIGHT Move right"
 msgstr "/RIGHT Spostra a destra"
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map up"
 msgstr "Sposta in su la mappa"
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map down"
 msgstr "Sposta in giù la mappa"
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map left"
 msgstr "Sposta la mappa a sinistra"
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "Shift map right"
 msgstr "Sposta la mappa a destra"
 
-#: src/editMode.cc:149
+#: src/editMode.cc:151
 msgid "*<SHIFT> x5"
 msgstr "*<MAIUSC> x5"
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Set region marker"
 msgstr "Imposta marcatore di regione"
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Clear marker"
 msgstr "Elimina marcatore"
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Copy region"
 msgstr "Copia area"
 
-#: src/editMode.cc:150
+#: src/editMode.cc:152
 msgid "Paste region"
 msgstr "Incolla area"
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Editor"
 msgstr "Editor"
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Toolbar"
 msgstr "Barra degli strumenti"
 
-#: src/editMode.cc:151
+#: src/editMode.cc:153
 msgid "Status"
 msgstr "Stato"
 
-#: src/editMode.cc:152
+#: src/editMode.cc:154
 msgid "Birds's eye"
 msgstr "Panoramica"
 
-#: src/editMode.cc:152
+#: src/editMode.cc:154
 msgid "Rotate view"
 msgstr "Ruota visuale"
 
-#: src/editMode.cc:156
+#: src/editMode.cc:158
 msgid "Trampoline"
 msgstr "Trampolino"
 
-#: src/editMode.cc:159
+#: src/editMode.cc:161
 msgid "Small smooth"
 msgstr "Arrotonda poco"
 
-#: src/editMode.cc:159
+#: src/editMode.cc:161
 msgid "Large smooth"
 msgstr "Arrotonda molto"
 
-#: src/editMode.cc:267
+#: src/editMode.cc:269
 #, c-format
 msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:273
+#: src/editMode.cc:275
 #, c-format
 msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:279
+#: src/editMode.cc:281
 #, c-format
 msgid ""
-"Error, %s/.trackballs/levels%s.map is a symbolic link. Cannot save map\n"
+"Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
 msgstr ""
 
-#: src/editMode.cc:283
+#: src/editMode.cc:285
 #, c-format
 msgid "Saving map as '%s'\n"
 msgstr "Salva mappa con nome '%s'\n"
 
-#: src/editMode.cc:296
+#: src/editMode.cc:298
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot create default script file\n"
 msgstr ""
 
-#: src/editMode.cc:301
+#: src/editMode.cc:303
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Percorso: %s\n"
 
-#: src/editMode.cc:302
+#: src/editMode.cc:304
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Questo è lo script predefinito per questo percorso.\n"
 
-#: src/editMode.cc:303
+#: src/editMode.cc:305
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Leggere la documentazione dell' Editor di livelli\n"
 
-#: src/editMode.cc:304
+#: src/editMode.cc:306
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -660,47 +648,47 @@ msgstr ""
 ";;; per imparare come personalizzarlo\n"
 "\n"
 
-#: src/editMode.cc:404
+#: src/editMode.cc:425
 #, c-format
 msgid "Raise: %f"
 msgstr "Incremento: %f"
 
-#: src/editMode.cc:408
+#: src/editMode.cc:429
 #, c-format
 msgid "Pos: %d,%d"
 msgstr "Posiz.: %d,%d"
 
-#: src/editMode.cc:411
+#: src/editMode.cc:432
 #, c-format
 msgid "Feature: %s"
 msgstr "Caratteristica: %s"
 
-#: src/editMode.cc:414
+#: src/editMode.cc:435
 #, c-format
 msgid "Color %1.1f %1.1f %1.1f %1.1f"
 msgstr "Colore %1.1f %1.1f %1.1f %1.1f"
 
-#: src/editMode.cc:429
+#: src/editMode.cc:450
 msgid "yes"
 msgstr "sì"
 
-#: src/editMode.cc:429
+#: src/editMode.cc:450
 msgid "no"
 msgstr "no"
 
-#: src/editMode.cc:436
+#: src/editMode.cc:457
 msgid "Water height"
 msgstr "Profondità acqua"
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Cell height"
 msgstr "Altezza cella"
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Cell water height"
 msgstr "Altezza acqua nella cella."
 
-#: src/editMode.cc:476
+#: src/editMode.cc:497
 msgid "Textures"
 msgstr "Textures"
 
@@ -747,13 +735,6 @@ msgstr "Guida"
 msgid "Map Editor"
 msgstr "Editor di livelli"
 
-#: src/menuMode.cc:236 src/hofMode.cc:46 src/hofMode.cc:57 src/setupMode.cc:70
-#: src/setupMode.cc:312 src/helpMode.cc:45 src/helpMode.cc:57
-#: src/helpMode.cc:73 src/helpMode.cc:86
-#, c-format
-msgid "Error: Failed to load %s\n"
-msgstr "Errore: Impossibile caricare %s\n"
-
 #: src/highScore.cc:58 src/highScore.cc:101
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot save highscores\n"
@@ -768,154 +749,154 @@ msgstr "Livelloteca:"
 msgid "%d points"
 msgstr "%d punti"
 
-#: src/settingsMode.cc:95
+#: src/settingsMode.cc:89
 msgid "Game Settings"
 msgstr "Impostazioni"
 
-#: src/settingsMode.cc:108
+#: src/settingsMode.cc:102
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr ""
 
-#: src/settingsMode.cc:111
+#: src/settingsMode.cc:105
 #, fuzzy
 msgid "Ok, use this resolution"
 msgstr "  Risoluzione"
 
-#: src/settingsMode.cc:112
+#: src/settingsMode.cc:106
 msgid "No, revert to old resolution"
 msgstr ""
 
-#: src/settingsMode.cc:114
+#: src/settingsMode.cc:108
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr ""
 
-#: src/settingsMode.cc:129
+#: src/settingsMode.cc:123
 msgid "Graphics"
 msgstr "Grafica"
 
-#: src/settingsMode.cc:133
+#: src/settingsMode.cc:127
 msgid "  Resolution"
 msgstr "  Risoluzione"
 
-#: src/settingsMode.cc:134
+#: src/settingsMode.cc:128
 #, fuzzy
 msgid "  Test this resolution"
 msgstr "  Risoluzione"
 
-#: src/settingsMode.cc:137
+#: src/settingsMode.cc:131
 msgid "  Fullscreen"
 msgstr "  Schermo intero"
 
-#: src/settingsMode.cc:137 src/settingsMode.cc:152 src/settingsMode.cc:155
-#: src/settingsMode.cc:165 src/editWindows.cc:350 src/editWindows.cc:388
+#: src/settingsMode.cc:131 src/settingsMode.cc:146 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:362 src/editWindows.cc:400
 msgid "No"
 msgstr "No"
 
-#: src/settingsMode.cc:137 src/settingsMode.cc:150 src/settingsMode.cc:155
-#: src/settingsMode.cc:165 src/editWindows.cc:349 src/editWindows.cc:387
+#: src/settingsMode.cc:131 src/settingsMode.cc:144 src/settingsMode.cc:149
+#: src/settingsMode.cc:159 src/editWindows.cc:361 src/editWindows.cc:399
 msgid "Yes"
 msgstr "Sì"
 
-#: src/settingsMode.cc:141
+#: src/settingsMode.cc:135
 #, c-format
 msgid "None"
 msgstr "Nessuno"
 
-#: src/settingsMode.cc:142
+#: src/settingsMode.cc:136
 #, c-format
 msgid "Minimalistic"
 msgstr "Minimi"
 
-#: src/settingsMode.cc:143
+#: src/settingsMode.cc:137
 #, c-format
 msgid "Simple"
 msgstr "Pochi"
 
-#: src/settingsMode.cc:144
+#: src/settingsMode.cc:138
 #, c-format
 msgid "Standard"
 msgstr "Standard"
 
-#: src/settingsMode.cc:145
+#: src/settingsMode.cc:139
 #, c-format
 msgid "Extra"
 msgstr "Molti"
 
-#: src/settingsMode.cc:146
+#: src/settingsMode.cc:140
 #, c-format
 msgid "Everything"
 msgstr "Tutti"
 
-#: src/settingsMode.cc:148
+#: src/settingsMode.cc:142
 msgid "  Details"
 msgstr "  Dettagli"
 
-#: src/settingsMode.cc:150 src/settingsMode.cc:152
+#: src/settingsMode.cc:144 src/settingsMode.cc:146
 msgid "  Reflections (beta)"
 msgstr "  Riflessi (beta)"
 
-#: src/settingsMode.cc:155
+#: src/settingsMode.cc:149
 msgid "  Show FPS"
 msgstr "  Visualizza FPS"
 
-#: src/settingsMode.cc:161
+#: src/settingsMode.cc:155
 msgid "Controls"
 msgstr "Controlli"
 
-#: src/settingsMode.cc:164
+#: src/settingsMode.cc:158
 msgid "  Use mouse"
 msgstr "  Utilizza mouse"
 
-#: src/settingsMode.cc:170
+#: src/settingsMode.cc:164
 msgid "  Sensitivity"
 msgstr "  Sensibilità"
 
-#: src/settingsMode.cc:175
+#: src/settingsMode.cc:169
 #, c-format
 msgid "+%d degrees"
 msgstr "+%d gradi"
 
-#: src/settingsMode.cc:176
+#: src/settingsMode.cc:170
 #, c-format
 msgid "-%d degrees"
 msgstr "-%d gradi"
 
-#: src/settingsMode.cc:177
+#: src/settingsMode.cc:171
 msgid "  Steering"
 msgstr "  Direzione"
 
-#: src/settingsMode.cc:182
+#: src/settingsMode.cc:176
 #, fuzzy, c-format
 msgid "no joystick found"
 msgstr "niente joystick"
 
-#: src/settingsMode.cc:185
+#: src/settingsMode.cc:179
 msgid "  Joystick:"
 msgstr "  Joystick:"
 
-#: src/settingsMode.cc:195
+#: src/settingsMode.cc:189
 msgid "Other"
 msgstr "Altro"
 
-#: src/settingsMode.cc:199
+#: src/settingsMode.cc:193
 msgid "  Music volume"
 msgstr "  Volume musica"
 
-#: src/settingsMode.cc:201
+#: src/settingsMode.cc:195
 msgid "  Effects volume"
 msgstr "  Volume effetti"
 
-#: src/settingsMode.cc:203
+#: src/settingsMode.cc:197
 msgid "  Language"
 msgstr ""
 
-#: src/settingsMode.cc:207 src/helpMode.cc:208
+#: src/settingsMode.cc:201 src/helpMode.cc:208
 msgid "Back"
 msgstr "Indietro"
 
-#: src/settings.cc:187 src/settings.cc:194
+#: src/settings.cc:188 src/settings.cc:195
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot save settings\n"
 msgstr ""
@@ -998,6 +979,11 @@ msgstr ""
 #, c-format
 msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
 msgstr ""
+
+#: src/helpMode.cc:73 src/helpMode.cc:86
+#, fuzzy, c-format
+msgid "Error: failed to load %s\n"
+msgstr "Errore: Impossibile caricare %s\n"
 
 #: src/helpMode.cc:100
 msgid "MORE HELP"
@@ -1211,31 +1197,41 @@ msgstr "correntemente: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centro: %d %d sinistra: %d destra: %d alto: %d basso: %d"
 
-#: src/editWindows.cc:348
+#: src/editWindows.cc:360
 msgid "Quit without saving?"
 msgstr "Si desidera uscire senza salvare?"
 
-#: src/editWindows.cc:386
+#: src/editWindows.cc:398
 msgid "Save map?"
 msgstr "Salvare la mappa?"
 
-#: src/editWindows.cc:390
+#: src/editWindows.cc:402
 msgid "Saving"
 msgstr "Salvataggio"
 
-#: src/editWindows.cc:465
+#: src/editWindows.cc:477
 msgid "Name of map"
 msgstr "Nome della mappa"
 
-#: src/editWindows.cc:467 src/editWindows.cc:518
+#: src/editWindows.cc:479 src/editWindows.cc:530
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/editWindows.cc:510
+#: src/editWindows.cc:480
+msgid "Open"
+msgstr "Apri"
+
+#: src/editWindows.cc:522
 msgid "Open map"
 msgstr "Carica mappa"
 
-#: src/editWindows.cc:516
+#: src/editWindows.cc:528
 #, c-format
 msgid "page %d / %d"
 msgstr "Pagina %d / %d"
+
+#~ msgid "Error: Failed to load font %s\n"
+#~ msgstr "Errore: Impossibile caricare il carattere %s\n"
+
+#~ msgid "Error: Failed to load fonts\n"
+#~ msgstr "Errore: Impossibile caricare i caratteri\n"

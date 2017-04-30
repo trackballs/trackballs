@@ -43,6 +43,8 @@ Real Animator::getValue() {
   return value0 * (1.0 - position / length) + position / length * value1;
 }
 void Animator::tick(Real td) {
+  GameHook::tick(td);
+
   if (!direction) return;
   position += td * direction;
   if (position <= 0 && repeat & ANIMATOR_0_STOP) {

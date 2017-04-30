@@ -31,9 +31,10 @@ using namespace std;
    menu. The name of languages should appear in the respective native
    language. Eg. the Swedish language is written as 'Svenska'
 */
-const char *Settings::languageCodes[5] = {"", "sv_SE", "de_DE", "it_IT", "fr_FR"};
-const char *Settings::languageNames[5] = {"Default", "Svenska", "Deutsch", "Italiano",
-                                          "Francais"};
+const char *Settings::languageCodes[6] = {"", "sv_SE", "de_DE", "it_IT", "fr_FR", "sk_SK"};
+const char *Settings::languageNames[6] = {"Default", "Svenska", "Deutsch", "Italiano",
+                                          "Francais"
+                                          "Slovak"};
 int Settings::nLanguages = 5;
 
 Settings *Settings::settings;
@@ -134,7 +135,7 @@ void Settings::loadLevelSets() {
     }
 
   if (!nLevelSets) {
-    printf("Error: Failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
+    printf("Error: failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
     exit(0);
   }
 }
@@ -342,5 +343,7 @@ void Settings::setLocale() {
   }
 
   /* Set the locale */
-  setlocale(LC_MESSAGES, languageCodes[language]);
+  printf("setLocale: %s ", languageCodes[language]);
+  char *ret = setlocale(LC_MESSAGES, languageCodes[language]);
+  printf("-> %s\n", ret);
 }

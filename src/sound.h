@@ -29,6 +29,9 @@ void playEffect(int);
 void volumeChanged();
 void playEffect(const char *name);
 void playEffect(const char *name, float vol);
+void clearMusicPreferences();
+void setMusicPreference(char *name, int weight);
+void playNextSong();
 
 #define SFX_PLAYER_DIES "die.wav"  // 0
 #define SFX_START "start.wav"      // 1

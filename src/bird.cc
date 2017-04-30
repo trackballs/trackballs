@@ -53,6 +53,8 @@ Bird::Bird(int x, int y, int dx, int dy, Real size, Real speed) {
   secondaryColor[2] = 0.9;
   animation = 0.0;
   rotation = M_PI - atan2(this->dx / lng, this->dy / lng);
+  scoreOnDeath = Game::defaultScores[SCORE_BIRD][0];
+  timeOnDeath = Game::defaultScores[SCORE_BIRD][1];
 }
 
 void Bird::draw2() {
@@ -125,6 +127,8 @@ void Bird::draw2() {
 }
 
 void Bird::tick(Real t) {
+  Animated::tick(t);
+
   animation = fmod(animation + t / 0.8, 1.0);
 
   // if hiden, just count down the time
@@ -155,8 +159,10 @@ void Bird::tick(Real t) {
     if (length(diff) < ball->radius + size * .75) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
         // the ball kills the bird !!!
-        position[2] += 1.2;
-        new ScoreSign(25, position);
+        Animated::die(DIE_OTHER);
+        /*position[2] += 1.2;
+          new ScoreSign(25,position);*/
+
         playEffect(SFX_BIRD_DIE);
         // restart the bird
         position[0] = x;

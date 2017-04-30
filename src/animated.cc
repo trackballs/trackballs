@@ -24,6 +24,7 @@
 #include "animated.h"
 #include "game.h"
 #include "map.h"
+#include "scoreSign.h"
 
 using namespace std;
 
@@ -40,6 +41,9 @@ Animated::Animated() : GameHook() {
   // Don't call any inherited version of the computeBoundBox yet to avoid problems
   // with uninitialized variables.
   Animated::computeBoundingBox();
+
+  scoreOnDeath = 0;
+  timeOnDeath = 0;
 }
 Animated::~Animated() {}
 void Animated::has_moved() {
@@ -59,4 +63,26 @@ void Animated::computeBoundingBox() {
   boundingBox[1][0] = +1.0;
   boundingBox[1][1] = +1.0;
   boundingBox[1][2] = +1.0;
+}
+
+void Animated::tick(Real dt) { GameHook::tick(dt); }
+
+void Animated::die(int how) {
+  double pos[3];
+
+  /* Trigger any callbacks to guile if registered */
+  triggerHook(GameHookEvent_Death, NULL);
+
+  pos[0] = position[0];
+  pos[1] = position[1];
+  pos[2] = position[2] + 0.7;
+
+  if (scoreOnDeath != 0.0) {
+    pos[2] += 0.5;
+    new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE);
+  }
+  if (timeOnDeath != 0.0) {
+    pos[2] += 0.5;
+    new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME);
+  }
 }

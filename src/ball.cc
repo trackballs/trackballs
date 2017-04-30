@@ -500,6 +500,8 @@ void Ball::tick(Real time) {
   int i;
   double phase;
 
+  Animated::tick(time);
+
   for (i = 0; i < NUM_MODS; i++) {
     if (!modTimeLeft[i])
       modTimePhaseIn[i] = 0.0;
@@ -1336,3 +1338,5 @@ void Ball::handlePipes() {
     }
   }
 }
+
+void Ball::die(int how) { Animated::die(how); }

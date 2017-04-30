@@ -76,9 +76,25 @@ SCM smobGameHook_make(GameHook *h) {
 size_t smobAnimated_free(SCM smob) { return 0; }
 size_t smobGameHook_free(SCM smob) { return 0; }
 
+/*=======================================================*/
+/*===========   creating ANIMATED objects    ============*/
+/*=======================================================*/
+
+/******************** player ********************/
+SCM_DEFINE(player, "player", 0, 0, 0, (),
+           "Returns the current player as an 'animated' object.")
+#define FUNC_NAME s_player
+{
+  if (Game::current)
+    return smobAnimated_make(Game::current->player1);
+  else
+    return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
 /************* new_mr_black ***********/
 SCM_DEFINE(new_mr_black, "new-mr-black", 2, 0, 0, (SCM x, SCM y),
-           "Creates Mr. Black at specified position.")
+           "Creates an opponend ball at specified position. Returns an 'animated' object.")
 #define FUNC_NAME s_new_mr_black
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
@@ -90,7 +106,7 @@ SCM_DEFINE(new_mr_black, "new-mr-black", 2, 0, 0, (SCM x, SCM y),
 
 /************** new_baby *****************/
 SCM_DEFINE(new_baby, "new-baby", 2, 0, 0, (SCM x, SCM y),
-           "Creates a baby ball at specified position.")
+           "Creates a baby ball at specified position. Returns an 'animated' object.")
 #define FUNC_NAME s_new_baby
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
@@ -102,7 +118,8 @@ SCM_DEFINE(new_baby, "new-baby", 2, 0, 0, (SCM x, SCM y),
 
 /************* add_teleport ***********/
 SCM_DEFINE(add_teleport, "add-teleport", 5, 0, 0, (SCM x, SCM y, SCM dx, SCM dy, SCM radius),
-           "Creates a teleporter at specified position, with specified destination.")
+           "Creates a teleporter at specified position, with specified destination. Returns "
+           "an 'animated' object.")
 #define FUNC_NAME s_add_teleport
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
@@ -119,7 +136,8 @@ SCM_DEFINE(add_teleport, "add-teleport", 5, 0, 0, (SCM x, SCM y, SCM dx, SCM dy,
 
 /************* add_bird ***********/
 SCM_DEFINE(add_bird, "add-bird", 6, 0, 0, (SCM x, SCM y, SCM dx, SCM dy, SCM size, SCM speed),
-           "Creates a bird at specified position, with specified destination.")
+           "Creates a bird at specified position, with specified destination. Returns an "
+           "'animated' object")
 #define FUNC_NAME s_add_bird
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
@@ -136,164 +154,9 @@ SCM_DEFINE(add_bird, "add-bird", 6, 0, 0, (SCM x, SCM y, SCM dx, SCM dy, SCM siz
 }
 #undef FUNC_NAME
 
-/************** add_cyclic_platform *************/
-
-SCM_DEFINE(add_cyclic_platform, "add-cyclic-platform", 8, 0, 0,
-           (SCM x1, SCM y1, SCM x2, SCM y2, SCM low, SCM high, SCM offset, SCM speed),
-           "Creates a new cyclic platform.")
-#define FUNC_NAME s_add_cyclic_platform
-{
-  const char *s_add_cyclic_platform = "add-cyclic-platform";
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG1, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG2, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(x2), x2, SCM_ARG3, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(y2), y2, SCM_ARG4, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(low), low, SCM_ARG5, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(high), high, SCM_ARG6, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(offset), offset, SCM_ARG7, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(speed), speed, SCM_ARG7, s_add_cyclic_platform);
-  CyclicPlatform *platform = new CyclicPlatform(
-      scm_to_int(x1), scm_to_int(y1), scm_to_int(x2), scm_to_int(y2), scm_to_double(low),
-      scm_to_double(high), scm_to_double(offset), scm_to_double(speed));
-  return smobGameHook_make(platform);
-}
-#undef FUNC_NAME
-
-/**************** set_position *************/
-SCM_DEFINE(set_position, "set-position", 3, 1, 0, (SCM obj, SCM x, SCM y, SCM z),
-           "Sets the position of specified object. Accepts optional z-coordinate.")
-#define FUNC_NAME s_set_position
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG3, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->position[0] = scm_to_double(x);
-  anim->position[1] = scm_to_double(y);
-  if (SCM_NUMBERP(z))
-    anim->position[2] = scm_to_double(z);
-  else
-    anim->has_moved();
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/**************** set_modtime *************/
-SCM_DEFINE(set_modtime, "set-modtime", 3, 0, 0, (SCM s_obj, SCM s_mod, SCM s_time),
-           "Alters time left for object to have modification.")
-#define FUNC_NAME s_set_modtime
-{
-  SCM_ASSERT(IS_ANIMATED(s_obj), s_obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(s_mod), s_mod, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(s_time), s_time, SCM_ARG3, FUNC_NAME);
-  int mod = scm_to_int(s_mod);
-  SCM_ASSERT(mod >= 0 && mod < NUM_MODS, s_mod, SCM_ARG2, FUNC_NAME);
-  double time = scm_to_double(s_time);
-  Animated *anim = (Animated *)SCM_CDR(s_obj);
-  Ball *ball = dynamic_cast<Ball *>(anim);
-  if (ball) ball->modTimeLeft[mod] = time;
-  return s_obj;
-}
-#undef FUNC_NAME
-
-/**************** set_acceleration *************/
-SCM_DEFINE(set_acceleration, "set-acceleration", 2, 0, 0, (SCM obj, SCM accel),
-           "Sets acceleration of given mr black")
-#define FUNC_NAME s_set_acceleration
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(accel), accel, SCM_ARG2, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  Black *black = dynamic_cast<Black *>(anim);
-  if (black) { black->acceleration = scm_to_double(accel); }
-  return obj;
-}
-#undef FUNC_NAME
-
-/**************** set_horizon *************/
-SCM_DEFINE(set_horizon, "set-horizon", 2, 0, 0, (SCM obj, SCM horizon),
-           "Sets horizon of given mr black")
-#define FUNC_NAME s_set_horizon
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(horizon), horizon, SCM_ARG2, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  Black *black = dynamic_cast<Black *>(anim);
-  if (black) black->horizon = scm_to_double(horizon);
-  return obj;
-}
-#undef FUNC_NAME
-
-/******************* set_primary_color *************/
-SCM_DEFINE(set_primary_color, "set-primary-color", 4, 1, 0,
-           (SCM obj, SCM r, SCM g, SCM b, SCM a), "Sets the primary color of object.")
-#define FUNC_NAME s_set_primary_color
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->primaryColor[0] = scm_to_double(r);
-  anim->primaryColor[1] = scm_to_double(g);
-  anim->primaryColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->primaryColor[3] = scm_to_double(a);
-  return obj;
-}
-#undef FUNC_NAME
-
-/******************* set_secondary_color *************/
-SCM_DEFINE(set_secondary_color, "set-secondary-color", 4, 1, 0,
-           (SCM obj, SCM r, SCM g, SCM b, SCM a),
-           "Sets the secondary color (if applicable) of object.")
-#define FUNC_NAME s_set_secondary_color
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->secondaryColor[0] = scm_to_double(r);
-  anim->secondaryColor[1] = scm_to_double(g);
-  anim->secondaryColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->secondaryColor[3] = scm_to_double(a);
-  return obj;
-}
-#undef FUNC_NAME
-
-/******************* set_specular_color *************/
-SCM_DEFINE(set_specular_color, "set-specular-color", 4, 1, 0,
-           (SCM obj, SCM r, SCM g, SCM b, SCM a),
-           "Sets the specular color (if applicable) of object.")
-#define FUNC_NAME s_set_specular_color
-{
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
-  Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->specularColor[0] = scm_to_double(r);
-  anim->specularColor[1] = scm_to_double(g);
-  anim->specularColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->specularColor[3] = scm_to_double(a);
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/******************** player ********************/
-SCM_DEFINE(player, "player", 0, 0, 0, (), "Returns the current player.")
-#define FUNC_NAME s_player
-{
-  if (Game::current)
-    return smobAnimated_make(Game::current->player1);
-  else
-    return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
 /**************** add_flag *************/
 SCM_DEFINE(add_flag, "add-flag", 5, 0, 0, (SCM x, SCM y, SCM points, SCM visible, SCM radius),
-           "Creates a flag giving points when captured.")
+           "Creates a flag giving points when captured. Returns an 'animated' object.")
 #define FUNC_NAME s_add_flag
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, s_add_flag);
@@ -310,7 +173,7 @@ SCM_DEFINE(add_flag, "add-flag", 5, 0, 0, (SCM x, SCM y, SCM points, SCM visible
 /**************** add_colormodifier *************/
 SCM_DEFINE(add_colormodifier, "add-colormodifier", 7, 0, 0,
            (SCM col, SCM x, SCM y, SCM min, SCM max, SCM freq, SCM phase),
-           "Allow to modify the color(s) of a cell.")
+           "Allow to modify the color(s) of a cell. Returns an 'animated' object")
 #define FUNC_NAME s_add_colormodifier
 {
   SCM_ASSERT(SCM_NUMBERP(col), col, SCM_ARG1, s_add_colormodifier);
@@ -331,7 +194,7 @@ SCM_DEFINE(add_colormodifier, "add-colormodifier", 7, 0, 0,
 SCM_DEFINE(add_heightmodifier, "add-heightmodifier", 7, 3, 0,
            (SCM corner, SCM x, SCM y, SCM min, SCM max, SCM freq, SCM phase, SCM n1, SCM n2,
             SCM n3),
-           "Allow to modify the height of a cell's corner.")
+           "Allow to modify the height of a cell's corner. Returns an 'animated' object")
 #define FUNC_NAME s_add_colormodifier
 {
   int not1 = -1, not2 = -1, not3 = -1;
@@ -368,7 +231,7 @@ SCM_DEFINE(add_cactus, "add-cactus", 3, 0, 0, (SCM x, SCM y, SCM radius),
 
 /**************** add_spike *************/
 SCM_DEFINE(add_spike, "add-spike", 4, 0, 0, (SCM x, SCM y, SCM speed, SCM phase),
-           "Creates a lethal spike.")
+           "Creates a lethal spike. Returns an 'animated' object.")
 #define FUNC_NAME s_add_spike
 {
   SCM_ASSERT(SCM_REALP(x), x, SCM_ARG1, s_add_spike);
@@ -386,7 +249,7 @@ SCM_DEFINE(add_spike, "add-spike", 4, 0, 0, (SCM x, SCM y, SCM speed, SCM phase)
 /**************** add_spike *************/
 SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
            (SCM x, SCM y, SCM speed, SCM phase, SCM side),
-           "Creates a lethal spike (comming from side).")
+           "Creates a lethal spike (comming from side). Returns an 'animated' object.")
 #define FUNC_NAME s_add_sidespike
 {
   SCM_ASSERT(SCM_REALP(x), x, SCM_ARG1, s_add_sidespike);
@@ -405,7 +268,7 @@ SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
 
 /**************** add_goal **************/
 SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLevel),
-           "Adds a new goal to the map.")
+           "Adds a new goal to the map. Returns an 'animated' object.")
 #define FUNC_NAME s_add_goal
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, s_add_goal);
@@ -413,14 +276,553 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
   SCM_ASSERT(SCM_BOOLP(rotate), rotate, SCM_ARG3, s_add_goal);
   SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, s_add_goal);
   char *sname = scm_to_utf8_string(nextLevel);
-  Animated *a = (Animated *)new Goal(scm_to_int(x), scm_to_int(y), SCM_NFALSEP(rotate), sname);
-  free(sname);
-  return smobAnimated_make(a);
+  if (sname) {
+    Animated *a =
+        (Animated *)new Goal(scm_to_int(x), scm_to_int(y), SCM_NFALSEP(rotate), sname);
+    return smobAnimated_make(a);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
+/************* sign ************/
+SCM_DEFINE(sign, "sign", 6, 1, 0,
+           (SCM text, SCM scale, SCM rotation, SCM duration, SCM x, SCM y, SCM z),
+           "Creates a new sign. duration<0 lasts forever. Returns an 'animated' object")
+#define FUNC_NAME s_sign
+{
+  SCM_ASSERT(scm_is_string(text), text, SCM_ARG1, FUNC_NAME);
+  if (Game::current) {
+    char *sname = scm_to_utf8_string(text);
+    if (strlen(sname) > 0) {
+      Coord3d pos;
+      pos[0] = scm_to_double(x);
+      pos[1] = scm_to_double(y);
+      if (SCM_NUMBERP(z))
+        pos[2] = scm_to_double(z);
+      else
+        pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
+      Sign *s = new Sign(sname, scm_to_double(duration), scm_to_double(scale),
+                         scm_to_double(rotation), pos);
+      return smobAnimated_make(s);
+    }
+  }
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/*********** add_modpill ***********/
+SCM_DEFINE(add_modpill, "add-modpill", 5, 0, 0,
+           (SCM x, SCM y, SCM kind, SCM length, SCM resurrecting),
+           "Adds a new modpill to level at x,y with given kind and resurrection state. "
+           "Returns an 'animated' object")
+#define FUNC_NAME s_add_modpill
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(kind), kind, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(resurrecting), resurrecting, SCM_ARG5, FUNC_NAME);
+  Coord3d position;
+  position[0] = scm_to_double(x);
+  position[1] = scm_to_double(y);
+  position[2] = 0.0;
+  return smobAnimated_make(
+      new ModPill(position, scm_to_int(kind), scm_to_int(length), scm_to_int(resurrecting)));
+}
+#undef FUNC_NAME
+
+/*********** forcefield ***********/
+SCM_DEFINE(forcefield, "forcefield", 8, 0, 0,
+           (SCM x, SCM y, SCM z, SCM dx, SCM dy, SCM dz, SCM height, SCM allow),
+           "Creats a forcefield. Returns an 'animated' object")
+#define FUNC_NAME s_forcefield
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(dx), dx, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(dy), dy, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(dz), dz, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(height), height, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(allow), allow, SCM_ARG7, FUNC_NAME);
+
+  Coord3d pos, dir;
+  pos[0] = scm_to_double(x);
+  pos[1] = scm_to_double(y);
+  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + scm_to_double(z);
+  dir[0] = scm_to_double(dx);
+  dir[1] = scm_to_double(dy);
+  dir[2] = scm_to_double(dz);
+  ForceField *ff = new ForceField(pos, dir, scm_to_double(height), scm_to_int(allow));
+  return smobAnimated_make(ff);
+}
+#undef FUNC_NAME
+
+/*********** switch ***********/
+SCM_DEFINE(fun_switch, "switch", 4, 0, 0, (SCM x, SCM y, SCM on, SCM off),
+           "Creates a switch. Returns an 'animated' object")
+#define FUNC_NAME s_fun_switch
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(on)), on, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(off)), off, SCM_ARG3, FUNC_NAME);
+  CSwitch *sw = new CSwitch(scm_to_double(x), scm_to_double(y), on, off);
+  return smobAnimated_make(sw);
+}
+#undef FUNC_NAME
+
+/*********** pipe **********/
+SCM_DEFINE(new_pipe, "pipe", 7, 0, 0,
+           (SCM x0, SCM y0, SCM z0, SCM x1, SCM y1, SCM z1, SCM radius),
+           "Creates a new pipe. Returns an 'animated' object")
+#define FUNC_NAME s_new_pipe
+{
+  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z1), z1, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG6, FUNC_NAME);
+  Coord3d from, to;
+  from[0] = scm_to_double(x0);
+  from[1] = scm_to_double(y0);
+  from[2] = scm_to_double(z0);
+  to[0] = scm_to_double(x1);
+  to[1] = scm_to_double(y1);
+  to[2] = scm_to_double(z1);
+  Pipe *pipe = new Pipe(from, to, scm_to_double(radius));
+  return smobAnimated_make(pipe);
+}
+#undef FUNC_NAME
+
+/*********** pipe-connector **********/
+SCM_DEFINE(pipe_connector, "pipe-connector", 4, 0, 0, (SCM x0, SCM y0, SCM z0, SCM radius),
+           "Creates a new pipe connector. Returns an 'animated' object")
+#define FUNC_NAME s_pipe_connector
+{
+  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG4, FUNC_NAME);
+  Coord3d pos;
+  pos[0] = scm_to_double(x0);
+  pos[1] = scm_to_double(y0);
+  pos[2] = scm_to_double(z0);
+  PipeConnector *pipeConnector = new PipeConnector(pos, scm_to_double(radius));
+  return smobAnimated_make(pipeConnector);
+}
+#undef FUNC_NAME
+
+/************* diamond ************/
+SCM_DEFINE(diamond, "diamond", 2, 1, 0, (SCM x, SCM y, SCM z),
+           "Creates a new diamond 'save point'. Returns an 'animated' object")
+#define FUNC_NAME s_diamond
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  Coord3d pos;
+  pos[0] = scm_to_double(x);
+  pos[1] = scm_to_double(y);
+  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 0.4;
+  if (SCM_NUMBERP(z)) pos[2] = scm_to_double(z);
+  Diamond *d = new Diamond(pos);
+  return smobAnimated_make(d);
+}
+#undef FUNC_NAME
+
+/************ fountain **************/
+SCM_DEFINE(fountain, "fountain", 6, 0, 0,
+           (SCM x, SCM y, SCM z, SCM randomSpeed, SCM radius, SCM strength),
+           "Creates a new fountain object. Returns an 'animated' object")
+#define FUNC_NAME s_fountain
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(randomSpeed), randomSpeed, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG6, FUNC_NAME);
+  Fountain *fountain =
+      new Fountain(scm_to_double(randomSpeed), scm_to_double(radius), scm_to_double(strength));
+  fountain->position[0] = scm_to_double(x);
+  fountain->position[1] = scm_to_double(y);
+  fountain->position[2] = scm_to_double(z);
+  return smobAnimated_make(fountain);
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*=========== operations on ANIMATED objects ============*/
+/*=======================================================*/
+
+/**************** set_position *************/
+SCM_DEFINE(set_position, "set-position", 3, 1, 0, (SCM obj, SCM x, SCM y, SCM z),
+           "Sets the position of specified 'animated' object. Accepts optional z-coordinate.")
+#define FUNC_NAME s_set_position
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG3, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  anim->position[0] = scm_to_double(x);
+  anim->position[1] = scm_to_double(y);
+  if (SCM_NUMBERP(z))
+    anim->position[2] = scm_to_double(z);
+  else
+    anim->has_moved();
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/************** get-position-x ****************/
+SCM_DEFINE(get_position_x, "get-position-x", 1, 0, 0, (SCM obj),
+           "Gets the X position of the specified 'animed' object. Object must be of type "
+           "animated, eg. a player, ball, etc.")
+#define FUNC_NAME s_get_position_x
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  return scm_from_double(anim->position[0]);
+}
+#undef FUNC_NAME
+
+/************** get-position-y ****************/
+SCM_DEFINE(get_position_y, "get-position-y", 1, 0, 0, (SCM obj),
+           "Gets the Y position of the specified 'animated' object. Object must be of type "
+           "animated, eg. a player, ball, etc.")
+#define FUNC_NAME s_get_position_y
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  return scm_from_double(anim->position[1]);
+}
+#undef FUNC_NAME
+
+/************** get-position-z ****************/
+SCM_DEFINE(get_position_z, "get-position-z", 1, 0, 0, (SCM obj),
+           "Gets the Z position of the specified 'animated' object. Object must be of type "
+           "animated, eg. a player, ball, etc.")
+#define FUNC_NAME s_get_position_z
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  return scm_from_double(anim->position[2]);
+}
+#undef FUNC_NAME
+
+/**************** set_modtime *************/
+SCM_DEFINE(set_modtime, "set-modtime", 3, 0, 0, (SCM s_obj, SCM s_mod, SCM s_time),
+           "Alters time left for object (must be a ball) to have the given modification.")
+#define FUNC_NAME s_set_modtime
+{
+  SCM_ASSERT(IS_ANIMATED(s_obj), s_obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(s_mod), s_mod, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(s_time), s_time, SCM_ARG3, FUNC_NAME);
+  int mod = scm_to_int(s_mod);
+  SCM_ASSERT(mod >= 0 && mod < NUM_MODS, s_mod, SCM_ARG2, FUNC_NAME);
+  double time = scm_to_double(s_time);
+  Animated *anim = (Animated *)SCM_CDR(s_obj);
+  Ball *ball = dynamic_cast<Ball *>(anim);
+  if (ball) ball->modTimeLeft[mod] = time;
+  return s_obj;
+}
+#undef FUNC_NAME
+
+/**************** set_acceleration *************/
+SCM_DEFINE(set_acceleration, "set-acceleration", 2, 0, 0, (SCM obj, SCM accel),
+           "Sets acceleration of given computer controlled ball object (mr black or baby)")
+#define FUNC_NAME s_set_acceleration
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(accel), accel, SCM_ARG2, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  Black *black = dynamic_cast<Black *>(anim);
+  if (black) {
+    black->acceleration = scm_to_double(accel);
+    return obj;
+  } else
+    return SCM_BOOL(false);
+}
+#undef FUNC_NAME
+
+/**************** set_horizon *************/
+SCM_DEFINE(set_horizon, "set-horizon", 2, 0, 0, (SCM obj, SCM horizon),
+           "Sets AI horizon of given computer controlled ball object (mr black or baby)")
+#define FUNC_NAME s_set_horizon
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(horizon), horizon, SCM_ARG2, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  Black *black = dynamic_cast<Black *>(anim);
+  if (black) {
+    black->horizon = scm_to_double(horizon);
+    return obj;
+  } else
+    return SCM_BOOL(false);
+}
+#undef FUNC_NAME
+
+/******************* set_primary_color *************/
+SCM_DEFINE(set_primary_color, "set-primary-color", 4, 1, 0,
+           (SCM obj, SCM r, SCM g, SCM b, SCM a),
+           "Sets the primary color of given 'animated' object.")
+#define FUNC_NAME s_set_primary_color
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  anim->primaryColor[0] = scm_to_double(r);
+  anim->primaryColor[1] = scm_to_double(g);
+  anim->primaryColor[2] = scm_to_double(b);
+  if (SCM_NUMBERP(a)) anim->primaryColor[3] = scm_to_double(a);
+  return obj;
+}
+#undef FUNC_NAME
+
+/******************* set_secondary_color *************/
+SCM_DEFINE(set_secondary_color, "set-secondary-color", 4, 1, 0,
+           (SCM obj, SCM r, SCM g, SCM b, SCM a),
+           "Sets the secondary color (if applicable) of given 'animated' object.")
+#define FUNC_NAME s_set_secondary_color
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  anim->secondaryColor[0] = scm_to_double(r);
+  anim->secondaryColor[1] = scm_to_double(g);
+  anim->secondaryColor[2] = scm_to_double(b);
+  if (SCM_NUMBERP(a)) anim->secondaryColor[3] = scm_to_double(a);
+  return obj;
+}
+#undef FUNC_NAME
+
+/******************* set_specular_color *************/
+SCM_DEFINE(set_specular_color, "set-specular-color", 4, 1, 0,
+           (SCM obj, SCM r, SCM g, SCM b, SCM a),
+           "Sets the specular color (if applicable) of given 'animated' object.")
+#define FUNC_NAME s_set_specular_color
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  Animated *anim = (Animated *)SCM_CDR(obj);
+  anim->specularColor[0] = scm_to_double(r);
+  anim->specularColor[1] = scm_to_double(g);
+  anim->specularColor[2] = scm_to_double(b);
+  if (SCM_NUMBERP(a)) anim->specularColor[3] = scm_to_double(a);
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/************** set-flag **********/
+SCM_DEFINE(set_flag, "set-flag", 3, 0, 0, (SCM anim, SCM flag, SCM state),
+           "Adds or removes status flag to an 'animated' object.")
+#define FUNC_NAME s_set_flag
+{
+  SCM_ASSERT(IS_ANIMATED(anim), anim, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(flag), flag, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG3, FUNC_NAME);
+  int iflag = scm_to_int(flag);
+  Animated *a = (Animated *)SCM_CDR(anim);
+  if (SCM_FALSEP(state))
+    a->flags = a->flags & (~iflag);
+  else
+    a->flags = a->flags | iflag;
+  return anim;
+}
+#undef FUNC_NAME
+
+/*********** set_wind **********/
+SCM_DEFINE(set_wind, "set-wind", 3, 0, 0, (SCM pipe, SCM forward, SCM backward),
+           "Sets the forward/backward wind of a pipe object.")
+#define FUNC_NAME s_set_wind
+{
+  SCM_ASSERT(IS_ANIMATED(pipe), pipe, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(forward), forward, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(backward), backward, SCM_ARG3, FUNC_NAME);
+  Pipe *p = dynamic_cast<Pipe *>((Animated *)SCM_CDR(pipe));
+  if (p) {
+    p->windForward = scm_to_double(forward);
+    p->windBackward = scm_to_double(backward);
+  }
+  return pipe;
+}
+#undef FUNC_NAME
+
+/************ set-speed ************/
+SCM_DEFINE(set_speed, "set-speed", 2, 0, 0, (SCM obj, SCM speed),
+           "Alters the speed of platforms or spikes")
+#define FUNC_NAME s_set_speed
+{
+  SCM_ASSERT(IS_GAMEHOOK(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(speed), speed, SCM_ARG2, FUNC_NAME);
+  Spike *spike = dynamic_cast<Spike *>((Animated *)SCM_CDR(obj));
+  if (spike) {
+    spike->speed = scm_to_double(speed);
+  } else {
+    CyclicPlatform *platform = dynamic_cast<CyclicPlatform *>((GameHook *)SCM_CDR(obj));
+    if (platform) { platform->speed = scm_to_double(speed); }
+  }
+  return obj;
+}
+#undef FUNC_NAME
+
+/************* set-texture ************/
+SCM_DEFINE(set_texture, "set-texture", 2, 0, 0, (SCM obj, SCM tname),
+           "Attempts to set the texture of an 'animated' object")
+#define FUNC_NAME s_set_texture
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_string(tname), tname, SCM_ARG2, FUNC_NAME);
+  char *name = scm_to_utf8_string(tname);
+  for (int i = 0; i < numTextures; i++)
+    if (strcmp(name, textureNames[i]) == 0) {
+      Animated *anim = (Animated *)SCM_CDR(obj);
+      anim->texture = textures[i];
+      return obj;
+    }
+  return SCM_BOOL(false);
+}
+#undef FUNC_NAME
+
+/************* set-fountain-strength *************/
+SCM_DEFINE(set_fountain_strength, "set-fountain-strength", 2, 0, 0, (SCM obj, SCM str),
+           "Sets the strength of a fountain object")
+#define FUNC_NAME s_set_fountain_strength
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(str), str, SCM_ARG2, FUNC_NAME);
+  Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
+  SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
+  fountain->strength = scm_to_double(str);
+  return obj;
+}
+#undef FUNC_NAME
+
+/************* fountain-velocity *************/
+SCM_DEFINE(set_fountain_velocity, "set-fountain-velocity", 4, 0, 0,
+           (SCM obj, SCM vx, SCM vy, SCM vz),
+           "Sets the velcity of outgoing droplets from a fountain object")
+#define FUNC_NAME s_set_fountain_velocity
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(vz), vz, SCM_ARG4, FUNC_NAME);
+  Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
+  SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
+  fountain->velocity[0] = scm_to_double(vx);
+  fountain->velocity[1] = scm_to_double(vy);
+  fountain->velocity[2] = scm_to_double(vz);
+  return obj;
+}
+#undef FUNC_NAME
+
+/************* score-on-death *************/
+SCM_DEFINE(score_on_death, "score-on-death", 2, 0, 0, (SCM obj, SCM points),
+           "Score to award player when this object dies")
+#define FUNC_NAME s_score_on_death
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(points), points, SCM_ARG2, FUNC_NAME);
+  Animated *animated = (Animated *)SCM_CDR(obj);
+  animated->scoreOnDeath = scm_to_double(points);
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/************* time-on-death *************/
+SCM_DEFINE(time_on_death, "time-on-death", 2, 0, 0, (SCM obj, SCM points),
+           "Time to award player when this object dies")
+#define FUNC_NAME s_time_on_death
+{
+  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(points), points, SCM_ARG2, FUNC_NAME);
+  Animated *animated = (Animated *)SCM_CDR(obj);
+  animated->timeOnDeath = scm_to_double(points);
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/************* default-on-death *************/
+SCM_DEFINE(default_on_death, "default-on-death", 3, 0, 0, (SCM unitType, SCM score, SCM time),
+           "Set the default score/time for all units of given type")
+#define FUNC_NAME s_default_on_death
+{
+  SCM_ASSERT(SCM_NUMBERP(unitType), unitType, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(score), score, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(time), time, SCM_ARG3, FUNC_NAME);
+  int type = (int)scm_to_double(unitType);
+  SCM_ASSERT(type >= 0 && type < SCORE_MAX, unitType, SCM_ARG1, FUNC_NAME);
+  Game::defaultScores[type][0] = scm_to_double(score);
+  Game::defaultScores[type][1] = scm_to_double(time);
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*===========      creating HOOK objects     ============*/
+/*=======================================================*/
+
+/************** add_cyclic_platform *************/
+
+SCM_DEFINE(add_cyclic_platform, "add-cyclic-platform", 8, 0, 0,
+           (SCM x1, SCM y1, SCM x2, SCM y2, SCM low, SCM high, SCM offset, SCM speed),
+           "Creates a new cyclic platform. Returns a 'hook' object.")
+#define FUNC_NAME s_add_cyclic_platform
+{
+  const char *s_add_cyclic_platform = "add-cyclic-platform";
+  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG1, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG2, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_NUMBERP(x2), x2, SCM_ARG3, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_NUMBERP(y2), y2, SCM_ARG4, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_REALP(low), low, SCM_ARG5, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_REALP(high), high, SCM_ARG6, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_REALP(offset), offset, SCM_ARG7, s_add_cyclic_platform);
+  SCM_ASSERT(SCM_REALP(speed), speed, SCM_ARG7, s_add_cyclic_platform);
+  CyclicPlatform *platform = new CyclicPlatform(
+      scm_to_int(x1), scm_to_int(y1), scm_to_int(x2), scm_to_int(y2), scm_to_double(low),
+      scm_to_double(high), scm_to_double(offset), scm_to_double(speed));
+  return smobGameHook_make(platform);
+}
+#undef FUNC_NAME
+
+/************* animator **************/
+SCM_DEFINE(
+    animator, "animator", 7, 0, 0,
+    (SCM length, SCM position, SCM direction, SCM v0, SCM v1, SCM repeat, SCM fun),
+    "Creates an animator object (this is not of class animated!). Returns a 'hook' object")
+#define FUNC_NAME s_animator
+{
+  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(v0), v0, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(v1), v1, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(repeat), repeat, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(SCM_BOOLP(fun) | SCM_NFALSEP(scm_procedure_p(fun)), fun, SCM_ARG7, FUNC_NAME);
+  Animator *a = new Animator(scm_to_double(length), scm_to_double(position),
+                             scm_to_double(direction), scm_to_double(v0), scm_to_double(v1),
+                             scm_to_int(repeat), SCM_BOOLP(fun) ? NULL : fun);
+  return smobGameHook_make(a);
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*===========   operations on HOOK objects   ============*/
+/*=======================================================*/
+
 /**************** set_onoff ************/
-SCM_DEFINE(set_onoff, "set-onoff", 2, 0, 0, (SCM obj, SCM state), "Turns an object on/off")
+SCM_DEFINE(set_onoff, "set-onoff", 2, 0, 0, (SCM obj, SCM state),
+           "Turns a 'hook' object on/off.")
 #define FUNC_NAME s_set_onoff
 {
   SCM_ASSERT(IS_GAMEHOOK(obj), obj, SCM_ARG1, FUNC_NAME);
@@ -430,6 +832,50 @@ SCM_DEFINE(set_onoff, "set-onoff", 2, 0, 0, (SCM obj, SCM state), "Turns an obje
   return obj;
 }
 #undef FUNC_NAME
+
+/************* animator-value **********/
+SCM_DEFINE(animator_value, "animator-value", 1, 0, 0, (SCM animator),
+           "Gets the value from an animator object")
+#define FUNC_NAME s_animator_value
+{
+  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
+  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
+  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
+  return scm_from_double(a->getValue());
+}
+#undef FUNC_NAME
+
+/************* set-animator-direction **********/
+SCM_DEFINE(set_animator_direction, "set-animator-direction", 2, 0, 0,
+           (SCM animator, SCM direction), "Sets the direction of an animator object")
+#define FUNC_NAME s_set_animator_direction
+{
+  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG2, FUNC_NAME);
+  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
+  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
+  a->direction = scm_to_double(direction);
+  return animator;
+}
+#undef FUNC_NAME
+
+/************* set-animator-position **********/
+SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
+           (SCM animator, SCM position), "Sets the position of an animator object")
+#define FUNC_NAME s_set_animator_position
+{
+  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
+  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
+  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
+  a->position = fmod(scm_to_double(position), a->length);
+  return animator;
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*===========        GLOBAL operations       ============*/
+/*=======================================================*/
 
 /************* day / night **************/
 SCM_DEFINE(day, "day", 0, 0, 0, (), "Turns on the global light for this level.") {
@@ -472,7 +918,8 @@ SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies co
 
 /************* set_bonus_level ************/
 SCM_DEFINE(set_bonus_level, "set-bonus-level", 1, 0, 0, (SCM name),
-           "Makes level a bonus level and specified return target.") {
+           "Makes level a bonus level and specified return level when this level is finished "
+           "or player dies.") {
   SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, "set-bonus-level");
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
@@ -481,38 +928,9 @@ SCM_DEFINE(set_bonus_level, "set-bonus-level", 1, 0, 0, (SCM name),
       Game::current->map->isBonus = 1;
     } else
       Game::current->map->isBonus = 0;
-    free(sname);
   }
   return SCM_UNSPECIFIED;
 }
-
-/************* sign ************/
-SCM_DEFINE(sign, "sign", 6, 1, 0,
-           (SCM text, SCM scale, SCM rotation, SCM duration, SCM x, SCM y, SCM z),
-           "Creates a new sign. duration<0 lasts forever.")
-#define FUNC_NAME s_sign
-{
-  SCM_ASSERT(scm_is_string(text), text, SCM_ARG1, FUNC_NAME);
-  if (Game::current) {
-    char *sname = scm_to_utf8_string(text);
-    if (strlen(sname) > 0) {
-      Coord3d pos;
-      pos[0] = scm_to_double(x);
-      pos[1] = scm_to_double(y);
-      if (SCM_NUMBERP(z))
-        pos[2] = scm_to_double(z);
-      else
-        pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
-      Sign *s = new Sign(sname, scm_to_double(duration), scm_to_double(scale),
-                         scm_to_double(rotation), pos);
-      free(sname);
-      return smobAnimated_make(s);
-    }
-    free(sname);
-  }
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
 
 /**************** set_track_name **************/
 SCM_DEFINE(set_track_name, "set-track-name", 1, 0, 0, (SCM name),
@@ -523,7 +941,6 @@ SCM_DEFINE(set_track_name, "set-track-name", 1, 0, 0, (SCM name),
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
     strcpy(Game::current->map->mapname, sname);
-    free(sname);
   }
   return SCM_UNSPECIFIED;
 }
@@ -538,7 +955,6 @@ SCM_DEFINE(set_author, "set-author", 1, 0, 0, (SCM name),
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
     strcpy(Game::current->map->author, sname);
-    free(sname);
   }
   return SCM_UNSPECIFIED;
 }
@@ -555,16 +971,6 @@ SCM_DEFINE(start_time, "start-time", 1, 0, 0, (SCM t),
 }
 #undef FUNC_NAME
 
-/*********** get_time ************/
-SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player has.left.") {
-  return scm_from_int(Game::current->player1->timeLeft);
-}
-
-/*********** get_score ************/
-SCM_DEFINE(get_score, "get-score", 0, 0, 0, (), "Returns the players score.") {
-  return scm_from_int(Game::current->player1->score);
-}
-
 /*********** set_time ************/
 SCM_DEFINE(set_time, "set-time", 1, 0, 0, (SCM t), "Sets the time left for player.")
 #define FUNC_NAME s_set_time
@@ -572,6 +978,24 @@ SCM_DEFINE(set_time, "set-time", 1, 0, 0, (SCM t), "Sets the time left for playe
   int it = scm_to_int(t);
   if (Game::current && Game::current->player1) Game::current->player1->timeLeft = it;
   return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/*********** get_time ************/
+SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player has left.") {
+  return scm_from_int(Game::current->player1->timeLeft);
+}
+
+/*********** add time ************/
+SCM_DEFINE(add_time, "add-time", 1, 0, 0, (SCM t), "Adds time for the user.")
+#define FUNC_NAME s_add_time
+{
+  int it = scm_to_int(t);
+  if (Game::current && Game::current->player1) {
+    Game::current->player1->timeLeft += it;
+    return scm_from_int(Game::current->player1->timeLeft);
+  } else
+    return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -585,49 +1009,21 @@ SCM_DEFINE(set_score, "set-score", 1, 0, 0, (SCM t), "Sets the score for player.
 }
 #undef FUNC_NAME
 
-/*********** add time ************/
-SCM_DEFINE(add_time, "add-time", 1, 0, 0, (SCM t), "Adds time for the user.")
-#define FUNC_NAME s_add_time
+/*********** get_score ************/
+SCM_DEFINE(get_score, "get-score", 0, 0, 0, (), "Returns the players score.") {
+  return scm_from_int(Game::current->player1->score);
+}
+
+/*********** add_score ************/
+SCM_DEFINE(add_score, "add-score", 1, 0, 0, (SCM t), "Adds points to the players score.")
+#define FUNC_NAME s_add_score
 {
   int it = scm_to_int(t);
-  if (Game::current && Game::current->player1) Game::current->player1->timeLeft += it;
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/*********** trigger ************/
-SCM_DEFINE(trigger, "trigger", 4, 0, 0, (SCM x, SCM y, SCM r, SCM expr),
-           "Call expr when player is within given radius.")
-#define FUNC_NAME s_trigger
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(expr)), expr, SCM_ARG4, FUNC_NAME);
-  new Trigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), expr);
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/*********** smart-trigger ************/
-SCM_DEFINE(smart_trigger, "smart-trigger", 5, 0, 0,
-           (SCM x, SCM y, SCM r, SCM entering, SCM leaving),
-           "Call expr when player is within given radius.")
-#define FUNC_NAME s_smart_trigger
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
-  if (SCM_FALSEP(entering))
-    entering = NULL;
-  else
-    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(entering)), entering, SCM_ARG4, FUNC_NAME);
-  if (SCM_FALSEP(leaving))
-    leaving = NULL;
-  else
-    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(leaving)), leaving, SCM_ARG5, FUNC_NAME);
-  new SmartTrigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), entering, leaving);
-  return SCM_UNSPECIFIED;
+  if (Game::current && Game::current->player1) {
+    Game::current->player1->score += it;
+    return scm_from_int(Game::current->player1->score);
+  } else
+    return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -645,160 +1041,6 @@ SCM_DEFINE(set_start_position, "set-start-position", 2, 0, 0, (SCM x, SCM y),
         Game::current->map->startPosition[0], Game::current->map->startPosition[1]);
   }
   return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/*********** add_modpill ***********/
-SCM_DEFINE(add_modpill, "add-modpill", 5, 0, 0,
-           (SCM x, SCM y, SCM kind, SCM length, SCM resurrecting),
-           "Adds a new modpill to level at x,y with given kind and resurrection state.")
-#define FUNC_NAME s_add_modpill
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(kind), kind, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(resurrecting), resurrecting, SCM_ARG5, FUNC_NAME);
-  Coord3d position;
-  position[0] = scm_to_double(x);
-  position[1] = scm_to_double(y);
-  position[2] = 0.0;
-  new ModPill(position, scm_to_int(kind), scm_to_int(length), scm_to_int(resurrecting));
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/*********** forcefield ***********/
-SCM_DEFINE(forcefield, "forcefield", 8, 0, 0,
-           (SCM x, SCM y, SCM z, SCM dx, SCM dy, SCM dz, SCM height, SCM allow),
-           "Creats a forcefield")
-#define FUNC_NAME s_forcefield
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dx), dx, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dy), dy, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dz), dz, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(height), height, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(allow), allow, SCM_ARG7, FUNC_NAME);
-
-  Coord3d pos, dir;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
-  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + scm_to_double(z);
-  dir[0] = scm_to_double(dx);
-  dir[1] = scm_to_double(dy);
-  dir[2] = scm_to_double(dz);
-  ForceField *ff = new ForceField(pos, dir, scm_to_double(height), scm_to_int(allow));
-  return smobAnimated_make(ff);
-}
-#undef FUNC_NAME
-
-/*********** switch ***********/
-SCM_DEFINE(fun_switch, "switch", 4, 0, 0, (SCM x, SCM y, SCM on, SCM off), "Creats a switch")
-#define FUNC_NAME s_fun_switch
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(on)), on, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(off)), off, SCM_ARG3, FUNC_NAME);
-  CSwitch *sw = new CSwitch(scm_to_double(x), scm_to_double(y), on, off);
-  return smobAnimated_make(sw);
-}
-#undef FUNC_NAME
-
-/*********** pipe **********/
-SCM_DEFINE(new_pipe, "pipe", 7, 0, 0,
-           (SCM x0, SCM y0, SCM z0, SCM x1, SCM y1, SCM z1, SCM radius), "Creates a new pipe")
-#define FUNC_NAME s_new_pipe
-{
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z1), z1, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG6, FUNC_NAME);
-  Coord3d from, to;
-  from[0] = scm_to_double(x0);
-  from[1] = scm_to_double(y0);
-  from[2] = scm_to_double(z0);
-  to[0] = scm_to_double(x1);
-  to[1] = scm_to_double(y1);
-  to[2] = scm_to_double(z1);
-  Pipe *pipe = new Pipe(from, to, scm_to_double(radius));
-  return smobAnimated_make(pipe);
-}
-#undef FUNC_NAME
-
-/************** set-flag **********/
-SCM_DEFINE(set_flag, "set-flag", 3, 0, 0, (SCM anim, SCM flag, SCM state),
-           "Adds or removes status flag to object")
-#define FUNC_NAME s_set_flag
-{
-  SCM_ASSERT(IS_ANIMATED(anim), anim, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(flag), flag, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG3, FUNC_NAME);
-  int iflag = scm_to_int(flag);
-  Animated *a = (Animated *)SCM_CDR(anim);
-  if (SCM_FALSEP(state))
-    a->flags = a->flags & (~iflag);
-  else
-    a->flags = a->flags | iflag;
-  return anim;
-}
-#undef FUNC_NAME
-
-/*********** pipe-connector **********/
-SCM_DEFINE(pipe_connector, "pipe-connector", 4, 0, 0, (SCM x0, SCM y0, SCM z0, SCM radius),
-           "Creates a new pipe connector")
-#define FUNC_NAME s_pipe_connector
-{
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG4, FUNC_NAME);
-  Coord3d pos;
-  pos[0] = scm_to_double(x0);
-  pos[1] = scm_to_double(y0);
-  pos[2] = scm_to_double(z0);
-  PipeConnector *pipeConnector = new PipeConnector(pos, scm_to_double(radius));
-  return smobAnimated_make(pipeConnector);
-}
-#undef FUNC_NAME
-
-/************* diamond ************/
-SCM_DEFINE(diamond, "diamond", 2, 1, 0, (SCM x, SCM y, SCM z),
-           "Creates a new diamond 'save point'")
-#define FUNC_NAME s_diamond
-{
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  Coord3d pos;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
-  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 0.4;
-  if (SCM_NUMBERP(z)) pos[2] = scm_to_double(z);
-  Diamond *d = new Diamond(pos);
-  return smobAnimated_make(d);
-}
-#undef FUNC_NAME
-
-/*********** set_wind **********/
-SCM_DEFINE(set_wind, "set-wind", 3, 0, 0, (SCM pipe, SCM forward, SCM backward),
-           "Determines forward/backward wind of pipe")
-#define FUNC_NAME s_set_wind
-{
-  SCM_ASSERT(IS_ANIMATED(pipe), pipe, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(forward), forward, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(backward), backward, SCM_ARG3, FUNC_NAME);
-  Pipe *p = dynamic_cast<Pipe *>((Animated *)SCM_CDR(pipe));
-  if (p) {
-    p->windForward = scm_to_double(forward);
-    p->windBackward = scm_to_double(backward);
-  }
-  return pipe;
 }
 #undef FUNC_NAME
 
@@ -831,14 +1073,12 @@ SCM_DEFINE(difficulty, "difficulty", 0, 0, 0, (),
 /*********** use-grid ************/
 SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off") {
   Game::current->useGrid = SCM_FALSEP(v) ? 0 : 1;
-  return SCM_UNSPECIFIED;
 }
 
 /*********** map-is-transparent ************/
 SCM_DEFINE(map_is_transparent, "map-is-transparent", 1, 0, 0, (SCM v),
            "Turns on/off transparency rendering of map.") {
   Game::current->map->isTransparent = SCM_FALSEP(v) ? 0 : 1;
-  return SCM_UNSPECIFIED;
 }
 
 /*********** jump ************/
@@ -847,7 +1087,6 @@ SCM_DEFINE(jump, "jump", 1, 0, 0, (SCM v), "Scales maximum jump height of player
 {
   SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->jumpFactor = scm_to_double(v);
-  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -858,25 +1097,6 @@ SCM_DEFINE(scale_oxygen, "scale-oxygen", 1, 0, 0, (SCM v),
 {
   SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->oxygenFactor = scm_to_double(v);
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/************ set-speed ************/
-SCM_DEFINE(set_speed, "set-speed", 2, 0, 0, (SCM obj, SCM speed),
-           "Alters the speed of platforms or spikes")
-#define FUNC_NAME s_set_speed
-{
-  SCM_ASSERT(IS_GAMEHOOK(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(speed), speed, SCM_ARG2, FUNC_NAME);
-  Spike *spike = dynamic_cast<Spike *>((Animated *)SCM_CDR(obj));
-  if (spike) {
-    spike->speed = scm_to_double(speed);
-  } else {
-    CyclicPlatform *platform = dynamic_cast<CyclicPlatform *>((GameHook *)SCM_CDR(obj));
-    if (platform) { platform->speed = scm_to_double(speed); }
-  }
-  return obj;
 }
 #undef FUNC_NAME
 
@@ -1071,70 +1291,8 @@ SCM_DEFINE(play_effect, "play-effect", 1, 0, 0, (SCM name), "Attempts to play a 
 #define FUNC_NAME s_play_effect
 {
   SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, FUNC_NAME);
-  char *effect = scm_to_utf8_string(name);
-  playEffect(effect);
-  free(effect);
+  playEffect(scm_to_utf8_string(name));
   return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/************* animator **************/
-SCM_DEFINE(animator, "animator", 7, 0, 0,
-           (SCM length, SCM position, SCM direction, SCM v0, SCM v1, SCM repeat, SCM fun),
-           "Creates an animator object")
-#define FUNC_NAME s_animator
-{
-  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(v0), v0, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(v1), v1, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(repeat), repeat, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(fun) | SCM_NFALSEP(scm_procedure_p(fun)), fun, SCM_ARG7, FUNC_NAME);
-  Animator *a = new Animator(scm_to_double(length), scm_to_double(position),
-                             scm_to_double(direction), scm_to_double(v0), scm_to_double(v1),
-                             scm_to_int(repeat), SCM_BOOLP(fun) ? NULL : fun);
-  return smobGameHook_make(a);
-}
-#undef FUNC_NAME
-
-/************* animator-value **********/
-SCM_DEFINE(animator_value, "animator-value", 1, 0, 0, (SCM animator),
-           "Gets the value from an animator object")
-#define FUNC_NAME s_animator_value
-{
-  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
-  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
-  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
-  return scm_from_double(a->getValue());
-}
-#undef FUNC_NAME
-
-/************* set-animator-direction **********/
-SCM_DEFINE(set_animator_direction, "set-animator-direction", 2, 0, 0,
-           (SCM animator, SCM direction), "Sets the direction of an animator object")
-#define FUNC_NAME s_set_animator_direction
-{
-  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG2, FUNC_NAME);
-  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
-  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
-  a->direction = scm_to_double(direction);
-  return animator;
-}
-#undef FUNC_NAME
-
-/************* set-animator-position **********/
-SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
-           (SCM animator, SCM position), "Sets the position of an animator object")
-#define FUNC_NAME s_set_animator_position
-{
-  SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
-  Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
-  SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
-  a->position = fmod(scm_to_double(position), a->length);
-  return animator;
 }
 #undef FUNC_NAME
 
@@ -1147,95 +1305,135 @@ SCM_DEFINE(camera_angle, "camera-angle", 2, 0, 0, (SCM xy, SCM z),
   SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG2, FUNC_NAME);
   ((MainMode *)GameMode::current)->wantedXYAngle = scm_to_double(xy);
   ((MainMode *)GameMode::current)->wantedZAngle = scm_to_double(z);
-  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
 /************* restart-time ***********/
+/* DEPRECATED! */
 SCM_DEFINE(restart_time, "restart-time", 1, 0, 0, (SCM t), "Sets the timebonus after death.")
 #define FUNC_NAME s_restart_time
 {
   SCM_ASSERT(SCM_NUMBERP(t), t, SCM_ARG1, FUNC_NAME);
-  Game::current->restartBonusTime = scm_to_double(t);
+  Game::current->player1->timeOnDeath = scm_to_double(t);
+}
+#undef FUNC_NAME
+
+/************* clear-song-preferences ***********/
+SCM_DEFINE(clear_song_preferences, "clear-song-preferences", 0, 0, 0, (),
+           "Removes all old music preferences")
+#define FUNC_NAME s_clear_song_preferences
+{
+  clearMusicPreferences();
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
-/************* set-texture ************/
-SCM_DEFINE(set_texture, "set-texture", 2, 0, 0, (SCM obj, SCM tname),
-           "Attempts to set the texture of object")
-#define FUNC_NAME s_set_texture
+/************* force-next-song ***********/
+SCM_DEFINE(force_next_song, "force-next-song", 0, 0, 0, (), "Force a reload of songs")
+#define FUNC_NAME s_force_next_song
 {
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(scm_is_string(tname), tname, SCM_ARG2, FUNC_NAME);
-  char *name = scm_to_utf8_string(tname);
-  for (int i = 0; i < numTextures; i++)
-    if (strcmp(name, textureNames[i]) == 0) {
-      Animated *anim = (Animated *)SCM_CDR(obj);
-      anim->texture = textures[i];
-      free(name);
-      return obj;
-    }
-  free(name);
-  return SCM_BOOL(false);
+  playNextSong();
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
-/************ fountain **************/
-SCM_DEFINE(fountain, "fountain", 6, 0, 0,
-           (SCM x, SCM y, SCM z, SCM randomSpeed, SCM radius, SCM strength),
-           "Creates a new fountain object")
-#define FUNC_NAME s_fountain
+/************* set-song-preferences ***********/
+SCM_DEFINE(set_song_preference, "set-song-preference", 2, 0, 0, (SCM song, SCM weight),
+           "Set the weight for playing given song")
+#define FUNC_NAME s_set_song_preference
+{
+  SCM_ASSERT(scm_is_string(song), song, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(weight), weight, SCM_ARG2, FUNC_NAME);
+
+  char *songName = scm_to_utf8_string(song);
+  if (songName) { setMusicPreference(songName, scm_to_int(weight)); }
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*===========             CALLBACKS          ============*/
+/*=======================================================*/
+
+/*********** trigger ************/
+SCM_DEFINE(trigger, "trigger", 4, 0, 0, (SCM x, SCM y, SCM r, SCM expr),
+           "Call expr when player is within given radius.")
+#define FUNC_NAME s_trigger
 {
   SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(randomSpeed), randomSpeed, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG6, FUNC_NAME);
-  Fountain *fountain =
-      new Fountain(scm_to_double(randomSpeed), scm_to_double(radius), scm_to_double(strength));
-  fountain->position[0] = scm_to_double(x);
-  fountain->position[1] = scm_to_double(y);
-  fountain->position[2] = scm_to_double(z);
-  return smobAnimated_make(fountain);
+  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(expr)), expr, SCM_ARG4, FUNC_NAME);
+  new Trigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), expr);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
-/************* set-fountain-strength *************/
-SCM_DEFINE(set_fountain_strength, "set-fountain-strength", 2, 0, 0, (SCM obj, SCM str),
-           "Sets the strength of a fountain object")
-#define FUNC_NAME s_set_fountain_strength
+/*********** smart-trigger ************/
+SCM_DEFINE(smart_trigger, "smart-trigger", 5, 0, 0,
+           (SCM x, SCM y, SCM r, SCM entering, SCM leaving),
+           "Call expr when player is within given radius.")
+#define FUNC_NAME s_smart_trigger
 {
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(str), str, SCM_ARG2, FUNC_NAME);
-  Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
-  SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
-  fountain->strength = scm_to_double(str);
-  return obj;
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
+  if (SCM_FALSEP(entering))
+    entering = NULL;
+  else
+    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(entering)), entering, SCM_ARG4, FUNC_NAME);
+  if (SCM_FALSEP(leaving))
+    leaving = NULL;
+  else
+    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(leaving)), leaving, SCM_ARG5, FUNC_NAME);
+  new SmartTrigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), entering, leaving);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
-/************* fountain-velocity *************/
-SCM_DEFINE(set_fountain_velocity, "set-fountain-velocity", 4, 0, 0,
-           (SCM obj, SCM vx, SCM vy, SCM vz),
-           "Sets the velcity of ougoing droplets from a fountain object")
-#define FUNC_NAME s_set_fountain_velocity
+/************ hooks to arbitrary objects and events **********/
+SCM_DEFINE(on_event, "on-event", 3, 0, 0, (SCM event, SCM subject, SCM callback),
+           "Register a callback to be triggered when the given event occurs for the given "
+           "object. Callback must accept two arguments (subject and object). Subject must be "
+           "of type 'animated' or of type 'gameHook', object is only used for some events and "
+           "is otherwise false.")
+#define FUNC_NAME s_on_event
 {
-  SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vz), vz, SCM_ARG4, FUNC_NAME);
-  Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
-  SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
-  fountain->velocity[0] = scm_to_double(vx);
-  fountain->velocity[1] = scm_to_double(vy);
-  fountain->velocity[2] = scm_to_double(vz);
-  return obj;
+  SCM_ASSERT(SCM_NUMBERP(event), event, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(IS_ANIMATED(subject) || IS_GAMEHOOK(subject), subject, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_FALSEP(callback) || SCM_NFALSEP(scm_procedure_p(callback)), callback,
+             SCM_ARG3, FUNC_NAME);
+  /* It is safe to always cast pointer into a GameHook since Animated
+     objects inherit from GameHook */
+  GameHook *h = (GameHook *)SCM_CDR(subject);
+  h->registerHook((GameHookEvent)(int)scm_to_double(event),
+                  SCM_FALSEP(callback) ? NULL : callback);
+  return subject;
 }
 #undef FUNC_NAME
 
-/******** Constants *******/
+/*** Returns currently registered hook to an object for an event */
+SCM_DEFINE(get_event_callback, "get-event-callback", 2, 0, 0, (SCM event, SCM subject),
+           "Returns the callback currently registerd to the given object and event.")
+#define FUNC_NAME s_get_event_callback
+{
+  SCM_ASSERT(SCM_NUMBERP(event), event, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(IS_ANIMATED(subject) || IS_GAMEHOOK(subject), subject, SCM_ARG2, FUNC_NAME);
+  /* It is safe to always cast pointer into a GameHook since Animated
+     objects inherit from GameHook */
+  GameHook *h = (GameHook *)SCM_CDR(subject);
+  SCM callback = h->getHook((GameHookEvent)(int)scm_to_double(event));
+  if (callback)
+    return callback;
+  else
+    return SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
+/*=======================================================*/
+/*===========             CONSTANTS          ============*/
+/*=======================================================*/
+
 SCM_GLOBAL_VARIABLE_INIT(s_mod_speed, "*mod-speed*", scm_from_long(MOD_SPEED));
 SCM_GLOBAL_VARIABLE_INIT(s_mod_jump, "*mod-jump*", scm_from_long(MOD_JUMP));
 SCM_GLOBAL_VARIABLE_INIT(s_mod_spike, "*mod-spike*", scm_from_long(MOD_SPIKE));
@@ -1306,6 +1504,17 @@ SCM_GLOBAL_VARIABLE_INIT(s_cell_center, "*cell-center*", scm_from_long(Cell::CEN
 /** flags for animated objects **/
 SCM_GLOBAL_VARIABLE_INIT(s_bird_ch, "*bird-constant-height*",
                          scm_from_long(BIRD_CONSTANT_HEIGHT));
+
+SCM_GLOBAL_VARIABLE_INIT(s_event_death, "*death*", scm_from_long(GameHookEvent_Death));
+SCM_GLOBAL_VARIABLE_INIT(s_event_spawn, "*spawn*", scm_from_long(GameHookEvent_Spawn));
+SCM_GLOBAL_VARIABLE_INIT(s_event_tick, "*tick*", scm_from_long(GameHookEvent_Tick));
+
+SCM_GLOBAL_VARIABLE_INIT(s_score_player, "*score-player*", scm_from_long(SCORE_PLAYER));
+SCM_GLOBAL_VARIABLE_INIT(s_score_black, "*score-black*", scm_from_long(SCORE_BLACK));
+SCM_GLOBAL_VARIABLE_INIT(s_score_baby, "*score-baby*", scm_from_long(SCORE_BABY));
+SCM_GLOBAL_VARIABLE_INIT(s_score_bird, "*score-bird*", scm_from_long(SCORE_BIRD));
+SCM_GLOBAL_VARIABLE_INIT(s_score_cactus, "*score-cactus*", scm_from_long(SCORE_CACTUS));
+SCM_GLOBAL_VARIABLE_INIT(s_score_flag, "*score-flag*", scm_from_long(SCORE_FLAG));
 
 void initGuileInterface() {
   smobAnimated_tag = scm_make_smob_type("Animated", 0);

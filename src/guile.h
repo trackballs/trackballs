@@ -24,5 +24,7 @@
 #include <libguile.h>
 
 void initGuileInterface();
+SCM smobAnimated_make(class Animated *a);
+SCM smobGameHook_make(class GameHook *h);
 
 #endif

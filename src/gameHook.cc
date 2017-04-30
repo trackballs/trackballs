@@ -23,6 +23,8 @@
 #include "general.h"
 #include "gameHook.h"
 #include "game.h"
+#include "animated.h"
+#include "guile.h"
 
 using namespace std;
 
@@ -31,6 +33,8 @@ std::set<GameHook *> *GameHook::deadObjects;
 
 void GameHook::init() { deadObjects = new set<GameHook *>(); }
 GameHook::GameHook() {
+  int i;
+
   alive = 1;
   id = nextId++;
   is_on = 1;
@@ -39,6 +43,8 @@ GameHook::GameHook() {
     Game::current->add(this);
   else
     throw "GameHook::GameHook() - no game loaded\n";
+
+  for (i = 0; i < GameHookEvent_MaxHooks; i++) hooks[i] = NULL;
 }
 
 GameHook::~GameHook() {}
@@ -50,7 +56,15 @@ void GameHook::remove() {
     this->onRemove();
   }
 }
-void GameHook::onRemove() { Game::current->remove(this); }
+void GameHook::onRemove() {
+  int event;
+
+  /* Remove all registered guile hooks */
+  for (event = 0; event < GameHookEvent_MaxHooks; event++)
+    if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
+
+  Game::current->remove(this);
+}
 void GameHook::deleteDeadObjects() {
   set<GameHook *>::iterator iter = deadObjects->begin();
   set<GameHook *>::iterator end = deadObjects->end();
@@ -62,3 +76,33 @@ void GameHook::deleteDeadObjects() {
 }
 void GameHook::playerRestarted() {}
 void GameHook::doExpensiveComputations() {}
+
+void GameHook::registerHook(GameHookEvent event, SCM hook) {
+  if (event < 0 || event >= GameHookEvent_MaxHooks) return;
+
+  /* Remove any previous hook */
+  if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
+  /* Save this hook */
+  if (hook) scm_gc_protect_object(hook);
+  hooks[event] = hook;
+}
+void GameHook::triggerHook(GameHookEvent event, SCM object) {
+  if (event < 0 || event >= GameHookEvent_MaxHooks) return;
+
+  if (hooks[event]) {
+    SCM subject;
+    Animated *a = dynamic_cast<Animated *>(this);
+    if (a)
+      subject = smobAnimated_make(a);
+    else
+      subject = smobGameHook_make(this);
+    scm_apply_2(hooks[event], subject, object ? object : SCM_BOOL_F, SCM_EOL);
+  }
+}
+
+SCM GameHook::getHook(GameHookEvent event) {
+  if (event < 0 || event >= GameHookEvent_MaxHooks) return NULL;
+  return hooks[event];
+}
+
+void GameHook::tick(Real dt) { triggerHook(GameHookEvent_Tick, NULL); }

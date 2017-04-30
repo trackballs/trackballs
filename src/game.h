@@ -21,6 +21,14 @@
 #ifndef GAME_H
 #define GAME_H
 
+#define SCORE_PLAYER 0
+#define SCORE_BLACK 1
+#define SCORE_BABY 2
+#define SCORE_BIRD 3
+#define SCORE_CACTUS 4
+#define SCORE_FLAG 5
+#define SCORE_MAX 6
+
 class Game {
  public:
   Game(char *, class Gamer *gamer);
@@ -40,7 +48,6 @@ class Game {
   GLfloat fogColor[4];
   int localPlayers, isNight, startTime, currentLevelSet, useGrid;
   double fogThickness, wantedFogThickness;
-  double restartBonusTime;
   double jumpFactor, oxygenFactor;
 
   class Player *player1;
@@ -54,6 +61,10 @@ class Game {
   char levelName[256];
   char nextLevel[256];
   char returnLevel[256]; /* When returning from bonus levels */
+
+  /** Records current default settings for score/time when killing
+      units and triggering other events */
+  static double defaultScores[SCORE_MAX][2];
 
  protected:
  private:

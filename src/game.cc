@@ -31,6 +31,7 @@
 #include "settings.h"
 #include "pipe.h"
 #include "weather.h"
+#include "sound.h"
 
 #define MARGIN 10
 
@@ -39,6 +40,8 @@ using namespace std;
 Game *Game::current = NULL;
 
 extern GLfloat colors[5][3];
+
+double Game::defaultScores[SCORE_MAX][2];
 
 Game::Game(char *name, Gamer *g) {
   Ball::reset();
@@ -117,7 +120,10 @@ void Game::loadLevel(char *name) {
 
   fogThickness = wantedFogThickness;
 }
+
 void Game::setDefaults() {
+  int i;
+
   isNight = 0;
   fogThickness = 0.0;
   wantedFogThickness = 0.0;
@@ -126,7 +132,30 @@ void Game::setDefaults() {
   useGrid = 1;
   jumpFactor = 1.0;
   oxygenFactor = 1.0;
-  restartBonusTime = 45.0;
+
+  for (i = 0; i < SCORE_MAX; i++) {
+    defaultScores[i][0] = 0.0;
+    defaultScores[i][1] = 0.0;
+  }
+  defaultScores[SCORE_PLAYER][0] = -100;
+  defaultScores[SCORE_PLAYER][1] = 60 - 5 * Settings::settings->difficulty;
+  defaultScores[SCORE_BLACK][0] = 100;
+  defaultScores[SCORE_BLACK][1] = 0;
+  defaultScores[SCORE_BABY][0] = 50;
+  defaultScores[SCORE_BABY][1] = 5 - 2 * Settings::settings->difficulty;
+  defaultScores[SCORE_BIRD][0] = 100;
+  defaultScores[SCORE_BIRD][1] = 0;
+  defaultScores[SCORE_CACTUS][0] = 100;
+  defaultScores[SCORE_CACTUS][1] = 0;
+  defaultScores[SCORE_FLAG][0] = 100;
+  defaultScores[SCORE_FLAG][1] = 0;
+
+  /* Since the player object lives on from level to level we need to
+     reset it's default values here too */
+  if (player1) {
+    player1->scoreOnDeath = defaultScores[SCORE_PLAYER][0];
+    player1->timeOnDeath = defaultScores[SCORE_PLAYER][1];
+  }
 }
 
 void Game::clearLevel() {
@@ -134,6 +163,7 @@ void Game::clearLevel() {
   ForceField::reset();
 
   weather->clear();
+  clearMusicPreferences();
   if (hooks) {
     set<GameHook *> *old_hooks = new set<GameHook *>(*hooks);
     set<GameHook *>::iterator ih = old_hooks->begin();
@@ -300,8 +330,5 @@ void Game::drawReflection(Coord3d focus) {
 
 void Game::add(Animated *a) { objects->insert(a); }
 void Game::add(GameHook *a) { hooks->insert(a); }
-void Game::remove(Animated *a) {
-  objects->erase(a);
-  //  printf("game::remove after - num objects is %d\n",objects->size());
-}
+void Game::remove(Animated *a) { objects->erase(a); }
 void Game::remove(GameHook *a) { hooks->erase(a); }

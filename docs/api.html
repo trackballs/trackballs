@@ -1,0 +1,853 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title> Trackballs - API Reference </title>
+<link title="Default style" rel="stylesheet" href="default.css" type="text/css">
+</head>
+<body>
+
+<div class="toc">
+<ol>
+<li> <a href="index.html"> Players guide </a> </li>
+<li> <a href="customizing.html"> Creating your own levels </a> </li>
+<li> <a href="mapeditor.html"> Map editor </a> </li>
+<li> <a href="scriptingLanguage.html"> Scripting Language </a> </li>
+<li> <a href="api.html"> API Reference </a> </li>
+<li> <a href="examples.html"> Examples </a> </li>
+</ol>
+</div>
+
+<div class="pagebody">
+
+<h1> API Reference </h1>
+
+This page serves to document all the API functions that are available
+for level designers of trackballs. Since it is currently under
+construction it is not complete and you can find some more inforamtion
+about the functions in existing levels or by looking in the <tt>guile.cc</tt>
+file in the source code.
+
+<h2> Creating animated objects </h2>
+
+These objects are any drawable and movable object in the world and a
+number of API functions can be used to create them. See the section
+below for functions to modify their properties. <p/>
+
+<div class="fn">
+<div class="fn-proto">(player)</div>
+<div class="fn-text">
+Returns the current player as an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(new-mr-black x y)</div>
+<div class="fn-text">
+Creates an opponend ball at specified position. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(new-baby x y)</div>
+<div class="fn-text">
+Creates a baby ball at specified position. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-teleport x y dx dy radius)</div>
+<div class="fn-text">
+Creates a teleporter at specified position with specified destination dx/dy expressed as absolute
+coordinates. Radius is the size of the teleporter. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-bird x y dx dy size speed)</div>
+<div class="fn-text">
+Creates a bird at specified x/y position, with specified destination
+dx/dy. Size and speed indicates the size of the bird and it's movement speed.
+Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-flag x y points visible radius)</div>
+<div class="fn-text">
+Creates a flag giving points when captured. The x/y position in this
+function is because of backwards compatibility given as an
+INTEGER. Thus x=100 gives the coordinate 100.5. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-colormodifier col x y min max freq phase)</div>
+<div class="fn-text">
+Allow to modify the color(s) of a cell. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-heightmodifier corner x y min max freq
+phase n1 n2 n3)</div>
+<div class="fn-text">
+Allow to modify the height of a cell's corner. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-cactus x y radius)</div>
+<div class="fn-text">
+Creates a cactus at given position with given radius. Returns an
+'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-spike x y speed phase)</div>
+<div class="fn-text">
+Creates a lethal spike going up and down. Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-sidespike x y speed phase side)</div>
+<div class="fn-text">
+Creates a lethal spike (comming from the side). Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-goal x y rotate-p next-level)</div>
+<div class="fn-text">
+Adds a new goal to the map. Orientation is given by rotate-p
+(horizontal or vertical) and the next level to go to is given as a
+string name (eg. "foo" to go to level "foo.map"). Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(sign text scale rotation duratin x y [z])</div>
+<div class="fn-text">
+Creates a new sign with the given text/scale/rotatation. Duration
+determines how long it lasts, if duration<0 then it lasts forever. The
+last 'z' argument is optional. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-modpill x y kind length resurrecting)</div>
+<div class="fn-text">
+Adds a new modpill at x,y with given kind. Kind must be one of the
+'*mod-' varibles, see below, and determines the effect of the pill.
+Length determines how long
+it's effect lasts and resurrecting how long until the modpill
+reappears on the map after it has been taken. Use resurrecting = 0 if
+the pill can only be used once. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(forcefield x y z dx dy dz height allow)</div>
+<div class="fn-text">
+Returns a forcefield extending from x,y,z to dx,dy,dz. The 'z'
+arguments are given relative to the ground position. Height gives the
+height of the forcefield and allow is the sum of one of *ff-nothing*,
+*ff-kill1*, *ff-bounce1* and  *ff-nothing*,
+*ff-kill2*, *ff-bounce2*. This determines if nothing happens, if the
+player is killed or bounces depending on in which direction he tries
+to pass the force field. The flags *ff-kill* and *ff-bounce* are
+shortcuts for (+ *ff-kill1* *ff-kill2*) and (+ *ff-kill1* *ff-kill2*)
+respectively.
+<p/>
+Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(switch x y on off)</div>
+<div class="fn-text">
+Creates a switch at x/y with the two function 'on' and 'off' which are
+called when the player toggles the switch to be on or off.
+Returns an 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(pipe x0 y0 z0 x1 y1 z1 radius)</div>
+<div class="fn-text">
+Creates a pipe going from x0/y0/z0 to x1/y1/z1 with the given radius. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(pipe-connector x0 y0 z0 radius)</div>
+<div class="fn-text">
+Creates a new pipe connector. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(diamond x y [z])</div>
+<div class="fn-text">
+Creates a new diamond 'save point'. Returns an 'animated' object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(fountain x y z rand-speed radius strength)</div>
+<div class="fn-text">
+Creates a new fountain object. Returns an 'animated' object
+</div>
+</div>
+
+<h2> Operations on animated objects </h2>
+
+These functions can be applied to most animated objects returned by
+the functions above in order to change their appearance, properties or
+even trigger callbacks on specific events.
+
+<div class="fn">
+<div class="fn-proto">(set-position obj x y [z])</div>
+<div class="fn-text">
+Sets the position of specified 'animated' object. Accepts optional z-coordinate.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-position-x obj)</div>
+<div class="fn-text">
+Gets the X position of the specified 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-position-y obj)</div>
+<div class="fn-text">
+Gets the Y position of the specified 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-position-z obj)</div>
+<div class="fn-text">
+Gets the Z position of the specified 'animated' object.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-modtime obj mod time)</div>
+<div class="fn-text">
+Alters time left for object (must be a ball or a pill) to have the
+given modification. 'mod' is here one of the '*mod-' predefined
+variables, see below.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-accelleration obj accel)</div>
+<div class="fn-text">
+Sets acceleration of given computer controlled ball object (mr black
+or baby) to make it easer/harder for the player.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-horizon obj horizon)</div>
+<div class="fn-text">
+Sets AI horizon of given computer controlled ball object (mr black or
+baby). The ball will not chase the player if he is beyond this distance.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-primary-color obj red green blue alpha)</div>
+<div class="fn-text">
+Sets the primary colour of the object from the given colour
+values. Values must be in the range 0.0 to 1.0. The actual drawing
+effect depends on what type of object is beeing drawn but most objects
+use this colour in their display.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-secondary-color obj red green blue alpha)</div>
+<div class="fn-text">
+Sets the secondary colour of the object from the given colour
+values. Values must be in the range 0.0 to 1.0. The actual drawing
+effect depends on what type of object is beeing drawn. Not all objects
+use this colour in their display.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-specular-color obj red green blue alpha)</div>
+<div class="fn-text">
+Sets the specular (aka. "highlight") colour of the object from the given colour
+values. Values must be in the range 0.0 to 1.0. The actual drawing
+effect depends on what type of object is beeing drawn. Not all objects
+use this colour in their display.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-flag obj flag state)</div>
+<div class="fn-text">
+If state is true, then the given flag will be turned on for the
+object. Otherwise it will be turned off. The available flags and the
+results of the flags are dependent on the actual object used.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-wind pipe forward backward)</div>
+<div class="fn-text">
+Sets the forward/backward wind of a pipe object. Can be used to force
+the player to travel in one specific direction (or ease travells in
+both) when entering a pipe. If forward is positive then it will be
+easier to travell in the forward direction. If it is negative this
+direction will be harder to travel in. If backwards is positive then it
+will be <b>harder</b> to travel in that direction and if negative then
+it will be easier.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-speed obj speed)</div>
+<div class="fn-text">
+Alters the speed of platforms or spikes.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-texture obj texture-name)</div>
+<div class="fn-text">
+Attempts to set the texture of an 'animated' object from the file with
+the given name. Actual result depends on the object and not all
+objects allows the use of a texture.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-fountain-strength obj str)</div>
+<div class="fn-text">
+Sets the strength of a fountain object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-fountain-velocity obj vx vy vz)</div>
+<div class="fn-text">
+Sets the velcity of outgoing droplets from a fountain object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(score-on-death obj points)</div>
+<div class="fn-text">
+Score to award player when this object dies. Can be used to customize
+how many points to be awarded when a ball/baby/bird/cactus/player
+etc. dies. Passing the player argument as the object here can increse
+or decrease the players points when he dies.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(time-on-death obj time)</div>
+<div class="fn-text">
+Bonus time to award player when this object dies. Can be used to customize
+how much time to be awarded when a ball/baby/bird/cactus/player
+etc. dies. Passing the player argument as the object here can increse
+or decrease the players time when he dies.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(default-on-death kind points time)</div>
+<div class="fn-text">
+Sets the default score/time to be awarded when objects of the given
+kind dies. The affects only objects created <b> after </b> this
+function call. 'kind' must here be one of the '*score-' variables.
+</div>
+</div>
+
+<h2> Creating hook objects </h2>
+These objects make a continous change to the game but is generally not
+drawn by themselves.
+
+<div class="fn">
+<div class="fn-proto">(add-cyclic-platform x1 y1 x2 y2 low high offset
+speed)</div>
+<div class="fn-text">
+Creates a new cyclic platform which modiies the map in the region
+x1/y1 to x2/y2. This platform moves between the height value 'low' and
+'high' with the given speed and time offset. Use offset to have
+platform which move out of sync (harder for the player to pass).
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(animator length position direction A B repeat
+function)</div>
+<div class="fn-text">
+These can be quite difficult to understand, so we shall describe these
+like this:
+<p/>
+Imagine a slider together with a marker you can position anywhere on
+the slider. The slider has numbers on it, 
+on the left end it starts with some number value A and ends with value
+B on the right end. 
+Furthermore, the marker on the slider can have a speed moving it right (positive speed) or left (negative speed). 
+When the marker hits one of the left/right ends it can either: 
+<p/>
+<ol>
+    <li> Bounce  </li>
+    <li> Wrap over. ie. continue from the other end  </li>
+    <li> Stop  </li>
+    <li> Remove the slider and everything. </li>
+</ol>
+Now, connected to this virtual slider is a function which is called
+whenever the marker has moved with the *value* which the marker
+currently points at. 
+<p/>
+Ok, so that is how an "animator" object works. The slider analogy is
+just for the explanation, nothing is displayed in the game, but
+you can use it to make callbacks which alters the gameworld. For
+some examples of what you can do with it see lv8.scm.    
+
+The behaviour can be the sum of  
+*animator-0-{remove,stop,bounce,wrap}*  and  
+*animator-1-{remove,stop,bounce,wrap}*  or simply  
+*animator-{remove,stop,bounce,wrap}* which has the same effect on both sides.
+</div>
+</div>
+
+<h2> Operations on hook objects </h2>
+Since all animated objects are also hook objects these functions can
+be applied to most of the animated objects also. Eg, it is possible to
+"turn off" a mr-black ball, or a switch etc.
+
+<div class="fn">
+<div class="fn-proto">(set-onoff obj state)</div>
+<div class="fn-text">
+Turns the given hook object on or off depending on if the given state
+is true or not.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(animator-value animator)</div>
+<div class="fn-text">
+Returns the current value of animator object
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-animator-direction animator direction)</div>
+<div class="fn-text">
+Sets the speed and direction of the animator.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-animator-position animator direction)</div>
+<div class="fn-text">
+Sets the position (0 .. length) for the position of the slider. This
+is <b>not</b> the same as the value of the animator unless A/B happens
+to be 0/1.
+</div>
+</div>
+
+<h2> Global operations </h2>
+These functions modify or read the global state of the game. Such as
+turning on fog, or making it night etc.
+
+<div class="fn">
+<div class="fn-proto">(day)</div>
+<div class="fn-text">
+Turns on the global light (day light).
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(night)</div>
+<div class="fn-text">
+Turns off the global light, making it night time.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(fog [strength])</div>
+<div class="fn-text">
+Turns on fog in the game, with the given strength going from 0 to 2.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(fog-color r g b)</div>
+<div class="fn-text">
+Gives the red/green/blue colour of the fog.
+</div>
+</div>
+
+
+<div class="fn">
+<div class="fn-proto">(set-bonus-level next-level)</div>
+<div class="fn-text">
+Makes this level a "bonus level". This means that the level is exited
+when the player dies and no life is lost. 
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-track-name name)</div>
+<div class="fn-text">
+Gives the name of this level (aka. "track").
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-author name)</div>
+<div class="fn-text">
+Gives the name of the author for this track.
+</div>
+</div>
+
+
+<div class="fn">
+<div class="fn-proto">(start-time time)</div>
+<div class="fn-text">
+Gives the starting time, in seconds, for this track.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-time time)</div>
+<div class="fn-text">
+Sets the time left for the player (regardless of his current time).
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-time)</div>
+<div class="fn-text">
+Returns how much time the player has left.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-time time)</div>
+<div class="fn-text">
+Adds the given amount of time to the player.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-score score)</div>
+<div class="fn-text">
+Sets the score of the player.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-score)</div>
+<div class="fn-text">
+Returns the current score of the player.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(add-score score)</div>
+<div class="fn-text">
+Adds the given score to the player.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-start-position x y)</div>
+<div class="fn-text">
+Sets the players starting position.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(snow strength)</div>
+<div class="fn-text">
+Turns on snow. Strength must be in the range 0.0 to 1.0
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(rain strength)</div>
+<div class="fn-text">
+Turns on rain. Strength must be in the range 0.0 to 1.0
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(difficulty)</div>
+<div class="fn-text">
+Returns the difficulty we are currently playing on as an integer in
+the range 0 (easy) to 2 (hard). See also the variables *easy*, *medium* and *hard*
+which has these values.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(use-grid v)</div>
+<div class="fn-text">
+Turns the grid on/off globally over the whole map.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(map-is-transparent state)</div>
+<div class="fn-text">
+Turns on/off rendering of transparancy on the whole map. This uses
+more CPU power and is turned off by default.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(jump strength)</div>
+<div class="fn-text">
+Scales the maximum jump height of the player. If zero than the player
+cannot jump, if eg. 2 then he can jump twice as high as normally.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(scale-oxygen strength)</div>
+<div class="fn-text">
+Scales how long player can be under water.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(play-effect name)</div>
+<div class="fn-text">
+Plays the sound effect in the given file name.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(camera-angle xy z)</div>
+<div class="fn-text">
+Sets the cameras position as a rotation in the xy plane and in the
+z plane.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(clear-song-preferences)</div>
+<div class="fn-text">
+Removes all old music preferences.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(force-next-song)</div>
+<div class="fn-text">
+Force a reload of songs.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-song-preference song weight)</div>
+<div class="fn-text">
+Sets the weight for playing the given song.
+</div>
+</div>
+
+<h2> Callbacks </h2>
+General callback (hook) functions.
+
+<div class="fn">
+<div class="fn-proto">(trigger x y radius function)</div>
+<div class="fn-text">
+Call the given function each tick when the player is within given radius from
+x/y. 
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(smart-trigger x y entering-fn leaving-fn)</div>
+<div class="fn-text">
+Call the given functions when the player enters or leaves the given
+radius from the given position.
+</div>
+</div>
+
+
+<div class="fn">
+<div class="fn-proto">(on-event event subject function)</div>
+<div class="fn-text">
+Register a function to be called when the given event occurs for
+the given object. Callback must accept two arguments (subject and
+object). Subject must be of type 'animated' or of type 'gameHook',
+object is only used for some events (giving eg. who killed the
+subject) and is otherwise false.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(get-event-callback)</div>
+<div class="fn-text">
+Returns the callback currently registerd to the given object and event.
+</div>
+</div>
+
+<h2> Map operations </h2>
+These operations makes changes to the terrain of the level and can be
+used to create custom events on the map.
+
+<div class="fn">
+<div class="fn-proto">(set-cell-flag x0 y0 x1 y1 flag state)</div>
+<div class="fn-text">
+Turns on/off the given flag in all cells in the region x0/y0 to
+x1/y1. Flag must here be one of the '*cell-' flags. See the list of
+built-in variables for a list of suitable flags to modify.
+<p/>
+Can be used to eg. dynamically change a region of the map to be icy,
+or an acid etc.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-cell-velocity x0 y0 x1 y1 vx vy)</div>
+<div class="fn-text">
+Modifies the velociy of the given cells. This is used primarily by
+cells which have the "track" property set.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-cell-heights x0 y0 x1 y1 h0 h1 h2 h3 h4)</div>
+<div class="fn-text">
+Modifies the height of the given cells. The heights are given as five
+values corresponding to the four corners and the center point of the cell.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-cell-water-heights x0 y0 x1 y1 h0 h1 h2 h3 h4)</div>
+<div class="fn-text">
+Modifies the water height of the given cells. If the water height is
+higher than the normal height of a cell then it is under water. 
+The heights are given as five
+values corresponding to the four corners and the center point of the cell.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-cell-colors x0 y0 x1 y1 corner r g b a)</div>
+<div class="fn-text">
+Modifies the color of <b> one </b> corner of each of the given
+cells. The corner modified is given by 'corner' and corresponds to one
+of the '*cell-' flags with a direction (eg. *cell-ne*). 
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(set-cell-wall-colors x0 y0 x1 y1 corner r g b a)</div>
+<div class="fn-text">
+Modifies the wall color of <b> one </b> corner of each of the given
+cells. The corner modified is given by 'corner' and corresponds to one
+of the '*cell-' flags with a direction (eg. *cell-ne*). 
+</div>
+</div>
+
+<h2> Constants </h2>
+These functions modify or read the global state of the game. Such as
+turning on fog, or making it night etc.
+
+
+<div class="fn">
+<div class="fn-proto">*mod-speed* *mod-jump* *mod-spike* *mod-glass*
+*mod-dizzy* *mod-frozen* *mod-float* *mod-extra-life* *mod-large*
+*mod-small* *mod-nitro* </div>
+<div class="fn-text">
+Specifices modifications to be applied to a ball or to a modpill.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*easy* *normal* *hard*</div>
+<div class="fn-text">
+Difficulty levels returned by the (difficulty) function.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*ff-nothing* *ff-kill1* *ff-bounce1* *ff-kill2*
+*ff-bounce2* *ff-kill* *ff-bounce* </div>
+<div class="fn-text">
+Specifies the behaviour of forcefields when moving through them in
+direction 1 or direction 2. Use eg. (+ *ff-kill1* *ff-bounce2*) to die
+when moving in direction 1 and bounce when moving in direction 2.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*soft-enter* *soft-exit*</div>
+<div class="fn-text">
+Flags to be given to pipes to make it easier to enter/exit them.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*cell-ice* *cell-acid* *cell-sand* *cell-kill*
+*cell-trampoline* *cell-nogrid* *cell-track*</div>
+<div class="fn-text">
+Flags that can be given to cells modifying the terrain on them. 
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*animator-0-remove* *animator-0-stop*
+*animator-0-bounce* *animator-0-wrap* *animator-1-remove* *animator-1-stop*
+*animator-1-bounce* *animator-1-wrap* *animator-remove* *animator-stop*
+*animator-bounce* *animator-wrap*</div>
+<div class="fn-text">
+Specify the behaviour of an animator objects movement based on a sum
+of these values.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*cell-ne* *cell-nw* *cell-se* *cell-sw*
+*cell-center*</div>
+<div class="fn-text">
+Gives the different corners of a cell.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*bird-constant-height*</div>
+<div class="fn-text">
+If this flag is set to true for a bird then it will always fly at the
+same height (not following the terrain). 
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*death* *spawn* *tick*</div>
+<div class="fn-text">
+Events for which it is possible to trigger callbacks on most animated
+objects. For now only the *death* events are working.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">*score-player* *score-black* *score-baby*
+*score-bird* *score-cactus* *score-flag* </div>
+<div class="fn-text">
+Specifies a type of animated object to be used with the
+default-on-death function.
+</div>
+</div>
+
+
+</div>
+</body>
+</html>

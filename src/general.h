@@ -27,7 +27,7 @@
 #include <time.h>
 #include <iterator>
 #include <sys/time.h>
-#include "../gettext.h"
+#include <libintl.h>
 #define _(String) gettext(String)
 
 #define GL_GLEXT_PROTOTYPES

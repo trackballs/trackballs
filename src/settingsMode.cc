@@ -38,18 +38,12 @@ using namespace std;
 SettingsMode *SettingsMode::settingsMode;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
-extern int screenResolutions[4][2], nScreenResolutions;
+extern int screenResolutions[5][2], nScreenResolutions;
 extern void changeScreenResolution();
 
 void SettingsMode::init() {
   char str[256];
   int i;
-
-  /*
-  sprintf(str,"%s/images/gamesettings.png",SHARE_DIR);
-  title=IMG_Load(str);
-  if(!title) { printf(_("Error: Failed to load %s\n"),str); exit(0); }
-  */
 
   settingsMode = new SettingsMode();
 }

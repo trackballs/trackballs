@@ -44,7 +44,7 @@ void HelpMode::init() {
     snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
     if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
+      printf("Error: failed to load %s\n", str);
       exit(0);
     }
   }
@@ -59,7 +59,7 @@ void HelpMode::activated() {
     snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
     if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
+      printf("Error: failed to load %s\n", str);
       exit(0);
     }
   }
@@ -78,7 +78,7 @@ void HelpMode::activated() {
     snprintf(str, sizeof(str), "%s/images/help0_1024.png", SHARE_DIR);
   page0 = IMG_Load(str);
   if (!page0) {
-    printf(_("Error: Failed to load %s\n"), str);
+    printf(_("Error: failed to load %s\n"), str);
     exit(0);
   }
   p0Texture = LoadTexture(page0, texcoord);
@@ -94,7 +94,7 @@ void HelpMode::activated() {
     snprintf(str, sizeof(str), "%s/images/help1_1024.png", SHARE_DIR);
   page1 = IMG_Load(str);
   if (!page1) {
-    printf(_("Error: Failed to load %s\n"), str);
+    printf(_("Error: failed to load %s\n"), str);
     exit(0);
   }
   p1Texture = LoadTexture(page1, texcoord);
@@ -181,7 +181,7 @@ void HelpMode::display() {
   Leave2DMode();
 
   if (page == 2) {
-    const char *text[21][2] = {
+    char *text[21][2] = {
         {_("Your marble:"), _("Steer this with your mouse, numpad or arrows. ")},
         {" ", _("Left mouse or spacebar is jump.")},
         {" ", _("Shift gives top speed when using keyboard.")},

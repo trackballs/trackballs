@@ -64,20 +64,29 @@ Player::Player(Gamer *gamer) : Ball() {
 
   lastJoyX = lastJoyY = 0;
   setReflectivity(0.4, 0);
+
+  scoreOnDeath = Game::defaultScores[SCORE_PLAYER][0];
+  timeOnDeath = Game::defaultScores[SCORE_PLAYER][1];
 }
+
 Player::~Player() {}
 void Player::draw() {
   if (!playing) return;
   Ball::draw();
 }
 void Player::tick(Real t) {
-  double dx = 0.0, dy = 0.0;
+  double dx, dy;
   int superAccelerate = 0;
   static time_t lastTick = 0;
+
+  /* Never let us drop below 0 points, it just looks silly */
+  if (score < 0) score = 0;
 
   if (!Game::current) return;
   if (!playing) return;
 
+  dx = 0.0;
+  dy = 0.0;
   Map *map = Game::current->map;
   health += t * 0.4;
   if (health > 1.0) health = 1.0;
@@ -94,17 +103,19 @@ void Player::tick(Real t) {
     if (Settings::settings->sandbox == 0)
       die(DIE_TIMEOUT);
     else {
+      /* DEPRACATED: This is instead handled by animated::die and the
+         scoreOnDeath/timeOnDeath variables */
+      /*
       score -= 100;
-      if (score < 0) score = 0;
-      timeLeft += 60;
+      if(score < 0) score=0;
+      timeLeft += 60;*/
     }
     return;
   }
 
   /* Check for oxygen by seeing if we are below water level. However:
-         when we are in a pipe we might be below ground and thus below the water level even
-     though
-         it's not supposed to be water here.
+     when we are in a pipe we might be below ground and thus below the water level even though
+     it's not supposed to be water here.
   */
   if (map->getWaterHeight(position[0], position[1]) > position[2] + radius * 0.75 &&
       (!(inPipe && position[2] < map->getHeight(position[0], position[1])))) {
@@ -304,8 +315,9 @@ void Player::jump() {
   }
 }
 void Player::die(int how) {
-  Map *map = Game::current->map;
+  Ball::die(how);
 
+  Map *map = Game::current->map;
   if (hasWon) return;
   if (!playing) return;
   if (Game::current->map->isBonus) {
@@ -397,5 +409,4 @@ Boolean Player::crash(Real speed) {
       modTimeLeft[MOD_GLASS] ? (1.5 * speed) / crashTolerance : speed / crashTolerance;
   setHealth(1.0 - espeed);
   this->Ball::crash(speed);
-  return true;
 }

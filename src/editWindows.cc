@@ -36,9 +36,7 @@
 
 using namespace std;
 
-const char* editModeNames[5] = {
-    "height", "color", "water", "velocity", "lines",
-};
+const char* editModeNames[6] = {"height", "color", "water", "velocity", "lines", "feature"};
 
 EMenuWindow::EMenuWindow() : MyWindow(0, 0, screenWidth, 30) {
   int i;
@@ -333,6 +331,32 @@ void EStatusWindow::draw() {
     glEnd();
     Leave2DMode();
     glLineWidth(1.0);
+  } else if (EditMode::editMode->currentEditMode == EDITMODE_FEATURES) {
+    const char* feature = "";
+    switch (EditMode::editMode->currentFeature) {
+    case FEATURE_SPIKE:
+      feature = "spike";
+      break;
+    case FEATURE_SMALL_HILL:
+      feature = "small hill";
+      break;
+    case FEATURE_MEDIUM_HILL:
+      feature = "medium hill";
+      break;
+    case FEATURE_LARGE_HILL:
+      feature = "large hill";
+      break;
+    case FEATURE_HUGE_HILL:
+      feature = "huge hill";
+      break;
+    case FEATURE_SMALL_SMOOTH:
+      feature = "small smooth";
+      break;
+    case FEATURE_LARGE_SMOOTH:
+      feature = "large smooth";
+      break;
+    }
+    addText_Center(0, fontSize / 2, row1, feature, (col1 + area3x) / 2);
   }
 
   /* Draw area 3, eg. some extra info */

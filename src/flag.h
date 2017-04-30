@@ -32,7 +32,7 @@ class Flag : public Animated {
   virtual void onGet();
 
  protected:
-  int visible, x, y, points;
+  int visible, x, y;
   Real radius;
 };
 

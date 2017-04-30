@@ -26,28 +26,49 @@
 #include "gameHook.h"
 #endif
 
+#define DIE_CRASH 0
+#define DIE_FF 1
+#define DIE_ACID 2
+#define DIE_TIMEOUT 3
+#define DIE_OTHER 4
+
 class Animated : public GameHook {
  public:
   Animated();
 
   virtual ~Animated();
-  virtual void draw();               /**< First drawing pass of object. Only opaque objects. */
-  virtual void draw2();              /**< Draws the second pass (eg. alpha) of object. */
-  virtual void computeBoundingBox(); /**< Recomputes the bounding box of the object. Needed
-                                        after changes in size */
+  /** First drawing pass of object. Only opaque objects. */
+  virtual void draw();
+  /** Draws the second pass (eg. alpha) of object. */
+  virtual void draw2();
+  /** Recomputes the bounding box of the object. Needed after changes in size */
+  virtual void computeBoundingBox();
   void onRemove();
-  int flags; /* General purpose field. Semantics defined by children */
 
-  // Tries to make the current position reasonable (eg. set to height of map etc.)
+  virtual void tick(Real dt);
+  virtual void die(int how);
+
+  /** General purpose field. Semantics defined by children */
+  int flags;
+
+  /** Tries to make the current position reasonable. Eg. set
+      z-position to height of map */
   virtual void has_moved();
 
-  int onScreen; /**< Computed by game::draw if the object appears roughly on the screen or not.
-                   */
-  Coord3d position;       /**< Center position of object */
-  Coord3d boundingBox[2]; /**< Lower/higher coordinate of boundingbox relative to position */
+  /** Computed by game::draw if the object appears roughly on the screen or not. */
+  int onScreen;
+  /** Center position of object */
+  Coord3d position;
+  /** Lower/higher coordinate of boundingbox relative to position */
+  Coord3d boundingBox[2];
 
   GLfloat primaryColor[4], secondaryColor[4], specularColor[4];
   GLuint texture;
+
+  /** Number of points the player is awarded when this object dies */
+  double scoreOnDeath;
+  /** Time modification player is awarded when this object dies */
+  double timeOnDeath;
 };
 
 #endif

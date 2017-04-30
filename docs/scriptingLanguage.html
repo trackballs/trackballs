@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title> Trackballs - Scripting Language </title>
+<link title="Default style" rel="stylesheet" href="default.css" type="text/css">
+</head>
+<body>
+
+<div class="toc">
+<ol>
+<li> <a href="index.html"> Players guide </a> </li>
+<li> <a href="customizing.html"> Creating your own levels </a> </li>
+<li> <a href="mapeditor.html"> Map editor </a> </li>
+<li> <a href="scriptingLanguage.html"> Scripting Language </a> </li>
+<li> <a href="api.html"> API Reference </a> </li>
+<li> <a href="examples.html"> Examples </a> </li>
+</ol>
+</div>
+
+<div class="pagebody">
+<h1> The Scripting Language </h1>
+
+In the <tt>.scm</tt> files of a level the designer can use a powerfull
+scripting language to decide which objects should exist in the game
+and, optionally, even customize how they should behave. Using these
+features it is possible to create very different kind of games.
+<p/>
+
+The scripting language choosen for this is called 
+<a href="http://www.gnu.org/software/guile/guile.html"> Guile </a> and is a
+language developed by <a href="http://www.gnu.org/"> GNU </a> to be
+used for customizing applications. The language is a version of 
+<a href="http://en.wikipedia.org/wiki/Scheme_(programming_language)">
+Scheme </a> and on a first appearance seems to constructed by lots of
+incredibly silly paranthesis (LISP). 
+<p/>
+
+The easiest way to get started with the language is by copying an
+existing .scm file and cusotmize it for your new map. We start by
+taking a look at, for instance, <tt>con1.scm</tt>.
+<p/>
+
+<div class="codeSnippet">
+<tt>
+<pre>
+;;; steep - by Russel Valentine
+
+(set-track-name "Steep")
+(set-author "Russell Valentine")
+
+(start-time 120)
+(set-start-position 253.5 253.5)
+(add-goal 230 228 #f "con2")
+
+(add-flag 248 220 100 1 0.1)
+(add-flag 247 220 100 1 0.1)
+(add-flag 246 220 150 1 0.1)
+
+(add-modpill 254.5 217.5 *mod-jump* 20 0)
+</pre>
+</tt>
+</div>
+
+In this script file we see first a comment, this is any line which
+starts with a ';' and is ignored by the program.
+<p/>
+
+Following this is a number of function calls which use some of the
+built-in functions in trackballs to setup the settings for this level
+and to create objects. The first of these function calls are the
+"set-track-name" function. As you can see all function calls must be
+encapsulated by paranthesis (that's how scheme knows they are
+functions and not variables or values) and this first function expects
+one argument. In this example it is given the argument "Steep" which
+is the name of the level. Similarily the function "set-author" is used
+to tell trackballs whom has created this level. These two pieces of
+information is used in the begining of the level to give proper credit
+to you, the author!
+<p/>
+
+Some other intersting functions you see here is the one to decide how
+much time the player has to complete the level, start-time, expressed
+as seconds,  and where he starts. The later function,
+set-start-position, expects the x and y position for where the player
+starts and the easiest way to decide which coordinate to use is to
+look at the coordinates of a cell in the map editor. Note that this
+function expects a floating point number, so it is possible to very
+precisely decide exactly where in the cell to start.
+<p/>
+
+The next function, add-goal, expresses where the goal for this level
+is placed and expects x/y coordinates again and a true or false value
+if the goal should be horizontal or vertial (use #f or #t) and finally
+the file name of the next level to go to.
+<p/>
+
+The remaining functions, add-flag and add-modpill, are used to create
+some objects in the game. In this case flags which gives points and a
+modpill which makes the player capable of jumping futher. See the 
+<a href="api.html"> API Reference </a> for more information about
+these and other functions.
+<p/>
+
+Apart from a number of built-in function trackballs also includes a
+large number of built-in variables. These variables are typically used
+as constant values to be passed to functions. One example was the
+variable <tt> *mod-jump* </tt> which declared which kind of bonus pill
+was created in the example above. 
+
+<h3> Programming in scheme </h3>
+
+If you want to do more fancy setup in you levels, perhaps selecting
+starting time and position depending on the difficulty settings or
+other customizations, you need to know a little bit of scheme
+programming. If you want to learn how to use scheme properly i would
+recommend reading a 
+<a href="http://www.google.com/search?q=scheme+tutorial"> tutorial
+</a> on using scheme. Otherwise, you can probably just learn as you go
+by examining examples.
+
+<h3> Creating your own variables and functions </h3>
+
+Apart from using the predefined functions and variables in trackballs
+you can create your own. This is good since it allows you to simplify
+the code for doing complex repetetive things. For instance, if you
+want to create an opponent ball with a customized colour you can do so
+by doing:
+<p/>
+
+<pre>
+(define erik (new-mr-black 241.5 245.5))
+(set-primary-color erik 1.0 1.0 0.0)
+</pre>
+<p/>
+
+This would create an opponent "erik" which is yellow. If you want to
+create lots of eriks, you can create a function which does this:
+
+<pre>
+(define new-erik (x y) 
+  (set-primary-color (new-mr-black x y) 
+  1.0 1.0 0.0))
+</pre>
+
+and use this function repeatedly. 
+
+<pre>
+(new-erik 100.0 100.0)
+(new-erik 200.0 100.0)
+(new-erik 200.0 200.0)
+</pre>
+
+Another more usefull way of using functions is to have them as "hooks"
+which get called by the game when different events occur. There exists
+a number of different functions with which you can create a hook which
+calls one of your functions when something happens in the
+game. Depending on on which event you have your function called your
+function may need different number of arguments. For instance, if we
+want to create modpill when an opponent "mr-black" gets killed
+we can do this by first creating a function to be called:
+<pre>
+(define my-modpill-function (subject object)
+  (add-modpill (get-position-x subject) 
+               (get-position-y subject) 
+               *mod-extra-life* 30 -1))
+</pre>
+
+This function accepts one argument, subject, which is the mr-black
+that got killed and another argument which is ignored. It then gets
+the position where he got killed and creates a new "extra life"
+modpill at that position. In order to use this function when different
+opponents gets killed we need to tell Trackballs to use it:
+
+<pre>
+(define erik (new-mr-black 241.5 245.5))
+(set-primary-color erik 1.0 1.0 0.0)
+(on-event *death* erik my-modpill-function)
+</pre>
+
+Congratulations, you now know the basic steps on how to completly
+customize the game. By using your own functions and hooks which plug
+in to different parts of the game (like when objects get killed, or
+the player is close to a switch, or whatever) you can accomplish
+almost anything. Well... atleast that's the general idea. Go ahead now
+and read the <a href="api.html"> API Reference </a> to see which
+functions, variables and hooks are available to you and take a look at
+the <a href="examples.html"> Examples </a> to get you started. If you
+have any great ideas for extra hooks or functions that are needed in
+the game please post a request at the <a
+href="http://sourceforge.net/forum/forum.php?forum_id=252194"> forums
+</a> and we'll see what we can do.
+
+</div>
+</body>
+</html>

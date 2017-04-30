@@ -10,9 +10,11 @@ Ari Pollak		Debian packaging, security & build patches
 
 Translators
 -----------
-Mathias Broxvall        English and Swedish Translation
-Francesco Guatieri      Italian Translation
-Guillaume Bedot         French Translation 
+English Translation	Mathias Broxvall        
+Swedish Translation	Mathias Broxvall        
+Italian Translation	Francesco Guatieri      
+French Translation 	Guillaume Bedot         
+Slovak Translation	Jozef Riha <jose1711@gmail.com>
 
 Fonts
 -----
@@ -21,7 +23,7 @@ The single truetype font which is used is from UCS Outline Fonts
 (http://www.nongnu.org/freefont/) and is GPL'ed.
 
 The textured font which are contained as RGB images was created by 
-Yannick Perret using GPL'ed GIMP-font's.
+Yannick Perret using GPL'ed GIMP-fonts.
 
 
 Music
@@ -31,6 +33,9 @@ tb_design.ogg aka. "Life by Design", by Dietrich Radel
 tg_genesis.ogg aka. "Genesis (In The Beginning)", by Dietrich Radel
 tb_hrluebke.ogg, by M3 (Marco Göbel <goebel29@web.de>)
 tb_plinkeplanke.ogg, by M3 (Marco Göbel <goebel29@web.de>)
+tb_schizophrenia.ogg, by Attila Boros (Attila Boros <wraith13@gmail.com>)
+tb_sorrow.ogg, by Attila Boros (Attila Boros <wraith13@gmail.com>)
+
 
 Images
 ------

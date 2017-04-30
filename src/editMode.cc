@@ -117,6 +117,7 @@ enum {
   editModeWater,
   editModeVelocity,
   editModeNoLines,
+  editModeFeatures,
   nEditModes
 };
 
@@ -143,9 +144,10 @@ EditMode* EditMode::editMode;
 
 void EditMode::init() {
   char* cMenuNames_i18n[N_SUBMENUS] = {
-      /* TRANSLATORS: This is a list of all the menus in the map editor. */
-      _("File"),    _("Edit"), _("Color"),  _("Flags"),
-      _("Feature"), _("Move"), _("Window"), _("View"),
+      /* TRANSLATORS: This is a list of all the submenus in the map
+          editor, if the initial character is * or / then that character
+          must be perserved as it is. */
+      _("New"), _("Open..."), _("Close"), _("Save"), _("Exit"), _("Test level"), NULL,
   };
   memcpy(cMenuNames, cMenuNames_i18n, sizeof(cMenuNames));
 
@@ -309,7 +311,7 @@ void EditMode::saveMap() {
            levelname);
   if (pathIsLink(str)) {
     fprintf(stderr,
-            _("Error, %s/.trackballs/levels%s.map is a symbolic link. Cannot save map\n"),
+            _("Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"),
             getenv("HOME"), levelname);
     return;
   }
@@ -402,7 +404,49 @@ void EditMode::display() {
       /* Otherwise, if we have a marked region then display footprint over it */
       for (x0 = min(markX, x); x0 <= max(markX, x); x0++)
         for (y0 = min(markY, y); y0 <= max(markY, y); y0++) map->drawFootprint(x0, y0, 0);
-    } else
+    } else if (currentEditMode == editModeFeatures) {
+      /* We have currently in the "features" edit mode, display foot
+         print of selected feature */
+      int footprintX, footprintY;
+      switch (currentFeature) {
+      case FEATURE_SPIKE:
+        footprintX = 2;
+        footprintY = 2;
+        break;
+      case FEATURE_SMALL_HILL:
+        footprintX = 3;
+        footprintY = 3;
+        break;
+      case FEATURE_MEDIUM_HILL:
+        footprintX = 5;
+        footprintY = 5;
+        break;
+      case FEATURE_LARGE_HILL:
+        footprintX = 7;
+        footprintY = 7;
+        break;
+      case FEATURE_HUGE_HILL:
+        footprintX = 11;
+        footprintY = 11;
+        break;
+      case FEATURE_SMALL_SMOOTH:
+        footprintX = 5;
+        footprintY = 5;
+        break;
+      case FEATURE_LARGE_SMOOTH:
+        footprintX = 11;
+        footprintY = 11;
+        break;
+      default:
+        footprintX = 1;
+        footprintY = 1;
+      }
+      for (x0 = x - footprintX / 2; x0 < x + (footprintX + 1) / 2; x0++)
+        for (y0 = y - footprintY / 2; y0 < y + (footprintY + 1) / 2; y0++)
+          map->drawFootprint(x0, y0, 0);
+    }
+    /* Finally, if no other case then just draw position of cursor */
+    else
       map->drawFootprint(x, y, 0);
   }
 
@@ -643,8 +687,15 @@ void EditMode::doCommand(int command) {
       for (y1 = yLow; y1 <= yHigh; y1++) { map->cell(x1, y1).texture = newTexture; }
   } break;
 
-  case FEATURE_SMALL_HILL: /* ... */
-    /* TODO. Not implemented yet */
+  case FEATURE_SPIKE:
+  case FEATURE_SMALL_HILL:
+  case FEATURE_MEDIUM_HILL:
+  case FEATURE_LARGE_HILL:
+  case FEATURE_HUGE_HILL:
+  case FEATURE_SMALL_SMOOTH:
+  case FEATURE_LARGE_SMOOTH:
+    currentEditMode = editModeFeatures;
+    currentFeature = command;
     break;
 
   case MOVE_UP:
@@ -692,7 +743,7 @@ void EditMode::doCommand(int command) {
 
   default:
     /* TODO. Not implemented yet? */
-    printf("Command %d not yet implemented\n");
+    printf("Command %d not yet implemented\n", command);
     break;
   }
 }
@@ -823,6 +874,60 @@ void EditMode::doCellAction(int code, int direction) {
         Cell& c2 = map->cell(x1, y1);
         c2.flags = (c2.flags & ~flag) | onoff;
       }
+  } break;
+
+  case editModeFeatures: {
+    switch (currentFeature) {
+    case FEATURE_SPIKE:
+      map->cell(x, y).heights[Cell::SOUTH + Cell::WEST] += shift ? -raise : raise;
+      map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += shift ? -raise : raise;
+      map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += shift ? -raise : raise;
+      map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] += shift ? -raise : raise;
+      break;
+    case FEATURE_SMALL_HILL:
+      map->cell(x, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 1.2;
+      for (i = 0; i < 4; i++) map->cell(x, y).heights[i] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y + 1).heights[Cell::SOUTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y + 1).heights[Cell::SOUTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y - 1).heights[Cell::NORTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y).heights[Cell::SOUTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y).heights[Cell::NORTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y).heights[Cell::NORTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y + 1).heights[Cell::SOUTH + Cell::WEST] +=
+          (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y + 1).heights[Cell::SOUTH + Cell::EAST] +=
+          (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y - 1).heights[Cell::NORTH + Cell::WEST] +=
+          (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] +=
+          (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
+      map->cell(x - 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
+      map->cell(x + 1, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
+      map->cell(x - 1, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
+      map->cell(x + 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
+      map->cell(x - 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
+      map->cell(x, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
+      map->cell(x, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
+      break;
+    case FEATURE_MEDIUM_HILL:
+      makeHill(2);
+      break;
+    case FEATURE_LARGE_HILL:
+      makeHill(3);
+      break;
+    case FEATURE_HUGE_HILL:
+      makeHill(5);
+      break;
+    case FEATURE_SMALL_SMOOTH:
+      doSmooth(2);
+      break;
+    case FEATURE_LARGE_SMOOTH:
+      doSmooth(5);
+      break;
+    }
   } break;
   }
 }
