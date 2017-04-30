@@ -106,7 +106,7 @@ int pathIsLink(char *path); /** Checks if the given path points to a link */
    2. In ./
    3. In configured share directory
 */
-char *locateFile(char *basename, char mode);
+const char *locateFile(char *basename, char mode);
 
 /* Sometimes these functions are already defined. If so, it is
    safe to remove them from below. */

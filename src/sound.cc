@@ -154,7 +154,7 @@ void playEffect(int e, float vol) {
 }
 void playEffect(int e) { playEffect(e, 1.); }
 
-void playEffect(char *name) {
+void playEffect(const char *name) {
   if (mute) return;
   for (int e = 0; e < N_EFFECTS; e++)
     if (effects[e] && strcmp(wavs[e], name) == 0) {
@@ -162,7 +162,7 @@ void playEffect(char *name) {
       return;
     }
 }
-void playEffect(char *name, float vol) {
+void playEffect(const char *name, float vol) {
   if (mute) return;
   for (int e = 0; e < N_EFFECTS; e++)
     if (effects[e] && strcmp(wavs[e], name) == 0) {

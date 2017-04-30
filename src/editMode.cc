@@ -54,7 +54,7 @@ char* cMenuEntries[N_SUBMENUS][MAX_MENU_ENTRIES];
    wins or
    the lowest numbered if none of them are currently open.
 */
-char* cKeyShortcuts[N_SUBMENUS] = {
+const char* cKeyShortcuts[N_SUBMENUS] = {
     /* File */
     "***sq*",
     /* Edit */
@@ -149,7 +149,7 @@ void EditMode::init() {
   };
   memcpy(cMenuNames, cMenuNames_i18n, sizeof(cMenuNames));
 
-  char* cMenuEntries_i18n[N_SUBMENUS][MAX_MENU_ENTRIES] = {
+  const char* cMenuEntries_i18n[N_SUBMENUS][MAX_MENU_ENTRIES] = {
       /* TRANSLATORS: This is a list of all the submenus in the map editor, if the initial
          character is * or / it must be perserved as it is. */
       {_("New"), _("Open"), _("Close"), _("Save"), _("Exit"), _("Test level"), NULL},

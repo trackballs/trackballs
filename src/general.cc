@@ -91,7 +91,7 @@ int pathIsLink(char *path) {
 }
 
 /* Note. this function is currently not used anywhere */
-char *locateFile(char *basename, char *mode) {
+const char *locateFile(char *basename, char *mode) {
   FILE *fp;
   static char str[512];
   char *home = getenv("HOME");

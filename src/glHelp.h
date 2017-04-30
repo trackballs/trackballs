@@ -43,7 +43,7 @@ void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d);
 int createSnapshot();
 // displays a semitransparent centered sign with two text rows */
 void message(char *row1, char *row2);
-void multiMessage(int nlines, char *left[], char *right[]);
+void multiMessage(int nlines, const char *left[], const char *right[]);
 void displayFrameRate();
 
 void assign(const float[3], float[3]);
@@ -77,11 +77,11 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0
 
 SDL_Surface *getSurfaceFromRGB(char *);
 int loadTexture(
-    char *name,
+    const char *name,
     Font *font = NULL);  // preloads a texture from file and returns position in textures array
 int bindTexture(
-    char *name);      // binds texture. Also returns index in textures array used for this.
-int resetTextures();  // Reloads all textures
+    const char *name);  // binds texture. Also returns index in textures array used for this.
+int resetTextures();    // Reloads all textures
 
 void createForcefieldTextures(); /** Create a set of special textures for forcefields that are
                                     animated over time. */

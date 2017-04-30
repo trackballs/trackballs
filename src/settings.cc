@@ -31,8 +31,9 @@ using namespace std;
    menu. The name of languages should appear in the respective native
    language. Eg. the Swedish language is written as 'Svenska'
 */
-char *Settings::languageCodes[5] = {"", "sv_SE", "de_DE", "it_IT", "fr_FR"};
-char *Settings::languageNames[5] = {"Default", "Svenska", "Deutsch", "Italiano", "Francais"};
+const char *Settings::languageCodes[5] = {"", "sv_SE", "de_DE", "it_IT", "fr_FR"};
+const char *Settings::languageNames[5] = {"Default", "Svenska", "Deutsch", "Italiano",
+                                          "Francais"};
 int Settings::nLanguages = 5;
 
 Settings *Settings::settings;

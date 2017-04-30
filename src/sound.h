@@ -27,8 +27,8 @@ void soundIdle();
 void playEffect(int, float vol);
 void playEffect(int);
 void volumeChanged();
-void playEffect(char *name);
-void playEffect(char *name, float vol);
+void playEffect(const char *name);
+void playEffect(const char *name, float vol);
 
 #define SFX_PLAYER_DIES "die.wav"  // 0
 #define SFX_START "start.wav"      // 1

@@ -36,7 +36,7 @@
 
 using namespace std;
 
-char* editModeNames[5] = {
+const char* editModeNames[5] = {
     "height", "color", "water", "velocity", "lines",
 };
 

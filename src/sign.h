@@ -27,8 +27,8 @@
 
 class Sign : public Animated {
  public:
-  Sign(char *text, Real life, Real scale, Real rotation, Coord3d pos);
-  void mkTexture(char *);
+  Sign(const char *text, Real life, Real scale, Real rotation, Coord3d pos);
+  void mkTexture(const char *);
   void draw();
   void draw2();
   void tick(Real);

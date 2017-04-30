@@ -177,7 +177,7 @@ void MainMode::display() {
     Game::current->draw();
     if (map) map->draw(1, 1, (int)map->startPosition[0], (int)map->startPosition[1]);
     {
-      char *lp[3], *rp[3];
+      const char *lp[3], *rp[3];
       lp[0] = _("Track:");
       rp[0] = Game::current->map->mapname;
       lp[1] = _("Author:");
@@ -610,8 +610,8 @@ void MainMode::levelComplete() {
 void MainMode::showBonus() {
   char left[16][256];
   char right[16][256];
-  char *left_pointers[16];
-  char *right_pointers[16];
+  const char *left_pointers[16];
+  const char *right_pointers[16];
   int i, difficulty = Settings::settings->difficulty;
   Player *player = Game::current->player1;
 

@@ -109,7 +109,7 @@
 
 extern char *cMenuNames[N_SUBMENUS];
 extern char *cMenuEntries[N_SUBMENUS][MAX_MENU_ENTRIES];
-extern char *cKeyShortcuts[N_SUBMENUS];
+extern const char *cKeyShortcuts[N_SUBMENUS];
 
 /* Converts between SUBMENU id's and highlight codes */
 #define CODE_FROM_MENU(x) ((x) + 1)

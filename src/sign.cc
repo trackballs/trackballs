@@ -26,7 +26,7 @@
 
 using namespace std;
 
-Sign::Sign(char *string, Real l, Real s, Real r, Coord3d pos) {
+Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
   assign(pos, position);
   if (l <= 0.0) l = 1e10;
   life = l;
@@ -51,7 +51,7 @@ Sign::Sign(char *string, Real l, Real s, Real r, Coord3d pos) {
   mkTexture(string);
 }
 
-void Sign::mkTexture(char *string) {
+void Sign::mkTexture(const char *string) {
   SDL_Surface *text;
   SDL_Color fgColor = {255, 255, 255};
   GLfloat texcoord[4];

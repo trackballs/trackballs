@@ -396,7 +396,7 @@ void message(char *A, char *B) {
                              0.5, 1.0, 0.2, 1.0);
 }
 
-void multiMessage(int nlines, char *left[], char *right[]) {
+void multiMessage(int nlines, const char *left[], const char *right[]) {
   int w, h, total_height, width, h_now;
   int i;
   int size = 16;
@@ -480,11 +480,11 @@ SDL_Surface *getSurfaceFromRGB(char *fullPath) {
 /** Loads a texture from file and returns a reference to it.
     It is safe to load the same texture multiple times since the results are cached
 */
-int loadTexture(char *name, Font *font) {
+int loadTexture(const char *name, Font *font) {
   GLfloat texCoord[4];
   char str[256];
   SDL_Surface *surface;
-  char *tempStr;
+  const char *tempStr;
   int i;
 
   /* Check in cache if texture already loaded */
@@ -689,7 +689,7 @@ void regenerateSphereDisplaylists() {
 
 #define FRAME 50
 
-int bindTexture(char *name) {
+int bindTexture(const char *name) {
   int i;
   for (i = 0; i < numTextures; i++)
     if (strcmp(name, textureNames[i]) == 0) {
@@ -707,7 +707,7 @@ int resetTextures() {
   char str[256];
   SDL_Surface *surface;
   int i;
-  char *tempStr;
+  const char *tempStr;
   int linear = 0;
 
   for (i = 0; i < numTextures; i++) {
