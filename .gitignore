@@ -10,6 +10,7 @@ stamp-h
 po/POTFILES
 po/Makefile.in
 *.cc.x
+share/icons/trackballs.desktop
 
 # Tool Artifacts
 *.directory

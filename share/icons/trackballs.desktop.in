@@ -6,4 +6,3 @@ Type=Application
 Terminal=0
 MimeType=application/x-executable
 Categories=Application;Game;ArcadeGame;
-Exec=/usr/local/bin/trackballs
