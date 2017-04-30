@@ -39,7 +39,7 @@ void Animator::tick(Real td) {
   if(position >= length && repeat & ANIMATOR_1_BOUNCE) { direction=-direction; position=length*2.0-position; }
   if(position >= length && repeat & ANIMATOR_1_WRAP) { position=position - length; }
 
-  scm_apply_1(fun,scm_double2num(getValue()),SCM_EOL);
+  scm_apply_1(fun,scm_from_double(getValue()),SCM_EOL);
 
   if(position <= 0 && repeat & ANIMATOR_0_REMOVE) { remove(); return; }
   if(position >= length && repeat & ANIMATOR_1_REMOVE) { remove(); return; }

@@ -1,0 +1,16 @@
+# Build Artifacts
+*.o
+build/
+Makefile
+src/trackballs
+config.log
+config.status
+config.h
+stamp-h
+po/POTFILES
+po/Makefile.in
+*.cc.x
+
+# Tool Artifacts
+*.directory
+*.out

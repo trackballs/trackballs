@@ -62,7 +62,7 @@ Game::Game(char *name,Gamer *g) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname,sizeof(scmname),"%s/levels/boot.scm",SHARE_DIR);
-  gh_eval_file(scmname);
+  scm_c_primitive_load(scmname);
 
   player1 = new Player(gamer);
   loadLevel(name);
@@ -107,7 +107,7 @@ void Game::loadLevel(char *name) {
 
   if(map) delete map;
   map = new Map(mapname);
-  gh_eval_file(scmname);
+  scm_c_primitive_load(scmname);
 
   if(player1)
     player1->timeLeft = startTime;

@@ -21,7 +21,6 @@
 #ifndef GUILE_H
 #define GUILE_H
 
-#include <guile/gh.h>
 #include <libguile.h>
 
 void initGuileInterface();
