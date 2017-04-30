@@ -18,12 +18,12 @@
 ;; result is a list of pipes and connectors
 (define (multi-pipe coords radius connectors)
   (let ((p0 (nth 0 coords))
-		(p1 (nth 1 coords)))
-	(if (= (length coords) 2)
-		(list (pipe (nth 0 p0) (nth 1 p0) (nth 2 p0) (nth 0 p1) (nth 1 p1) (nth 2 p1) radius))
-		(cons (pipe (nth 0 p0) (nth 1 p0) (nth 2 p0) (nth 0 p1) (nth 1 p1) (nth 2 p1) radius)
-			  (if connectors 
-				  (cons (pipe-connector (nth 0 p1) (nth 1 p1) (nth 2 p1) radius)
-						(multi-pipe (cdr coords) radius connectors))
-				  (multi-pipe (cdr coords) radius connectors))))))
-				  
+    (p1 (nth 1 coords)))
+  (if (= (length coords) 2)
+    (list (pipe (nth 0 p0) (nth 1 p0) (nth 2 p0) (nth 0 p1) (nth 1 p1) (nth 2 p1) radius))
+    (cons (pipe (nth 0 p0) (nth 1 p0) (nth 2 p0) (nth 0 p1) (nth 1 p1) (nth 2 p1) radius)
+        (if connectors 
+          (cons (pipe-connector (nth 0 p1) (nth 1 p1) (nth 2 p1) radius)
+            (multi-pipe (cdr coords) radius connectors))
+          (multi-pipe (cdr coords) radius connectors))))))
+          

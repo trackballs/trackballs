@@ -10,19 +10,19 @@
 
 (define f0 (fountain 245.5 240.5 -8.5 0.03 0.0 200.0))
 (define waterAnimator (animator 1.0 0.0 0.0 -8.6 -8.1 *animator-stop* 
-								(lambda (v) (set-cell-water-heights 246 241 243 238 v v v v))))
-			
+                (lambda (v) (set-cell-water-heights 246 241 243 238 v v v v))))
+      
 (add-modpill 249.5 252.5 *mod-float* 60 -1)
 
 (switch 245 243 
-		(lambda () 
-		  (set-animator-direction waterAnimator 0.2)
-		  (set-fountain-strength f0 200.0)
-		  ) 
-		(lambda() 
-		  (set-animator-direction waterAnimator -0.2)
-		  (set-fountain-strength f0 0.0)
-		))
+    (lambda () 
+      (set-animator-direction waterAnimator 0.2)
+      (set-fountain-strength f0 200.0)
+      ) 
+    (lambda() 
+      (set-animator-direction waterAnimator -0.2)
+      (set-fountain-strength f0 0.0)
+    ))
 
 
 (add-cactus 237 237 0.3)

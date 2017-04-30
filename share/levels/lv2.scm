@@ -67,7 +67,7 @@
 ;; Jump over acid
 (add-flag 230 234 100 0 0.6)
 (if (= (difficulty) *easy*)
-	(add-modpill 232.5 244.5 *mod-jump* 10 30))
+  (add-modpill 232.5 244.5 *mod-jump* 10 30))
 (diamond 228.5 244.5)
 (sign "Jump!" 1.0 0.0 0.0 230.5 235.5)
 (add-flag 230 228 100 1 0.1)

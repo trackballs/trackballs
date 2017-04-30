@@ -9,9 +9,9 @@
 (add-goal 226 221 #t "jump4")
 
 (if (= (difficulty) *easy*)
-	(begin
-	  (diamond 222.5 221.5)
-	  (diamond 224.5 221.5)))
+  (begin
+    (diamond 222.5 221.5)
+    (diamond 224.5 221.5)))
 
 (add-flag 221 221 100 1 0.1)
 (add-flag 223 221 100 1 0.1)

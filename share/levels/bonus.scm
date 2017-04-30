@@ -6,10 +6,10 @@
 (set-bonus-level bonus-goto)
 (set-start-position 240 241)
 (if (= (difficulty) *easy*)
-	(start-time 90) 
-	(if (= (difficulty) *normal)
-		(start-time 75)
-		(start-time 60)))
+  (start-time 90) 
+  (if (= (difficulty) *normal)
+    (start-time 75)
+    (start-time 60)))
 
 ;; It costs 200 to enter the bonus level
 (add-flag 240 241 -200 0 1.0)

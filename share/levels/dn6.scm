@@ -56,7 +56,7 @@
 
 (switch 223.5 151.5
         (lambda () (set-speed spike2 0.2))
-		(lambda () (set-speed spike2 3.0)))
+    (lambda () (set-speed spike2 3.0)))
 (switch 223.5 161.5
         (lambda () (set-speed spike3 0.2))
         (lambda () (set-speed spike3 3.0)))

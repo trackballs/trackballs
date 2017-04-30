@@ -66,14 +66,14 @@
          (begin
            (set! pipe0 #t)
            (let ((pipe-island (pipe 244 183.5 -7.5 244 188.2 -7.5 0.5)))
-			 (set-wind pipe-island 2.0 2.0)
-			 (set-primary-color pipe-island 0.5 1.0 0.5 0.5)
-			 )
+       (set-wind pipe-island 2.0 2.0)
+       (set-primary-color pipe-island 0.5 1.0 0.5 0.5)
+       )
            (set-onoff forestff #f)
-		   )
-		 )
-	   )
-	)
+       )
+     )
+     )
+  )
 
 
 

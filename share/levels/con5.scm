@@ -12,7 +12,7 @@
 (start-time 150)
 
 (if (> (difficulty) *easy*) ; MB. Only on medium and hard
-	(add-modpill 222.5 226.5 *mod-spike* 30 -1))
+  (add-modpill 222.5 226.5 *mod-spike* 30 -1))
 
 (add-goal 219 215 #t "")
 

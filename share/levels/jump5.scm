@@ -8,11 +8,11 @@
 (set-start-position 239.5 239.5)
 
 (if (< (difficulty) *hard*)
-	(diamond 243.5 233.5))
+  (diamond 243.5 233.5))
 (if (= (difficulty) *easy*) 
-	(diamond 238.5 229.5))
+  (diamond 238.5 229.5))
 (if (< (difficulty) *hard*)
-	(diamond 235.5 225.5))
+  (diamond 235.5 225.5))
 
 (add-flag 239 235 100 1 0.1)
 (add-flag 239 231 100 1 0.1)

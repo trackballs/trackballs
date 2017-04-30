@@ -30,7 +30,7 @@
 
 ; Savepoints for easy only
 (if (= (difficulty) *easy*) 
-	(begin (diamond 242.5 234.5)
-		   (diamond 235.5 232.5)))
+  (begin (diamond 242.5 234.5)
+       (diamond 235.5 232.5)))
 
 

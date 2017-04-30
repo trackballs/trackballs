@@ -29,17 +29,17 @@
 
 ;; This would create a forcefield and a switch turning it on/off
 (if (= (difficulty) *hard*)
-	(begin
-	  (define ff (forcefield 251.5 250.5 0.0 
-							 2.0 0.0 0.0 
-							 0.5 *ff-kill*))
-	  (switch 252.5 249.5 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
-	  ))
+  (let ()
+    (define ff (forcefield 251.5 250.5 0.0 
+               2.0 0.0 0.0 
+               0.5 *ff-kill*))
+    (switch 252.5 249.5 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
+    ))
 
 
 ;(smart-trigger 252.5 249.5 1.0 
-;			   (lambda()(sign "Entering" 1.0 0.0 2.0 252.5 249.5))  
-;			   (lambda()(sign "Leaving" 1.0 0.0 2.0 252.5 249.5)))
+;        (lambda()(sign "Entering" 1.0 0.0 2.0 252.5 249.5))  
+;        (lambda()(sign "Leaving" 1.0 0.0 2.0 252.5 249.5)))
 
 ;; This is the goal
 (add-goal 219 204 #f "lv2")
@@ -112,7 +112,7 @@
 
 (define plat1 (add-cyclic-platform 
  ;;; Positions
-			   238 228 239 229
+         238 228 239 229
  ;;; Low, High, Time Offset, Speed
  3. 4. 0. speed)
 )

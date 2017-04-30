@@ -15,9 +15,9 @@
 (diamond 226.5 239.5)
 
 (if (= (difficulty) *hard*)
-	(set-acceleration (new-mr-black 251.5 239.5) 2.0))
+  (set-acceleration (new-mr-black 251.5 239.5) 2.0))
 (if (= (difficulty) *easy*)
-	(add-modpill 251.5 239.5 *mod-spike* 20 30))
+  (add-modpill 251.5 239.5 *mod-spike* 20 30))
 
 (add-flag 251 238 150 1 0.1)
 (add-flag 234 239 250 1 0.1)
@@ -31,10 +31,10 @@
 (set-flag (add-bird 252 238 234 238 0.5 1.45) *bird-constant-height* #f)
 
 (if (= (difficulty) *hard*)
-	(new-mr-black 214 236))
+  (new-mr-black 214 236))
 (if (>= (difficulty) *normal*)
-	(new-mr-black 214 233))
+  (new-mr-black 214 233))
 (if (>= (difficulty) *normal*)
-	(new-mr-black 214 230))
+  (new-mr-black 214 230))
 
 
