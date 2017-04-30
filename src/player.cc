@@ -71,14 +71,13 @@ void Player::draw() {
   Ball::draw();
 }
 void Player::tick(Real t) {
-  double dx,dy;
+  double dx=0.0,dy=0.0;
   int superAccelerate=0;
   static time_t lastTick=0;
 
   if(!Game::current) return;
   if(!playing) return;
 
-  dx=0.0; dy=0.0;
   Map *map = Game::current->map;
   health+=t * 0.4; if(health > 1.0) health = 1.0;
 
@@ -359,4 +358,5 @@ Boolean Player::crash(Real speed) {
   double espeed=modTimeLeft[MOD_GLASS] ? (1.5*speed) / crashTolerance : speed / crashTolerance;
   setHealth(1.0-espeed);
   this->Ball::crash(speed);
+  return true;
 }

@@ -207,6 +207,7 @@ int Font::figureFontInfo(void *pixels, int tx, int ty)
   this->char_sizes[5*CHAR_WNB+2]=0;
   this->char_sizes[4*CHAR_WNB+14]=0;
   */
+  return 1;
 }
 
 int Font::addText(int font, const char *text, int x, int y, float sx, float sy, double delay,
@@ -806,6 +807,7 @@ int Font::l_drawSimpleText(const char *text, int x, int y, float sx, float sy, f
   glEnd();
 
   Leave2DMode();
+  return 0;
 }
 
 int Font::l_drawRightSimpleText(const char *text, int x, int y, float sx, float sy, float r, float g, float b, float a) {
@@ -849,6 +851,7 @@ int Font::l_drawSimpleText3D(const char *text, float sx, float sy) {
   }
 
   glEnd();
+  return 0;
 }
 
 

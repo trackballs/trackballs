@@ -112,7 +112,7 @@ void EnterHighScoreMode::activated() {
 	if(!background) { printf("Error: Failed to load %s\n",str); exit(0); }  
   }
 
-  snprintf(name,sizeof(str),"%s",Game::current->gamer->name);
+  snprintf(name,sizeof(name),"%s",Game::current->gamer->name);
   if(!HighScore::highScore->isHighScore(Game::current->player1->score)) 
 	GameMode::activate(MenuMode::menuMode);
 

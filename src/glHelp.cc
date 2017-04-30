@@ -126,7 +126,7 @@ void drawSurface(SDL_Surface *surface,int x,int y,int w,int h) {
   glBindTexture(GL_TEXTURE_2D, textures[0]); // This is needed for mga_dri cards
   //glDeleteTextures(1,&texture);
 }
-inline Real abs(Real v) {return v>0.0?v:-v;}
+
 double mousePointerPhase=0.0;
 
 void tickMouse(Real td) {
@@ -279,7 +279,7 @@ int createSnapshot()
   /* allocate buffer */
   if ((buffer = (unsigned char*)malloc(sizeof(unsigned char)*screenWidth*screenHeight*3)) == NULL)
     {
-    fprintf(stderr, _("Warning: cannot allocate %d bytes for snapshot. Aborting.\n"), sizeof(unsigned char)*screenWidth*screenHeight*3);
+    fprintf(stderr, _("Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"), sizeof(unsigned char)*screenWidth*screenHeight*3);
     return(0);
     }
 
@@ -333,6 +333,7 @@ int createSnapshot()
   /* freed everything */
   fclose(f);
   free(buffer);
+  return 0;
 }
 
 
