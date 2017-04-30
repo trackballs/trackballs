@@ -475,6 +475,7 @@ SDL_Surface *getSurfaceFromRGB(char *fullPath) {
   read_2d_image_rgb(fullPath, &font_data, &tx, &ty);
   surface = SDL_CreateRGBSurfaceFrom((void *)font_data, tx, ty, 32, tx * 4, 0xFF000000,
                                      0x00FF0000, 0x0000FF00, 0x000000FF);
+  free(font_data);
 
   if (!surface) printf(_("Error creating surface from RGB file: %s\n"), SDL_GetError());
   return surface;

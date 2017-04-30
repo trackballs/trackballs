@@ -30,7 +30,7 @@
  ((= (difficulty) *easy*) .4)
  ((= (difficulty) *normal*) .3)
  ((= (difficulty) *hard*) .2)
-)
+))
 
 (add-cyclic-platform 204 191 204 191 4.9 6.4 1. speed)
 (add-cyclic-platform 204 190 204 190 4.9 6.4 6. speed)

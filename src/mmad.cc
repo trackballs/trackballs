@@ -19,7 +19,7 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-char *SHARE_DIR_DEFAULT = SHARE_DIR;
+const char *SHARE_DIR_DEFAULT = SHARE_DIR;
 #include "general.h"
 #include "gameMode.h"
 #include "mainMode.h"
