@@ -65,16 +65,10 @@
 (add-flag 208 219 30 0 1.5)
 (add-flag 209 216 30 0 1.5)
 
-(cond
- ((= (difficulty) *easy*)
-         (define speed .6)
- )
- ((= (difficulty) *normal*)
-         (define speed .4)
- )
- ((= (difficulty) *hard*)
-         (define speed .2)
- )
+(define speed (cond
+ ((= (difficulty) *easy*) .6)
+ ((= (difficulty) *normal*) .4)
+ ((= (difficulty) *hard*) .2))
 )
 
 (add-cyclic-platform 220 238 220 238 3.0 5.0 1. speed)

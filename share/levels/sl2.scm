@@ -43,17 +43,17 @@
 (set-primary-color (set-acceleration (set-modtime
 (new-mr-black 151.5 191.5) *mod-spike* -1.) 2.3) 0.8 0.0 0.0)
 
-(cond
+(define kill-me (cond
  ((= (difficulty) *easy*)
-         (define kill-me (set-modtime (new-mr-black 179.5 192.5) *mod-small* -1.))
+          (set-modtime (new-mr-black 179.5 192.5) *mod-small* -1.)
  )
  ((= (difficulty) *normal*)
-         (define kill-me (set-primary-color (set-acceleration (new-mr-black 179.5 192.0) 1.6) 0.5 0.5 0.5))
+         (set-primary-color (set-acceleration (new-mr-black 179.5 192.0) 1.6) 0.5 0.5 0.5)
  )
  ((= (difficulty) *hard*)
-         (define kill-me (set-primary-color (set-acceleration (new-mr-black 179.5 192.0) 1.6) 0.5 0.5 0.5))
+         (set-primary-color (set-acceleration (new-mr-black 179.5 192.0) 1.6) 0.5 0.5 0.5)
  )
-)
+))
 (on-event *death* kill-me (lambda (subject object)
 (add-cyclic-platform 180 184 181 185 1.7 3.2 1. .5)
 (add-cyclic-platform 180 182 181 183 3.2 4.7 4. .5)

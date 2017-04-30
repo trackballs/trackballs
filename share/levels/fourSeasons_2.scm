@@ -23,7 +23,7 @@
 
 
 (if (> (difficulty) *easy*)
-  (begin
+  (let ()
     (define enemy-1 (new-mr-black 198.5 175.5))
     (if (= (difficulty) *hard*) (set-modtime enemy-1 *mod-spike* -1.))
     (set-acceleration enemy-1 2.0)
