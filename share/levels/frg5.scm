@@ -26,16 +26,10 @@
 
 (diamond 190.0 182.0)
 
-(cond
- ((= (difficulty) *easy*)
-         (define speed .4)
- )
- ((= (difficulty) *normal*)
-         (define speed .3)
- )
- ((= (difficulty) *hard*)
-         (define speed .2)
- )
+(define speed (cond
+ ((= (difficulty) *easy*) .4)
+ ((= (difficulty) *normal*) .3)
+ ((= (difficulty) *hard*) .2)
 )
 
 (add-cyclic-platform 204 191 204 191 4.9 6.4 1. speed)

@@ -413,14 +413,9 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
   SCM_ASSERT(SCM_BOOLP(rotate), rotate, SCM_ARG3, s_add_goal);
   SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, s_add_goal);
   char *sname = scm_to_utf8_string(nextLevel);
-  if (strlen(sname) > 0) {
-    Animated *a =
-        (Animated *)new Goal(scm_to_int(x), scm_to_int(y), SCM_NFALSEP(rotate), sname);
-    free(sname);
-    return smobAnimated_make(a);
-  }
+  Animated *a = (Animated *)new Goal(scm_to_int(x), scm_to_int(y), SCM_NFALSEP(rotate), sname);
   free(sname);
-  return SCM_UNSPECIFIED;
+  return smobAnimated_make(a);
 }
 #undef FUNC_NAME
 
