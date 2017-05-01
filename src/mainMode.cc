@@ -96,8 +96,7 @@ void MainMode::display() {
     glDisable(GL_FOG);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1,
-                 200);  // 40,640.0/480.0,1.0,1e20);
+  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1, 200);
 
   /* Setup openGL matrixes for the camera perspective */
   glMatrixMode(GL_MODELVIEW);
@@ -484,10 +483,6 @@ void MainMode::activated() {
   camFocus[1] = Game::current->map->startPosition[1] - 5;
   time = 0.0;
   flash = 0.0;
-
-  /* Fix for an apparanet bug in my SDL + Xorg combination... */
-  SDL_WM_ToggleFullScreen(screen);
-  SDL_WM_ToggleFullScreen(screen);
 }
 void MainMode::deactivated() {
   free(viewportData);
@@ -676,7 +671,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
     glDisable(GL_FOG);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(140, 1.0, 0.01, 200);
+  gluPerspective(140, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.01, 200);
 
   /* Setup openGL matrixes for the camera perspective */
   glMatrixMode(GL_MODELVIEW);

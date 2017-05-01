@@ -181,7 +181,7 @@ void HelpMode::display() {
   Leave2DMode();
 
   if (page == 2) {
-    char *text[21][2] = {
+    const char *text[21][2] = {
         {_("Your marble:"), _("Steer this with your mouse, numpad or arrows. ")},
         {" ", _("Left mouse or spacebar is jump.")},
         {" ", _("Shift gives top speed when using keyboard.")},

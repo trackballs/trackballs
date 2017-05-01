@@ -62,6 +62,7 @@ SDL_Surface *screen = NULL;
 const char *program_name;
 int silent = 0;
 int debug_joystick, repair_joystick;
+int windowWidth, windowHeight;
 
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
@@ -71,15 +72,28 @@ int screenResolutions[5][2] = {{640, 480},
                                {1600, 1200}},
     nScreenResolutions = 5;
 
-void changeScreenResolution(int overWidth = 0, int overHeight = 0) {
-  if (screen == NULL || overWidth == 0 || overHeight == 0 ||
-      !Settings::settings->is_windowed) {
+void changeScreenResolution() {
+  SDL_Rect **rects = NULL;
+  if (screen == NULL && Settings::settings->resolution > 0) {
     screenWidth = screenResolutions[Settings::settings->resolution][0];
     screenHeight = screenResolutions[Settings::settings->resolution][1];
     printf("Screen resolution given as %dx%d.\n", screenWidth, screenHeight);
   } else {
-    screenWidth = overWidth;
-    screenHeight = overHeight;
+    if (Settings::settings->is_windowed) {
+      screenWidth = windowWidth;
+      screenHeight = windowHeight;
+    } else {
+      rects = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_SWSURFACE | SDL_OPENGL);
+      if (rects == (SDL_Rect **)0) {
+        printf("No modes available! Using last window settings.\n");
+        screenWidth = windowWidth;
+        screenHeight = windowHeight;
+      } else {
+        /* First returned mode is largest */
+        screenWidth = rects[0]->w;
+        screenHeight = rects[0]->h;
+      }
+    }
     printf("Screen resolution from window is %dx%d.\n", screenWidth, screenHeight);
   }
 
@@ -96,7 +110,8 @@ void changeScreenResolution(int overWidth = 0, int overHeight = 0) {
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
   screen = SDL_SetVideoMode(screenWidth, screenHeight, Settings::settings->colorDepth,
-                            SDL_RESIZABLE | SDL_SWSURFACE | SDL_OPENGL |
+                            (Settings::settings->resolution < 0 ? SDL_RESIZABLE : 0) |
+                                SDL_SWSURFACE | SDL_OPENGL |
                                 (Settings::settings->is_windowed ? 0 : SDL_FULLSCREEN));
   if (!screen) return;
   /* Pick up what the screen actually has */
@@ -302,6 +317,10 @@ void innerMain(void *closure, int argc, char **argv) {
   snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", SHARE_DIR);
   SDL_Surface *wmIcon = IMG_Load(str);
   if (wmIcon) { SDL_WM_SetIcon(wmIcon, NULL); }
+
+  // Initial assumptions about window size. SDL 1.2 doesn't have window management
+  windowWidth = 800;
+  windowHeight = 600;
 
   // MB: Until here we are using 7 megs of memory
   changeScreenResolution();
@@ -533,9 +552,8 @@ void innerMain(void *closure, int argc, char **argv) {
            is pressed */
         else if (event.key.keysym.sym == 'f' && SDL_GetModState() & KMOD_CTRL) {
           Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
-          changeScreenResolution(0);
-          /* Flush all events that occured while switching screen
-             resolution */
+          changeScreenResolution();
+          /* Flush all events that occured while switching screen resolution */
           while (SDL_PollEvent(&event)) {}
         }
 
@@ -572,8 +590,14 @@ void innerMain(void *closure, int argc, char **argv) {
 
         break;
       case SDL_VIDEORESIZE:
-        changeScreenResolution(ve->w, ve->h);
-        while (SDL_PollEvent(&event)) {}
+        windowWidth = ve->w;
+        windowHeight = ve->h;
+        /* Only change screen resolution if resizing is enabled */
+        if (Settings::settings->resolution < 0) {
+          changeScreenResolution();
+          /* Flush all events that occured while switching screen resolution */
+          while (SDL_PollEvent(&event)) {}
+        }
         break;
       }
     }

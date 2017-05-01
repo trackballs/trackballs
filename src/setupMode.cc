@@ -229,7 +229,7 @@ void SetupMode::display() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glTranslatef(0.75, -0.75, 0.0);  // 0.7
-  gluPerspective(40, 640.0 / 480.0, 1.0, 1e20);
+  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();

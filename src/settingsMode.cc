@@ -39,7 +39,7 @@ SettingsMode *SettingsMode::settingsMode;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
-extern void changeScreenResolution(int forceW = 0, int forceH = 0);
+extern void changeScreenResolution();
 
 void SettingsMode::init() {
   char str[256];
@@ -122,8 +122,12 @@ void SettingsMode::display() {
     menuItem_Left(MENU_SUBSCREEN, menucount++, _("Graphics"));
 
     // Resolution
-    snprintf(str, sizeof(str), "%dx%dx%d", screenResolutions[resolution][0],
-             screenResolutions[resolution][1], colorDepth);
+    if (resolution >= 0) {
+      snprintf(str, sizeof(str), "%dx%dx%d", screenResolutions[resolution][0],
+               screenResolutions[resolution][1], colorDepth);
+    } else {
+      snprintf(str, sizeof(str), "%s %d", _("Auto"), colorDepth);
+    }
     menuItem_LeftRight(MENU_RESOLUTION, menucount++, _("  Resolution"), str);
     menuItem_Left(MENU_APPLY_RESOLUTION, menucount++, _("  Test this resolution"));
 
@@ -300,13 +304,13 @@ void SettingsMode::mouseDown(int button, int x, int y) {
     // Change screen resolution until we got a valid screen
 
     resolution = resolution + (up ? 1 : -1);
-    if (resolution == nScreenResolutions) {
-      resolution = 0;
+    if (resolution >= nScreenResolutions) {
+      resolution = -1;
       if (colorDepth == 16)
         colorDepth = 32;
       else
         colorDepth = 16;
-    } else if (resolution == -1) {
+    } else if (resolution <= -2) {
       resolution = nScreenResolutions - 1;
       if (colorDepth == 16)
         colorDepth = 32;

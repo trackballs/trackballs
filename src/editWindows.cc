@@ -610,9 +610,7 @@ void EOpenWindow::mouseDown(int button, int x, int y) {
     }
 }
 
-int sortstrcmp(const void* n1, const void* n2) {
-    return strcmp((char*)n1,(char*)n2);
-}
+int sortstrcmp(const void* n1, const void* n2) { return strcmp((char*)n1, (char*)n2); }
 
 void EOpenWindow::refreshMapList() {
   char str[512];
@@ -641,7 +639,7 @@ void EOpenWindow::refreshMapList() {
   }
   qsort(names, nNames, sizeof(char[256]), sortstrcmp);
   int divNames = nNames;
-  
+
   /* Add all maps from the share directory */
   snprintf(str, sizeof(str), "%s/levels", SHARE_DIR);
   dir = opendir(str);

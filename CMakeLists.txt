@@ -8,7 +8,6 @@ add_compile_options(-ggdb3)
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fsanitize=address" )
 set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address" )
 
-
 # Required libraries
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 find_package(Guile)
@@ -18,7 +17,7 @@ add_definitions(-DVERSION="1.1.5")
 add_definitions(-DLOCALEDIR="${CMAKE_INSTALL_PREFIX}/share/locale")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${CMAKE_INSTALL_PREFIX}/share/trackballs")
-add_definitions(-DDEFAULT_RESOLUTION=1)
+add_definitions(-DDEFAULT_RESOLUTION=-1)
 
 # Guile interface
 get_directory_property( definitions DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
@@ -65,3 +64,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION share/a
 # todo: spam copy the ${icons} to wherever KDE, GNOME, etc. would pick up on them
 
 # Translations!
+find_package(Gettext)
+# GETTEXT_CREATE_TRANSLATIONS ( outputFile [ALL] file1 ... fileN )
+# GETTEXT_PROCESS_POT( <potfile> [ALL] [INSTALL_DESTINATION <destdir>] LANGUAGES <lang1> <lang2> ... )
+# GETTEXT_PROCESS_PO_FILES( <lang> [ALL] [INSTALL_DESTINATION <dir>] PO_FILES <po1> <po2> ... )
