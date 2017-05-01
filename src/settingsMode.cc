@@ -39,7 +39,7 @@ SettingsMode *SettingsMode::settingsMode;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
-extern void changeScreenResolution();
+extern void changeScreenResolution(int forceW = 0, int forceH = 0);
 
 void SettingsMode::init() {
   char str[256];

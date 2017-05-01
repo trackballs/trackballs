@@ -60,7 +60,7 @@ add_custom_command(OUTPUT execstring
 add_custom_command(OUTPUT trackballs.desktop
                   COMMAND cat ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring > ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop
                   DEPENDS ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring)
-add_custom_target(icon ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop)
+add_custom_target(desktop ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION share/applications)
 # todo: spam copy the ${icons} to wherever KDE, GNOME, etc. would pick up on them
 

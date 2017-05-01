@@ -96,7 +96,8 @@ void MainMode::display() {
     glDisable(GL_FOG);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40, 640.0 / 480.0, 0.1, 200);  // 40,640.0/480.0,1.0,1e20);
+  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1,
+                 200);  // 40,640.0/480.0,1.0,1e20);
 
   /* Setup openGL matrixes for the camera perspective */
   glMatrixMode(GL_MODELVIEW);

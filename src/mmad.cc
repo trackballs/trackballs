@@ -71,9 +71,17 @@ int screenResolutions[5][2] = {{640, 480},
                                {1600, 1200}},
     nScreenResolutions = 5;
 
-void changeScreenResolution() {
-  screenWidth = screenResolutions[Settings::settings->resolution][0];
-  screenHeight = screenResolutions[Settings::settings->resolution][1];
+void changeScreenResolution(int overWidth = 0, int overHeight = 0) {
+  if (screen == NULL || overWidth == 0 || overHeight == 0 ||
+      !Settings::settings->is_windowed) {
+    screenWidth = screenResolutions[Settings::settings->resolution][0];
+    screenHeight = screenResolutions[Settings::settings->resolution][1];
+    printf("Screen resolution given as %dx%d.\n", screenWidth, screenHeight);
+  } else {
+    screenWidth = overWidth;
+    screenHeight = overHeight;
+    printf("Screen resolution from window is %dx%d.\n", screenWidth, screenHeight);
+  }
 
   if (Settings::settings->colorDepth == 16) {
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
@@ -87,23 +95,22 @@ void changeScreenResolution() {
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  screen = SDL_SetVideoMode(
-      screenResolutions[Settings::settings->resolution][0],
-      screenResolutions[Settings::settings->resolution][1], Settings::settings->colorDepth,
-      SDL_SWSURFACE | SDL_OPENGL | (Settings::settings->is_windowed ? 0 : SDL_FULLSCREEN));
+  screen = SDL_SetVideoMode(screenWidth, screenHeight, Settings::settings->colorDepth,
+                            SDL_RESIZABLE | SDL_SWSURFACE | SDL_OPENGL |
+                                (Settings::settings->is_windowed ? 0 : SDL_FULLSCREEN));
   if (!screen) return;
+  /* Pick up what the screen actually has */
   screenWidth = screen->w;
   screenHeight = screen->h;
-  SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
 
   /* Use CapsLock key to determine if mouse should be hidden+grabbed */
-  if (SDL_GetModState() & KMOD_CAPS) {
+  if (SDL_GetModState() & KMOD_CAPS || 1) {
     SDL_WM_GrabInput(SDL_GRAB_OFF);
-    SDL_ShowCursor(SDL_ENABLE);
   } else {
+    SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
     SDL_WM_GrabInput(SDL_GRAB_ON);
-    SDL_ShowCursor(SDL_DISABLE);
   }
+  SDL_ShowCursor(SDL_DISABLE);
 
   resetTextures();
 }
@@ -493,6 +500,7 @@ void innerMain(void *closure, int argc, char **argv) {
     */
 
     SDL_MouseButtonEvent *e = (SDL_MouseButtonEvent *)&event;
+    SDL_ResizeEvent *ve = (SDL_ResizeEvent *)&event;
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
@@ -525,7 +533,7 @@ void innerMain(void *closure, int argc, char **argv) {
            is pressed */
         else if (event.key.keysym.sym == 'f' && SDL_GetModState() & KMOD_CTRL) {
           Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
-          changeScreenResolution();
+          changeScreenResolution(0);
           /* Flush all events that occured while switching screen
              resolution */
           while (SDL_PollEvent(&event)) {}
@@ -549,6 +557,8 @@ void innerMain(void *closure, int argc, char **argv) {
             is_running = 0;
           else {
             GameMode::activate(MenuMode::menuMode);
+            /* Flush all events that occured while switching screen
+             resolution */
             while (SDL_PollEvent(&event)) {}
           }
 
@@ -560,6 +570,10 @@ void innerMain(void *closure, int argc, char **argv) {
           GameMode::current->key(event.key.keysym.sym);
         }
 
+        break;
+      case SDL_VIDEORESIZE:
+        changeScreenResolution(ve->w, ve->h);
+        while (SDL_PollEvent(&event)) {}
         break;
       }
     }

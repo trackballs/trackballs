@@ -26,7 +26,7 @@
 
 ;; This would create a forcefield and a switch turning it on/off
 (if (= (difficulty) *hard*)
-  (begin
+  (let()
     (define ff (forcefield 251.5 250.5 0.0 
                2.0 0.0 0.0 
                0.5 *ff-kill*))

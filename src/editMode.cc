@@ -144,16 +144,16 @@ EditMode* EditMode::editMode;
 
 void EditMode::init() {
   char* cMenuNames_i18n[N_SUBMENUS] = {
-      /* TRANSLATORS: This is a list of all the submenus in the map
-          editor, if the initial character is * or / then that character
-          must be perserved as it is. */
-      _("New"), _("Open..."), _("Close"), _("Save"), _("Exit"), _("Test level"), NULL,
+      /* TRANSLATORS: This is a list of all the menus in the map editor. */
+      _("File"),    _("Edit"), _("Color"),  _("Flags"),
+      _("Feature"), _("Move"), _("Window"), _("View"),
   };
   memcpy(cMenuNames, cMenuNames_i18n, sizeof(cMenuNames));
 
   const char* cMenuEntries_i18n[N_SUBMENUS][MAX_MENU_ENTRIES] = {
-      /* TRANSLATORS: This is a list of all the submenus in the map editor, if the initial
-         character is * or / it must be perserved as it is. */
+      /* TRANSLATORS: This is a list of all the submenus in the map
+          editor, if the initial character is * or / then that character
+          must be perserved as it is. */
       {_("New"), _("Open"), _("Close"), _("Save"), _("Exit"), _("Test level"), NULL},
       {_("Edit height"), _("Edit color"), _("Edit water"), _("Edit velocity"), _("Edit lines"),
        _("*<SPACE> Whole cell"), _("Upper corner"), _("Bottom corner"), _("Right corner"),
@@ -362,7 +362,7 @@ void EditMode::display() {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40, 640.0 / 480.0, 1.0, 1e20);
+  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20);
 
   /* Setup openGL matrixes for the camera perspective */
   glMatrixMode(GL_MODELVIEW);

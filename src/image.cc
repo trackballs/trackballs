@@ -86,6 +86,8 @@ static Image *ImageOpen(char *fileName) {
       return (NULL);
     }
   }
+  image->rowStart = NULL;
+  image->rowSize = NULL;
 
   if ((image->type & 0xFF00) == 0x0100) /* RLE image */
   {
@@ -124,6 +126,8 @@ static void ImageClose(Image *image) {
   for (i = 0; i <= image->sizeZ; i++) {
     if (image->tmp[i] != NULL) free(image->tmp[i]);
   }
+  if (image->rowStart != NULL) free(image->rowStart);
+  if (image->rowSize != NULL) free(image->rowSize);
   free(image);
 }
 

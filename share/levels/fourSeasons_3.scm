@@ -38,7 +38,7 @@
 (add-flag 241 207 100 1 0.1) 
 (add-flag 239 208 100 1 0.1) 
 
-(define speed nil)
+(define speed #f)
 (cond
  ((= (difficulty) *easy*) (set! speed 0.70))
  ((= (difficulty) *normal*) (set! speed 0.40))

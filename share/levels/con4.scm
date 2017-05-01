@@ -57,16 +57,16 @@
 
 
 ;;; Mr Black for the lower level.
-(cond
+(define mr-black (cond
  ((= (difficulty) *normal*)
- (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
- (define mr-black (new-mr-black 248 238))
+   (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
+   (new-mr-black 248 238)
  )
  ((= (difficulty) *hard*)
- (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
- (define mr-black (new-mr-black 248 238))
+   (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
+   (new-mr-black 248 238)
  )
-)
+))
 
  
 
