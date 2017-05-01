@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+project(trackballs)
 
 # Compile options
 add_compile_options(-Os)
@@ -65,6 +66,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION share/a
 
 # Translations!
 find_package(Gettext)
-# GETTEXT_CREATE_TRANSLATIONS ( outputFile [ALL] file1 ... fileN )
-# GETTEXT_PROCESS_POT( <potfile> [ALL] [INSTALL_DESTINATION <destdir>] LANGUAGES <lang1> <lang2> ... )
-# GETTEXT_PROCESS_PO_FILES( <lang> [ALL] [INSTALL_DESTINATION <dir>] PO_FILES <po1> <po2> ... )
+file(GLOB po_files po/*.po)
+foreach(po_file ${po_files})
+  get_filename_component(lang ${po_file} NAME_WE)
+  GETTEXT_PROCESS_PO_FILES( ${lang} ALL PO_FILES ${po_file} )
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${lang}.gmo DESTINATION share/locale/${lang}/LC_MESSAGES/ RENAME trackballs.mo)
+endforeach()

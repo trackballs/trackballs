@@ -75,7 +75,7 @@ class Settings {
   int lastJoyX, lastJoyY;
 
   int language;
-  static const char *languageNames[], *languageCodes[];
+  static const char *languageNames[], *languageCodes[][3];
   static int nLanguages;
 
  private:

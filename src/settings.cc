@@ -31,11 +31,16 @@ using namespace std;
    menu. The name of languages should appear in the respective native
    language. Eg. the Swedish language is written as 'Svenska'
 */
-const char *Settings::languageCodes[6] = {"", "sv_SE", "de_DE", "it_IT", "fr_FR", "sk_SK"};
-const char *Settings::languageNames[6] = {"Default", "Svenska", "Deutsch", "Italiano",
-                                          "Francais"
-                                          "Slovak"};
-int Settings::nLanguages = 5;
+const char *Settings::languageCodes[7][3] = {{"", "", ""},
+                                             {"de", "de_DE", "de_DE.utf8"},
+                                             {"fr", "fr_FR", "fr_FR.utf8"},
+                                             {"it", "it_IT", "it_IT.utf8"},
+                                             {"hu", "hu_Hu", "hu_Hu.utf8"},
+                                             {"sk", "sk_SK", "sk_SK.utf8"},
+                                             {"sv", "sk_SK", "sk_SK.utf8"}};
+const char *Settings::languageNames[7] = {"Default",  "Deutsch", "Francais", "Magyar",
+                                          "Italiano", "Slovak",  "Svenska"};
+int Settings::nLanguages = 7;
 
 Settings *Settings::settings;
 void Settings::init() { settings = new Settings(); }
@@ -329,11 +334,11 @@ void Settings::setLocale() {
   if (language != 0) {
     char localedir[512];
 #ifdef LOCALEDIR
-    snprintf(localedir, 511, "%s/%c%c", LOCALEDIR, languageCodes[language][0],
-             languageCodes[language][1]);
+    snprintf(localedir, 511, "%s/%c%c", LOCALEDIR, languageCodes[language][0][0],
+             languageCodes[language][0][1]);
 #else
-    snprintf(localedir, 511, "%s/locale/%c%c", effectiveShareDir, languageCodes[language][0],
-             languageCodes[language][1]);
+    snprintf(localedir, 511, "%s/locale/%c%c", effectiveShareDir,
+             languageCodes[language][0][0], languageCodes[language][0][1]);
 #endif
 
     if (!dirExists(localedir)) {
@@ -342,8 +347,12 @@ void Settings::setLocale() {
     }
   }
 
-  /* Set the locale */
-  printf("setLocale: %s ", languageCodes[language]);
-  char *ret = setlocale(LC_MESSAGES, languageCodes[language]);
+  /* Set the locale, trying several name options */
+  printf("setLocale: %s ", languageCodes[language][0]);
+  char *ret = NULL;
+  for (int i = 0; i < 3; i++) {
+    ret = setlocale(LC_MESSAGES, languageCodes[language][i]);
+    if (ret) { break; }
+  }
   printf("-> %s\n", ret);
 }

@@ -6,609 +6,361 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-25 16:50+0200\n"
+"POT-Creation-Date: 2017-05-01 18:44-0400\n"
 "PO-Revision-Date: 2007-04-07 14:22+0100\n"
 "Last-Translator: Jozef Říha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/mmad.cc:106
+#: ../src/calibrateJoystickMode.cc:97
 #, c-format
-msgid ""
-"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
+msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 msgstr ""
-"Použitie: %s [-w, -m] [-e, -l -t <level>] [-r <sirka>] [-s <citlivost>]\n"
+"Chyba, volaná funkcia CalibrateJoystickMode s nesprávnym joystickom!\n"
 
-#: src/mmad.cc:107
+#: ../src/calibrateJoystickMode.cc:101
+msgid "Calibrating Joystick"
+msgstr "Kalibrujem Joystick"
+
+#: ../src/calibrateJoystickMode.cc:109
+msgid "Center joystick"
+msgstr "Centrujte joystick"
+
+#: ../src/calibrateJoystickMode.cc:113
+msgid "Move joystick left"
+msgstr "Pohnite joystickom vľavo"
+
+#: ../src/calibrateJoystickMode.cc:117
+msgid "Move joystick right"
+msgstr "Pohnite joystickom vpravo"
+
+#: ../src/calibrateJoystickMode.cc:121
+msgid "Move joystick up"
+msgstr "Pohnite joystickom hore"
+
+#: ../src/calibrateJoystickMode.cc:125
+msgid "Move joystick down"
+msgstr "Pohnite joystickom dole"
+
+#: ../src/calibrateJoystickMode.cc:129
+msgid "Press any button to continue"
+msgstr "Stlačte ľubovoľný kláves pre pokračovanie"
+
+#: ../src/calibrateJoystickMode.cc:131
+msgid "Press escape to cancel"
+msgstr "Stlačte escape pre zrušenie"
+
+#: ../src/calibrateJoystickMode.cc:134
 #, c-format
-msgid "   -h  --help            Display this usage information.\n"
-msgstr "   -h  --help            Zobrazenie tohto navodu na pouzivanie.\n"
+msgid "now: %d %d"
+msgstr "teraz: %d %d"
 
-#: src/mmad.cc:108
+#: ../src/calibrateJoystickMode.cc:139
 #, c-format
-msgid "   -e  --edit            Start as level editor.\n"
-msgstr "   -e  --edit            Spustit editor levelov.\n"
-
-#: src/mmad.cc:109
-#, c-format
-msgid "   -l  --level           Start from level.\n"
-msgstr "   -l  --level           Spustit od levelu.\n"
-
-#: src/mmad.cc:110
-#, c-format
-msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
-msgstr ""
-"   -w  --windowed        Spustit v okne (vychodzie je na celu obrazovku\n"
-
-#: src/mmad.cc:111
-#, c-format
-msgid "   -m  --mute            Mute sound.\n"
-msgstr "   -m  --mute            Vypnut zvuk.\n"
-
-#: src/mmad.cc:112
-#, c-format
-msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
-msgstr "   -r  --resolution      Nastavit rozlisenia na 640, 800 alebo 1024\n"
-
-#: src/mmad.cc:113
-#, c-format
-msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     Citlivost mysi, vychodzia 1.0\n"
-
-#: src/mmad.cc:114
-#, c-format
-msgid "   -f  --fps             Displays framerate\n"
-msgstr "   -f  --fps             Zobrazovat rychlost snimkov\n"
-
-#: src/mmad.cc:115
-#, c-format
-msgid "   -q  --quiet           Do not print anything to stdout\n"
-msgstr "   -q  --quiet           Nevypisovat nic na standardny vystup\n"
-
-#: src/mmad.cc:116
-#, c-format
-msgid "   -v  --version         Prints current version number\n"
-msgstr "   -v  --version         Zobrazi aktualne cislo verzie\n"
-
-#: src/mmad.cc:117
-#, c-format
-msgid "   -t  --touch           Updates a map to the latest format\n"
-msgstr "   -t  --touch           Aktualizuje mapu na najnovsi format\n"
-
-#: src/mmad.cc:118
-#, c-format
-msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
-msgstr "   -y  --low-memory      Pokusi sa setrit spotrebu pamate\n"
-
-#: src/mmad.cc:119
-#, c-format
-msgid "   -j  --repair-joystick Correct for bad joysticks\n"
-msgstr "   -j  --repair-joystick Oprava pre zle joysticky\n"
-
-#: src/mmad.cc:121
-#, c-format
-msgid "Important keyboard shortcuts\n"
-msgstr "Dôležité klávesové skratky\n"
-
-#: src/mmad.cc:122
-#, c-format
-msgid "   Escape     Soft quit\n"
-msgstr "   Escape     Normálne ukončenie\n"
-
-#: src/mmad.cc:123
-#, c-format
-msgid "   CapsLock   Unhide mouse pointer\n"
-msgstr "   CapsLock   Zobraziť kurzor myši\n"
-
-#: src/mmad.cc:124
-#, c-format
-msgid "   CTRL-q     Quit the game immediatly\n"
-msgstr "   CTRL-q     Okamžité ukončenie hry\n"
-
-#: src/mmad.cc:125
-#, c-format
-msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
-msgstr "   CTRL-f     Prepína medzi plnoobrazovkovým a okenným režimom\n"
-
-#: src/mmad.cc:126
-#, c-format
-msgid "   k          Kill the ball\n"
-msgstr "   k          Zrušiť guličku\n"
-
-#: src/mmad.cc:208
-#, c-format
-msgid ""
-"Commandline switch -e is deprecated, use the editor button the main menu "
-"instead\n"
-msgstr ""
-"Konzolovy prepinac -e je neaktualny, pouzite tlacitko Editor v hlavnom menu\n"
-
-#: src/mmad.cc:228
-#, c-format
-msgid "Unknown screen resolution of width %d\n"
-msgstr "Neznáme rozlíšenie šírky %d\n"
-
-#: src/mmad.cc:253
-#, c-format
-msgid "Welcome to Trackballs. \n"
-msgstr "Vitajte v hre Trackballs. \n"
-
-#: src/mmad.cc:254
-#, c-format
-msgid "Using %s as gamedata directory.\n"
-msgstr "Používam %s ako adresár s dátami hry.\n"
-
-#: src/mmad.cc:259
-#, c-format
-msgid ""
-"Could not initialize libSDL.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Nepodarilo sa inicializovať libSDL.\n"
-"Chybová hláška: '%s'\n"
-
-#: src/mmad.cc:275
-#, c-format
-msgid ""
-"Could not initialize screen resolution.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Nepodarilo sa inicializovať rozlíšenie obrazovky.\n"
-"Chybová hláška: '%s'\n"
-
-#: src/mainMode.cc:176
-msgid "Track:"
-msgstr "Stopa:"
-
-#: src/mainMode.cc:177
-msgid "Author:"
-msgstr "Autor:"
-
-#: src/mainMode.cc:178
-msgid "Press spacebar to begin"
-msgstr "Stlačte medzerník pre štart"
-
-#: src/mainMode.cc:194 src/mainMode.cc:203 src/mainMode.cc:243
-#: src/mainMode.cc:257
-#, c-format
-msgid "Press spacebar to continue"
-msgstr "Stlačte medzerník pre pokračovanie"
-
-#: src/mainMode.cc:195
-msgid "Game over"
-msgstr "Koniec hry"
-
-#: src/mainMode.cc:203
-msgid "Oops"
-msgstr "Ups"
-
-#: src/mainMode.cc:236
-msgid "Paused"
-msgstr "Pauza"
-
-#: src/mainMode.cc:243
-msgid "Bonus level complete"
-msgstr "Bonusový level kompletný"
-
-#: src/mainMode.cc:257
-msgid "Level complete"
-msgstr "Level kompletný"
-
-#: src/mainMode.cc:264
-msgid "Congratulations"
-msgstr "Gratulujem"
-
-#: src/mainMode.cc:264
-msgid "You have completed the game!"
-msgstr "Úspešne ste ukončili hru!"
-
-#: src/mainMode.cc:492 src/mainMode.cc:507
-msgid "Good luck!"
-msgstr "Veľa šťastia!"
-
-#: src/mainMode.cc:599
-#, c-format
-msgid "Level bonuses"
-msgstr "Bonusové levely"
-
-#: src/mainMode.cc:600
-#, c-format
-msgid "Lives left:"
-msgstr "Ešte životov:"
-
-#: src/mainMode.cc:600
-#, c-format
-msgid "%d x 100 = %d points"
-msgstr "%d x 100 = %d bodov"
-
-#: src/mainMode.cc:601
-#, c-format
-msgid "Time left:"
-msgstr "Ešte času:"
-
-#: src/mainMode.cc:601
-#, c-format
-msgid "%d minutes = %d points"
-msgstr "%d minút = %d bodov"
-
-#: src/mainMode.cc:602
-#, c-format
-msgid "Difficulty:"
-msgstr "Náročnosť"
-
-#: src/mainMode.cc:603
-msgid "easy"
-msgstr "ľahká"
-
-#: src/mainMode.cc:603 src/settingsMode.cc:168
-#, c-format
-msgid "normal"
-msgstr "bežná"
-
-#: src/mainMode.cc:603
-msgid "hard"
-msgstr "ťažká"
-
-#: src/glHelp.cc:285
-#, c-format
-msgid "Warning: cannot allocate %d bytes for snapshot. Aborting.\n"
-msgstr ""
-"Varovanie: nepodarilo sa vyhradiť %d bytov pre snapshot. Ruším akciu.\n"
-
-#: src/glHelp.cc:317
-#, c-format
-msgid "Warning: cannot create file '%s'. Abort\n"
-msgstr "Varovanie: nepodarilo sa vytvoriť súbor '%s'. Ruším akciu\n"
-
-#: src/glHelp.cc:454
-#, c-format
-msgid "Error creating surface from RGB file: %s\n"
-msgstr "Chyba pri vytváraní terénu z RGB súboru: %s\n"
-
-#: src/glHelp.cc:474
-#, c-format
-msgid ""
-"Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
-msgstr ""
-"Varovanie: bol dosiahnutý maximálny počet textúr (%d). Textúra '%s' "
-"nebola nahraná.\n"
-
-#: src/glHelp.cc:487 src/glHelp.cc:648
-#, c-format
-msgid "Warning: Failed to load texture %s\n"
-msgstr "Varovanie: Nepodarilo sa nahrať textúru %s\n"
-
-#: src/glHelp.cc:671
-#, c-format
-msgid "Warning: too fast framerate (%f)\n"
-msgstr "Varovanie: príliš veľká rýchlosť snímkov (%f)\n"
-
-#: src/glHelp.cc:678
-#, c-format
-msgid "Framerate: %.1f"
-msgstr "Rýchlosť snímkov: %.1f"
-
-#: src/glHelp.cc:679
-#, c-format
-msgid "Framerate unknown"
-msgstr "Rýchlosť snímkov neznáma"
-
-#: src/glHelp.cc:941
-#, c-format
-msgid "Warning: Rescaling images before loading them as textures.\n"
-msgstr "Varovanie: Pred nahrávaním textúr sa obrázky preškálujú.\n"
-
-#: src/map.cc:209
-#, c-format
-msgid "Unknown track"
-msgstr "Neznáma stopa"
-
-#: src/map.cc:210
-#, c-format
-msgid "Unknown author"
-msgstr "Neznámy autor"
+msgid "center: %d %d left: %d right: %d up: %d down: %d"
+msgstr "stred: %d %d ľavý: %d pravý: %d horný: %d spodný: %d"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
-#: src/editMode.cc:135
+#: ../src/editMode.cc:148
 msgid "File"
 msgstr "Súbor"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:148
 msgid "Edit"
 msgstr "Úpravy"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:148
 msgid "Color"
 msgstr "Farba"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:148
 msgid "Flags"
 msgstr "Vlajky"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:149
 msgid "Feature"
 msgstr "Vlastnosť"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:149
 msgid "Move"
 msgstr "Presunúť"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:149
 msgid "Window"
 msgstr "Okno"
 
-#: src/editMode.cc:135
+#: ../src/editMode.cc:149
 msgid "View"
 msgstr "Pohľad"
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
-#: src/editMode.cc:143
+#: ../src/editMode.cc:157
 msgid "New"
 msgstr "Nový"
 
-#: src/editMode.cc:143
-#, fuzzy
-msgid "Open..."
+#: ../src/editMode.cc:157 ../src/editWindows.cc:532
+msgid "Open"
 msgstr "Otvoriť"
 
-#: src/editMode.cc:143
+#: ../src/editMode.cc:157
 msgid "Close"
 msgstr "Zatvoriť"
 
-#: src/editMode.cc:143
+#: ../src/editMode.cc:157
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/editMode.cc:143
+#: ../src/editMode.cc:157
 msgid "Exit"
 msgstr "Ukončiť"
 
-#: src/editMode.cc:143
+#: ../src/editMode.cc:157
 msgid "Test level"
 msgstr "Testovať level"
 
-#: src/editMode.cc:144
+#: ../src/editMode.cc:158
 msgid "Edit height"
 msgstr "Upraviť výšku"
 
-#: src/editMode.cc:144
+#: ../src/editMode.cc:158
 msgid "Edit color"
 msgstr "Upraviť farbu"
 
-#: src/editMode.cc:144
+#: ../src/editMode.cc:158
 msgid "Edit water"
 msgstr "Upraviť vodu"
 
-#: src/editMode.cc:144
+#: ../src/editMode.cc:158
 msgid "Edit velocity"
 msgstr "Upraviť rýchlosť"
 
-#: src/editMode.cc:144
+#: ../src/editMode.cc:158
 msgid "Edit lines"
 msgstr "Upraviť čiary"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:159
 msgid "*<SPACE> Whole cell"
 msgstr "*<SPACE> Celá bunka"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:159
 msgid "Upper corner"
 msgstr "Horný roh"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:159
 msgid "Bottom corner"
 msgstr "Spodný roh"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:159
 msgid "Right corner"
 msgstr "Pravý roh"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:160
 msgid "Left corner"
 msgstr "Ľavý roh"
 
-#: src/editMode.cc:145
+#: ../src/editMode.cc:160
 msgid "Center"
 msgstr "Stred"
 
-#: src/editMode.cc:146
+#: ../src/editMode.cc:160
 msgid "Raise increment"
 msgstr "Prírastok"
 
-#: src/editMode.cc:146
+#: ../src/editMode.cc:160
 msgid "Lower increment"
 msgstr "Úbytok"
 
-#: src/editMode.cc:146
+#: ../src/editMode.cc:161
 msgid "*<SHIFT> reversed"
 msgstr ""
 
-#: src/editMode.cc:146
+#: ../src/editMode.cc:161
 msgid "*<CTRL> walls"
 msgstr "*<CTRL> steny"
 
-#: src/editMode.cc:147
+#: ../src/editMode.cc:162
 msgid "Inc. red"
 msgstr "Prid. červenej"
 
-#: src/editMode.cc:147
+#: ../src/editMode.cc:162
 msgid "Inc. green"
 msgstr "Prid. zelenej"
 
-#: src/editMode.cc:147
+#: ../src/editMode.cc:162
 msgid "Inc. blue"
 msgstr "Prid. modrej"
 
-#: src/editMode.cc:147
+#: ../src/editMode.cc:162
 msgid "Inc. alpha"
 msgstr "Prid. alpha"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:176
 msgid "Ice"
 msgstr "Ľad"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:176
 msgid "Acid"
 msgstr "Kyselina"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:176
 msgid "Sand"
 msgstr "Piesok"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:176
 msgid "Kill"
 msgstr "Zabiť"
 
-#: src/editMode.cc:148
+#: ../src/editMode.cc:163
 msgid "Bounce"
 msgstr "Skákať"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:177
 msgid "No grid"
 msgstr "Bez mriežky"
 
-#: src/editMode.cc:148 src/editMode.cc:158
+#: ../src/editMode.cc:163 ../src/editMode.cc:177
 msgid "Track"
 msgstr "Stopa"
 
-#: src/editMode.cc:148
+#: ../src/editMode.cc:164
 msgid "Texture"
 msgstr "Textúra"
 
-#: src/editMode.cc:148
+#: ../src/editMode.cc:164
 msgid "ch. texture"
 msgstr "ch. textúra"
 
-#: src/editMode.cc:149 src/editMode.cc:161
+#: ../src/editMode.cc:165 ../src/editMode.cc:180
 msgid "Spike"
 msgstr "Bodce"
 
-#: src/editMode.cc:149 src/editMode.cc:161
+#: ../src/editMode.cc:165 ../src/editMode.cc:180
 msgid "Small hill"
 msgstr "Malý kopec"
 
-#: src/editMode.cc:149 src/editMode.cc:161
+#: ../src/editMode.cc:165 ../src/editMode.cc:180
 msgid "Medium hill"
 msgstr "Stredný kopec"
 
-#: src/editMode.cc:149 src/editMode.cc:161
+#: ../src/editMode.cc:165 ../src/editMode.cc:181
 msgid "Large hill"
 msgstr "Veľký kopec"
 
-#: src/editMode.cc:149 src/editMode.cc:161
+#: ../src/editMode.cc:165 ../src/editMode.cc:181
 msgid "Huge hill"
 msgstr "Obrovský kopec"
 
-#: src/editMode.cc:149
+#: ../src/editMode.cc:166
 msgid "Smooth small"
 msgstr "Vyhladiť malú oblasť"
 
-#: src/editMode.cc:149
+#: ../src/editMode.cc:166
 msgid "Smooth large"
 msgstr "Vyhladiť veľkú oblasť"
 
-#: src/editMode.cc:150
+#: ../src/editMode.cc:167
 msgid "/UP Move up"
 msgstr "/UP Hore"
 
-#: src/editMode.cc:150
+#: ../src/editMode.cc:167
 msgid "/DOWN Move down"
 msgstr "/DOWN Dole"
 
-#: src/editMode.cc:150
+#: ../src/editMode.cc:167
 msgid "/LEFT Move left"
 msgstr "/LEFT Vľavo"
 
-#: src/editMode.cc:150
+#: ../src/editMode.cc:167
 msgid "/RIGHT Move right"
 msgstr "/RIGHT Vpravo"
 
-#: src/editMode.cc:151
+#: ../src/editMode.cc:168
 msgid "Shift map up"
 msgstr "Posunúť mapu dole"
 
-#: src/editMode.cc:151
+#: ../src/editMode.cc:168
 msgid "Shift map down"
 msgstr "Posunúť mapu dole"
 
-#: src/editMode.cc:151
+#: ../src/editMode.cc:168
 msgid "Shift map left"
 msgstr "Posunúť mapu vľavo"
 
-#: src/editMode.cc:151
+#: ../src/editMode.cc:168
 msgid "Shift map right"
 msgstr "Posunúť mapu vpravo"
 
-#: src/editMode.cc:151
+#: ../src/editMode.cc:169
 msgid "*<SHIFT> x5"
 msgstr "*<SHIFT> x5"
 
-#: src/editMode.cc:152
+#: ../src/editMode.cc:169
 msgid "Set region marker"
 msgstr "Nastaviť značku"
 
-#: src/editMode.cc:152
+#: ../src/editMode.cc:169
 msgid "Clear marker"
 msgstr "Vymazať značku"
 
-#: src/editMode.cc:152
+#: ../src/editMode.cc:169
 msgid "Copy region"
 msgstr "Kopírovať oblasť"
 
-#: src/editMode.cc:152
+#: ../src/editMode.cc:170
 msgid "Paste region"
 msgstr "Vložiť oblasť"
 
-#: src/editMode.cc:153
+#: ../src/editMode.cc:171
 msgid "Editor"
 msgstr "Editor"
 
-#: src/editMode.cc:153
+#: ../src/editMode.cc:171
 msgid "Toolbar"
 msgstr "Lišta nástrojov"
 
-#: src/editMode.cc:153
+#: ../src/editMode.cc:171
 msgid "Status"
 msgstr "Stav"
 
-#: src/editMode.cc:154
+#: ../src/editMode.cc:172
 msgid "Birds's eye"
 msgstr "Vtáčia perspektíva"
 
-#: src/editMode.cc:154
+#: ../src/editMode.cc:172
 msgid "Rotate view"
 msgstr "Otáčať pohľad"
 
-#: src/editMode.cc:158
+#: ../src/editMode.cc:177
 msgid "Trampoline"
 msgstr "Trampolína"
 
-#: src/editMode.cc:161
+#: ../src/editMode.cc:181
 msgid "Small smooth"
 msgstr ""
 
-#: src/editMode.cc:161
+#: ../src/editMode.cc:182
 msgid "Large smooth"
 msgstr ""
 
-#: src/editMode.cc:269
+#: ../src/editMode.cc:296
 #, c-format
 msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
 msgstr ""
 "Chyba, %s/.trackballs je symbolický odkaz. Nepodarilo sa uložiť mapu\n"
 
-#: src/editMode.cc:275
+#: ../src/editMode.cc:304
 #, c-format
 msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
 msgstr ""
 "Chyba, %s/.trackballs/levels je symbolický odkaz. Nepodarilo sa uložiť "
 "mapu\n"
 
-#: src/editMode.cc:281
+#: ../src/editMode.cc:314
 #, fuzzy, c-format
 msgid ""
 "Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
@@ -616,33 +368,33 @@ msgstr ""
 "Chyba, %s/.trackballs/levels%s.map je symbolický odkaz. Nepodarilo sa "
 "uložiť mapu\n"
 
-#: src/editMode.cc:285
+#: ../src/editMode.cc:320
 #, c-format
 msgid "Saving map as '%s'\n"
 msgstr "Ukladám mapu ako '%s'\n"
 
-#: src/editMode.cc:298
+#: ../src/editMode.cc:333
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot create default script file\n"
 msgstr ""
 "Chyba, %s je symbolický odkaz. Nepodarilo sa vytvoriť východzí skript\n"
 
-#: src/editMode.cc:303
+#: ../src/editMode.cc:339
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Stopa: %s\n"
 
-#: src/editMode.cc:304
+#: ../src/editMode.cc:340
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Toto je východzí skript pre túto stopu.\n"
 
-#: src/editMode.cc:305
+#: ../src/editMode.cc:341
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Preštudujte dokumentáciu k editoru a pozrite sa na príklady\n"
 
-#: src/editMode.cc:306
+#: ../src/editMode.cc:342
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -651,51 +403,441 @@ msgstr ""
 ";;; pre kurz, ako ho upraviť\n"
 "\n"
 
-#: src/editMode.cc:425
+#: ../src/editMode.cc:484
 #, c-format
 msgid "Raise: %f"
 msgstr "Dvihnúť: %f"
 
-#: src/editMode.cc:429
+#: ../src/editMode.cc:488
 #, c-format
 msgid "Pos: %d,%d"
 msgstr "Poz: %d,%d"
 
-#: src/editMode.cc:432
+#: ../src/editMode.cc:491
 #, c-format
 msgid "Feature: %s"
 msgstr "Vlastnosť: %s"
 
-#: src/editMode.cc:435
+#: ../src/editMode.cc:494
 #, c-format
 msgid "Color %1.1f %1.1f %1.1f %1.1f"
 msgstr ""
 
-#: src/editMode.cc:450
+#: ../src/editMode.cc:516
 msgid "yes"
 msgstr "áno"
 
-#: src/editMode.cc:450
+#: ../src/editMode.cc:516
 msgid "no"
 msgstr "nie"
 
-#: src/editMode.cc:457
+#: ../src/editMode.cc:523
 msgid "Water height"
 msgstr "Výška vody"
 
-#: src/editMode.cc:497
+#: ../src/editMode.cc:563
 msgid "Cell height"
 msgstr "Výška bunky"
 
-#: src/editMode.cc:497
+#: ../src/editMode.cc:563
 msgid "Cell water height"
 msgstr "Výška bunky vody"
 
-#: src/editMode.cc:497
+#: ../src/editMode.cc:563
 msgid "Textures"
 msgstr "Textúry"
 
-#: src/menuMode.cc:74
+#: ../src/editWindows.cc:401
+msgid "Quit without saving?"
+msgstr "Ukončiť bez uloženia?"
+
+#: ../src/editWindows.cc:402 ../src/editWindows.cc:445
+#: ../src/settingsMode.cc:136 ../src/settingsMode.cc:162
+#: ../src/settingsMode.cc:168 ../src/settingsMode.cc:178
+msgid "Yes"
+msgstr "Áno"
+
+#: ../src/editWindows.cc:403 ../src/editWindows.cc:446
+#: ../src/settingsMode.cc:136 ../src/settingsMode.cc:164
+#: ../src/settingsMode.cc:168 ../src/settingsMode.cc:178
+msgid "No"
+msgstr "Nie"
+
+#: ../src/editWindows.cc:444
+msgid "Save map?"
+msgstr "Uložiť mapu?"
+
+#: ../src/editWindows.cc:448
+msgid "Saving"
+msgstr "Ukladanie"
+
+#: ../src/editWindows.cc:529
+msgid "Name of map"
+msgstr "Názov mapy"
+
+#: ../src/editWindows.cc:531 ../src/editWindows.cc:588
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: ../src/editWindows.cc:579
+msgid "Open map"
+msgstr "Otvoriť mapu"
+
+#: ../src/editWindows.cc:586
+#, c-format
+msgid "page %d / %d"
+msgstr "stránka %d / %d"
+
+#: ../src/gamer.cc:91
+#, c-format
+msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
+msgstr ""
+"Chyba, %s/.trackballs je symbolický odkaz. Nepodarilo sa uložiť "
+"nastavenia\n"
+
+#: ../src/gamer.cc:99
+#, c-format
+msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
+msgstr ""
+"Chyba, %s/.trackballs/%s.gmr je symbolický odkaz. Nepodarilo sa uložiť "
+"nastavenia\n"
+
+#: ../src/glHelp.cc:321
+#, c-format
+msgid "Warning: cannot allocate %d bytes for snapshot. Aborting.\n"
+msgstr ""
+"Varovanie: nepodarilo sa vyhradiť %d bytov pre snapshot. Ruším akciu.\n"
+
+#: ../src/glHelp.cc:347
+#, c-format
+msgid "Warning: cannot create file '%s'. Abort\n"
+msgstr "Varovanie: nepodarilo sa vytvoriť súbor '%s'. Ruším akciu\n"
+
+#: ../src/glHelp.cc:480
+#, c-format
+msgid "Error creating surface from RGB file: %s\n"
+msgstr "Chyba pri vytváraní terénu z RGB súboru: %s\n"
+
+#: ../src/glHelp.cc:500
+#, c-format
+msgid ""
+"Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+msgstr ""
+"Varovanie: bol dosiahnutý maximálny počet textúr (%d). Textúra '%s' "
+"nebola nahraná.\n"
+
+#: ../src/glHelp.cc:513 ../src/glHelp.cc:723
+#, c-format
+msgid "Warning: Failed to load texture %s\n"
+msgstr "Varovanie: Nepodarilo sa nahrať textúru %s\n"
+
+#: ../src/glHelp.cc:746
+#, c-format
+msgid "Warning: too fast framerate (%f)\n"
+msgstr "Varovanie: príliš veľká rýchlosť snímkov (%f)\n"
+
+#: ../src/glHelp.cc:756
+#, c-format
+msgid "Framerate: %.1f"
+msgstr "Rýchlosť snímkov: %.1f"
+
+#: ../src/glHelp.cc:758
+#, c-format
+msgid "Framerate unknown"
+msgstr "Rýchlosť snímkov neznáma"
+
+#: ../src/glHelp.cc:1005
+#, c-format
+msgid "Warning: Rescaling images before loading them as textures.\n"
+msgstr "Varovanie: Pred nahrávaním textúr sa obrázky preškálujú.\n"
+
+#: ../src/helpMode.cc:81 ../src/helpMode.cc:97
+#, fuzzy, c-format
+msgid "Error: failed to load %s\n"
+msgstr "Chyba: Nepodarilo sa nahrať %s\n"
+
+#: ../src/helpMode.cc:113
+msgid "MORE HELP"
+msgstr "ĎALŠIA POMOC"
+
+#: ../src/helpMode.cc:185
+msgid "Your marble:"
+msgstr "Vaša gulička:"
+
+#: ../src/helpMode.cc:185
+msgid "Steer this with your mouse, numpad or arrows. "
+msgstr "Navádzaj guličku pomocou myši, numerickej klávesnice a šípiek."
+
+#: ../src/helpMode.cc:186
+msgid "Left mouse or spacebar is jump."
+msgstr "Ľavým tlačidlom myši alebo medzerníkom sa skáče."
+
+#: ../src/helpMode.cc:187
+msgid "Shift gives top speed when using keyboard."
+msgstr "Shift prepne na najvyššiu rýchlosť pri používaní klávesnice."
+
+#: ../src/helpMode.cc:188
+msgid "Mr Black:"
+msgstr "Pán Čierny:"
+
+#: ../src/helpMode.cc:188
+msgid "Your enemy. Defeat with Modpill - Spike."
+msgstr "Váš nepriateľ. Poraziť sa dá s Modpill - Bodce"
+
+#: ../src/helpMode.cc:189
+msgid "Modpill Speed:"
+msgstr "Modpill Rýchlosť:"
+
+#: ../src/helpMode.cc:189
+msgid "Makes you go faster for short period of time."
+msgstr "Zväčší na krátky čas vašu rýchlosť"
+
+#: ../src/helpMode.cc:190
+msgid "Modpill Spikes:"
+msgstr "Modpill Bodce:"
+
+#: ../src/helpMode.cc:190
+msgid "Weapon against Mr Black and grip for icy terrain."
+msgstr "Zbraň proti p. Čiernom a ochrana pred zľadovatelým povrchom."
+
+#: ../src/helpMode.cc:191
+msgid "Modpill Freeze:"
+msgstr "Modpill Mráz:"
+
+#: ../src/helpMode.cc:191
+msgid "This will freeze you - avoid it."
+msgstr "Toto vás zamrazí - vyhnite sa jej."
+
+#: ../src/helpMode.cc:192
+msgid "Modpill Glass:"
+msgstr "Modpill Sklo:"
+
+#: ../src/helpMode.cc:192
+msgid "Protects you from acid, but makes you more fragile."
+msgstr "Ochráni vás pred kyselinou, ale za cenu väčšej zraniteľnosti."
+
+#: ../src/helpMode.cc:193
+msgid "Modpill Nitro:"
+msgstr "Modpill Nitro:"
+
+#: ../src/helpMode.cc:193
+msgid "Move really fast. Active nitro with second button."
+msgstr ""
+
+#: ../src/helpMode.cc:194
+msgid "Switch:"
+msgstr "Prepnúť:"
+
+#: ../src/helpMode.cc:194
+msgid "Activates/deactivates some object/element in the level."
+msgstr "Aktivuje/deaktivuje určitý objekt/element v leveli."
+
+#: ../src/helpMode.cc:195
+msgid "Moving spike:"
+msgstr ""
+
+#: ../src/helpMode.cc:195
+msgid "Obstacle to avoid."
+msgstr "Prekážka"
+
+#: ../src/helpMode.cc:196
+msgid "Flag:"
+msgstr "Vlajka:"
+
+#: ../src/helpMode.cc:196
+msgid "Collect for bonus points."
+msgstr "Zbierajte na získanie bonusových bodov."
+
+#: ../src/helpMode.cc:197
+msgid "Normal terrain:"
+msgstr "Normálny povrch:"
+
+#: ../src/helpMode.cc:197
+msgid "Can be of any color and is safe to move on."
+msgstr "Môže byť ľubovoľnej farby a je bezpečný pre pohyb."
+
+#: ../src/helpMode.cc:198
+msgid "Acid terrain:"
+msgstr "Povrch kyselina:"
+
+#: ../src/helpMode.cc:198
+msgid "Will kill your marble unless you have a glass modpill."
+msgstr "Pokiaľ nemáte Modpill Sklo, zabije vás."
+
+#: ../src/helpMode.cc:199
+msgid "Icy terrain:"
+msgstr "Zľadovatelý povrch:"
+
+#: ../src/helpMode.cc:199
+msgid "Slippery terrain unless you have a spikes modpill."
+msgstr "Šmykľavý povrch, ak nemáte Modpill Bodce."
+
+#: ../src/helpMode.cc:200
+msgid "Sandy terrain:"
+msgstr "Piesočný povrch:"
+
+#: ../src/helpMode.cc:200
+msgid "Soft to land on but will slow you down."
+msgstr "Mäkký na pristátie, ale spomalí vás."
+
+#: ../src/helpMode.cc:201
+msgid "Goal:"
+msgstr "Cieľ:"
+
+#: ../src/helpMode.cc:201
+msgid "Will take you to the next level. "
+msgstr "Vezme vás do dalšieho levelu. "
+
+#: ../src/helpMode.cc:202
+msgid "Get here before time runs out."
+msgstr "Dostaňte sa sem pred vypršaním času."
+
+#: ../src/helpMode.cc:203
+msgid "Force Field:"
+msgstr ""
+
+#: ../src/helpMode.cc:203
+msgid "You cannot pass this unless you switch it off."
+msgstr "Nemôžete prejsť cez toto, pokiaľ ho nevypnete."
+
+#: ../src/helpMode.cc:204
+msgid "Some are lethal and some are one way."
+msgstr "Niektoré sú smrtiaci a iné jednosmerky."
+
+#: ../src/helpMode.cc:205
+msgid "Tunnel:"
+msgstr "Tunel:"
+
+#: ../src/helpMode.cc:205
+msgid "Takes you places, sometimes with great speed."
+msgstr "Presunie vás na iné miesto, niekedy pridá rýchlosť."
+
+#: ../src/helpMode.cc:249
+msgid "More Help"
+msgstr "Ďalšia pomoc"
+
+#: ../src/helpMode.cc:251 ../src/settingsMode.cc:227
+msgid "Back"
+msgstr "Späť"
+
+#: ../src/highScore.cc:64 ../src/highScore.cc:113
+#, c-format
+msgid "Error, %s is a symbolic link. Cannot save highscores\n"
+msgstr "Chyba, %s je symbolický odkaz. Nepodarilo sa uložiť skóre\n"
+
+#: ../src/hofMode.cc:141 ../src/setupMode.cc:172
+msgid "Level Set"
+msgstr ""
+
+#: ../src/hofMode.cc:158
+#, c-format
+msgid "%d points"
+msgstr "%d bodov"
+
+#: ../src/mainMode.cc:181
+msgid "Track:"
+msgstr "Stopa:"
+
+#: ../src/mainMode.cc:183
+msgid "Author:"
+msgstr "Autor:"
+
+#: ../src/mainMode.cc:185
+msgid "Press spacebar to begin"
+msgstr "Stlačte medzerník pre štart"
+
+#: ../src/mainMode.cc:202 ../src/mainMode.cc:211 ../src/mainMode.cc:252
+#: ../src/mainMode.cc:266
+#, c-format
+msgid "Press spacebar to continue"
+msgstr "Stlačte medzerník pre pokračovanie"
+
+#: ../src/mainMode.cc:203
+msgid "Game over"
+msgstr "Koniec hry"
+
+#: ../src/mainMode.cc:211
+msgid "Oops"
+msgstr "Ups"
+
+#: ../src/mainMode.cc:244
+msgid "Paused"
+msgstr "Pauza"
+
+#: ../src/mainMode.cc:252
+msgid "Bonus level complete"
+msgstr "Bonusový level kompletný"
+
+#: ../src/mainMode.cc:266
+msgid "Level complete"
+msgstr "Level kompletný"
+
+#: ../src/mainMode.cc:273
+msgid "Congratulations"
+msgstr "Gratulujem"
+
+#: ../src/mainMode.cc:273
+msgid "You have completed the game!"
+msgstr "Úspešne ste ukončili hru!"
+
+#: ../src/mainMode.cc:512 ../src/mainMode.cc:527
+msgid "Good luck!"
+msgstr "Veľa šťastia!"
+
+#: ../src/mainMode.cc:618
+#, c-format
+msgid "Level bonuses"
+msgstr "Bonusové levely"
+
+#: ../src/mainMode.cc:620
+#, c-format
+msgid "Lives left:"
+msgstr "Ešte životov:"
+
+#: ../src/mainMode.cc:621
+#, c-format
+msgid "%d x 100 = %d points"
+msgstr "%d x 100 = %d bodov"
+
+#: ../src/mainMode.cc:622
+#, c-format
+msgid "Time left:"
+msgstr "Ešte času:"
+
+#: ../src/mainMode.cc:623
+#, c-format
+msgid "%d minutes = %d points"
+msgstr "%d minút = %d bodov"
+
+#: ../src/mainMode.cc:625
+#, c-format
+msgid "Difficulty:"
+msgstr "Náročnosť"
+
+#: ../src/mainMode.cc:627
+msgid "easy"
+msgstr "ľahká"
+
+#: ../src/mainMode.cc:627 ../src/settingsMode.cc:188
+#, c-format
+msgid "normal"
+msgstr "bežná"
+
+#: ../src/mainMode.cc:627
+msgid "hard"
+msgstr "ťažká"
+
+#: ../src/map.cc:235
+#, c-format
+msgid "Unknown track"
+msgstr "Neznáma stopa"
+
+#: ../src/map.cc:236
+#, c-format
+msgid "Unknown author"
+msgstr "Neznámy autor"
+
+#: ../src/menuMode.cc:78
 msgid ""
 "Trackballs is a game similar to the classical game Marble Madness from the "
 "80's. By steering a marble ball through a labyrinth filled with sharp "
@@ -712,521 +854,390 @@ msgstr ""
 "nevyprší čas. Guličku ovládate pomocou myši a medzerníkom môžete na "
 "skákať na kratšie vzdialenosti."
 
-#: src/menuMode.cc:125
+#: ../src/menuMode.cc:127
 msgid "New Game"
 msgstr "Nová hra"
 
-#: src/menuMode.cc:126
+#: ../src/menuMode.cc:128
 msgid "Quit"
 msgstr "Ukončiť"
 
-#: src/menuMode.cc:127
+#: ../src/menuMode.cc:129
 msgid "Settings"
 msgstr "Nastavenia"
 
-#: src/menuMode.cc:128
+#: ../src/menuMode.cc:130
 msgid "Hall of Fame"
 msgstr "Sieň slávnych"
 
-#: src/menuMode.cc:129
+#: ../src/menuMode.cc:131
 msgid "Help"
 msgstr "Pomoc"
 
-#: src/menuMode.cc:130
+#: ../src/menuMode.cc:132
 msgid "Map Editor"
 msgstr "Editor máp"
 
-#: src/highScore.cc:58 src/highScore.cc:101
+#: ../src/mmad.cc:135
 #, c-format
-msgid "Error, %s is a symbolic link. Cannot save highscores\n"
-msgstr "Chyba, %s je symbolický odkaz. Nepodarilo sa uložiť skóre\n"
-
-#: src/hofMode.cc:109 src/setupMode.cc:164
-msgid "Level Set"
+msgid ""
+"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
 msgstr ""
+"Použitie: %s [-w, -m] [-e, -l -t <level>] [-r <sirka>] [-s <citlivost>]\n"
 
-#: src/hofMode.cc:122
+#: ../src/mmad.cc:137
 #, c-format
-msgid "%d points"
-msgstr "%d bodov"
+msgid "   -h  --help            Display this usage information.\n"
+msgstr "   -h  --help            Zobrazenie tohto navodu na pouzivanie.\n"
 
-#: src/settingsMode.cc:89
-msgid "Game Settings"
-msgstr "Nastavenia hry"
-
-#: src/settingsMode.cc:102
+#: ../src/mmad.cc:138
 #, c-format
-msgid "Is resolution %dx%dx%d ok?"
-msgstr "Je rozlíšenie %dx%d%d v poriadku?"
+msgid "   -e  --edit            Start as level editor.\n"
+msgstr "   -e  --edit            Spustit editor levelov.\n"
 
-#: src/settingsMode.cc:105
-msgid "Ok, use this resolution"
-msgstr "Áno, použi toto rozlíšenie"
-
-#: src/settingsMode.cc:106
-msgid "No, revert to old resolution"
-msgstr "Nie, vráť sa k minulému rozlíšeniu"
-
-#: src/settingsMode.cc:108
+#: ../src/mmad.cc:139
 #, c-format
-msgid "Timeout in %d seconds"
-msgstr "Timeout %d sekúnd"
+msgid "   -l  --level           Start from level.\n"
+msgstr "   -l  --level           Spustit od levelu.\n"
 
-#: src/settingsMode.cc:123
-msgid "Graphics"
-msgstr "Grafika"
-
-#: src/settingsMode.cc:127
-msgid "  Resolution"
-msgstr "  Rozlíšenie"
-
-#: src/settingsMode.cc:128
-msgid "  Test this resolution"
-msgstr "  Vyskúšať toto rozlíšenie"
-
-#: src/settingsMode.cc:131
-msgid "  Fullscreen"
-msgstr "  Celá obrazovka"
-
-#: src/settingsMode.cc:131 src/settingsMode.cc:146 src/settingsMode.cc:149
-#: src/settingsMode.cc:159 src/editWindows.cc:362 src/editWindows.cc:400
-msgid "No"
-msgstr "Nie"
-
-#: src/settingsMode.cc:131 src/settingsMode.cc:144 src/settingsMode.cc:149
-#: src/settingsMode.cc:159 src/editWindows.cc:361 src/editWindows.cc:399
-msgid "Yes"
-msgstr "Áno"
-
-#: src/settingsMode.cc:135
+#: ../src/mmad.cc:140
 #, c-format
-msgid "None"
-msgstr "Žiadne"
+msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
+msgstr ""
+"   -w  --windowed        Spustit v okne (vychodzie je na celu obrazovku\n"
 
-#: src/settingsMode.cc:136
+#: ../src/mmad.cc:141
 #, c-format
-msgid "Minimalistic"
-msgstr "Minimalistické"
+msgid "   -m  --mute            Mute sound.\n"
+msgstr "   -m  --mute            Vypnut zvuk.\n"
 
-#: src/settingsMode.cc:137
+#: ../src/mmad.cc:142
 #, c-format
-msgid "Simple"
-msgstr "Jednoduché"
+msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
+msgstr "   -r  --resolution      Nastavit rozlisenia na 640, 800 alebo 1024\n"
 
-#: src/settingsMode.cc:138
+#: ../src/mmad.cc:143
 #, c-format
-msgid "Standard"
-msgstr "Štandardné"
+msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
+msgstr "   -s  --sensitivity     Citlivost mysi, vychodzia 1.0\n"
 
-#: src/settingsMode.cc:139
+#: ../src/mmad.cc:144
 #, c-format
-msgid "Extra"
-msgstr "Extra"
+msgid "   -f  --fps             Displays framerate\n"
+msgstr "   -f  --fps             Zobrazovat rychlost snimkov\n"
 
-#: src/settingsMode.cc:140
+#: ../src/mmad.cc:145
 #, c-format
-msgid "Everything"
-msgstr "Všetko"
+msgid "   -q  --quiet           Do not print anything to stdout\n"
+msgstr "   -q  --quiet           Nevypisovat nic na standardny vystup\n"
 
-#: src/settingsMode.cc:142
-msgid "  Details"
-msgstr "  Detaily"
-
-#: src/settingsMode.cc:144 src/settingsMode.cc:146
-msgid "  Reflections (beta)"
-msgstr "  Odrazy (beta)"
-
-#: src/settingsMode.cc:149
-msgid "  Show FPS"
-msgstr "  Zobraziť rýchlosť snímkov"
-
-#: src/settingsMode.cc:155
-msgid "Controls"
-msgstr "Ovládanie"
-
-#: src/settingsMode.cc:158
-msgid "  Use mouse"
-msgstr "  Používať myš"
-
-#: src/settingsMode.cc:164
-msgid "  Sensitivity"
-msgstr "  Citlivosť"
-
-#: src/settingsMode.cc:169
+#: ../src/mmad.cc:146
 #, c-format
-msgid "+%d degrees"
-msgstr "+%d stupňov"
+msgid "   -v  --version         Prints current version number\n"
+msgstr "   -v  --version         Zobrazi aktualne cislo verzie\n"
 
-#: src/settingsMode.cc:170
+#: ../src/mmad.cc:147
 #, c-format
-msgid "-%d degrees"
-msgstr "-%d stupňov"
+msgid "   -t  --touch           Updates a map to the latest format\n"
+msgstr "   -t  --touch           Aktualizuje mapu na najnovsi format\n"
 
-#: src/settingsMode.cc:171
-msgid "  Steering"
-msgstr "  Manévrovanie"
-
-#: src/settingsMode.cc:176
+#: ../src/mmad.cc:148
 #, c-format
-msgid "no joystick found"
-msgstr "joystick nebol nájdený"
+msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
+msgstr "   -y  --low-memory      Pokusi sa setrit spotrebu pamate\n"
 
-#: src/settingsMode.cc:179
-msgid "  Joystick:"
-msgstr "  Joystick:"
+#: ../src/mmad.cc:149
+#, c-format
+msgid "   -j  --repair-joystick Correct for bad joysticks\n"
+msgstr "   -j  --repair-joystick Oprava pre zle joysticky\n"
 
-#: src/settingsMode.cc:189
-msgid "Other"
-msgstr "Iné"
+#: ../src/mmad.cc:151
+#, c-format
+msgid "Important keyboard shortcuts\n"
+msgstr "Dôležité klávesové skratky\n"
 
-#: src/settingsMode.cc:193
-msgid "  Music volume"
-msgstr "  Hlasitosť hudby"
+#: ../src/mmad.cc:152
+#, c-format
+msgid "   Escape     Soft quit\n"
+msgstr "   Escape     Normálne ukončenie\n"
 
-#: src/settingsMode.cc:195
-msgid "  Effects volume"
-msgstr "  Hlasitosť efektov"
+#: ../src/mmad.cc:153
+#, c-format
+msgid "   CapsLock   Unhide mouse pointer\n"
+msgstr "   CapsLock   Zobraziť kurzor myši\n"
 
-#: src/settingsMode.cc:197
-msgid "  Language"
-msgstr "  Jazyk"
+#: ../src/mmad.cc:154
+#, c-format
+msgid "   CTRL-q     Quit the game immediatly\n"
+msgstr "   CTRL-q     Okamžité ukončenie hry\n"
 
-#: src/settingsMode.cc:201 src/helpMode.cc:208
-msgid "Back"
-msgstr "Späť"
+#: ../src/mmad.cc:155
+#, c-format
+msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
+msgstr "   CTRL-f     Prepína medzi plnoobrazovkovým a okenným režimom\n"
 
-#: src/settings.cc:188 src/settings.cc:195
+#: ../src/mmad.cc:156
+#, c-format
+msgid "   k          Kill the ball\n"
+msgstr "   k          Zrušiť guličku\n"
+
+#: ../src/mmad.cc:240
+#, c-format
+msgid ""
+"Commandline switch -e is deprecated, use the editor button the main menu "
+"instead\n"
+msgstr ""
+"Konzolovy prepinac -e je neaktualny, pouzite tlacitko Editor v hlavnom menu\n"
+
+#: ../src/mmad.cc:267
+#, c-format
+msgid "Unknown screen resolution of width %d\n"
+msgstr "Neznáme rozlíšenie šírky %d\n"
+
+#: ../src/mmad.cc:302
+#, c-format
+msgid "Welcome to Trackballs. \n"
+msgstr "Vitajte v hre Trackballs. \n"
+
+#: ../src/mmad.cc:303
+#, c-format
+msgid "Using %s as gamedata directory.\n"
+msgstr "Používam %s ako adresár s dátami hry.\n"
+
+#: ../src/mmad.cc:308
+#, c-format
+msgid ""
+"Could not initialize libSDL.\n"
+"Error message: '%s'\n"
+msgstr ""
+"Nepodarilo sa inicializovať libSDL.\n"
+"Chybová hláška: '%s'\n"
+
+#: ../src/mmad.cc:328
+#, c-format
+msgid ""
+"Could not initialize screen resolution.\n"
+"Error message: '%s'\n"
+msgstr ""
+"Nepodarilo sa inicializovať rozlíšenie obrazovky.\n"
+"Chybová hláška: '%s'\n"
+
+#: ../src/settings.cc:203 ../src/settings.cc:210
 #, c-format
 msgid "Error, %s is a symbolic link. Cannot save settings\n"
 msgstr "Chyba, %s je symbolický odkaz. Nepodarilo sa uložiť skóre\n"
 
-#: src/setupMode.cc:156
+#: ../src/settingsMode.cc:88
+msgid "Game Settings"
+msgstr "Nastavenia hry"
+
+#: ../src/settingsMode.cc:101
+#, c-format
+msgid "Is resolution %dx%dx%d ok?"
+msgstr "Je rozlíšenie %dx%d%d v poriadku?"
+
+#: ../src/settingsMode.cc:105
+msgid "Ok, use this resolution"
+msgstr "Áno, použi toto rozlíšenie"
+
+#: ../src/settingsMode.cc:106
+msgid "No, revert to old resolution"
+msgstr "Nie, vráť sa k minulému rozlíšeniu"
+
+#: ../src/settingsMode.cc:108
+#, c-format
+msgid "Timeout in %d seconds"
+msgstr "Timeout %d sekúnd"
+
+#: ../src/settingsMode.cc:122
+msgid "Graphics"
+msgstr "Grafika"
+
+#: ../src/settingsMode.cc:129
+msgid "Auto"
+msgstr ""
+
+#: ../src/settingsMode.cc:131
+msgid "  Resolution"
+msgstr "  Rozlíšenie"
+
+#: ../src/settingsMode.cc:132
+msgid "  Test this resolution"
+msgstr "  Vyskúšať toto rozlíšenie"
+
+#: ../src/settingsMode.cc:135
+msgid "  Fullscreen"
+msgstr "  Celá obrazovka"
+
+#: ../src/settingsMode.cc:141
+#, c-format
+msgid "None"
+msgstr "Žiadne"
+
+#: ../src/settingsMode.cc:144
+#, c-format
+msgid "Minimalistic"
+msgstr "Minimalistické"
+
+#: ../src/settingsMode.cc:147
+#, c-format
+msgid "Simple"
+msgstr "Jednoduché"
+
+#: ../src/settingsMode.cc:150
+#, c-format
+msgid "Standard"
+msgstr "Štandardné"
+
+#: ../src/settingsMode.cc:153
+#, c-format
+msgid "Extra"
+msgstr "Extra"
+
+#: ../src/settingsMode.cc:156
+#, c-format
+msgid "Everything"
+msgstr "Všetko"
+
+#: ../src/settingsMode.cc:159
+msgid "  Details"
+msgstr "  Detaily"
+
+#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:164
+msgid "  Reflections (beta)"
+msgstr "  Odrazy (beta)"
+
+#: ../src/settingsMode.cc:167
+msgid "  Show FPS"
+msgstr "  Zobraziť rýchlosť snímkov"
+
+#: ../src/settingsMode.cc:174
+msgid "Controls"
+msgstr "Ovládanie"
+
+#: ../src/settingsMode.cc:177
+msgid "  Use mouse"
+msgstr "  Používať myš"
+
+#: ../src/settingsMode.cc:183
+msgid "  Sensitivity"
+msgstr "  Citlivosť"
+
+#: ../src/settingsMode.cc:190
+#, c-format
+msgid "+%d degrees"
+msgstr "+%d stupňov"
+
+#: ../src/settingsMode.cc:192
+#, c-format
+msgid "-%d degrees"
+msgstr "-%d stupňov"
+
+#: ../src/settingsMode.cc:193
+msgid "  Steering"
+msgstr "  Manévrovanie"
+
+#: ../src/settingsMode.cc:200
+#, c-format
+msgid "no joystick found"
+msgstr "joystick nebol nájdený"
+
+#: ../src/settingsMode.cc:204
+msgid "  Joystick:"
+msgstr "  Joystick:"
+
+#: ../src/settingsMode.cc:214
+msgid "Other"
+msgstr "Iné"
+
+#: ../src/settingsMode.cc:218
+msgid "  Music volume"
+msgstr "  Hlasitosť hudby"
+
+#: ../src/settingsMode.cc:220
+msgid "  Effects volume"
+msgstr "  Hlasitosť efektov"
+
+#: ../src/settingsMode.cc:222
+msgid "  Language"
+msgstr "  Jazyk"
+
+#: ../src/setupMode.cc:72 ../src/setupMode.cc:351
+#, fuzzy, c-format
+msgid "Error: Failed to load %s\n"
+msgstr "Chyba: Nepodarilo sa nahrať %s\n"
+
+#: ../src/setupMode.cc:164
 msgid "Setup new game"
 msgstr "Nastaviť novú hru"
 
-#: src/setupMode.cc:160
+#: ../src/setupMode.cc:168
 msgid "Player Name"
 msgstr "Meno hráča"
 
-#: src/setupMode.cc:166
+#: ../src/setupMode.cc:174
 msgid "N/A"
 msgstr "N/A"
 
-#: src/setupMode.cc:171
+#: ../src/setupMode.cc:180
 msgid "Level"
 msgstr "Level"
 
-#: src/setupMode.cc:178
+#: ../src/setupMode.cc:188
 msgid "Difficulty"
 msgstr "Náročnosť"
 
-#: src/setupMode.cc:181
+#: ../src/setupMode.cc:193
 msgid "Sandbox (Easy)"
 msgstr "Sandbox (Ľahká)"
 
-#: src/setupMode.cc:182
+#: ../src/setupMode.cc:194
 msgid "Sandbox (Normal)"
 msgstr "Sandbox (Bežná)"
 
-#: src/setupMode.cc:182
+#: ../src/setupMode.cc:194
 msgid "Sandbox (Hard)"
 msgstr "Sandbox (Ťažká)"
 
-#: src/setupMode.cc:183
+#: ../src/setupMode.cc:196
 msgid "Easy"
 msgstr "Ľahká"
 
-#: src/setupMode.cc:183
+#: ../src/setupMode.cc:197
 msgid "Normal"
 msgstr "Bežná"
 
-#: src/setupMode.cc:183
+#: ../src/setupMode.cc:197
 msgid "Hard"
 msgstr "Ťažká"
 
-#: src/setupMode.cc:186
+#: ../src/setupMode.cc:201
 msgid "Start Game"
 msgstr "Spustiť hru"
 
-#: src/setupMode.cc:189
+#: ../src/setupMode.cc:205
 #, c-format
 msgid "Total games played: %d"
 msgstr "Všetkých odohraných hier: %d"
 
-#: src/setupMode.cc:192
+#: ../src/setupMode.cc:209
 #, c-format
 msgid "Average score: %d"
 msgstr "Priemerné skóre: %d"
 
-#: src/setupMode.cc:194
+#: ../src/setupMode.cc:211
 #, c-format
 msgid "Average score: N/A"
 msgstr "Priemerné skóre: nedostupné"
 
-#: src/setupMode.cc:196
+#: ../src/setupMode.cc:214
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Hotových levelov: %d"
 
-#: src/gamer.cc:94
-#, c-format
-msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
-msgstr ""
-"Chyba, %s/.trackballs je symbolický odkaz. Nepodarilo sa uložiť "
-"nastavenia\n"
-
-#: src/gamer.cc:101
-#, c-format
-msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
-msgstr ""
-"Chyba, %s/.trackballs/%s.gmr je symbolický odkaz. Nepodarilo sa uložiť "
-"nastavenia\n"
-
-#: src/helpMode.cc:73 src/helpMode.cc:86
-#, fuzzy, c-format
-msgid "Error: failed to load %s\n"
-msgstr "Chyba: Nepodarilo sa nahrať %s\n"
-
-#: src/helpMode.cc:100
-msgid "MORE HELP"
-msgstr "ĎALŠIA POMOC"
-
-#: src/helpMode.cc:159
-msgid "Your marble:"
-msgstr "Vaša gulička:"
-
-#: src/helpMode.cc:159
-msgid "Steer this with your mouse, numpad or arrows. "
-msgstr "Navádzaj guličku pomocou myši, numerickej klávesnice a šípiek."
-
-#: src/helpMode.cc:160
-msgid "Left mouse or spacebar is jump."
-msgstr "Ľavým tlačidlom myši alebo medzerníkom sa skáče."
-
-#: src/helpMode.cc:161
-msgid "Shift gives top speed when using keyboard."
-msgstr "Shift prepne na najvyššiu rýchlosť pri používaní klávesnice."
-
-#: src/helpMode.cc:162
-msgid "Mr Black:"
-msgstr "Pán Čierny:"
-
-#: src/helpMode.cc:162
-msgid "Your enemy. Defeat with Modpill - Spike."
-msgstr "Váš nepriateľ. Poraziť sa dá s Modpill - Bodce"
-
-#: src/helpMode.cc:163
-msgid "Modpill Speed:"
-msgstr "Modpill Rýchlosť:"
-
-#: src/helpMode.cc:163
-msgid "Makes you go faster for short period of time."
-msgstr "Zväčší na krátky čas vašu rýchlosť"
-
-#: src/helpMode.cc:164
-msgid "Modpill Spikes:"
-msgstr "Modpill Bodce:"
-
-#: src/helpMode.cc:164
-msgid "Weapon against Mr Black and grip for icy terrain."
-msgstr "Zbraň proti p. Čiernom a ochrana pred zľadovatelým povrchom."
-
-#: src/helpMode.cc:165
-msgid "Modpill Freeze:"
-msgstr "Modpill Mráz:"
-
-#: src/helpMode.cc:165
-msgid "This will freeze you - avoid it."
-msgstr "Toto vás zamrazí - vyhnite sa jej."
-
-#: src/helpMode.cc:166
-msgid "Modpill Glass:"
-msgstr "Modpill Sklo:"
-
-#: src/helpMode.cc:166
-msgid "Protects you from acid, but makes you more fragile."
-msgstr "Ochráni vás pred kyselinou, ale za cenu väčšej zraniteľnosti."
-
-#: src/helpMode.cc:167
-msgid "Modpill Nitro:"
-msgstr "Modpill Nitro:"
-
-#: src/helpMode.cc:167
-msgid "Move really fast. Active nitro with second button."
-msgstr ""
-
-#: src/helpMode.cc:168
-msgid "Switch:"
-msgstr "Prepnúť:"
-
-#: src/helpMode.cc:168
-msgid "Activates/deactivates some object/element in the level."
-msgstr "Aktivuje/deaktivuje určitý objekt/element v leveli."
-
-#: src/helpMode.cc:169
-msgid "Moving spike:"
-msgstr ""
-
-#: src/helpMode.cc:169
-msgid "Obstacle to avoid."
-msgstr "Prekážka"
-
-#: src/helpMode.cc:170
-msgid "Flag:"
-msgstr "Vlajka:"
-
-#: src/helpMode.cc:170
-msgid "Collect for bonus points."
-msgstr "Zbierajte na získanie bonusových bodov."
-
-#: src/helpMode.cc:171
-msgid "Normal terrain:"
-msgstr "Normálny povrch:"
-
-#: src/helpMode.cc:171
-msgid "Can be of any color and is safe to move on."
-msgstr "Môže byť ľubovoľnej farby a je bezpečný pre pohyb."
-
-#: src/helpMode.cc:172
-msgid "Acid terrain:"
-msgstr "Povrch kyselina:"
-
-#: src/helpMode.cc:172
-msgid "Will kill your marble unless you have a glass modpill."
-msgstr "Pokiaľ nemáte Modpill Sklo, zabije vás."
-
-#: src/helpMode.cc:173
-msgid "Icy terrain:"
-msgstr "Zľadovatelý povrch:"
-
-#: src/helpMode.cc:173
-msgid "Slippery terrain unless you have a spikes modpill."
-msgstr "Šmykľavý povrch, ak nemáte Modpill Bodce."
-
-#: src/helpMode.cc:174
-msgid "Sandy terrain:"
-msgstr "Piesočný povrch:"
-
-#: src/helpMode.cc:174
-msgid "Soft to land on but will slow you down."
-msgstr "Mäkký na pristátie, ale spomalí vás."
-
-#: src/helpMode.cc:175
-msgid "Goal:"
-msgstr "Cieľ:"
-
-#: src/helpMode.cc:175
-msgid "Will take you to the next level. "
-msgstr "Vezme vás do dalšieho levelu. "
-
-#: src/helpMode.cc:176
-msgid "Get here before time runs out."
-msgstr "Dostaňte sa sem pred vypršaním času."
-
-#: src/helpMode.cc:177
-msgid "Force Field:"
-msgstr ""
-
-#: src/helpMode.cc:177
-msgid "You cannot pass this unless you switch it off."
-msgstr "Nemôžete prejsť cez toto, pokiaľ ho nevypnete."
-
-#: src/helpMode.cc:178
-msgid "Some are lethal and some are one way."
-msgstr "Niektoré sú smrtiaci a iné jednosmerky."
-
-#: src/helpMode.cc:179
-msgid "Tunnel:"
-msgstr "Tunel:"
-
-#: src/helpMode.cc:179
-msgid "Takes you places, sometimes with great speed."
-msgstr "Presunie vás na iné miesto, niekedy pridá rýchlosť."
-
-#: src/helpMode.cc:207
-msgid "More Help"
-msgstr "Ďalšia pomoc"
-
-#: src/calibrateJoystickMode.cc:91
-#, c-format
-msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
-msgstr ""
-"Chyba, volaná funkcia CalibrateJoystickMode s nesprávnym joystickom!\n"
-
-#: src/calibrateJoystickMode.cc:93
-msgid "Calibrating Joystick"
-msgstr "Kalibrujem Joystick"
-
-#: src/calibrateJoystickMode.cc:99
-msgid "Center joystick"
-msgstr "Centrujte joystick"
-
-#: src/calibrateJoystickMode.cc:102
-msgid "Move joystick left"
-msgstr "Pohnite joystickom vľavo"
-
-#: src/calibrateJoystickMode.cc:105
-msgid "Move joystick right"
-msgstr "Pohnite joystickom vpravo"
-
-#: src/calibrateJoystickMode.cc:108
-msgid "Move joystick up"
-msgstr "Pohnite joystickom hore"
-
-#: src/calibrateJoystickMode.cc:111
-msgid "Move joystick down"
-msgstr "Pohnite joystickom dole"
-
-#: src/calibrateJoystickMode.cc:114
-msgid "Press any button to continue"
-msgstr "Stlačte ľubovoľný kláves pre pokračovanie"
-
-#: src/calibrateJoystickMode.cc:115
-msgid "Press escape to cancel"
-msgstr "Stlačte escape pre zrušenie"
-
-#: src/calibrateJoystickMode.cc:117
-#, c-format
-msgid "now: %d %d"
-msgstr "teraz: %d %d"
-
-#: src/calibrateJoystickMode.cc:120
-#, c-format
-msgid "center: %d %d left: %d right: %d up: %d down: %d"
-msgstr "stred: %d %d ľavý: %d pravý: %d horný: %d spodný: %d"
-
-#: src/editWindows.cc:360
-msgid "Quit without saving?"
-msgstr "Ukončiť bez uloženia?"
-
-#: src/editWindows.cc:398
-msgid "Save map?"
-msgstr "Uložiť mapu?"
-
-#: src/editWindows.cc:402
-msgid "Saving"
-msgstr "Ukladanie"
-
-#: src/editWindows.cc:477
-msgid "Name of map"
-msgstr "Názov mapy"
-
-#: src/editWindows.cc:479 src/editWindows.cc:530
-msgid "Cancel"
-msgstr "Zrušiť"
-
-#: src/editWindows.cc:480
-msgid "Open"
-msgstr "Otvoriť"
-
-#: src/editWindows.cc:522
-msgid "Open map"
-msgstr "Otvoriť mapu"
-
-#: src/editWindows.cc:528
-#, c-format
-msgid "page %d / %d"
-msgstr "stránka %d / %d"
+#, fuzzy
+#~ msgid "Open..."
+#~ msgstr "Otvoriť"
 
 #~ msgid "Error: file %s is a symlink.\n"
 #~ msgstr "Chyba: súbor %s je symbolický odkaz.\n"
