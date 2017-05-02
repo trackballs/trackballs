@@ -78,7 +78,7 @@ void EMenuWindow::openSubMenu(int id) {
   activeSubWindow = subWindows[id];
   activeSubWindow->attach();
 }
-int EMenuWindow::keyToMenuEntry(int key) {
+int EMenuWindow::keyToMenuEntry(int key, int shift) {
   int i, j;
 
   /* Convert keypad numbers to normal numbers */
@@ -88,7 +88,7 @@ int EMenuWindow::keyToMenuEntry(int key) {
 
   /* Make all keys lower case since SHIFT and uppercase keys have
          a special meaning */
-  if (isupper(key)) key = key - 'A' + 'a';
+  if (shift) key = key - 'A' + 'a';
   if (key == SDLK_UP) key = 'U';
   if (key == SDLK_LEFT) key = 'L';
   if (key == SDLK_RIGHT) key = 'R';
@@ -104,12 +104,12 @@ int EMenuWindow::keyToMenuEntry(int key) {
       if (cKeyShortcuts[i][j] == key) return i * MAX_MENU_ENTRIES + j;
   return -1;
 }
-void EMenuWindow::key(int key) {
+void EMenuWindow::key(int key, int shift) {
   if (key >= SDLK_F1 && key <= SDLK_F12) {
     int menu = key - SDLK_F1;
     if (menu >= 0 && menu < N_SUBMENUS) openSubMenu(menu);
   } else {
-    int command = keyToMenuEntry(key);
+    int command = keyToMenuEntry(key, shift);
     if (command >= 0) EditMode::editMode->doCommand(command);
   }
 }

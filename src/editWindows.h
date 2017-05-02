@@ -32,9 +32,9 @@ class EMenuWindow : public MyWindow {
   void draw();
   void mouseDown(int state, int x, int y);
   void openSubMenu(int);
-  void key(int key);
+  void key(int key, int shift);
 
-  int keyToMenuEntry(int);
+  int keyToMenuEntry(int, int);
 
  private:
   int spacing;

@@ -1007,7 +1007,7 @@ void EditMode::key(int key) {
   case SDLK_DOWN: x-=(switchViewpoint?-1:1)*(shift?5:1); break;
   }*/
 
-  menuWindow->key(key);
+  menuWindow->key(key, shift);
 
   return;
 
