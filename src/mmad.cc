@@ -64,6 +64,7 @@ SDL_GLContext mainContext;
 const char *program_name;
 int silent = 0;
 int debug_joystick, repair_joystick;
+int not_yet_windowed = 1;
 
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
@@ -109,6 +110,7 @@ void changeScreenResolution() {
       windowWidth = 800;
       windowHeight = 600;
     }
+    not_yet_windowed = full;
 
     window = SDL_CreateWindow(buffer, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                               windowWidth, windowHeight, flags);
@@ -134,12 +136,21 @@ void changeScreenResolution() {
     } else {
       SDL_SetWindowFullscreen(window, 0);
       SDL_SetWindowResizable(window, SDL_FALSE);
+      if (not_yet_windowed) {
+        not_yet_windowed = 0;
+        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+      }
     }
   } else {
     if (full) {
       SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
     } else {
       SDL_SetWindowFullscreen(window, 0);
+      if (not_yet_windowed) {
+        not_yet_windowed = 0;
+        SDL_SetWindowSize(window, 800, 600);
+        SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+      }
       SDL_SetWindowResizable(window, SDL_TRUE);
     }
   }
