@@ -4,10 +4,7 @@ project(trackballs)
 # Compile options
 add_compile_options(-Os)
 add_compile_options(-ggdb3)
-
-# ASAN for debugging
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fsanitize=address" )
-set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address" )
+add_compile_options(-Wall)
 
 # Required libraries
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
@@ -28,7 +25,8 @@ foreach( d ${definitions} )
 endforeach()
 
 add_custom_command(OUTPUT guile.cc.x
-                  COMMAND CPP=cpp; guile-snarf -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr}  -pthread -I${GUILE_INCLUDE_DIRS} -g -O2 -I/usr/include/SDL -D_GNU_SOURCE=1 -D_REENTRANT -I./ -I../ 
+# -pthread
+                  COMMAND CPP=cpp; guile-snarf -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr}   -I${GUILE_INCLUDE_DIRS} -g -O2 -I/usr/include/SDL2 -D_GNU_SOURCE=1 -D_REENTRANT -I./ -I../ 
                   DEPENDS src/guile.cc
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -36,7 +34,7 @@ add_custom_command(OUTPUT guile.cc.x
 include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} GL GLU SDL SDL_mixer SDL_image SDL_ttf z pthread m)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} GL GLU SDL2 SDL2_mixer SDL2_image SDL2_ttf z m)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files

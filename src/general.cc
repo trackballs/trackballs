@@ -21,10 +21,10 @@
 #include "general.h"
 #include "gameMode.h"
 #include "menuMode.h"
-#include "SDL/SDL_opengl.h"
+#include "SDL2/SDL_opengl.h"
 #include "font.h"
 #include "glHelp.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include <sys/time.h>
 #include <dirent.h>
 #include <sys/types.h>

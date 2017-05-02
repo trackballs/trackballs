@@ -147,7 +147,7 @@ void Player::tick(Real t) {
     Uint8 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
     mouseX -= screenWidth / 2;
     mouseY -= screenHeight / 2;
-    SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
+    SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
 /*
 Uint8 mouseState=SDL_GetRelativeMouseState(&mouseX,&mouseY);
@@ -174,31 +174,31 @@ Uint8 mouseState=SDL_GetRelativeMouseState(&mouseX,&mouseY);
   }
 
   /* Handle keyboard steering */
-  Uint8 *keystate = SDL_GetKeyState(NULL);
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
   double kscale = shift ? 200.0 : 100.0;
 
-  if (keystate[SDLK_UP] || keystate[SDLK_KP8]) { dy = -kscale * t; }
-  if (keystate[SDLK_DOWN] || keystate[SDLK_KP2]) { dy = kscale * t; }
-  if (keystate[SDLK_LEFT] || keystate[SDLK_KP4]) { dx = -kscale * t; }
-  if (keystate[SDLK_RIGHT] || keystate[SDLK_KP6]) { dx = kscale * t; }
-  if (keystate[SDLK_KP7] || keystate[SDLK_q]) {
+  if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) { dy = -kscale * t; }
+  if (keystate[SDL_SCANCODE_DOWN] || keystate[SDL_SCANCODE_KP_2]) { dy = kscale * t; }
+  if (keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_KP_4]) { dx = -kscale * t; }
+  if (keystate[SDL_SCANCODE_RIGHT] || keystate[SDL_SCANCODE_KP_6]) { dx = kscale * t; }
+  if (keystate[SDL_SCANCODE_KP_7] || keystate[SDL_SCANCODE_Q]) {
     dx = -kscale * t;
     dy = -kscale * t;
   }
-  if (keystate[SDLK_KP9] || keystate[SDLK_w]) {
+  if (keystate[SDL_SCANCODE_KP_9] || keystate[SDL_SCANCODE_W]) {
     dx = kscale * t;
     dy = -kscale * t;
   }
-  if (keystate[SDLK_KP1] || keystate[SDLK_a]) {
+  if (keystate[SDL_SCANCODE_KP_1] || keystate[SDL_SCANCODE_A]) {
     dx = -kscale * t;
     dy = kscale * t;
   }
-  if (keystate[SDLK_KP3] || keystate[SDLK_s]) {
+  if (keystate[SDL_SCANCODE_KP_3] || keystate[SDL_SCANCODE_S]) {
     dx = kscale * t;
     dy = kscale * t;
   }
-  if (keystate[SDLK_KP_ENTER] || keystate[SDLK_RETURN]) superAccelerate = 1;
+  if (keystate[SDL_SCANCODE_KP_ENTER] || keystate[SDL_SCANCODE_RETURN]) superAccelerate = 1;
 
   /* rotate control as by settings->rotateArrows */
   {

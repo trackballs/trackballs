@@ -22,10 +22,10 @@
 #include "gameMode.h"
 #include "mainMode.h"
 #include "menuMode.h"
-#include "SDL/SDL_opengl.h"
+#include "SDL2/SDL_opengl.h"
 #include "font.h"
 #include "glHelp.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include "highScore.h"
 #include "hofMode.h"
 #include "settingsMode.h"
@@ -189,24 +189,24 @@ void MenuMode::idle(Real td) {
 
   tickMouse(td);
   SDL_GetMouseState(&x, &y);
-  Uint8 *keystate = SDL_GetKeyState(NULL);
-  if (keystate[SDLK_LEFT]) {
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  if (keystate[SDL_SCANCODE_LEFT]) {
     x -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_RIGHT]) {
+  if (keystate[SDL_SCANCODE_RIGHT]) {
     x += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_UP]) {
+  if (keystate[SDL_SCANCODE_UP]) {
     y -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_DOWN]) {
+  if (keystate[SDL_SCANCODE_DOWN]) {
     y += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_SPACE] || keystate[SDLK_RETURN]) doSelection();
+  if (keystate[SDL_SCANCODE_SPACE] || keystate[SDL_SCANCODE_RETURN]) doSelection();
 
   //  Uint8 mouseState=SDL_GetMouseState(&mouseX,&mouseY);
   // printf("mouseState: %d\n",mouseState); fflush(stdout);

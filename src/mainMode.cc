@@ -31,7 +31,7 @@
 #include "menuMode.h"
 #include "enterHighScoreMode.h"
 #include "sign.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include "forcefield.h"
 #include "scoreSign.h"
 #include "settings.h"
@@ -345,7 +345,7 @@ void MainMode::key(int key) {
       gameStatus = statusPaused;
       break;
     }
-    if (key == SDLK_PRINT) {
+    if (key == SDLK_PRINTSCREEN) {
       createSnapshot();
       break;
     }
@@ -477,7 +477,7 @@ void MainMode::activated() {
   zero(camFocus);
   zero(camDelta);
   gameStatus = statusBeforeGame;
-  SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
+  SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
   camFocus[0] = Game::current->map->startPosition[0] - 5;
   camFocus[1] = Game::current->map->startPosition[1] - 5;

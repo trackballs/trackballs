@@ -22,7 +22,7 @@
 #include "gameMode.h"
 #include "menuMode.h"
 #include "glHelp.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include "settingsMode.h"
 #include "game.h"
 #include "settings.h"
@@ -98,8 +98,12 @@ void SettingsMode::display() {
   menucount = 0;
 
   if (testingResolution > 0.0) {
-    snprintf(str, sizeof(str), _("Is resolution %dx%dx%d ok?"), screenWidth, screenHeight,
-             colorDepth);
+    if (resolution >= 0) {
+      snprintf(str, sizeof(str), _("Is resolution %dx%dx%d ok?"), screenWidth, screenHeight,
+               colorDepth);
+    } else {
+      snprintf(str, sizeof(str), _("Is resolution Auto-%d ok?"), colorDepth);
+    }
     menuItem_Center(0, menucount++, str);
     menucount++;  // looks better with a small gap
     menuItem_Left(MENU_RESOLUTION_OK, menucount++, _("Ok, use this resolution"));
@@ -126,7 +130,7 @@ void SettingsMode::display() {
       snprintf(str, sizeof(str), "%dx%dx%d", screenResolutions[resolution][0],
                screenResolutions[resolution][1], colorDepth);
     } else {
-      snprintf(str, sizeof(str), "%s %d", _("Auto"), colorDepth);
+      snprintf(str, sizeof(str), _("Auto-%d"), colorDepth);
     }
     menuItem_LeftRight(MENU_RESOLUTION, menucount++, _("  Resolution"), str);
     menuItem_Left(MENU_APPLY_RESOLUTION, menucount++, _("  Test this resolution"));
@@ -195,7 +199,7 @@ void SettingsMode::display() {
     /* Joystick */
     i = Settings::settings->joystickIndex;
     if (i)
-      snprintf(str, 255, "%s", SDL_JoystickName(i - 1));
+      snprintf(str, 255, "%s", SDL_JoystickNameForIndex(i - 1));
     else if (SDL_NumJoysticks() == 0)
       snprintf(str, 255, _("no joystick found"));
     else
@@ -252,22 +256,22 @@ void SettingsMode::idle(Real td) {
   tickMouse(td);
 
   SDL_GetMouseState(&x, &y);
-  Uint8 *keystate = SDL_GetKeyState(NULL);
-  if (keystate[SDLK_LEFT]) {
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  if (keystate[SDL_SCANCODE_LEFT]) {
     x -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_RIGHT]) {
+  if (keystate[SDL_SCANCODE_RIGHT]) {
     x += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_UP]) {
+  if (keystate[SDL_SCANCODE_UP]) {
     y -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_DOWN]) {
+  if (keystate[SDL_SCANCODE_DOWN]) {
     y += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
 
   /* Check against timeouts when testing a new resolution */

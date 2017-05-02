@@ -37,9 +37,9 @@
 
 //#include <g++-3/set.h>   //TODO: Fix configure.in
 #include <set>  //TODO: Fix configure.in
-#include <SDL/SDL.h>
-#include <SDL/SDL_mouse.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_ttf.h>
 #include "libguile.h"
 #include "libguile/numbers.h"  // Eliminate this line if it gives you any troubles
 #include <stdint.h>
@@ -125,6 +125,7 @@ double getSystemTime();
 
 /*** Globals ***/
 extern SDL_Surface *screen;
+extern SDL_Window *window;
 extern int silent;
 extern int low_memory;  // if true, attempt to conserve memory
 extern int debug_joystick;

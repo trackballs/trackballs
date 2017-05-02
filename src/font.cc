@@ -457,11 +457,12 @@ int Font::getTextWidth(int font, const char *text, float sx) {
 
 // returns the effective width of the text
 int Font::l_getTextWidth(const char *text, float sx) {
-  int i, l = 0, index, offset;
+  int i, l = 0, index, offset, len;
 
   if ((text == NULL) || (strlen(text) == 0)) return (0);
 
-  for (i = 0; i < strlen(text); i++) {
+  len = strlen(text);
+  for (i = 0; i < len; i++) {
     index = get_letter_index(text + i, &offset);
     l += (int)(2. * sx * char_sizes[index]);
   }
@@ -613,7 +614,7 @@ void Font::l_setColor(float r, float g, float b, float a) {
 void Font::l_setTransp(float a) { color[3] = a; }
 
 void Font::changeText(int tl, const char *text) {
-  int i;
+  int i, len;
 
   if (tl < 0) return;
   if (textlines[tl].text == NULL) return;
@@ -630,7 +631,8 @@ void Font::changeText(int tl, const char *text) {
     return;
   }
 
-  for (i = 0; i < strlen(text); i++) {
+  len = strlen(text);
+  for (i = 0; i < len; i++) {
     textlines[tl].time[i] = BASE_TIME;  // animation for remove will not be correct
   }
 }
@@ -669,7 +671,7 @@ int Font::drawCenterSimpleText(int font, const char *text, int x, int y, float s
 
 int Font::l_drawSimpleText(const char *text, int x, int y, float sx, float sy, float r,
                            float g, float b, float a) {
-  int i, offset, index;
+  int i, offset, index, len;
   double tm, tr, tim;
   float cx;
 
@@ -685,7 +687,8 @@ int Font::l_drawSimpleText(const char *text, int x, int y, float sx, float sy, f
   glBegin(GL_QUADS);
 
   cx = (float)x;
-  for (i = 0; i < strlen(text); i++) {
+  len = strlen(text);
+  for (i = 0; i < len; i++) {
     index = get_letter_index(text + i, &offset);
 
     draw_a_char(index, (int)cx, y, sx, sy);
@@ -715,7 +718,7 @@ int Font::drawSimpleText3D(int font, const char *text, float sx, float sy) {
 }
 
 int Font::l_drawSimpleText3D(const char *text, float sx, float sy) {
-  int i, offset, index;
+  int i, offset, index, len;
   double tm, tr, tim;
   float cx, y;
 
@@ -728,7 +731,8 @@ int Font::l_drawSimpleText3D(const char *text, float sx, float sy) {
 
   cx = 0.;
   y = 0.;
-  for (i = 0; i < strlen(text); i++) {
+  len = strlen(text);
+  for (i = 0; i < len; i++) {
     index = get_letter_index(text + i, &offset);
 
     draw_a_char3D(index, cx, y, sx, sy);

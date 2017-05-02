@@ -141,7 +141,7 @@
 
 ; Invisble Mr Black on top of the castle - heheheh
 (define invisible 'true)
-(switch 226.5 236.5 (lambda ()() )  (lambda () (if invisible (begin (set! invisible #f) (set! mr-black1 (new-mr-black 225.5 250.5))(set-speed spike 0.2)))) )
+(switch 226.5 236.5 (lambda () #f)  (lambda () (if invisible (begin (set! invisible #f) (set! mr-black1 (new-mr-black 225.5 250.5))(set-speed spike 0.2)))) )
 (define spike (add-spike 251.5 219.5 speed -0.20))
 
 ; Shute leading you outside

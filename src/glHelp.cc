@@ -21,11 +21,11 @@
 */
 
 #include "general.h"
-#include "SDL/SDL_ttf.h"
-#include "SDL/SDL_opengl.h"
+#include "SDL2/SDL_ttf.h"
+#include "SDL2/SDL_opengl.h"
 #include "settings.h"
 #include "font.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include "sparkle2d.h"
 #include "image.h"
 
@@ -978,9 +978,12 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   if (image == NULL) { return 0; }
 
   /* Save the alpha blending attributes */
-  saved_flags = surface->flags & (SDL_SRCALPHA | SDL_RLEACCELOK);
-  saved_alpha = surface->format->alpha;
-  if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) { SDL_SetAlpha(surface, 0, 0); }
+  //   saved_flags = surface->flags & (SDL_SRCALPHA | SDL_RLEACCELOK);
+  //   int alpha_valid = !SDL_GetSurfaceAlphaMod(surface, &saved_alpha);
+  //   if (alpha_valid) SDL_SetSurfaceAlphaMod(surface, 0);
+  //   if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) {
+
+  //   }
 
   /* Copy the surface into the GL texture image */
   area.x = 0;
@@ -1023,9 +1026,9 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   }
 
   /* Restore the alpha blending attributes */
-  if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) {
-    SDL_SetAlpha(surface, saved_flags, saved_alpha);
-  }
+  //   if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) {
+  //   if (alpha_valid) SDL_SetSurfaceAlphaMod(surface, /*saved_flags,*/ saved_alpha);
+  //   }
 
   /* Create an OpenGL texture for the image */
   GLuint freshTexture = 0;

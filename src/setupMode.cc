@@ -22,7 +22,7 @@
 #include "gameMode.h"
 #include "menuMode.h"
 #include "glHelp.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_image.h"
 #include "setupMode.h"
 #include "game.h"
 #include "player.h"
@@ -319,22 +319,22 @@ void SetupMode::idle(Real td) {
 
   tickMouse(td);
   SDL_GetMouseState(&x, &y);
-  Uint8 *keystate = SDL_GetKeyState(NULL);
-  if (keystate[SDLK_LEFT]) {
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  if (keystate[SDL_SCANCODE_LEFT]) {
     x -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_RIGHT]) {
+  if (keystate[SDL_SCANCODE_RIGHT]) {
     x += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_UP]) {
+  if (keystate[SDL_SCANCODE_UP]) {
     y -= (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
-  if (keystate[SDLK_DOWN]) {
+  if (keystate[SDL_SCANCODE_DOWN]) {
     y += (int)(150 / fps);
-    SDL_WarpMouse(x, y);
+    SDL_WarpMouseInWindow(window, x, y);
   }
 
   t += td;

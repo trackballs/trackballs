@@ -82,7 +82,7 @@ int EMenuWindow::keyToMenuEntry(int key) {
   int i, j;
 
   /* Convert keypad numbers to normal numbers */
-  if (key >= SDLK_KP0 && key <= SDLK_KP9) key = '0' + key - SDLK_KP0;
+  if (key >= SDLK_KP_0 && key <= SDLK_KP_9) key = '0' + key - SDLK_KP_0;
   if (key == SDLK_KP_PLUS) key = '+';
   if (key == SDLK_KP_MINUS) key = '-';
 

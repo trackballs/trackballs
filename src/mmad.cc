@@ -36,7 +36,7 @@ const char *SHARE_DIR_DEFAULT = SHARE_DIR;
 #include "game.h"
 #include "forcefield.h"
 #include "hofMode.h"
-#include <SDL/SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <unistd.h>
 #include <settingsMode.h>
 #include <settings.h>
@@ -58,11 +58,12 @@ const char *SHARE_DIR_DEFAULT = SHARE_DIR;
 using namespace std;
 
 /* Important globals */
+SDL_Window *window = NULL;
 SDL_Surface *screen = NULL;
+SDL_GLContext mainContext;
 const char *program_name;
 int silent = 0;
 int debug_joystick, repair_joystick;
-int windowWidth, windowHeight;
 
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
@@ -73,46 +74,78 @@ int screenResolutions[5][2] = {{640, 480},
     nScreenResolutions = 5;
 
 void changeScreenResolution() {
-  SDL_Rect **rects = NULL;
-  if (screen == NULL && Settings::settings->resolution > 0) {
-    screenWidth = screenResolutions[Settings::settings->resolution][0];
-    screenHeight = screenResolutions[Settings::settings->resolution][1];
-    printf("Screen resolution given as %dx%d.\n", screenWidth, screenHeight);
-  } else {
-    if (Settings::settings->is_windowed) {
-      screenWidth = windowWidth;
-      screenHeight = windowHeight;
+  int full = Settings::settings->is_windowed == 0;
+  int fixed = Settings::settings->resolution >= 0;
+
+  if (window == NULL) {
+    char buffer[1024];
+    snprintf(buffer, sizeof(buffer), "/%s/ V%s", PACKAGE, VERSION);
+
+    if (Settings::settings->colorDepth == 16) {
+      SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+      SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+      SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
     } else {
-      rects = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_SWSURFACE | SDL_OPENGL);
-      if (rects == (SDL_Rect **)0) {
-        printf("No modes available! Using last window settings.\n");
-        screenWidth = windowWidth;
-        screenHeight = windowHeight;
-      } else {
-        /* First returned mode is largest */
-        screenWidth = rects[0]->w;
-        screenHeight = rects[0]->h;
-      }
+      SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+      SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+      SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     }
-    printf("Screen resolution from window is %dx%d.\n", screenWidth, screenHeight);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+    // Start at default size; will be adjusted
+    int windowHeight, windowWidth;
+    Uint32 flags = SDL_WINDOW_OPENGL;
+    if (fixed) {
+      windowWidth = screenResolutions[Settings::settings->resolution][0];
+      windowHeight = screenResolutions[Settings::settings->resolution][1];
+      if (full) { flags |= SDL_WINDOW_FULLSCREEN; }
+    } else {
+      if (full) {
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+      } else {
+        flags |= SDL_WINDOW_RESIZABLE;
+      }
+      windowWidth = 800;
+      windowHeight = 600;
+    }
+
+    window = SDL_CreateWindow(buffer, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                              windowWidth, windowHeight, flags);
+
+    if (window == NULL) {
+      printf("Could not create window: %s\n", SDL_GetError());
+      return;
+    }
+
+    mainContext = SDL_GL_CreateContext(window);
+
+    char str[256];
+    snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", SHARE_DIR);
+    SDL_Surface *wmIcon = IMG_Load(str);
+    if (wmIcon) { SDL_SetWindowIcon(window, wmIcon); }
   }
 
-  if (Settings::settings->colorDepth == 16) {
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+  if (fixed) {
+    SDL_SetWindowSize(window, screenResolutions[Settings::settings->resolution][0],
+                      screenResolutions[Settings::settings->resolution][1]);
+    if (full) {
+      SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+    } else {
+      SDL_SetWindowFullscreen(window, 0);
+      SDL_SetWindowResizable(window, SDL_FALSE);
+    }
   } else {
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+    if (full) {
+      SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+    } else {
+      SDL_SetWindowFullscreen(window, 0);
+      SDL_SetWindowResizable(window, SDL_TRUE);
+    }
   }
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-  screen = SDL_SetVideoMode(screenWidth, screenHeight, Settings::settings->colorDepth,
-                            (Settings::settings->resolution < 0 ? SDL_RESIZABLE : 0) |
-                                SDL_SWSURFACE | SDL_OPENGL |
-                                (Settings::settings->is_windowed ? 0 : SDL_FULLSCREEN));
+  screen = SDL_GetWindowSurface(window);
+
   if (!screen) return;
   /* Pick up what the screen actually has */
   screenWidth = screen->w;
@@ -120,10 +153,10 @@ void changeScreenResolution() {
 
   /* Use CapsLock key to determine if mouse should be hidden+grabbed */
   if (SDL_GetModState() & KMOD_CAPS || 1) {
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_SetWindowGrab(window, SDL_FALSE);
   } else {
-    SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
+    SDL_SetWindowGrab(window, SDL_TRUE);
   }
   SDL_ShowCursor(SDL_DISABLE);
 
@@ -310,18 +343,6 @@ void innerMain(void *closure, int argc, char **argv) {
   }
   atexit(SDL_Quit);
 
-  char buffer[1024];
-  snprintf(buffer, sizeof(buffer), "/%s/ V%s", PACKAGE, VERSION);
-  SDL_WM_SetCaption(buffer, buffer);
-
-  snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", SHARE_DIR);
-  SDL_Surface *wmIcon = IMG_Load(str);
-  if (wmIcon) { SDL_WM_SetIcon(wmIcon, NULL); }
-
-  // Initial assumptions about window size. SDL 1.2 doesn't have window management
-  windowWidth = 800;
-  windowHeight = 600;
-
   // MB: Until here we are using 7 megs of memory
   changeScreenResolution();
   if (!screen) {
@@ -373,7 +394,7 @@ void innerMain(void *closure, int argc, char **argv) {
     glEnd();
     Leave2DMode();
     glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(window);
   }
 
   // MB: Until here we are using 47 megs of memory.
@@ -453,7 +474,7 @@ void innerMain(void *closure, int argc, char **argv) {
     glEnd();
     Leave2DMode();
     glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(window);
     timeNow = ((double)SDL_GetTicks()) / 1000.0;
   }
   glDeleteTextures(1, &splashTexture);
@@ -464,7 +485,7 @@ void innerMain(void *closure, int argc, char **argv) {
 
   double oldTime, t, td;
   oldTime = ((double)SDL_GetTicks()) / 1000.0;
-  SDL_WarpMouse(screenWidth / 2, screenHeight / 2);
+  SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
   /* Initialize random number generator */
   int seed = (int)getSystemTime();
@@ -501,7 +522,7 @@ void innerMain(void *closure, int argc, char **argv) {
       glClear(GL_COLOR_BUFFER_BIT);
     }
     // Font::draw();
-    SDL_GL_SwapBuffers();
+    SDL_GL_SwapWindow(window);
 
     /* Expensive computations has to be done *after* tick+draw to keep world in good
        synchronisation. */
@@ -519,7 +540,6 @@ void innerMain(void *closure, int argc, char **argv) {
     */
 
     SDL_MouseButtonEvent *e = (SDL_MouseButtonEvent *)&event;
-    SDL_ResizeEvent *ve = (SDL_ResizeEvent *)&event;
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
@@ -535,10 +555,10 @@ void innerMain(void *closure, int argc, char **argv) {
         /* Use Caps lock key to determine if mouse should be hidden+grabbed */
         if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
-            SDL_WM_GrabInput(SDL_GRAB_OFF);
+            SDL_SetWindowGrab(window, SDL_FALSE);
             SDL_ShowCursor(SDL_ENABLE);
           } else {
-            SDL_WM_GrabInput(SDL_GRAB_ON);
+            SDL_SetWindowGrab(window, SDL_TRUE);
             SDL_ShowCursor(SDL_DISABLE);
           }
         } else
@@ -560,10 +580,10 @@ void innerMain(void *closure, int argc, char **argv) {
         /* Use CapsLock key to determine if mouse should be hidden+grabbed */
         else if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
-            SDL_WM_GrabInput(SDL_GRAB_OFF);
+            SDL_SetWindowGrab(window, SDL_FALSE);
             SDL_ShowCursor(SDL_ENABLE);
           } else {
-            SDL_WM_GrabInput(SDL_GRAB_ON);
+            SDL_SetWindowGrab(window, SDL_TRUE);
             SDL_ShowCursor(SDL_DISABLE);
           }
         }
@@ -589,14 +609,14 @@ void innerMain(void *closure, int argc, char **argv) {
         }
 
         break;
-      case SDL_VIDEORESIZE:
-        windowWidth = ve->w;
-        windowHeight = ve->h;
-        /* Only change screen resolution if resizing is enabled */
-        if (Settings::settings->resolution < 0) {
-          changeScreenResolution();
-          /* Flush all events that occured while switching screen resolution */
-          while (SDL_PollEvent(&event)) {}
+      case SDL_WINDOWEVENT:
+        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+          /* Only change screen resolution if resizing is enabled */
+          if (Settings::settings->resolution < 0) {
+            changeScreenResolution();
+            /* Flush all events that occured while switching screen resolution */
+            while (SDL_PollEvent(&event)) {}
+          }
         }
         break;
       }
@@ -690,8 +710,6 @@ int main(int argc, char **argv) {
    * loaded */
   setlocale(LC_ALL, "");
   char localedir[512];
-
-  char *ret;
 
 #ifdef LOCALEDIR
   snprintf(localedir, 511, "%s", LOCALEDIR);

@@ -22,8 +22,8 @@
 
 #include "general.h"
 #include "map.h"
-#include "SDL/SDL_endian.h"
-#include "SDL/SDL_image.h"
+#include "SDL2/SDL_endian.h"
+#include "SDL2/SDL_image.h"
 
 #include "settings.h"
 #include "game.h"

@@ -100,7 +100,8 @@ void CalibrateJoystickMode::display() {
 
   Font::drawCenterSimpleText(0, _("Calibrating Joystick"), screenWidth / 2,
                              screenHeight / 2 - 230, 20., 20., 1.0, 1.0, 1.0, 1.0);
-  snprintf(str, sizeof(str), "%s", SDL_JoystickName(Settings::settings->joystickIndex - 1));
+  snprintf(str, sizeof(str), "%s",
+           SDL_JoystickNameForIndex(Settings::settings->joystickIndex - 1));
   Font::drawCenterSimpleText(0, str, screenWidth / 2, screenHeight / 2 - 190, 16., 16., 1.0,
                              1.0, 1.0, 1.0);
 

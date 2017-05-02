@@ -1073,12 +1073,14 @@ SCM_DEFINE(difficulty, "difficulty", 0, 0, 0, (),
 /*********** use-grid ************/
 SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off") {
   Game::current->useGrid = SCM_FALSEP(v) ? 0 : 1;
+  return SCM_UNSPECIFIED;
 }
 
 /*********** map-is-transparent ************/
 SCM_DEFINE(map_is_transparent, "map-is-transparent", 1, 0, 0, (SCM v),
            "Turns on/off transparency rendering of map.") {
   Game::current->map->isTransparent = SCM_FALSEP(v) ? 0 : 1;
+  return SCM_UNSPECIFIED;
 }
 
 /*********** jump ************/
@@ -1087,6 +1089,7 @@ SCM_DEFINE(jump, "jump", 1, 0, 0, (SCM v), "Scales maximum jump height of player
 {
   SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->jumpFactor = scm_to_double(v);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -1097,6 +1100,7 @@ SCM_DEFINE(scale_oxygen, "scale-oxygen", 1, 0, 0, (SCM v),
 {
   SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->oxygenFactor = scm_to_double(v);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -1305,6 +1309,7 @@ SCM_DEFINE(camera_angle, "camera-angle", 2, 0, 0, (SCM xy, SCM z),
   SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG2, FUNC_NAME);
   ((MainMode *)GameMode::current)->wantedXYAngle = scm_to_double(xy);
   ((MainMode *)GameMode::current)->wantedZAngle = scm_to_double(z);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -1315,6 +1320,7 @@ SCM_DEFINE(restart_time, "restart-time", 1, 0, 0, (SCM t), "Sets the timebonus a
 {
   SCM_ASSERT(SCM_NUMBERP(t), t, SCM_ARG1, FUNC_NAME);
   Game::current->player1->timeOnDeath = scm_to_double(t);
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
