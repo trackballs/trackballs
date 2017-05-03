@@ -105,7 +105,7 @@ class Map {
   Cell *cells;
 
   int cachedCX, cachedCY, cacheCount;
-  char cacheVisible[41][41];
+  char *cacheVisible;
 
   /* For maintaining display lists  */
   int displayLists, nLists, nListsWide;

@@ -32,6 +32,8 @@
 
 using namespace std;
 
+#define VISRADIUS 20
+
 #define WRITE_PORTABLE 1
 #define READ_PORTABLE 1
 
@@ -331,11 +333,14 @@ Map::Map(char* filename) {
   tx_Acid = loadTexture("acid.png");
   tx_Sand = loadTexture("sand.png");
   tx_Track = loadTexture("track.png");
+
+  cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
 }
 Map::~Map() {
   //  glDeleteLists(cache[0].lists[0],(width/4)*(height/4));
   glDeleteLists(displayLists, nLists);
   delete[] cells;
+  delete[] cacheVisible;
 }
 
 /* Draws the map on the screen from current viewpoint */
@@ -377,7 +382,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   GLint viewport[4];
   GLdouble model_matrix[16], proj_matrix[16], rot_matrix[16];
 
-#define MARGIN 50
+#define MARGIN 200
+#define CACHE_SIZE (VISRADIUS * 2 + 1)
 
   if (cx != cachedCX || cy != cachedCY || cacheCount > 10) {
     double t0 = getSystemTime();
@@ -391,11 +397,11 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     int ix, iy;
     int visibleCnt = 0;
 
-    for (ix = 0; ix < 41; ix++)
-      for (iy = 0; iy < 41; iy++) {
-        x = cx + ix - 20;
-        y = cy + iy - 20;
-        cacheVisible[ix][iy] = 0;
+    for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
+      for (iy = 0; iy < 2 * VISRADIUS + 1; iy++) {
+        x = cx + ix - VISRADIUS;
+        y = cy + iy - VISRADIUS;
+        cacheVisible[ix * CACHE_SIZE + iy] = 0;
         worldCoord[0] = x + .5;
         worldCoord[1] = y + .5;
         worldCoord[2] = cell(x, y).heights[Cell::CENTER];
@@ -403,7 +409,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
                    viewport, &screenCoord[0], &screenCoord[1], &screenCoord[2]);
         if (screenCoord[0] >= -MARGIN && screenCoord[0] <= screenWidth + MARGIN &&
             screenCoord[1] >= -MARGIN && screenCoord[1] <= screenHeight + MARGIN) {
-          cacheVisible[ix][iy] = 1;
+          cacheVisible[ix * CACHE_SIZE + iy] = 1;
           visibleCnt++;
           continue;
         }
@@ -416,7 +422,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
                        viewport, &screenCoord[0], &screenCoord[1], &screenCoord[2]);
             if (screenCoord[0] >= -MARGIN && screenCoord[0] <= screenWidth + MARGIN &&
                 screenCoord[1] >= -MARGIN && screenCoord[1] <= screenHeight + MARGIN) {
-              cacheVisible[ix][iy] = 1;
+              cacheVisible[ix * CACHE_SIZE + iy] = 1;
               visibleCnt++;
               goto cont;  // The almighty goto statment, don't do this at home kids!
             }
@@ -425,12 +431,13 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
         x = x;
       }
     // OPT. use only the +1,+1 versions if birdsEye == true
-    for (ix = 0; ix < 41; ix++)
-      for (iy = 0; iy < 41; iy++)
-        cacheVisible[ix][iy] |= (iy > 0 ? cacheVisible[ix][iy - 1] : 0) |
-                                (iy < 40 ? cacheVisible[ix][iy + 1] : 0) |
-                                (ix > 0 ? cacheVisible[ix - 1][iy] : 0) |
-                                (ix < 40 ? cacheVisible[ix + 1][iy] : 0);
+    for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
+      for (iy = 0; iy < 2 * VISRADIUS + 1; iy++)
+        cacheVisible[ix * CACHE_SIZE + iy] |=
+            (iy > 0 ? cacheVisible[ix * CACHE_SIZE + iy - 1] : 0) |
+            (iy < 2 * VISRADIUS ? cacheVisible[ix * CACHE_SIZE + iy + 1] : 0) |
+            (ix > 0 ? cacheVisible[(ix - 1) * CACHE_SIZE + iy] : 0) |
+            (ix < 2 * VISRADIUS ? cacheVisible[(ix + 1) * CACHE_SIZE + iy] : 0);
     cachedCX = cx;
     cachedCY = cy;
     cacheCount = 0;
@@ -444,11 +451,11 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
          that are either too old or have been marked as dirty */
   int redrawCnt = 0;
   if (stage == 0)
-    for (ix = 0; ix < 41; ix++)
-      for (iy = 0; iy < 41; iy++)
-        if (cacheVisible[ix][iy]) {
-          x = cx + ix - 20;
-          y = cy + iy - 20;
+    for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
+      for (iy = 0; iy < 2 * VISRADIUS + 1; iy++)
+        if (cacheVisible[ix * CACHE_SIZE + iy]) {
+          x = cx + ix - VISRADIUS;
+          y = cy + iy - VISRADIUS;
           if (x >= 0 && x < width && y >= 0 && y < height) {
             Cell& c = cell(x, y);
             if (c.displayListLastCompiled + 10 < frameCount || c.displayListDirty ||
@@ -472,11 +479,11 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   // printf("%d cells redrawn\n",redrawCnt);
 
   /* Call all the display lists to draw the actual ground */
-  for (ix = 0; ix < 41; ix++)
-    for (iy = 0; iy < 41; iy++)
-      if (cacheVisible[ix][iy]) {
-        x = cx + ix - 20;
-        y = cy + iy - 20;
+  for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
+    for (iy = 0; iy < 2 * VISRADIUS + 1; iy++)
+      if (cacheVisible[ix * CACHE_SIZE + iy]) {
+        x = cx + ix - VISRADIUS;
+        y = cy + iy - VISRADIUS;
         if (x >= 0 && x < width && y >= 0 && y < height) {
           Cell& c = cell(x, y);
           glCallList(c.displayList + stage);
