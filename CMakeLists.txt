@@ -62,7 +62,8 @@ install(FILES ${PROJECT_SOURCE_DIR}/share/highScores DESTINATION ${TRACKBALLS_SH
 
 # Documentation
 install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
-# < insert other files!
+file(GLOB htmldocs ${PROJECT_SOURCE_DIR}/docs/*.html)
+install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_SHARE_DIR}/docs)
 
 # Icons need special handling
 file(GLOB icons ${PROJECT_SOURCE_DIR}/share/icons/*.png)

@@ -1,6 +1,9 @@
 # Build Artifacts
 build/
+html/
 
 # Tool Artifacts
 *.directory
 *.out
+Doxyfile
+doxyfile
