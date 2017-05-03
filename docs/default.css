@@ -1,0 +1,80 @@
+h1 {
+  text-align: center;
+}
+
+code {
+  font-family: Courier;
+  font-size: 0.75em;
+}
+
+a:link {
+  color: #000099;
+}
+a:visited {
+  color: #330099;
+}
+a:hover {
+  color: #5555FF;
+}
+
+.float-left-icon { float: left; }
+.float-left { float: left; }
+.float-right { float: right; }
+
+body {
+  font-size: 12pt;
+  width: 800px;
+  background-color: rgb(204, 204, 255);
+}
+
+.mainpage {
+}
+
+.pagebody {
+  border: 1px solid rgb(0, 0, 0);
+  padding: 10px;
+  margin-left: 5px;
+  margin-top: 10px;
+  width: 773px;
+
+}
+
+.toc {
+  border: 1px solid rgb(0, 0, 0);
+  padding: 0px;
+
+  display: inline;
+  float: right;
+  width: 180px;
+
+  margin-right: 0px;
+
+  background-image: url(assets/background.jpg);
+  background-repeat: no-repeat;
+}
+
+.abstract {
+  font-size: 0.75em;
+  font-style: italic;
+  border: 1px solid rgb(0, 0, 0); 
+  width: 500px;
+  margin-left: 40px;
+  padding: 5px
+}
+
+.fn {
+  border: 1px solid rgb(0,0,0);
+  padding: 10px;
+  background-color: rgb(230, 230, 255);
+  margin-bottom: 5px;
+  width: 750px;
+}
+
+.fn-proto {
+  font-family: monospace;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.fn-text {
+}

@@ -110,7 +110,7 @@ void EnterHighScoreMode::key(int key) {
   if (len == 19) /* TODO. Beep */
     return;
 
-  if (isprint(key)) {
+  if (key < 127 && isprint(key)) {
     if (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) key = toupper(key);
     name[len] = (char)key;
     name[len + 1] = 0;

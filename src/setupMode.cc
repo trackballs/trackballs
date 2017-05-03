@@ -305,7 +305,7 @@ void SetupMode::key(int key) {
     playEffect(SFX_PLAYER_DIES);
     return;
   }
-  if (isprint(key)) {
+  if (key < 127 && isprint(key)) {
     if (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) key = toupper(key);
     gamer->name[len] = (char)key;
     gamer->name[len + 1] = 0;
