@@ -164,7 +164,6 @@ void Sparkle2D::draw() {
   float *clr;
   float *pos;
   Sparkle *skl;
-  GLuint sparkleTex;
 
   Enter2DMode();
   glEnable(GL_BLEND);

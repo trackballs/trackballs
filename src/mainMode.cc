@@ -54,8 +54,6 @@ MainMode *MainMode::mainMode = NULL;
 char *MainMode::viewportData, *MainMode::environmentTextureData;
 
 void MainMode::init() {
-  char str[256];
-
   mainMode = new MainMode();
 
   /* Reflection maps */
@@ -390,7 +388,7 @@ void MainMode::key(int key) {
 void MainMode::special(int key, int x, int y) {}
 void MainMode::idle(Real td) {
   Player *player1 = Game::current ? Game::current->player1 : NULL;
-  Map *map = Game::current ? Game::current->map : NULL;
+  //   Map *map = Game::current ? Game::current->map : NULL;
   double t;
   int i;
 
@@ -532,7 +530,7 @@ void MainMode::showInfo() {
   if (!Game::current) return;
   char str[256];
   Player *player = Game::current->player1;
-  int i, w, h;
+  int i;
 
   /* Don't draw the panel if we have released the cursor etc. This is
      usefull for screenshots. */
@@ -734,7 +732,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   }
 
   Map *map = Game::current ? Game::current->map : NULL;
-  Player *player1 = Game::current ? Game::current->player1 : NULL;
 
   map->draw(birdsEye, 0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
@@ -752,7 +749,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
 
   // Converts viewport data to fisheye environment perspective
   // approx 10 ms */
-  double t0_5 = ((double)SDL_GetTicks()) / 1000.0;
+  // double t0_5 = ((double)SDL_GetTicks()) / 1000.0;
   convertToFisheye(environmentTextureData, viewportData, viewportSize);
 
   /* Takes approx 1-2 ms */
@@ -777,7 +774,7 @@ void MainMode::convertToFisheye(char *data, char *viewport, int viewportSize) {
          Encode an alpha value directly in the translationmap and let the alpha value increase
          as the angle away from the observer increases.
   */
-  int x, y, i, j, x2, y2;
+  int i, j, x2, y2;
   static short *translationMap = NULL;
   static short translationViewportSize = 0;
   if (!translationMap)
@@ -786,7 +783,7 @@ void MainMode::convertToFisheye(char *data, char *viewport, int viewportSize) {
   if (translationViewportSize != viewportSize) {
     translationViewportSize = viewportSize;
     /* Create mapping between fisheye texture and viewport */
-    int x, y, i, x2, y2;
+    int x, y, x2, y2;
     for (x = 0; x < ENVIRONMENT_TEXTURE_SIZE; x++) {
       double nx = (x - ENVIRONMENT_TEXTURE_SIZE / 2) * 2.0 / ENVIRONMENT_TEXTURE_SIZE;
       for (y = 0; y < ENVIRONMENT_TEXTURE_SIZE; y++) {

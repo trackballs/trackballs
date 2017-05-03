@@ -32,7 +32,11 @@
 
 using namespace std;
 
+/* VISRADIUS is half-width of square of drawable cells
+   MARGIN    is px zone on edge of screen where cells can be skipped. */
 #define VISRADIUS 20
+#define CACHE_SIZE (VISRADIUS * 2 + 1)
+#define MARGIN 10
 
 #define WRITE_PORTABLE 1
 #define READ_PORTABLE 1
@@ -219,8 +223,6 @@ Real Cell::getWaterHeight(Real x, Real y) {
 Map::Map(char* filename) {
   gzFile gp;
   int x, y, i, north, east;
-  char str[256];
-  GLfloat texCoord[4];
 
   isBonus = 0;
   isTransparent = 0;
@@ -228,9 +230,9 @@ Map::Map(char* filename) {
   cachedCX = cachedCY = -1, cacheCount = 0;
 
   /* Data structures for maintaining displaylists.
-         We allocate 50 * 50 * 2 display lists for 50 x 50 x/y coordinates and 2 drawing stages
+         We allocate rad^2 * 2 display lists for rad^2 x/y coordinates and 2 drawing stages
   */
-  nListsWide = 50;
+  nListsWide = CACHE_SIZE;
   nLists = nListsWide * nListsWide * 2;
   displayLists = (int)glGenLists(nLists);
 
@@ -345,9 +347,7 @@ Map::~Map() {
 
 /* Draws the map on the screen from current viewpoint */
 void Map::draw(int birdsEye, int stage, int cx, int cy) {
-  int x, y, i, ix, iy;
-  int r0, r1, c0, c1;
-  int gfx_details = Settings::settings->gfx_details;
+  int x, y, ix, iy;
 
   if (stage > 0 && !isTransparent) return;
   static int frameCount = 0;
@@ -355,23 +355,10 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   glPushAttrib(GL_ENABLE_BIT);
 
-  r0 = 8 + 2 * gfx_details;
-  r1 = gfx_details >= 4 ? -6 : -5;
-  c0 = -8;
-  c1 = 8;
-  if (birdsEye) {
-    c0 = -10;
-    c1 = 10;
-    r0 = 10;
-    r1 = -10;
-  }
-
   GLfloat specular[4] = {0.0, 0.0, 0.0, 0.0};
   glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
   glMaterialf(GL_FRONT, GL_SHININESS, 0.0);
   glDisable(GL_TEXTURE_2D);
-
-  int row, column;
 
   if (stage > 0) {
     glEnable(GL_BLEND);
@@ -380,14 +367,10 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     glDisable(GL_BLEND);
 
   GLint viewport[4];
-  GLdouble model_matrix[16], proj_matrix[16], rot_matrix[16];
+  GLdouble model_matrix[16], proj_matrix[16];
 
-#define MARGIN 200
-#define CACHE_SIZE (VISRADIUS * 2 + 1)
-
+  // double t0 = getSystemTime();
   if (cx != cachedCX || cy != cachedCY || cacheCount > 10) {
-    double t0 = getSystemTime();
-
     glGetIntegerv(GL_VIEWPORT, viewport);
     glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
     glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
@@ -442,8 +425,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     cachedCY = cy;
     cacheCount = 0;
 
-    // printf("Time for cache check: %3.3fms\n",1000.0*(getSystemTime()-t0));
-    // printf("%d cells visible\n",visibleCnt);
+    // printf("Time for cache check: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
+    // printf("%d cells visible\n", visibleCnt);
   } else
     cacheCount++;
 
@@ -492,6 +475,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   glPopMatrix();
 
   glPopAttrib();
+
+  // printf("Time for total draw: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
 }
 void Map::drawFootprint(int x, int y, int kind) {
   Cell& center = cell(x, y);
@@ -850,9 +835,7 @@ void Map::drawCell(int birdsEye, int stage, int x, int y) {
 ****************************************************/
 
 void Map::drawCellAA(int birdsEye, int x, int y) {
-  Coord3d normal;
-  int i, draw;
-  int gfx_details = Settings::settings->gfx_details;
+  int draw;
 
   Cell& c = cell(x, y);
 
@@ -944,8 +927,6 @@ int Map::save(char* pathname, int x, int y) {
 }
 
 void Cell::dump(gzFile gp) {
-  Real texCoord[5];
-
   int32_t data[8];
   int i, j;
   for (i = 0; i < 5; i++) data[i] = saveInt((int32_t)(heights[i] / 0.0025));

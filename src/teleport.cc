@@ -56,8 +56,6 @@ Teleport::Teleport(int x, int y, int dx, int dy, Real radius) {
 void Teleport::draw() {
   int i;
 
-  double d1 = Game::current->gameTime * 1.0, d2 = 3.0, d3 = 0.5;
-
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 

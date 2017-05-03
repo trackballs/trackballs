@@ -56,8 +56,6 @@ void ForceField::onRemove() {
 
 void ForceField::draw() {}
 void ForceField::draw2() {
-  int i;
-
   if (!is_on) return;
 
   glPushAttrib(GL_ENABLE_BIT);

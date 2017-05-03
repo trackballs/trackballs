@@ -116,7 +116,6 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
     printf("Error, too many menus active\n");
     exit(1);
   }
-  int widthL = Font::getTextWidth(0, leftStr, fontSize);
   int widthR = Font::getTextWidth(0, rightStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];

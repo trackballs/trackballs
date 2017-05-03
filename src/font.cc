@@ -424,6 +424,8 @@ void Font::draw_a_text(int tl) {
           tp = 0.25 * textlines[tl].time_pulse / BASE_TIME;
         else
           tp = 0.25;
+      } else {
+        tp = 0.;
       }
       tm = 1. + textlines[tl].amplitude * tr * sin(4. * 3.14159 * (tim)) +
            tp * sin(3.31 * 3.14159 * (total_time + i * 0.1));
@@ -672,7 +674,6 @@ int Font::drawCenterSimpleText(int font, const char *text, int x, int y, float s
 int Font::l_drawSimpleText(const char *text, int x, int y, float sx, float sy, float r,
                            float g, float b, float a) {
   int i, offset, index, len;
-  double tm, tr, tim;
   float cx;
 
   if ((text == NULL) || (strlen(text) == 0)) return (0);
@@ -719,7 +720,6 @@ int Font::drawSimpleText3D(int font, const char *text, float sx, float sy) {
 
 int Font::l_drawSimpleText3D(const char *text, float sx, float sy) {
   int i, offset, index, len;
-  double tm, tr, tim;
   float cx, y;
 
   if ((text == NULL) || (strlen(text) == 0)) return (0);

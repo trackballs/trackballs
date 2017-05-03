@@ -44,7 +44,7 @@ const char *modExplanations[NUM_MODS] = {"Speed ball", "Extra jump", "Spikes",  
                                          "Small ball", "Large ball", "Nitro"};
 
 ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
-    : Ball(), kind(kind), time(time), resurrecting(resurrecting), state(STATE_ALIVE) {
+    : Ball(), kind(kind), resurrecting(resurrecting), state(STATE_ALIVE), time(time) {
   assign(position, this->position);
   no_physics = 1;
   realRadius = 0.2;

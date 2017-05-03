@@ -26,9 +26,9 @@ using namespace std;
 
 Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat,
                    SCM fun)
-    : length(length),
+    : direction(direction),
       position(fmod(position, 1.0)),
-      direction(direction),
+      length(length),
       value0(v0),
       value1(v1),
       repeat(repeat),

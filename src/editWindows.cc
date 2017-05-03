@@ -123,18 +123,16 @@ ESubWindow::ESubWindow(int id, int x, int y) : MyWindow(x, y, 100, 0) {
 }
 
 void ESubWindow::draw() {
-  int i, is_selectable;
+  int i;
   char str[256];
 
   this->MyWindow::draw();
   for (i = 0; i < rows; i++) {
     if (cMenuEntries[id][i][0] == '*') {
-      is_selectable = 0;
       snprintf(str, 255, "%s", cMenuEntries[id][i] + 1);
       addText_Left(0, fontSize / 2, y + 2 + fontSize * i + fontSize / 2, str,
                    x + 2 + fontSize / 2);
     } else {
-      is_selectable = 1;
       if (cMenuEntries[id][i][0] == '/')
         snprintf(str, 255, "%s", cMenuEntries[id][i] + 1); /* Shortcut already part of name */
       else
@@ -394,9 +392,6 @@ void EQuitWindow::draw() {
   this->MyWindow::draw();
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
-  int col0 = x + 2 + fontSize / 2;
-  int col1 = x + 2 + fontSize / 2 + fontSize * 10;
-  char str[256];
 
   addText_Center(0, fontSize / 2, row1, _("Quit without saving?"), x + width / 2);
   addText_Center(CODE_YES, fontSize / 2, row2, _("Yes"), x + fontSize * 5);
@@ -436,8 +431,6 @@ void ESaveWindow::draw() {
   this->MyWindow::draw();
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
-  int col0 = x + 2 + fontSize / 2;
-  int col1 = x + 2 + fontSize / 2 + fontSize * 10;
   char str[256];
 
   if (!saveCnt) {
@@ -488,8 +481,6 @@ void ECloseWindow::draw() {
   this->MyWindow::draw();
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
-  int col0 = x + 2 + fontSize / 2;
-  int col1 = x + 2 + fontSize / 2 + fontSize * 10;
 
   addText_Center(0, fontSize / 2, row1, "Close without saving?", x + width / 2);
   addText_Center(CODE_YES, fontSize / 2, row2, "Yes", x + fontSize * 5);
@@ -523,8 +514,6 @@ void ENewWindow::draw() {
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
   int row3 = row1 + fontSize * 2 + 2;
-  int col0 = x + 2 + fontSize / 2;
-  int col1 = x + 2 + fontSize / 2 + fontSize * 10;
 
   addText_Center(0, fontSize / 2, row1, _("Name of map"), x + width / 2);
   addText_Center(0, fontSize / 2, row2, name, x + width / 2);
@@ -546,7 +535,7 @@ void ENewWindow::key(int key, int x, int y) {
   if (key == SDLK_BACKSPACE) {
     int len = strlen(name);
     if (len > 0) name[len - 1] = 0;
-  } else if (key < 256 && isalnum(key) || key == ' ' || key == '_' || key == '-') {
+  } else if ((key < 128 && isalnum(key)) || key == ' ' || key == '_' || key == '-') {
     if (shift && islower(key)) key = toupper(key);
     int len = strlen(name);
     if (len >= 255) return;

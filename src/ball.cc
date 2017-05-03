@@ -47,7 +47,7 @@ void Ball::init() {
   balls = new set<Ball *>();
   SDL_Surface *text;
   SDL_Color fgColor = {255, 255, 255};
-  GLfloat texcoord[4];
+  // GLfloat texcoord[4];
 
   text = TTF_RenderText_Blended(ingameFont, " ? ", fgColor);
   // dizzyTexture = LoadTexture(text, texcoord);
@@ -564,7 +564,7 @@ void Ball::setReflectivity(double reflectivity, int metallic) {
 }
 
 Boolean Ball::physics(Real time) {
-  Real x, y, h;
+  Real x, y;
 
   if (!Game::current) return true;
   Map *map = Game::current->map;
@@ -586,8 +586,6 @@ Boolean Ball::physics(Real time) {
   int i;
   Real t = 0;
   do {
-    Real partialX = position[0] - (Real)((int)position[0]);
-    Real partialY = position[1] - (Real)((int)position[1]);
     Cell &c = map->cell((int)position[0], (int)position[1]);
     Coord3d normal;
     c.getNormal(normal, Cell::CENTER);
@@ -653,9 +651,8 @@ Boolean Ball::physics(Real time) {
           Coord3d center;
           assign(position, center);
           center[2] = map->getWaterHeight(center[0], center[1]);
-          Splash *s =
-              new Splash(center, velocity, waterColor, 30 * radius / 0.3,
-                         radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
+          new Splash(center, velocity, waterColor, 30 * radius / 0.3,
+                     radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
         }
         // splashes caused by rotation. eg "swimming"
         speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
@@ -672,7 +669,7 @@ Boolean Ball::physics(Real time) {
           rotation[1] *= 0.9;
           velocity[0] += 0.01 * rotation[0];
           velocity[1] += 0.01 * rotation[1];
-          Splash *s = new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
+          new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
         }
         double fric = 0.004 * min(1.0, depth / (2. * radius));  // an extra water friction
         velocity[0] = velocity[0] * (1. - fric) + c.velocity[0] * fric;
@@ -700,7 +697,7 @@ Boolean Ball::physics(Real time) {
         Coord3d center;
         assign(position, center);
         center[2] = map->getHeight(center[0], center[1]);
-        Splash *s = new Splash(center, velocity, acidColor, speed * radius, radius);
+        new Splash(center, velocity, acidColor, speed * radius, radius);
       }
       if (modTimeLeft[MOD_GLASS]) sink = min(sink, 0.3);
       if (sink > radius * 2.0) {
@@ -863,7 +860,7 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
           Coord3d center;
           assign(position, center);
           center[2] = map->getHeight(center[0], center[1]);
-          Splash *s = new Splash(center, velocity, acidColor, speed * radius * 20.0, radius);
+          new Splash(center, velocity, acidColor, speed * radius * 20.0, radius);
         }
 
         if (cell.flags & CELL_SAND) {
@@ -996,8 +993,6 @@ void Ball::handleBallCollisions() {
   }
 }
 void Ball::handleForcefieldCollisions() {
-  int i;
-
   set<ForceField *>::iterator iter = ForceField::forcefields->begin();
   set<ForceField *>::iterator end = ForceField::forcefields->end();
   for (; iter != end; iter++) {
@@ -1239,8 +1234,8 @@ void Ball::handlePipes() {
           for (i = 0; i < 3; i++) position[i] += correction * normal[i];
       } else if (distance < pipe->radius + radius && l != 0.0 && l != 1.0 && !inPipe) {
         /* Collision from outside */
-        if (pipe->flags & PIPE_SOFT_ENTER & l < 0.2 / pipeLength) continue;
-        if (pipe->flags & PIPE_SOFT_EXIT & l > 1.0 - 0.2 / pipeLength) continue;
+        if ((pipe->flags & PIPE_SOFT_ENTER) && l < 0.2 / pipeLength) continue;
+        if ((pipe->flags & PIPE_SOFT_EXIT) && l > 1.0 - 0.2 / pipeLength) continue;
 
         Coord3d normal;
         assign(v1, normal);

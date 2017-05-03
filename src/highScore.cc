@@ -30,8 +30,7 @@ char highScorePath[256];
 
 HighScore *HighScore::highScore;
 HighScore::HighScore() {
-  int i, j;
-
+  int i;
   for (int levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
     for (i = 0; i < 10; i++) {
       points[levelSet][i] = 1000 - i * 100;

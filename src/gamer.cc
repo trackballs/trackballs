@@ -167,7 +167,7 @@ void Gamer::playerLoose() {
 }
 void Gamer::reloadNames() {
   char str[256];
-  int i;
+  int i, len;
 
   nNames = 0;
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
@@ -177,7 +177,8 @@ void Gamer::reloadNames() {
     while ((dirent = readdir(dir))) {
       if (strlen(dirent->d_name) > 4 &&
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".gmr") == 0) {
-        for (i = 0; i < strlen(dirent->d_name) - 4; i++) names[nNames][i] = dirent->d_name[i];
+        len = strlen(dirent->d_name);
+        for (i = 0; i < len - 4; i++) names[nNames][i] = dirent->d_name[i];
         names[nNames][i] = 0;
         nNames++;
       }

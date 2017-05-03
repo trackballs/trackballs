@@ -64,7 +64,6 @@ void Black::die(int how) {
   Ball::die(how);
 
   if (alive) {
-    Color color = {0.0, 0.0, 0.2};
     Coord3d pos, vel;
     for (i = 0; i < 4; i++)
       for (j = 0; j < 4; j++) {

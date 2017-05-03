@@ -41,12 +41,7 @@ SettingsMode *SettingsMode::settingsMode;
 extern int screenResolutions[5][2], nScreenResolutions;
 extern void changeScreenResolution();
 
-void SettingsMode::init() {
-  char str[256];
-  int i;
-
-  settingsMode = new SettingsMode();
-}
+void SettingsMode::init() { settingsMode = new SettingsMode(); }
 SettingsMode::SettingsMode() {}
 void SettingsMode::activated() {
   Settings *settings = Settings::settings;
@@ -72,10 +67,9 @@ void SettingsMode::deactivated() {
   }
 }
 void SettingsMode::display() {
-  int w, h, i;
+  int i;
   int menucount;
   int titleFontSize = 64;
-  Settings *settings = Settings::settings;
 
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);  // | GL_DEPTH_BUFFER_BIT);
@@ -90,7 +84,6 @@ void SettingsMode::display() {
   // drawSurface(title,(screenWidth-title->w)/2,64,title->w,title->h);
 
   char str[256];
-  int opt;
   glColor3f(1.0, 1.0, 1.0);
 
   clearSelectionAreas();
@@ -226,6 +219,9 @@ void SettingsMode::display() {
     menuItem_LeftRight(MENU_LANGUAGE, 3, _("  Language"),
                        Settings::languageNames[Settings::settings->language]);
 
+    break;
+  case NUM_SUBSCREENS:
+    // never should happen
     break;
   }
   menuItem_Left(MENU_RETURN, 10, _("Back"));

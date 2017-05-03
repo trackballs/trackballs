@@ -61,7 +61,6 @@ GLfloat colors[5][3] = {
 
 void SetupMode::init() {
   char str[256];
-  int i;
 
   if (low_memory)
     background = NULL;
@@ -106,9 +105,7 @@ void SetupMode::display() {
   Leave2DMode();
 
   char str[256];
-  int opt;
   Settings *settings = Settings::settings;
-  int w, h;
   int fontSize = 48;
   int titleFontSize = 64;
   int col0 = screenWidth / 2 - 400;

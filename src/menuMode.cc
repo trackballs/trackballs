@@ -57,12 +57,7 @@ MenuMode *MenuMode::menuMode = NULL;
 
 #define NUM_SLIDES 10
 
-void MenuMode::init() {
-  char str[256];
-  int i;
-
-  menuMode = new MenuMode();
-}
+void MenuMode::init() { menuMode = new MenuMode(); }
 MenuMode::MenuMode() {
   offset = 0.0;
   slides[0] = 0, slides[1] = 0;
@@ -72,7 +67,6 @@ char *story;
 
 void MenuMode::display() {
   char str[256];
-  int i, w, h;
 
   story =
       _("Trackballs is a game similar to the classical game Marble Madness from the 80's. \
@@ -88,7 +82,7 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   glColor3f(1.0, 1.0, 1.0);
   // drawSurface(header,(screenWidth-550)/2,20,550,100);
 
-  int storyText_y = screenHeight / 2 - 20;
+  // int storyText_y = screenHeight / 2 - 20;
 
   Enter2DMode();
   glEnable(GL_BLEND);
@@ -181,8 +175,7 @@ void MenuMode::doSelection() {
 }
 
 void MenuMode::idle(Real td) {
-  int w, h, i, x, y;
-  int mouseX, mouseY;
+  int x, y;
 
   slideTime += td;
   if (slideTime > SLIDE_TOTAL) loadSlide();
@@ -207,9 +200,6 @@ void MenuMode::idle(Real td) {
     SDL_WarpMouseInWindow(window, x, y);
   }
   if (keystate[SDL_SCANCODE_SPACE] || keystate[SDL_SCANCODE_RETURN]) doSelection();
-
-  //  Uint8 mouseState=SDL_GetMouseState(&mouseX,&mouseY);
-  // printf("mouseState: %d\n",mouseState); fflush(stdout);
 
   /* This controls the scrolling text */
   offset += 150.0 * td;
@@ -236,8 +226,6 @@ void MenuMode::deactivated() {
 void MenuMode::loadSlide() {
   char str[256];
   SDL_Surface *slide;
-
-  double t0 = getSystemTime();
 
   /* Delete old slide */
   if (slides[0] != 0) {
@@ -271,8 +259,6 @@ void MenuMode::loadSlide() {
   slideMax[1][1] = texcoord[3];
   slideMode[1] = rand() % NUM_SLIDE_MODES;
   slideTime = 0.0;
-
-  double t1 = getSystemTime();
 }
 
 void MenuMode::drawSlide(int slide, double time) {
@@ -280,7 +266,7 @@ void MenuMode::drawSlide(int slide, double time) {
   double slideHeight = slideMax[slide][1];
   double screenAspect = screenWidth / (double)screenHeight;
   double slideAspect = slideMax[slide][0] / slideMax[slide][1];
-  double viewWidth, viewHeight, viewOffsetX, viewOffsetY;
+  double viewWidth, viewHeight, viewOffsetX = 0., viewOffsetY = 0.;
 
   time = time / (double)SLIDE_TOTAL;
   if (slideAspect < screenAspect) {

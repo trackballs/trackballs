@@ -31,7 +31,7 @@
 
 using namespace std;
 
-Box::Box(Real ct, int pnt) : Animated(), crashTolerance(ct), points(pnt), size(0.4) {}
+Box::Box(Real ct, int pnt) : Animated(), crashTolerance(ct), size(0.4), points(pnt) {}
 void Box::has_moved() {
   Map *map = Game::current->map;
   double h1 = max(map->getHeight(position[0] - size / 2, position[1] - size / 2),

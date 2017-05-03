@@ -57,7 +57,7 @@ static Image *ImageOpen(char *fileName) {
 
   image = (Image *)malloc(sizeof(Image));
   if (image == NULL) {
-    fprintf(stderr, "Cannot allocate '%z' bytes.\n", sizeof(Image));
+    fprintf(stderr, "Cannot allocate %zu bytes.\n", sizeof(Image));
     return (NULL);
   }
   if ((image->file = fopen(fileName, "rb")) == NULL) {
@@ -82,7 +82,7 @@ static Image *ImageOpen(char *fileName) {
   for (i = 0; i <= image->sizeZ; i++) {
     image->tmp[i] = (unsigned char *)malloc(image->sizeX * 256);
     if (image->tmp[i] == NULL) {
-      fprintf(stderr, "Cannot allocate '%z' bytes.\n", image->sizeX * 256);
+      fprintf(stderr, "Cannot allocate %d bytes.\n", image->sizeX * 256);
       return (NULL);
     }
   }
@@ -95,7 +95,7 @@ static Image *ImageOpen(char *fileName) {
     image->rowStart = (unsigned long *)malloc(x);
     image->rowSize = (unsigned long *)malloc(x);
     if (image->rowStart == NULL || image->rowSize == NULL) {
-      fprintf(stderr, "Cannot allocate '%z' bytes.\n", x);
+      fprintf(stderr, "Cannot allocate %d bytes.\n", x);
       return (NULL);
     }
     image->rleEnd = 512 + (2 * x);
@@ -198,7 +198,7 @@ IMAGE *ImageLoad(char *fileName) {
 
   final = (IMAGE *)malloc(sizeof(IMAGE));
   if (final == NULL) {
-    fprintf(stderr, "Cannot allocate '%z' bytes.\n", sizeof(IMAGE));
+    fprintf(stderr, "Cannot allocate %zu bytes.\n", sizeof(IMAGE));
     ImageClose(image);
     return (NULL);
   }
@@ -219,7 +219,7 @@ IMAGE *ImageLoad(char *fileName) {
   if (final->data == NULL) {
     ImageClose(image);
     free(final);
-    fprintf(stderr, "Cannot allocate '%z' bytes.\n", sx * image->sizeY * sizeof(unsigned int));
+    fprintf(stderr, "Cannot allocate %zu bytes.\n", sx * image->sizeY * sizeof(unsigned int));
     return (NULL);
   }
 
@@ -244,7 +244,7 @@ void read_2d_image_rgb(char *image, unsigned char **rbuffer, int *tx, int *ty) {
   *rbuffer = (unsigned char *)malloc(sizeof(unsigned char) * base_image->sizeX *
                                      base_image->sizeY * 4);
   if (*rbuffer == NULL) {
-    fprintf(stderr, "Cannot allocate '%z' bytes for image '%s'\n",
+    fprintf(stderr, "Cannot allocate %zu bytes for image '%s'\n",
             sizeof(unsigned char) * base_image->sizeX * base_image->sizeY * 4, image);
     /* Free the image */
     free(base_image->data);

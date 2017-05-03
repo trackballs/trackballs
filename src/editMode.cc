@@ -96,10 +96,10 @@ char* flagNames[NUM_FLAGS];
 char* hillNames[N_HILLS];
 
 #define MAX_SUBCOMMANDS 10
-enum { tlFile = 0, tlEdit = 1, tlView = 2, tlFlags = 3, tlTextures = 4, tlSize = 5 } tlMenus;
-enum { subFileSave = 0, subFileQuit } subFile;
-enum { subEditRegion = 10 } subEdit;
-enum { subViewBirdsEye = 20, subViewSwitch, subViewCrosshair, subViewClearWalls } subView;
+enum { tlFile = 0, tlEdit = 1, tlView = 2, tlFlags = 3, tlTextures = 4, tlSize = 5 };
+enum { subFileSave = 0, subFileQuit };
+enum { subEditRegion = 10 };
+enum { subViewBirdsEye = 20, subViewSwitch, subViewCrosshair, subViewClearWalls };
 enum {
   subFlagsIce = 30,
   subFlagsAcid = 31,
@@ -108,7 +108,7 @@ enum {
   subFlagsTrampoline = 34,
   subFlagsNoGrid = 35,
   subFlagsTrack = 36,
-} subFlags;
+};
 enum { subTexturesNext = 40, subTexturesPrev, subTexturesRotate };
 
 enum {
@@ -237,7 +237,7 @@ void EditMode::loadMap(char* name) {
   snprintf(levelname, sizeof(levelname), name);
 
   /* Set the pathname under which we will save the map */
-  snprintf(pathname, sizeof(pathname), "%s/.trackballs/levels", getenv("HOME"), name);
+  snprintf(pathname, sizeof(pathname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
 
   // Default load the map from the home directory if existing (same as default pathname)
   snprintf(mapname, sizeof(mapname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
@@ -355,7 +355,6 @@ void EditMode::saveMap() {
 }
 
 void EditMode::display() {
-  int i;
   double h;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -476,7 +475,6 @@ void EditMode::display() {
   */
 
   // displayFrameRate();
-  char str[256];
 
   Enter2DMode();
 #ifdef FOOBARS
@@ -568,7 +566,6 @@ void EditMode::doCommand(int command) {
   int mouseState;
   mouseState = SDL_GetMouseState(&mouseX, &mouseY);
 
-  int ctrl = SDL_GetModState() & (KMOD_LCTRL | KMOD_RCTRL);
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
 
   // printf("Doing command: %d\n",command);
@@ -933,17 +930,9 @@ void EditMode::doCellAction(int code, int direction) {
 }
 
 void EditMode::key(int key) {
-  int i, j;
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
-  int ctrl = SDL_GetModState() & (KMOD_LCTRL | KMOD_RCTRL);
-  int x1, y1;
-  int xLow = x, xHigh = x, yLow = y, yHigh = y;
-  int set_flag;
-  int corner;
-  int north, east;
   int mouseX, mouseY;
-  Uint8 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
-
+  SDL_GetMouseState(&mouseX, &mouseY);
   /* TODO. Send any keys to the EOpenWindow?? */
 
   if (newWindow->isAttached()) {

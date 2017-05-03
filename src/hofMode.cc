@@ -83,7 +83,6 @@ void HallOfFameMode::deactivated() {
 }
 void HallOfFameMode::display() {
   char str[256];
-  int w, h;
 
   // Draw the background using the preloaded texture
   glColor3f(timeLeft, timeLeft, timeLeft);
@@ -102,7 +101,7 @@ void HallOfFameMode::display() {
   glEnd();
   Leave2DMode();
 
-  int y, dy, size, x, y2;
+  int y, dy, size, x;
   if (screenWidth <= 640)
     x = 300;
   else if (screenWidth <= 800)
@@ -113,22 +112,18 @@ void HallOfFameMode::display() {
     x = 450;
   if (screenHeight <= 480) {
     y = 160;
-    y2 = 150;
     dy = 32;
     size = 16;
   } else if (screenHeight <= 600) {
     y = 200;
-    y2 = 180;
     dy = 40;
     size = 20;
   } else if (screenHeight <= 768) {
     y = 280;
-    y2 = 200;
     dy = 52;
     size = 24;
   } else {
     y = 300;
-    y2 = 200;
     dy = 58;
     size = 24;
   }

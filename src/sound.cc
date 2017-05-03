@@ -46,7 +46,7 @@ int hasMusicPreferences = 0;
 
 void soundInit() {
   mute = 0;
-  char str[512], i;
+  char str[512];
   DIR *dir;
   struct dirent *dirent;
 
@@ -116,7 +116,6 @@ double musicFade = 1.0;
 
 void soundIdle() {
   if (mute) return;
-  int i;
 
   if (doSpecialSfx) {
     musicFade = max(0.0, musicFade - 0.3 / fps);

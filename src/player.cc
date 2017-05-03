@@ -261,7 +261,6 @@ Uint8 mouseState=SDL_GetRelativeMouseState(&mouseX,&mouseY);
       nitroDebris += t;
       while (nitroDebris > 0.1) {
         nitroDebris -= 0.1;
-        Coord3d pos, vel;
         Debris *d = new Debris(this, position, velocity, 1.0 + frandom() * 2.0);
         d->position[0] += (frandom() - 0.5) * radius - velocity[0] * 0.1;
         d->position[1] += (frandom() - 0.5) * radius - velocity[1] * 0.1;
@@ -335,7 +334,6 @@ void Player::die(int how) {
   health = 0.0;
 
   int i, j;
-  Color color = {1.0, 0.2, 0.2};
   Coord3d pos, vel;
   if (how == DIE_ACID) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
@@ -355,7 +353,7 @@ void Player::die(int how) {
         vel[0] = velocity[0] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[1] = velocity[1] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[2] = velocity[2] + (sink ? 0.01 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        Debris *d = new Debris(this, pos, vel, 2.0 + 8.0 * frandom());
+        new Debris(this, pos, vel, 2.0 + 8.0 * frandom());
       }
 
   if (how == DIE_CRASH)
@@ -387,8 +385,6 @@ void Player::setStartVariables() {
 }
 
 void Player::restart(Coord3d pos) {
-  int i;
-
   setStartVariables();
   assign(pos, position);
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
@@ -408,5 +404,5 @@ Boolean Player::crash(Real speed) {
   double espeed =
       modTimeLeft[MOD_GLASS] ? (1.5 * speed) / crashTolerance : speed / crashTolerance;
   setHealth(1.0 - espeed);
-  this->Ball::crash(speed);
+  return this->Ball::crash(speed);
 }

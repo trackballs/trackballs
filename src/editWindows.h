@@ -47,6 +47,7 @@ class EMenuWindow : public MyWindow {
 class ESubWindow : public MyWindow {
  public:
   ESubWindow(int id, int x, int y);
+  virtual ~ESubWindow() {}
   void draw();
   void mouseDown(int state, int x, int y);
 
@@ -59,6 +60,7 @@ class ESubWindow : public MyWindow {
 class EStatusWindow : public MyWindow {
  public:
   EStatusWindow();
+  virtual ~EStatusWindow() {}
   void draw();
   void mouseDown(int state, int x, int y);
 
@@ -68,6 +70,7 @@ class EStatusWindow : public MyWindow {
 class EQuitWindow : public MyWindow {
  public:
   EQuitWindow();
+  virtual ~EQuitWindow() {}
   void yes();
   void no();
 
@@ -80,6 +83,7 @@ class EQuitWindow : public MyWindow {
 class ESaveWindow : public MyWindow {
  public:
   ESaveWindow();
+  virtual ~ESaveWindow() {}
   void yes();
   void no();
 
@@ -93,6 +97,7 @@ class ESaveWindow : public MyWindow {
 class ECloseWindow : public MyWindow {
  public:
   ECloseWindow();
+  virtual ~ECloseWindow() {}
   void yes();
   void no();
 
@@ -105,6 +110,7 @@ class ECloseWindow : public MyWindow {
 class EOpenWindow : public MyWindow {
  public:
   EOpenWindow();
+  virtual ~EOpenWindow() {}
 
   void draw();
   void mouseDown(int state, int x, int y);
@@ -118,6 +124,7 @@ class EOpenWindow : public MyWindow {
 class ENewWindow : public MyWindow {
  public:
   ENewWindow();
+  virtual ~ENewWindow() {}
 
   void draw();
   void mouseDown(int state, int x, int y);

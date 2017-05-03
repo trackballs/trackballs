@@ -59,8 +59,6 @@ void Cactus::draw() {
 
   if (killed == 2) return;
 
-  double d1 = Game::current->gameTime * 1.0, d2 = 3.0, d3 = 0.5;
-
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 
@@ -271,7 +269,6 @@ void Cactus::draw() {
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
-  Player *p = Game::current->player1;
   Coord3d diff;
 
   // no more used (can be deleted ?)

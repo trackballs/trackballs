@@ -28,7 +28,7 @@ using namespace std;
 
 Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength,
                double radius) {
-  int i, j;
+  int i;
 
   timeLeft = 3.0;
   nDroplets = (int)strength;

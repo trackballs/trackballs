@@ -63,9 +63,7 @@ void draw2DString(TTF_Font *font, char *string, int x, int y, Uint8 red, Uint8 g
                   Uint8 blue) {
   int w, h;
   SDL_Color fgColor = {255, 255, 255};
-  SDL_Color bgColor = {0, 0, 0};
   SDL_Surface *text;
-  SDL_Rect rect;
   GLuint texture;
   GLfloat texcoord[4];
   GLfloat texMinX, texMinY;
@@ -195,7 +193,7 @@ void drawMousePointer() {
   int mouseX, mouseY;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   sparkle2D->draw();
-  Uint8 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
+  SDL_GetMouseState(&mouseX, &mouseY);
   drawMouse(mouseX, mouseY, 64, 64, 0.01);
 }
 
@@ -318,7 +316,7 @@ int createSnapshot() {
   /* allocate buffer */
   if ((buffer = (unsigned char *)malloc(sizeof(unsigned char) * screenWidth * screenHeight *
                                         3)) == NULL) {
-    fprintf(stderr, _("Warning: cannot allocate %d bytes for snapshot. Aborting.\n"),
+    fprintf(stderr, _("Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"),
             sizeof(unsigned char) * screenWidth * screenHeight * 3);
     return (0);
   }
@@ -363,6 +361,7 @@ int createSnapshot() {
   /* freed everything */
   fclose(f);
   free(buffer);
+  return 1;
 }
 
 /* Displays a centered semi-transparent sign with two text rows */
@@ -540,7 +539,6 @@ int loadTexture(const char *name, Font *font) {
 
 void glHelpInit() {
   char str[256];
-  GLfloat texCoords[4];
 
   qobj = gluNewQuadric();
   gluQuadricDrawStyle(qobj, GLU_FILL);
@@ -611,7 +609,7 @@ void glHelpInit() {
 }
 
 void regenerateSphereDisplaylists() {
-  int resolution;
+  int resolution = 6;
 
   glNewList(sphereDisplayLists[0], GL_COMPILE);
   switch (Settings::settings->gfx_details) {
@@ -699,6 +697,7 @@ int bindTexture(const char *name) {
   //     and add it in the list
   i = loadTexture(name);
   if (i >= 0) glBindTexture(GL_TEXTURE_2D, textures[i]);
+  return i;
 }
 
 int resetTextures() {
@@ -728,6 +727,7 @@ int resetTextures() {
       SDL_FreeSurface(surface);
     }
   }
+  return 1;
 }
 
 /* Calculates and displays current framerate */
@@ -943,8 +943,8 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   int w, h;
   SDL_Surface *image;
   SDL_Rect area;
-  Uint32 saved_flags;
-  Uint8 saved_alpha;
+  //   Uint32 saved_flags;
+  //   Uint8 saved_alpha;
   int useMipmaps = 0;
 
   /* Use the surface width and height expanded to powers of 2 */
@@ -1011,8 +1011,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
     SDL_Surface *source = SDL_ConvertSurface(surface, image->format, SDL_SWSURFACE);
     SDL_LockSurface(source);
     SDL_LockSurface(image);
-    Uint32 *destPixels = (Uint32 *)image->pixels;
-    Uint32 *sourcePixels = (Uint32 *)source->pixels;
     for (int x = 0; x < area.w; x++)
       for (int y = 0; y < area.h; y++)
         *((Uint32 *)(((char *)image->pixels) + x * image->format->BytesPerPixel +

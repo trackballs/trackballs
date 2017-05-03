@@ -125,9 +125,6 @@ void HelpMode::deactivated() {
   Font::destroyAllText();
 }
 void HelpMode::display() {
-  char str[256];
-  int w, h;
-
   // Draw the background using the preloaded texture
   glColor3f(timeLeft, timeLeft, timeLeft);
 
@@ -279,7 +276,6 @@ void HelpMode::key(int key) {
   }
 }
 void HelpMode::idle(Real td) {
-  int mouseX, mouseY;
   int x, y;
 
   tickMouse(td);

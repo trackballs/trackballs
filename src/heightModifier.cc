@@ -77,11 +77,10 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
 void HeightModifier::draw() {}
 
 void HeightModifier::tick(Real t) {
-  int i;
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
-  int x1, y1, x2, y2, x3, y3;
-  int cor1, cor2, cor3;
+  int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
+  int cor1 = 0, cor2 = 0, cor3 = 0;
 
   float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * 3.14159)) / 2.;
 

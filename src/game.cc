@@ -98,10 +98,10 @@ void Game::loadLevel(char *name) {
 
   setDefaults();
 
-  /* Find path to map, default is load any maps and/or scripts in the home directory first (eg.
-     ~/.trackballs/levels/*.map)
-         It is possible to mix using a map file in the home dir and a script in the share dir
-     or viceversa */
+  /* Find path to map, default is load any maps and/or scripts in
+   * the home directory first (eg. ~/.trackballs/levels/{name}.map)
+   * It is possible to mix using a map file in the home dir and a
+   * script in the share dir or viceversa */
   snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
   snprintf(scmname, sizeof(scmname) - 1, "%s/.trackballs/levels/%s.scm", getenv("HOME"), name);
   if (!fileExists(mapname))
@@ -209,7 +209,6 @@ void Game::doExpensiveComputations() {
 /* Draw all the objects in the world in two stages (nontransparent objects first, transparent
  * objects second) */
 void Game::draw() {
-  int j;
   GLint viewport[4];
   GLdouble model_matrix[16], proj_matrix[16];
 
@@ -270,7 +269,6 @@ void Game::draw() {
    of the world. Does not draw weather or objects far away to save some time.
 */
 void Game::drawReflection(Coord3d focus) {
-  int j;
   GLint viewport[4];
   GLdouble model_matrix[16], proj_matrix[16];
 

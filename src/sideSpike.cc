@@ -128,12 +128,11 @@ void SideSpike::tick(Real t) {
   set<Ball *>::iterator iter = Ball::balls->begin();
   set<Ball *>::iterator end = Ball::balls->end();
   Ball *ball;
-  double dist, dx, dy, speed, h;
-  int is_sinking = 0;
+  double dist, h;
 
   if (is_on) phase += t * this->speed;
 
-  double x = position[0], y = position[1], z = position[2];
+  double z = position[2];
   while (phase > 1.0) phase -= 1.0;
   h = -0.3;
   if (phase < 0.4) {
@@ -149,7 +148,6 @@ void SideSpike::tick(Real t) {
   } else {
     /* spike is sinking */
     z = h + 1.0 - (phase - 0.9) / 0.1;
-    is_sinking = 1;
   }
   offset = z;
 
@@ -167,9 +165,9 @@ void SideSpike::tick(Real t) {
 
   if (offset <= 0.05) return;  // no collision possible
 
-  double sx, sy, bx, by;
-  double od, aod;  // lateral distance to the spike
-  int ol;          // true if possible bounce
+  double sx = 0., sy = 0.;
+  double od = 0., aod;  // lateral distance to the spike
+  int ol = 0;           // true if possible bounce
 
   for (; iter != end; iter++) {
     ball = *iter;
@@ -180,8 +178,6 @@ void SideSpike::tick(Real t) {
     case 1:
       sx = position[0] - 0.5 + (offset + 0.29);
       sy = position[1];
-      bx = position[0] - 0.5;
-      by = sy;
 
       od = ball->position[1] - position[1];
 
@@ -194,8 +190,6 @@ void SideSpike::tick(Real t) {
     case 2:
       sx = position[0] + 0.5 - (offset + 0.29);
       sy = position[1];
-      bx = position[0] + 0.5;
-      by = sy;
 
       od = ball->position[1] - position[1];
 
@@ -208,8 +202,6 @@ void SideSpike::tick(Real t) {
     case 3:
       sx = position[0];
       sy = position[1] - 0.5 + (offset + 0.29);
-      bx = sx;
-      by = position[1] - 0.5;
 
       od = ball->position[0] - position[0];
 
@@ -222,8 +214,6 @@ void SideSpike::tick(Real t) {
     case 4:
       sx = position[0];
       sy = position[1] + 0.5 - (offset + 0.29);
-      bx = sx;
-      by = position[1] + 0.5;
 
       od = ball->position[0] - position[0];
 
