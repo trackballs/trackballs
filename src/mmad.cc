@@ -94,6 +94,10 @@ void changeScreenResolution() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+    // Uncomment to apply basic antialiasing. SDL can't automatically select this.
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    // SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
     // Start at default size; will be adjusted
     int windowHeight, windowWidth;
     Uint32 flags = SDL_WINDOW_OPENGL;
@@ -107,8 +111,15 @@ void changeScreenResolution() {
       } else {
         flags |= SDL_WINDOW_RESIZABLE;
       }
-      windowWidth = 800;
-      windowHeight = 600;
+
+      SDL_Rect disprect;
+      if (!SDL_GetDisplayBounds(0, &disprect)) {
+        windowWidth = disprect.w / 2;
+        windowHeight = disprect.h / 2;
+      } else {
+        windowWidth = 800;
+        windowHeight = 600;
+      }
     }
     not_yet_windowed = full;
 
@@ -148,7 +159,12 @@ void changeScreenResolution() {
       SDL_SetWindowFullscreen(window, 0);
       if (not_yet_windowed) {
         not_yet_windowed = 0;
-        SDL_SetWindowSize(window, 800, 600);
+        SDL_Rect disprect;
+        if (!SDL_GetDisplayBounds(0, &disprect)) {
+          SDL_SetWindowSize(window, disprect.w / 2, disprect.h / 2);
+        } else {
+          SDL_SetWindowSize(window, 800, 600);
+        }
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
       }
       SDL_SetWindowResizable(window, SDL_TRUE);
