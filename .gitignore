@@ -1,9 +1,26 @@
 # Build Artifacts
 build/
 html/
+*.x
+*.gmo
+Makefile
+trackballs
+install_manifest.txt
+*.cmake
+CMakeFiles
+CMakeCache.txt
+execstring
 
 # Tool Artifacts
 *.directory
 *.out
 Doxyfile
 doxyfile
+*.config
+*.creator
+*.files
+*.includes
+*#
+*~
+*.bak
+*.user

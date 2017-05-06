@@ -73,6 +73,7 @@ class Map {
   };
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
+  void drawMapVBO(int birdseye, int x, int y);
   void drawCell(int birdsEye, int stage, int x, int y);
   void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
@@ -94,7 +95,7 @@ class Map {
   char mapname[256], author[256];
   int indexTranslation[256];  // translates indices when reading map.
 
-  int tx_Ice, tx_Acid, tx_Sand, tx_Track;
+  int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Map;
   Coord3d startPosition;
 
   static const int flagNone, flagFlashCenter, flagTranslucent, flagShowCross;

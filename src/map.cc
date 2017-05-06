@@ -34,7 +34,7 @@ using namespace std;
 
 /* VISRADIUS is half-width of square of drawable cells
    MARGIN    is px zone on edge of screen where cells can be skipped. */
-#define VISRADIUS 20
+#define VISRADIUS 50
 #define CACHE_SIZE (VISRADIUS * 2 + 1)
 #define MARGIN 10
 
@@ -52,6 +52,7 @@ inline int32_t loadInt(int32_t v) { return (int32_t)SDL_SwapBE32((uint32_t)v); }
 Cell::Cell() {
   texture = -1;
   flags = 0;
+  for (int i = 0; i < 5; i++) heights[i] = -8.0;
   for (int i = 0; i < 5; i++) waterHeights[i] = -20.0;
 }
 
@@ -335,6 +336,7 @@ Map::Map(char* filename) {
   tx_Acid = loadTexture("acid.png");
   tx_Sand = loadTexture("sand.png");
   tx_Track = loadTexture("track.png");
+  tx_Map = loadTexture("maptex.png");
 
   cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
 }
@@ -347,6 +349,15 @@ Map::~Map() {
 
 /* Draws the map on the screen from current viewpoint */
 void Map::draw(int birdsEye, int stage, int cx, int cy) {
+  if (1) {
+    // Run in both stages, why not
+
+    if (stage == 0) {
+      glDisable(GL_BLEND);
+      drawMapVBO(birdsEye, cx, cy);
+    }
+    return;
+  }
   int x, y, ix, iy;
 
   if (stage > 0 && !isTransparent) return;
@@ -369,7 +380,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   GLint viewport[4];
   GLdouble model_matrix[16], proj_matrix[16];
 
-  // double t0 = getSystemTime();
+  double t0 = getSystemTime();
   if (cx != cachedCX || cy != cachedCY || cacheCount > 10) {
     glGetIntegerv(GL_VIEWPORT, viewport);
     glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
@@ -425,8 +436,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     cachedCY = cy;
     cacheCount = 0;
 
-    // printf("Time for cache check: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
-    // printf("%d cells visible\n", visibleCnt);
+    printf("Time for cache check: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
+    printf("%d cells visible\n", visibleCnt);
   } else
     cacheCount++;
 
@@ -476,8 +487,520 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   glPopAttrib();
 
-  // printf("Time for total draw: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
+  printf("Time for total draw (stage %d): %03.3fms. Redraw %d\n", stage,
+         1000.0 * (getSystemTime() - t0), redrawCnt);
 }
+char* filetobuf(const char* filename) {
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR) { printf("E: %x\n", err); }
+  // Copypasted
+  FILE* fptr;
+  long length;
+  char* buf;
+
+  fptr = fopen(filename, "rb"); /* Open file for reading */
+  if (!fptr)                    /* Return NULL on failure */
+    return NULL;
+  fseek(fptr, 0, SEEK_END); /* Seek to the end of the file */
+  length = ftell(fptr);     /* Find out how many bytes into the file we are */
+  buf = (char*)malloc(
+      length +
+      1); /* Allocate a buffer for the entire length of the file and a null terminator */
+  fseek(fptr, 0, SEEK_SET);    /* Go back to the beginning of the file */
+  fread(buf, length, 1, fptr); /* Read the contents of the file in to the buffer */
+  fclose(fptr);                /* Close the file */
+  buf[length] = 0;             /* Null terminator */
+
+  return buf; /* Return the buffer */
+}
+
+void indicateErrors(const char* key) {
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR) { printf("%s: %x\n", key, err); }
+}
+
+GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
+  /* Read our shaders into the appropriate buffers */
+  char path[256];
+  snprintf(path, 256, "%s/shaders/basic.vert", effectiveShareDir);
+  GLchar* vertexsource = filetobuf(path);
+  if (vertexsource == NULL) {
+    printf("NULL V %s\n", path);
+    return -1;
+  }
+  snprintf(path, 256, "%s/shaders/basic.frag", effectiveShareDir);
+  GLchar* fragmentsource = filetobuf(path);
+  if (vertexsource == NULL) {
+    printf("NULL F %s\n", path);
+    return -1;
+  }
+  GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
+  int maxLength;
+  glShaderSource(vertexshader, 1, (const GLchar**)&vertexsource, 0);
+  glCompileShader(vertexshader);
+  int IsCompiled_VS, IsCompiled_FS, IsLinked;
+  glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &IsCompiled_VS);
+  if (IsCompiled_VS == 0) {
+    glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
+    char* vertexInfoLog = (char*)malloc(maxLength);
+    glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
+    fprintf(stderr, "%s\n", vertexInfoLog);
+    free(vertexInfoLog);
+    return -1;
+  }
+  GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentshader, 1, (const GLchar**)&fragmentsource, 0);
+  glCompileShader(fragmentshader);
+  glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &IsCompiled_FS);
+  if (IsCompiled_FS == 0) {
+    glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
+    char* fragmentInfoLog = (char*)malloc(maxLength);
+    glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
+    free(fragmentInfoLog);
+    fprintf(stderr, "%s\n", fragmentInfoLog);
+    return -1;
+  }
+  GLuint shaderprogram = glCreateProgram();
+  glAttachShader(shaderprogram, vertexshader);
+  glAttachShader(shaderprogram, fragmentshader);
+  glBindAttribLocation(shaderprogram, 0, "in_Position");
+  glBindAttribLocation(shaderprogram, 1, "in_Color");
+  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
+  glLinkProgram(shaderprogram);
+  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int*)&IsLinked);
+  if (IsLinked == 0) {
+    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
+    char* shaderProgramInfoLog = (char*)malloc(maxLength);
+    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
+    fprintf(stderr, "%s\n", shaderProgramInfoLog);
+    free(shaderProgramInfoLog);
+    return -1;
+  }
+  return shaderprogram;
+}
+
+void Map::drawMapVBO(int birdseye, int cx, int cy) {
+  // Cost to pay once and only once
+  static GLuint shaderprogram = -1;
+  static GLuint lineprogram = -1;
+  static GLuint vao;
+  static GLuint textureloc;
+  if (shaderprogram == (GLuint)-1) {
+    shaderprogram = loadProgramFromFiles("basic.vert", "basic.frag");
+    if (shaderprogram == (GLuint)-1) { return; }
+    lineprogram = loadProgramFromFiles("line.vert", "line.frag");
+    if (lineprogram == (GLuint)-1) { return; }
+    textureloc = glGetUniformLocation(shaderprogram, "tex");
+    glGenVertexArrays(1, &vao);
+
+    // Or: Array_Texture, indexed by short&(short,short)/alpha
+    // (is precise enough to cover animation, save memory, yet wraparound)
+  }
+
+  double t0 = getSystemTime();
+// use CHUNKSIZE = 32, % on the map cells themselves.
+// allocate/deallocate within the loop, to start..
+#define CHUNKSIZE 32
+  static int xchunks[25];
+  static int ychunks[25];
+  static int nchunks;
+
+  // Locate chunks whose centers are within reach
+  int mx = cx - cx % CHUNKSIZE;
+  int my = cy - cy % CHUNKSIZE;
+  nchunks = 0;
+  for (int i = -2; i <= 2; i++) {
+    for (int j = -2; j <= 2; j++) {
+      int ox = mx + i * CHUNKSIZE + CHUNKSIZE / 2;
+      int oy = my + j * CHUNKSIZE + CHUNKSIZE / 2;
+      if ((ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS) {
+        xchunks[nchunks] = ox - CHUNKSIZE / 2;
+        ychunks[nchunks] = oy - CHUNKSIZE / 2;
+        nchunks++;
+      }
+    }
+  }
+  // The obligatory VAO
+  glBindVertexArray(vao);
+
+  // For each chunk, construct a VBO for the tiles
+  GLuint tile_vbos[50];
+  GLuint wall_vbos[50];
+  GLuint line_vbos[50];
+  glGenBuffers(2 * nchunks, tile_vbos);
+  glGenBuffers(2 * nchunks, wall_vbos);
+  glGenBuffers(2 * nchunks, line_vbos);
+  GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
+  ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+  GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
+  ushort* widx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+  GLfloat* ldat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
+  ushort* lidx = new ushort[CHUNKSIZE * CHUNKSIZE * 8];
+  for (int i = 0; i < nchunks; i++) {
+    for (int x = xchunks[i]; x < xchunks[i] + CHUNKSIZE; x++) {
+      for (int y = ychunks[i]; y < ychunks[i] + CHUNKSIZE; y++) {
+        // Could speed entry up a lot with a geometry shader
+        // to eliminate redundant coordinates...
+        Cell c = (0 <= x && x < width && 0 <= y && y < height) ? cells[x + y * width] : Cell();
+        int j = (x - xchunks[i]) + (y - ychunks[i]) * CHUNKSIZE;
+        int k = j * 5 * 8;
+        // TODO: determine if texture arrays are available!
+        // (then we just pass short/short/short in
+        float txo = 0.5f, tyo = 0.5f;
+        int typed = c.flags & (CELL_ICE | CELL_ACID | CELL_TRACK | CELL_SAND);
+        if (typed || c.texture >= 0) {
+          if ((c.flags & CELL_ICE) || (!typed && c.texture == tx_Ice)) {
+            txo = 0.25f;
+            tyo = 0.f;
+          } else if ((c.flags & CELL_SAND) || (!typed && c.texture == tx_Sand)) {
+            txo = 0.5f;
+            tyo = 0.f;
+          } else if ((c.flags & CELL_TRACK) || (!typed && c.texture == tx_Track)) {
+            txo = 0.25f;
+            tyo = 0.5f;
+          } else if ((c.flags & CELL_ACID) || (!typed && c.texture == tx_Acid)) {
+            txo = 0.0f;
+            tyo = 0.0f;
+          }
+          // TODO: link given map to texture map. Best would be 1d array constructed
+          // from up/downscaled given textures
+          double time =
+              -(Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
+          double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
+          double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
+          if (ry < 0.) { ry += 1.; }
+          if (rx < 0.) { rx += 1.; }
+          txo += rx * 0.125f;
+          tyo += ry * 0.125f;
+          // Get local offsets
+        } else {
+          // Nothing much...
+        }
+
+        tdat[k++] = float(x);
+        tdat[k++] = float(y);
+        tdat[k++] = c.heights[Cell::SOUTH + Cell::WEST];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][0];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][1];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][2];
+        tdat[k++] = txo;
+        tdat[k++] = tyo;
+
+        tdat[k++] = float(x + 1);
+        tdat[k++] = float(y);
+        tdat[k++] = c.heights[Cell::SOUTH + Cell::EAST];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][0];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][1];
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][2];
+        tdat[k++] = txo + 0.125f;
+        tdat[k++] = tyo;
+
+        tdat[k++] = float(x + 1);
+        tdat[k++] = float(y + 1);
+        tdat[k++] = c.heights[Cell::NORTH + Cell::EAST];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][0];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][1];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][2];
+        tdat[k++] = txo + 0.125f;
+        tdat[k++] = tyo + 0.125f;
+
+        tdat[k++] = float(x);
+        tdat[k++] = float(y + 1);
+        tdat[k++] = c.heights[Cell::NORTH + Cell::WEST];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][0];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][1];
+        tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][2];
+        tdat[k++] = txo;
+        tdat[k++] = tyo + 0.125f;
+
+        tdat[k++] = 0.5f * float(2 * x + 1);
+        tdat[k++] = 0.5f * float(2 * y + 1);
+        tdat[k++] = c.heights[Cell::CENTER];
+        tdat[k++] = c.colors[Cell::CENTER][0];
+        tdat[k++] = c.colors[Cell::CENTER][1];
+        tdat[k++] = c.colors[Cell::CENTER][2];
+        tdat[k++] = txo + 0.0625f;
+        tdat[k++] = tyo + 0.0625f;
+
+        int m = j * 12;
+        ushort b = (ushort)5 * j;
+        tidx[m++] = b + 0;
+        tidx[m++] = b + 1;
+        tidx[m++] = b + 4;
+
+        // render both sides just in case
+        tidx[m++] = b + 1;
+        tidx[m++] = b + 2;
+        tidx[m++] = b + 4;
+
+        tidx[m++] = b + 2;
+        tidx[m++] = b + 3;
+        tidx[m++] = b + 4;
+
+        tidx[m++] = b + 3;
+        tidx[m++] = b + 0;
+        tidx[m++] = b + 4;
+
+        // We draw only the walls to two sides, flipping if need be
+        Cell ns = (0 <= x && x < width && 1 <= y && y < height + 1)
+                      ? cells[x + (y - 1) * width]
+                      : Cell();
+        Cell ne = (1 <= x && x < width + 1 && 0 <= y && y < height) ? cells[x - 1 + y * width]
+                                                                    : Cell();
+
+        // We assume that a quad suffices to render each wall
+        // (otherwise, in the worst case, we'd need 6 vertices/side!
+
+        int p = j * 8 * 8;  // 64 floats!
+        GLfloat* swcolor = &c.wallColors[Cell::SOUTH + Cell::WEST][0];
+        GLfloat* secolor = &c.wallColors[Cell::SOUTH + Cell::EAST][0];
+        if (ns.heights[Cell::NORTH + Cell::WEST] > c.heights[Cell::SOUTH + Cell::WEST] &&
+            ns.heights[Cell::NORTH + Cell::EAST] > c.heights[Cell::SOUTH + Cell::EAST]) {
+          swcolor = &ns.wallColors[Cell::NORTH + Cell::WEST][0];
+          secolor = &ns.wallColors[Cell::NORTH + Cell::EAST][0];
+        }
+
+        GLfloat* encolor = &c.wallColors[Cell::EAST + Cell::NORTH][0];
+        GLfloat* escolor = &c.wallColors[Cell::EAST + Cell::SOUTH][0];
+        if (ne.heights[Cell::WEST + Cell::NORTH] > c.heights[Cell::EAST + Cell::NORTH] &&
+            ne.heights[Cell::WEST + Cell::SOUTH] > c.heights[Cell::EAST + Cell::SOUTH]) {
+          encolor = &ns.wallColors[Cell::WEST + Cell::NORTH][0];
+          escolor = &ns.wallColors[Cell::WEST + Cell::SOUTH][0];
+        }
+
+        // Less X
+        wdat[p++] = float(x);
+        wdat[p++] = float(y);
+        wdat[p++] = c.heights[Cell::SOUTH + Cell::WEST];
+        wdat[p++] = swcolor[0];
+        wdat[p++] = swcolor[1];
+        wdat[p++] = swcolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x);
+        wdat[p++] = float(y);
+        wdat[p++] = ns.heights[Cell::NORTH + Cell::WEST];
+        wdat[p++] = swcolor[0];
+        wdat[p++] = swcolor[1];
+        wdat[p++] = swcolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x + 1);
+        wdat[p++] = float(y);
+        wdat[p++] = c.heights[Cell::SOUTH + Cell::EAST];
+        wdat[p++] = secolor[0];
+        wdat[p++] = secolor[1];
+        wdat[p++] = secolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x + 1);
+        wdat[p++] = float(y);
+        wdat[p++] = ns.heights[Cell::NORTH + Cell::EAST];
+        wdat[p++] = secolor[0];
+        wdat[p++] = secolor[1];
+        wdat[p++] = secolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        // Less Y
+        wdat[p++] = float(x);
+        wdat[p++] = float(y);
+        wdat[p++] = c.heights[Cell::WEST + Cell::SOUTH];
+        wdat[p++] = escolor[0];
+        wdat[p++] = escolor[1];
+        wdat[p++] = escolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x);
+        wdat[p++] = float(y);
+        wdat[p++] = ne.heights[Cell::EAST + Cell::SOUTH];
+        wdat[p++] = escolor[0];
+        wdat[p++] = escolor[1];
+        wdat[p++] = escolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x);
+        wdat[p++] = float(y + 1);
+        wdat[p++] = c.heights[Cell::WEST + Cell::NORTH];
+        wdat[p++] = encolor[0];
+        wdat[p++] = encolor[1];
+        wdat[p++] = encolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        wdat[p++] = float(x);
+        wdat[p++] = float(y + 1);
+        wdat[p++] = ne.heights[Cell::EAST + Cell::NORTH];
+        wdat[p++] = encolor[0];
+        wdat[p++] = encolor[1];
+        wdat[p++] = encolor[2];
+        wdat[p++] = 0.5f;
+        wdat[p++] = 0.5f;
+
+        // Render the quad. The heights autocorrect orientations
+        int q = j * 12;
+        widx[q++] = j * 8 + 0;
+        widx[q++] = j * 8 + 1;
+        widx[q++] = j * 8 + 2;
+        widx[q++] = j * 8 + 1;
+        widx[q++] = j * 8 + 3;
+        widx[q++] = j * 8 + 2;
+
+        widx[q++] = j * 8 + 4;
+        widx[q++] = j * 8 + 6;
+        widx[q++] = j * 8 + 5;
+        widx[q++] = j * 8 + 6;
+        widx[q++] = j * 8 + 7;
+        widx[q++] = j * 8 + 5;
+
+        // Line data ! (thankfully they're all black)
+        int s = j * 12;
+        ldat[s++] = float(x);
+        ldat[s++] = float(y);
+        ldat[s++] = c.heights[Cell::SOUTH + Cell::WEST];
+        ldat[s++] = float(x + 1);
+        ldat[s++] = float(y);
+        ldat[s++] = c.heights[Cell::SOUTH + Cell::EAST];
+        ldat[s++] = float(x + 1);
+        ldat[s++] = float(y + 1);
+        ldat[s++] = c.heights[Cell::NORTH + Cell::EAST];
+        ldat[s++] = float(x);
+        ldat[s++] = float(y + 1);
+        ldat[s++] = c.heights[Cell::NORTH + Cell::WEST];
+
+        int t = j * 8;
+        // We disable lines by doubling indices
+        lidx[t++] = 4 * j + 0;
+        lidx[t++] = 4 * j + (c.flags & CELL_NOLINESOUTH ? 0 : 1);
+        lidx[t++] = 4 * j + 1;
+        lidx[t++] = 4 * j + (c.flags & CELL_NOLINEEAST ? 1 : 2);
+        lidx[t++] = 4 * j + 2;
+        lidx[t++] = 4 * j + (c.flags & CELL_NOLINENORTH ? 2 : 3);
+        lidx[t++] = 4 * j + 3;
+        lidx[t++] = 4 * j + (c.flags & CELL_NOLINEWEST ? 3 : 0);
+      }
+    }
+
+    // Tiles
+    glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
+    glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), tdat,
+                 GL_STREAM_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), tidx,
+                 GL_STREAM_DRAW);
+    // Walls
+    glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
+    glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * 8 * sizeof(GLfloat), wdat,
+                 GL_STREAM_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), widx,
+                 GL_STREAM_DRAW);
+    // Lines
+    glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
+    glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 4 * 3 * sizeof(GLfloat), ldat,
+                 GL_STREAM_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * sizeof(ushort), lidx,
+                 GL_STREAM_DRAW);
+  }
+  delete[] tdat;
+  delete[] tidx;
+  delete[] wdat;
+  delete[] widx;
+  delete[] ldat;
+  delete[] lidx;
+
+  double t1 = getSystemTime();
+
+  // Load matrix from other GL
+  GLfloat proj[16];
+  GLfloat model[16];
+
+  glGetFloatv(GL_PROJECTION_MATRIX, proj);
+  glGetFloatv(GL_MODELVIEW_MATRIX, model);
+
+  // Put into shader
+  glUseProgram(shaderprogram);
+  glUniformMatrix4fv(glGetUniformLocation(shaderprogram, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat*)&proj[0]);
+  glUniformMatrix4fv(glGetUniformLocation(shaderprogram, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat*)&model[0]);
+
+  // Link in texture atlas :-)
+  glUniform1i(textureloc, 0);
+  glActiveTexture(GL_TEXTURE0 + 0);
+  glBindTexture(GL_TEXTURE_2D, textures[tx_Map]);
+
+  // Run through ye olde draw loop
+  // WALLS
+  for (int i = 0; i < nchunks; i++) {
+    glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
+    //                    #  W   type      norm  stride (skip)  offset
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    // Index & draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
+    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  }
+
+  // TOPS
+  for (int i = 0; i < nchunks; i++) {
+    glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
+    //                    #  W   type      norm  stride (skip)  offset
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    // Index & draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
+    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  }
+
+  glUseProgram(lineprogram);
+  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat*)&proj[0]);
+  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat*)&model[0]);
+
+  glEnable(GL_LINE_SMOOTH);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+  glLineWidth(1.0);
+  for (int i = 0; i < nchunks; i++) {
+    glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
+    // Just dot connecting
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
+    glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
+  }
+  glDisable(GL_LINE_SMOOTH);
+
+  glDeleteBuffers(2 * nchunks, tile_vbos);
+  glDeleteBuffers(2 * nchunks, wall_vbos);
+  glDeleteBuffers(2 * nchunks, line_vbos);
+
+  glUseProgram(0);
+  // Revert to fixed-function
+
+  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d\n", 1e3 * (getSystemTime() - t1),
+         1e3 * (t1 - t0), nchunks, vao);
+}
+
 void Map::drawFootprint(int x, int y, int kind) {
   Cell& center = cell(x, y);
   glPushAttrib(GL_ENABLE_BIT);
