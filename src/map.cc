@@ -52,6 +52,8 @@ inline int32_t loadInt(int32_t v) { return (int32_t)SDL_SwapBE32((uint32_t)v); }
 Cell::Cell() {
   texture = -1;
   flags = 0;
+  for (int i = 0; i < 20; i++) colors[i / 4][i % 4] = 1.;
+  for (int i = 0; i < 16; i++) wallColors[i / 4][i % 4] = 1.;
   for (int i = 0; i < 5; i++) heights[i] = -8.0;
   for (int i = 0; i < 5; i++) waterHeights[i] = -20.0;
 }
@@ -350,11 +352,15 @@ Map::~Map() {
 /* Draws the map on the screen from current viewpoint */
 void Map::draw(int birdsEye, int stage, int cx, int cy) {
   if (1) {
-    // Run in both stages, why not
+    // Run in both stages,  why not
 
     if (stage == 0) {
       glDisable(GL_BLEND);
-      drawMapVBO(birdsEye, cx, cy);
+      drawMapVBO(birdsEye, cx, cy, 0);
+    } else {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      drawMapVBO(birdsEye, cx, cy, 1);
     }
     return;
   }
@@ -472,6 +478,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
         }
   // printf("%d cells redrawn\n",redrawCnt);
 
+  double t1 = getSystemTime();
+
   /* Call all the display lists to draw the actual ground */
   for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
     for (iy = 0; iy < 2 * VISRADIUS + 1; iy++)
@@ -487,8 +495,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   glPopAttrib();
 
-  printf("Time for total draw (stage %d): %03.3fms. Redraw %d\n", stage,
-         1000.0 * (getSystemTime() - t0), redrawCnt);
+  printf("Time for total draw (stage %d): %03.3fms (%3.3fms). Redraw %d\n", stage,
+         1000.0 * (getSystemTime() - t1), 1e3 * (t1 - t0), redrawCnt);
 }
 char* filetobuf(const char* filename) {
   GLenum err;
@@ -579,7 +587,20 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   return shaderprogram;
 }
 
-void Map::drawMapVBO(int birdseye, int cx, int cy) {
+float packShorts(ushort a, ushort b) {
+  // To ensure strict aliasing
+  float r;
+  uint x = b * (1 << 16) + a;
+  memcpy(&r, &x, sizeof(float));
+  return r;
+}
+
+float packTex(float a, float b) {
+  float texrad = 16384.f;
+  return packShorts(texrad * a, texrad * b);
+}
+
+void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   // Cost to pay once and only once
   static GLuint shaderprogram = -1;
   static GLuint lineprogram = -1;
@@ -627,15 +648,24 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
   GLuint tile_vbos[50];
   GLuint wall_vbos[50];
   GLuint line_vbos[50];
+  GLuint flui_vbos[50];
   glGenBuffers(2 * nchunks, tile_vbos);
   glGenBuffers(2 * nchunks, wall_vbos);
   glGenBuffers(2 * nchunks, line_vbos);
+  glGenBuffers(2 * nchunks, flui_vbos);
+  // For now, we render water as just another tile layer...
+  // Proper (multiplicative) alpha handling can come later & be universal ?
+  // perhaps pave way for N-tiles?
+  // (Any sort of symmetric hack works since we typ have max 1 transp layer
   GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
   ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
   GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
   ushort* widx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
   GLfloat* ldat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
   ushort* lidx = new ushort[CHUNKSIZE * CHUNKSIZE * 8];
+  GLfloat* fdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
+  ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+
   for (int i = 0; i < nchunks; i++) {
     for (int x = xchunks[i]; x < xchunks[i] + CHUNKSIZE; x++) {
       for (int y = ychunks[i]; y < ychunks[i] + CHUNKSIZE; y++) {
@@ -664,18 +694,18 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
           }
           // TODO: link given map to texture map. Best would be 1d array constructed
           // from up/downscaled given textures
-          double time =
-              -(Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
-          double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
-          double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
-          if (ry < 0.) { ry += 1.; }
-          if (rx < 0.) { rx += 1.; }
-          txo += rx * 0.125f;
-          tyo += ry * 0.125f;
-          // Get local offsets
         } else {
           // Nothing much...
         }
+        // Cell velocity (moves base textures and water)
+        double time =
+            -(Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
+        double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
+        double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
+        if (ry < 0.) { ry += 1.; }
+        if (rx < 0.) { rx += 1.; }
+        txo += rx * 0.125f;
+        tyo += ry * 0.125f;
 
         tdat[k++] = float(x);
         tdat[k++] = float(y);
@@ -683,8 +713,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][0];
         tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][1];
         tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][2];
-        tdat[k++] = txo;
-        tdat[k++] = tyo;
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][3];
+        tdat[k++] = packTex(txo, tyo);
 
         tdat[k++] = float(x + 1);
         tdat[k++] = float(y);
@@ -692,8 +722,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][0];
         tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][1];
         tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][2];
-        tdat[k++] = txo + 0.125f;
-        tdat[k++] = tyo;
+        tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][3];
+        tdat[k++] = packTex(txo + 0.125f, tyo);
 
         tdat[k++] = float(x + 1);
         tdat[k++] = float(y + 1);
@@ -701,8 +731,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][0];
         tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][1];
         tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][2];
-        tdat[k++] = txo + 0.125f;
-        tdat[k++] = tyo + 0.125f;
+        tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][3];
+        tdat[k++] = packTex(txo + 0.125f, tyo + 0.125f);
 
         tdat[k++] = float(x);
         tdat[k++] = float(y + 1);
@@ -710,8 +740,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][0];
         tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][1];
         tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][2];
-        tdat[k++] = txo;
-        tdat[k++] = tyo + 0.125f;
+        tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][3];
+        tdat[k++] = packTex(txo, tyo + 0.125f);
 
         tdat[k++] = 0.5f * float(2 * x + 1);
         tdat[k++] = 0.5f * float(2 * y + 1);
@@ -719,8 +749,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         tdat[k++] = c.colors[Cell::CENTER][0];
         tdat[k++] = c.colors[Cell::CENTER][1];
         tdat[k++] = c.colors[Cell::CENTER][2];
-        tdat[k++] = txo + 0.0625f;
-        tdat[k++] = tyo + 0.0625f;
+        tdat[k++] = c.colors[Cell::CENTER][3];
+        tdat[k++] = packTex(txo + 0.0625f, tyo + 0.0625f);
 
         int m = j * 12;
         ushort b = (ushort)5 * j;
@@ -775,8 +805,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = swcolor[0];
         wdat[p++] = swcolor[1];
         wdat[p++] = swcolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = swcolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x);
         wdat[p++] = float(y);
@@ -784,8 +814,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = swcolor[0];
         wdat[p++] = swcolor[1];
         wdat[p++] = swcolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = swcolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x + 1);
         wdat[p++] = float(y);
@@ -793,8 +823,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = secolor[0];
         wdat[p++] = secolor[1];
         wdat[p++] = secolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = secolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x + 1);
         wdat[p++] = float(y);
@@ -802,8 +832,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = secolor[0];
         wdat[p++] = secolor[1];
         wdat[p++] = secolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = secolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         // Less Y
         wdat[p++] = float(x);
@@ -812,8 +842,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = escolor[0];
         wdat[p++] = escolor[1];
         wdat[p++] = escolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = escolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x);
         wdat[p++] = float(y);
@@ -821,8 +851,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = escolor[0];
         wdat[p++] = escolor[1];
         wdat[p++] = escolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = escolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x);
         wdat[p++] = float(y + 1);
@@ -830,8 +860,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = encolor[0];
         wdat[p++] = encolor[1];
         wdat[p++] = encolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = encolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         wdat[p++] = float(x);
         wdat[p++] = float(y + 1);
@@ -839,8 +869,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         wdat[p++] = encolor[0];
         wdat[p++] = encolor[1];
         wdat[p++] = encolor[2];
-        wdat[p++] = 0.5f;
-        wdat[p++] = 0.5f;
+        wdat[p++] = encolor[3];
+        wdat[p++] = packTex(0.5f, 0.5f);
 
         // Render the quad. The heights autocorrect orientations
         int q = j * 12;
@@ -876,13 +906,75 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
         int t = j * 8;
         // We disable lines by doubling indices
         lidx[t++] = 4 * j + 0;
-        lidx[t++] = 4 * j + (c.flags & CELL_NOLINESOUTH ? 0 : 1);
+        lidx[t++] = 4 * j + (c.flags & (CELL_NOLINESOUTH | CELL_NOGRID) ? 0 : 1);
         lidx[t++] = 4 * j + 1;
-        lidx[t++] = 4 * j + (c.flags & CELL_NOLINEEAST ? 1 : 2);
+        lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEEAST | CELL_NOGRID) ? 1 : 2);
         lidx[t++] = 4 * j + 2;
-        lidx[t++] = 4 * j + (c.flags & CELL_NOLINENORTH ? 2 : 3);
+        lidx[t++] = 4 * j + (c.flags & (CELL_NOLINENORTH | CELL_NOGRID) ? 2 : 3);
         lidx[t++] = 4 * j + 3;
-        lidx[t++] = 4 * j + (c.flags & CELL_NOLINEWEST ? 3 : 0);
+        lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEWEST | CELL_NOGRID) ? 3 : 0);
+
+        // Water (TODO alpha channel! & random offset smoothSemiRand(x, y, 1.0))
+        GLfloat waterc[4] = {0.3f, 0.3f, 0.7f, 0.6f};
+        int u = j * 5 * 8;
+        fdat[u++] = float(x);
+        fdat[u++] = float(y);
+        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.25f + rx * 0.125f, 0.f + ry * 0.125f);
+
+        fdat[u++] = float(x + 1);
+        fdat[u++] = float(y);
+        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.25f + 0.125f + rx * 0.125f, 0.0f + ry * 0.125f);
+
+        fdat[u++] = float(x + 1);
+        fdat[u++] = float(y + 1);
+        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.25f + 0.125f + rx * 0.125f, 0.125f + ry * 0.125f);
+
+        fdat[u++] = float(x);
+        fdat[u++] = float(y + 1);
+        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.25f + rx * 0.125f, 0.125f + ry * 0.125f);
+
+        fdat[u++] = 0.5f * float(2 * x + 1);
+        fdat[u++] = 0.5f * float(2 * y + 1);
+        fdat[u++] = c.waterHeights[Cell::CENTER];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.25f + 0.0625f + rx * 0.125f, 0.0625f + ry * 0.125f);
+
+        int v = j * 12;
+        fidx[v++] = b + 0;
+        fidx[v++] = b + 1;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 1;
+        fidx[v++] = b + 2;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 2;
+        fidx[v++] = b + 3;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 3;
+        fidx[v++] = b + 0;
+        fidx[v++] = b + 4;
       }
     }
 
@@ -907,6 +999,13 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * sizeof(ushort), lidx,
                  GL_STREAM_DRAW);
+    // Water (alt layer ?)
+    glBindBuffer(GL_ARRAY_BUFFER, flui_vbos[2 * i]);
+    glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), fdat,
+                 GL_STREAM_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, flui_vbos[2 * i + 1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), fidx,
+                 GL_STREAM_DRAW);
   }
   delete[] tdat;
   delete[] tidx;
@@ -914,6 +1013,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
   delete[] widx;
   delete[] ldat;
   delete[] lidx;
+  delete[] fdat;
+  delete[] fidx;
 
   double t1 = getSystemTime();
 
@@ -930,45 +1031,69 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
                      (GLfloat*)&proj[0]);
   glUniformMatrix4fv(glGetUniformLocation(shaderprogram, "model_matrix"), 1, GL_FALSE,
                      (GLfloat*)&model[0]);
+  GLint fogActive = (Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderprogram, "fog_active"), fogActive);
 
   // Link in texture atlas :-)
   glUniform1i(textureloc, 0);
   glActiveTexture(GL_TEXTURE0 + 0);
   glBindTexture(GL_TEXTURE_2D, textures[tx_Map]);
 
-  // Run through ye olde draw loop
-  // WALLS
-  for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
-    //                    #  W   type      norm  stride (skip)  offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void*)(3 * sizeof(GLfloat)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void*)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    // Index & draw
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
-    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  if (stage == 0) {
+    // Run through ye olde draw loop
+    // WALLS
+    for (int i = 0; i < nchunks; i++) {
+      glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
+      //                    #  W   type      norm  stride (skip)  offset
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(3 * sizeof(GLfloat)));
+      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(7 * sizeof(GLfloat)));
+      glEnableVertexAttribArray(0);
+      glEnableVertexAttribArray(1);
+      glEnableVertexAttribArray(2);
+      // Index & draw
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
+
+    // TOPS
+    for (int i = 0; i < nchunks; i++) {
+      glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
+      //                    #  W   type      norm  stride (skip)  offset
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(3 * sizeof(GLfloat)));
+      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(7 * sizeof(GLfloat)));
+      glEnableVertexAttribArray(0);
+      glEnableVertexAttribArray(1);
+      glEnableVertexAttribArray(2);
+      // Index & draw
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
+    // TODO: pass in stage as shader flag?
   }
 
-  // TOPS
-  for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
-    //                    #  W   type      norm  stride (skip)  offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void*)(3 * sizeof(GLfloat)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void*)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    // Index & draw
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
-    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  if (stage == 1) {
+    // Water
+    for (int i = 0; i < nchunks; i++) {
+      glBindBuffer(GL_ARRAY_BUFFER, flui_vbos[2 * i]);
+      //                    #  W   type      norm  stride (skip)  offset
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(3 * sizeof(GLfloat)));
+      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
+                            (void*)(7 * sizeof(GLfloat)));
+      glEnableVertexAttribArray(0);
+      glEnableVertexAttribArray(1);
+      glEnableVertexAttribArray(2);
+      // Index & draw
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, flui_vbos[2 * i + 1]);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
   }
 
   glUseProgram(lineprogram);
@@ -976,29 +1101,33 @@ void Map::drawMapVBO(int birdseye, int cx, int cy) {
                      (GLfloat*)&proj[0]);
   glUniformMatrix4fv(glGetUniformLocation(lineprogram, "model_matrix"), 1, GL_FALSE,
                      (GLfloat*)&model[0]);
+  glUniform1i(glGetUniformLocation(lineprogram, "fog_active"), fogActive);
 
-  glEnable(GL_LINE_SMOOTH);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glLineWidth(1.0);
-  for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
-    // Just dot connecting
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
-    glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
+  if (stage == 0) {
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glLineWidth(2.0f);
+    for (int i = 0; i < nchunks; i++) {
+      glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
+      // Just dot connecting
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+      glEnableVertexAttribArray(0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
+      glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
+    }
+    glDisable(GL_LINE_SMOOTH);
   }
-  glDisable(GL_LINE_SMOOTH);
 
   glDeleteBuffers(2 * nchunks, tile_vbos);
   glDeleteBuffers(2 * nchunks, wall_vbos);
   glDeleteBuffers(2 * nchunks, line_vbos);
+  glDeleteBuffers(2 * nchunks, flui_vbos);
 
   glUseProgram(0);
   // Revert to fixed-function
 
   printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d\n", 1e3 * (getSystemTime() - t1),
-         1e3 * (t1 - t0), nchunks, vao);
+         1e3 * (t1 - t0), nchunks, stage);
 }
 
 void Map::drawFootprint(int x, int y, int kind) {

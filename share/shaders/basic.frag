@@ -2,10 +2,13 @@
 precision mediump float;
 #endif
 
+uniform int fog_active;
+// TODO 1d array!
 uniform sampler2D tex;
 varying vec4 fcolor;
 varying vec2 texco;
 varying vec3 cpos;
+
 
 void main(void) {
   vec3 normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
@@ -23,10 +26,10 @@ void main(void) {
   Ispecular = clamp(Ispecular, 0.0, 1.0);
 
   vec4 surfcolor = gl_LightModel.ambient + Iambient + Idiffuse + Ispecular;
-  surfcolor = normalize(surfcolor);
+  surfcolor = clamp(surfcolor, 0.0, 1.0);
 
   float dist;
-  if (gl_Fog.end <= 1.0) {
+  if (fog_active == 0) {
     // Fog not active, skip
     dist = 0.;
   } else {

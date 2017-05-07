@@ -7,7 +7,7 @@ uniform mat4 proj_matrix;
 uniform mat4 model_matrix;
 
 attribute vec3 in_Position;
-attribute vec3 in_Color;
+attribute vec4 in_Color;
 attribute vec2 in_Texcoord;
 
 varying vec4 fcolor;
@@ -19,8 +19,8 @@ void main(void) {
   mat4 mvp_matrix = proj_matrix * model_matrix;
   gl_Position = mvp_matrix * pos;
   cpos = vec4(mvp_matrix * pos).xyz;
-  fcolor = vec4(in_Color, 0.5);
-  texco = in_Texcoord;
+  fcolor = in_Color;
+  texco = in_Texcoord / 16384.;
 
   vec4 eyepos = model_matrix * pos;
   gl_FogFragCoord = abs(eyepos.z / eyepos.w);
