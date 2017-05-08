@@ -80,7 +80,8 @@ void Sign::mkTexture(const char *string) {
 void Sign::draw() {}
 void Sign::draw2() {
   glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_DEPTH_TEST);
+  // Keep the depth function on but trivial so as to record depth values
+  glDepthFunc(GL_ALWAYS);
   glDisable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_LIGHTING);
@@ -109,6 +110,8 @@ void Sign::draw2() {
 
   glPopMatrix();
   glPopAttrib();
+
+  glDepthFunc(GL_LEQUAL);
 }
 
 void Sign::tick(Real t) {

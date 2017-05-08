@@ -3,6 +3,8 @@ precision mediump float;
 #endif
 
 uniform int fog_active;
+uniform int render_stage;
+
 // TODO 1d array!
 uniform sampler2D tex;
 varying vec4 fcolor;
@@ -11,6 +13,11 @@ varying vec3 cpos;
 
 
 void main(void) {
+  if (render_stage == 0 && fcolor.w < 0.99) {
+    // Drop transparent elements in first stage only
+    discard;
+  }
+
   vec3 normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
   vec4 texcolor = fcolor * texture2D(tex, texco);
 
@@ -36,5 +43,6 @@ void main(void) {
     // Apply linear fog as in original
     dist = clamp(1.0 - (gl_Fog.end - gl_FogFragCoord) * gl_Fog.scale, 0., 1.0);
   }
-  gl_FragColor = mix(surfcolor, gl_Fog.color, dist);
+  // Force override alpha
+  gl_FragColor = vec4(mix(surfcolor, gl_Fog.color, dist).xyz, fcolor.w);
 }

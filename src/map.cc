@@ -353,15 +353,15 @@ Map::~Map() {
 void Map::draw(int birdsEye, int stage, int cx, int cy) {
   if (1) {
     // Run in both stages,  why not
-
     if (stage == 0) {
       glDisable(GL_BLEND);
-      drawMapVBO(birdsEye, cx, cy, 0);
     } else {
+      glEnable(GL_ALPHA_TEST);
+      glAlphaFunc(GL_GREATER, 0.01);
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      drawMapVBO(birdsEye, cx, cy, 1);
     }
+    drawMapVBO(birdsEye, cx, cy, stage);
     return;
   }
   int x, y, ix, iy;
@@ -794,8 +794,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
         GLfloat* escolor = &c.wallColors[Cell::EAST + Cell::SOUTH][0];
         if (ne.heights[Cell::WEST + Cell::NORTH] > c.heights[Cell::EAST + Cell::NORTH] &&
             ne.heights[Cell::WEST + Cell::SOUTH] > c.heights[Cell::EAST + Cell::SOUTH]) {
-          encolor = &ns.wallColors[Cell::WEST + Cell::NORTH][0];
-          escolor = &ns.wallColors[Cell::WEST + Cell::SOUTH][0];
+          encolor = &ne.wallColors[Cell::WEST + Cell::NORTH][0];
+          escolor = &ne.wallColors[Cell::WEST + Cell::SOUTH][0];
         }
 
         // Less X
@@ -1033,48 +1033,46 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
                      (GLfloat*)&model[0]);
   GLint fogActive = (Game::current->fogThickness != 0);
   glUniform1i(glGetUniformLocation(shaderprogram, "fog_active"), fogActive);
+  glUniform1i(glGetUniformLocation(shaderprogram, "render_stage"), stage);
 
   // Link in texture atlas :-)
   glUniform1i(textureloc, 0);
   glActiveTexture(GL_TEXTURE0 + 0);
   glBindTexture(GL_TEXTURE_2D, textures[tx_Map]);
 
-  if (stage == 0) {
-    // Run through ye olde draw loop
-    // WALLS
-    for (int i = 0; i < nchunks; i++) {
-      glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
-      //                    #  W   type      norm  stride (skip)  offset
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                            (void*)(3 * sizeof(GLfloat)));
-      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
-                            (void*)(7 * sizeof(GLfloat)));
-      glEnableVertexAttribArray(0);
-      glEnableVertexAttribArray(1);
-      glEnableVertexAttribArray(2);
-      // Index & draw
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
-      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
-    }
+  // Run through ye olde draw loop
+  // WALLS
+  for (int i = 0; i < nchunks; i++) {
+    glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
+    //                    #  W   type      norm  stride (skip)  offset
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(7 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    // Index & draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
+    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  }
 
-    // TOPS
-    for (int i = 0; i < nchunks; i++) {
-      glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
-      //                    #  W   type      norm  stride (skip)  offset
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-      glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                            (void*)(3 * sizeof(GLfloat)));
-      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
-                            (void*)(7 * sizeof(GLfloat)));
-      glEnableVertexAttribArray(0);
-      glEnableVertexAttribArray(1);
-      glEnableVertexAttribArray(2);
-      // Index & draw
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
-      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
-    }
-    // TODO: pass in stage as shader flag?
+  // TOPS
+  for (int i = 0; i < nchunks; i++) {
+    glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
+    //                    #  W   type      norm  stride (skip)  offset
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void*)(7 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    // Index & draw
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
+    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   if (stage == 1) {
@@ -1096,14 +1094,14 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
     }
   }
 
-  glUseProgram(lineprogram);
-  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&model[0]);
-  glUniform1i(glGetUniformLocation(lineprogram, "fog_active"), fogActive);
-
   if (stage == 0) {
+    glUseProgram(lineprogram);
+    glUniformMatrix4fv(glGetUniformLocation(lineprogram, "proj_matrix"), 1, GL_FALSE,
+                       (GLfloat*)&proj[0]);
+    glUniformMatrix4fv(glGetUniformLocation(lineprogram, "model_matrix"), 1, GL_FALSE,
+                       (GLfloat*)&model[0]);
+    glUniform1i(glGetUniformLocation(lineprogram, "fog_active"), fogActive);
+
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glLineWidth(2.0f);
