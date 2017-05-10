@@ -37,6 +37,7 @@ using namespace std;
 #define VISRADIUS 50
 #define CACHE_SIZE (VISRADIUS * 2 + 1)
 #define MARGIN 10
+#define CHUNKSIZE 32
 
 #define WRITE_PORTABLE 1
 #define READ_PORTABLE 1
@@ -223,6 +224,52 @@ Real Cell::getWaterHeight(Real x, Real y) {
   }
 }
 
+Chunk::Chunk() { is_active = false; }
+Chunk::~Chunk() {
+  if (is_active) {
+    glDeleteBuffers(2, &tile_vbo[0]);
+    glDeleteBuffers(2, &flui_vbo[0]);
+    glDeleteBuffers(2, &wall_vbo[0]);
+    glDeleteBuffers(2, &line_vbo[0]);
+  }
+}
+
+inline void updateMinMax(double in, double* minv, double* maxv) {
+  *minv = min(in, *minv);
+  *maxv = max(in, *maxv);
+}
+
+int Chunk::checkForUpdates(Cell* map, int width, int height) {
+  // Return true if changed; update min/max heights.
+  GLfloat newmin = 1e99, newmax = -1e99;
+  int reqschange = 0;
+
+  for (int x = xm; x < xm + CHUNKSIZE; x++) {
+    for (int y = ym; y < ym + CHUNKSIZE; y++) {
+      Cell* c = &map[y * width + x];
+      int wvis = c->heights[0] < c->waterHeights[0] || c->heights[1] < c->waterHeights[1] ||
+                 c->heights[2] < c->waterHeights[2] || c->heights[3] < c->waterHeights[3] ||
+                 c->heights[4] < c->waterHeights[4];
+
+      if (c->displayListDirty || c->velocity[0] != 0. || c->velocity[1] != 0. || wvis) {
+        c->displayListDirty = 0;
+        reqschange = 1;
+      }
+
+      for (int i = 0; i < 5; i++) {
+        newmin = min(c->heights[i], newmin);
+        newmin = min(c->waterHeights[i], newmin);
+        newmax = max(c->heights[i], newmax);
+        newmax = max(c->waterHeights[i], newmax);
+      }
+    }
+  }
+  minHeight = newmin;
+  maxHeight = newmax;
+
+  return reqschange;
+}
+
 Map::Map(char* filename) {
   gzFile gp;
   int x, y, i, north, east;
@@ -341,11 +388,20 @@ Map::Map(char* filename) {
   tx_Map = loadTexture("maptex.png");
 
   cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
+  int cw = -(-width / CHUNKSIZE), ch = -(-height / CHUNKSIZE);
+  chunks = new Chunk[cw * ch]();
+  for (int x = 0; x < cw; x++) {
+    for (int y = 0; y < ch; y++) {
+      chunks[y * cw + x].xm = x * CHUNKSIZE;
+      chunks[y * cw + x].ym = y * CHUNKSIZE;
+    }
+  }
 }
 Map::~Map() {
   //  glDeleteLists(cache[0].lists[0],(width/4)*(height/4));
   glDeleteLists(displayLists, nLists);
   delete[] cells;
+  delete[] chunks;
   delete[] cacheVisible;
 }
 
@@ -586,7 +642,7 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   return shaderprogram;
 }
 
-float packShorts(ushort a, ushort b) {
+inline float packShorts(ushort a, ushort b) {
   // To ensure strict aliasing
   float r;
   uint x = b * (1 << 16) + a;
@@ -594,12 +650,12 @@ float packShorts(ushort a, ushort b) {
   return r;
 }
 
-float packTex(float a, float b) {
+inline float packTex(float a, float b) {
   float texrad = 16384.f;
   return packShorts(texrad * a, texrad * b);
 }
 
-double smoothSemiRand(int x, int y, double scale) {
+inline double smoothSemiRand(int x, int y, double scale) {
   double dt =
       (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time) * scale;
   int t = (int)dt;
@@ -607,14 +663,393 @@ double smoothSemiRand(int x, int y, double scale) {
   return semiRand(x, y, t) * (1. - frac) + semiRand(x, y, t + 1) * frac;
 }
 
-float watershift(int x, int y, int type) {
+inline float watershift(int x, int y, int type) {
   // Motion depends on X and Y and time
   return 0.3 + 0.7 * smoothSemiRand(x * 17 + type * 23, y * 19, 0.5);
 }
 
+void Map::fillChunkVBO(Chunk* chunk) {
+  GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
+  ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+  GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
+  ushort* widx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+  GLfloat* ldat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
+  ushort* lidx = new ushort[CHUNKSIZE * CHUNKSIZE * 8];
+  GLfloat* fdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
+  ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+
+  if (chunk->is_active) {
+    // Stopgap: wipe/reload style.
+    glDeleteBuffers(2, &chunk->tile_vbo[0]);
+    glDeleteBuffers(2, &chunk->flui_vbo[0]);
+    glDeleteBuffers(2, &chunk->wall_vbo[0]);
+    glDeleteBuffers(2, &chunk->line_vbo[0]);
+    chunk->is_active = 0;
+  }
+  glGenBuffers(2, &chunk->tile_vbo[0]);
+  glGenBuffers(2, &chunk->wall_vbo[0]);
+  glGenBuffers(2, &chunk->line_vbo[0]);
+  glGenBuffers(2, &chunk->flui_vbo[0]);
+  chunk->is_active = 1;
+
+  for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
+    for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
+      // Could speed entry up a lot with a geometry shader
+      // to eliminate redundant coordinates...
+      Cell c = (0 <= x && x < width && 0 <= y && y < height) ? cells[x + y * width] : Cell();
+      int j = (x - chunk->xm) + (y - chunk->ym) * CHUNKSIZE;
+      int k = j * 5 * 8;
+      // TODO: determine if texture arrays are available!
+      // (then we just pass short/short/short in
+      float txo = 0.5f, tyo = 0.5f;
+      int typed = c.flags & (CELL_ICE | CELL_ACID | CELL_TRACK | CELL_SAND);
+      if (typed || c.texture >= 0) {
+        if ((c.flags & CELL_ICE) || (!typed && c.texture == tx_Ice)) {
+          txo = 0.25f;
+          tyo = 0.0f;
+        } else if ((c.flags & CELL_SAND) || (!typed && c.texture == tx_Sand)) {
+          txo = 0.25f;
+          tyo = 0.75f;
+        } else if ((c.flags & CELL_TRACK) || (!typed && c.texture == tx_Track)) {
+          txo = 0.25f;
+          tyo = 0.5f;
+        } else if ((c.flags & CELL_ACID) || (!typed && c.texture == tx_Acid)) {
+          txo = 0.0f;
+          tyo = 0.0f;
+        }
+        // TODO: link given map to texture map. Best would be 1d array constructed
+        // from up/downscaled given textures
+      } else {
+        // Nothing much...
+      }
+      // Cell velocity (moves base textures and water)
+      double time =
+          -(Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
+      double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
+      double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
+      if (ry < 0.) { ry += 1.; }
+      if (rx < 0.) { rx += 1.; }
+      txo += rx * 0.125f;
+      tyo += ry * 0.125f;
+
+      tdat[k++] = float(x);
+      tdat[k++] = float(y);
+      tdat[k++] = c.heights[Cell::SOUTH + Cell::WEST];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][0];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][1];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][2];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][3];
+      tdat[k++] = packTex(txo, tyo);
+
+      tdat[k++] = float(x + 1);
+      tdat[k++] = float(y);
+      tdat[k++] = c.heights[Cell::SOUTH + Cell::EAST];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][0];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][1];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][2];
+      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][3];
+      tdat[k++] = packTex(txo + 0.125f, tyo);
+
+      tdat[k++] = float(x + 1);
+      tdat[k++] = float(y + 1);
+      tdat[k++] = c.heights[Cell::NORTH + Cell::EAST];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][0];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][1];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][2];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][3];
+      tdat[k++] = packTex(txo + 0.125f, tyo + 0.125f);
+
+      tdat[k++] = float(x);
+      tdat[k++] = float(y + 1);
+      tdat[k++] = c.heights[Cell::NORTH + Cell::WEST];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][0];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][1];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][2];
+      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][3];
+      tdat[k++] = packTex(txo, tyo + 0.125f);
+
+      tdat[k++] = 0.5f * float(2 * x + 1);
+      tdat[k++] = 0.5f * float(2 * y + 1);
+      tdat[k++] = c.heights[Cell::CENTER];
+      tdat[k++] = c.colors[Cell::CENTER][0];
+      tdat[k++] = c.colors[Cell::CENTER][1];
+      tdat[k++] = c.colors[Cell::CENTER][2];
+      tdat[k++] = c.colors[Cell::CENTER][3];
+      tdat[k++] = packTex(txo + 0.0625f, tyo + 0.0625f);
+
+      int m = j * 12;
+      ushort b = (ushort)5 * j;
+      tidx[m++] = b + 0;
+      tidx[m++] = b + 1;
+      tidx[m++] = b + 4;
+
+      // render both sides just in case
+      tidx[m++] = b + 1;
+      tidx[m++] = b + 2;
+      tidx[m++] = b + 4;
+
+      tidx[m++] = b + 2;
+      tidx[m++] = b + 3;
+      tidx[m++] = b + 4;
+
+      tidx[m++] = b + 3;
+      tidx[m++] = b + 0;
+      tidx[m++] = b + 4;
+
+      // We draw only the walls to two sides, flipping if need be
+      Cell ns = (0 <= x && x < width && 1 <= y && y < height + 1) ? cells[x + (y - 1) * width]
+                                                                  : Cell();
+      Cell ne = (1 <= x && x < width + 1 && 0 <= y && y < height) ? cells[x - 1 + y * width]
+                                                                  : Cell();
+
+      // We assume that a quad suffices to render each wall
+      // (otherwise, in the worst case, we'd need 6 vertices/side!
+
+      int p = j * 8 * 8;  // 64 floats!
+      GLfloat* swcolor = &c.wallColors[Cell::SOUTH + Cell::WEST][0];
+      GLfloat* secolor = &c.wallColors[Cell::SOUTH + Cell::EAST][0];
+      if (ns.heights[Cell::NORTH + Cell::WEST] > c.heights[Cell::SOUTH + Cell::WEST] &&
+          ns.heights[Cell::NORTH + Cell::EAST] > c.heights[Cell::SOUTH + Cell::EAST]) {
+        swcolor = &ns.wallColors[Cell::NORTH + Cell::WEST][0];
+        secolor = &ns.wallColors[Cell::NORTH + Cell::EAST][0];
+      }
+
+      GLfloat* encolor = &c.wallColors[Cell::EAST + Cell::NORTH][0];
+      GLfloat* escolor = &c.wallColors[Cell::EAST + Cell::SOUTH][0];
+      if (ne.heights[Cell::WEST + Cell::NORTH] > c.heights[Cell::EAST + Cell::NORTH] &&
+          ne.heights[Cell::WEST + Cell::SOUTH] > c.heights[Cell::EAST + Cell::SOUTH]) {
+        encolor = &ne.wallColors[Cell::WEST + Cell::NORTH][0];
+        escolor = &ne.wallColors[Cell::WEST + Cell::SOUTH][0];
+      }
+
+      // Less X
+      wdat[p++] = float(x);
+      wdat[p++] = float(y);
+      wdat[p++] = c.heights[Cell::SOUTH + Cell::WEST];
+      wdat[p++] = swcolor[0];
+      wdat[p++] = swcolor[1];
+      wdat[p++] = swcolor[2];
+      wdat[p++] = swcolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x);
+      wdat[p++] = float(y);
+      wdat[p++] = ns.heights[Cell::NORTH + Cell::WEST];
+      wdat[p++] = swcolor[0];
+      wdat[p++] = swcolor[1];
+      wdat[p++] = swcolor[2];
+      wdat[p++] = swcolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x + 1);
+      wdat[p++] = float(y);
+      wdat[p++] = c.heights[Cell::SOUTH + Cell::EAST];
+      wdat[p++] = secolor[0];
+      wdat[p++] = secolor[1];
+      wdat[p++] = secolor[2];
+      wdat[p++] = secolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x + 1);
+      wdat[p++] = float(y);
+      wdat[p++] = ns.heights[Cell::NORTH + Cell::EAST];
+      wdat[p++] = secolor[0];
+      wdat[p++] = secolor[1];
+      wdat[p++] = secolor[2];
+      wdat[p++] = secolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      // Less Y
+      wdat[p++] = float(x);
+      wdat[p++] = float(y);
+      wdat[p++] = c.heights[Cell::WEST + Cell::SOUTH];
+      wdat[p++] = escolor[0];
+      wdat[p++] = escolor[1];
+      wdat[p++] = escolor[2];
+      wdat[p++] = escolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x);
+      wdat[p++] = float(y);
+      wdat[p++] = ne.heights[Cell::EAST + Cell::SOUTH];
+      wdat[p++] = escolor[0];
+      wdat[p++] = escolor[1];
+      wdat[p++] = escolor[2];
+      wdat[p++] = escolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x);
+      wdat[p++] = float(y + 1);
+      wdat[p++] = c.heights[Cell::WEST + Cell::NORTH];
+      wdat[p++] = encolor[0];
+      wdat[p++] = encolor[1];
+      wdat[p++] = encolor[2];
+      wdat[p++] = encolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      wdat[p++] = float(x);
+      wdat[p++] = float(y + 1);
+      wdat[p++] = ne.heights[Cell::EAST + Cell::NORTH];
+      wdat[p++] = encolor[0];
+      wdat[p++] = encolor[1];
+      wdat[p++] = encolor[2];
+      wdat[p++] = encolor[3];
+      wdat[p++] = packTex(0.5f, 0.5f);
+
+      // Render the quad. The heights autocorrect orientations
+      int q = j * 12;
+      widx[q++] = j * 8 + 0;
+      widx[q++] = j * 8 + 1;
+      widx[q++] = j * 8 + 2;
+      widx[q++] = j * 8 + 1;
+      widx[q++] = j * 8 + 3;
+      widx[q++] = j * 8 + 2;
+
+      widx[q++] = j * 8 + 4;
+      widx[q++] = j * 8 + 6;
+      widx[q++] = j * 8 + 5;
+      widx[q++] = j * 8 + 6;
+      widx[q++] = j * 8 + 7;
+      widx[q++] = j * 8 + 5;
+
+      // Line data ! (thankfully they're all black)
+      int s = j * 12;
+      ldat[s++] = float(x);
+      ldat[s++] = float(y);
+      ldat[s++] = c.heights[Cell::SOUTH + Cell::WEST];
+      ldat[s++] = float(x + 1);
+      ldat[s++] = float(y);
+      ldat[s++] = c.heights[Cell::SOUTH + Cell::EAST];
+      ldat[s++] = float(x + 1);
+      ldat[s++] = float(y + 1);
+      ldat[s++] = c.heights[Cell::NORTH + Cell::EAST];
+      ldat[s++] = float(x);
+      ldat[s++] = float(y + 1);
+      ldat[s++] = c.heights[Cell::NORTH + Cell::WEST];
+
+      int t = j * 8;
+      // We disable lines by doubling indices
+      lidx[t++] = 4 * j + 0;
+      lidx[t++] = 4 * j + (c.flags & (CELL_NOLINESOUTH | CELL_NOGRID) ? 0 : 1);
+      lidx[t++] = 4 * j + 1;
+      lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEEAST | CELL_NOGRID) ? 1 : 2);
+      lidx[t++] = 4 * j + 2;
+      lidx[t++] = 4 * j + (c.flags & (CELL_NOLINENORTH | CELL_NOGRID) ? 2 : 3);
+      lidx[t++] = 4 * j + 3;
+      lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEWEST | CELL_NOGRID) ? 3 : 0);
+
+      // Water
+      GLfloat waterc[4] = {0.3f, 0.3f, 0.7f, 0.6f};
+      int u = j * 5 * 8;
+      fdat[u++] = float(x);
+      fdat[u++] = float(y);
+      fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
+      fdat[u++] = waterc[0];
+      fdat[u++] = waterc[1];
+      fdat[u++] = waterc[2];
+      fdat[u++] = waterc[3];
+      fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y, 0),
+                          0.0f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y, 1));
+
+      fdat[u++] = float(x + 1);
+      fdat[u++] = float(y);
+      fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
+      fdat[u++] = waterc[0];
+      fdat[u++] = waterc[1];
+      fdat[u++] = waterc[2];
+      fdat[u++] = waterc[3];
+      fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 0),
+                          0.0f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 1));
+
+      fdat[u++] = float(x + 1);
+      fdat[u++] = float(y + 1);
+      fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
+      fdat[u++] = waterc[0];
+      fdat[u++] = waterc[1];
+      fdat[u++] = waterc[2];
+      fdat[u++] = waterc[3];
+      fdat[u++] =
+          packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 0),
+                  0.125f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 1));
+
+      fdat[u++] = float(x);
+      fdat[u++] = float(y + 1);
+      fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
+      fdat[u++] = waterc[0];
+      fdat[u++] = waterc[1];
+      fdat[u++] = waterc[2];
+      fdat[u++] = waterc[3];
+      fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 0),
+                          0.125f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 1));
+
+      fdat[u++] = 0.5f * float(2 * x + 1);
+      fdat[u++] = 0.5f * float(2 * y + 1);
+      fdat[u++] = c.waterHeights[Cell::CENTER];
+      fdat[u++] = waterc[0];
+      fdat[u++] = waterc[1];
+      fdat[u++] = waterc[2];
+      fdat[u++] = waterc[3];
+      fdat[u++] =
+          packTex(0.5f + 0.0625f + rx * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 0),
+                  0.0625f + ry * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 1));
+
+      int v = j * 12;
+      fidx[v++] = b + 0;
+      fidx[v++] = b + 1;
+      fidx[v++] = b + 4;
+      fidx[v++] = b + 1;
+      fidx[v++] = b + 2;
+      fidx[v++] = b + 4;
+      fidx[v++] = b + 2;
+      fidx[v++] = b + 3;
+      fidx[v++] = b + 4;
+      fidx[v++] = b + 3;
+      fidx[v++] = b + 0;
+      fidx[v++] = b + 4;
+    }
+  }
+
+  // Tiles
+  glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
+  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), tdat,
+               GL_STREAM_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), tidx,
+               GL_STREAM_DRAW);
+  // Walls
+  glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
+  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * 8 * sizeof(GLfloat), wdat,
+               GL_STREAM_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), widx,
+               GL_STREAM_DRAW);
+  // Lines
+  glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
+  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 4 * 3 * sizeof(GLfloat), ldat,
+               GL_STREAM_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->line_vbo[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * sizeof(ushort), lidx,
+               GL_STREAM_DRAW);
+  // Water (alt layer ?)
+  glBindBuffer(GL_ARRAY_BUFFER, chunk->flui_vbo[0]);
+  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), fdat,
+               GL_STREAM_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), fidx,
+               GL_STREAM_DRAW);
+  delete[] tdat;
+  delete[] tidx;
+  delete[] wdat;
+  delete[] widx;
+  delete[] ldat;
+  delete[] lidx;
+  delete[] fdat;
+  delete[] fidx;
+}
+
 void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   // Cost to pay once and only once
-  static int oldnchunks = 0;
+  //  static int oldnchunks = 0;
   static GLuint shaderprogram = -1;
   static GLuint lineprogram = -1;
   static GLuint vao;
@@ -632,422 +1067,47 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   }
 
   double t0 = getSystemTime();
-// use CHUNKSIZE = 32, % on the map cells themselves.
-// allocate/deallocate within the loop, to start..
-#define CHUNKSIZE 32
-  static int xchunks[25];
-  static int ychunks[25];
-  static int nchunks;
-
-  // Locate chunks whose centers are within reach
-  int mx = cx - cx % CHUNKSIZE;
-  int my = cy - cy % CHUNKSIZE;
-  nchunks = 0;
-  for (int i = -2; i <= 2; i++) {
-    for (int j = -2; j <= 2; j++) {
-      int ox = mx + i * CHUNKSIZE + CHUNKSIZE / 2;
-      int oy = my + j * CHUNKSIZE + CHUNKSIZE / 2;
-      if ((ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS) {
-        xchunks[nchunks] = ox - CHUNKSIZE / 2;
-        ychunks[nchunks] = oy - CHUNKSIZE / 2;
-        nchunks++;
+  // use CHUNKSIZE = 32, % on the map cells themselves.
+  // allocate/deallocate within the loop, to start..
+  // Iterate over every chunk in chunks;
+  // activate by midpoitn criterion...
+  // Ignore chunks outside the real world (i.e., makeinvisible? or gen
+  // null chunk?)
+  int cw = -(-width / CHUNKSIZE), ch = -(-height / CHUNKSIZE);
+  int nchunks = 0;
+  Chunk* drawlist[128];
+  for (int i = 0; i < cw; i++) {
+    for (int j = 0; j < ch; j++) {
+      int update = 0;
+      if (stage == 0) {
+        // To calculate visibility needs, detect if update needed.
+        // Issue: applied to _all_ cells in map
+        update = chunks[j * cw + i].checkForUpdates(cells, width, height);
       }
-    }
-  }
-  // The obligatory VAO
-  glBindVertexArray(vao);
 
-  // For each chunk, construct a VBO for the tiles
-  static GLuint tile_vbos[50];
-  static GLuint wall_vbos[50];
-  static GLuint line_vbos[50];
-  static GLuint flui_vbos[50];
-  if (stage == 0) {
-    // Free all previous buffers
-    glDeleteBuffers(2 * oldnchunks, tile_vbos);
-    glDeleteBuffers(2 * oldnchunks, wall_vbos);
-    glDeleteBuffers(2 * oldnchunks, line_vbos);
-    glDeleteBuffers(2 * oldnchunks, flui_vbos);
+      int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
+      int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
+      int visible = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
 
-    glGenBuffers(2 * nchunks, tile_vbos);
-    glGenBuffers(2 * nchunks, wall_vbos);
-    glGenBuffers(2 * nchunks, line_vbos);
-    glGenBuffers(2 * nchunks, flui_vbos);
-    oldnchunks = nchunks;
-
-    // For now, we render water as just another tile layer...
-    // Proper (multiplicative) alpha handling can come later & be universal ?
-    // perhaps pave way for N-tiles?
-    // (Any sort of symmetric hack works since we typ have max 1 transp layer
-    GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
-    ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
-    GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
-    ushort* widx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
-    GLfloat* ldat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
-    ushort* lidx = new ushort[CHUNKSIZE * CHUNKSIZE * 8];
-    GLfloat* fdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
-    ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
-
-    for (int i = 0; i < nchunks; i++) {
-      for (int x = xchunks[i]; x < xchunks[i] + CHUNKSIZE; x++) {
-        for (int y = ychunks[i]; y < ychunks[i] + CHUNKSIZE; y++) {
-          // Could speed entry up a lot with a geometry shader
-          // to eliminate redundant coordinates...
-          Cell c =
-              (0 <= x && x < width && 0 <= y && y < height) ? cells[x + y * width] : Cell();
-          int j = (x - xchunks[i]) + (y - ychunks[i]) * CHUNKSIZE;
-          int k = j * 5 * 8;
-          // TODO: determine if texture arrays are available!
-          // (then we just pass short/short/short in
-          float txo = 0.5f, tyo = 0.5f;
-          int typed = c.flags & (CELL_ICE | CELL_ACID | CELL_TRACK | CELL_SAND);
-          if (typed || c.texture >= 0) {
-            if ((c.flags & CELL_ICE) || (!typed && c.texture == tx_Ice)) {
-              txo = 0.25f;
-              tyo = 0.0f;
-            } else if ((c.flags & CELL_SAND) || (!typed && c.texture == tx_Sand)) {
-              txo = 0.25f;
-              tyo = 0.75f;
-            } else if ((c.flags & CELL_TRACK) || (!typed && c.texture == tx_Track)) {
-              txo = 0.25f;
-              tyo = 0.5f;
-            } else if ((c.flags & CELL_ACID) || (!typed && c.texture == tx_Acid)) {
-              txo = 0.0f;
-              tyo = 0.0f;
-            }
-            // TODO: link given map to texture map. Best would be 1d array constructed
-            // from up/downscaled given textures
-          } else {
-            // Nothing much...
-          }
-          // Cell velocity (moves base textures and water)
-          double time = -(Game::current ? Game::current->gameTime
-                                        : ((EditMode*)GameMode::current)->time);
-          double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
-          double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
-          if (ry < 0.) { ry += 1.; }
-          if (rx < 0.) { rx += 1.; }
-          txo += rx * 0.125f;
-          tyo += ry * 0.125f;
-
-          tdat[k++] = float(x);
-          tdat[k++] = float(y);
-          tdat[k++] = c.heights[Cell::SOUTH + Cell::WEST];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][0];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][1];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][2];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][3];
-          tdat[k++] = packTex(txo, tyo);
-
-          tdat[k++] = float(x + 1);
-          tdat[k++] = float(y);
-          tdat[k++] = c.heights[Cell::SOUTH + Cell::EAST];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][0];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][1];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][2];
-          tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][3];
-          tdat[k++] = packTex(txo + 0.125f, tyo);
-
-          tdat[k++] = float(x + 1);
-          tdat[k++] = float(y + 1);
-          tdat[k++] = c.heights[Cell::NORTH + Cell::EAST];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][0];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][1];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][2];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][3];
-          tdat[k++] = packTex(txo + 0.125f, tyo + 0.125f);
-
-          tdat[k++] = float(x);
-          tdat[k++] = float(y + 1);
-          tdat[k++] = c.heights[Cell::NORTH + Cell::WEST];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][0];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][1];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][2];
-          tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][3];
-          tdat[k++] = packTex(txo, tyo + 0.125f);
-
-          tdat[k++] = 0.5f * float(2 * x + 1);
-          tdat[k++] = 0.5f * float(2 * y + 1);
-          tdat[k++] = c.heights[Cell::CENTER];
-          tdat[k++] = c.colors[Cell::CENTER][0];
-          tdat[k++] = c.colors[Cell::CENTER][1];
-          tdat[k++] = c.colors[Cell::CENTER][2];
-          tdat[k++] = c.colors[Cell::CENTER][3];
-          tdat[k++] = packTex(txo + 0.0625f, tyo + 0.0625f);
-
-          int m = j * 12;
-          ushort b = (ushort)5 * j;
-          tidx[m++] = b + 0;
-          tidx[m++] = b + 1;
-          tidx[m++] = b + 4;
-
-          // render both sides just in case
-          tidx[m++] = b + 1;
-          tidx[m++] = b + 2;
-          tidx[m++] = b + 4;
-
-          tidx[m++] = b + 2;
-          tidx[m++] = b + 3;
-          tidx[m++] = b + 4;
-
-          tidx[m++] = b + 3;
-          tidx[m++] = b + 0;
-          tidx[m++] = b + 4;
-
-          // We draw only the walls to two sides, flipping if need be
-          Cell ns = (0 <= x && x < width && 1 <= y && y < height + 1)
-                        ? cells[x + (y - 1) * width]
-                        : Cell();
-          Cell ne = (1 <= x && x < width + 1 && 0 <= y && y < height)
-                        ? cells[x - 1 + y * width]
-                        : Cell();
-
-          // We assume that a quad suffices to render each wall
-          // (otherwise, in the worst case, we'd need 6 vertices/side!
-
-          int p = j * 8 * 8;  // 64 floats!
-          GLfloat* swcolor = &c.wallColors[Cell::SOUTH + Cell::WEST][0];
-          GLfloat* secolor = &c.wallColors[Cell::SOUTH + Cell::EAST][0];
-          if (ns.heights[Cell::NORTH + Cell::WEST] > c.heights[Cell::SOUTH + Cell::WEST] &&
-              ns.heights[Cell::NORTH + Cell::EAST] > c.heights[Cell::SOUTH + Cell::EAST]) {
-            swcolor = &ns.wallColors[Cell::NORTH + Cell::WEST][0];
-            secolor = &ns.wallColors[Cell::NORTH + Cell::EAST][0];
-          }
-
-          GLfloat* encolor = &c.wallColors[Cell::EAST + Cell::NORTH][0];
-          GLfloat* escolor = &c.wallColors[Cell::EAST + Cell::SOUTH][0];
-          if (ne.heights[Cell::WEST + Cell::NORTH] > c.heights[Cell::EAST + Cell::NORTH] &&
-              ne.heights[Cell::WEST + Cell::SOUTH] > c.heights[Cell::EAST + Cell::SOUTH]) {
-            encolor = &ne.wallColors[Cell::WEST + Cell::NORTH][0];
-            escolor = &ne.wallColors[Cell::WEST + Cell::SOUTH][0];
-          }
-
-          // Less X
-          wdat[p++] = float(x);
-          wdat[p++] = float(y);
-          wdat[p++] = c.heights[Cell::SOUTH + Cell::WEST];
-          wdat[p++] = swcolor[0];
-          wdat[p++] = swcolor[1];
-          wdat[p++] = swcolor[2];
-          wdat[p++] = swcolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x);
-          wdat[p++] = float(y);
-          wdat[p++] = ns.heights[Cell::NORTH + Cell::WEST];
-          wdat[p++] = swcolor[0];
-          wdat[p++] = swcolor[1];
-          wdat[p++] = swcolor[2];
-          wdat[p++] = swcolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x + 1);
-          wdat[p++] = float(y);
-          wdat[p++] = c.heights[Cell::SOUTH + Cell::EAST];
-          wdat[p++] = secolor[0];
-          wdat[p++] = secolor[1];
-          wdat[p++] = secolor[2];
-          wdat[p++] = secolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x + 1);
-          wdat[p++] = float(y);
-          wdat[p++] = ns.heights[Cell::NORTH + Cell::EAST];
-          wdat[p++] = secolor[0];
-          wdat[p++] = secolor[1];
-          wdat[p++] = secolor[2];
-          wdat[p++] = secolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          // Less Y
-          wdat[p++] = float(x);
-          wdat[p++] = float(y);
-          wdat[p++] = c.heights[Cell::WEST + Cell::SOUTH];
-          wdat[p++] = escolor[0];
-          wdat[p++] = escolor[1];
-          wdat[p++] = escolor[2];
-          wdat[p++] = escolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x);
-          wdat[p++] = float(y);
-          wdat[p++] = ne.heights[Cell::EAST + Cell::SOUTH];
-          wdat[p++] = escolor[0];
-          wdat[p++] = escolor[1];
-          wdat[p++] = escolor[2];
-          wdat[p++] = escolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x);
-          wdat[p++] = float(y + 1);
-          wdat[p++] = c.heights[Cell::WEST + Cell::NORTH];
-          wdat[p++] = encolor[0];
-          wdat[p++] = encolor[1];
-          wdat[p++] = encolor[2];
-          wdat[p++] = encolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          wdat[p++] = float(x);
-          wdat[p++] = float(y + 1);
-          wdat[p++] = ne.heights[Cell::EAST + Cell::NORTH];
-          wdat[p++] = encolor[0];
-          wdat[p++] = encolor[1];
-          wdat[p++] = encolor[2];
-          wdat[p++] = encolor[3];
-          wdat[p++] = packTex(0.5f, 0.5f);
-
-          // Render the quad. The heights autocorrect orientations
-          int q = j * 12;
-          widx[q++] = j * 8 + 0;
-          widx[q++] = j * 8 + 1;
-          widx[q++] = j * 8 + 2;
-          widx[q++] = j * 8 + 1;
-          widx[q++] = j * 8 + 3;
-          widx[q++] = j * 8 + 2;
-
-          widx[q++] = j * 8 + 4;
-          widx[q++] = j * 8 + 6;
-          widx[q++] = j * 8 + 5;
-          widx[q++] = j * 8 + 6;
-          widx[q++] = j * 8 + 7;
-          widx[q++] = j * 8 + 5;
-
-          // Line data ! (thankfully they're all black)
-          int s = j * 12;
-          ldat[s++] = float(x);
-          ldat[s++] = float(y);
-          ldat[s++] = c.heights[Cell::SOUTH + Cell::WEST];
-          ldat[s++] = float(x + 1);
-          ldat[s++] = float(y);
-          ldat[s++] = c.heights[Cell::SOUTH + Cell::EAST];
-          ldat[s++] = float(x + 1);
-          ldat[s++] = float(y + 1);
-          ldat[s++] = c.heights[Cell::NORTH + Cell::EAST];
-          ldat[s++] = float(x);
-          ldat[s++] = float(y + 1);
-          ldat[s++] = c.heights[Cell::NORTH + Cell::WEST];
-
-          int t = j * 8;
-          // We disable lines by doubling indices
-          lidx[t++] = 4 * j + 0;
-          lidx[t++] = 4 * j + (c.flags & (CELL_NOLINESOUTH | CELL_NOGRID) ? 0 : 1);
-          lidx[t++] = 4 * j + 1;
-          lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEEAST | CELL_NOGRID) ? 1 : 2);
-          lidx[t++] = 4 * j + 2;
-          lidx[t++] = 4 * j + (c.flags & (CELL_NOLINENORTH | CELL_NOGRID) ? 2 : 3);
-          lidx[t++] = 4 * j + 3;
-          lidx[t++] = 4 * j + (c.flags & (CELL_NOLINEWEST | CELL_NOGRID) ? 3 : 0);
-
-          // Water
-          GLfloat waterc[4] = {0.3f, 0.3f, 0.7f, 0.6f};
-          int u = j * 5 * 8;
-          fdat[u++] = float(x);
-          fdat[u++] = float(y);
-          fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
-          fdat[u++] = waterc[0];
-          fdat[u++] = waterc[1];
-          fdat[u++] = waterc[2];
-          fdat[u++] = waterc[3];
-          fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y, 0),
-                              0.0f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y, 1));
-
-          fdat[u++] = float(x + 1);
-          fdat[u++] = float(y);
-          fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
-          fdat[u++] = waterc[0];
-          fdat[u++] = waterc[1];
-          fdat[u++] = waterc[2];
-          fdat[u++] = waterc[3];
-          fdat[u++] =
-              packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 0),
-                      0.0f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 1));
-
-          fdat[u++] = float(x + 1);
-          fdat[u++] = float(y + 1);
-          fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
-          fdat[u++] = waterc[0];
-          fdat[u++] = waterc[1];
-          fdat[u++] = waterc[2];
-          fdat[u++] = waterc[3];
-          fdat[u++] =
-              packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 0),
-                      0.125f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 1));
-
-          fdat[u++] = float(x);
-          fdat[u++] = float(y + 1);
-          fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
-          fdat[u++] = waterc[0];
-          fdat[u++] = waterc[1];
-          fdat[u++] = waterc[2];
-          fdat[u++] = waterc[3];
-          fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 0),
-                              0.125f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 1));
-
-          fdat[u++] = 0.5f * float(2 * x + 1);
-          fdat[u++] = 0.5f * float(2 * y + 1);
-          fdat[u++] = c.waterHeights[Cell::CENTER];
-          fdat[u++] = waterc[0];
-          fdat[u++] = waterc[1];
-          fdat[u++] = waterc[2];
-          fdat[u++] = waterc[3];
-          fdat[u++] = packTex(
-              0.5f + 0.0625f + rx * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 0),
-              0.0625f + ry * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 1));
-
-          int v = j * 12;
-          fidx[v++] = b + 0;
-          fidx[v++] = b + 1;
-          fidx[v++] = b + 4;
-          fidx[v++] = b + 1;
-          fidx[v++] = b + 2;
-          fidx[v++] = b + 4;
-          fidx[v++] = b + 2;
-          fidx[v++] = b + 3;
-          fidx[v++] = b + 4;
-          fidx[v++] = b + 3;
-          fidx[v++] = b + 0;
-          fidx[v++] = b + 4;
+      if (visible) {
+        drawlist[nchunks] = &chunks[j * cw + i];
+        if (update || !chunks[j * cw + i].is_active) { fillChunkVBO(drawlist[nchunks]); }
+        nchunks++;
+      } else {
+        // Cleanup buffers for invisible zones
+        if (chunks[j * cw + i].is_active) {
+          glDeleteBuffers(2, &chunks[j * cw + i].tile_vbo[0]);
+          glDeleteBuffers(2, &chunks[j * cw + i].flui_vbo[0]);
+          glDeleteBuffers(2, &chunks[j * cw + i].wall_vbo[0]);
+          glDeleteBuffers(2, &chunks[j * cw + i].line_vbo[0]);
+          chunks[j * cw + i].is_active = 0;
         }
       }
-
-      // Tiles
-      glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
-      glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), tdat,
-                   GL_STREAM_DRAW);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), tidx,
-                   GL_STREAM_DRAW);
-      // Walls
-      glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
-      glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * 8 * sizeof(GLfloat), wdat,
-                   GL_STREAM_DRAW);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), widx,
-                   GL_STREAM_DRAW);
-      // Lines
-      glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
-      glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 4 * 3 * sizeof(GLfloat), ldat,
-                   GL_STREAM_DRAW);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * sizeof(ushort), lidx,
-                   GL_STREAM_DRAW);
-      // Water (alt layer ?)
-      glBindBuffer(GL_ARRAY_BUFFER, flui_vbos[2 * i]);
-      glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), fdat,
-                   GL_STREAM_DRAW);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, flui_vbos[2 * i + 1]);
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), fidx,
-                   GL_STREAM_DRAW);
     }
-    delete[] tdat;
-    delete[] tidx;
-    delete[] wdat;
-    delete[] widx;
-    delete[] ldat;
-    delete[] lidx;
-    delete[] fdat;
-    delete[] fidx;
   }
+
+  // The obligatory VAO
+  glBindVertexArray(vao);
 
   double t1 = getSystemTime();
 
@@ -1076,7 +1136,7 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   // Run through ye olde draw loop
   // WALLS
   for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, wall_vbos[2 * i]);
+    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->wall_vbo[0]);
     //                    #  W   type      norm  stride (skip)  offset
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
@@ -1087,13 +1147,13 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     // Index & draw
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wall_vbos[2 * i + 1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->wall_vbo[1]);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   // TOPS
   for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, tile_vbos[2 * i]);
+    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->tile_vbo[0]);
     //                    #  W   type      norm  stride (skip)  offset
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
@@ -1104,14 +1164,14 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
     // Index & draw
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, tile_vbos[2 * i + 1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->tile_vbo[1]);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   if (stage == 1) {
     // Water
     for (int i = 0; i < nchunks; i++) {
-      glBindBuffer(GL_ARRAY_BUFFER, flui_vbos[2 * i]);
+      glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->flui_vbo[0]);
       //                    #  W   type      norm  stride (skip)  offset
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
       glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
@@ -1122,7 +1182,7 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
       glEnableVertexAttribArray(1);
       glEnableVertexAttribArray(2);
       // Index & draw
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, flui_vbos[2 * i + 1]);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->flui_vbo[1]);
       glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
     }
   }
@@ -1138,11 +1198,11 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
   glLineWidth(2.0f);
   for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, line_vbos[2 * i]);
+    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->line_vbo[0]);
     // Just dot connecting
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, line_vbos[2 * i + 1]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->line_vbo[1]);
     glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
   }
   glDisable(GL_LINE_SMOOTH);

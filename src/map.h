@@ -62,6 +62,21 @@ class Cell {
   static const int NORTH = 1, SOUTH = 0, EAST = 2, WEST = 0, CENTER = 4;
 };
 
+class Chunk {
+ public:
+  Chunk();
+  ~Chunk();
+  int xm, ym;
+  GLuint wall_vbo[2];
+  GLuint tile_vbo[2];
+  GLuint flui_vbo[2];
+  GLuint line_vbo[2];
+  GLfloat maxHeight;
+  GLfloat minHeight;
+  int is_active;
+  int checkForUpdates(Cell *map, int width, int height);
+};
+
 class Map {
  public:
   Map(char *mapname);
@@ -74,6 +89,7 @@ class Map {
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
   void drawMapVBO(int birdseye, int x, int y, int stage);
+  void fillChunkVBO(Chunk *c);
   void drawCell(int birdsEye, int stage, int x, int y);
   void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
@@ -104,6 +120,7 @@ class Map {
  protected:
  private:
   Cell *cells;
+  Chunk *chunks;
 
   int cachedCX, cachedCY, cacheCount;
   char *cacheVisible;

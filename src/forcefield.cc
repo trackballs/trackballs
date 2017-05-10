@@ -48,6 +48,12 @@ ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {
   secondaryColor[2] = 1.0;
   forcefields->insert(this);
   bounceFactor = 2.5;
+  boundingBox[0][0] = -abs(dir[0]);
+  boundingBox[0][1] = -abs(dir[1]);
+  boundingBox[0][2] = -abs(dir[2]) - h;
+  boundingBox[1][0] = +abs(dir[0]);
+  boundingBox[1][1] = +abs(dir[1]);
+  boundingBox[1][2] = +abs(dir[2]) + h;
 }
 void ForceField::onRemove() {
   Animated::onRemove();

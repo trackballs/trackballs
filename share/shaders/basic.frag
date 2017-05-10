@@ -41,7 +41,8 @@ void main(void) {
     dist = 0.;
   } else {
     // Apply linear fog as in original
-    dist = clamp(1.0 - (gl_Fog.end - gl_FogFragCoord) * gl_Fog.scale, 0., 1.0);
+      float fogfudge = 1.3;
+      dist = clamp(1.0 - (gl_Fog.end * fogfudge - length(cpos)) * gl_Fog.scale*fogfudge, 0., 1.0);
   }
   // Force override alpha
   gl_FragColor = vec4(mix(surfcolor, gl_Fog.color, dist).xyz, fcolor.w);
