@@ -3,7 +3,7 @@
 (day)
 (set-track-name "Scary")
 (set-start-position 254.5 252.5)
-(add-goal 254 216 #t "")
+(add-goal 254 216 #t "con5")
 (set-author "Dietrich Radel")
 
 ;;; how much time each difficulty level gets
