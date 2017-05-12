@@ -51,14 +51,19 @@ class Cell {
   int flags, texture;
   int displayList, displayListLastCompiled, displayListDirty;
 
-  void dump(gzFile gp);
+  void dump(gzFile gp) const;
   void load(class Map *map, gzFile gp, int version);
 
   Cell();
-  void getNormal(Coord3d, int vertex);
-  void getWaterNormal(Coord3d, int vertex);
-  Real getHeight(Real x, Real y);
-  Real getWaterHeight(Real x, Real y);
+  void getNormal(Coord3d, int vertex) const;
+  void getWaterNormal(Coord3d, int vertex) const;
+  Real getHeight(Real x, Real y) const;
+  Real getWaterHeight(Real x, Real y) const;
+  inline int isWaterVisible() const {
+    return heights[0] < waterHeights[0] || heights[1] < waterHeights[1] ||
+           heights[2] < waterHeights[2] || heights[3] < waterHeights[3] ||
+           heights[4] < waterHeights[4];
+  }
   static const int NORTH = 1, SOUTH = 0, EAST = 2, WEST = 0, CENTER = 4;
 };
 
@@ -71,8 +76,6 @@ class Chunk {
   GLuint tile_vbo[2];
   GLuint flui_vbo[2];
   GLuint line_vbo[2];
-  GLfloat maxHeight;
-  GLfloat minHeight;
   int is_active;
   int checkForUpdates(Cell *map, int width, int height);
 };
@@ -82,7 +85,7 @@ class Map {
   Map(char *mapname);
   virtual ~Map();
 
-  inline Cell &cell(int x, int y) {
+  inline Cell &cell(int x, int y) const {
     return cells[(x < 0 ? 0 : (x >= width ? width - 1 : x)) +
                  width * (y < 0 ? 0 : (y >= height ? height - 1 : y))];
   };
@@ -90,15 +93,16 @@ class Map {
   void draw(int birdseye, int stage, int x, int y);
   void drawMapVBO(int birdseye, int x, int y, int stage);
   void fillChunkVBO(Chunk *c);
+  int checkForUpdates(Chunk *chunk) const;
   void drawCell(int birdsEye, int stage, int x, int y);
   void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
-  inline Real getHeight(Real x, Real y) {
+  inline Real getHeight(Real x, Real y) const {
     int ix = (int)x;
     int iy = (int)y;
     return cell(ix, iy).getHeight(x - ix, y - iy);
   }
-  inline Real getWaterHeight(Real x, Real y) {
+  inline Real getWaterHeight(Real x, Real y) const {
     int ix = (int)x;
     int iy = (int)y;
     Cell &c = cell(ix, iy);

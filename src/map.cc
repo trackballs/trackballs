@@ -60,7 +60,7 @@ Cell::Cell() {
 }
 
 /* Returns the normal for a point on the edge of the cell */
-void Cell::getNormal(Coord3d normal, int vertex) {
+void Cell::getNormal(Coord3d normal, int vertex) const {
   Coord3d v1;
   Coord3d v2;
 
@@ -112,7 +112,7 @@ void Cell::getNormal(Coord3d normal, int vertex) {
   normalize(normal);
 }
 /* Works on water heights */
-void Cell::getWaterNormal(Coord3d normal, int vertex) {
+void Cell::getWaterNormal(Coord3d normal, int vertex) const {
   Coord3d v1;
   Coord3d v2;
 
@@ -165,7 +165,7 @@ void Cell::getWaterNormal(Coord3d normal, int vertex) {
 }
 
 /* Gives the height of the cell in a specified (floatingpoint) position */
-Real Cell::getHeight(Real x, Real y) {
+Real Cell::getHeight(Real x, Real y) const {
   Real h1, h2, h3, c;
 
   c = heights[CENTER];
@@ -195,7 +195,7 @@ Real Cell::getHeight(Real x, Real y) {
 }
 
 /* Works for water */
-Real Cell::getWaterHeight(Real x, Real y) {
+Real Cell::getWaterHeight(Real x, Real y) const {
   Real h1, h2, h3, c;
 
   c = waterHeights[CENTER];
@@ -239,35 +239,20 @@ inline void updateMinMax(double in, double* minv, double* maxv) {
   *maxv = max(in, *maxv);
 }
 
-int Chunk::checkForUpdates(Cell* map, int width, int height) {
-  // Return true if changed; update min/max heights.
-  GLfloat newmin = 1e99, newmax = -1e99;
-  int reqschange = 0;
-
-  for (int x = xm; x < xm + CHUNKSIZE; x++) {
-    for (int y = ym; y < ym + CHUNKSIZE; y++) {
-      Cell* c = &map[y * width + x];
-      int wvis = c->heights[0] < c->waterHeights[0] || c->heights[1] < c->waterHeights[1] ||
-                 c->heights[2] < c->waterHeights[2] || c->heights[3] < c->waterHeights[3] ||
-                 c->heights[4] < c->waterHeights[4];
-
-      if (c->displayListDirty || c->velocity[0] != 0. || c->velocity[1] != 0. || wvis) {
-        c->displayListDirty = 0;
-        reqschange = 1;
-      }
-
-      for (int i = 0; i < 5; i++) {
-        newmin = min(c->heights[i], newmin);
-        newmin = min(c->waterHeights[i], newmin);
-        newmax = max(c->heights[i], newmax);
-        newmax = max(c->waterHeights[i], newmax);
+int Map::checkForUpdates(Chunk* chunk) const {
+  // Return true if changed.
+  // Expensive: a "markChange flag" + counter for # visible water/vel tiles
+  //            would bring it to O(1)
+  for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
+    for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
+      const Cell& c = cell(x, y);
+      if (c.displayListDirty || c.velocity[0] != 0. || c.velocity[1] != 0. ||
+          c.isWaterVisible()) {
+        return 1;
       }
     }
   }
-  minHeight = newmin;
-  maxHeight = newmax;
-
-  return reqschange;
+  return 0;
 }
 
 Map::Map(char* filename) {
@@ -663,9 +648,17 @@ inline double smoothSemiRand(int x, int y, double scale) {
   return semiRand(x, y, t) * (1. - frac) + semiRand(x, y, t + 1) * frac;
 }
 
-inline float watershift(int x, int y, int type) {
-  // Motion depends on X and Y and time
-  return 0.3 + 0.7 * smoothSemiRand(x * 17 + type * 23, y * 19, 0.5);
+inline float watershift(int x, int y, int type, int t, float frac) {
+  // Pseudorandom deterministic linear piecewise function of time, in [0,1]
+  // Ought to pull up a level for more realistic water motions/call count reduction
+  const int rmul = type ? 658946839 : 8960453;
+  uint base = x * 552913 + y * 1159523;
+  uint orig = (177821389 * t + base) * rmul;
+  uint nxt = (177821389 * (t + 1) + base) * rmul;
+  float s1 = (orig % 65536) * (1.f / 65535.f);
+  float s2 = (nxt % 65536) * (1.f / 65535.f);
+  float r = s2 * frac + (1.f - frac) * s1;
+  return 0.25f * r;
 }
 
 void Map::fillChunkVBO(Chunk* chunk) {
@@ -692,11 +685,18 @@ void Map::fillChunkVBO(Chunk* chunk) {
   glGenBuffers(2, &chunk->flui_vbo[0]);
   chunk->is_active = 1;
 
+  // Water interpolation performed once, to permit expensive functions
+  double dt =
+      (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time) * 0.5f;
+  int st = (int)dt;
+  float frac = (float)(dt - (double)st);
+
   for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
     for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
       // Could speed entry up a lot with a geometry shader
       // to eliminate redundant coordinates...
-      Cell c = (0 <= x && x < width && 0 <= y && y < height) ? cells[x + y * width] : Cell();
+      Cell& c = cell(x, y);
+      c.displayListDirty = false;
       int j = (x - chunk->xm) + (y - chunk->ym) * CHUNKSIZE;
       int k = j * 5 * 8;
       // TODO: determine if texture arrays are available!
@@ -940,72 +940,87 @@ void Map::fillChunkVBO(Chunk* chunk) {
 
       // Water
       GLfloat waterc[4] = {0.3f, 0.3f, 0.7f, 0.6f};
-      int u = j * 5 * 8;
-      fdat[u++] = float(x);
-      fdat[u++] = float(y);
-      fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
-      fdat[u++] = waterc[0];
-      fdat[u++] = waterc[1];
-      fdat[u++] = waterc[2];
-      fdat[u++] = waterc[3];
-      fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y, 0),
-                          0.0f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y, 1));
+      if (c.isWaterVisible()) {
+        GLfloat wdx[4], wdy[4];
+        wdx[0] = watershift(x, y, 0, st, frac);
+        wdy[0] = watershift(x, y, 1, st, frac);
+        wdx[1] = watershift(x + 1, y, 0, st, frac);
+        wdy[1] = watershift(x + 1, y, 1, st, frac);
+        wdx[2] = watershift(x + 1, y + 1, 0, st, frac);
+        wdy[2] = watershift(x + 1, y + 1, 1, st, frac);
+        wdx[3] = watershift(x, y + 1, 0, st, frac);
+        wdy[3] = watershift(x, y + 1, 1, st, frac);
 
-      fdat[u++] = float(x + 1);
-      fdat[u++] = float(y);
-      fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
-      fdat[u++] = waterc[0];
-      fdat[u++] = waterc[1];
-      fdat[u++] = waterc[2];
-      fdat[u++] = waterc[3];
-      fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 0),
-                          0.0f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y, 1));
+        int u = j * 5 * 8;
+        fdat[u++] = float(x);
+        fdat[u++] = float(y);
+        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] =
+            packTex(0.5f + rx * 0.125f + 0.25f * wdx[0], 0.0f + ry * 0.125f + 0.25f * wdy[0]);
 
-      fdat[u++] = float(x + 1);
-      fdat[u++] = float(y + 1);
-      fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
-      fdat[u++] = waterc[0];
-      fdat[u++] = waterc[1];
-      fdat[u++] = waterc[2];
-      fdat[u++] = waterc[3];
-      fdat[u++] =
-          packTex(0.5f + 0.125f + rx * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 0),
-                  0.125f + ry * 0.125f + 0.25 * watershift(2 * x + 2, 2 * y + 2, 1));
+        fdat[u++] = float(x + 1);
+        fdat[u++] = float(y);
+        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25f * wdx[1],
+                            0.0f + ry * 0.125f + 0.25f * wdy[1]);
 
-      fdat[u++] = float(x);
-      fdat[u++] = float(y + 1);
-      fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
-      fdat[u++] = waterc[0];
-      fdat[u++] = waterc[1];
-      fdat[u++] = waterc[2];
-      fdat[u++] = waterc[3];
-      fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 0),
-                          0.125f + ry * 0.125f + 0.25 * watershift(2 * x, 2 * y + 2, 1));
+        fdat[u++] = float(x + 1);
+        fdat[u++] = float(y + 1);
+        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25f * wdx[2],
+                            0.125f + ry * 0.125f + 0.25f * wdy[2]);
 
-      fdat[u++] = 0.5f * float(2 * x + 1);
-      fdat[u++] = 0.5f * float(2 * y + 1);
-      fdat[u++] = c.waterHeights[Cell::CENTER];
-      fdat[u++] = waterc[0];
-      fdat[u++] = waterc[1];
-      fdat[u++] = waterc[2];
-      fdat[u++] = waterc[3];
-      fdat[u++] =
-          packTex(0.5f + 0.0625f + rx * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 0),
-                  0.0625f + ry * 0.125f + 0.25 * watershift(2 * x + 1, 2 * y + 1, 1));
+        fdat[u++] = float(x);
+        fdat[u++] = float(y + 1);
+        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25f * wdx[3],
+                            0.125f + ry * 0.125f + 0.25f * wdy[3]);
 
-      int v = j * 12;
-      fidx[v++] = b + 0;
-      fidx[v++] = b + 1;
-      fidx[v++] = b + 4;
-      fidx[v++] = b + 1;
-      fidx[v++] = b + 2;
-      fidx[v++] = b + 4;
-      fidx[v++] = b + 2;
-      fidx[v++] = b + 3;
-      fidx[v++] = b + 4;
-      fidx[v++] = b + 3;
-      fidx[v++] = b + 0;
-      fidx[v++] = b + 4;
+        fdat[u++] = 0.5f * float(2 * x + 1);
+        fdat[u++] = 0.5f * float(2 * y + 1);
+        fdat[u++] = c.waterHeights[Cell::CENTER];
+        fdat[u++] = waterc[0];
+        fdat[u++] = waterc[1];
+        fdat[u++] = waterc[2];
+        fdat[u++] = waterc[3];
+        fdat[u++] = packTex(
+            0.5f + 0.0625f + rx * 0.125f + 0.0625f * (wdx[0] + wdx[1] + wdx[2] + wdx[3]),
+            0.0625f + ry * 0.125f + 0.0625f * (wdy[0] + wdy[1] + wdy[2] + wdy[3]));
+
+        int v = j * 12;
+        fidx[v++] = b + 0;
+        fidx[v++] = b + 1;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 1;
+        fidx[v++] = b + 2;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 2;
+        fidx[v++] = b + 3;
+        fidx[v++] = b + 4;
+        fidx[v++] = b + 3;
+        fidx[v++] = b + 0;
+        fidx[v++] = b + 4;
+      } else {
+        // Zero tile (safer than uninitialized)
+        memset(&fdat[j * 5 * 8], 0, 5 * 8 * sizeof(GLfloat));
+        for (int i = 0; i < 12; i++) { fidx[j * 12 + i] = b; }
+      }
     }
   }
 
@@ -1082,8 +1097,15 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
       if (stage == 0) {
         // To calculate visibility needs, detect if update needed.
         // Issue: applied to _all_ cells in map
-        update = chunks[j * cw + i].checkForUpdates(cells, width, height);
+        update = checkForUpdates(&chunks[j * cw + i]);
       }
+
+      // TODO: visibility clipped to camera; step 1,
+      // restrict to the class of chunks whose vertical pillars (height +/- 1e3?)
+      // are in view; step 2, sort chunks by proximity and pick first 25...
+      // How? 4 pillar edges; either crossing inside viewport, or
+      // on opposite sides. Not persp projects lines to lines, so even
+      // the infinitely tall pillars work. Abuse box metric (L_infty)
 
       int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
       int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
@@ -1106,10 +1128,10 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
     }
   }
 
+  double t1 = getSystemTime();
+
   // The obligatory VAO
   glBindVertexArray(vao);
-
-  double t1 = getSystemTime();
 
   // Load matrix from other GL
   GLfloat proj[16];
@@ -1654,7 +1676,7 @@ int Map::save(char* pathname, int x, int y) {
   return 1;
 }
 
-void Cell::dump(gzFile gp) {
+void Cell::dump(gzFile gp) const {
   int32_t data[8];
   int i, j;
   for (i = 0; i < 5; i++) data[i] = saveInt((int32_t)(heights[i] / 0.0025));
