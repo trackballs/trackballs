@@ -1062,6 +1062,10 @@ void Map::fillChunkVBO(Chunk* chunk) {
   delete[] fidx;
 }
 
+GLfloat max4(GLfloat a, GLfloat b, GLfloat c, GLfloat d) { return max(max(a, b), max(c, d)); }
+GLfloat min4(GLfloat a, GLfloat b, GLfloat c, GLfloat d) { return min(min(a, b), min(c, d)); }
+GLfloat rotpi(GLfloat a) { return a > 0 ? a - M_PI / 2 : a + M_PI + 2; }
+
 void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   // Cost to pay once and only once
   //  static int oldnchunks = 0;
@@ -1076,69 +1080,137 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
     if (lineprogram == (GLuint)-1) { return; }
     textureloc = glGetUniformLocation(shaderprogram, "tex");
     glGenVertexArrays(1, &vao);
-
     // Or: Array_Texture, indexed by short&(short,short)/alpha
     // (is precise enough to cover animation, save memory, yet wraparound)
   }
 
   double t0 = getSystemTime();
-  // use CHUNKSIZE = 32, % on the map cells themselves.
-  // allocate/deallocate within the loop, to start..
-  // Iterate over every chunk in chunks;
-  // activate by midpoitn criterion...
-  // Ignore chunks outside the real world (i.e., makeinvisible? or gen
-  // null chunk?)
+
+  // Load matrices from other GL
+  GLfloat proj[16];
+  GLfloat model[16];
+  GLdouble proj_d[16];
+  GLdouble model_d[16];
+  glGetFloatv(GL_PROJECTION_MATRIX, proj);
+  glGetFloatv(GL_MODELVIEW_MATRIX, model);
+  glGetDoublev(GL_PROJECTION_MATRIX, proj_d);
+  glGetDoublev(GL_MODELVIEW_MATRIX, model_d);
+
   int cw = -(-width / CHUNKSIZE), ch = -(-height / CHUNKSIZE);
   int nchunks = 0;
-  Chunk* drawlist[128];
+  Chunk* drawlist[1024];
   for (int i = 0; i < cw; i++) {
+    char debugline[128];
     for (int j = 0; j < ch; j++) {
+      Chunk* cur = &chunks[j * cw + i];
       int update = 0;
       if (stage == 0) {
-        // To calculate visibility needs, detect if update needed.
-        // Issue: applied to _all_ cells in map
-        update = checkForUpdates(&chunks[j * cw + i]);
+        // Detect if update needed. Ought to replace with single flag
+        update = checkForUpdates(cur);
+      }
+      // Visibility testing. Assume all chunks are infinite pillars
+      int visible = 0;
+      GLfloat angles[4];
+      for (int k = 0; k < 4; k++) {
+        GLint viewport[4] = {-1, -1, 2, 2};
+        GLdouble xp = cur->xm + CHUNKSIZE * (k % 2);
+        GLdouble yp = cur->ym + CHUNKSIZE * (k / 2);
+        GLdouble tc[3];
+        GLdouble bc[3];
+        gluProject(xp, yp, CHUNKSIZE, model_d, proj_d, viewport, &tc[0], &tc[1], &tc[2]);
+        gluProject(xp, yp, 0, model_d, proj_d, viewport, &bc[0], &bc[1], &bc[2]);
+        // Center screen space
+
+        // TODO: figure out how to clip the boxes entirely behind the camera...
+
+        // (x,y) = (tcx+(bcx-tcx)*t,tcy+(bcy-tcy)*t)
+
+        // x = y
+        // t = (tcx - tcy) / (bcx - bcy - tcx + tcy)
+        GLdouble r1 = 1e99, r2 = 1e99;
+        GLdouble dti = tc[0] - tc[1];
+        GLdouble dtr = bc[1] - bc[0] - tc[1] + tc[0];
+        if (dtr != 0) {
+          GLdouble t = dti / dtr;
+          r1 = abs(tc[0] + (bc[0] - tc[0]) * t);
+        }
+        // x = -y
+        // t = (tcx + tcy) / (tcx + tcy - bcx - bcy)
+        GLdouble eti = tc[0] + tc[1];
+        GLdouble etr = tc[1] + tc[0] - bc[1] - bc[0];
+        if (etr != 0) {
+          GLdouble t = eti / etr;
+          r2 = abs(tc[0] + (bc[0] - tc[0]) * t);
+        }
+        if (r1 < 1. || r2 < 1.) {
+          visible = true;
+          break;
+        }
+        // Compute angle of vertex to (euclidean) closest point
+        GLdouble nx = -(bc[1] - tc[1]), ny = (bc[0] - tc[0]);
+        if (nx * bc[0] + ny * bc[1] < 0) {
+          nx = -nx;
+          ny = -ny;
+        }
+        angles[k] = atan2(nx, ny);
+      }
+      if (!visible) {
+        // Largest difference between any two line directions
+        GLfloat ud = max4(angles[0], angles[1], angles[2], angles[3]) -
+                     min4(angles[0], angles[1], angles[2], angles[3]);
+        GLfloat rd =
+            max4(rotpi(angles[0]), rotpi(angles[1]), rotpi(angles[2]), rotpi(angles[3])) -
+            min4(rotpi(angles[0]), rotpi(angles[1]), rotpi(angles[2]), rotpi(angles[3]));
+        GLfloat spread = min(ud, rd);
+        // Why PI/4 ? Consider a birds-eye view, slightly off center...
+        if (spread >= M_PI / 4.) { visible = true; }
       }
 
-      // TODO: visibility clipped to camera; step 1,
-      // restrict to the class of chunks whose vertical pillars (height +/- 1e3?)
-      // are in view; step 2, sort chunks by proximity and pick first 25...
-      // How? 4 pillar edges; either crossing inside viewport, or
-      // on opposite sides. Not persp projects lines to lines, so even
-      // the infinitely tall pillars work. Abuse box metric (L_infty)
-
+      // Current cell is in viewport
       int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
       int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
-      int visible = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
+      int iscent = max(abs(ox - cx), abs(oy - cy)) <= CHUNKSIZE / 2;
+
+      //      printf("    %d %d | %d %d (%d)\n", cur->xm, cur->ym, cx, cy, visible);
+
+      // TODO: visibility clipped to camera;
+      // We calc location of 4 camera corners (+W 1) in XY plane
+      // Then, for every box, test if any of its four
+      // sides passes the test. Current box is auto-in.
+
+      // Next issue: picking the closest K cells.
+
+      //      int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
+      //      int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
+      int inrad = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
+      visible = (visible || iscent) && inrad;
+
+      // Mark self with Z:!
+      debugline[j] = iscent ? 'Z' : (visible ? 'X' : '.');
 
       if (visible) {
-        drawlist[nchunks] = &chunks[j * cw + i];
-        if (update || !chunks[j * cw + i].is_active) { fillChunkVBO(drawlist[nchunks]); }
+        drawlist[nchunks] = cur;
+        if (update || !cur->is_active) { fillChunkVBO(drawlist[nchunks]); }
         nchunks++;
       } else {
         // Cleanup buffers for invisible zones
-        if (chunks[j * cw + i].is_active) {
+        if (cur->is_active) {
           glDeleteBuffers(2, &chunks[j * cw + i].tile_vbo[0]);
           glDeleteBuffers(2, &chunks[j * cw + i].flui_vbo[0]);
           glDeleteBuffers(2, &chunks[j * cw + i].wall_vbo[0]);
           glDeleteBuffers(2, &chunks[j * cw + i].line_vbo[0]);
-          chunks[j * cw + i].is_active = 0;
+          cur->is_active = 0;
         }
       }
     }
+    debugline[ch] = '\0';
+    printf("%s\n", debugline);
   }
 
   double t1 = getSystemTime();
 
   // The obligatory VAO
   glBindVertexArray(vao);
-
-  // Load matrix from other GL
-  GLfloat proj[16];
-  GLfloat model[16];
-
-  glGetFloatv(GL_PROJECTION_MATRIX, proj);
-  glGetFloatv(GL_MODELVIEW_MATRIX, model);
 
   // Put into shader
   glUseProgram(shaderprogram);

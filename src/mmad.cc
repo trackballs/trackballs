@@ -94,12 +94,12 @@ void changeScreenResolution() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    // Goal is eventually to switch to ES
+    /* Goal is eventually to switch to ES */
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
 
-    // Uncomment to apply basic antialiasing. SDL can't automatically select this.
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+    /* Uncomment to apply basic antialiasing. SDL can't automatically select this. */
+    //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
     // Start at default size; will be adjusted
     int windowHeight, windowWidth;

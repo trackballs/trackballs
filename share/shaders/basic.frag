@@ -4,6 +4,7 @@ precision mediump float;
 
 uniform int fog_active;
 uniform int render_stage;
+uniform mat4 model_matrix;
 
 // TODO 1d array!
 uniform sampler2D tex;
@@ -28,9 +29,10 @@ void main(void) {
   vec4 Iambient = texcolor * gl_LightSource[0].ambient;
   vec4 Idiffuse = texcolor * gl_LightSource[0].diffuse * max(dot(normal, L), 0.0);
   Idiffuse = clamp(Idiffuse, 0.0, 1.0);
-  vec4 Ispecular = texcolor * gl_LightSource[0].specular *
-                   pow(max(dot(R, E), 0.0), 0.3 * gl_FrontMaterial.shininess);
-  Ispecular = clamp(Ispecular, 0.0, 1.0);
+//  vec4 Ispecular = texcolor * gl_LightSource[0].specular *
+//                   pow(max(dot(R, E), 0.0), 0.3 * gl_FrontMaterial.shininess);
+//  Ispecular = clamp(Ispecular, 0.0, 1.0);
+  vec4 Ispecular = vec4(0,0,0,0);
 
   vec4 surfcolor = gl_LightModel.ambient + Iambient + Idiffuse + Ispecular;
   surfcolor = clamp(surfcolor, 0.0, 1.0);
@@ -41,7 +43,7 @@ void main(void) {
     dist = 0.;
   } else {
     // Apply linear fog as in original
-      float fogfudge = 1.3;
+      float fogfudge = 1.0;
       dist = clamp(1.0 - (gl_Fog.end * fogfudge - length(cpos)) * gl_Fog.scale*fogfudge, 0., 1.0);
   }
   // Force override alpha
