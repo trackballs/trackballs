@@ -219,31 +219,26 @@ void Game::draw() {
   glGetIntegerv(GL_VIEWPORT, viewport);
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
-  Coord3d worldCoord, screenCoord;
 
   set<Animated *>::iterator i = objects->begin();
   set<Animated *>::iterator end = objects->end();
 
   /* Compute visibility of all objects */
+  int nelem = 0;
   for (; i != end; i++) {
     Animated *anim = *i;
     anim->onScreen = 0;
 
-    /* Test all the corners of the bounding box */
-    int dx, dy, dz;
-    for (dx = 0; dx < 2; dx++)
-      for (dy = 0; dy < 2; dy++)
-        for (dz = 0; dz < 2; dz++) {
-          worldCoord[0] = anim->position[0] + anim->boundingBox[dx][0];
-          worldCoord[1] = anim->position[1] + anim->boundingBox[dy][1];
-          worldCoord[2] = anim->position[2] + anim->boundingBox[dz][2];
-
-          gluProject(worldCoord[0], worldCoord[1], worldCoord[2], model_matrix, proj_matrix,
-                     viewport, &screenCoord[0], &screenCoord[1], &screenCoord[2]);
-          if (screenCoord[0] >= -MARGIN && screenCoord[0] <= screenWidth + MARGIN &&
-              screenCoord[1] >= -MARGIN && screenCoord[1] <= screenHeight + MARGIN)
-            anim->onScreen = 1;
-        }
+    /* Test if bounding box is visible */
+    if (testBboxClip(anim->position[0] + anim->boundingBox[0][0],
+                     anim->position[0] + anim->boundingBox[1][0],
+                     anim->position[1] + anim->boundingBox[0][1],
+                     anim->position[1] + anim->boundingBox[1][1],
+                     anim->position[2] + anim->boundingBox[0][2],
+                     anim->position[2] + anim->boundingBox[1][2], model_matrix, proj_matrix)) {
+      anim->onScreen = 1;
+      nelem++;
+    }
   }
 
   /* Draw first pass of all objects */

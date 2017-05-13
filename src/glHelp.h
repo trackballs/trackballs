@@ -61,12 +61,15 @@ void useMatrix(Matrix4d, const double[3], double[3]);
 void useMatrix(Matrix3d, const double[3], double[3]);
 void identityMatrix(Matrix4d);
 void assign(const Matrix4d, Matrix4d);
-void matrixMult(Matrix4d, Matrix4d, Matrix4d);
+void transpose(const Matrix4d, Matrix4d);
+void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);
 void rotateY(double, Matrix4d);
 void rotateZ(double, Matrix4d);
 void makeProjectionMatrix(const Coord3d p1, const Coord3d p2, const Coord3d p3, Matrix3d m);
 int power_of_two(int input);
+int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
+                 const double *model, const double *proj);
 
 void drawTriangle(Coord3d, Coord3d, Coord3d);
 

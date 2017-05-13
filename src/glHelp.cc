@@ -810,7 +810,7 @@ void debugMatrix(Matrix4d m) {
 }
 
 /* C <- A * B */
-void matrixMult(Matrix4d A, Matrix4d B, Matrix4d C) {
+void matrixMult(const Matrix4d A, const Matrix4d B, Matrix4d C) {
   int i, j, k;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++) {
@@ -845,6 +845,15 @@ void assign(const Matrix4d A, Matrix4d C) {
   int i, j;
   for (i = 0; i < 4; i++)
     for (j = 0; j < 4; j++) C[i][j] = A[i][j];
+}
+
+/* C <- A */
+void transpose(const Matrix4d A, Matrix4d C) {
+  Matrix4d B;
+  int i, j;
+  for (i = 0; i < 4; i++)
+    for (j = 0; j < 4; j++) B[j][i] = A[i][j];
+  assign(C, B);
 }
 
 /* C <- A */
@@ -895,6 +904,40 @@ void rotateZ(double v, Matrix4d m) {
   matrixMult(morig, mr, m);
 }
 void zero(double v[3]) { v[0] = v[1] = v[2] = 0.0; }
+
+int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
+                 const double *model, const double *proj) {
+  // Construct axis-aligned bounding box in window space
+  double vxl = 1e99, vyl = 1e99, vzl = 1e99;
+  double vxh = -1e99, vyh = -1e99, vzh = -1e99;
+  Matrix4d mvp;
+  Matrix4d mmod, mproj;
+  memcpy(&mmod[0][0], model, sizeof(Matrix4d));
+  memcpy(&mproj[0][0], proj, sizeof(Matrix4d));
+  matrixMult(mmod, mproj, mvp);
+  for (int i = 0; i < 8; i++) {
+    double w[3] = {0., 0., 0.};
+    double p[3] = {i & 4 ? x1 : x2, i & 2 ? y1 : y2, i & 1 ? z1 : z2};
+    // Apply perspective transform with MVP matrix
+    for (int k = 0; k < 3; k++)
+      w[k] += mvp[0][k] * p[0] + mvp[1][k] * p[1] + mvp[2][k] * p[2] + mvp[3][k];
+    double h = mvp[0][3] * p[0] + mvp[1][3] * p[1] + mvp[2][3] * p[2] + mvp[3][3];
+    for (int k = 0; k < 3; k++) w[k] /= h;
+
+    vxl = min(vxl, w[0]);
+    vyl = min(vyl, w[1]);
+    vzl = min(vzl, w[2]);
+
+    vxh = max(vxh, w[0]);
+    vyh = max(vyh, w[1]);
+    vzh = max(vzh, w[2]);
+  }
+  // Window frustum is [0,1]^3
+  if (vxl > 1 || vxh < -1) return 0;
+  if (vyl > 1 || vyh < -1) return 0;
+  if (vzl > 1 || vzh < 0) return 0;
+  return 1;
+}
 
 void Enter2DMode() {
   glPushAttrib(GL_ENABLE_BIT);

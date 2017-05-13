@@ -37,7 +37,7 @@ using namespace std;
 #define VISRADIUS 50
 #define CACHE_SIZE (VISRADIUS * 2 + 1)
 #define MARGIN 10
-#define CHUNKSIZE 32
+#define CHUNKSIZE 16
 
 #define WRITE_PORTABLE 1
 #define READ_PORTABLE 1
@@ -224,7 +224,12 @@ Real Cell::getWaterHeight(Real x, Real y) const {
   }
 }
 
-Chunk::Chunk() { is_active = false; }
+Chunk::Chunk() {
+  is_active = false;
+  maxHeight = 0.;
+  minHeight = 0.;
+}
+
 Chunk::~Chunk() {
   if (is_active) {
     glDeleteBuffers(2, &tile_vbo[0]);
@@ -242,17 +247,27 @@ inline void updateMinMax(double in, double* minv, double* maxv) {
 int Map::checkForUpdates(Chunk* chunk) const {
   // Return true if changed.
   // Expensive: a "markChange flag" + counter for # visible water/vel tiles
-  //            would bring it to O(1)
+  //            would bring it to O(1). Markchange would strictly boost Z range
+  GLfloat minz = 1e99, maxz = -1e99;
+  int delta = 0;
   for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
     for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
       const Cell& c = cell(x, y);
       if (c.displayListDirty || c.velocity[0] != 0. || c.velocity[1] != 0. ||
           c.isWaterVisible()) {
-        return 1;
+        delta = 1;
+      }
+      for (int k = 0; k < 5; k++) {
+        minz = min(minz, c.heights[k]);
+        minz = min(minz, c.waterHeights[k]);
+        maxz = max(maxz, c.heights[k]);
+        maxz = max(maxz, c.waterHeights[k]);
       }
     }
   }
-  return 0;
+  chunk->minHeight = minz;
+  chunk->maxHeight = maxz;
+  return delta;
 }
 
 Map::Map(char* filename) {
@@ -1107,88 +1122,23 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
       if (stage == 0) {
         // Detect if update needed. Ought to replace with single flag
         update = checkForUpdates(cur);
+
+        int visible = testBboxClip(cur->xm, cur->xm + CHUNKSIZE, cur->ym, cur->ym + CHUNKSIZE,
+                                   cur->maxHeight, cur->minHeight, model_d, proj_d);
+
+        // Current cell is in viewport
+        int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
+        int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
+        int iscent = max(abs(ox - cx), abs(oy - cy)) <= CHUNKSIZE / 2;
+        int inrad = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
+        visible = visible && inrad;
+
+        // Mark self with Z:!
+        debugline[j] = iscent ? 'Z' : (visible ? 'X' : '.');
+
+        cur->is_visible = visible;
       }
-      // Visibility testing. Assume all chunks are infinite pillars
-      int visible = 0;
-      GLfloat angles[4];
-      for (int k = 0; k < 4; k++) {
-        GLint viewport[4] = {-1, -1, 2, 2};
-        GLdouble xp = cur->xm + CHUNKSIZE * (k % 2);
-        GLdouble yp = cur->ym + CHUNKSIZE * (k / 2);
-        GLdouble tc[3];
-        GLdouble bc[3];
-        gluProject(xp, yp, CHUNKSIZE, model_d, proj_d, viewport, &tc[0], &tc[1], &tc[2]);
-        gluProject(xp, yp, 0, model_d, proj_d, viewport, &bc[0], &bc[1], &bc[2]);
-        // Center screen space
-
-        // TODO: figure out how to clip the boxes entirely behind the camera...
-
-        // (x,y) = (tcx+(bcx-tcx)*t,tcy+(bcy-tcy)*t)
-
-        // x = y
-        // t = (tcx - tcy) / (bcx - bcy - tcx + tcy)
-        GLdouble r1 = 1e99, r2 = 1e99;
-        GLdouble dti = tc[0] - tc[1];
-        GLdouble dtr = bc[1] - bc[0] - tc[1] + tc[0];
-        if (dtr != 0) {
-          GLdouble t = dti / dtr;
-          r1 = abs(tc[0] + (bc[0] - tc[0]) * t);
-        }
-        // x = -y
-        // t = (tcx + tcy) / (tcx + tcy - bcx - bcy)
-        GLdouble eti = tc[0] + tc[1];
-        GLdouble etr = tc[1] + tc[0] - bc[1] - bc[0];
-        if (etr != 0) {
-          GLdouble t = eti / etr;
-          r2 = abs(tc[0] + (bc[0] - tc[0]) * t);
-        }
-        if (r1 < 1. || r2 < 1.) {
-          visible = true;
-          break;
-        }
-        // Compute angle of vertex to (euclidean) closest point
-        GLdouble nx = -(bc[1] - tc[1]), ny = (bc[0] - tc[0]);
-        if (nx * bc[0] + ny * bc[1] < 0) {
-          nx = -nx;
-          ny = -ny;
-        }
-        angles[k] = atan2(nx, ny);
-      }
-      if (!visible) {
-        // Largest difference between any two line directions
-        GLfloat ud = max4(angles[0], angles[1], angles[2], angles[3]) -
-                     min4(angles[0], angles[1], angles[2], angles[3]);
-        GLfloat rd =
-            max4(rotpi(angles[0]), rotpi(angles[1]), rotpi(angles[2]), rotpi(angles[3])) -
-            min4(rotpi(angles[0]), rotpi(angles[1]), rotpi(angles[2]), rotpi(angles[3]));
-        GLfloat spread = min(ud, rd);
-        // Why PI/4 ? Consider a birds-eye view, slightly off center...
-        if (spread >= M_PI / 4.) { visible = true; }
-      }
-
-      // Current cell is in viewport
-      int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
-      int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
-      int iscent = max(abs(ox - cx), abs(oy - cy)) <= CHUNKSIZE / 2;
-
-      //      printf("    %d %d | %d %d (%d)\n", cur->xm, cur->ym, cx, cy, visible);
-
-      // TODO: visibility clipped to camera;
-      // We calc location of 4 camera corners (+W 1) in XY plane
-      // Then, for every box, test if any of its four
-      // sides passes the test. Current box is auto-in.
-
-      // Next issue: picking the closest K cells.
-
-      //      int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
-      //      int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
-      int inrad = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
-      visible = (visible || iscent) && inrad;
-
-      // Mark self with Z:!
-      debugline[j] = iscent ? 'Z' : (visible ? 'X' : '.');
-
-      if (visible) {
+      if (cur->is_visible) {
         drawlist[nchunks] = cur;
         if (update || !cur->is_active) { fillChunkVBO(drawlist[nchunks]); }
         nchunks++;
@@ -1203,8 +1153,10 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
         }
       }
     }
-    debugline[ch] = '\0';
-    printf("%s\n", debugline);
+    if (stage == 0 && 0) {
+      debugline[ch] = '\0';
+      printf("%s\n", debugline);
+    }
   }
 
   double t1 = getSystemTime();

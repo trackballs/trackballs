@@ -76,7 +76,8 @@ class Chunk {
   GLuint tile_vbo[2];
   GLuint flui_vbo[2];
   GLuint line_vbo[2];
-  int is_active;
+  GLfloat maxHeight, minHeight;
+  int is_active, is_visible;
   int checkForUpdates(Cell *map, int width, int height);
 };
 
