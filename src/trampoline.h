@@ -23,11 +23,11 @@
 
 class Trampoline : public GameHook {
  public:
-  Trampoline(Cell&);
+  Trampoline(int x, int y);
   virtual void tick(Real);
 
  private:
-  Cell& cell;
+  int cx, cy;
 };
 
 #endif

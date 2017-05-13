@@ -833,7 +833,8 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
 
       Real speed = -dotProduct(velocity, normal);  // or simply -velocity[2];
       if (speed > 0) {
-        Cell &cell = map->cell((int)(position[0] + x), (int)(position[1] + y));
+        int tx = (int)(position[0] + x), ty = (int)(position[1] + y);
+        Cell &cell = map->cell(tx, ty);
 
         double crash_speed = speed;
         if (cell.flags & (CELL_TRAMPOLINE | CELL_SAND)) crash_speed *= 0.4;
@@ -847,7 +848,7 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
           Real dh = 1.0 * speed * radius * radius * radius;
           effective_bounceFactor += 0.6;
           for (i = 0; i < 5; i++) cell.heights[i] -= dh;
-          if (cell.sunken <= 0.0) new Trampoline(cell);
+          if (cell.sunken <= 0.0) new Trampoline(tx, ty);
           cell.sunken += dh;
         }
         speed *= 1.0 + effective_bounceFactor;

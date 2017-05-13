@@ -37,7 +37,7 @@ using namespace std;
 #define VISRADIUS 50
 #define CACHE_SIZE (VISRADIUS * 2 + 1)
 #define MARGIN 10
-#define CHUNKSIZE 16
+#define CHUNKSIZE 32
 
 #define WRITE_PORTABLE 1
 #define READ_PORTABLE 1
@@ -226,8 +226,13 @@ Real Cell::getWaterHeight(Real x, Real y) const {
 
 Chunk::Chunk() {
   is_active = false;
-  maxHeight = 0.;
-  minHeight = 0.;
+  is_visible = false;
+  is_updated = true;
+  num_dynamic = 0;
+  // Init with extreme range to ensure visibility after which
+  // exact range would be calculated
+  maxHeight = 1e3;
+  minHeight = 1e-3;
 }
 
 Chunk::~Chunk() {
@@ -237,37 +242,6 @@ Chunk::~Chunk() {
     glDeleteBuffers(2, &wall_vbo[0]);
     glDeleteBuffers(2, &line_vbo[0]);
   }
-}
-
-inline void updateMinMax(double in, double* minv, double* maxv) {
-  *minv = min(in, *minv);
-  *maxv = max(in, *maxv);
-}
-
-int Map::checkForUpdates(Chunk* chunk) const {
-  // Return true if changed.
-  // Expensive: a "markChange flag" + counter for # visible water/vel tiles
-  //            would bring it to O(1). Markchange would strictly boost Z range
-  GLfloat minz = 1e99, maxz = -1e99;
-  int delta = 0;
-  for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
-    for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
-      const Cell& c = cell(x, y);
-      if (c.displayListDirty || c.velocity[0] != 0. || c.velocity[1] != 0. ||
-          c.isWaterVisible()) {
-        delta = 1;
-      }
-      for (int k = 0; k < 5; k++) {
-        minz = min(minz, c.heights[k]);
-        minz = min(minz, c.waterHeights[k]);
-        maxz = max(maxz, c.heights[k]);
-        maxz = max(maxz, c.waterHeights[k]);
-      }
-    }
-  }
-  chunk->minHeight = minz;
-  chunk->maxHeight = maxz;
-  return delta;
 }
 
 Map::Map(char* filename) {
@@ -385,6 +359,10 @@ Map::Map(char* filename) {
   tx_Acid = loadTexture("acid.png");
   tx_Sand = loadTexture("sand.png");
   tx_Track = loadTexture("track.png");
+  tx_1 = loadTexture("texture.png");
+  tx_2 = loadTexture("texture2.png");
+  tx_3 = loadTexture("texture3.png");
+  tx_4 = loadTexture("texture4.png");
   tx_Map = loadTexture("maptex.png");
 
   cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
@@ -642,17 +620,18 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   return shaderprogram;
 }
 
-inline float packShorts(ushort a, ushort b) {
-  // To ensure strict aliasing
-  float r;
-  uint x = b * (1 << 16) + a;
-  memcpy(&r, &x, sizeof(float));
-  return r;
-}
-
-inline float packTex(float a, float b) {
+inline void packCell(GLfloat* out, GLfloat px, GLfloat py, GLfloat pz, const GLfloat* colors,
+                     GLfloat tx, GLfloat ty) {
   float texrad = 16384.f;
-  return packShorts(texrad * a, texrad * b);
+  uint32_t x = (ushort)(texrad * ty) * (1 << 16) + (ushort)(texrad * tx);
+  out[0] = px;
+  out[1] = py;
+  out[2] = pz;
+  out[3] = colors[0];
+  out[4] = colors[1];
+  out[5] = colors[2];
+  out[6] = colors[3];
+  ((uint32_t*)out)[7] = x;
 }
 
 inline double smoothSemiRand(int x, int y, double scale) {
@@ -686,6 +665,10 @@ void Map::fillChunkVBO(Chunk* chunk) {
   GLfloat* fdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
   ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
 
+  // Update number of dynamic cells & exact bounds as well
+  GLfloat minz = 1e99, maxz = -1e99;
+  int ndynamic = 0;
+
   if (chunk->is_active) {
     // Stopgap: wipe/reload style.
     glDeleteBuffers(2, &chunk->tile_vbo[0]);
@@ -706,14 +689,24 @@ void Map::fillChunkVBO(Chunk* chunk) {
   int st = (int)dt;
   float frac = (float)(dt - (double)st);
 
+  // Further speed boosts will come from finer-grained updates
+  // (ex. update only textures if ndynamic>0; or finite cell height shifting)
   for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
     for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
       // Could speed entry up a lot with a geometry shader
       // to eliminate redundant coordinates...
       Cell& c = cell(x, y);
-      c.displayListDirty = false;
+      c.displayListDirty = 0;
+
+      // Update height table for future actions
+      for (int k = 0; k < 5; k++) {
+        minz = min(minz, c.heights[k]);
+        minz = min(minz, c.waterHeights[k]);
+        maxz = max(maxz, c.heights[k]);
+        maxz = max(maxz, c.waterHeights[k]);
+      }
+
       int j = (x - chunk->xm) + (y - chunk->ym) * CHUNKSIZE;
-      int k = j * 5 * 8;
       // TODO: determine if texture arrays are available!
       // (then we just pass short/short/short in
       float txo = 0.5f, tyo = 0.5f;
@@ -731,6 +724,18 @@ void Map::fillChunkVBO(Chunk* chunk) {
         } else if ((c.flags & CELL_ACID) || (!typed && c.texture == tx_Acid)) {
           txo = 0.0f;
           tyo = 0.0f;
+        } else if (c.texture == tx_1) {
+          txo = 0.0f;
+          tyo = 0.25f;
+        } else if (c.texture == tx_2) {
+          txo = 0.25f;
+          tyo = 0.25f;
+        } else if (c.texture == tx_3) {
+          txo = 0.0f;
+          tyo = 0.75f;
+        } else if (c.texture == tx_4) {
+          txo = 0.0f;
+          tyo = 0.5f;
         }
         // TODO: link given map to texture map. Best would be 1d array constructed
         // from up/downscaled given textures
@@ -740,6 +745,7 @@ void Map::fillChunkVBO(Chunk* chunk) {
       // Cell velocity (moves base textures and water)
       double time =
           -(Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
+      int texshift = c.velocity[0] != 0. || c.velocity[1] != 0.;
       double rx = time * c.velocity[0] - double(int(time * c.velocity[0]));
       double ry = time * c.velocity[1] - double(int(time * c.velocity[1]));
       if (ry < 0.) { ry += 1.; }
@@ -747,50 +753,18 @@ void Map::fillChunkVBO(Chunk* chunk) {
       txo += rx * 0.125f;
       tyo += ry * 0.125f;
 
-      tdat[k++] = float(x);
-      tdat[k++] = float(y);
-      tdat[k++] = c.heights[Cell::SOUTH + Cell::WEST];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][0];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][1];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][2];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::WEST][3];
-      tdat[k++] = packTex(txo, tyo);
-
-      tdat[k++] = float(x + 1);
-      tdat[k++] = float(y);
-      tdat[k++] = c.heights[Cell::SOUTH + Cell::EAST];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][0];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][1];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][2];
-      tdat[k++] = c.colors[Cell::SOUTH + Cell::EAST][3];
-      tdat[k++] = packTex(txo + 0.125f, tyo);
-
-      tdat[k++] = float(x + 1);
-      tdat[k++] = float(y + 1);
-      tdat[k++] = c.heights[Cell::NORTH + Cell::EAST];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][0];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][1];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][2];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::EAST][3];
-      tdat[k++] = packTex(txo + 0.125f, tyo + 0.125f);
-
-      tdat[k++] = float(x);
-      tdat[k++] = float(y + 1);
-      tdat[k++] = c.heights[Cell::NORTH + Cell::WEST];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][0];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][1];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][2];
-      tdat[k++] = c.colors[Cell::NORTH + Cell::WEST][3];
-      tdat[k++] = packTex(txo, tyo + 0.125f);
-
-      tdat[k++] = 0.5f * float(2 * x + 1);
-      tdat[k++] = 0.5f * float(2 * y + 1);
-      tdat[k++] = c.heights[Cell::CENTER];
-      tdat[k++] = c.colors[Cell::CENTER][0];
-      tdat[k++] = c.colors[Cell::CENTER][1];
-      tdat[k++] = c.colors[Cell::CENTER][2];
-      tdat[k++] = c.colors[Cell::CENTER][3];
-      tdat[k++] = packTex(txo + 0.0625f, tyo + 0.0625f);
+      int k = j * 5 * 8;
+      packCell(&tdat[k], x, y, c.heights[Cell::SOUTH + Cell::WEST],
+               &c.colors[Cell::SOUTH + Cell::WEST][0], txo, tyo);
+      packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
+               &c.colors[Cell::SOUTH + Cell::EAST][0], txo + 0.125f, tyo);
+      packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NORTH + Cell::EAST],
+               &c.colors[Cell::NORTH + Cell::EAST][0], txo + 0.125f, tyo + 0.125f);
+      packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NORTH + Cell::WEST],
+               &c.colors[Cell::NORTH + Cell::WEST][0], txo, tyo + 0.125f);
+      packCell(&tdat[k + 32], 0.5f * float(2 * x + 1), 0.5f * float(2 * y + 1),
+               c.heights[Cell::CENTER], &c.colors[Cell::CENTER][0], txo + 0.0625f,
+               tyo + 0.0625f);
 
       int m = j * 12;
       ushort b = (ushort)5 * j;
@@ -820,7 +794,6 @@ void Map::fillChunkVBO(Chunk* chunk) {
       // We assume that a quad suffices to render each wall
       // (otherwise, in the worst case, we'd need 6 vertices/side!
 
-      int p = j * 8 * 8;  // 64 floats!
       GLfloat* swcolor = &c.wallColors[Cell::SOUTH + Cell::WEST][0];
       GLfloat* secolor = &c.wallColors[Cell::SOUTH + Cell::EAST][0];
       if (ns.heights[Cell::NORTH + Cell::WEST] > c.heights[Cell::SOUTH + Cell::WEST] &&
@@ -838,78 +811,20 @@ void Map::fillChunkVBO(Chunk* chunk) {
       }
 
       // Less X
-      wdat[p++] = float(x);
-      wdat[p++] = float(y);
-      wdat[p++] = c.heights[Cell::SOUTH + Cell::WEST];
-      wdat[p++] = swcolor[0];
-      wdat[p++] = swcolor[1];
-      wdat[p++] = swcolor[2];
-      wdat[p++] = swcolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
+      int p = j * 8 * 8;
+      packCell(&wdat[p], x, y, c.heights[Cell::SOUTH + Cell::WEST], swcolor, 0.5f, 0.5f);
+      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NORTH + Cell::WEST], swcolor, 0.5f, 0.5f);
+      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST], secolor, 0.5f,
+               0.5f);
+      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NORTH + Cell::EAST], secolor, 0.5f,
+               0.5f);
 
-      wdat[p++] = float(x);
-      wdat[p++] = float(y);
-      wdat[p++] = ns.heights[Cell::NORTH + Cell::WEST];
-      wdat[p++] = swcolor[0];
-      wdat[p++] = swcolor[1];
-      wdat[p++] = swcolor[2];
-      wdat[p++] = swcolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      wdat[p++] = float(x + 1);
-      wdat[p++] = float(y);
-      wdat[p++] = c.heights[Cell::SOUTH + Cell::EAST];
-      wdat[p++] = secolor[0];
-      wdat[p++] = secolor[1];
-      wdat[p++] = secolor[2];
-      wdat[p++] = secolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      wdat[p++] = float(x + 1);
-      wdat[p++] = float(y);
-      wdat[p++] = ns.heights[Cell::NORTH + Cell::EAST];
-      wdat[p++] = secolor[0];
-      wdat[p++] = secolor[1];
-      wdat[p++] = secolor[2];
-      wdat[p++] = secolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      // Less Y
-      wdat[p++] = float(x);
-      wdat[p++] = float(y);
-      wdat[p++] = c.heights[Cell::WEST + Cell::SOUTH];
-      wdat[p++] = escolor[0];
-      wdat[p++] = escolor[1];
-      wdat[p++] = escolor[2];
-      wdat[p++] = escolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      wdat[p++] = float(x);
-      wdat[p++] = float(y);
-      wdat[p++] = ne.heights[Cell::EAST + Cell::SOUTH];
-      wdat[p++] = escolor[0];
-      wdat[p++] = escolor[1];
-      wdat[p++] = escolor[2];
-      wdat[p++] = escolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      wdat[p++] = float(x);
-      wdat[p++] = float(y + 1);
-      wdat[p++] = c.heights[Cell::WEST + Cell::NORTH];
-      wdat[p++] = encolor[0];
-      wdat[p++] = encolor[1];
-      wdat[p++] = encolor[2];
-      wdat[p++] = encolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
-
-      wdat[p++] = float(x);
-      wdat[p++] = float(y + 1);
-      wdat[p++] = ne.heights[Cell::EAST + Cell::NORTH];
-      wdat[p++] = encolor[0];
-      wdat[p++] = encolor[1];
-      wdat[p++] = encolor[2];
-      wdat[p++] = encolor[3];
-      wdat[p++] = packTex(0.5f, 0.5f);
+      packCell(&wdat[p + 32], x, y, c.heights[Cell::WEST + Cell::SOUTH], escolor, 0.5f, 0.5f);
+      packCell(&wdat[p + 40], x, y, ne.heights[Cell::EAST + Cell::SOUTH], escolor, 0.5f, 0.5f);
+      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::WEST + Cell::NORTH], encolor, 0.5f,
+               0.5f);
+      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::EAST + Cell::NORTH], encolor, 0.5f,
+               0.5f);
 
       // Render the quad. The heights autocorrect orientations
       int q = j * 12;
@@ -955,7 +870,8 @@ void Map::fillChunkVBO(Chunk* chunk) {
 
       // Water
       GLfloat waterc[4] = {0.3f, 0.3f, 0.7f, 0.6f};
-      if (c.isWaterVisible()) {
+      int wvis = c.isWaterVisible();
+      if (wvis) {
         GLfloat wdx[4], wdy[4];
         wdx[0] = watershift(x, y, 0, st, frac);
         wdy[0] = watershift(x, y, 1, st, frac);
@@ -966,57 +882,21 @@ void Map::fillChunkVBO(Chunk* chunk) {
         wdx[3] = watershift(x, y + 1, 0, st, frac);
         wdy[3] = watershift(x, y + 1, 1, st, frac);
 
+        GLfloat bx = 0.5f + rx * 0.125f;
+        GLfloat by = 0.0f + ry * 0.125f;
+
         int u = j * 5 * 8;
-        fdat[u++] = float(x);
-        fdat[u++] = float(y);
-        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::WEST];
-        fdat[u++] = waterc[0];
-        fdat[u++] = waterc[1];
-        fdat[u++] = waterc[2];
-        fdat[u++] = waterc[3];
-        fdat[u++] =
-            packTex(0.5f + rx * 0.125f + 0.25f * wdx[0], 0.0f + ry * 0.125f + 0.25f * wdy[0]);
-
-        fdat[u++] = float(x + 1);
-        fdat[u++] = float(y);
-        fdat[u++] = c.waterHeights[Cell::SOUTH + Cell::EAST];
-        fdat[u++] = waterc[0];
-        fdat[u++] = waterc[1];
-        fdat[u++] = waterc[2];
-        fdat[u++] = waterc[3];
-        fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25f * wdx[1],
-                            0.0f + ry * 0.125f + 0.25f * wdy[1]);
-
-        fdat[u++] = float(x + 1);
-        fdat[u++] = float(y + 1);
-        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::EAST];
-        fdat[u++] = waterc[0];
-        fdat[u++] = waterc[1];
-        fdat[u++] = waterc[2];
-        fdat[u++] = waterc[3];
-        fdat[u++] = packTex(0.5f + 0.125f + rx * 0.125f + 0.25f * wdx[2],
-                            0.125f + ry * 0.125f + 0.25f * wdy[2]);
-
-        fdat[u++] = float(x);
-        fdat[u++] = float(y + 1);
-        fdat[u++] = c.waterHeights[Cell::NORTH + Cell::WEST];
-        fdat[u++] = waterc[0];
-        fdat[u++] = waterc[1];
-        fdat[u++] = waterc[2];
-        fdat[u++] = waterc[3];
-        fdat[u++] = packTex(0.5f + rx * 0.125f + 0.25f * wdx[3],
-                            0.125f + ry * 0.125f + 0.25f * wdy[3]);
-
-        fdat[u++] = 0.5f * float(2 * x + 1);
-        fdat[u++] = 0.5f * float(2 * y + 1);
-        fdat[u++] = c.waterHeights[Cell::CENTER];
-        fdat[u++] = waterc[0];
-        fdat[u++] = waterc[1];
-        fdat[u++] = waterc[2];
-        fdat[u++] = waterc[3];
-        fdat[u++] = packTex(
-            0.5f + 0.0625f + rx * 0.125f + 0.0625f * (wdx[0] + wdx[1] + wdx[2] + wdx[3]),
-            0.0625f + ry * 0.125f + 0.0625f * (wdy[0] + wdy[1] + wdy[2] + wdy[3]));
+        packCell(&fdat[u], x, y, c.waterHeights[Cell::SOUTH + Cell::WEST], waterc,
+                 bx + 0.25f * wdx[0], by + 0.25f * wdy[0]);
+        packCell(&fdat[u + 8], x + 1, y, c.waterHeights[Cell::SOUTH + Cell::EAST], waterc,
+                 bx + 0.125f + 0.25f * wdx[1], by + 0.25f * wdy[1]);
+        packCell(&fdat[u + 16], x + 1, y + 1, c.waterHeights[Cell::NORTH + Cell::EAST], waterc,
+                 bx + 0.125f + 0.25f * wdx[2], by + 0.125f + 0.25f * wdy[2]);
+        packCell(&fdat[u + 24], x, y + 1, c.waterHeights[Cell::NORTH + Cell::WEST], waterc,
+                 bx + 0.25f * wdx[3], by + 0.125f + 0.25f * wdy[3]);
+        packCell(&fdat[u + 32], x + 0.5f, y + 0.5f, c.waterHeights[Cell::CENTER], waterc,
+                 bx + 0.0625f + 0.0625f * (wdx[0] + wdx[1] + wdx[2] + wdx[3]),
+                 by + 0.0625f + 0.0625f * (wdy[0] + wdy[1] + wdy[2] + wdy[3]));
 
         int v = j * 12;
         fidx[v++] = b + 0;
@@ -1036,6 +916,8 @@ void Map::fillChunkVBO(Chunk* chunk) {
         memset(&fdat[j * 5 * 8], 0, 5 * 8 * sizeof(GLfloat));
         for (int i = 0; i < 12; i++) { fidx[j * 12 + i] = b; }
       }
+
+      if (texshift || wvis) { ndynamic++; }
     }
   }
 
@@ -1075,13 +957,15 @@ void Map::fillChunkVBO(Chunk* chunk) {
   delete[] lidx;
   delete[] fdat;
   delete[] fidx;
+
+  // Update view parameters
+  chunk->num_dynamic = ndynamic;
+  chunk->minHeight = minz;
+  chunk->maxHeight = maxz;
+  chunk->is_updated = 0;
 }
 
-GLfloat max4(GLfloat a, GLfloat b, GLfloat c, GLfloat d) { return max(max(a, b), max(c, d)); }
-GLfloat min4(GLfloat a, GLfloat b, GLfloat c, GLfloat d) { return min(min(a, b), min(c, d)); }
-GLfloat rotpi(GLfloat a) { return a > 0 ? a - M_PI / 2 : a + M_PI + 2; }
-
-void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
+void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   // Cost to pay once and only once
   //  static int oldnchunks = 0;
   static GLuint shaderprogram = -1;
@@ -1120,11 +1004,11 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
       Chunk* cur = &chunks[j * cw + i];
       int update = 0;
       if (stage == 0) {
-        // Detect if update needed. Ought to replace with single flag
-        update = checkForUpdates(cur);
+        // Detect if update needed. Birdseye does't require retexturing
+        update = (cur->is_updated || (cur->num_dynamic > 0 && !birdseye));
 
         int visible = testBboxClip(cur->xm, cur->xm + CHUNKSIZE, cur->ym, cur->ym + CHUNKSIZE,
-                                   cur->maxHeight, cur->minHeight, model_d, proj_d);
+                                   cur->minHeight, cur->maxHeight, model_d, proj_d);
 
         // Current cell is in viewport
         int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
@@ -1256,8 +1140,28 @@ void Map::drawMapVBO(int /*birdseye*/, int cx, int cy, int stage) {
   glUseProgram(0);
   // Revert to fixed-function
 
-  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d\n", 1e3 * (getSystemTime() - t1),
-         1e3 * (t1 - t0), nchunks, stage);
+  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d %d\n", 1e3 * (getSystemTime() - t1),
+         1e3 * (t1 - t0), nchunks, stage, birdseye);
+}
+
+void Map::markCellUpdated(int x, int y) {
+  Cell& c = cell(x, y);
+  if (0 <= x && x < width && 0 <= y && y <= width) {
+    int cx = x / CHUNKSIZE;
+    int cy = y / CHUNKSIZE;
+    int cw = -(-width / CHUNKSIZE);
+    Chunk& z = chunks[cy * cw + cx];
+    z.is_updated = 1;
+    c.displayListDirty = 1;
+
+    // Extend bounding box
+    for (int k = 0; k < 5; k++) {
+      z.minHeight = min(z.minHeight, c.heights[k]);
+      z.minHeight = min(z.minHeight, c.waterHeights[k]);
+      z.maxHeight = max(z.maxHeight, c.heights[k]);
+      z.maxHeight = max(z.maxHeight, c.waterHeights[k]);
+    }
+  }
 }
 
 void Map::drawFootprint(int x, int y, int kind) {

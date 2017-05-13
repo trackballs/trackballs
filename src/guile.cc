@@ -1121,7 +1121,7 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
   for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
     for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       if (SCM_FALSEP(state))
         c.flags = c.flags & (~iflag);
       else
@@ -1146,7 +1146,7 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
   for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
     for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       c.velocity[0] = scm_to_double(vx);
       c.velocity[1] = scm_to_double(vy);
     }
@@ -1177,7 +1177,7 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
       c.heights[1] = scm_to_double(h1);
       c.heights[2] = scm_to_double(h2);
       c.heights[3] = scm_to_double(h3);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       if (SCM_NUMBERP(h4))
         c.heights[4] = scm_to_double(h4);
       else
@@ -1210,7 +1210,7 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
       c.waterHeights[1] = scm_to_double(h1);
       c.waterHeights[2] = scm_to_double(h2);
       c.waterHeights[3] = scm_to_double(h3);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       if (SCM_NUMBERP(h4))
         c.waterHeights[4] = scm_to_double(h4);
       else
@@ -1246,7 +1246,7 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
       c.colors[i][0] = (GLfloat)scm_to_double(r);
       c.colors[i][1] = (GLfloat)scm_to_double(g);
       c.colors[i][2] = (GLfloat)scm_to_double(b);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       if (SCM_NUMBERP(a))
         c.colors[i][3] = (GLfloat)scm_to_double(a);
       else
@@ -1280,7 +1280,7 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
       c.wallColors[i][0] = (GLfloat)scm_to_double(r);
       c.wallColors[i][1] = (GLfloat)scm_to_double(g);
       c.wallColors[i][2] = (GLfloat)scm_to_double(b);
-      c.displayListDirty = 1;
+      Game::current->map->markCellUpdated(x, y);
       if (SCM_NUMBERP(a))
         c.wallColors[i][3] = (GLfloat)scm_to_double(a);
       else

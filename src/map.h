@@ -77,8 +77,7 @@ class Chunk {
   GLuint flui_vbo[2];
   GLuint line_vbo[2];
   GLfloat maxHeight, minHeight;
-  int is_active, is_visible;
-  int checkForUpdates(Cell *map, int width, int height);
+  int is_active, is_visible, is_updated, num_dynamic;
 };
 
 class Map {
@@ -90,11 +89,11 @@ class Map {
     return cells[(x < 0 ? 0 : (x >= width ? width - 1 : x)) +
                  width * (y < 0 ? 0 : (y >= height ? height - 1 : y))];
   };
+  void markCellUpdated(int x, int y);
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
   void drawMapVBO(int birdseye, int x, int y, int stage);
   void fillChunkVBO(Chunk *c);
-  int checkForUpdates(Chunk *chunk) const;
   void drawCell(int birdsEye, int stage, int x, int y);
   void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
@@ -116,7 +115,7 @@ class Map {
   char mapname[256], author[256];
   int indexTranslation[256];  // translates indices when reading map.
 
-  int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Map;
+  int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Map, tx_1, tx_2, tx_3, tx_4;
   Coord3d startPosition;
 
   static const int flagNone, flagFlashCenter, flagTranslucent, flagShowCross;

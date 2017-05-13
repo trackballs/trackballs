@@ -65,9 +65,9 @@ Game::Game(char *name, Gamer *g) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", SHARE_DIR);
-  fprintf(stderr, "Loading script %s ...", scmname);
+  printf("Loading script %s ...", scmname);
   scm_c_primitive_load(scmname);
-  fprintf(stderr, " done\n");
+  printf(" done\n");
 
   player1 = new Player(gamer);
   loadLevel(name);

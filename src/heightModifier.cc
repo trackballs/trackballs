@@ -145,6 +145,7 @@ void HeightModifier::tick(Real t) {
   if ((cor2 != not1) && (cor2 != not2) && (cor2 != not3)) c2.heights[cor2] = v;
   if ((cor3 != not1) && (cor3 != not2) && (cor3 != not3)) c3.heights[cor3] = v;
 
+  Game::current->map->markCellUpdated(x, y);
   c.displayListDirty = 1;
   c1.displayListDirty = 1;
   c2.displayListDirty = 1;

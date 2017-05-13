@@ -20,14 +20,17 @@
 
 #include "general.h"
 #include "map.h"
+#include "game.h"
 #include "gameHook.h"
 #include "trampoline.h"
 
 using namespace std;
 
-Trampoline::Trampoline(Cell& c) : GameHook(), cell(c) {}
+Trampoline::Trampoline(int x, int y) : GameHook(), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
-  Real dh = min(0.5 * t, cell.sunken - 1e-5);
-  for (int i = 0; i < 5; i++) cell.heights[i] += dh;
-  cell.sunken -= dh;
+  Cell& c = Game::current->map->cell(cx, cy);
+  Real dh = min(0.5 * t, c.sunken - 1e-5);
+  for (int i = 0; i < 5; i++) c.heights[i] += dh;
+  c.sunken -= dh;
+  Game::current->map->markCellUpdated(cx, cy);
 }

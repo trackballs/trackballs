@@ -65,7 +65,7 @@ void CyclicPlatform::tick(Real dt) {
     for (int y = y1; y <= y2; y++) {
       Cell &c = map->cell(x, y);
       for (int j = 0; j < 5; j++) c.heights[j] = h;
-      c.displayListDirty = 1;
+      map->markCellUpdated(x, y);
       map->cell(x + 1, y).displayListDirty = 1;
       map->cell(x - 1, y).displayListDirty = 1;
       map->cell(x, y + 1).displayListDirty = 1;
