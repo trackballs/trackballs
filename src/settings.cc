@@ -25,6 +25,9 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+
+#include "guile.h"
+
 using namespace std;
 
 /* These are the names/codes codes of languages available from the settings
@@ -68,37 +71,150 @@ Settings::Settings() {
   doReflections = 0;
   language = 0;
 
-  /* Load all settings here */
+  /* Load all settings from a scheme-syntaxed config file */
   char str[256];
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/settings", getenv("HOME"));
-  FILE *fp = fopen(str, "rb");
-  if (fp) {
-    int version;
-    fread(&version, sizeof(int), 1, fp);
-    fread(&sfxVolume, sizeof(double), 1, fp);
-    fread(&musicVolume, sizeof(double), 1, fp);
-    fread(&mouseSensitivity, sizeof(double), 1, fp);
-    fread(&gfx_details, sizeof(int), 1, fp);
-    fread(&showFPS, sizeof(int), 1, fp);
-    fread(&is_windowed, sizeof(int), 1, fp);
-    fread(&resolution, sizeof(int), 1, fp);
-    if (version >= 2) fread(&colorDepth, sizeof(int), 1, fp);
-    if (version >= 3) {
-      fread(&joystickIndex, sizeof(int), 1, fp);
-      fread(&joy_center, sizeof(int), 2, fp);
-      fread(&joy_left, sizeof(int), 1, fp);
-      fread(&joy_right, sizeof(int), 1, fp);
-      fread(&joy_up, sizeof(int), 1, fp);
-      fread(&joy_down, sizeof(int), 1, fp);
+  const char *errstring1 = _("Configuration file should be a series of (key value) tuples.");
+  const char *errstring2 = _("Error in value associated with:");
+  if (access(str, R_OK) != -1) {
+    SCM ip = scm_open_file(scm_from_locale_string(str), scm_from_locale_string("r"));
+    // ^ TODO catch exception
+    /* Iteratively read key-value pairs */
+    for (int i = 0; i < 1000; i++) {
+      SCM contents = scm_read(ip);
+      if (SCM_EOF_OBJECT_P(contents)) { break; }
+      if (!scm_to_bool(scm_list_p(contents)) || scm_to_int(scm_length(contents)) != 2) {
+        fprintf(stderr, "%s\n", errstring1);
+        continue;
+      }
+      SCM key = SCM_CAR(contents);
+      SCM value = SCM_CADR(contents);
+      if (!scm_is_symbol(key) || !SCM_NUMBERP(value)) {
+        fprintf(stderr, "%s\n", errstring1);
+        continue;
+      }
+      char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
+      if (!strcmp(skey, "sfx-volume")) {
+        if (scm_is_real(value)) {
+          sfxVolume = scm_to_double(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "music-volume")) {
+        if (scm_is_real(value)) {
+          musicVolume = scm_to_double(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "mouse-sensitivity")) {
+        if (scm_is_real(value)) {
+          mouseSensitivity = scm_to_double(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "gfx-details")) {
+        if (scm_is_integer(value)) {
+          gfx_details = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "show-fps")) {
+        if (scm_is_integer(value)) {
+          showFPS = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "is-windowed")) {
+        if (scm_is_integer(value)) {
+          is_windowed = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "resolution")) {
+        if (scm_is_integer(value)) {
+          resolution = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "color-depth")) {
+        if (scm_is_integer(value)) {
+          colorDepth = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joystick-index")) {
+        if (scm_is_integer(value)) {
+          joystickIndex = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy_center-x")) {
+        if (scm_is_integer(value)) {
+          joy_center[0] = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy_center-y")) {
+        if (scm_is_integer(value)) {
+          joy_center[1] = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy-left")) {
+        if (scm_is_integer(value)) {
+          joy_left = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy-right")) {
+        if (scm_is_integer(value)) {
+          joy_right = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy-up")) {
+        if (scm_is_integer(value)) {
+          joy_up = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "joy-down")) {
+        if (scm_is_integer(value)) {
+          joy_down = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "rotate-steering")) {
+        if (scm_is_integer(value)) {
+          rotateSteering = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "language")) {
+        if (scm_is_integer(value)) {
+          language = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "ignore-mouse")) {
+        if (scm_is_integer(value)) {
+          ignoreMouse = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else if (!strcmp(skey, "do-reflections")) {
+        if (scm_is_integer(value)) {
+          mouseSensitivity = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
+      } else {
+        fprintf(stderr, "%s >%s<\n", _("Unidentified setting:"), skey);
+      }
+
+      free(skey);
     }
-    if (version >= 4) { fread(&rotateSteering, sizeof(int), 1, fp); }
-    if (version >= 5) {
-      fread(&ignoreMouse, sizeof(int), 1, fp);
-      fread(&doReflections, sizeof(int), 1, fp);
-    }
-    if (version >= 6) { fread(&language, sizeof(int), 1, fp); }
-    /* TODO. Santitycheck of values */
-    fclose(fp);
+    scm_close(ip);
   }
 }
 void Settings::loadLevelSets() {
@@ -196,7 +312,6 @@ void Settings::loadLevelSet(char *setname) {
 
 void Settings::save() {
   char str[256];
-  int version = 6;
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
   if (pathIsLink(str)) {
@@ -211,36 +326,30 @@ void Settings::save() {
     return;
   }
 
-  /* TODO. Save all settings here */
-  FILE *fp = fopen(str, "wb");
+  /* Save all settings here */
+  FILE *fp = fopen(str, "w");
   if (!fp) {
     printf("Warning. Could not save settings.\n");
   } else {
-    /* Version 1 */
-    fwrite(&version, sizeof(int), 1, fp);
-    fwrite(&sfxVolume, sizeof(double), 1, fp);
-    fwrite(&musicVolume, sizeof(double), 1, fp);
-    fwrite(&mouseSensitivity, sizeof(double), 1, fp);
-    fwrite(&gfx_details, sizeof(int), 1, fp);
-    fwrite(&showFPS, sizeof(int), 1, fp);
-    fwrite(&is_windowed, sizeof(int), 1, fp);
-    fwrite(&resolution, sizeof(int), 1, fp);
-    /* Version 2 */
-    fwrite(&colorDepth, sizeof(int), 1, fp);
-    /* Version 3 */
-    fwrite(&joystickIndex, sizeof(int), 1, fp);
-    fwrite(&joy_center, sizeof(int), 2, fp);
-    fwrite(&joy_left, sizeof(int), 1, fp);
-    fwrite(&joy_right, sizeof(int), 1, fp);
-    fwrite(&joy_up, sizeof(int), 1, fp);
-    fwrite(&joy_down, sizeof(int), 1, fp);
-    /* Version 4 */
-    fwrite(&rotateSteering, sizeof(int), 1, fp);
-    /* Version 5 */
-    fwrite(&ignoreMouse, sizeof(int), 1, fp);
-    fwrite(&doReflections, sizeof(int), 1, fp);
-    /* Version 6 */
-    fwrite(&language, sizeof(int), 1, fp);
+    fprintf(fp, "(sfx-volume %g)\n", sfxVolume);
+    fprintf(fp, "(music-volume %g)\n", musicVolume);
+    fprintf(fp, "(mouse-sensitivity %g)\n", mouseSensitivity);
+    fprintf(fp, "(gfx-details %d)\n", gfx_details);
+    fprintf(fp, "(show-fps %d)\n", showFPS);
+    fprintf(fp, "(is-windowed %d)\n", is_windowed);
+    fprintf(fp, "(resolution %d)\n", resolution);
+    fprintf(fp, "(color-depth %d)\n", colorDepth);
+    fprintf(fp, "(joystick-index %d)\n", joystickIndex);
+    fprintf(fp, "(joy_center-x %d)\n", joy_center[0]);
+    fprintf(fp, "(joy_center-y %d)\n", joy_center[1]);
+    fprintf(fp, "(joy-left %d)\n", joy_left);
+    fprintf(fp, "(joy-right %d)\n", joy_right);
+    fprintf(fp, "(joy-up %d)\n", joy_up);
+    fprintf(fp, "(joy-down %d)\n", joy_down);
+    fprintf(fp, "(rotate-steering %d)\n", rotateSteering);
+    fprintf(fp, "(ignore-mouse %d)\n", ignoreMouse);
+    fprintf(fp, "(do-reflections %d)\n", doReflections);
+    fprintf(fp, "(language %d)\n", language);
     fclose(fp);
   }
 }

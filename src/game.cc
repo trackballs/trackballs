@@ -112,9 +112,9 @@ void Game::loadLevel(char *name) {
 
   if (map) delete map;
   map = new Map(mapname);
-  fprintf(stderr, "Loading script %s ...", scmname);
+  printf("Loading script %s ...", scmname);
   scm_c_primitive_load(scmname);
-  fprintf(stderr, " done\n");
+  printf(" done\n");
 
   if (player1) player1->timeLeft = startTime;
 
