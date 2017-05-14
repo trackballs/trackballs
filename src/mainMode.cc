@@ -435,6 +435,13 @@ void MainMode::idle(Real td) {
       zAngle += min(0.4 * td, wantedZAngle - zAngle);
     else if (wantedZAngle < zAngle)
       zAngle -= min(0.4 * td, zAngle - wantedZAngle);
+    /* take shortest path under modulo */
+    if (abs(xyAngle + 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) {
+        xyAngle += 4.f;
+    }
+    if (abs(xyAngle - 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) {
+        xyAngle -= 4.f;
+    }
     if (wantedXYAngle > xyAngle)
       xyAngle += min(0.4 * td, wantedXYAngle - xyAngle);
     else if (wantedXYAngle < xyAngle)
