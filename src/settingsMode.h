@@ -52,6 +52,7 @@ class SettingsMode : public GameMode {
     MENU_GFX_DETAILS,
     MENU_SHOW_FPS,
     MENU_DO_REFLECTIONS,
+    MENU_VSYNC,
 
     MENU_USEMOUSE,
     MENU_SENSITIVITY,

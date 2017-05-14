@@ -160,6 +160,9 @@ void SettingsMode::display() {
     else
       menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections (beta)"), _("No"));
 
+    menuItem_LeftRight(MENU_VSYNC, menucount++, _("  VSync"),
+                       (char *)(Settings::settings->vsynced ? _("Yes") : _("No")));
+
     // show FPS
     switch (Settings::settings->showFPS) {
     case 0:
@@ -361,6 +364,10 @@ void SettingsMode::mouseDown(int button, int x, int y) {
     break;
   case MENU_SHOW_FPS:
     Settings::settings->showFPS = (Settings::settings->showFPS + 1) % 3;
+    break;
+  case MENU_VSYNC:
+    Settings::settings->vsynced = Settings::settings->vsynced ? 0 : 1;
+    SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
     break;
 
   case MENU_USEMOUSE:

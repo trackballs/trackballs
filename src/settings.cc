@@ -70,6 +70,7 @@ Settings::Settings() {
   ignoreMouse = 0;
   doReflections = 0;
   language = 0;
+  vsynced = 1;
 
   /* Load all settings from a scheme-syntaxed config file */
   char str[256];
@@ -208,6 +209,12 @@ Settings::Settings() {
         } else {
           fprintf(stderr, "%s >%s<\n", errstring2, skey);
         }
+      } else if (!strcmp(skey, "vsync-on")) {
+        if (scm_is_integer(value)) {
+          vsynced = scm_to_int(value);
+        } else {
+          fprintf(stderr, "%s >%s<\n", errstring2, skey);
+        }
       } else {
         fprintf(stderr, "%s >%s<\n", _("Unidentified setting:"), skey);
       }
@@ -331,9 +338,9 @@ void Settings::save() {
   if (!fp) {
     printf("Warning. Could not save settings.\n");
   } else {
-    fprintf(fp, "(sfx-volume %g)\n", sfxVolume);
-    fprintf(fp, "(music-volume %g)\n", musicVolume);
-    fprintf(fp, "(mouse-sensitivity %g)\n", mouseSensitivity);
+    fprintf(fp, "(sfx-volume %.3g)\n", sfxVolume);
+    fprintf(fp, "(music-volume %.3g)\n", musicVolume);
+    fprintf(fp, "(mouse-sensitivity %.3g)\n", mouseSensitivity);
     fprintf(fp, "(gfx-details %d)\n", gfx_details);
     fprintf(fp, "(show-fps %d)\n", showFPS);
     fprintf(fp, "(is-windowed %d)\n", is_windowed);
@@ -350,6 +357,7 @@ void Settings::save() {
     fprintf(fp, "(ignore-mouse %d)\n", ignoreMouse);
     fprintf(fp, "(do-reflections %d)\n", doReflections);
     fprintf(fp, "(language %d)\n", language);
+    fprintf(fp, "(vsync-on %d)\n", vsynced);
     fclose(fp);
   }
 }

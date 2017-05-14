@@ -55,6 +55,7 @@ class Settings {
   int rotateSteering;
   int ignoreMouse;
   int doReflections;
+  int vsynced;
 
   void setLocale();
   int hasJoystick();

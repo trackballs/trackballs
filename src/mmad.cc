@@ -136,7 +136,6 @@ void changeScreenResolution() {
     }
 
     mainContext = SDL_GL_CreateContext(window);
-
     char str[256];
     snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", SHARE_DIR);
     SDL_Surface *wmIcon = IMG_Load(str);
@@ -190,6 +189,7 @@ void changeScreenResolution() {
     SDL_SetWindowGrab(window, SDL_TRUE);
   }
   SDL_ShowCursor(SDL_DISABLE);
+  SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 
   resetTextures();
 }
@@ -517,9 +517,6 @@ void innerMain(void *closure, int argc, char **argv) {
   double oldTime, t, td;
   oldTime = ((double)SDL_GetTicks()) / 1000.0;
   SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
-
-  /* Immediate window updates (0), suitable for optimization testing */
-  SDL_GL_SetSwapInterval(1);
 
   /* Initialize random number generator */
   int seed = (int)getSystemTime();
