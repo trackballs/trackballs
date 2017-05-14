@@ -161,8 +161,18 @@ void SettingsMode::display() {
       menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections (beta)"), _("No"));
 
     // show FPS
-    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, _("  Show FPS"),
-                       (char *)(Settings::settings->showFPS ? _("Yes") : _("No")));
+    switch (Settings::settings->showFPS) {
+    case 0:
+      snprintf(str, sizeof(str), _("No"));
+      break;
+    case 1:
+      snprintf(str, sizeof(str), _("Frame rate"));
+      break;
+    case 2:
+      snprintf(str, sizeof(str), _("Frame time"));
+      break;
+    }
+    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, _("  Show FPS"), str);
 
     break;
 
@@ -350,7 +360,7 @@ void SettingsMode::mouseDown(int button, int x, int y) {
     Settings::settings->doReflections = Settings::settings->doReflections ? 0 : 1;
     break;
   case MENU_SHOW_FPS:
-    Settings::settings->showFPS = Settings::settings->showFPS ? 0 : 1;
+    Settings::settings->showFPS = (Settings::settings->showFPS + 1) % 3;
     break;
 
   case MENU_USEMOUSE:

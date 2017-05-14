@@ -65,6 +65,7 @@ const char *program_name;
 int silent = 0;
 int debug_joystick, repair_joystick;
 int not_yet_windowed = 1;
+double displayStartTime = 0.;
 
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
@@ -517,6 +518,9 @@ void innerMain(void *closure, int argc, char **argv) {
   oldTime = ((double)SDL_GetTicks()) / 1000.0;
   SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
+  /* Immediate window updates (0), suitable for optimization testing */
+  SDL_GL_SetSwapInterval(1);
+
   /* Initialize random number generator */
   int seed = (int)getSystemTime();
   srand(seed);
@@ -554,6 +558,7 @@ void innerMain(void *closure, int argc, char **argv) {
     // Font::draw();
     SDL_GL_SwapWindow(window);
 
+    displayStartTime = getSystemTime();
     /* Expensive computations has to be done *after* tick+draw to keep world in good
        synchronisation. */
     if (GameMode::current) GameMode::current->doExpensiveComputations();

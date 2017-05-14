@@ -43,6 +43,7 @@ GLuint sphereDisplayLists[3];
 
 TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
 extern SDL_Surface *screen;
+extern double displayStartTime;
 
 double fake_rand[4711];
 double frand(int i) { return fake_rand[i % 4711]; }
@@ -751,12 +752,16 @@ void displayFrameRate() {
   oldTime = t;
   realTimeNow = t;
 
-  if (Settings::settings->showFPS) {
-    if (fps > 0)
-      snprintf(str, sizeof(str), _("Framerate: %.1f"), fps);
-    else
-      snprintf(str, sizeof(str), _("Framerate unknown"));
-
+  if (Settings::settings->showFPS > 0) {
+    if (Settings::settings->showFPS == 1) {
+      if (fps > 0)
+        snprintf(str, sizeof(str), _("Framerate: %.1f"), fps);
+      else
+        snprintf(str, sizeof(str), _("Framerate unknown"));
+    } else {
+      snprintf(str, sizeof(str), _("%.1f ms/Frame"),
+               1e3 * (getSystemTime() - displayStartTime));
+    }
     // glColor3f(1.0,1.0,1.0);
     Font::drawSimpleText(0, str, 15, screenHeight - 15, 10., 10., 1., 1., 0.25, 0.8);
   }
