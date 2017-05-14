@@ -798,6 +798,7 @@ void EditMode::doCellAction(int code, int direction) {
           c2.heights[corner] += (direction ? -scale : scale);
           c2.heights[Cell::CENTER] += (direction ? -scale : scale) / 4;
         }
+        map->markCellUpdated(x1, y1);
       }
     break;
   case editModeColor:
@@ -826,6 +827,7 @@ void EditMode::doCellAction(int code, int direction) {
           else
             for (i = 0; i < 4; i++) c2.colors[corner][i] = color[i];
         }
+        map->markCellUpdated(x1, y1);
       }
     break;
   case editModeWater:
@@ -845,6 +847,7 @@ void EditMode::doCellAction(int code, int direction) {
           c2.waterHeights[corner] += direction ? -scale : scale;
           c2.waterHeights[Cell::CENTER] += (direction ? -scale : scale) / 4;
         }
+        map->markCellUpdated(x1, y1);
       }
     break;
 
@@ -856,6 +859,7 @@ void EditMode::doCellAction(int code, int direction) {
         if (code == CODE_CELL_S) c2.velocity[1] -= direction ? 0.5 : 0.1;
         if (code == CODE_CELL_W) c2.velocity[0] -= direction ? 0.5 : 0.1;
         if (code == CODE_CELL_E) c2.velocity[0] += direction ? 0.5 : 0.1;
+        map->markCellUpdated(x1, y1);
       }
     break;
 
@@ -870,6 +874,7 @@ void EditMode::doCellAction(int code, int direction) {
       for (y1 = yLow; y1 <= yHigh; y1++) {
         Cell& c2 = map->cell(x1, y1);
         c2.flags = (c2.flags & ~flag) | onoff;
+        map->markCellUpdated(x1, y1);
       }
   } break;
 
@@ -880,6 +885,10 @@ void EditMode::doCellAction(int code, int direction) {
       map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += shift ? -raise : raise;
       map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += shift ? -raise : raise;
       map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] += shift ? -raise : raise;
+      map->markCellUpdated(x, y);
+      map->markCellUpdated(x - 1, y);
+      map->markCellUpdated(x, y - 1);
+      map->markCellUpdated(x - 1, y - 1);
       break;
     case FEATURE_SMALL_HILL:
       map->cell(x, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 1.2;
@@ -908,6 +917,9 @@ void EditMode::doCellAction(int code, int direction) {
       map->cell(x - 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
       map->cell(x, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
       map->cell(x, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
+      for (int k = x - 1; k <= x + 1; k++) {
+        for (int j = y - 1; j <= y + 1; j++) { map->markCellUpdated(k, j); }
+      }
       break;
     case FEATURE_MEDIUM_HILL:
       makeHill(2);
@@ -1432,6 +1444,7 @@ void EditMode::makeHill(int radius) {
           ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
                  sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
           .1;
+      map->markCellUpdated(x + mx, y + my);
     }
 }
 void EditMode::doSmooth(int radius) {
@@ -1445,6 +1458,7 @@ void EditMode::doSmooth(int radius) {
     for (my = -radius; my <= radius; my++) {
       Cell& c1 = map->cell(x + mx, y + my);
       for (i = 0; i < 5; i++) avgHeight += c1.heights[i];
+      map->markCellUpdated(x + mx, y + my);
     }
   avgHeight = avgHeight / (5. * diameter * diameter);
   for (mx = -radius; mx <= radius; mx++)
@@ -1461,6 +1475,7 @@ void EditMode::doSmooth(int radius) {
           c.heights[Cell::NORTH * north + Cell::EAST * east] = steps(
               c.heights[Cell::NORTH * north + Cell::EAST * east] * (1. - s) + avgHeight * s);
         }
+      map->markCellUpdated(x + mx, y + my);
     }
 }
 void EditMode::copyRegion() {

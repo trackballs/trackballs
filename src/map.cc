@@ -366,21 +366,14 @@ Map::Map(char* filename) {
   tx_Map = loadTexture("maptex.png");
 
   cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
-  int cw = -(-width / CHUNKSIZE), ch = -(-height / CHUNKSIZE);
-  chunks = new Chunk[cw * ch]();
-  for (int x = 0; x < cw; x++) {
-    for (int y = 0; y < ch; y++) {
-      chunks[y * cw + x].xm = x * CHUNKSIZE;
-      chunks[y * cw + x].ym = y * CHUNKSIZE;
-    }
-  }
+  chunks.clear();
 }
 Map::~Map() {
   //  glDeleteLists(cache[0].lists[0],(width/4)*(height/4));
   glDeleteLists(displayLists, nLists);
   delete[] cells;
-  delete[] chunks;
   delete[] cacheVisible;
+  chunks.clear();
 }
 
 /* Draws the map on the screen from current viewpoint */
@@ -785,46 +778,28 @@ void Map::fillChunkVBO(Chunk* chunk) {
       tidx[m++] = b + 0;
       tidx[m++] = b + 4;
 
-      // We draw only the walls to two sides, flipping if need be
-      Cell ns = (0 <= x && x < width && 1 <= y && y < height + 1) ? cells[x + (y - 1) * width]
-                                                                  : Cell();
-      Cell ne = (1 <= x && x < width + 1 && 0 <= y && y < height) ? cells[x - 1 + y * width]
-                                                                  : Cell();
-
       // We assume that a quad suffices to render each wall
       // (otherwise, in the worst case, we'd need 6 vertices/side!
-
-      GLfloat* swcolor = &c.wallColors[Cell::SOUTH + Cell::WEST][0];
-      GLfloat* secolor = &c.wallColors[Cell::SOUTH + Cell::EAST][0];
-      if (ns.heights[Cell::NORTH + Cell::WEST] > c.heights[Cell::SOUTH + Cell::WEST] &&
-          ns.heights[Cell::NORTH + Cell::EAST] > c.heights[Cell::SOUTH + Cell::EAST]) {
-        swcolor = &ns.wallColors[Cell::NORTH + Cell::WEST][0];
-        secolor = &ns.wallColors[Cell::NORTH + Cell::EAST][0];
-      }
-
-      GLfloat* encolor = &c.wallColors[Cell::EAST + Cell::NORTH][0];
-      GLfloat* escolor = &c.wallColors[Cell::EAST + Cell::SOUTH][0];
-      if (ne.heights[Cell::WEST + Cell::NORTH] > c.heights[Cell::EAST + Cell::NORTH] &&
-          ne.heights[Cell::WEST + Cell::SOUTH] > c.heights[Cell::EAST + Cell::SOUTH]) {
-        encolor = &ne.wallColors[Cell::WEST + Cell::NORTH][0];
-        escolor = &ne.wallColors[Cell::WEST + Cell::SOUTH][0];
-      }
-
-      // Less X
       int p = j * 8 * 8;
-      packCell(&wdat[p], x, y, c.heights[Cell::SOUTH + Cell::WEST], swcolor, 0.5f, 0.5f);
-      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NORTH + Cell::WEST], swcolor, 0.5f, 0.5f);
-      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST], secolor, 0.5f,
-               0.5f);
-      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NORTH + Cell::EAST], secolor, 0.5f,
-               0.5f);
+      const Cell& ns = cell(x, y - 1);
+      packCell(&wdat[p], x, y, c.heights[Cell::SOUTH + Cell::WEST],
+               c.wallColors[Cell::SOUTH + Cell::WEST], 0.5f, 0.5f);
+      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NORTH + Cell::WEST],
+               ns.wallColors[Cell::NORTH + Cell::WEST], 0.5f, 0.5f);
+      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
+               c.wallColors[Cell::SOUTH + Cell::EAST], 0.5f, 0.5f);
+      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NORTH + Cell::EAST],
+               ns.wallColors[Cell::NORTH + Cell::EAST], 0.5f, 0.5f);
 
-      packCell(&wdat[p + 32], x, y, c.heights[Cell::WEST + Cell::SOUTH], escolor, 0.5f, 0.5f);
-      packCell(&wdat[p + 40], x, y, ne.heights[Cell::EAST + Cell::SOUTH], escolor, 0.5f, 0.5f);
-      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::WEST + Cell::NORTH], encolor, 0.5f,
-               0.5f);
-      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::EAST + Cell::NORTH], encolor, 0.5f,
-               0.5f);
+      const Cell& ne = cell(x - 1, y);
+      packCell(&wdat[p + 32], x, y, c.heights[Cell::WEST + Cell::SOUTH],
+               c.wallColors[Cell::WEST + Cell::SOUTH], 0.5f, 0.5f);
+      packCell(&wdat[p + 40], x, y, ne.heights[Cell::EAST + Cell::SOUTH],
+               ne.wallColors[Cell::EAST + Cell::SOUTH], 0.5f, 0.5f);
+      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::WEST + Cell::NORTH],
+               c.wallColors[Cell::WEST + Cell::NORTH], 0.5f, 0.5f);
+      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::EAST + Cell::NORTH],
+               ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f);
 
       // Render the quad. The heights autocorrect orientations
       int q = j * 12;
@@ -995,13 +970,16 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   glGetDoublev(GL_PROJECTION_MATRIX, proj_d);
   glGetDoublev(GL_MODELVIEW_MATRIX, model_d);
 
-  int cw = -(-width / CHUNKSIZE), ch = -(-height / CHUNKSIZE);
+  int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
+  int prad = (VISRADIUS / CHUNKSIZE) + 1;
+
   int nchunks = 0;
   Chunk* drawlist[1024];
-  for (int i = 0; i < cw; i++) {
+  for (int i = -prad; i <= prad; i++) {
     char debugline[128];
-    for (int j = 0; j < ch; j++) {
-      Chunk* cur = &chunks[j * cw + i];
+    for (int j = -prad; j < +prad; j++) {
+      int hx = origx + i * CHUNKSIZE, hy = origy + j * CHUNKSIZE;
+      Chunk* cur = chunk(hx, hy);
       int update = 0;
       if (stage == 0) {
         // Detect if update needed. Birdseye does't require retexturing
@@ -1011,8 +989,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
                                    cur->minHeight, cur->maxHeight, model_d, proj_d);
 
         // Current cell is in viewport
-        int ox = i * CHUNKSIZE + CHUNKSIZE / 2;
-        int oy = j * CHUNKSIZE + CHUNKSIZE / 2;
+        int ox = hx + CHUNKSIZE / 2;
+        int oy = hy + CHUNKSIZE / 2;
         int iscent = max(abs(ox - cx), abs(oy - cy)) <= CHUNKSIZE / 2;
         int inrad = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
         visible = visible && inrad;
@@ -1029,16 +1007,16 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
       } else {
         // Cleanup buffers for invisible zones
         if (cur->is_active) {
-          glDeleteBuffers(2, &chunks[j * cw + i].tile_vbo[0]);
-          glDeleteBuffers(2, &chunks[j * cw + i].flui_vbo[0]);
-          glDeleteBuffers(2, &chunks[j * cw + i].wall_vbo[0]);
-          glDeleteBuffers(2, &chunks[j * cw + i].line_vbo[0]);
+          glDeleteBuffers(2, &cur->tile_vbo[0]);
+          glDeleteBuffers(2, &cur->flui_vbo[0]);
+          glDeleteBuffers(2, &cur->wall_vbo[0]);
+          glDeleteBuffers(2, &cur->line_vbo[0]);
           cur->is_active = 0;
         }
       }
     }
     if (stage == 0 && 0) {
-      debugline[ch] = '\0';
+      debugline[2 * prad + 1] = '\0';
       printf("%s\n", debugline);
     }
   }
@@ -1148,10 +1126,7 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
 void Map::markCellUpdated(int x, int y) {
   Cell& c = cell(x, y);
   if (0 <= x && x < width && 0 <= y && y <= width) {
-    int cx = x / CHUNKSIZE;
-    int cy = y / CHUNKSIZE;
-    int cw = -(-width / CHUNKSIZE);
-    Chunk& z = chunks[cy * cw + cx];
+    Chunk& z = *chunk(x - x % CHUNKSIZE, y - y % CHUNKSIZE);
     z.is_updated = 1;
     c.displayListDirty = 1;
 
@@ -1567,6 +1542,37 @@ void Map::drawCellAA(int birdsEye, int x, int y) {
       glEnd();
     }
   }
+}
+
+Chunk* Map::chunk(int cx, int cy) {
+  if (cx % CHUNKSIZE != 0 || cy % CHUNKSIZE != 0) {
+    fprintf(stderr, "Bad chunk access %d %d\n", cx, cy);
+    return NULL;
+  }
+  std::pair<int, int> cpos(cx, cy);
+  if (chunks.count(cpos) == 0) {
+    // If local region not present, create associated chunk
+    // & establish height boundaries
+    Chunk c = Chunk();
+    c.is_active = false;
+    c.is_updated = true;
+    c.is_visible = false;
+    c.xm = cx;
+    c.ym = cy;
+    c.minHeight = 1e99;
+    c.maxHeight = 1e-99;
+    for (int dx = c.xm; dx < c.xm + CHUNKSIZE; dx++) {
+      for (int dy = c.xm; dy < c.xm + CHUNKSIZE; dy++) {
+        const Cell& w = cell(dx, dy);
+        for (int k = 0; k < 5; k++) {
+          c.maxHeight = max(c.maxHeight, max(w.heights[k], w.waterHeights[k]));
+          c.minHeight = min(c.minHeight, min(w.heights[k], w.waterHeights[k]));
+        }
+      }
+    }
+    chunks[cpos] = c;
+  }
+  return &chunks[cpos];
 }
 
 /** Saves the map to file in compressed binary or compressed ascii format */

@@ -22,6 +22,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <map>
+
 // more simple like this...
 #define CELL_ICE (1 << 0)
 #define CELL_ACID (1 << 1)
@@ -89,6 +91,7 @@ class Map {
     return cells[(x < 0 ? 0 : (x >= width ? width - 1 : x)) +
                  width * (y < 0 ? 0 : (y >= height ? height - 1 : y))];
   };
+  inline Chunk *chunk(int x, int y);
   void markCellUpdated(int x, int y);
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
@@ -124,7 +127,7 @@ class Map {
  protected:
  private:
   Cell *cells;
-  Chunk *chunks;
+  std::map<std::pair<int, int>, Chunk> chunks;
 
   int cachedCX, cachedCY, cacheCount;
   char *cacheVisible;

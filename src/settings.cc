@@ -205,7 +205,7 @@ Settings::Settings() {
         }
       } else if (!strcmp(skey, "do-reflections")) {
         if (scm_is_integer(value)) {
-          mouseSensitivity = scm_to_int(value);
+          doReflections = scm_to_int(value);
         } else {
           fprintf(stderr, "%s >%s<\n", errstring2, skey);
         }
