@@ -528,8 +528,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   glPopAttrib();
 
-  printf("Time for total draw (stage %d): %03.3fms (%3.3fms). Redraw %d\n", stage,
-         1000.0 * (getSystemTime() - t1), 1e3 * (t1 - t0), redrawCnt);
+  //  printf("Time for total draw (stage %d): %03.3fms (%3.3fms). Redraw %d\n", stage,
+  //         1000.0 * (getSystemTime() - t1), 1e3 * (t1 - t0), redrawCnt);
 }
 char* filetobuf(const char* filename) {
   GLenum err;
@@ -1140,8 +1140,9 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   glUseProgram(0);
   // Revert to fixed-function
 
-  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d %d\n", 1e3 * (getSystemTime() - t1),
-         1e3 * (t1 - t0), nchunks, stage, birdseye);
+  //  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d %d\n", 1e3 * (getSystemTime() -
+  //  t1),
+  //         1e3 * (t1 - t0), nchunks, stage, birdseye);
 }
 
 void Map::markCellUpdated(int x, int y) {

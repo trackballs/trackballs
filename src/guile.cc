@@ -1290,6 +1290,56 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
 }
 #undef FUNC_NAME
 
+/************** copy-cells ************/
+SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
+           (SCM x0, SCM y0, SCM x1, SCM y1, SCM x2, SCM y2, SCM flipx, SCM flipy, SCM transp),
+           "Copies and reflects or rotates a rectangle of cells to new coordinates")
+#define FUNC_NAME s_copy_cells
+{
+  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(x2), x2, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y2), y2, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(SCM_BOOLP(flipx), flipx, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(SCM_BOOLP(flipy), flipy, 8, FUNC_NAME);
+  SCM_ASSERT(SCM_BOOLP(transp), transp, 9, FUNC_NAME);
+  int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
+  int tx = scm_to_int(x2), ty = scm_to_int(y2);
+  int fx = scm_to_bool(flipx), fy = scm_to_bool(flipy), fxy = scm_to_bool(transp);
+  // Load region into memory
+  Map *map = Game::current->map;
+  int w = abs(ix0 - ix1) + 1;
+  int h = abs(ix0 - ix1) + 1;
+  int xs = ix1 > ix0 ? 1 : -1;
+  int ys = iy1 > iy0 ? 1 : -1;
+  Cell *buf = new Cell[w * h];
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < w; y++) { buf[y * w + x] = map->cell(ix0 + xs * x, iy0 + ys * y); }
+  }
+  // Paste with transformation
+  xs *= fx ? -1 : 1;
+  ys *= fy ? -1 : 1;
+  for (int x = 0; x < w; x++) {
+    for (int y = 0; y < w; y++) {
+      int dx, dy;
+      if (fxy) {
+        dx = tx + ys * y;
+        dy = ty + xs * x;
+      } else {
+        dx = tx + xs * x;
+        dy = ty + ys * y;
+      }
+      map->cell(dx, dy) = buf[y * w + x];
+      map->markCellUpdated(dx, dy);
+    }
+  }
+  delete[] buf;
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
 /************ play_effect ************/
 SCM_DEFINE(play_effect, "play-effect", 1, 0, 0, (SCM name), "Attempts to play a soundeffect")
 #define FUNC_NAME s_play_effect
@@ -1309,6 +1359,22 @@ SCM_DEFINE(camera_angle, "camera-angle", 2, 0, 0, (SCM xy, SCM z),
   SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG2, FUNC_NAME);
   ((MainMode *)GameMode::current)->wantedXYAngle = scm_to_double(xy);
   ((MainMode *)GameMode::current)->wantedZAngle = scm_to_double(z);
+  return SCM_UNSPECIFIED;
+}
+#undef FUNC_NAME
+
+/************* camera-force-focus ***********/
+SCM_DEFINE(camera_force_focus, "camera-force-focus", 3, 0, 0, (SCM x, SCM y, SCM z),
+           "Immediately set camera focus to new location. (Camera then drifts to player.)")
+#define FUNC_NAME s_camera_force_focus
+{
+  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
+  Coord3d &c = ((MainMode *)GameMode::current)->camFocus;
+  c[0] = scm_to_double(x);
+  c[1] = scm_to_double(y);
+  c[2] = scm_to_double(z);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
