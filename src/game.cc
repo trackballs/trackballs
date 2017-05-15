@@ -43,6 +43,49 @@ extern GLfloat colors[5][3];
 
 double Game::defaultScores[SCORE_MAX][2];
 
+SCM load_proc(void *body_data) {
+  const char *scmname = (const char *)body_data;
+  printf("Loading script %s ...", scmname);
+  scm_c_primitive_load(scmname);
+  printf(" done\n");
+  return SCM_UNSPECIFIED;
+}
+
+SCM preunwind_proc(void *handler_data, SCM, SCM) {
+  *(SCM *)handler_data = scm_make_stack(SCM_BOOL_T, SCM_EOL);
+}
+
+SCM error_proc(void *, SCM key, SCM parameters) {
+  printf(" failed.\n");
+  SCM display = scm_variable_ref(scm_c_lookup("display"));
+  SCM keystr = scm_object_to_string(key, display);
+  SCM parameterstr = scm_object_to_string(parameters, display);
+  char *ckey = scm_to_utf8_string(keystr);
+  char *cparameter = scm_to_utf8_string(parameterstr);
+
+  fprintf(stderr, "ERROR TYPE: %s\n", ckey);
+  fprintf(stderr, "DETAILS: %s\n", cparameter);
+
+  free(ckey);
+  free(cparameter);
+
+  return SCM_UNSPECIFIED;
+}
+
+void loadScript(const char *path) {
+  SCM stack = SCM_BOOL_F;
+  scm_c_catch(SCM_BOOL_T, load_proc, (void *)path, error_proc, NULL, preunwind_proc, &stack);
+  if (stack != SCM_BOOL_F) {
+    SCM oport = scm_open_output_string();
+    scm_display_backtrace(stack, oport, SCM_BOOL_F, SCM_BOOL_F);
+    SCM stackstr = scm_get_output_string(oport);
+    scm_close_port(oport);
+    char *cstack = scm_to_utf8_string(stackstr);
+    fprintf(stderr, "STACK:\n %s\n", cstack);
+    free(cstack);
+  }
+}
+
 Game::Game(char *name, Gamer *g) {
   Ball::reset();
   ForceField::reset();
@@ -65,9 +108,7 @@ Game::Game(char *name, Gamer *g) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", SHARE_DIR);
-  printf("Loading script %s ...", scmname);
-  scm_c_primitive_load(scmname);
-  printf(" done\n");
+  loadScript(scmname);
 
   player1 = new Player(gamer);
   loadLevel(name);
@@ -112,9 +153,7 @@ void Game::loadLevel(char *name) {
 
   if (map) delete map;
   map = new Map(mapname);
-  printf("Loading script %s ...", scmname);
-  scm_c_primitive_load(scmname);
-  printf(" done\n");
+  loadScript(scmname);
 
   if (player1) player1->timeLeft = startTime;
 
@@ -224,7 +263,6 @@ void Game::draw() {
   set<Animated *>::iterator end = objects->end();
 
   /* Compute visibility of all objects */
-  int nelem = 0;
   for (; i != end; i++) {
     Animated *anim = *i;
     anim->onScreen = 0;
@@ -237,7 +275,6 @@ void Game::draw() {
                      anim->position[2] + anim->boundingBox[0][2],
                      anim->position[2] + anim->boundingBox[1][2], model_matrix, proj_matrix)) {
       anim->onScreen = 1;
-      nelem++;
     }
   }
 
@@ -288,20 +325,13 @@ void Game::drawReflection(Coord3d focus) {
     sub(focus, anim->position, tmp);
     if (length(tmp) > 5.0) continue;
 
-    /* Test all the corners of the bounding box */
-    int dx, dy, dz;
-    for (dx = 0; dx < 2; dx++)
-      for (dy = 0; dy < 2; dy++)
-        for (dz = 0; dz < 2; dz++) {
-          worldCoord[0] = anim->position[0] + anim->boundingBox[dx][0];
-          worldCoord[1] = anim->position[1] + anim->boundingBox[dy][1];
-          worldCoord[2] = anim->position[2] + anim->boundingBox[dz][2];
-        }
-    gluProject(worldCoord[0], worldCoord[1], worldCoord[2], model_matrix, proj_matrix,
-               viewport, &screenCoord[0], &screenCoord[1], &screenCoord[2]);
-    if (screenCoord[0] >= -MARGIN && screenCoord[0] <= screenWidth + MARGIN &&
-        screenCoord[1] >= -MARGIN && screenCoord[1] <= screenHeight + MARGIN)
-      anim->onScreen = 1;
+    anim->onScreen =
+        testBboxClip(anim->position[0] + anim->boundingBox[0][0],
+                     anim->position[0] + anim->boundingBox[1][0],
+                     anim->position[1] + anim->boundingBox[0][1],
+                     anim->position[1] + anim->boundingBox[1][1],
+                     anim->position[2] + anim->boundingBox[0][2],
+                     anim->position[2] + anim->boundingBox[1][2], model_matrix, proj_matrix);
   }
 
   /* Draw first pass of all objects */
