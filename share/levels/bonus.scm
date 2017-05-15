@@ -7,7 +7,7 @@
 (set-start-position 240 241)
 (if (= (difficulty) *easy*)
   (start-time 90) 
-  (if (= (difficulty) *normal)
+  (if (= (difficulty) *normal*)
     (start-time 75)
     (start-time 60)))
 
