@@ -79,7 +79,7 @@ class Chunk {
   GLuint flui_vbo[2];
   GLuint line_vbo[2];
   GLfloat maxHeight, minHeight;
-  int is_active, is_visible, is_updated, num_dynamic;
+  int is_active, is_visible, is_updated, last_shown;
 };
 
 class Map {

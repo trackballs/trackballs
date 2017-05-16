@@ -3,24 +3,17 @@ precision mediump float;
 #endif
 
 uniform int fog_active;
-uniform int render_stage;
 uniform mat4 model_matrix;
 
-// TODO 1d array!
-uniform sampler2D tex;
-varying vec4 fcolor;
+uniform sampler2D wtex;
 varying vec2 texco;
 varying vec3 cpos;
 
 void main(void) {
-  if (render_stage == 0 && fcolor.w < 0.95) {
-    // Drop transparent elements in first stage only.
-    // Tolerance is generous since float packing may induce slight errors
-    discard;
-  }
+  vec4 fcolor = vec4(0.3, 0.3, 0.7, 0.6);
 
   vec3 normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
-  vec4 texcolor = fcolor * texture2D(tex, texco);
+  vec4 texcolor = fcolor * texture2D(wtex, texco);
 
   // Lighting model, not tuned very much
   vec3 L = normalize(gl_LightSource[0].position.xyz - cpos);
