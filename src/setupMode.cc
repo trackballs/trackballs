@@ -88,18 +88,32 @@ void SetupMode::display() {
   /* Draw background */
   Enter2DMode();
   glColor4f(1.0, 1.0, 1.0, 1.0);
-  if (screenshot)
+  GLfloat coord[4];
+  if (screenshot) {
     glBindTexture(GL_TEXTURE_2D, screenshot);
-  else
+    for (int i = 0; i < 4; i++) coord[i] = scrshtCoord[i];
+  } else {
     glBindTexture(GL_TEXTURE_2D, texture);
+    for (int i = 0; i < 4; i++) coord[i] = texCoord[i];
+  }
+  /* avoid distortion */
+  if (screenWidth * coord[3] > screenHeight * coord[2]) {
+    double delta = coord[3] - coord[2] * screenHeight / (double)max(screenWidth, 1);
+    coord[1] += delta / 2;
+    coord[3] -= delta;
+  } else {
+    double delta = coord[2] - coord[3] * screenWidth / (double)max(screenHeight, 1);
+    coord[0] += delta / 2;
+    coord[2] -= delta;
+  }
   glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMaxX, texMinY);
+  glTexCoord2f(coord[0], coord[1]);
   glVertex2i(0, 0);
-  glTexCoord2f(texMinX, texMinY);
+  glTexCoord2f(coord[0] + coord[2], coord[1]);
   glVertex2i(screenWidth, 0);
-  glTexCoord2f(texMaxX, texMaxY);
+  glTexCoord2f(coord[0], coord[1] + coord[3]);
   glVertex2i(0, screenHeight);
-  glTexCoord2f(texMinX, texMaxY);
+  glTexCoord2f(coord[0] + coord[2], coord[1] + coord[3]);
   glVertex2i(screenWidth, screenHeight);
   glEnd();
   Leave2DMode();
@@ -351,12 +365,7 @@ void SetupMode::activated() {
   }
 
   /* Preloads the background texture. */
-  GLfloat texcoord[4];
-  texture = LoadTexture(background, texcoord);
-  texMaxX = texcoord[0];
-  texMinY = texcoord[1];
-  texMinX = texcoord[2];
-  texMaxY = texcoord[3];
+  texture = LoadTexture(background, texCoord);
 
   t = 0.0;
   level = 0;
@@ -452,11 +461,8 @@ void SetupMode::levelSetChanged() {
   if (settings->levelSets[levelSet].imagename[0] != 0 && settings->gfx_details >= 2) {
     SDL_Surface *surf = IMG_Load(settings->levelSets[levelSet].imagename);
     if (surf) {
-      GLfloat texcoord[4];
-      screenshot = LoadTexture(surf, texcoord);
+      screenshot = LoadTexture(surf, scrshtCoord);
       SDL_FreeSurface(surf);
-      screenshotMax[0] = texcoord[2];
-      screenshotMax[1] = texcoord[3];
     }
   }
 }

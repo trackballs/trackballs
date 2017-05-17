@@ -44,11 +44,10 @@ class SetupMode : public GameMode {
   double t;
 
   GLuint texture;
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
+  GLfloat texCoord[4];
 
   GLuint screenshot;
-  GLfloat screenshotMax[2];
+  GLfloat scrshtCoord[4];
 };
 
 #endif
