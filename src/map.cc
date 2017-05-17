@@ -627,37 +627,43 @@ inline short clampSShort(GLfloat val, short low, short high) {
 }
 
 inline void packPair(GLfloat ztoa, GLfloat ztob, uint32_t* out) {
-  ushort av = clampUShort(65535.f * ztoa, 0, -1);
-  ushort bv = clampUShort(65535.f * ztob, 0, -1);
-  *out = (bv * (1 << 16) + av);
+  ushort av = min(max((int)(65535 * ztoa), 0), 65535);
+  ushort bv = min(max((int)(65535 * ztob), 0), 65535);
+  *out = ((uint16_t)bv * (1 << 16) + (uint16_t)av);
 }
 inline void packSPair(GLfloat ztoa, GLfloat ztob, uint32_t* out) {
-  short av = clampSShort(32677.f * ztoa, -32677, 32677);
-  short bv = clampSShort(32677.f * ztob, -32677, 32677);
-  *out = (bv * (1 << 16) + av);
+  short av = min(max((int)(32677 * ztoa), -32677), 32677);
+  short bv = min(max((int)(32677 * ztob), -32677), 32677);
+  *out = ((uint16_t)bv * (1 << 16) + (uint16_t)av);
 }
 
-inline void packCell(GLfloat* out, GLfloat px, GLfloat py, GLfloat pz, const GLfloat* colors,
+inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, const GLfloat* colors,
                      GLfloat tx, GLfloat ty, const float vel[2]) {
-  out[0] = px;
-  out[1] = py;
-  out[2] = pz;
-  packPair(colors[0], colors[1], (uint32_t*)&out[3]);
-  packPair(colors[2], colors[3], (uint32_t*)&out[4]);
-  packPair(tx, ty, (uint32_t*)&out[5]);
-  packSPair(0.25 * vel[0], 0.25 * vel[1], (uint32_t*)&out[6]);
-  out[7] = 0.;
+  uint32_t* aout = (uint32_t*)fout;
+  fout[0] = px;
+  fout[1] = py;
+  fout[2] = pz;
+  aout[3] = (((uint32_t)(65535.f * colors[1])) << 16) + (uint32_t)(65535.f * colors[0]);
+  aout[4] = (((uint32_t)(65535.f * colors[3])) << 16) + (uint32_t)(65535.f * colors[2]);
+  aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
+  int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
+  int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
+  aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
+  aout[7] = 0;
 }
-inline void packWaterCell(GLfloat* out, GLfloat px, GLfloat py, GLfloat pz, const float vel[2],
-                          GLfloat tx, GLfloat ty) {
-  out[0] = px;
-  out[1] = py;
-  out[2] = pz;
-  ((uint32_t*)out)[3] = -1;
-  ((uint32_t*)out)[4] = -1;
-  packPair(tx, ty, (uint32_t*)&out[5]);
-  packSPair(0.25 * vel[0], 0.25 * vel[1], (uint32_t*)&out[6]);
-  out[7] = 0.;
+inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
+                          const float vel[2], GLfloat tx, GLfloat ty) {
+  uint32_t* aout = (uint32_t*)fout;
+  fout[0] = px;
+  fout[1] = py;
+  fout[2] = pz;
+  aout[3] = -1;
+  aout[4] = -1;
+  aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
+  int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
+  int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
+  aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
+  aout[7] = 0;
 }
 
 inline double smoothSemiRand(int x, int y, double scale) {
@@ -668,7 +674,7 @@ inline double smoothSemiRand(int x, int y, double scale) {
   return semiRand(x, y, t) * (1. - frac) + semiRand(x, y, t + 1) * frac;
 }
 
-void Map::fillChunkVBO(Chunk* chunk) {
+void Map::fillChunkVBO(Chunk* chunk) const {
   GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
   ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
   GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
@@ -978,7 +984,6 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   int nchunks = 0;
   Chunk* drawlist[1024];
   for (int i = -prad; i <= prad; i++) {
-    char debugline[128];
     for (int j = -prad; j < +prad; j++) {
       int hx = origx + i * CHUNKSIZE, hy = origy + j * CHUNKSIZE;
       Chunk* cur = chunk(hx, hy);
@@ -993,12 +998,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
         // Current cell is in viewport
         int ox = hx + CHUNKSIZE / 2;
         int oy = hy + CHUNKSIZE / 2;
-        int iscent = max(abs(ox - cx), abs(oy - cy)) <= CHUNKSIZE / 2;
         int inrad = (ox - cx) * (ox - cx) + (oy - cy) * (oy - cy) < 2 * VISRADIUS * VISRADIUS;
         visible = visible && inrad;
-
-        // Mark self with Z:!
-        debugline[j] = iscent ? 'Z' : (visible ? 'X' : '.');
 
         cur->is_visible = visible;
       }
@@ -1017,10 +1018,6 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
           cur->is_active = 0;
         }
       }
-    }
-    if (stage == 0 && 0) {
-      debugline[2 * prad + 1] = '\0';
-      printf("%s\n", debugline);
     }
   }
 

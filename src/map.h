@@ -88,15 +88,16 @@ class Map {
   virtual ~Map();
 
   inline Cell &cell(int x, int y) const {
-    return cells[(x < 0 ? 0 : (x >= width ? width - 1 : x)) +
-                 width * (y < 0 ? 0 : (y >= height ? height - 1 : y))];
+    int lx = std::max(std::min(x, width - 1), 0);
+    int ly = std::max(std::min(y, height - 1), 0);
+    return cells[lx + width * ly];
   };
   inline Chunk *chunk(int x, int y);
   void markCellUpdated(int x, int y);
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
   void drawMapVBO(int birdseye, int x, int y, int stage);
-  void fillChunkVBO(Chunk *c);
+  void fillChunkVBO(Chunk *c) const;
   void drawCell(int birdsEye, int stage, int x, int y);
   void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
@@ -108,8 +109,7 @@ class Map {
   inline Real getWaterHeight(Real x, Real y) const {
     int ix = (int)x;
     int iy = (int)y;
-    Cell &c = cell(ix, iy);
-    return c.getWaterHeight(x - ix, y - iy);
+    return cell(ix, iy).getWaterHeight(x - ix, y - iy);
   }
 
   int width;

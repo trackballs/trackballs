@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 project(trackballs)
 
-# Compile options
-add_compile_options(-Os)
-add_compile_options(-ggdb3)
+# Compile options (ought to set mode dependent)
+#add_compile_options(-Os)
+#add_compile_options(-ggdb3)
 add_compile_options(-Wall)
 
 # Required libraries
