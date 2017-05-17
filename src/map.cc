@@ -614,29 +614,6 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   return shaderprogram;
 }
 
-inline ushort clampUShort(GLfloat val, ushort low, ushort high) {
-  if (val < low) return low;
-  if (val > high) return high;
-  return (ushort)val;
-}
-
-inline short clampSShort(GLfloat val, short low, short high) {
-  if (val <= low) return low;
-  if (val >= high) return high;
-  return (short)val;
-}
-
-inline void packPair(GLfloat ztoa, GLfloat ztob, uint32_t* out) {
-  ushort av = min(max((int)(65535 * ztoa), 0), 65535);
-  ushort bv = min(max((int)(65535 * ztob), 0), 65535);
-  *out = ((uint16_t)bv * (1 << 16) + (uint16_t)av);
-}
-inline void packSPair(GLfloat ztoa, GLfloat ztob, uint32_t* out) {
-  short av = min(max((int)(32677 * ztoa), -32677), 32677);
-  short bv = min(max((int)(32677 * ztob), -32677), 32677);
-  *out = ((uint16_t)bv * (1 << 16) + (uint16_t)av);
-}
-
 inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, const GLfloat* colors,
                      GLfloat tx, GLfloat ty, const float vel[2]) {
   uint32_t* aout = (uint32_t*)fout;
@@ -684,43 +661,40 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   GLfloat* fdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 5];
   ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
 
-  // Update exact chunk bounds as well
-  GLfloat minz = 1e99, maxz = -1e99;
-
-  if (chunk->is_active) {
-    // Stopgap: wipe/reload style.
-    glDeleteBuffers(2, &chunk->tile_vbo[0]);
-    glDeleteBuffers(2, &chunk->flui_vbo[0]);
-    glDeleteBuffers(2, &chunk->wall_vbo[0]);
-    glDeleteBuffers(2, &chunk->line_vbo[0]);
-    chunk->is_active = 0;
+  // Create data if not already there
+  int first_time = 0;
+  if (!chunk->is_active) {
+    glGenBuffers(2, &chunk->tile_vbo[0]);
+    glGenBuffers(2, &chunk->wall_vbo[0]);
+    glGenBuffers(2, &chunk->line_vbo[0]);
+    glGenBuffers(2, &chunk->flui_vbo[0]);
+    first_time = 1;
   }
-  glGenBuffers(2, &chunk->tile_vbo[0]);
-  glGenBuffers(2, &chunk->wall_vbo[0]);
-  glGenBuffers(2, &chunk->line_vbo[0]);
-  glGenBuffers(2, &chunk->flui_vbo[0]);
   chunk->is_active = 1;
 
-  // Further speed boosts will come from finer-grained updates
-  // (ex. finite cell height shifting)
+  // Update exact chunk bounds as well, and mark all first-timers as
+  // updated
+  GLfloat minz = 1e99, maxz = -1e99;
   for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
     for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
-      // Could speed entry up a lot with a geometry shader
-      // to eliminate redundant coordinates...
       Cell& c = cell(x, y);
-      c.displayListDirty = 0;
-
-      // Update height table for future actions
+      c.displayListDirty |= first_time;
       for (int k = 0; k < 5; k++) {
         minz = min(minz, c.heights[k]);
         minz = min(minz, c.waterHeights[k]);
         maxz = max(maxz, c.heights[k]);
         maxz = max(maxz, c.waterHeights[k]);
       }
+    }
+  }
+  int jstart = -1;
+  for (int j = 0; j < CHUNKSIZE * CHUNKSIZE; j++) {
+    int x = chunk->xm + j % CHUNKSIZE;
+    int y = chunk->ym + j / CHUNKSIZE;
+    Cell& c = cell(x, y);
+    if (c.displayListDirty) {
+      if (jstart < 0) { jstart = j; }
 
-      int j = (x - chunk->xm) + (y - chunk->ym) * CHUNKSIZE;
-      // TODO: determine if texture arrays are available!
-      // (then we just pass short/short/short in
       float txo = 0.5f, tyo = 0.5f;
       int typed = c.flags & (CELL_ICE | CELL_ACID | CELL_TRACK | CELL_SAND);
       if (typed || c.texture >= 0) {
@@ -768,24 +742,8 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                c.heights[Cell::CENTER], &c.colors[Cell::CENTER][0], txo + 0.0625f,
                tyo + 0.0625f, c.velocity);
 
-      int m = j * 12;
-      ushort b = (ushort)5 * j;
-      tidx[m++] = b + 0;
-      tidx[m++] = b + 1;
-      tidx[m++] = b + 4;
-
-      // render both sides just in case
-      tidx[m++] = b + 1;
-      tidx[m++] = b + 2;
-      tidx[m++] = b + 4;
-
-      tidx[m++] = b + 2;
-      tidx[m++] = b + 3;
-      tidx[m++] = b + 4;
-
-      tidx[m++] = b + 3;
-      tidx[m++] = b + 0;
-      tidx[m++] = b + 4;
+      const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
+      for (uint i = 0; i < 12; i++) { tidx[j * 12 + i] = 5 * j + topindices[i]; }
 
       // We assume that a quad suffices to render each wall
       // (otherwise, in the worst case, we'd need 6 vertices/side!
@@ -812,20 +770,8 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f, nv);
 
       // Render the quad. The heights autocorrect orientations
-      int q = j * 12;
-      widx[q++] = j * 8 + 0;
-      widx[q++] = j * 8 + 1;
-      widx[q++] = j * 8 + 2;
-      widx[q++] = j * 8 + 1;
-      widx[q++] = j * 8 + 3;
-      widx[q++] = j * 8 + 2;
-
-      widx[q++] = j * 8 + 4;
-      widx[q++] = j * 8 + 6;
-      widx[q++] = j * 8 + 5;
-      widx[q++] = j * 8 + 6;
-      widx[q++] = j * 8 + 7;
-      widx[q++] = j * 8 + 5;
+      const ushort quadmap[12] = {0, 1, 2, 1, 3, 2, 4, 6, 5, 6, 7, 5};
+      for (uint i = 0; i < 12; i++) { widx[j * 12 + i] = j * 8 + quadmap[i]; }
 
       // Line data ! (thankfully they're all black)
       int s = j * 12;
@@ -868,56 +814,104 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         packWaterCell(&fdat[u + 32], x + 0.5f, y + 0.5f, c.waterHeights[Cell::CENTER],
                       c.velocity, 0.5f, 0.5f);
 
-        int v = j * 12;
-        ushort f = (ushort)5 * j;
-        fidx[v++] = f + 0;
-        fidx[v++] = f + 1;
-        fidx[v++] = f + 4;
-        fidx[v++] = f + 1;
-        fidx[v++] = f + 2;
-        fidx[v++] = f + 4;
-        fidx[v++] = f + 2;
-        fidx[v++] = f + 3;
-        fidx[v++] = f + 4;
-        fidx[v++] = f + 3;
-        fidx[v++] = f + 0;
-        fidx[v++] = f + 4;
+        for (uint i = 0; i < 12; i++) { fidx[j * 12 + i] = 5 * j + topindices[i]; }
       } else {
         // Zero tile (safer than uninitialized)
         memset(&fdat[j * 5 * 8], 0, 5 * 8 * sizeof(GLfloat));
         for (int i = 0; i < 12; i++) { fidx[j * 12 + i] = 0; }
       }
     }
+    if ((!c.displayListDirty || j == CHUNKSIZE * CHUNKSIZE - 1) && jstart >= 0) {
+      int jend = c.displayListDirty ? CHUNKSIZE * CHUNKSIZE : j;
+      size_t tile_data_size = 5 * 8 * sizeof(GLfloat);
+      size_t tile_index_size = 12 * sizeof(ushort);
+      size_t wall_data_size = 8 * 8 * sizeof(GLfloat);
+      size_t wall_index_size = 12 * sizeof(ushort);
+      size_t line_data_size = 4 * 3 * sizeof(GLfloat);
+      size_t line_index_size = 8 * sizeof(ushort);
+      size_t flui_data_size = 5 * 8 * sizeof(GLfloat);
+      size_t flui_index_size = 12 * sizeof(ushort);
+
+      if (first_time) {
+        // Tiles
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_data_size, tdat,
+                     GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size, tidx,
+                     GL_DYNAMIC_DRAW);
+        // Walls
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_data_size, wdat,
+                     GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_index_size, widx,
+                     GL_DYNAMIC_DRAW);
+        // Lines
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * line_data_size, ldat,
+                     GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->line_vbo[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * line_index_size, lidx,
+                     GL_DYNAMIC_DRAW);
+        // Water
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->flui_vbo[0]);
+        glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * flui_data_size, fdat,
+                     GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * flui_index_size, fidx,
+                     GL_DYNAMIC_DRAW);
+      } else {
+        // Tiles
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, jstart * tile_data_size,
+                        (jend - jstart) * tile_data_size,
+                        &tdat[jstart * tile_data_size / sizeof(GLfloat)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
+                        (jend - jstart) * tile_index_size,
+                        &tidx[jstart * tile_index_size / sizeof(ushort)]);
+        // Walls
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, jstart * wall_data_size,
+                        (jend - jstart) * wall_data_size,
+                        &wdat[jstart * wall_data_size / sizeof(GLfloat)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * wall_index_size,
+                        (jend - jstart) * wall_index_size,
+                        &widx[jstart * wall_index_size / sizeof(ushort)]);
+        // Lines
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, jstart * line_data_size,
+                        (jend - jstart) * line_data_size,
+                        &ldat[jstart * line_data_size / sizeof(GLfloat)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->line_vbo[1]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * line_index_size,
+                        (jend - jstart) * line_index_size,
+                        &lidx[jstart * line_index_size / sizeof(ushort)]);
+        // Water
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->flui_vbo[0]);
+        glBufferSubData(GL_ARRAY_BUFFER, jstart * flui_data_size,
+                        (jend - jstart) * flui_data_size,
+                        &fdat[jstart * flui_data_size / sizeof(GLfloat)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * flui_index_size,
+                        (jend - jstart) * flui_index_size,
+                        &tidx[jstart * flui_index_size / sizeof(ushort)]);
+      }
+      jstart = -1;
+    }
+  }
+
+  // Wipe dirty list. This _MUST_ be a separate phase
+  // since cell(x,y) is not guaranteed to be unique!
+  for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
+    for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
+      cell(x, y).displayListDirty = 0;
+    }
   }
 
   // Tiles
-  glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), tdat,
-               GL_STREAM_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), tidx,
-               GL_STREAM_DRAW);
-  // Walls
-  glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * 8 * sizeof(GLfloat), wdat,
-               GL_STREAM_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), widx,
-               GL_STREAM_DRAW);
-  // Lines
-  glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 4 * 3 * sizeof(GLfloat), ldat,
-               GL_STREAM_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->line_vbo[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 8 * sizeof(ushort), lidx,
-               GL_STREAM_DRAW);
-  // Water (alt layer ?)
-  glBindBuffer(GL_ARRAY_BUFFER, chunk->flui_vbo[0]);
-  glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 5 * 8 * sizeof(GLfloat), fdat,
-               GL_STREAM_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * 12 * sizeof(ushort), fidx,
-               GL_STREAM_DRAW);
 
   delete[] tdat;
   delete[] tidx;
@@ -1145,6 +1139,8 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
 }
 
 void Map::markCellUpdated(int x, int y) {
+  // TODO: establish means to mark a range updated
+  // (Why? would save a _lot_ of time on bulk operations)
   Cell& c = cell(x, y);
   if (0 <= x && x < width && 0 <= y && y <= width) {
     Chunk& z = *chunk(x - x % CHUNKSIZE, y - y % CHUNKSIZE);

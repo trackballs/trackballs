@@ -1177,11 +1177,16 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
       c.heights[1] = scm_to_double(h1);
       c.heights[2] = scm_to_double(h2);
       c.heights[3] = scm_to_double(h3);
-      Game::current->map->markCellUpdated(x, y);
       if (SCM_NUMBERP(h4))
         c.heights[4] = scm_to_double(h4);
       else
         c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
+      Game::current->map->markCellUpdated(x, y);
+      // Include neighbors as walls change
+      Game::current->map->markCellUpdated(x + 1, y);
+      Game::current->map->markCellUpdated(x - 1, y);
+      Game::current->map->markCellUpdated(x, y - 1);
+      Game::current->map->markCellUpdated(x, y + 1);
     }
   return SCM_UNSPECIFIED;
 }
@@ -1247,6 +1252,10 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
       c.colors[i][1] = (GLfloat)scm_to_double(g);
       c.colors[i][2] = (GLfloat)scm_to_double(b);
       Game::current->map->markCellUpdated(x, y);
+      Game::current->map->markCellUpdated(x + 1, y);
+      Game::current->map->markCellUpdated(x - 1, y);
+      Game::current->map->markCellUpdated(x, y + 1);
+      Game::current->map->markCellUpdated(x, y - 1);
       if (SCM_NUMBERP(a))
         c.colors[i][3] = (GLfloat)scm_to_double(a);
       else
@@ -1333,6 +1342,10 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
       }
       map->cell(dx, dy) = buf[y * w + x];
       map->markCellUpdated(dx, dy);
+      map->markCellUpdated(dx + 1, dy);
+      map->markCellUpdated(dx - 1, dy);
+      map->markCellUpdated(dx, dy + 1);
+      map->markCellUpdated(dx, dy - 1);
     }
   }
   delete[] buf;
