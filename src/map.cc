@@ -580,6 +580,8 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
     glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
     fprintf(stderr, "%s VILOG |%s|\n", vertname, vertexInfoLog);
     free(vertexInfoLog);
+    free(vertexsource);
+    free(fragmentsource);
     return -1;
   }
   GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -590,10 +592,14 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
     glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
     char* fragmentInfoLog = (char*)malloc(maxLength);
     glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
-    free(fragmentInfoLog);
     fprintf(stderr, "%s FILOG |%s|\n", fragname, fragmentInfoLog);
+    free(fragmentInfoLog);
+    free(vertexsource);
+    free(fragmentsource);
     return -1;
   }
+  free(vertexsource);
+  free(fragmentsource);
   GLuint shaderprogram = glCreateProgram();
   glAttachShader(shaderprogram, vertexshader);
   glAttachShader(shaderprogram, fragmentshader);
@@ -612,6 +618,7 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
     free(shaderProgramInfoLog);
     return -1;
   }
+  // TODO: put into glHelp; and include a function to free it all
   return shaderprogram;
 }
 
