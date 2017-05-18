@@ -28,9 +28,14 @@ using namespace std;
 
 Trampoline::Trampoline(int x, int y) : GameHook(), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
+  // Q: when to clear trampoline effect
   Cell& c = Game::current->map->cell(cx, cy);
   Real dh = min(0.5 * t, c.sunken - 1e-5);
   for (int i = 0; i < 5; i++) c.heights[i] += dh;
   c.sunken -= dh;
   Game::current->map->markCellUpdated(cx, cy);
+  Game::current->map->markCellUpdated(cx + 1, cy);
+  Game::current->map->markCellUpdated(cx - 1, cy);
+  Game::current->map->markCellUpdated(cx, cy + 1);
+  Game::current->map->markCellUpdated(cx, cy - 1);
 }

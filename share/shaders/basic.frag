@@ -11,6 +11,7 @@ uniform sampler2D tex;
 varying vec4 fcolor;
 varying vec2 texco;
 varying vec3 cpos;
+varying vec3 inormal;
 
 void main(void) {
   if (render_stage == 0 && fcolor.w < 0.95) {
@@ -19,7 +20,8 @@ void main(void) {
     discard;
   }
 
-  vec3 normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
+  // Linear combinations of units need not be units
+  vec3 normal = normalize(inormal);
   vec4 texcolor = fcolor * texture2D(tex, texco);
 
   // Lighting model, not tuned very much
@@ -29,9 +31,9 @@ void main(void) {
   vec4 Iambient = texcolor * gl_LightSource[0].ambient;
   vec4 Idiffuse = texcolor * gl_LightSource[0].diffuse * max(dot(normal, L), 0.0);
   Idiffuse = clamp(Idiffuse, 0.0, 1.0);
-  //  vec4 Ispecular = texcolor * gl_LightSource[0].specular *
-  //                   pow(max(dot(R, E), 0.0), 0.3 * gl_FrontMaterial.shininess);
-  //  Ispecular = clamp(Ispecular, 0.0, 1.0);
+//    vec4 Ispecular = texcolor * gl_LightSource[0].specular *
+//                     pow(max(dot(R, E), 0.0), 0.3 * gl_FrontMaterial.shininess);
+//    Ispecular = clamp(Ispecular, 0.0, 1.0);
   vec4 Ispecular = vec4(0, 0, 0, 0);
 
   vec4 surfcolor = gl_LightModel.ambient + Iambient + Idiffuse + Ispecular;

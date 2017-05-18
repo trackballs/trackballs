@@ -601,6 +601,7 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   glBindAttribLocation(shaderprogram, 1, "in_Color");
   glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
   glBindAttribLocation(shaderprogram, 3, "in_Velocity");
+  glBindAttribLocation(shaderprogram, 4, "in_Normal");
   glLinkProgram(shaderprogram);
   glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int*)&IsLinked);
   if (IsLinked == 0) {
@@ -614,8 +615,27 @@ GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
   return shaderprogram;
 }
 
+inline uint32_t packNormal(GLfloat a, GLfloat b, GLfloat c) {
+  GLfloat v[3] = {a, b, c};
+  GLfloat norm = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  if (norm > 0.) {
+    v[0] = v[0] / norm;
+    v[1] = v[1] / norm;
+    v[2] = v[2] / norm;
+  }
+  uint32_t d = (512 + v[2] * 511.f);
+  uint32_t e = (512 + v[1] * 511.f);
+  uint32_t f = (512 + v[0] * 511.f);
+  uint32_t x = 0;
+  // Alpha (<<30) is irrelevant; can abuse for flags..
+  x |= d << 20;
+  x |= e << 10;
+  x |= f << 0;
+  return x;
+}
+
 inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, const GLfloat* colors,
-                     GLfloat tx, GLfloat ty, const float vel[2]) {
+                     GLfloat tx, GLfloat ty, const float vel[2], const GLfloat normal[3]) {
   uint32_t* aout = (uint32_t*)fout;
   fout[0] = px;
   fout[1] = py;
@@ -626,10 +646,16 @@ inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, const GL
   int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
   int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  aout[7] = 0;
+  //  printf("%x %x\n",packNormal(0,0,1.f),packNormal(0,0,-1.f));
+  //  printf("%x %x\n",packNormal(0,1,0.f),packNormal(0,-1,0.f));
+  //  printf("%x %x\n",packNormal(1,0,0.f),packNormal(-1,0,0.f));
+  //  exit(1);
+
+  aout[7] = packNormal(normal[0], normal[1], normal[2]);
 }
 inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
-                          const float vel[2], GLfloat tx, GLfloat ty) {
+                          const float vel[2], GLfloat tx, GLfloat ty,
+                          const GLfloat normal[3]) {
   uint32_t* aout = (uint32_t*)fout;
   fout[0] = px;
   fout[1] = py;
@@ -640,7 +666,7 @@ inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
   int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
   int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  aout[7] = 0;
+  aout[7] = packNormal(normal[0], normal[1], normal[2]);
 }
 
 inline double smoothSemiRand(int x, int y, double scale) {
@@ -649,6 +675,12 @@ inline double smoothSemiRand(int x, int y, double scale) {
   int t = (int)dt;
   double frac = dt - t;
   return semiRand(x, y, t) * (1. - frac) + semiRand(x, y, t + 1) * frac;
+}
+
+int cmp(float l, float r) {
+  if (l > r) return 1;
+  if (r > l) return -1;
+  return 0;
 }
 
 void Map::fillChunkVBO(Chunk* chunk) const {
@@ -729,18 +761,38 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         // Nothing much...
       }
 
+      GLfloat nnormal[3] = {0.f, 1.f, 0.f};
+      GLfloat snormal[3] = {0.f, -1.f, 0.f};
+      GLfloat enormal[3] = {-1.f, 0.f, 0.f};
+      GLfloat wnormal[3] = {1.f, 0.f, 0.f};
+
+      double cnormal[5][3];
+      c.getNormal(&cnormal[0][0], 0);
+      c.getNormal(&cnormal[1][0], 1);
+      c.getNormal(&cnormal[2][0], 2);
+      c.getNormal(&cnormal[3][0], 3);
+      c.getNormal(&cnormal[4][0], 4);
+      float fcnormal[5][3];
+      for (size_t i = 0; i < 15; i++) {
+        fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
+      }
+
       int k = j * 5 * 8;
       packCell(&tdat[k], x, y, c.heights[Cell::SOUTH + Cell::WEST],
-               &c.colors[Cell::SOUTH + Cell::WEST][0], txo, tyo, c.velocity);
+               &c.colors[Cell::SOUTH + Cell::WEST][0], txo, tyo, c.velocity,
+               fcnormal[Cell::SOUTH + Cell::WEST]);
       packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
-               &c.colors[Cell::SOUTH + Cell::EAST][0], txo + 0.125f, tyo, c.velocity);
+               &c.colors[Cell::SOUTH + Cell::EAST][0], txo + 0.125f, tyo, c.velocity,
+               fcnormal[Cell::SOUTH + Cell::EAST]);
       packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NORTH + Cell::EAST],
-               &c.colors[Cell::NORTH + Cell::EAST][0], txo + 0.125f, tyo + 0.125f, c.velocity);
+               &c.colors[Cell::NORTH + Cell::EAST][0], txo + 0.125f, tyo + 0.125f, c.velocity,
+               fcnormal[Cell::NORTH + Cell::EAST]);
       packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NORTH + Cell::WEST],
-               &c.colors[Cell::NORTH + Cell::WEST][0], txo, tyo + 0.125f, c.velocity);
-      packCell(&tdat[k + 32], 0.5f * float(2 * x + 1), 0.5f * float(2 * y + 1),
-               c.heights[Cell::CENTER], &c.colors[Cell::CENTER][0], txo + 0.0625f,
-               tyo + 0.0625f, c.velocity);
+               &c.colors[Cell::NORTH + Cell::WEST][0], txo, tyo + 0.125f, c.velocity,
+               fcnormal[Cell::NORTH + Cell::WEST]);
+      packCell(&tdat[k + 32], x + 0.5f, y + 0.5f, c.heights[Cell::CENTER],
+               &c.colors[Cell::CENTER][0], txo + 0.0625f, tyo + 0.0625f, c.velocity,
+               fcnormal[Cell::CENTER]);
 
       const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
       for (uint i = 0; i < 12; i++) { tidx[j * 12 + i] = 5 * j + topindices[i]; }
@@ -750,24 +802,40 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int p = j * 8 * 8;
       const Cell& ns = cell(x, y - 1);
       const float nv[2] = {0.f, 0.f};
+      int nsover =
+          cmp(c.heights[Cell::SOUTH + Cell::WEST], ns.heights[Cell::NORTH + Cell::WEST]) +
+              cmp(c.heights[Cell::SOUTH + Cell::EAST], ns.heights[Cell::NORTH + Cell::EAST]) >
+          0;
       packCell(&wdat[p], x, y, c.heights[Cell::SOUTH + Cell::WEST],
-               c.wallColors[Cell::SOUTH + Cell::WEST], 0.5f, 0.5f, nv);
+               c.wallColors[Cell::SOUTH + Cell::WEST], 0.5f, 0.5f, nv,
+               nsover ? snormal : nnormal);
       packCell(&wdat[p + 8], x, y, ns.heights[Cell::NORTH + Cell::WEST],
-               ns.wallColors[Cell::NORTH + Cell::WEST], 0.5f, 0.5f, nv);
+               ns.wallColors[Cell::NORTH + Cell::WEST], 0.5f, 0.5f, nv,
+               nsover ? snormal : nnormal);
       packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
-               c.wallColors[Cell::SOUTH + Cell::EAST], 0.5f, 0.5f, nv);
+               c.wallColors[Cell::SOUTH + Cell::EAST], 0.5f, 0.5f, nv,
+               nsover ? snormal : nnormal);
       packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NORTH + Cell::EAST],
-               ns.wallColors[Cell::NORTH + Cell::EAST], 0.5f, 0.5f, nv);
+               ns.wallColors[Cell::NORTH + Cell::EAST], 0.5f, 0.5f, nv,
+               nsover ? snormal : nnormal);
 
       const Cell& ne = cell(x - 1, y);
+      int ewover =
+          cmp(c.heights[Cell::WEST + Cell::SOUTH], ne.heights[Cell::EAST + Cell::SOUTH]) +
+              cmp(c.heights[Cell::WEST + Cell::NORTH], ne.heights[Cell::EAST + Cell::NORTH]) >
+          0;
       packCell(&wdat[p + 32], x, y, c.heights[Cell::WEST + Cell::SOUTH],
-               c.wallColors[Cell::WEST + Cell::SOUTH], 0.5f, 0.5f, nv);
+               c.wallColors[Cell::WEST + Cell::SOUTH], 0.5f, 0.5f, nv,
+               ewover ? enormal : wnormal);
       packCell(&wdat[p + 40], x, y, ne.heights[Cell::EAST + Cell::SOUTH],
-               ne.wallColors[Cell::EAST + Cell::SOUTH], 0.5f, 0.5f, nv);
+               ne.wallColors[Cell::EAST + Cell::SOUTH], 0.5f, 0.5f, nv,
+               ewover ? enormal : wnormal);
       packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::WEST + Cell::NORTH],
-               c.wallColors[Cell::WEST + Cell::NORTH], 0.5f, 0.5f, nv);
+               c.wallColors[Cell::WEST + Cell::NORTH], 0.5f, 0.5f, nv,
+               ewover ? enormal : wnormal);
       packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::EAST + Cell::NORTH],
-               ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f, nv);
+               ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f, nv,
+               ewover ? enormal : wnormal);
 
       // Render the quad. The heights autocorrect orientations
       const ushort quadmap[12] = {0, 1, 2, 1, 3, 2, 4, 6, 5, 6, 7, 5};
@@ -802,17 +870,28 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       // Water
       int wvis = c.isWaterVisible();
       if (wvis) {
+        double onormal[5][3];
+        c.getWaterNormal(&onormal[0][0], 0);
+        c.getWaterNormal(&onormal[1][0], 1);
+        c.getWaterNormal(&onormal[2][0], 2);
+        c.getWaterNormal(&onormal[3][0], 3);
+        c.getWaterNormal(&onormal[4][0], 4);
+        float fonormal[5][3];
+        for (size_t i = 0; i < 15; i++) {
+          fonormal[i / 3][i % 3] = (float)onormal[i / 3][i % 3];
+        }
+
         int u = j * 8 * 5;
         packWaterCell(&fdat[u], x, y, c.waterHeights[Cell::SOUTH + Cell::WEST], c.velocity,
-                      0.0f, 0.0f);
+                      0.0f, 0.0f, fonormal[Cell::SOUTH + Cell::WEST]);
         packWaterCell(&fdat[u + 8], x + 1, y, c.waterHeights[Cell::SOUTH + Cell::EAST],
-                      c.velocity, 1.0f, 0.0f);
+                      c.velocity, 1.0f, 0.0f, fonormal[Cell::SOUTH + Cell::EAST]);
         packWaterCell(&fdat[u + 16], x + 1, y + 1, c.waterHeights[Cell::NORTH + Cell::EAST],
-                      c.velocity, 1.0f, 1.0f);
+                      c.velocity, 1.0f, 1.0f, fonormal[Cell::NORTH + Cell::EAST]);
         packWaterCell(&fdat[u + 24], x, y + 1, c.waterHeights[Cell::NORTH + Cell::WEST],
-                      c.velocity, 0.0f, 1.0f);
+                      c.velocity, 0.0f, 1.0f, fonormal[Cell::NORTH + Cell::WEST]);
         packWaterCell(&fdat[u + 32], x + 0.5f, y + 0.5f, c.waterHeights[Cell::CENTER],
-                      c.velocity, 0.5f, 0.5f);
+                      c.velocity, 0.5f, 0.5f, fonormal[Cell::CENTER]);
 
         for (uint i = 0; i < 12; i++) { fidx[j * 12 + i] = 5 * j + topindices[i]; }
       } else {
@@ -928,6 +1007,23 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   chunk->is_updated = 0;
 }
 
+static void configureCellAttributes() {
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
+  glVertexAttribPointer(1, 4, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void*)(3 * sizeof(GLfloat)));
+  glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void*)(5 * sizeof(GLfloat)));
+  glVertexAttribPointer(3, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void*)(6 * sizeof(GLfloat)));
+  glVertexAttribPointer(4, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void*)(7 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+  glEnableVertexAttribArray(3);
+  glEnableVertexAttribArray(4);
+}
+
 void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   // Cost to pay once and only once
   static long tickno = 0;
@@ -1040,19 +1136,7 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   // WALLS
   for (int i = 0; i < nchunks; i++) {
     glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->wall_vbo[0]);
-    //                    #  W   type      norm  stride (skip)  offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(3 * sizeof(GLfloat)));
-    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(5 * sizeof(GLfloat)));
-    glVertexAttribPointer(3, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    // Index & draw
+    configureCellAttributes();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->wall_vbo[1]);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
@@ -1060,19 +1144,7 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   // TOPS
   for (int i = 0; i < nchunks; i++) {
     glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->tile_vbo[0]);
-    //                    #  W   type      norm  stride (skip)  offset
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-    glVertexAttribPointer(1, 4, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(3 * sizeof(GLfloat)));
-    glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(5 * sizeof(GLfloat)));
-    glVertexAttribPointer(3, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                          (void*)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    // Index & draw
+    configureCellAttributes();
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->tile_vbo[1]);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
@@ -1092,19 +1164,7 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
     // Water
     for (int i = 0; i < nchunks; i++) {
       glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->flui_vbo[0]);
-      //                    #  W   type      norm  stride (skip)  offset
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
-      glVertexAttribPointer(1, 4, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                            (void*)(3 * sizeof(GLfloat)));
-      glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                            (void*)(5 * sizeof(GLfloat)));
-      glVertexAttribPointer(3, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                            (void*)(6 * sizeof(GLfloat)));
-      glEnableVertexAttribArray(0);
-      glEnableVertexAttribArray(1);
-      glEnableVertexAttribArray(2);
-      glEnableVertexAttribArray(3);
-      // Index & draw
+      configureCellAttributes();
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->flui_vbo[1]);
       glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
     }

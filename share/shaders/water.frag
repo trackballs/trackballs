@@ -8,11 +8,13 @@ uniform mat4 model_matrix;
 uniform sampler2D wtex;
 varying vec2 texco;
 varying vec3 cpos;
+varying vec3 inormal;
 
 void main(void) {
   vec4 fcolor = vec4(0.3, 0.3, 0.7, 0.6);
 
-  vec3 normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
+  // Linear combinations of units need not be units
+  vec3 normal = normalize(inormal);
   vec4 texcolor = fcolor * texture2D(wtex, texco);
 
   // Lighting model, not tuned very much
