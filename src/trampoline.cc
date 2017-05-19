@@ -32,14 +32,15 @@ void Trampoline::tick(Real t) {
   Real dh = min(0.5 * t, c.sunken - 1e-5);
   for (int i = 0; i < 5; i++) c.heights[i] += dh;
   c.sunken -= dh;
+  if (abs(c.sunken) < 2e-5 && abs(dh) < 1e-10) {
+    remove();
+    // Reset cell to no-trampoline-active state
+    for (int i = 0; i < 5; i++) c.heights[i] += c.sunken;
+    c.sunken = 0.;
+  }
   Game::current->map->markCellUpdated(cx, cy);
   Game::current->map->markCellUpdated(cx + 1, cy);
   Game::current->map->markCellUpdated(cx - 1, cy);
   Game::current->map->markCellUpdated(cx, cy + 1);
   Game::current->map->markCellUpdated(cx, cy - 1);
-  if (abs(c.sunken) < 2e-5 && abs(dh) < 1e-10) {
-    remove();
-    // Reset cell to no-trampoline-active state
-    c.sunken = 0.;
-  }
 }
