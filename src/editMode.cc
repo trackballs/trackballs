@@ -227,7 +227,7 @@ EditMode::EditMode() {
 
 EditMode::~EditMode() {
   if (map) saveMap();
-  if (cellClipboard) delete cellClipboard;
+  if (cellClipboard) delete[] cellClipboard;
   /* TODO. Delete all windows here */
 }
 
@@ -721,7 +721,7 @@ void EditMode::doCommand(int command) {
     break;
   case MOVE_CLEAR_MARKER:
     markX = -1;
-    if (cellClipboard) delete cellClipboard;
+    if (cellClipboard) delete[] cellClipboard;
     cellClipboard = NULL;
     break;
   case MOVE_COPY_REGION:
@@ -1497,7 +1497,7 @@ void EditMode::copyRegion() {
   int y1 = max(y, markY);
   int width = x1 - x0 + 1;
   int height = y1 - y0 + 1;
-  if (cellClipboard) delete cellClipboard;
+  if (cellClipboard) delete[] cellClipboard;
   cellClipboard = new Cell[width * height];
   cellClipboardWidth = width;
   cellClipboardHeight = height;
@@ -1511,7 +1511,7 @@ void EditMode::pasteRegion() {
   for (cx = 0; cx < cellClipboardWidth; cx++)
     for (cy = 0; cy < cellClipboardHeight; cy++) {
       Cell& toCell = map->cell(cx + x, cy + y);
-      Cell& fromCell = cellClipboard[cx + cy * cellClipboardHeight];
+      Cell& fromCell = cellClipboard[cx + cy * cellClipboardWidth];
       /* We cannot just do a memcpy here since we need to preserve displaylists and other meta
        * data */
       memcpy(toCell.velocity, fromCell.velocity, sizeof(toCell.velocity));
@@ -1523,6 +1523,11 @@ void EditMode::pasteRegion() {
       toCell.sunken = fromCell.sunken;
       toCell.flags = fromCell.flags;
       toCell.texture = fromCell.texture;
+      map->markCellUpdated(cx + x, cy + y);
+      map->markCellUpdated(cx + x - 1, cy + y);
+      map->markCellUpdated(cx + x, cy + y + 1);
+      map->markCellUpdated(cx + x - 1, cy + y);
+      map->markCellUpdated(cx + x, cy + y + 1);
     }
 }
 

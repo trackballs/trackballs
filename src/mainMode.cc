@@ -512,6 +512,7 @@ void MainMode::startGame() {
   pos[2] += 2.0;
   new Sign(_("Good luck!"), 6, 1.0, 60.0, pos);
   Game::current->player1->position[2] += 1.0;
+  Game::current->player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 
 /* (Re)starts the current player */
@@ -526,6 +527,7 @@ void MainMode::restartPlayer() {
   assign(Game::current->map->startPosition, pos);
   pos[2] += 2.0;
   new Sign(_("Good luck!"), 7, 1.0, 60.0, pos);
+  player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 
 /* Shows various information on screen */
