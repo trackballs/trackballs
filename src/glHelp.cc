@@ -685,6 +685,93 @@ void regenerateSphereDisplaylists() {
   glEndList();
 }
 
+char *filetobuf(const char *filename) {
+  FILE *fptr = fopen(filename, "rb");
+  if (!fptr) return NULL;
+  fseek(fptr, 0, SEEK_END);
+  long length = ftell(fptr);
+  char *buf = (char *)malloc(length + 1);
+  fseek(fptr, 0, SEEK_SET);
+  fread(buf, length, 1, fptr);
+  fclose(fptr);
+  buf[length] = 0;
+  return buf;
+}
+
+GLuint loadProgram(const char *vertname, const char *fragname) {
+  /* Read our shaders into the appropriate buffers */
+  char path[256];
+  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, vertname);
+  GLchar *vertexsource = filetobuf(path);
+  if (vertexsource == NULL) {
+    printf("NULL V %s\n", path);
+    return -1;
+  }
+  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, fragname);
+  GLchar *fragmentsource = filetobuf(path);
+  if (vertexsource == NULL) {
+    printf("NULL F %s\n", path);
+    return -1;
+  }
+  GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
+  int maxLength;
+  glShaderSource(vertexshader, 1, (const GLchar **)&vertexsource, 0);
+  glCompileShader(vertexshader);
+  int IsCompiled_VS, IsCompiled_FS, IsLinked;
+  glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &IsCompiled_VS);
+  if (IsCompiled_VS == 0) {
+    glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
+    char *vertexInfoLog = (char *)malloc(maxLength);
+    glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
+    fprintf(stderr, "%s Vertex shader error |%s|\n", vertname, vertexInfoLog);
+    glDeleteShader(vertexshader);
+    free(vertexInfoLog);
+    free(vertexsource);
+    free(fragmentsource);
+    return -1;
+  }
+  GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
+  glShaderSource(fragmentshader, 1, (const GLchar **)&fragmentsource, 0);
+  glCompileShader(fragmentshader);
+  glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &IsCompiled_FS);
+  if (IsCompiled_FS == 0) {
+    glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
+    char *fragmentInfoLog = (char *)malloc(maxLength);
+    glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
+    fprintf(stderr, "%s Fragment shader error |%s|\n", fragname, fragmentInfoLog);
+    glDeleteShader(vertexshader);
+    glDeleteShader(fragmentshader);
+    free(fragmentInfoLog);
+    free(vertexsource);
+    free(fragmentsource);
+    return -1;
+  }
+  free(vertexsource);
+  free(fragmentsource);
+  GLuint shaderprogram = glCreateProgram();
+  glAttachShader(shaderprogram, vertexshader);
+  glAttachShader(shaderprogram, fragmentshader);
+  glBindAttribLocation(shaderprogram, 0, "in_Position");
+  glBindAttribLocation(shaderprogram, 1, "in_Color");
+  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
+  glBindAttribLocation(shaderprogram, 3, "in_Velocity");
+  glBindAttribLocation(shaderprogram, 4, "in_Normal");
+  glLinkProgram(shaderprogram);
+  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&IsLinked);
+  glDeleteShader(vertexshader);
+  glDeleteShader(fragmentshader);
+  if (IsLinked == 0) {
+    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
+    char *shaderProgramInfoLog = (char *)malloc(maxLength);
+    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
+    fprintf(stderr, "%s %s Program link error |%s|\n", vertname, fragname,
+            shaderProgramInfoLog);
+    free(shaderProgramInfoLog);
+    return -1;
+  }
+  return shaderprogram;
+}
+
 #define FRAME 50
 
 int bindTexture(const char *name) {

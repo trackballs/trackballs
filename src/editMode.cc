@@ -62,7 +62,7 @@ const char* cKeyShortcuts[N_SUBMENUS] = {
     /* Colour */
     "1234",
     /* Flag */
-    "12345678t",
+    "12345678*t",
     /* Features */
     "1234567",
     /* Move */
@@ -80,7 +80,8 @@ const char* cKeyShortcuts[N_SUBMENUS] = {
 #define FLAG_TRAMPOLINE 4
 #define FLAG_NOGRID 5
 #define FLAG_TRACK 6
-#define NUM_FLAGS 7
+#define FLAG_FLAT 7
+#define NUM_FLAGS 8
 
 char* flagNames[NUM_FLAGS];
 
@@ -108,6 +109,7 @@ enum {
   subFlagsTrampoline = 34,
   subFlagsNoGrid = 35,
   subFlagsTrack = 36,
+  subFlagsFlat = 37,
 };
 enum { subTexturesNext = 40, subTexturesPrev, subTexturesRotate };
 
@@ -161,7 +163,7 @@ void EditMode::init() {
        _("*<SHIFT> reversed"), _("*<CTRL> walls"), NULL},
       {_("Inc. red"), _("Inc. green"), _("Inc. blue"), _("Inc. alpha"), NULL},
       {_("Ice"), _("Acid"), _("Sand"), _("Kill"), _("Bounce"), _("No grid"), _("Track"),
-       _("Texture"), _("ch. texture"), NULL},
+       _("Shade flat"), _("Texture"), _("ch. texture"), NULL},
       {_("Spike"), _("Small hill"), _("Medium hill"), _("Large hill"), _("Huge hill"),
        _("Smooth small"), _("Smooth large"), NULL},
       {_("/UP Move up"), _("/DOWN Move down"), _("/LEFT Move left"), _("/RIGHT Move right"),
@@ -173,8 +175,9 @@ void EditMode::init() {
   };
   memcpy(cMenuEntries, cMenuEntries_i18n, sizeof(cMenuEntries));
 
-  char* flagNames_i18n[NUM_FLAGS] = {_("Ice"),        _("Acid"),    _("Sand"), _("Kill"),
-                                     _("Trampoline"), _("No grid"), _("Track")};
+  char* flagNames_i18n[NUM_FLAGS] = {_("Ice"),   _("Acid"),       _("Sand"),
+                                     _("Kill"),  _("Trampoline"), _("No grid"),
+                                     _("Track"), _("Shade flat")};
   memcpy(flagNames, flagNames_i18n, sizeof(flagNames));
 
   char* hillNames_i18n[N_HILLS] = {_("Spike"),       _("Small hill"), _("Medium hill"),
@@ -670,18 +673,22 @@ void EditMode::doCommand(int command) {
   case FLAG_5:
   case FLAG_6:
   case FLAG_7: {
-    int flag = 1 << (command - FLAG_0);
+    int flag = command == FLAG_7 ? 1 << 11 : 1 << (command - FLAG_0);
     int onoff = cell.flags & flag ? 0 : flag;
     for (x1 = xLow; x1 <= xHigh; x1++)
       for (y1 = yLow; y1 <= yHigh; y1++) {
         Cell& c2 = map->cell(x1, y1);
         c2.flags = (c2.flags & ~flag) | onoff;
+        map->markCellUpdated(x1, y1);
       }
   } break;
   case FLAG_CH_TEXTURE: {
     int newTexture = mymod(cell.texture + 1 + (shift ? -1 : +1), numTextures + 1) - 1;
     for (x1 = xLow; x1 <= xHigh; x1++)
-      for (y1 = yLow; y1 <= yHigh; y1++) { map->cell(x1, y1).texture = newTexture; }
+      for (y1 = yLow; y1 <= yHigh; y1++) {
+        map->cell(x1, y1).texture = newTexture;
+        map->markCellUpdated(x1, y1);
+      }
   } break;
 
   case FEATURE_SPIKE:
@@ -799,6 +806,10 @@ void EditMode::doCellAction(int code, int direction) {
           c2.heights[Cell::CENTER] += (direction ? -scale : scale) / 4;
         }
         map->markCellUpdated(x1, y1);
+        map->markCellUpdated(x1 + 1, y1);
+        map->markCellUpdated(x1, y1 + 1);
+        map->markCellUpdated(x1 - 1, y1);
+        map->markCellUpdated(x1, y1 - 1);
       }
     break;
   case editModeColor:

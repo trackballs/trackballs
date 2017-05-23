@@ -36,6 +36,7 @@
 #define CELL_NOLINESOUTH (1 << 8)
 #define CELL_NOLINEEAST (1 << 9)
 #define CELL_NOLINEWEST (1 << 10)
+#define CELL_SHADE_FLAT (1 << 11)
 
 class Cell {
  public:

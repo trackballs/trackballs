@@ -140,19 +140,19 @@ void ESubWindow::draw() {
 
       addText_Left(CODE_FROM_MENUENTRY(id * MAX_MENU_ENTRIES + i), fontSize / 2,
                    y + 2 + fontSize * i + fontSize / 2, str, x + 2 + fontSize / 2);
-      if (id == FLAGS_MENU && i < 8) {
+      if (id == FLAGS_MENU && i < 9) {
         /* The flags current status can only be added if we have a map loaded */
         if (EditMode::editMode->map) {
           Cell& cell =
               EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
-          if (cell.flags & (1 << i))
+          if (cell.flags & (1 << i) || (cell.flags & (1 << 11) && i == 9))
             addText_Left(CODE_FROM_MENUENTRY(id * MAX_MENU_ENTRIES + i), fontSize / 2,
                          y + 2 + fontSize * i + fontSize / 2, "y", x + 2 + fontSize / 2 + 160);
           else
             addText_Left(CODE_FROM_MENUENTRY(id * MAX_MENU_ENTRIES + i), fontSize / 2,
                          y + 2 + fontSize * i + fontSize / 2, "n", x + 2 + fontSize / 2 + 160);
         }
-      } else if (id == FLAGS_MENU && i == 8) {
+      } else if (id == FLAGS_MENU && i == 10) {
         /* The current texture can only be added if we have a map loaded */
         if (EditMode::editMode->map) {
           Cell& cell =

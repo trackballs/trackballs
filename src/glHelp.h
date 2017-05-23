@@ -26,6 +26,7 @@
 /* Prototypes */
 void glHelpInit();
 void regenerateSphereDisplaylists();
+GLuint loadProgram(const char *fragment, const char *vertex);
 double frand();
 double frand(int);
 

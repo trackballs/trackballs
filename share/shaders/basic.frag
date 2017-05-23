@@ -12,6 +12,7 @@ varying vec4 fcolor;
 varying vec2 texco;
 varying vec3 cpos;
 varying vec3 inormal;
+varying float flatkey;
 
 void main(void) {
   if (render_stage == 0 && fcolor.w < 0.95) {
@@ -21,7 +22,12 @@ void main(void) {
   }
 
   // Linear combinations of units need not be units
-  vec3 normal = normalize(inormal);
+  vec3 normal;
+  if (flatkey >= 1.) {
+    normal = normalize(inormal);
+  } else {
+    normal = normalize(cross(dFdx(cpos),dFdy(cpos)));
+  }
   vec4 texcolor = fcolor * texture2D(tex, texco);
 
   // Lighting model, not tuned very much

@@ -524,115 +524,11 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   //  printf("Time for total draw (stage %d): %03.3fms (%3.3fms). Redraw %d\n", stage,
   //         1000.0 * (getSystemTime() - t1), 1e3 * (t1 - t0), redrawCnt);
 }
-char* filetobuf(const char* filename) {
-  GLenum err;
-  while ((err = glGetError()) != GL_NO_ERROR) { printf("E: %x\n", err); }
-  // Copypasted
-  FILE* fptr;
-  long length;
-  char* buf;
 
-  fptr = fopen(filename, "rb"); /* Open file for reading */
-  if (!fptr)                    /* Return NULL on failure */
-    return NULL;
-  fseek(fptr, 0, SEEK_END); /* Seek to the end of the file */
-  length = ftell(fptr);     /* Find out how many bytes into the file we are */
-  buf = (char*)malloc(
-      length +
-      1); /* Allocate a buffer for the entire length of the file and a null terminator */
-  fseek(fptr, 0, SEEK_SET);    /* Go back to the beginning of the file */
-  fread(buf, length, 1, fptr); /* Read the contents of the file in to the buffer */
-  fclose(fptr);                /* Close the file */
-  buf[length] = 0;             /* Null terminator */
-
-  return buf; /* Return the buffer */
-}
-
-void indicateErrors(const char* key) {
-  GLenum err;
-  while ((err = glGetError()) != GL_NO_ERROR) { printf("%s: %x\n", key, err); }
-}
-
-GLuint loadProgramFromFiles(const char* vertname, const char* fragname) {
-  /* Read our shaders into the appropriate buffers */
-  char path[256];
-  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, vertname);
-  GLchar* vertexsource = filetobuf(path);
-  if (vertexsource == NULL) {
-    printf("NULL V %s\n", path);
-    return -1;
-  }
-  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, fragname);
-  GLchar* fragmentsource = filetobuf(path);
-  if (vertexsource == NULL) {
-    printf("NULL F %s\n", path);
-    return -1;
-  }
-  GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
-  int maxLength;
-  glShaderSource(vertexshader, 1, (const GLchar**)&vertexsource, 0);
-  glCompileShader(vertexshader);
-  int IsCompiled_VS, IsCompiled_FS, IsLinked;
-  glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &IsCompiled_VS);
-  if (IsCompiled_VS == 0) {
-    glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
-    char* vertexInfoLog = (char*)malloc(maxLength);
-    glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
-    fprintf(stderr, "%s VILOG |%s|\n", vertname, vertexInfoLog);
-    free(vertexInfoLog);
-    free(vertexsource);
-    free(fragmentsource);
-    return -1;
-  }
-  GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentshader, 1, (const GLchar**)&fragmentsource, 0);
-  glCompileShader(fragmentshader);
-  glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &IsCompiled_FS);
-  if (IsCompiled_FS == 0) {
-    glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
-    char* fragmentInfoLog = (char*)malloc(maxLength);
-    glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
-    fprintf(stderr, "%s FILOG |%s|\n", fragname, fragmentInfoLog);
-    free(fragmentInfoLog);
-    free(vertexsource);
-    free(fragmentsource);
-    return -1;
-  }
-  free(vertexsource);
-  free(fragmentsource);
-  GLuint shaderprogram = glCreateProgram();
-  glAttachShader(shaderprogram, vertexshader);
-  glAttachShader(shaderprogram, fragmentshader);
-  glBindAttribLocation(shaderprogram, 0, "in_Position");
-  glBindAttribLocation(shaderprogram, 1, "in_Color");
-  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
-  glBindAttribLocation(shaderprogram, 3, "in_Velocity");
-  glBindAttribLocation(shaderprogram, 4, "in_Normal");
-  glLinkProgram(shaderprogram);
-  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int*)&IsLinked);
-  if (IsLinked == 0) {
-    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
-    char* shaderProgramInfoLog = (char*)malloc(maxLength);
-    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
-    fprintf(stderr, "%s %s SILOG |%s|\n", vertname, fragname, shaderProgramInfoLog);
-    free(shaderProgramInfoLog);
-    return -1;
-  }
-  // TODO: put into glHelp; and include a function to free it all
-  return shaderprogram;
-}
-
-inline uint32_t packNormal(GLfloat a, GLfloat b, GLfloat c) {
-  GLfloat v[3] = {a, b, c};
-  GLfloat norm = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-  if (norm > 0.) {
-    v[0] = v[0] / norm;
-    v[1] = v[1] / norm;
-    v[2] = v[2] / norm;
-  }
-  uint32_t d = (512 + v[2] * 511.f);
-  uint32_t e = (512 + v[1] * 511.f);
-  uint32_t f = (512 + v[0] * 511.f);
+inline uint32_t packNormal(const GLfloat n[3]) {
+  uint32_t d = (512 + n[2] * 511.f);
+  uint32_t e = (512 + n[1] * 511.f);
+  uint32_t f = (512 + n[0] * 511.f);
   uint32_t x = 0;
   // Alpha (<<30) is irrelevant; can abuse for flags..
   x |= d << 20;
@@ -653,12 +549,7 @@ inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, const GL
   int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
   int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  //  printf("%x %x\n",packNormal(0,0,1.f),packNormal(0,0,-1.f));
-  //  printf("%x %x\n",packNormal(0,1,0.f),packNormal(0,-1,0.f));
-  //  printf("%x %x\n",packNormal(1,0,0.f),packNormal(-1,0,0.f));
-  //  exit(1);
-
-  aout[7] = packNormal(normal[0], normal[1], normal[2]);
+  aout[7] = packNormal(normal);
 }
 inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
                           const float vel[2], GLfloat tx, GLfloat ty,
@@ -673,7 +564,7 @@ inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
   int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
   int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  aout[7] = packNormal(normal[0], normal[1], normal[2]);
+  aout[7] = packNormal(normal);
 }
 
 inline double smoothSemiRand(int x, int y, double scale) {
@@ -773,15 +664,19 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       GLfloat enormal[3] = {-1.f, 0.f, 0.f};
       GLfloat wnormal[3] = {1.f, 0.f, 0.f};
 
-      double cnormal[5][3];
-      c.getNormal(&cnormal[0][0], 0);
-      c.getNormal(&cnormal[1][0], 1);
-      c.getNormal(&cnormal[2][0], 2);
-      c.getNormal(&cnormal[3][0], 3);
-      c.getNormal(&cnormal[4][0], 4);
       float fcnormal[5][3];
-      for (size_t i = 0; i < 15; i++) {
-        fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
+      if (c.flags & CELL_SHADE_FLAT) {
+        for (size_t i = 0; i < 15; i++) { fcnormal[i / 3][i % 3] = 0.f; }
+      } else {
+        double cnormal[5][3];
+        c.getNormal(&cnormal[0][0], 0);
+        c.getNormal(&cnormal[1][0], 1);
+        c.getNormal(&cnormal[2][0], 2);
+        c.getNormal(&cnormal[3][0], 3);
+        c.getNormal(&cnormal[4][0], 4);
+        for (size_t i = 0; i < 15; i++) {
+          fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
+        }
       }
 
       int k = j * 5 * 8;
@@ -1050,11 +945,11 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
   static GLuint textureloc;
   static GLuint wtextureloc;
   if (shaderprogram == (GLuint)-1) {
-    shaderprogram = loadProgramFromFiles("basic.vert", "basic.frag");
+    shaderprogram = loadProgram("basic.vert", "basic.frag");
     if (shaderprogram == (GLuint)-1) { return; }
-    lineprogram = loadProgramFromFiles("line.vert", "line.frag");
+    lineprogram = loadProgram("line.vert", "line.frag");
     if (lineprogram == (GLuint)-1) { return; }
-    waterprogram = loadProgramFromFiles("water.vert", "water.frag");
+    waterprogram = loadProgram("water.vert", "water.frag");
     if (waterprogram == (GLuint)-1) { return; }
     textureloc = glGetUniformLocation(shaderprogram, "tex");
     wtextureloc = glGetUniformLocation(waterprogram, "wtex");
