@@ -169,6 +169,8 @@ void Bird::tick(Real t) {
         position[1] = y;
         position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
         hide = 1.;
+        triggerHook(GameHookEvent_Death, NULL);
+        triggerHook(GameHookEvent_Spawn, NULL);
         return;
       }
       // kill the ball
@@ -188,5 +190,6 @@ void Bird::tick(Real t) {
     position[1] = y;
     position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
     hide = .5;  // wait .5 sec before restarting
+    triggerHook(GameHookEvent_Spawn, NULL);
   }
 }
