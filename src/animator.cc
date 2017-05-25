@@ -21,6 +21,7 @@
 #include "general.h"
 #include "gameHook.h"
 #include "animator.h"
+#include "guile.h"
 
 using namespace std;
 
@@ -66,7 +67,7 @@ void Animator::tick(Real td) {
   }
   if (position >= length && repeat & ANIMATOR_1_WRAP) { position = position - length; }
 
-  scm_apply_1(fun, scm_from_double(getValue()), SCM_EOL);
+  scm_catch_apply_1(fun, scm_from_double(getValue()));
 
   if (position <= 0 && repeat & ANIMATOR_0_REMOVE) {
     remove();

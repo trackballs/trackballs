@@ -22,7 +22,7 @@
 #include "smartTrigger.h"
 #include "game.h"
 #include "player.h"
-#include "libguile.h"
+#include "guile.h"
 
 using namespace std;
 
@@ -41,10 +41,10 @@ void SmartTrigger::tick(Real t) {
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;
   if (dx * dx + dy * dy < radius * radius) {
-    if (!wasIn && entering) scm_apply_0(entering, SCM_EOL);
+    if (!wasIn && entering) scm_catch_apply_0(entering);
     wasIn = 1;
   } else {
-    if (wasIn && leaving) scm_apply_0(leaving, SCM_EOL);
+    if (wasIn && leaving) scm_catch_apply_0(leaving);
     wasIn = 0;
   }
 }

@@ -27,6 +27,7 @@
 #include "ball.h"
 #include "player.h"
 #include "sound.h"
+#include "guile.h"
 
 using namespace std;
 
@@ -80,10 +81,10 @@ void CSwitch::tick(Real t) {
     if (!is_touched) {
       if (is_on) {
         is_on = 0;
-        scm_apply_0(off, SCM_EOL);
+        scm_catch_apply_0(off);
       } else {
         is_on = 1;
-        scm_apply_0(on, SCM_EOL);
+        scm_catch_apply_0(on);
       }
       playEffect(SFX_SWITCH);
     }

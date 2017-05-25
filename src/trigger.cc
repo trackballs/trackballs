@@ -22,7 +22,7 @@
 #include "trigger.h"
 #include "game.h"
 #include "player.h"
-#include "libguile.h"
+#include "guile.h"
 
 using namespace std;
 
@@ -38,5 +38,5 @@ void Trigger::tick(Real t) {
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;
-  if (dx * dx + dy * dy < radius * radius) scm_apply_0(expr, SCM_EOL);
+  if (dx * dx + dy * dy < radius * radius) scm_catch_apply_0(expr);
 }

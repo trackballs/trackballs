@@ -96,7 +96,7 @@ void GameHook::triggerHook(GameHookEvent event, SCM object) {
       subject = smobAnimated_make(a);
     else
       subject = smobGameHook_make(this);
-    scm_apply_2(hooks[event], subject, object ? object : SCM_BOOL_F, SCM_EOL);
+    scm_catch_apply_2(hooks[event], subject, object ? object : SCM_BOOL_F);
   }
 }
 
