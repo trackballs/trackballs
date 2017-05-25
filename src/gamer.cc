@@ -23,6 +23,7 @@
 #include "settings.h"
 #include "game.h"
 #include "map.h"
+#include "guile.h"
 #include "player.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -81,7 +82,6 @@ void Gamer::levelStarted() {
    files are meant to be local. */
 void Gamer::save() {
   char str[256];
-  int version = 3;
   int levelSet;
 
   Settings *settings = Settings::settings;
@@ -103,62 +103,121 @@ void Gamer::save() {
 
   gzFile gp = gzopen(str, "wb9");
   if (gp) {
-    gzwrite(gp, &version, sizeof(int));
-    gzwrite(gp, &color, sizeof(int));
-    gzwrite(gp, &totalScore, sizeof(int));
-    gzwrite(gp, &nLevelsCompleted, sizeof(int));
-    gzwrite(gp, &timesPlayed, sizeof(int));
-    gzwrite(gp, &textureNum, sizeof(int));
-    gzwrite(gp, &(Settings::settings->difficulty), sizeof(int));
-    gzwrite(gp, &(Settings::settings->nLevelSets), sizeof(int));
+    gzprintf(gp, "(color %d)\n", color);
+    gzprintf(gp, "(texture %d)\n", textureNum);
+    gzprintf(gp, "(total-score %d)\n", totalScore);
+    gzprintf(gp, "(levels-completed %d)\n", nLevelsCompleted);
+    gzprintf(gp, "(times-played %d)\n", timesPlayed);
+    gzprintf(gp, "(difficulty %d)\n", Settings::settings->difficulty);
+    gzprintf(gp, "(sandbox %d)\n", Settings::settings->sandbox);
+    gzprintf(gp, "(levelsets %d\n", Settings::settings->nLevelSets);
     for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++) {
-      gzwrite(gp, &settings->levelSets[levelSet].name, 256);
-      gzwrite(gp, &nKnownLevels[levelSet], sizeof(int));
-      gzwrite(gp, levels[levelSet], sizeof(KnownLevel) * nKnownLevels[levelSet]);
+      char *name = ascm_format(settings->levelSets[levelSet].name);
+      gzprintf(gp, "  (%s %d\n", name, nKnownLevels[levelSet]);
+      free(name);
+      for (int i = 0; i < nKnownLevels[levelSet]; i++) {
+        char *fname = ascm_format(&levels[levelSet][i].fileName[0]);
+        char *tname = ascm_format(&levels[levelSet][i].name[0]);
+        gzprintf(gp, "    (%s %s)\n", fname, tname);
+        free(fname);
+        free(tname);
+      }
+      gzprintf(gp, "  )\n");
     }
-    gzwrite(gp, &(Settings::settings->sandbox), sizeof(int));
+    gzprintf(gp, ")\n");
     gzclose(gp);
   }
 }
 void Gamer::update() {
   char str[256];
-  int version;
 
-  Settings *settings = Settings::settings;
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/%s.gmr", getenv("HOME"), name);
-  gzFile gp = gzopen(str, "rb");
-  if (!gp) {
+  SCM ip = scm_port_from_gzip(str);
+  if (SCM_EOF_OBJECT_P(ip)) {
     setDefaults();
     return;
   }
-  gzread(gp, &version, sizeof(int));
-  if (version < 2) {
-    printf("Warning. Ignoring outdated player profile for player %s\n", name);
-    return;
-  }
-  gzread(gp, &color, sizeof(int));
-  gzread(gp, &totalScore, sizeof(int));
-  gzread(gp, &nLevelsCompleted, sizeof(int));
-  gzread(gp, &timesPlayed, sizeof(int));
-  gzread(gp, &textureNum, sizeof(int));
-  gzread(gp, &(Settings::settings->difficulty), sizeof(int));
-  int nLevelSets, levelSet;
-  gzread(gp, &nLevelSets, sizeof(int));
-  for (; nLevelSets; nLevelSets--) {
-    char name[256];
-    gzread(gp, name, 256);
-    for (levelSet = 0; levelSet < settings->nLevelSets; levelSet++)
-      if (strcmp(name, settings->levelSets[levelSet].name) == 0) break;
-    if (levelSet == settings->nLevelSets) {
-      printf("Error: Profile for %s contains info for unknown levelset %s\n", str, name);
-      gzclose(gp);
-      return;
+  const char *fmterr = _("Warning. Profile format error for player %s\n");
+  for (int i = 0; i < 1000; i++) {
+    SCM blob = scm_read(ip);
+    if (SCM_EOF_OBJECT_P(blob)) { break; }
+    if (!scm_to_bool(scm_list_p(blob)) || scm_to_int(scm_length(blob)) < 2 ||
+        !scm_is_symbol(SCM_CAR(blob))) {
+      fprintf(stderr, fmterr, name);
+      break;
     }
-    gzread(gp, &nKnownLevels[levelSet], sizeof(int));
-    gzread(gp, levels[levelSet], sizeof(KnownLevel) * nKnownLevels[levelSet]);
+    char *skey = scm_to_utf8_string(scm_symbol_to_string(SCM_CAR(blob)));
+    if (!strcmp(skey, "levelsets")) {
+      free(skey);
+      if (!scm_is_integer(SCM_CADR(blob))) {
+        fprintf(stderr, fmterr, name);
+        break;
+      }
+      int nLevelSets = scm_to_int32(SCM_CADR(blob));
+      if (scm_to_int(scm_length(blob)) != nLevelSets + 2) {
+        fprintf(stderr, fmterr, name);
+        break;
+      }
+
+      for (; nLevelSets; nLevelSets--) {
+        SCM block = scm_list_ref(blob, scm_from_int32(nLevelSets + 1));
+        if (!scm_to_bool(scm_list_p(block)) || !scm_is_string(SCM_CAR(block)) ||
+            !scm_is_integer(SCM_CADR(block)) || scm_to_int32(SCM_CADR(block)) <= 0) {
+          fprintf(stderr, fmterr, name);
+          break;
+        }
+        char *lsname = scm_to_utf8_string(SCM_CAR(block));
+        int levelSet;
+        for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
+          if (strcmp(lsname, Settings::settings->levelSets[levelSet].name) == 0) break;
+        free(lsname);
+        if (levelSet == Settings::settings->nLevelSets) {
+          fprintf(stderr, _("Error: Profile for %s contains info for unknown levelset %s\n"),
+                  str, lsname);
+          break;
+        }
+        nKnownLevels[levelSet] = scm_to_int32(SCM_CADR(block));
+        for (int i = 0; i < nKnownLevels[levelSet]; i++) {
+          SCM cell = scm_list_ref(block, scm_from_int32(i + 2));
+          if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
+              !scm_is_string(SCM_CAR(cell)) || !scm_is_string(SCM_CADR(cell)) ||
+              scm_to_int32(scm_string_length(SCM_CAR(cell))) >= 64 ||
+              scm_to_int32(scm_string_length(SCM_CADR(cell))) >= 64) {
+            fprintf(stderr, fmterr, name);
+            break;
+          }
+          char *fname = scm_to_utf8_string(SCM_CAR(cell));
+          char *tname = scm_to_utf8_string(SCM_CADR(cell));
+          strncpy(&levels[levelSet][i].fileName[0], fname, 64);
+          strncpy(&levels[levelSet][i].name[0], tname, 64);
+          free(fname);
+          free(tname);
+        }
+      }
+    } else {
+      const char *keys[7] = {"color",        "texture",    "total-score", "levels-completed",
+                             "times-played", "difficulty", "sandbox"};
+      int *dests[7] = {&color,
+                       &textureNum,
+                       &totalScore,
+                       &nLevelsCompleted,
+                       &timesPlayed,
+                       &Settings::settings->difficulty,
+                       &Settings::settings->sandbox};
+      if (scm_to_int(scm_length(blob)) != 2 || !scm_is_integer(SCM_CADR(blob))) {
+        fprintf(stderr, fmterr, name);
+        free(skey);
+        break;
+      }
+      int val = scm_to_int32(SCM_CADR(blob));
+      for (int i = 0; i < 7; i++) {
+        if (!strcmp(skey, keys[i])) { *dests[i] = val; }
+      }
+      free(skey);
+    }
   }
-  if (version >= 3) { gzread(gp, &(Settings::settings->sandbox), sizeof(int)); }
-  gzclose(gp);
+  scm_close_input_port(ip);
+  return;
 }
 void Gamer::playerLoose() {
   timesPlayed++;
