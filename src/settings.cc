@@ -78,7 +78,7 @@ Settings::Settings() {
   const char *errstring1 = _("Configuration file should be a series of (key value) tuples.");
   const char *errstring2 = _("Error in value associated with:");
   if (access(str, R_OK) != -1) {
-    SCM ip = scm_open_file(scm_from_locale_string(str), scm_from_locale_string("r"));
+    SCM ip = scm_open_file(scm_from_utf8_string(str), scm_from_utf8_string("r"));
     // ^ TODO catch exception
     /* Iteratively read key-value pairs */
     for (int i = 0; i < 1000; i++) {

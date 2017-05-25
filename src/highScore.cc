@@ -25,16 +25,18 @@
 #include "settings.h"
 #include "game.h"
 
+#include "guile.h"
+
 using namespace std;
 char highScorePath[256];
 
-HighScore *HighScore::highScore;
+HighScore* HighScore::highScore;
 HighScore::HighScore() {
   int i;
   for (int levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
     for (i = 0; i < 10; i++) {
       points[levelSet][i] = 1000 - i * 100;
-      snprintf(names[levelSet][i], sizeof(names[levelSet][i]), "Anonymous Coward");
+      snprintf(names[levelSet][i], sizeof(names[levelSet][i]), _("Anonymous Coward"));
     }
 
 #ifdef ALT_HIGHSCORES
@@ -60,39 +62,64 @@ HighScore::HighScore() {
   snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", SHARE_DIR);
 #endif
   if (pathIsLink(highScorePath)) {
-    fprintf(stderr, _("Error, %s is a symbolic link. Cannot save highscores\n"),
+    fprintf(stderr, _("Error, %s is a symbolic link. Cannot load highscores\n"),
             highScorePath);
     return;
   }
-  gzFile gp = gzopen(highScorePath, "rb");
-  if (!gp) {
-    printf("Warning. Could not find highscore file %s\n", highScorePath);
+  SCM ip = scm_port_from_gzip(highScorePath);
+  if (SCM_EOF_OBJECT_P(ip)) { return; }
+
+  SCM contents = scm_read(ip);
+  const char* err = _("Warning. Incorrect format for highscore file %s\n");
+  if (SCM_EOF_OBJECT_P(contents) || !scm_is_integer(contents)) {
+    scm_close_input_port(ip);
+    fprintf(stderr, err, highScorePath);
     return;
   }
-  int nLevelSets, levelSet;
-  Settings *settings = Settings::settings;
-  gzread(gp, &nLevelSets, sizeof(int));
+  int nLevelSets = scm_to_int32(contents);
+  int levelSet;
   for (; nLevelSets; nLevelSets--) {
-    char name[256];
-    gzread(gp, name, sizeof(char) * 256);
-    for (levelSet = 0; levelSet < settings->nLevelSets; levelSet++)
-      if (strcmp(name, settings->levelSets[levelSet].name) == 0) break;
-    if (levelSet == settings->nLevelSets) {
-      printf("Warning. Highscores contains info about unknown levelset %s\n", name);
-      gzclose(gp);
+    SCM block = scm_read(ip);
+    if (SCM_EOF_OBJECT_P(block) || !scm_to_bool(scm_list_p(block)) ||
+        scm_to_int(scm_length(block)) != 11) {
+      scm_close_input_port(ip);
+      fprintf(stderr, err, highScorePath);
       return;
     }
-    gzread(gp, &(points[levelSet][0]), sizeof(int) * 10);
-    gzread(gp, &(names[levelSet][0][0]), sizeof(char) * 10 * 25);
+    SCM sname = SCM_CAR(block);
+    char* name = scm_to_utf8_string(sname);
+    for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
+      if (strcmp(name, Settings::settings->levelSets[levelSet].name) == 0) break;
+    free(name);
+    if (levelSet == Settings::settings->nLevelSets) {
+      scm_close_input_port(ip);
+      fprintf(stderr, _("Warning. Highscores contains info about unknown levelset %s\n"),
+              name);
+      return;
+    }
+    for (int i = 0; i < 10; i++) {
+      SCM cell = scm_list_ref(block, scm_from_int32(i + 1));
+      if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
+          !scm_is_string(SCM_CAR(cell)) || !scm_is_integer(SCM_CADR(cell)) ||
+          scm_to_int32(scm_string_length(SCM_CAR(cell))) >= 25) {
+        scm_close_input_port(ip);
+        fprintf(stderr, err, highScorePath);
+        return;
+      }
+      char* lname = scm_to_utf8_string(SCM_CAR(cell));
+      strncpy(&names[levelSet][i][0], lname, 25);
+      free(lname);
+      points[levelSet][i] = scm_to_int32(SCM_CADR(cell));
+    }
   }
-  gzclose(gp);
+  scm_close_input_port(ip);
 }
 void HighScore::init() { highScore = new HighScore(); }
 int HighScore::isHighScore(int score) {
   if (Game::current->currentLevelSet < 0) return 0;
   return score > points[Game::current->currentLevelSet][9];
 }
-void HighScore::addHighScore(int score, char *name) {
+void HighScore::addHighScore(int score, char* name) {
   int i, j;
   int levelSet = Game::current->currentLevelSet;
   if (levelSet < 0) return;
@@ -114,17 +141,24 @@ void HighScore::addHighScore(int score, char *name) {
     return;
   }
 
-  Settings *settings = Settings::settings;
+  Settings* settings = Settings::settings;
   gzFile gp = gzopen(highScorePath, "wb9");
   if (!gp) {
-    printf("Warning. Cannot save highscores at %s, check file permissions\n", highScorePath);
+    fprintf(stderr, _("Warning. Cannot save highscores at %s, check file permissions\n"),
+            highScorePath);
     return;
   }
-  gzwrite(gp, &(Settings::settings->nLevelSets), sizeof(int));
+  gzprintf(gp, "%d\n", Settings::settings->nLevelSets);
   for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++) {
-    gzwrite(gp, &settings->levelSets[levelSet].name, 256);
-    gzwrite(gp, &(points[levelSet][0]), sizeof(int) * 10);
-    gzwrite(gp, &(names[levelSet][0][0]), sizeof(char) * 10 * 25);
+    char* lsname = ascm_format(settings->levelSets[levelSet].name);
+    gzprintf(gp, "(%s\n", lsname);
+    free(lsname);
+    for (int i = 0; i < 10; i++) {
+      char* recname = ascm_format(&names[levelSet][i][0]);
+      gzprintf(gp, "  (%s %d)\n", recname, points[levelSet][i]);
+      free(recname);
+    }
+    gzprintf(gp, ")\n");
   }
   gzclose(gp);
 }

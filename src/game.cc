@@ -43,49 +43,6 @@ extern GLfloat colors[5][3];
 
 double Game::defaultScores[SCORE_MAX][2];
 
-SCM load_proc(void *body_data) {
-  const char *scmname = (const char *)body_data;
-  printf("Loading script %s ...", scmname);
-  scm_c_primitive_load(scmname);
-  printf(" done\n");
-  return SCM_UNSPECIFIED;
-}
-
-SCM preunwind_proc(void *handler_data, SCM, SCM) {
-  *(SCM *)handler_data = scm_make_stack(SCM_BOOL_T, SCM_EOL);
-}
-
-SCM error_proc(void *, SCM key, SCM parameters) {
-  printf(" failed.\n");
-  SCM display = scm_variable_ref(scm_c_lookup("display"));
-  SCM keystr = scm_object_to_string(key, display);
-  SCM parameterstr = scm_object_to_string(parameters, display);
-  char *ckey = scm_to_utf8_string(keystr);
-  char *cparameter = scm_to_utf8_string(parameterstr);
-
-  fprintf(stderr, "ERROR TYPE: %s\n", ckey);
-  fprintf(stderr, "DETAILS: %s\n", cparameter);
-
-  free(ckey);
-  free(cparameter);
-
-  return SCM_UNSPECIFIED;
-}
-
-void loadScript(const char *path) {
-  SCM stack = SCM_BOOL_F;
-  scm_c_catch(SCM_BOOL_T, load_proc, (void *)path, error_proc, NULL, preunwind_proc, &stack);
-  if (stack != SCM_BOOL_F) {
-    SCM oport = scm_open_output_string();
-    scm_display_backtrace(stack, oport, SCM_BOOL_F, SCM_BOOL_F);
-    SCM stackstr = scm_get_output_string(oport);
-    scm_close_port(oport);
-    char *cstack = scm_to_utf8_string(stackstr);
-    fprintf(stderr, "STACK:\n %s\n", cstack);
-    free(cstack);
-  }
-}
-
 Game::Game(char *name, Gamer *g) {
   Ball::reset();
   ForceField::reset();
@@ -311,7 +268,6 @@ void Game::drawReflection(Coord3d focus) {
   glGetIntegerv(GL_VIEWPORT, viewport);
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
-  Coord3d worldCoord, screenCoord;
 
   set<Animated *>::iterator i = objects->begin();
   set<Animated *>::iterator end = objects->end();

@@ -76,6 +76,78 @@ SCM smobGameHook_make(GameHook *h) {
 size_t smobAnimated_free(SCM smob) { return 0; }
 size_t smobGameHook_free(SCM smob) { return 0; }
 
+static SCM load_proc(void *body_data) {
+  const char *scmname = (const char *)body_data;
+  printf("Loading script %s ...", scmname);
+  scm_c_primitive_load(scmname);
+  printf(" done\n");
+  return SCM_UNSPECIFIED;
+}
+
+static SCM preunwind_proc(void *handler_data, SCM, SCM) {
+  *(SCM *)handler_data = scm_make_stack(SCM_BOOL_T, SCM_EOL);
+  return SCM_UNSPECIFIED;
+}
+
+static SCM error_proc(void *, SCM key, SCM parameters) {
+  printf(" failed.\n");
+  SCM display = scm_variable_ref(scm_c_lookup("display"));
+  SCM keystr = scm_object_to_string(key, display);
+  SCM parameterstr = scm_object_to_string(parameters, display);
+  char *ckey = scm_to_utf8_string(keystr);
+  char *cparameter = scm_to_utf8_string(parameterstr);
+
+  fprintf(stderr, "ERROR TYPE: %s\n", ckey);
+  fprintf(stderr, "DETAILS: %s\n", cparameter);
+
+  free(ckey);
+  free(cparameter);
+
+  return SCM_UNSPECIFIED;
+}
+
+void loadScript(const char *path) {
+  SCM stack = SCM_BOOL_F;
+  scm_c_catch(SCM_BOOL_T, load_proc, (void *)path, error_proc, NULL, preunwind_proc, &stack);
+  if (stack != SCM_BOOL_F) {
+    SCM oport = scm_open_output_string();
+    scm_display_backtrace(stack, oport, SCM_BOOL_F, SCM_BOOL_F);
+    SCM stackstr = scm_get_output_string(oport);
+    scm_close_port(oport);
+    char *cstack = scm_to_utf8_string(stackstr);
+    fprintf(stderr, "STACK:\n %s\n", cstack);
+    free(cstack);
+  }
+}
+
+SCM scm_port_from_gzip(const char *path) {
+  gzFile gp = gzopen(path, "rb");
+  if (!gp) {
+    fprintf(stderr, _("Warning. Could not find file %s\n"), path);
+    return SCM_EOF_VAL;
+  }
+  int sz = 256 * 10 * 25 * 3;
+  char *ebuf = new char[sz + 1];
+  int len = gzread(gp, ebuf, sz);
+  gzclose(gp);
+  if (len == sz) {
+    delete[] ebuf;
+    fprintf(stderr, _("Warning. File '%s' unusually large\n"), path);
+    return SCM_EOF_VAL;
+  }
+  ebuf[len] = '\0';
+  SCM str = scm_from_utf8_string(ebuf);
+  delete[] ebuf;
+  return scm_open_input_string(str);
+}
+
+char *ascm_format(const char *str) {
+  SCM write = scm_variable_ref(scm_c_lookup("write"));
+  SCM ostr = scm_from_utf8_string(str);
+  SCM keystr = scm_object_to_string(ostr, write);
+  return scm_to_utf8_string(keystr);
+}
+
 /*=======================================================*/
 /*===========   creating ANIMATED objects    ============*/
 /*=======================================================*/

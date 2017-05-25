@@ -24,7 +24,10 @@
 #include <libguile.h>
 
 void initGuileInterface();
-SCM smobAnimated_make(class Animated *a);
-SCM smobGameHook_make(class GameHook *h);
+SCM smobAnimated_make(class Animated* a);
+SCM smobGameHook_make(class GameHook* h);
+void loadScript(const char* path);
+SCM scm_port_from_gzip(const char* highScorePath);
+char* ascm_format(const char* str);
 
 #endif
