@@ -314,9 +314,13 @@ void Player::jump() {
   }
 }
 void Player::die(int how) {
-  Ball::die(how);
-
   Map *map = Game::current->map;
+  /* immortal when not playing (i.e., at level finish) */
+  if (hasWon) return;
+  if (!playing) return;
+
+  Ball::die(how);
+  /* death hooks may have altered `hasWon` and `playing` */
   if (hasWon) return;
   if (!playing) return;
   if (Game::current->map->isBonus) {
