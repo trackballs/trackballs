@@ -32,7 +32,6 @@ double frand(int);
 
 // displays a 2d text on specific screen coordinates */
 void draw2DString(TTF_Font *, char *, int x, int y, Uint8 r, Uint8 g, Uint8 b);
-void drawSurface(SDL_Surface *, int x, int y, int w, int h);
 void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
 void drawMousePointer();

@@ -59,6 +59,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/levels DESTINATION ${TRACKBALLS_SH
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/music DESTINATION ${TRACKBALLS_SHARE_DIR})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/shaders DESTINATION ${TRACKBALLS_SHARE_DIR})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE_DIR})
+#todo: set executable setgid to games RX, and highscores to games RW
 install(FILES ${PROJECT_SOURCE_DIR}/share/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
 
 # Documentation

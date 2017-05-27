@@ -273,14 +273,13 @@ Map::Map(char* filename) {
     version = loadInt(data[5]);
 
     if (version < mapFormatVersion)
-      printf("Warning. Map %s is of an old format (v%d, latest is v%d)\n", filename, version,
-             mapFormatVersion);
+      warning("Warning. Map %s is of an old format (v%d, latest is v%d)", filename, version,
+              mapFormatVersion);
     else if (version > mapFormatVersion) {
-      fprintf(stderr, "Error. Map %s is from the future (v%d, I know only format v%d)",
-              filename, version, mapFormatVersion);
-      fprintf(stderr,
-              "This error usually occurs because or broken maps or big/small endian issues\n");
-      exit(0);
+      error(
+          "Error. Map %s is from the future (v%d, I know only format v%d)\n"
+          "This error usually occurs because or broken maps or big/small endian issues",
+          filename, version, mapFormatVersion);
     }
 
     if (version >= 7) { /* Read texture indices */
@@ -311,7 +310,7 @@ Map::Map(char* filename) {
       }
     gzclose(gp);
   } else {
-    printf("Warning: could not open %s\n", filename);
+    warning("could not open %s", filename);
     width = height = 256;
     cells = new Cell[width * height];
     startPosition[0] = startPosition[1] = 252;
@@ -412,7 +411,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   GLint viewport[4];
   GLdouble model_matrix[16], proj_matrix[16];
 
-  double t0 = getSystemTime();
   if (cx != cachedCX || cy != cachedCY || cacheCount > 10) {
     glGetIntegerv(GL_VIEWPORT, viewport);
     glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
@@ -467,9 +465,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     cachedCX = cx;
     cachedCY = cy;
     cacheCount = 0;
-
-    printf("Time for cache check: %3.3fms\n", 1000.0 * (getSystemTime() - t0));
-    printf("%d cells visible\n", visibleCnt);
   } else
     cacheCount++;
 
@@ -502,9 +497,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
             }
           }
         }
-  // printf("%d cells redrawn\n",redrawCnt);
-
-  double t1 = getSystemTime();
 
   /* Call all the display lists to draw the actual ground */
   for (ix = 0; ix < 2 * VISRADIUS + 1; ix++)
@@ -958,8 +950,6 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
     // (is precise enough to cover animation, save memory, yet wraparound)
   }
 
-  double t0 = getSystemTime();
-
   // Load matrices from other GL
   GLfloat proj[16];
   GLfloat model[16];
@@ -1012,8 +1002,6 @@ void Map::drawMapVBO(int birdseye, int cx, int cy, int stage) {
       }
     }
   }
-
-  double t1 = getSystemTime();
 
   // The obligatory VAO
   glBindVertexArray(vao);
@@ -1525,7 +1513,7 @@ void Map::drawCellAA(int birdsEye, int x, int y) {
 
 Chunk* Map::chunk(int cx, int cy) {
   if (cx % CHUNKSIZE != 0 || cy % CHUNKSIZE != 0) {
-    fprintf(stderr, "Bad chunk access %d %d\n", cx, cy);
+    warning("Bad chunk access %d %d", cx, cy);
     return NULL;
   }
   std::pair<int, int> cpos(cx, cy);
@@ -1559,7 +1547,7 @@ int Map::save(char* pathname, int x, int y) {
   int i, version = mapFormatVersion;
 
   if (pathIsLink(pathname)) {
-    fprintf(stderr, "Error, %s is a link, cannot save map\n", pathname);
+    warning("%s is a link, cannot save map", pathname);
     return 0;
   }
 

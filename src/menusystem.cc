@@ -48,10 +48,7 @@ void addArea(int code, int x, int y, int w, int h) {
 }
 
 void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX) {
-  if (nSelectionAreas >= MAX_MENUS) {
-    printf("Error, too many menus active\n");
-    exit(1);
-  }
+  if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int width = Font::getTextWidth(0, leftStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
@@ -69,10 +66,7 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
                          64 / 256., 1.);
 }
 void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rightX) {
-  if (nSelectionAreas >= MAX_MENUS) {
-    printf("Error, too many menus active\n");
-    exit(1);
-  }
+  if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int width = Font::getTextWidth(0, rightStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
@@ -90,10 +84,7 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
                          220 / 256., 64 / 256., 1.);
 }
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
-  if (nSelectionAreas >= MAX_MENUS) {
-    printf("Error, too many menus active\n");
-    exit(1);
-  }
+  if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int width = Font::getTextWidth(0, str, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
@@ -112,10 +103,7 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
 }
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,
                        const char *rightStr, int rightX) {
-  if (nSelectionAreas >= MAX_MENUS) {
-    printf("Error, too many menus active\n");
-    exit(1);
-  }
+  if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int widthR = Font::getTextWidth(0, rightStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];

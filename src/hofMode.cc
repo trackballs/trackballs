@@ -44,10 +44,7 @@ void HallOfFameMode::init() {
   else {
     snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
   hallOfFameMode = new HallOfFameMode();
 }
@@ -58,10 +55,7 @@ void HallOfFameMode::activated() {
   if (!background) {
     snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
 
   /* Loads the background images. */

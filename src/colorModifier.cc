@@ -42,9 +42,7 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
   this->freq = freq;
   this->phase = phase;
   if ((col < 0) || (col > 3)) {
-    fprintf(stderr,
-            "Warning: erroneous color ID (%d) of ColorModifier (%d,%d). Using '0' instead.\n",
-            col, x, y);
+    warning("erroneous color ID (%d) of ColorModifier (%d,%d). Using '0' instead.", col, x, y);
     col = 0;
   }
   this->colors = col;

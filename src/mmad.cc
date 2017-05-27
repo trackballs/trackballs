@@ -62,7 +62,6 @@ SDL_Window *window = NULL;
 SDL_Surface *screen = NULL;
 SDL_GLContext mainContext;
 const char *program_name;
-int silent = 0;
 int debug_joystick, repair_joystick;
 int not_yet_windowed = 1;
 double displayStartTime = 0.;
@@ -131,7 +130,7 @@ void changeScreenResolution() {
                               windowWidth, windowHeight, flags);
 
     if (window == NULL) {
-      printf("Could not create window: %s\n", SDL_GetError());
+      warning("Could not create window: %s", SDL_GetError());
       return;
     }
 
@@ -199,14 +198,12 @@ void print_usage(FILE *stream, int exit_code) {
           _("Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"),
           program_name);
   fprintf(stream, _("   -h  --help            Display this usage information.\n"));
-  fprintf(stream, _("   -e  --edit            Start as level editor.\n"));
   fprintf(stream, _("   -l  --level           Start from level.\n"));
   fprintf(stream, _("   -w  --windowed        Run in window (Default is fullscreen)\n"));
   fprintf(stream, _("   -m  --mute            Mute sound.\n"));
   fprintf(stream, _("   -r  --resolution      Set resolution to 640, 800 or 1024\n"));
   fprintf(stream, _("   -s  --sensitivity     Mouse sensitivity, default 1.0\n"));
   fprintf(stream, _("   -f  --fps             Displays framerate\n"));
-  fprintf(stream, _("   -q  --quiet           Do not print anything to stdout\n"));
   fprintf(stream, _("   -v  --version         Prints current version number\n"));
   fprintf(stream, _("   -t  --touch           Updates a map to the latest format\n"));
   fprintf(stream, _("   -y  --low-memory      Attempt to conserve memory usage\n"));
@@ -256,14 +253,12 @@ void innerMain(void *closure, int argc, char **argv) {
 
   const char *const short_options = "he:l:t:wmr:s:fqvyj";
   const struct option long_options[] = {{"help", 0, NULL, 'h'},
-                                        {"edit", 1, NULL, 'e'},
                                         {"level", 1, NULL, 'l'},
                                         {"windowed", 0, NULL, 'w'},
                                         {"mute", 0, NULL, 'm'},
                                         {"resolution", 1, NULL, 'r'},
                                         {"sensitivity", 1, NULL, 's'},
                                         {"fps", 0, NULL, 'f'},
-                                        {"quiet", 0, NULL, 'q'},
                                         {"version", 0, NULL, 'v'},
                                         {"touch", 1, NULL, 't'},
                                         {"low-memory", 0, NULL, 'y'},
@@ -300,12 +295,6 @@ void innerMain(void *closure, int argc, char **argv) {
     switch (next_option) {
     case 'h':
       print_usage(stdout, 0);
-    case 'e':
-      fprintf(stderr, _("Commandline switch -e is deprecated, use the editor button the main "
-                        "menu instead\n"));
-      break;
-    // editMode = 1;
-    // fall through to l
     case 'l':
       snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
                "%s", optarg);
@@ -341,9 +330,6 @@ void innerMain(void *closure, int argc, char **argv) {
       print_usage(stderr, 1);
     case -1:
       break;
-    case 'q':
-      silent = 1;
-      break;
     case 'v':
       printf("%s v%s\n", PACKAGE, VERSION);
       exit(0);
@@ -362,29 +348,24 @@ void innerMain(void *closure, int argc, char **argv) {
     }
   } while (next_option != -1);
 
-  if (!silent) {
-    printf(_("Welcome to Trackballs. \n"));
-    printf(_("Using %s as gamedata directory.\n"), SHARE_DIR);
-  }
+  printf(_("Welcome to Trackballs. \n"));
+  printf(_("Using %s as gamedata directory.\n"), SHARE_DIR);
 
   /* Initialize SDL */
   if ((SDL_Init(SDL_INIT_VIDEO | audio | SDL_INIT_JOYSTICK) == -1)) {
-    printf(_("Could not initialize libSDL.\nError message: '%s'\n"), SDL_GetError());
-    exit(-1);
+    error("Could not initialize libSDL. Error message: '%s'", SDL_GetError());
   }
   atexit(SDL_Quit);
 
   // MB: Until here we are using 7 megs of memory
   changeScreenResolution();
   if (!screen) {
-    printf(_("Could not initialize screen resolution.\nError message: '%s'\n"),
-           SDL_GetError());
-    exit(-1);
+    error("Could not initialize screen resolution (message: '%s')", SDL_GetError());
   }
   // MB: Until here we are using 42 megs of memory
 
   if (SDL_GetModState() & KMOD_CAPS) {
-    printf("Warning - capslock is on, the mouse will be visible and not grabbed\n");
+    warning("capslock is on, the mouse will be visible and not grabbed");
   }
 
   // set the name of the window
@@ -392,10 +373,7 @@ void innerMain(void *closure, int argc, char **argv) {
   double bootStart = ((double)SDL_GetTicks()) / 1000.0;
   snprintf(str, sizeof(str), "%s/images/splashScreen.jpg", SHARE_DIR);
   SDL_Surface *splashScreen = IMG_Load(str);
-  if (!splashScreen) {
-    printf("Error: failed to load %s\n", str);
-    exit(0);
-  }
+  if (!splashScreen) { error("failed to load %s", str); }
   glViewport(0, 0, screenWidth, screenHeight);
 
   // Draw the splash screen
@@ -486,7 +464,6 @@ void innerMain(void *closure, int argc, char **argv) {
 
     // Until here 74 megs
   }
-  if (!silent) printf("Trackballs initialization successfull\n");
 
   /* Make sure splahsscreen has been shown for atleast 2.5 seconds */
   double timeNow = ((double)SDL_GetTicks()) / 1000.0;
@@ -711,8 +688,7 @@ int main(int argc, char **argv) {
             snprintf(effectiveShareDir, sizeof(effectiveShareDir), "%s", SHARE_DIR_DEFAULT);
 
             if (!testDir()) {
-              printf("Error. Could not find resource directory(%s)\n", effectiveShareDir);
-              exit(0);
+              error("Could not find resource directory(%s)\n", effectiveShareDir);
             }
           }
         }

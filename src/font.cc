@@ -115,11 +115,11 @@ Font::~Font() {}
 int Font::figureFontInfo(void *pixels, int tx, int ty) {
   int i, j, jj, x, xs, k, y;
   if ((tx != CHARS_W) || (ty != CHARS_H)) {
-    fprintf(stderr, "Font image is not %dx%d. Aborted.\n", CHARS_W, CHARS_H);
+    warning("Font image is not %dx%d. Aborted.", CHARS_W, CHARS_H);
     return 0;
   }
   if (pixels == NULL) {
-    fprintf(stderr, "Font image not loaded.\n");
+    warning("Font image not loaded.");
     return 0;
   }
 
@@ -210,13 +210,13 @@ int Font::l_addText(const char *text, int x, int y, float sx, float sy, double d
     if (textlines[i].text == NULL) { break; }
   }
   if (i == MAX_TEXT_LINE) {
-    fprintf(stderr, "Too many text drawn. Ignored.\n");
+    warning("Too many text drawn. Ignored.");
     return (-1);
   }
   // add the entry
   textlines[i].time = (float *)malloc(sizeof(float) * strlen(text));
   if (textlines[i].time == NULL) {
-    fprintf(stderr, "Connot perform allocation for new text. Ignored.\n");
+    warning("Cannot perform allocation for new text. Ignored.");
     return (-1);
   }
   textlines[i].text = strdup(text);
@@ -627,7 +627,7 @@ void Font::changeText(int tl, const char *text) {
   textlines[tl].length = strlen(text);
   textlines[tl].time = (float *)malloc(sizeof(float) * strlen(text));
   if (textlines[tl].time == NULL) {
-    fprintf(stderr, "Cannot perform allocation in Font system. Text removed.\n");
+    warning("Cannot perform allocation in Font system. Text removed.");
     if (textlines[tl].text != NULL) free(textlines[tl].text);
     textlines[tl].text = NULL;
     return;

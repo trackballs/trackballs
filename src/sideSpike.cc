@@ -38,8 +38,8 @@ SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
   while (phase < 0.0) phase += 1.0;
   this->phase = phase;
   if ((side < 1) || (side > 4)) {
-    fprintf(stderr, "Warning: SideSpike (%f,%f) got invalide side (%d). Treated as '1'.\n",
-            position[0], position[1], side);
+    warning("SideSpike (%f,%f) got invalide side (%d). Treated as '1'.", position[0],
+            position[1], side);
     this->side = 1;
   } else
     this->side = side;

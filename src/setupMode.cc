@@ -67,10 +67,7 @@ void SetupMode::init() {
   else {
     snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
 
   setupMode = new SetupMode();
@@ -358,10 +355,7 @@ void SetupMode::activated() {
   if (!background) {
     snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf(_("Error: Failed to load %s\n"), str);
-      exit(0);
-    }
+    if (!background) { error("Failed to load %s", str); }
   }
 
   /* Preloads the background texture. */

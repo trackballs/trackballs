@@ -58,9 +58,6 @@
 extern char effectiveShareDir[];
 #define SHARE_DIR effectiveShareDir
 
-//#define SHARE_DIR "/home/matbr/development/trackballs/share"
-//#define SHARE_DIR "./share/trackballs"
-
 /*** More includes follows after typedeclarations ***/
 
 typedef unsigned char uchar;
@@ -82,12 +79,6 @@ typedef int Boolean;
 #ifndef M_PI2
 #define M_PI2 2.0 * M_PI
 #endif
-
-#define DEBUG(A)        \
-  {                     \
-    fprintf(stderr, A); \
-    fflush(stderr);     \
-  }
 
 void generalInit();
 double semiRand(int, int);
@@ -123,10 +114,13 @@ int mymod(int v, int m);
  * optimizations */
 double getSystemTime();
 
+/* Printfs for when things go wrong. Errors are fatal. _Never_ translate input. */
+void error(const char *formatstr, ...) __attribute__((__noreturn__));
+void warning(const char *formatstr, ...);
+
 /*** Globals ***/
 extern SDL_Surface *screen;
 extern SDL_Window *window;
-extern int silent;
 extern int low_memory;  // if true, attempt to conserve memory
 extern int debug_joystick;
 extern int repair_joystick;

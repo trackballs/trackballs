@@ -62,18 +62,16 @@ HighScore::HighScore() {
   snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", SHARE_DIR);
 #endif
   if (pathIsLink(highScorePath)) {
-    fprintf(stderr, _("Error, %s is a symbolic link. Cannot load highscores\n"),
-            highScorePath);
+    warning("%s is a symbolic link. Cannot load highscores\n", highScorePath);
     return;
   }
   SCM ip = scm_port_from_gzip(highScorePath);
   if (SCM_EOF_OBJECT_P(ip)) { return; }
 
   SCM contents = scm_read(ip);
-  const char* err = _("Warning. Incorrect format for highscore file %s\n");
   if (SCM_EOF_OBJECT_P(contents) || !scm_is_integer(contents)) {
     scm_close_input_port(ip);
-    fprintf(stderr, err, highScorePath);
+    warning("Incorrect format for highscore file %s", highScorePath);
     return;
   }
   int nLevelSets = scm_to_int32(contents);
@@ -83,7 +81,7 @@ HighScore::HighScore() {
     if (SCM_EOF_OBJECT_P(block) || !scm_to_bool(scm_list_p(block)) ||
         scm_to_int(scm_length(block)) != 11) {
       scm_close_input_port(ip);
-      fprintf(stderr, err, highScorePath);
+      warning("Incorrect format for highscore file %s", highScorePath);
       return;
     }
     SCM sname = SCM_CAR(block);
@@ -93,8 +91,7 @@ HighScore::HighScore() {
     free(name);
     if (levelSet == Settings::settings->nLevelSets) {
       scm_close_input_port(ip);
-      fprintf(stderr, _("Warning. Highscores contains info about unknown levelset %s\n"),
-              name);
+      warning("Highscores contains info about unknown levelset %s", name);
       return;
     }
     for (int i = 0; i < 10; i++) {
@@ -103,7 +100,7 @@ HighScore::HighScore() {
           !scm_is_string(SCM_CAR(cell)) || !scm_is_integer(SCM_CADR(cell)) ||
           scm_to_int32(scm_string_length(SCM_CAR(cell))) >= 25) {
         scm_close_input_port(ip);
-        fprintf(stderr, err, highScorePath);
+        warning("Incorrect format for highscore file %s", highScorePath);
         return;
       }
       char* lname = scm_to_utf8_string(SCM_CAR(cell));
@@ -136,16 +133,14 @@ void HighScore::addHighScore(int score, char* name) {
   }
 
   if (pathIsLink(highScorePath)) {
-    fprintf(stderr, _("Error, %s is a symbolic link. Cannot save highscores\n"),
-            highScorePath);
+    warning("Error, %s is a symbolic link. Cannot save highscores", highScorePath);
     return;
   }
 
   Settings* settings = Settings::settings;
   gzFile gp = gzopen(highScorePath, "wb9");
   if (!gp) {
-    fprintf(stderr, _("Warning. Cannot save highscores at %s, check file permissions\n"),
-            highScorePath);
+    warning("Warning. Cannot save highscores at %s, check file permissions", highScorePath);
     return;
   }
   gzprintf(gp, "%d\n", Settings::settings->nLevelSets);

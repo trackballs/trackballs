@@ -103,45 +103,6 @@ void draw2DString(TTF_Font *font, char *string, int x, int y, Uint8 red, Uint8 g
   glDeleteTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
 }
-/* Creates a texture from an SDL surface and draws it on screen.
-   Inefficient since the texture is created + deleted.  Avoid using this function.
-*/
-void drawSurface(SDL_Surface *surface, int x, int y, int w, int h) {
-  printf(
-      "WARNING: Using depracated function 'drawSurface' - dont do this or bad things may "
-      "happen!!!\n");
-
-  static GLuint texture = 0;
-  GLfloat texcoord[4];
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
-
-  texture = LoadTexture(surface, texcoord, 0, NULL);
-
-  texMinX = texcoord[0];
-  texMinY = texcoord[1];
-  texMaxX = texcoord[2];
-  texMaxY = texcoord[3];
-
-  Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x, y);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w, y);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x, y + h);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w, y + h);
-  glEnd();
-  Leave2DMode();
-  glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for
-                                              // mga_dri cards
-
-  // why is this removed? should it not be done???
-  glDeleteTextures(1, &texture);
-}
 
 double mousePointerPhase = 0.0;
 
@@ -317,14 +278,14 @@ int createSnapshot() {
   /* allocate buffer */
   if ((buffer = (unsigned char *)malloc(sizeof(unsigned char) * screenWidth * screenHeight *
                                         3)) == NULL) {
-    fprintf(stderr, _("Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"),
+    warning("cannot allocate %lu bytes for snapshot. Aborting.",
             sizeof(unsigned char) * screenWidth * screenHeight * 3);
     return (0);
   }
 
   /* find the name for the image */
   do {
-    sprintf(name, "./snapshot_%04d.ppm", snap_number++);
+    snprintf(name, 1023, "./snapshot_%04d.ppm", snap_number++);
     if ((f = fopen(name, "r")) == NULL) {
       again = 0;
     } else {
@@ -334,7 +295,7 @@ int createSnapshot() {
 
   /* Check against symlinks */
   if (pathIsLink(name)) {
-    fprintf(stderr, "Error: file %s is a symlink.\n", name);
+    warning("file %s is a symlink.", name);
     return 0;
   }
 
@@ -343,12 +304,12 @@ int createSnapshot() {
 
   /* save the image */
   if ((f = fopen(name, "w")) == NULL) {
-    fprintf(stderr, _("Warning: cannot create file '%s'. Abort\n"), name);
+    warning("cannot create file '%s'. Abort", name);
     free(buffer);
     return (0);
   }
 
-  fprintf(f, "P6\n# CREATOR: Hexasoft Corp. / trackballs Snapshot\n");
+  fprintf(f, "P6\n");
   fprintf(f, "%d %d\n255\n", screenWidth, screenHeight);
 
   /* write data */
@@ -477,7 +438,7 @@ SDL_Surface *getSurfaceFromRGB(char *fullPath) {
                                      0x00FF0000, 0x0000FF00, 0x000000FF);
   free(font_data);
 
-  if (!surface) printf(_("Error creating surface from RGB file: %s\n"), SDL_GetError());
+  if (!surface) warning("Failed to create surface from RGB file: %s", SDL_GetError());
   return surface;
 }
 
@@ -496,8 +457,7 @@ int loadTexture(const char *name, Font *font) {
     if (strcmp(textureNames[i], name) == 0) return i;
 
   if (numTextures >= GLHELP_MAX_TEXTURES) {
-    fprintf(stderr,
-            _("Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"),
+    warning("Warning: max. number of textures reached (%d). Texture '%s' not loaded.",
             GLHELP_MAX_TEXTURES, name);
     return 0;
   }
@@ -510,7 +470,7 @@ int loadTexture(const char *name, Font *font) {
     surface = IMG_Load(str);
   }
   if (!surface) {
-    printf(_("Warning: Failed to load texture %s\n"), str);
+    warning("Failed to load texture %s", str);
     textureNames[numTextures] = strdup(name);
     textures[numTextures++] =
         textures[0];  // just assume we managed to load this, better than nothing
@@ -549,34 +509,19 @@ void glHelpInit() {
   TTF_Init();
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   msgFont = TTF_OpenFont(str, 30);  // 30 astron
-  if (!msgFont) {
-    fprintf(stderr, "Error: failed to load font %s\n", str);
-    exit(0);
-  }
+  if (!msgFont) { error("failed to load font %s", str); }
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   infoFont = TTF_OpenFont(str, 18);
-  if (!infoFont) {
-    fprintf(stderr, "Error: failed to load font %s\n", str);
-    exit(0);
-  }
+  if (!infoFont) { error("failed to load font %s", str); }
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   ingameFont = TTF_OpenFont(str, 30);  // barbatri
-  if (!ingameFont) {
-    fprintf(stderr, "Error: failed to load font %s\n", str);
-    exit(0);
-  }
+  if (!ingameFont) { error("failed to load font %s", str); }
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   menuFont = TTF_OpenFont(str, 40);  // barbatri
-  if (!menuFont) {
-    fprintf(stderr, "Error: failed to load font %s\n", str);
-    exit(0);
-  }
+  if (!menuFont) { error("failed to load font %s", str); }
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   scrollFont = TTF_OpenFont(str, 18);
-  if (!(msgFont && infoFont && ingameFont)) {
-    printf("Error: failed to load fonts\n");
-    exit(0);
-  }
+  if (!(msgFont && infoFont && ingameFont)) { error("Error: failed to load fonts"); }
   TTF_SetFontStyle(msgFont, TTF_STYLE_NORMAL);
 
   /* Note: all textures must be powers of 2 since we ignore texcoords */
@@ -703,16 +648,10 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
   char path[256];
   snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, vertname);
   GLchar *vertexsource = filetobuf(path);
-  if (vertexsource == NULL) {
-    printf("NULL V %s\n", path);
-    return -1;
-  }
+  if (vertexsource == NULL) { error("Vertex shader %s could not be read", path); }
   snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, fragname);
   GLchar *fragmentsource = filetobuf(path);
-  if (vertexsource == NULL) {
-    printf("NULL F %s\n", path);
-    return -1;
-  }
+  if (fragmentsource == NULL) { error("Fragment shader %s could not be read", path); }
   GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
   int maxLength;
   glShaderSource(vertexshader, 1, (const GLchar **)&vertexsource, 0);
@@ -723,7 +662,7 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
     glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
     char *vertexInfoLog = (char *)malloc(maxLength);
     glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
-    fprintf(stderr, "%s Vertex shader error |%s|\n", vertname, vertexInfoLog);
+    warning("Vertex shader %s error: %s", vertname, vertexInfoLog);
     glDeleteShader(vertexshader);
     free(vertexInfoLog);
     free(vertexsource);
@@ -738,7 +677,7 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
     glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
     char *fragmentInfoLog = (char *)malloc(maxLength);
     glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
-    fprintf(stderr, "%s Fragment shader error |%s|\n", fragname, fragmentInfoLog);
+    warning("Fragment shader %s error: %s", fragname, fragmentInfoLog);
     glDeleteShader(vertexshader);
     glDeleteShader(fragmentshader);
     free(fragmentInfoLog);
@@ -764,8 +703,7 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
     glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
     char *shaderProgramInfoLog = (char *)malloc(maxLength);
     glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
-    fprintf(stderr, "%s %s Program link error |%s|\n", vertname, fragname,
-            shaderProgramInfoLog);
+    warning("Program (%s %s) link error: %s", vertname, fragname, shaderProgramInfoLog);
     free(shaderProgramInfoLog);
     return -1;
   }
@@ -807,7 +745,7 @@ int resetTextures() {
       surface = IMG_Load(str);
     }
     if (!surface) {
-      printf(_("Warning: Failed to load texture %s\n"), str);
+      warning("Failed to load texture %s", str);
       return 0;  // error (a valid texture entry)
     } else {
       glDeleteTextures(1, &textures[i]);
@@ -831,7 +769,7 @@ void displayFrameRate() {
   else if (td <= 1e-4) {
     static int hasWarned = 0;
     if (!hasWarned) {
-      printf(_("Warning: too fast framerate (%f)\n"), td);
+      warning("Warning: too fast framerate (%f)", td);
       hasWarned = 1;
     }
   } else
@@ -1092,11 +1030,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   double scale = 1.0;
   if (w > maxSize || h > maxSize) scale = min(maxSize / (double)w, maxSize / (double)h);
 
-  /*
-  printf("loadTexture: surface->w = %d, surface->h = %d\nw = %d, h = %d, maxSize = %d, scale =
-  %f nw=%d nh=%d\n",
-         surface->w,surface->h,w,h,maxSize,scale,(int)(w*scale),(int)(h*scale));
-  */
   texcoord[0] = 0.0f;                    /* Min X */
   texcoord[1] = 0.0f;                    /* Min Y */
   texcoord[2] = (GLfloat)surface->w / w; /* Max X */
@@ -1126,21 +1059,17 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   area.w = (int)(surface->w * scale);
   area.h = (int)(surface->h * scale);
 
-  /*printf("area.w = %d, area.h = %d\n",area.w,area.h);*/
-
   if (useMipmaps) scale = 1.0;  // this looks like a bug!
 
   if (scale == 1.0)
     // Easy, no scaling needed
     SDL_BlitSurface(surface, NULL, image, &area);
   else {
-    printf("doing scaling!\n");
-
     // Scaling needed
     // This is a realy inefficient and unoptimised way to do it. Sorry!
     static int hasWarned = 0;
     if (!hasWarned) {
-      printf(_("Warning: Rescaling images before loading them as textures.\n"));
+      warning("Rescaling images before loading them as textures.");
       hasWarned = 1;
     }
     SDL_Surface *source = SDL_ConvertSurface(surface, image->format, SDL_SWSURFACE);

@@ -43,10 +43,7 @@ void HelpMode::init() {
   else {
     snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
 
   helpMode = new HelpMode();
@@ -58,10 +55,7 @@ void HelpMode::activated() {
   if (!background) {
     snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s\n", str); }
   }
 
   /* Loads the background images. */
@@ -77,10 +71,7 @@ void HelpMode::activated() {
   else
     snprintf(str, sizeof(str), "%s/images/help0_1024.png", SHARE_DIR);
   page0 = IMG_Load(str);
-  if (!page0) {
-    printf(_("Error: failed to load %s\n"), str);
-    exit(0);
-  }
+  if (!page0) { error("Error: failed to load %s", str); }
   p0Texture = LoadTexture(page0, texcoord);
   SDL_FreeSurface(page0);
   p0MaxX = texcoord[0];
@@ -93,10 +84,7 @@ void HelpMode::activated() {
   else
     snprintf(str, sizeof(str), "%s/images/help1_1024.png", SHARE_DIR);
   page1 = IMG_Load(str);
-  if (!page1) {
-    printf(_("Error: failed to load %s\n"), str);
-    exit(0);
-  }
+  if (!page1) { error("failed to load %s", str); }
   p1Texture = LoadTexture(page1, texcoord);
   SDL_FreeSurface(page1);
   p1MaxX = texcoord[0];

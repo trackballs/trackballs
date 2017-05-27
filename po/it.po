@@ -7,58 +7,54 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-25 08:20-0400\n"
-"PO-Revision-Date: 2002-01-01 02:04+0100\n"
+"POT-Creation-Date: 2017-05-27 13:36-0400\n"
+"PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
-"Language: \n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
 
-#: ../src/calibrateJoystickMode.cc:97
-#, c-format
-msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
-msgstr "Errore,  chiamata a CalibrateJoystickMode senza un joystick valido!\n"
-
-#: ../src/calibrateJoystickMode.cc:101
+#: ../src/calibrateJoystickMode.cc:100
 msgid "Calibrating Joystick"
 msgstr "Calibrazione Joystick"
 
-#: ../src/calibrateJoystickMode.cc:110
+#: ../src/calibrateJoystickMode.cc:109
 msgid "Center joystick"
 msgstr "Centra joystick"
 
-#: ../src/calibrateJoystickMode.cc:114
+#: ../src/calibrateJoystickMode.cc:113
 msgid "Move joystick left"
 msgstr "Muovi joystick a sinistra"
 
-#: ../src/calibrateJoystickMode.cc:118
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Move joystick right"
 msgstr "Muovi joystick a destra"
 
-#: ../src/calibrateJoystickMode.cc:122
+#: ../src/calibrateJoystickMode.cc:121
 msgid "Move joystick up"
 msgstr "Muovi joystick verso l'alto"
 
-#: ../src/calibrateJoystickMode.cc:126
+#: ../src/calibrateJoystickMode.cc:125
 msgid "Move joystick down"
 msgstr "Muovi joystick in basso"
 
-#: ../src/calibrateJoystickMode.cc:130
+#: ../src/calibrateJoystickMode.cc:129
 msgid "Press any button to continue"
 msgstr "Premere qualunque tasto per continuare"
 
-#: ../src/calibrateJoystickMode.cc:132
+#: ../src/calibrateJoystickMode.cc:131
 msgid "Press escape to cancel"
 msgstr "Premere ESC per annullare"
 
-#: ../src/calibrateJoystickMode.cc:135
+#: ../src/calibrateJoystickMode.cc:134
 #, c-format
 msgid "now: %d %d"
 msgstr "correntemente: %d %d"
 
-#: ../src/calibrateJoystickMode.cc:140
+#: ../src/calibrateJoystickMode.cc:139
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centro: %d %d sinistra: %d destra: %d alto: %d basso: %d"
@@ -137,7 +133,7 @@ msgstr "Modifica acqua"
 
 #: ../src/editMode.cc:160
 msgid "Edit velocity"
-msgstr "Modifica velocit‡"
+msgstr "Modifica velocit√†"
 
 #: ../src/editMode.cc:160
 msgid "Edit lines"
@@ -273,7 +269,7 @@ msgstr "/UP Sposta su"
 
 #: ../src/editMode.cc:169
 msgid "/DOWN Move down"
-msgstr "/DOWN Sposta gi˘"
+msgstr "/DOWN Sposta gi√π"
 
 #: ../src/editMode.cc:169
 msgid "/LEFT Move left"
@@ -289,7 +285,7 @@ msgstr "Sposta in su la mappa"
 
 #: ../src/editMode.cc:170
 msgid "Shift map down"
-msgstr "Sposta in gi˘ la mappa"
+msgstr "Sposta in gi√π la mappa"
 
 #: ../src/editMode.cc:170
 msgid "Shift map left"
@@ -351,48 +347,22 @@ msgstr "Arrotonda poco"
 msgid "Large smooth"
 msgstr "Arrotonda molto"
 
-#: ../src/editMode.cc:299
-#, c-format
-msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
-msgstr ""
-
-#: ../src/editMode.cc:307
-#, c-format
-msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
-msgstr ""
-
-#: ../src/editMode.cc:317
-#, c-format
-msgid ""
-"Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
-msgstr ""
-
-#: ../src/editMode.cc:323
-#, c-format
-msgid "Saving map as '%s'\n"
-msgstr "Salva mappa con nome '%s'\n"
-
 #: ../src/editMode.cc:336
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot create default script file\n"
-msgstr ""
-
-#: ../src/editMode.cc:342
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Percorso: %s\n"
 
-#: ../src/editMode.cc:343
+#: ../src/editMode.cc:337
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
-msgstr ";;; Questo Ë lo script predefinito per questo percorso.\n"
+msgstr ";;; Questo √® lo script predefinito per questo percorso.\n"
 
-#: ../src/editMode.cc:344
+#: ../src/editMode.cc:338
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Leggere la documentazione dell' Editor di livelli\n"
 
-#: ../src/editMode.cc:345
+#: ../src/editMode.cc:339
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -401,47 +371,47 @@ msgstr ""
 ";;; per imparare come personalizzarlo\n"
 "\n"
 
-#: ../src/editMode.cc:485
+#: ../src/editMode.cc:479
 #, c-format
 msgid "Raise: %f"
 msgstr "Incremento: %f"
 
-#: ../src/editMode.cc:489
+#: ../src/editMode.cc:483
 #, c-format
 msgid "Pos: %d,%d"
 msgstr "Posiz.: %d,%d"
 
-#: ../src/editMode.cc:492
+#: ../src/editMode.cc:486
 #, c-format
 msgid "Feature: %s"
 msgstr "Caratteristica: %s"
 
-#: ../src/editMode.cc:495
+#: ../src/editMode.cc:489
 #, c-format
 msgid "Color %1.1f %1.1f %1.1f %1.1f"
 msgstr "Colore %1.1f %1.1f %1.1f %1.1f"
 
-#: ../src/editMode.cc:517
+#: ../src/editMode.cc:511
 msgid "yes"
-msgstr "sÏ"
+msgstr "s√¨"
 
-#: ../src/editMode.cc:517
+#: ../src/editMode.cc:511
 msgid "no"
 msgstr "no"
 
-#: ../src/editMode.cc:524
+#: ../src/editMode.cc:518
 msgid "Water height"
-msgstr "Profondit‡ acqua"
+msgstr "Profondit√† acqua"
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Cell height"
 msgstr "Altezza cella"
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Cell water height"
 msgstr "Altezza acqua nella cella."
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Textures"
 msgstr "Textures"
 
@@ -453,7 +423,7 @@ msgstr "Si desidera uscire senza salvare?"
 #: ../src/settingsMode.cc:133 ../src/settingsMode.cc:159
 #: ../src/settingsMode.cc:164 ../src/settingsMode.cc:188
 msgid "Yes"
-msgstr "SÏ"
+msgstr "S√¨"
 
 #: ../src/editWindows.cc:398 ../src/editWindows.cc:439
 #: ../src/settingsMode.cc:133 ../src/settingsMode.cc:161
@@ -488,261 +458,197 @@ msgstr "Carica mappa"
 msgid "page %d / %d"
 msgstr "Pagina %d / %d"
 
-#: ../src/gamer.cc:91
-#, c-format
-msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
-msgstr ""
-
-#: ../src/gamer.cc:99
-#, c-format
-msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
-msgstr ""
-
-#: ../src/gamer.cc:140
-#, c-format
-msgid "Warning. Profile format error for player %s\n"
-msgstr ""
-
-#: ../src/gamer.cc:175
-#, c-format
-msgid "Error: Profile for %s contains info for unknown levelset %s\n"
-msgstr ""
-
-#: ../src/glHelp.cc:320
+#: ../src/enterHighScoreMode.cc:74
 #, fuzzy, c-format
-msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
-msgstr "Attenzione: impossibile allocare %d bytes per lo snapshot. Arresto.\n"
+msgid "You got %d points"
+msgstr "%d punti"
 
-#: ../src/glHelp.cc:346
+#: ../src/enterHighScoreMode.cc:79
 #, c-format
-msgid "Warning: cannot create file '%s'. Abort\n"
-msgstr "Attenzione: impossibile creare il file '%s'. Chiusura\n"
-
-#: ../src/glHelp.cc:480
-#, c-format
-msgid "Error creating surface from RGB file: %s\n"
-msgstr "Errore nel creare una superficie dal file RGB: %s\n"
-
-#: ../src/glHelp.cc:500
-#, c-format
-msgid ""
-"Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+msgid "Enter your name: %s"
 msgstr ""
-"Attenzione: superato il massimo numero di textures (%d). Texture '%s' non "
-"caricata.\n"
 
-#: ../src/glHelp.cc:513 ../src/glHelp.cc:810
-#, c-format
-msgid "Warning: Failed to load texture %s\n"
-msgstr "Attenzione: Impossibile caricare la texture %s\n"
-
-#: ../src/glHelp.cc:834
-#, c-format
-msgid "Warning: too fast framerate (%f)\n"
-msgstr "Attenzione: troppi fotogrammi al secondo (%f)\n"
-
-#: ../src/glHelp.cc:845
+#: ../src/glHelp.cc:783
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/glHelp.cc:847
+#: ../src/glHelp.cc:785
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: ../src/glHelp.cc:849
+#: ../src/glHelp.cc:787
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/glHelp.cc:1143
-#, c-format
-msgid "Warning: Rescaling images before loading them as textures.\n"
-msgstr ""
-"Attenzione: Ridimensionare le immagini prima di caricarle come textures.\n"
-
-#: ../src/guile.cc:177
-#, c-format
-msgid "Warning. Could not find file %s\n"
-msgstr ""
-
-#: ../src/guile.cc:186
-#, c-format
-msgid "Warning. File '%s' unusually large\n"
-msgstr ""
-
-#: ../src/helpMode.cc:81 ../src/helpMode.cc:97
-#, fuzzy, c-format
-msgid "Error: failed to load %s\n"
-msgstr "Errore: Impossibile caricare %s\n"
-
-#: ../src/helpMode.cc:113
+#: ../src/helpMode.cc:101
 msgid "MORE HELP"
 msgstr "CONTINUA"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:170
 msgid "Your marble:"
 msgstr "La tua sfera"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:170
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr ""
 "Guidala utilizzando il tuo mouse, il tastierino numerico, oppure i tasti "
 "freccia."
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:171
 msgid "Left mouse or spacebar is jump."
 msgstr "Salta utilizzando il click destro del mouse o la barra spaziatrice"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:172
 msgid "Shift gives top speed when using keyboard."
-msgstr "MAIUSC d‡ la velocit‡ massima quando si utilizza la tastiera."
+msgstr "MAIUSC d√† la velocit√† massima quando si utilizza la tastiera."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:173
 msgid "Mr Black:"
 msgstr "Mr Black:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:173
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "Il tuo nemico. Sconfiggilo utilizzando la pillola-spina."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:174
 msgid "Modpill Speed:"
-msgstr "Pillola della velocit‡:"
+msgstr "Pillola della velocit√†:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:174
 msgid "Makes you go faster for short period of time."
 msgstr ""
-"Ti permette di procedere pi˘ velocemente per un breve periodo di tempo."
+"Ti permette di procedere pi√π velocemente per un breve periodo di tempo."
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:175
 msgid "Modpill Spikes:"
 msgstr "Pillola-spina:"
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:175
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "Arma contro Mr Black, inoltre rampichino per il terreno ghiacciato."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:176
 msgid "Modpill Freeze:"
 msgstr "Pillola congelante:"
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:176
 msgid "This will freeze you - avoid it."
 msgstr "Ti congela. Evitala."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:177
 msgid "Modpill Glass:"
 msgstr "Pillola di vetro:"
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:177
 msgid "Protects you from acid, but makes you more fragile."
-msgstr "Ti protegge dall'acido, ma ti rende pi˘ fragile."
+msgstr "Ti protegge dall'acido, ma ti rende pi√π fragile."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:178
 msgid "Modpill Nitro:"
 msgstr "Pillola a steroidi:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:178
 #, fuzzy
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
-"Ti sposta veramente in fretta. Attivate gli steroidi con il bottone n∞2."
+"Ti sposta veramente in fretta. Attivate gli steroidi con il bottone n¬∞2."
 
-#: ../src/helpMode.cc:191
+#: ../src/helpMode.cc:179
 msgid "Switch:"
 msgstr "Interruttore:"
 
-#: ../src/helpMode.cc:191
+#: ../src/helpMode.cc:179
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Attiva/disattiva alcuni oggetti/elementi all'interno del livello."
 
-#: ../src/helpMode.cc:192
+#: ../src/helpMode.cc:180
 msgid "Moving spike:"
 msgstr "Aculeo semovente:"
 
-#: ../src/helpMode.cc:192
+#: ../src/helpMode.cc:180
 msgid "Obstacle to avoid."
 msgstr "Ostacolo da evitare."
 
-#: ../src/helpMode.cc:193
+#: ../src/helpMode.cc:181
 msgid "Flag:"
 msgstr "Bandierina:"
 
-#: ../src/helpMode.cc:193
+#: ../src/helpMode.cc:181
 msgid "Collect for bonus points."
 msgstr "Raccoglila per ottenere punti extra."
 
-#: ../src/helpMode.cc:194
+#: ../src/helpMode.cc:182
 msgid "Normal terrain:"
 msgstr "Terreno normale:"
 
-#: ../src/helpMode.cc:194
+#: ../src/helpMode.cc:182
 msgid "Can be of any color and is safe to move on."
-msgstr "PuÚ essere di qualunque colore ed Ë sicuro procedervi sopra."
+msgstr "Pu√≤ essere di qualunque colore ed √® sicuro procedervi sopra."
 
-#: ../src/helpMode.cc:195
+#: ../src/helpMode.cc:183
 msgid "Acid terrain:"
 msgstr "Terreno acido:"
 
-#: ../src/helpMode.cc:195
+#: ../src/helpMode.cc:183
 msgid "Will kill your marble unless you have a glass modpill."
-msgstr "Ti uccider‡, a meno che tu non sia protetto dalla pillola di vetro."
+msgstr "Ti uccider√†, a meno che tu non sia protetto dalla pillola di vetro."
 
-#: ../src/helpMode.cc:196
+#: ../src/helpMode.cc:184
 msgid "Icy terrain:"
 msgstr "Terreno ghiacciato:"
 
-#: ../src/helpMode.cc:196
+#: ../src/helpMode.cc:184
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Terreno scivoloso, a meno che tu utilizzi la pillola-spina."
 
-#: ../src/helpMode.cc:197
+#: ../src/helpMode.cc:185
 msgid "Sandy terrain:"
 msgstr "Terreno sabbioso:"
 
-#: ../src/helpMode.cc:197
+#: ../src/helpMode.cc:185
 msgid "Soft to land on but will slow you down."
-msgstr "Superficie morbida per atterrare, ma ti rallenter‡."
+msgstr "Superficie morbida per atterrare, ma ti rallenter√†."
 
-#: ../src/helpMode.cc:198
+#: ../src/helpMode.cc:186
 msgid "Goal:"
 msgstr "Obbiettivo:"
 
-#: ../src/helpMode.cc:198
+#: ../src/helpMode.cc:186
 msgid "Will take you to the next level. "
-msgstr "Ti condurr‡ al livello successivo."
+msgstr "Ti condurr√† al livello successivo."
 
-#: ../src/helpMode.cc:199
+#: ../src/helpMode.cc:187
 msgid "Get here before time runs out."
 msgstr "Arriva qui prima che scada il tempo."
 
-#: ../src/helpMode.cc:200
+#: ../src/helpMode.cc:188
 msgid "Force Field:"
 msgstr "Campo di forza:"
 
-#: ../src/helpMode.cc:200
+#: ../src/helpMode.cc:188
 msgid "You cannot pass this unless you switch it off."
 msgstr "Non puoi oltrepassarlo, a meno che tu non non lo disattivi."
 
-#: ../src/helpMode.cc:201
+#: ../src/helpMode.cc:189
 msgid "Some are lethal and some are one way."
 msgstr "Alcuni sono letali, altri sono a senso unico."
 
-#: ../src/helpMode.cc:202
+#: ../src/helpMode.cc:190
 msgid "Tunnel:"
 msgstr "Tunnel:"
 
-#: ../src/helpMode.cc:202
+#: ../src/helpMode.cc:190
 msgid "Takes you places, sometimes with great speed."
-msgstr "Ti porta in un altro luogo, a volte a gran velocit‡."
+msgstr "Ti porta in un altro luogo, a volte a gran velocit√†."
 
-#: ../src/helpMode.cc:246
+#: ../src/helpMode.cc:234
 msgid "More Help"
 msgstr "Avanti"
 
-#: ../src/helpMode.cc:248 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
 msgid "Back"
 msgstr "Indietro"
 
@@ -751,36 +657,11 @@ msgstr "Indietro"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/highScore.cc:65
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot load highscores\n"
-msgstr ""
-
-#: ../src/highScore.cc:73
-#, c-format
-msgid "Warning. Incorrect format for highscore file %s\n"
-msgstr ""
-
-#: ../src/highScore.cc:96
-#, c-format
-msgid "Warning. Highscores contains info about unknown levelset %s\n"
-msgstr ""
-
-#: ../src/highScore.cc:139
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot save highscores\n"
-msgstr ""
-
-#: ../src/highScore.cc:147
-#, c-format
-msgid "Warning. Cannot save highscores at %s, check file permissions\n"
-msgstr ""
-
-#: ../src/hofMode.cc:136 ../src/setupMode.cc:183
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
 msgid "Level Set"
 msgstr "Livelloteca:"
 
-#: ../src/hofMode.cc:153
+#: ../src/hofMode.cc:147
 #, c-format
 msgid "%d points"
 msgstr "%d punti"
@@ -863,7 +744,7 @@ msgstr "%d minuti = %d punti"
 #: ../src/mainMode.cc:628
 #, c-format
 msgid "Difficulty:"
-msgstr "Difficolt‡:"
+msgstr "Difficolt√†:"
 
 #: ../src/mainMode.cc:630
 msgid "easy"
@@ -898,11 +779,11 @@ msgid ""
 "out.                                               You steer the ball using "
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
-"Trackball Ë un semplice gioco simile al classico gioco Marble Madness degli "
+"Trackball √® un semplice gioco simile al classico gioco Marble Madness degli "
 "anni '80. Guidando una sfera marmorea attraverso un labirinto pieno di "
 "aculei acuminati, pozze d'acido e altri ostacoli, il giocatore guadagna "
 "punti. Quando la sfera raggiunge l'obbiettivo, si continua con il successivo "
-"e pi˘ difficile livello - a meno che non finisca il tempo, "
+"e pi√π difficile livello - a meno che non finisca il tempo, "
 "ovviamente.                                               Puoi guidare la "
 "sfera tramite il mouse oppure con i tasti freccia, con la barra spaziatrice, "
 "puoi saltare per brevi distanze."
@@ -931,168 +812,114 @@ msgstr "Guida"
 msgid "Map Editor"
 msgstr "Editor di livelli"
 
-#: ../src/mmad.cc:199
+#: ../src/mmad.cc:198
 #, c-format
 msgid ""
 "Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
 msgstr ""
 "Utilizzo: %s [-w, -m] [-e, -l -t <livello>] [-r <larghezza>] [-s "
-"<sensibilit‡>]\n"
+"<sensibilit√†>]\n"
 
-#: ../src/mmad.cc:201
+#: ../src/mmad.cc:200
 #, c-format
 msgid "   -h  --help            Display this usage information.\n"
 msgstr "   -h  --help            Visualizza questa guida.\n"
 
-#: ../src/mmad.cc:202
-#, c-format
-msgid "   -e  --edit            Start as level editor.\n"
-msgstr "   -e  --edit            Avvia il programma con l'editor di livelli.\n"
-
-#: ../src/mmad.cc:203
+#: ../src/mmad.cc:201
 #, c-format
 msgid "   -l  --level           Start from level.\n"
 msgstr "   -l  --level           Parte dal livello.\n"
 
-#: ../src/mmad.cc:204
+#: ../src/mmad.cc:202
 #, c-format
 msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
 msgstr ""
 "   -w  --windowed        Avvia in una finestra (predefinito tuttoschermo)\n"
 
-#: ../src/mmad.cc:205
+#: ../src/mmad.cc:203
 #, c-format
 msgid "   -m  --mute            Mute sound.\n"
 msgstr "   -m  --mute            Senza audio.\n"
 
-#: ../src/mmad.cc:206
+#: ../src/mmad.cc:204
 #, c-format
 msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
 msgstr "   -r  --resolution      Imposta la risoluzione a 640, 800 o 1024\n"
 
-#: ../src/mmad.cc:207
+#: ../src/mmad.cc:205
 #, c-format
 msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     Sensibilit‡ del mouse, predefinita 1.0\n"
+msgstr "   -s  --sensitivity     Sensibilit√† del mouse, predefinita 1.0\n"
 
-#: ../src/mmad.cc:208
+#: ../src/mmad.cc:206
 #, c-format
 msgid "   -f  --fps             Displays framerate\n"
 msgstr "   -f  --fps             Visualizza i fotogrammi al secondo\n"
 
-#: ../src/mmad.cc:209
-#, c-format
-msgid "   -q  --quiet           Do not print anything to stdout\n"
-msgstr "   -q  --quiet           Non invia dati a stdout\n"
-
-#: ../src/mmad.cc:210
+#: ../src/mmad.cc:207
 #, c-format
 msgid "   -v  --version         Prints current version number\n"
 msgstr "   -v  --version         Visualizza la versione corrente\n"
 
-#: ../src/mmad.cc:211
+#: ../src/mmad.cc:208
 #, c-format
 msgid "   -t  --touch           Updates a map to the latest format\n"
 msgstr "   -t  --touch           Aggiorna una mappa all'ultimo FileFormat\n"
 
-#: ../src/mmad.cc:212
+#: ../src/mmad.cc:209
 #, c-format
 msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
 msgstr "   -y  --low-memory     Ottimizza l'utilizzo della memoria\n"
 
-#: ../src/mmad.cc:213
+#: ../src/mmad.cc:210
 #, c-format
 msgid "   -j  --repair-joystick Correct for bad joysticks\n"
 msgstr "   -j  --repair-joystick Correzione per joystick difettosi\n"
 
-#: ../src/mmad.cc:215
+#: ../src/mmad.cc:212
 #, c-format
 msgid "Important keyboard shortcuts\n"
 msgstr ""
 
-#: ../src/mmad.cc:216
+#: ../src/mmad.cc:213
 #, c-format
 msgid "   Escape     Soft quit\n"
 msgstr ""
 
-#: ../src/mmad.cc:217
+#: ../src/mmad.cc:214
 #, c-format
 msgid "   CapsLock   Unhide mouse pointer\n"
 msgstr ""
 
-#: ../src/mmad.cc:218
+#: ../src/mmad.cc:215
 #, c-format
 msgid "   CTRL-q     Quit the game immediatly\n"
 msgstr ""
 
-#: ../src/mmad.cc:219
+#: ../src/mmad.cc:216
 #, c-format
 msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
 msgstr ""
 
-#: ../src/mmad.cc:220
+#: ../src/mmad.cc:217
 #, c-format
 msgid "   k          Kill the ball\n"
 msgstr ""
 
-#: ../src/mmad.cc:304
-#, c-format
-msgid ""
-"Commandline switch -e is deprecated, use the editor button the main menu "
-"instead\n"
-msgstr ""
-"Il parametro -e Ë stato disttivato. Utilizzare il pulsante \"Editor\" "
-"all'interno del men˘ principale.\n"
-
-#: ../src/mmad.cc:331
+#: ../src/mmad.cc:320
 #, c-format
 msgid "Unknown screen resolution of width %d\n"
 msgstr "Risoluzione schermo sconosciuta per larghezza %d\n"
 
-#: ../src/mmad.cc:366
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Welcome to Trackballs. \n"
 msgstr "Benvenuti in Trackballs. \n"
 
-#: ../src/mmad.cc:367
+#: ../src/mmad.cc:352
 #, c-format
 msgid "Using %s as gamedata directory.\n"
 msgstr "Utilizza la catella %s per i dati del gioco.\n"
-
-#: ../src/mmad.cc:372
-#, c-format
-msgid ""
-"Could not initialize libSDL.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Impossibile inizializzare libSDL.\n"
-"Messaggio di errore: '%s'\n"
-
-#: ../src/mmad.cc:380
-#, fuzzy, c-format
-msgid ""
-"Could not initialize screen resolution.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Impossibile inizializzare libSDL.\n"
-"Messaggio di errore: '%s'\n"
-
-#: ../src/settings.cc:78
-msgid "Configuration file should be a series of (key value) tuples."
-msgstr ""
-
-#: ../src/settings.cc:79
-msgid "Error in value associated with:"
-msgstr ""
-
-#: ../src/settings.cc:219
-msgid "Unidentified setting:"
-msgstr ""
-
-#: ../src/settings.cc:325 ../src/settings.cc:332
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot save settings\n"
-msgstr ""
 
 #: ../src/settingsMode.cc:82
 msgid "Game Settings"
@@ -1210,7 +1037,7 @@ msgstr "  Utilizza mouse"
 
 #: ../src/settingsMode.cc:193
 msgid "  Sensitivity"
-msgstr "  Sensibilit‡"
+msgstr "  Sensibilit√†"
 
 #: ../src/settingsMode.cc:200
 #, c-format
@@ -1251,79 +1078,145 @@ msgstr "  Volume effetti"
 msgid "  Language"
 msgstr ""
 
-#: ../src/setupMode.cc:71 ../src/setupMode.cc:362
-#, fuzzy, c-format
-msgid "Error: Failed to load %s\n"
-msgstr "Errore: Impossibile caricare %s\n"
-
-#: ../src/setupMode.cc:175
+#: ../src/setupMode.cc:172
 msgid "Setup new game"
 msgstr "Prepara nuovo gioco."
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:176
 msgid "Player Name"
 msgstr "Nome del giocatore"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:182
 msgid "N/A"
 msgstr "N/D"
 
-#: ../src/setupMode.cc:191
+#: ../src/setupMode.cc:188
 msgid "Level"
 msgstr "Livello"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:196
 msgid "Difficulty"
-msgstr "Difficolt‡:"
+msgstr "Difficolt√†:"
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:201
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:202
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:202
 #, fuzzy
 msgid "Sandbox (Hard)"
 msgstr "Standard"
 
-#: ../src/setupMode.cc:207
+#: ../src/setupMode.cc:204
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:205
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:205
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:212
+#: ../src/setupMode.cc:209
 msgid "Start Game"
 msgstr "Gioca!"
 
-#: ../src/setupMode.cc:216
+#: ../src/setupMode.cc:213
 #, c-format
 msgid "Total games played: %d"
 msgstr "Partite giocate: %d"
 
-#: ../src/setupMode.cc:220
+#: ../src/setupMode.cc:217
 #, c-format
 msgid "Average score: %d"
 msgstr "Punteggio medio: %d"
 
-#: ../src/setupMode.cc:222
+#: ../src/setupMode.cc:219
 #, c-format
 msgid "Average score: N/A"
 msgstr "Punteggio medio: N/D"
 
-#: ../src/setupMode.cc:225
+#: ../src/setupMode.cc:222
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"
+
+#~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
+#~ msgstr ""
+#~ "Errore,  chiamata a CalibrateJoystickMode senza un joystick valido!\n"
+
+#~ msgid "Saving map as '%s'\n"
+#~ msgstr "Salva mappa con nome '%s'\n"
+
+#, fuzzy
+#~ msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
+#~ msgstr ""
+#~ "Attenzione: impossibile allocare %d bytes per lo snapshot. Arresto.\n"
+
+#~ msgid "Warning: cannot create file '%s'. Abort\n"
+#~ msgstr "Attenzione: impossibile creare il file '%s'. Chiusura\n"
+
+#~ msgid "Error creating surface from RGB file: %s\n"
+#~ msgstr "Errore nel creare una superficie dal file RGB: %s\n"
+
+#~ msgid ""
+#~ "Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+#~ msgstr ""
+#~ "Attenzione: superato il massimo numero di textures (%d). Texture '%s' non "
+#~ "caricata.\n"
+
+#~ msgid "Warning: Failed to load texture %s\n"
+#~ msgstr "Attenzione: Impossibile caricare la texture %s\n"
+
+#~ msgid "Warning: too fast framerate (%f)\n"
+#~ msgstr "Attenzione: troppi fotogrammi al secondo (%f)\n"
+
+#~ msgid "Warning: Rescaling images before loading them as textures.\n"
+#~ msgstr ""
+#~ "Attenzione: Ridimensionare le immagini prima di caricarle come textures.\n"
+
+#, fuzzy
+#~ msgid "Error: failed to load %s\n"
+#~ msgstr "Errore: Impossibile caricare %s\n"
+
+#~ msgid "   -e  --edit            Start as level editor.\n"
+#~ msgstr ""
+#~ "   -e  --edit            Avvia il programma con l'editor di livelli.\n"
+
+#~ msgid "   -q  --quiet           Do not print anything to stdout\n"
+#~ msgstr "   -q  --quiet           Non invia dati a stdout\n"
+
+#~ msgid ""
+#~ "Commandline switch -e is deprecated, use the editor button the main menu "
+#~ "instead\n"
+#~ msgstr ""
+#~ "Il parametro -e √® stato disttivato. Utilizzare il pulsante \"Editor\" "
+#~ "all'interno del men√π principale.\n"
+
+#~ msgid ""
+#~ "Could not initialize libSDL.\n"
+#~ "Error message: '%s'\n"
+#~ msgstr ""
+#~ "Impossibile inizializzare libSDL.\n"
+#~ "Messaggio di errore: '%s'\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Could not initialize screen resolution.\n"
+#~ "Error message: '%s'\n"
+#~ msgstr ""
+#~ "Impossibile inizializzare libSDL.\n"
+#~ "Messaggio di errore: '%s'\n"
+
+#, fuzzy
+#~ msgid "Error: Failed to load %s\n"
+#~ msgstr "Errore: Impossibile caricare %s\n"
 
 #, fuzzy
 #~ msgid "Open..."

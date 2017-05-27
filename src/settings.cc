@@ -75,8 +75,6 @@ Settings::Settings() {
   /* Load all settings from a scheme-syntaxed config file */
   char str[256];
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/settings", getenv("HOME"));
-  const char *errstring1 = _("Configuration file should be a series of (key value) tuples.");
-  const char *errstring2 = _("Error in value associated with:");
   if (access(str, R_OK) != -1) {
     SCM ip = scm_open_file(scm_from_utf8_string(str), scm_from_utf8_string("r"));
     // ^ TODO catch exception
@@ -85,140 +83,55 @@ Settings::Settings() {
       SCM contents = scm_read(ip);
       if (SCM_EOF_OBJECT_P(contents)) { break; }
       if (!scm_to_bool(scm_list_p(contents)) || scm_to_int(scm_length(contents)) != 2) {
-        fprintf(stderr, "%s\n", errstring1);
+        warning("Configuration file should be a series of (key value) tuples.");
         continue;
       }
       SCM key = SCM_CAR(contents);
       SCM value = SCM_CADR(contents);
       if (!scm_is_symbol(key) || !SCM_NUMBERP(value)) {
-        fprintf(stderr, "%s\n", errstring1);
+        warning("Configuration file should be a series of (key value) tuples.");
         continue;
       }
-      char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
-      if (!strcmp(skey, "sfx-volume")) {
-        if (scm_is_real(value)) {
-          sfxVolume = scm_to_double(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "music-volume")) {
-        if (scm_is_real(value)) {
-          musicVolume = scm_to_double(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "mouse-sensitivity")) {
-        if (scm_is_real(value)) {
-          mouseSensitivity = scm_to_double(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "gfx-details")) {
-        if (scm_is_integer(value)) {
-          gfx_details = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "show-fps")) {
-        if (scm_is_integer(value)) {
-          showFPS = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "is-windowed")) {
-        if (scm_is_integer(value)) {
-          is_windowed = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "resolution")) {
-        if (scm_is_integer(value)) {
-          resolution = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "color-depth")) {
-        if (scm_is_integer(value)) {
-          colorDepth = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joystick-index")) {
-        if (scm_is_integer(value)) {
-          joystickIndex = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy_center-x")) {
-        if (scm_is_integer(value)) {
-          joy_center[0] = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy_center-y")) {
-        if (scm_is_integer(value)) {
-          joy_center[1] = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy-left")) {
-        if (scm_is_integer(value)) {
-          joy_left = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy-right")) {
-        if (scm_is_integer(value)) {
-          joy_right = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy-up")) {
-        if (scm_is_integer(value)) {
-          joy_up = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "joy-down")) {
-        if (scm_is_integer(value)) {
-          joy_down = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "rotate-steering")) {
-        if (scm_is_integer(value)) {
-          rotateSteering = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "language")) {
-        if (scm_is_integer(value)) {
-          language = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "ignore-mouse")) {
-        if (scm_is_integer(value)) {
-          ignoreMouse = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "do-reflections")) {
-        if (scm_is_integer(value)) {
-          doReflections = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else if (!strcmp(skey, "vsync-on")) {
-        if (scm_is_integer(value)) {
-          vsynced = scm_to_int(value);
-        } else {
-          fprintf(stderr, "%s >%s<\n", errstring2, skey);
-        }
-      } else {
-        fprintf(stderr, "%s >%s<\n", _("Unidentified setting:"), skey);
-      }
+      const int intnum = 17, realnum = 3;
+      const char *intkeys[intnum] = {
+          "gfx-details",    "show-fps",     "is-windowed",     "resolution", "color-depth",
+          "joystick-index", "joy_center-x", "joy_center-y",    "joy-left",   "joy-right",
+          "joy-up",         "joy-down",     "rotate-steering", "language",   "ignore-mouse",
+          "do-reflections", "vsync-on"};
 
+      int *intdests[intnum] = {&gfx_details,    &showFPS,       &is_windowed,   &resolution,
+                               &colorDepth,     &joystickIndex, &joy_center[0], &joy_center[1],
+                               &joy_left,       &joy_right,     &joy_up,        &joy_down,
+                               &rotateSteering, &language,      &ignoreMouse,   &doReflections,
+                               &vsynced};
+      const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
+      double *realdests[realnum] = {&sfxVolume, &musicVolume, &mouseSensitivity};
+
+      int matched = 0;
+      char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
+      for (int j = 0; j < realnum; j++) {
+        if (!strcmp(realkeys[j], skey)) {
+          if (scm_is_real(value)) {
+            *realdests[j] = scm_to_double(value);
+          } else {
+            warning("Value associated with %s is not a number", skey);
+          }
+          matched = 1;
+          break;
+        }
+      }
+      for (int j = 0; j < intnum; j++) {
+        if (!strcmp(intkeys[j], skey)) {
+          if (scm_is_integer(value)) {
+            *intdests[j] = scm_to_int(value);
+          } else {
+            warning("Value associated with %s is not an integer", skey);
+          }
+          matched = 1;
+          break;
+        }
+      }
+      if (!matched) { warning("Unidentified setting: %s", skey); }
       free(skey);
     }
     scm_close(ip);
@@ -235,10 +148,7 @@ void Settings::loadLevelSets() {
 
   snprintf(str, sizeof(str), "%s/levels", SHARE_DIR);
   DIR *dir = opendir(str);
-  if (!dir) {
-    printf("Can't find the %s/ directory\n", str);
-    exit(0);
-  }
+  if (!dir) { error("Can't find the %s/ directory", str); }
   struct dirent *dirent;
   while ((dirent = readdir(dir))) {
     if (strlen(dirent->d_name) > 4 &&
@@ -263,8 +173,7 @@ void Settings::loadLevelSets() {
     }
 
   if (!nLevelSets) {
-    printf("Error: failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
-    exit(0);
+    error("failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
   }
 }
 void Settings::loadLevelSet(char *setname) {
@@ -274,7 +183,7 @@ void Settings::loadLevelSet(char *setname) {
   int lineno;
 
   if (!fp)
-    printf("Warning: Failure reading levelSet %s\n", setname);
+    warning("Failure reading levelSet %s", setname);
   else {
     fgets(levelSets[nLevelSets].name, 256, fp);
     if (levelSets[nLevelSets].name[strlen(levelSets[nLevelSets].name) - 1] == '\n')
@@ -295,7 +204,7 @@ void Settings::loadLevelSet(char *setname) {
       if (levelSets[nLevelSets]
               .description[lineno][strlen(levelSets[nLevelSets].description[lineno]) - 1] !=
           '\n') {
-        printf("Warning - malformed descriptions for levelset %s\n", setname);
+        warning("malformed descriptions for levelset %s", setname);
       }
       /* Remove final newline character */
       levelSets[nLevelSets]
@@ -322,21 +231,21 @@ void Settings::save() {
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
   if (pathIsLink(str)) {
-    fprintf(stderr, _("Error, %s is a symbolic link. Cannot save settings\n"), str);
+    warning("%s is a symbolic link. Cannot save settings", str);
     return;
   }
 
   mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/settings", getenv("HOME"));
   if (pathIsLink(str)) {
-    fprintf(stderr, _("Error, %s is a symbolic link. Cannot save settings\n"), str);
+    warning("%s is a symbolic link. Cannot save settings", str);
     return;
   }
 
   /* Save all settings here */
   FILE *fp = fopen(str, "w");
   if (!fp) {
-    printf("Warning. Could not save settings.\n");
+    warning("Could not save settings to '%s'.", str);
   } else {
     fprintf(fp, "(sfx-volume %.3g)\n", sfxVolume);
     fprintf(fp, "(music-volume %.3g)\n", musicVolume);
@@ -367,7 +276,7 @@ int Settings::hasJoystick() {
 
   if (!joystick) joystick = SDL_JoystickOpen(Settings::settings->joystickIndex - 1);
   if (!joystick) {
-    printf("Warning, failed to open joystick no. %d\n", Settings::settings->joystickIndex - 1);
+    warning("failed to open joystick no. %d", Settings::settings->joystickIndex - 1);
     joystickIndex = 0;
   }
   return joystickIndex;
@@ -404,7 +313,7 @@ double Settings::joystickX() {
   if (!joystickIndex) return 0.0;
   if (!joystick) joystick = SDL_JoystickOpen(Settings::settings->joystickIndex - 1);
   if (!joystick) {
-    printf("Warning, failed to open joystick no. %d\n", Settings::settings->joystickIndex - 1);
+    warning("failed to open joystick no. %d", Settings::settings->joystickIndex - 1);
     joystickIndex = 0;
   }
   int joyX = joystickRawX();
@@ -421,7 +330,7 @@ double Settings::joystickY() {
   if (!joystickIndex) return 0.0;
   if (!joystick) joystick = SDL_JoystickOpen(Settings::settings->joystickIndex - 1);
   if (!joystick) {
-    printf("Warning, failed to open joystick no. %d\n", Settings::settings->joystickIndex - 1);
+    warning("failed to open joystick no. %d", Settings::settings->joystickIndex - 1);
     joystickIndex = 0;
   }
 
@@ -459,17 +368,15 @@ void Settings::setLocale() {
 #endif
 
     if (!dirExists(localedir)) {
-      fprintf(stderr, "Warning: locale directory %s missing.\n", localedir);
+      warning("locale directory %s missing.\n", localedir);
       // language=0;
     }
   }
 
   /* Set the locale, trying several name options */
-  printf("setLocale: %s ", languageCodes[language][0]);
   char *ret = NULL;
   for (int i = 0; i < 3; i++) {
     ret = setlocale(LC_MESSAGES, languageCodes[language][i]);
     if (ret) { break; }
   }
-  printf("-> %s\n", ret);
 }

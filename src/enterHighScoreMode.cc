@@ -45,10 +45,7 @@ void EnterHighScoreMode::init() {
   else {
     snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
 }
 EnterHighScoreMode::EnterHighScoreMode() {
@@ -74,12 +71,12 @@ void EnterHighScoreMode::display() {
   glEnd();
   Leave2DMode();
 
-  snprintf(str, sizeof(str), "You got %d points", Game::current->player1->score);
+  snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
   TTF_SizeText(menuFont, str, &w, &h);
   h += 5;
   draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 0 * h, 220,
                220, 64);
-  snprintf(str, sizeof(str), "Enter your name: %s", name);
+  snprintf(str, sizeof(str), _("Enter your name: %s"), name);
   TTF_SizeText(menuFont, str, &w, &h);
   h += 5;
   draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 1 * h, 220,
@@ -121,10 +118,7 @@ void EnterHighScoreMode::activated() {
   if (!background) {
     snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", SHARE_DIR);
     background = IMG_Load(str);
-    if (!background) {
-      printf("Error: failed to load %s\n", str);
-      exit(0);
-    }
+    if (!background) { error("failed to load %s", str); }
   }
 
   snprintf(name, sizeof(name), "%s", Game::current->gamer->name);

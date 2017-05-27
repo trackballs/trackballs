@@ -50,20 +50,14 @@ void soundInit() {
   DIR *dir;
   struct dirent *dirent;
 
-  if (!silent) {
-    printf("Attempting to open mixer...");
-    fflush(stdout);
-  }
   if (Mix_OpenAudio(22050, AUDIO_S16, 2, 4096) < 0) {
-    printf("failed\n");
-    fprintf(stderr,
-            "Couldn't open audio: %s\nTry shutting down artsd/esd or run trackballs through "
-            "artsdsp/esddsp\n",
-            SDL_GetError());
+    warning(
+        "Couldn't open audio: %s\nTry shutting down artsd/esd or run trackballs through "
+        "artsdsp/esddsp\n",
+        SDL_GetError());
     mute = 1;
     return;
   }
-  if (!silent) printf("successfull\n");
 
   clearMusicPreferences();
 
@@ -79,7 +73,7 @@ void soundInit() {
           wavs[n_effects] = strdup(dirent->d_name);
           n_effects++;
         } else
-          printf("Warning: Error when loading '%s'\n", str);
+          warning("Failed to load '%s'\n", str);
       }
     }
     closedir(dir);
@@ -96,19 +90,11 @@ void soundInit() {
         snprintf(str, sizeof(str), "%s/music/%s", SHARE_DIR, dirent->d_name);
         music[n_songs] = Mix_LoadMUS(str);
         songName[n_songs] = strdup(dirent->d_name);
-        if (!music[n_songs++]) printf("Warning: Error when loading '%s'\n", str);
+        if (!music[n_songs++]) warning("Failed to load '%s'", str);
       }
     }
     closedir(dir);
   }
-
-  /*
-  for(i=0;i<N_SONGS;i++) {
-        sprintf(str,"%s/music/%s",SHARE_DIR,songs[i]);
-        music[i] = Mix_LoadMUS(str);
-        if(!music[i])
-          printf("Warning: Failed to load '%s'\n",str);
-          }*/
 }
 
 int doSpecialSfx = 0;
@@ -144,7 +130,7 @@ void playNextSong() {
         if (r <= 0) break;
       }
       if (i == n_songs) {
-        printf("Error, bad weights in music preferences\n");
+        warning("bad weights in music preferences");
         i = 0;
       }
     } else {
@@ -161,7 +147,7 @@ void playNextSong() {
   if (music[i])
     Mix_FadeInMusic(music[i], 1, 2000);
   else
-    printf("Warning, bad song index %d selected\n", i);
+    warning("bad song index %d selected", i);
 }
 
 void playEffect(int e, float vol) {
@@ -222,7 +208,7 @@ void setMusicPreference(char *name, int weight) {
     if (strcasecmp(songName[i], name) == 0) break;
   }
   if (i == n_songs) {
-    printf("setMusicPreference: failed to find song '%s'\nMake sr", name);
+    warning("setMusicPreference: failed to find song '%s'", name);
     return;
   } else {
     hasMusicPreferences -= musicPreferences[i];

@@ -88,15 +88,13 @@ void Gamer::save() {
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
   if (pathIsLink(str)) {
-    fprintf(stderr, _("Error, %s/.trackballs is a symbolic link. Cannot save settings\n"),
-            getenv("HOME"));
+    warning("Error, %s/.trackballs is a symbolic link. Cannot save settings", getenv("HOME"));
     return;
   }
   if (!pathIsDir(str)) mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/%s.gmr", getenv("HOME"), name);
   if (pathIsLink(str)) {
-    fprintf(stderr,
-            _("Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"),
+    warning("Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings",
             getenv("HOME"), name);
     return;
   }
@@ -137,25 +135,24 @@ void Gamer::update() {
     setDefaults();
     return;
   }
-  const char *fmterr = _("Warning. Profile format error for player %s\n");
   for (int i = 0; i < 1000; i++) {
     SCM blob = scm_read(ip);
     if (SCM_EOF_OBJECT_P(blob)) { break; }
     if (!scm_to_bool(scm_list_p(blob)) || scm_to_int(scm_length(blob)) < 2 ||
         !scm_is_symbol(SCM_CAR(blob))) {
-      fprintf(stderr, fmterr, name);
+      warning("Profile format error for player %s", name);
       break;
     }
     char *skey = scm_to_utf8_string(scm_symbol_to_string(SCM_CAR(blob)));
     if (!strcmp(skey, "levelsets")) {
       free(skey);
       if (!scm_is_integer(SCM_CADR(blob))) {
-        fprintf(stderr, fmterr, name);
+        warning("Profile format error for player %s", name);
         break;
       }
       int nLevelSets = scm_to_int32(SCM_CADR(blob));
       if (scm_to_int(scm_length(blob)) != nLevelSets + 2) {
-        fprintf(stderr, fmterr, name);
+        warning("Profile format error for player %s", name);
         break;
       }
 
@@ -163,7 +160,7 @@ void Gamer::update() {
         SCM block = scm_list_ref(blob, scm_from_int32(nLevelSets + 1));
         if (!scm_to_bool(scm_list_p(block)) || !scm_is_string(SCM_CAR(block)) ||
             !scm_is_integer(SCM_CADR(block)) || scm_to_int32(SCM_CADR(block)) <= 0) {
-          fprintf(stderr, fmterr, name);
+          warning("Profile format error for player %s", name);
           break;
         }
         char *lsname = scm_to_utf8_string(SCM_CAR(block));
@@ -172,8 +169,7 @@ void Gamer::update() {
           if (strcmp(lsname, Settings::settings->levelSets[levelSet].name) == 0) break;
         free(lsname);
         if (levelSet == Settings::settings->nLevelSets) {
-          fprintf(stderr, _("Error: Profile for %s contains info for unknown levelset %s\n"),
-                  str, lsname);
+          warning("Error: Profile for %s contains info for unknown levelset %s", str, lsname);
           break;
         }
         nKnownLevels[levelSet] = scm_to_int32(SCM_CADR(block));
@@ -183,7 +179,7 @@ void Gamer::update() {
               !scm_is_string(SCM_CAR(cell)) || !scm_is_string(SCM_CADR(cell)) ||
               scm_to_int32(scm_string_length(SCM_CAR(cell))) >= 64 ||
               scm_to_int32(scm_string_length(SCM_CADR(cell))) >= 64) {
-            fprintf(stderr, fmterr, name);
+            warning("Profile format error for player %s", name);
             break;
           }
           char *fname = scm_to_utf8_string(SCM_CAR(cell));
@@ -205,7 +201,7 @@ void Gamer::update() {
                        &Settings::settings->difficulty,
                        &Settings::settings->sandbox};
       if (scm_to_int(scm_length(blob)) != 2 || !scm_is_integer(SCM_CADR(blob))) {
-        fprintf(stderr, fmterr, name);
+        warning("Profile format error for player %s", name);
         free(skey);
         break;
       }

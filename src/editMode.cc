@@ -296,15 +296,14 @@ void EditMode::saveMap() {
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
   if (pathIsLink(str)) {
-    fprintf(stderr, _("Error, %s/.trackballs is a symbolic link. Cannot save map\n"),
-            getenv("HOME"));
+    warning("Error, %s/.trackballs is a symbolic link. Cannot save map", getenv("HOME"));
     return;
   } else if (!pathIsDir(str))
     mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels", getenv("HOME"));
   if (pathIsLink(str)) {
-    fprintf(stderr, _("Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"),
+    warning("Error, %s/.trackballs/levels is a symbolic link. Cannot save map",
             getenv("HOME"));
     return;
   } else if (!pathIsDir(str))
@@ -313,14 +312,10 @@ void EditMode::saveMap() {
   snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
            levelname);
   if (pathIsLink(str)) {
-    fprintf(stderr,
-            _("Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"),
+    warning("Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map",
             getenv("HOME"), levelname);
     return;
   }
-  // snprintf(mapname,sizeof(mapname)-1,"%s/levels/%s.map",SHARE_DIR,name); only if we allow
-  // saving in the share dir
-  printf(_("Saving map as '%s'\n"), mapname);
 
   map->save(mapname, x, y);
   doSave = 0;
@@ -333,8 +328,7 @@ void EditMode::saveMap() {
     if (!pathIsFile(str)) {
       /* No script file exists. Create a default one */
       if (pathIsLink(str)) {
-        fprintf(stderr, _("Error, %s is a symbolic link. Cannot create default script file\n"),
-                str);
+        warning("Error, %s is a symbolic link. Cannot create default script file", str);
         return;
       }
       printf("Creating default script file at: %s\n", str);
@@ -571,8 +565,6 @@ void EditMode::doCommand(int command) {
 
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
 
-  // printf("Doing command: %d\n",command);
-
   /* File commands are handled first */
   switch (command) {
   case FILE_NEW:
@@ -747,14 +739,12 @@ void EditMode::doCommand(int command) {
 
   default:
     /* TODO. Not implemented yet? */
-    printf("Command %d not yet implemented\n", command);
+    warning("Command %d not yet implemented", command);
     break;
   }
 }
 
 void EditMode::doCellAction(int code, int direction) {
-  // printf("Cell action: %d %d\n",code,direction);
-
   int corner;
   int xLow, xHigh, yLow, yHigh;
   int i, j, x1, y1;

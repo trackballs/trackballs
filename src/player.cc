@@ -149,23 +149,6 @@ void Player::tick(Real t) {
     mouseY -= screenHeight / 2;
     SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
-/*
-Uint8 mouseState=SDL_GetRelativeMouseState(&mouseX,&mouseY);
-*/
-
-/* DEBUGGING */
-#ifdef FOO
-    printf("Screen Width/2=%d, screenHeight/2=%d\n", screenWidth / 2, screenHeight / 2);
-    {
-      int tmp1, tmp2;
-      SDL_GetMouseState(&tmp1, &tmp2);
-      if (tmp1 != screenWidth / 2 || tmp2 != screenHeight / 2)
-        fprintf(stderr, "Error - broken SDL_warp %d %d\n", tmp1, tmp2);
-      if (tmp1 != screenWidth / 2 || tmp2 != screenHeight / 2)
-        fprintf(stderr, "Again error - broken SDL_warp %d %d\n", tmp1, tmp2);
-    }
-#endif
-
     if (mouseState & SDL_BUTTON_RMASK) superAccelerate = 1;
     if ((mouseX || mouseY)) {
       dx = mouseX * Settings::settings->mouseSensitivity * 0.1;

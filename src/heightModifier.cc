@@ -52,10 +52,8 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
   } else
     this->avg_center = 0;
   if ((corner < 0) || (corner > 3)) {
-    fprintf(
-        stderr,
-        "Warning: erroneous corner ID (%d) of HeightModifier (%d,%d). Using '0' instead.\n",
-        corner, x, y);
+    warning("Warning: erroneous corner ID (%d) of HeightModifier (%d,%d). Using '0' instead.",
+            corner, x, y);
     corner = 0;
   }
   this->corner = corner;

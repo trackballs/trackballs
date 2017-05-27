@@ -122,7 +122,7 @@ const char *locateFile(char *basename, char *mode) {
     return str;
   }
 
-  fprintf(stderr, "Warning, failed to open resource file %s in mode '%s'\n", basename, mode);
+  warning("failed to open resource file %s in mode '%s'", basename, mode);
   return "";
 }
 
@@ -132,4 +132,22 @@ double getSystemTime() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec + 1e-6 * tv.tv_usec;
+}
+
+void error(const char *formatstr, ...) {
+  char errmsg[256];
+  va_list(args);
+  snprintf(errmsg, 255, "[ERROR] %s\n", formatstr);
+  errmsg[255] = '\0';
+  va_start(args, formatstr);
+  vfprintf(stderr, errmsg, args);
+  exit(EXIT_FAILURE);
+}
+void warning(const char *formatstr, ...) {
+  char errmsg[256];
+  va_list(args);
+  snprintf(errmsg, 255, "[WARNING] %s\n", formatstr);
+  errmsg[255] = '\0';
+  va_start(args, formatstr);
+  vfprintf(stderr, errmsg, args);
 }

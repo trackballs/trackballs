@@ -9,86 +9,82 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-25 08:20-0400\n"
-"PO-Revision-Date: 2006-08-27 12:24+0200\n"
+"POT-Creation-Date: 2017-05-27 13:36-0400\n"
+"PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
 "Language-Team: Hungarian\n"
-"Language: \n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=iso-8859-2\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.1\n"
 
-#: ../src/calibrateJoystickMode.cc:97
-#, c-format
-msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
-msgstr "Hiba, CalibrateJoystickMode meghÌv·sa botkorm·ny nÈlk¸l.\n"
-
-#: ../src/calibrateJoystickMode.cc:101
+#: ../src/calibrateJoystickMode.cc:100
 msgid "Calibrating Joystick"
-msgstr "Botkorm·ny be·llÌt·sa"
+msgstr "Botkorm√°ny be√°ll√≠t√°sa"
 
-#: ../src/calibrateJoystickMode.cc:110
+#: ../src/calibrateJoystickMode.cc:109
 msgid "Center joystick"
-msgstr "Botkorm·nyt kˆzÈpre"
+msgstr "Botkorm√°nyt k√∂z√©pre"
 
-#: ../src/calibrateJoystickMode.cc:114
+#: ../src/calibrateJoystickMode.cc:113
 msgid "Move joystick left"
-msgstr "Botkorm·nyt balra"
+msgstr "Botkorm√°nyt balra"
 
-#: ../src/calibrateJoystickMode.cc:118
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Move joystick right"
-msgstr "Botkorm·nyt jobbra"
+msgstr "Botkorm√°nyt jobbra"
 
-#: ../src/calibrateJoystickMode.cc:122
+#: ../src/calibrateJoystickMode.cc:121
 msgid "Move joystick up"
-msgstr "Botkorm·nyt fel"
+msgstr "Botkorm√°nyt fel"
 
-#: ../src/calibrateJoystickMode.cc:126
+#: ../src/calibrateJoystickMode.cc:125
 msgid "Move joystick down"
-msgstr "Botkorm·nyt le"
+msgstr "Botkorm√°nyt le"
 
-#: ../src/calibrateJoystickMode.cc:130
+#: ../src/calibrateJoystickMode.cc:129
 msgid "Press any button to continue"
-msgstr "Folytat·s b·rmely gomb megnyom·s·val"
+msgstr "Folytat√°s b√°rmely gomb megnyom√°s√°val"
 
-#: ../src/calibrateJoystickMode.cc:132
+#: ../src/calibrateJoystickMode.cc:131
 msgid "Press escape to cancel"
-msgstr "Esc: KilÈpÈs"
+msgstr "Esc: Kil√©p√©s"
 
-#: ../src/calibrateJoystickMode.cc:135
+#: ../src/calibrateJoystickMode.cc:134
 #, c-format
 msgid "now: %d %d"
 msgstr "most: %d %d"
 
-#: ../src/calibrateJoystickMode.cc:140
+#: ../src/calibrateJoystickMode.cc:139
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
-msgstr "kˆzÈp: %d %d bal: %d jobb: %d fel: %d le: %d"
+msgstr "k√∂z√©p: %d %d bal: %d jobb: %d fel: %d le: %d"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
 #: ../src/editMode.cc:150
 msgid "File"
-msgstr "F·jl"
+msgstr "F√°jl"
 
 #: ../src/editMode.cc:150
 msgid "Edit"
-msgstr "SzerkesztÈs"
+msgstr "Szerkeszt√©s"
 
 #: ../src/editMode.cc:150
 msgid "Color"
-msgstr "SzÌn"
+msgstr "Sz√≠n"
 
 #: ../src/editMode.cc:150
 msgid "Flags"
-msgstr "KapcsolÛk"
+msgstr "Kapcsol√≥k"
 
 #: ../src/editMode.cc:151
 msgid "Feature"
-msgstr "Tulajdons·g"
+msgstr "Tulajdons√°g"
 
 #: ../src/editMode.cc:151
 msgid "Move"
-msgstr "Mozgat·s"
+msgstr "Mozgat√°s"
 
 #: ../src/editMode.cc:151
 msgid "Window"
@@ -96,66 +92,66 @@ msgstr "Ablak"
 
 #: ../src/editMode.cc:151
 msgid "View"
-msgstr "NÈzet"
+msgstr "N√©zet"
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
 #: ../src/editMode.cc:159
 msgid "New"
-msgstr "⁄j"
+msgstr "√öj"
 
 #: ../src/editMode.cc:159 ../src/editWindows.cc:521
 msgid "Open"
-msgstr "Megnyit·s"
+msgstr "Megnyit√°s"
 
 #: ../src/editMode.cc:159
 msgid "Close"
-msgstr "Bez·r·s"
+msgstr "Bez√°r√°s"
 
 #: ../src/editMode.cc:159
 msgid "Save"
-msgstr "MentÈs"
+msgstr "Ment√©s"
 
 #: ../src/editMode.cc:159
 msgid "Exit"
-msgstr "KilÈpÈs"
+msgstr "Kil√©p√©s"
 
 #: ../src/editMode.cc:159
 msgid "Test level"
-msgstr "P·lya tesztelÈse"
+msgstr "P√°lya tesztel√©se"
 
 #: ../src/editMode.cc:160
 msgid "Edit height"
-msgstr "Magass·g szerkesztÈse"
+msgstr "Magass√°g szerkeszt√©se"
 
 #: ../src/editMode.cc:160
 msgid "Edit color"
-msgstr "SzÌn szerkesztÈse"
+msgstr "Sz√≠n szerkeszt√©se"
 
 #: ../src/editMode.cc:160
 msgid "Edit water"
-msgstr "VÌz szerkesztÈse"
+msgstr "V√≠z szerkeszt√©se"
 
 #: ../src/editMode.cc:160
 msgid "Edit velocity"
-msgstr "SebessÈg szerkesztÈse"
+msgstr "Sebess√©g szerkeszt√©se"
 
 #: ../src/editMode.cc:160
 msgid "Edit lines"
-msgstr "Vonalak szerkesztÈse"
+msgstr "Vonalak szerkeszt√©se"
 
 #: ../src/editMode.cc:161
 msgid "*<SPACE> Whole cell"
-msgstr "*<SPACE> EgÈsz cella"
+msgstr "*<SPACE> Eg√©sz cella"
 
 #: ../src/editMode.cc:161
 msgid "Upper corner"
-msgstr "Felsı sarok"
+msgstr "Fels≈ë sarok"
 
 #: ../src/editMode.cc:161
 msgid "Bottom corner"
-msgstr "AlsÛ sarok"
+msgstr "Als√≥ sarok"
 
 #: ../src/editMode.cc:161
 msgid "Right corner"
@@ -167,19 +163,19 @@ msgstr "Bal sarok"
 
 #: ../src/editMode.cc:162
 msgid "Center"
-msgstr "KˆzÈp"
+msgstr "K√∂z√©p"
 
 #: ../src/editMode.cc:162
 msgid "Raise increment"
-msgstr "LÈpÈskˆz nˆvelÈse"
+msgstr "L√©p√©sk√∂z n√∂vel√©se"
 
 #: ../src/editMode.cc:162
 msgid "Lower increment"
-msgstr "LÈpÈskˆz csˆkkentÈse"
+msgstr "L√©p√©sk√∂z cs√∂kkent√©se"
 
 #: ../src/editMode.cc:163
 msgid "*<SHIFT> reversed"
-msgstr "*<SHIFT> fordÌtott"
+msgstr "*<SHIFT> ford√≠tott"
 
 #: ../src/editMode.cc:163
 msgid "*<CTRL> walls"
@@ -187,23 +183,23 @@ msgstr "*<CTRL> falak"
 
 #: ../src/editMode.cc:164
 msgid "Inc. red"
-msgstr "vˆrˆs nˆv."
+msgstr "v√∂r√∂s n√∂v."
 
 #: ../src/editMode.cc:164
 msgid "Inc. green"
-msgstr "zˆld nˆv."
+msgstr "z√∂ld n√∂v."
 
 #: ../src/editMode.cc:164
 msgid "Inc. blue"
-msgstr "kÈk nˆv."
+msgstr "k√©k n√∂v."
 
 #: ../src/editMode.cc:164
 msgid "Inc. alpha"
-msgstr "·tl·tszÛs·g nˆv."
+msgstr "√°tl√°tsz√≥s√°g n√∂v."
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178
 msgid "Ice"
-msgstr "JÈg"
+msgstr "J√©g"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178
 msgid "Acid"
@@ -215,19 +211,19 @@ msgstr "Homok"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:179
 msgid "Kill"
-msgstr "Hal·l"
+msgstr "Hal√°l"
 
 #: ../src/editMode.cc:165
 msgid "Bounce"
-msgstr "Pattog·s"
+msgstr "Pattog√°s"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:179
 msgid "No grid"
-msgstr "Nincs r·cs"
+msgstr "Nincs r√°cs"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:180
 msgid "Track"
-msgstr "P·lya"
+msgstr "P√°lya"
 
 #: ../src/editMode.cc:166 ../src/editMode.cc:180
 msgid "Shade flat"
@@ -235,15 +231,15 @@ msgstr ""
 
 #: ../src/editMode.cc:166
 msgid "Texture"
-msgstr "Text˙ra"
+msgstr "Text√∫ra"
 
 #: ../src/editMode.cc:166
 msgid "ch. texture"
-msgstr "Text˙ra v·lt·s"
+msgstr "Text√∫ra v√°lt√°s"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:183
 msgid "Spike"
-msgstr "T¸ske"
+msgstr "T√ºske"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:183
 msgid "Small hill"
@@ -251,7 +247,7 @@ msgstr "Kis domb"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:183
 msgid "Medium hill"
-msgstr "Kˆzepes domb"
+msgstr "K√∂zepes domb"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:184
 msgid "Large hill"
@@ -259,47 +255,47 @@ msgstr "Nagy domb"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:184
 msgid "Huge hill"
-msgstr "”ri·si domb"
+msgstr "√ìri√°si domb"
 
 #: ../src/editMode.cc:168
 msgid "Smooth small"
-msgstr "Kis simÌt·s"
+msgstr "Kis sim√≠t√°s"
 
 #: ../src/editMode.cc:168
 msgid "Smooth large"
-msgstr "Nagy simÌt·s"
+msgstr "Nagy sim√≠t√°s"
 
 #: ../src/editMode.cc:169
 msgid "/UP Move up"
-msgstr "/UP Mozg·s fel"
+msgstr "/UP Mozg√°s fel"
 
 #: ../src/editMode.cc:169
 msgid "/DOWN Move down"
-msgstr "/DOWN Mozg·s le"
+msgstr "/DOWN Mozg√°s le"
 
 #: ../src/editMode.cc:169
 msgid "/LEFT Move left"
-msgstr "/LEFT Mozg·s balra"
+msgstr "/LEFT Mozg√°s balra"
 
 #: ../src/editMode.cc:169
 msgid "/RIGHT Move right"
-msgstr "/RIGHT Mozg·s jobbra"
+msgstr "/RIGHT Mozg√°s jobbra"
 
 #: ../src/editMode.cc:170
 msgid "Shift map up"
-msgstr "tÈrkÈp fel"
+msgstr "t√©rk√©p fel"
 
 #: ../src/editMode.cc:170
 msgid "Shift map down"
-msgstr "tÈrkÈp le"
+msgstr "t√©rk√©p le"
 
 #: ../src/editMode.cc:170
 msgid "Shift map left"
-msgstr "tÈrkÈp balra"
+msgstr "t√©rk√©p balra"
 
 #: ../src/editMode.cc:170
 msgid "Shift map right"
-msgstr "tÈrkÈp jobbra"
+msgstr "t√©rk√©p jobbra"
 
 #: ../src/editMode.cc:171
 msgid "*<SHIFT> x5"
@@ -307,39 +303,39 @@ msgstr "*<SHIFT> x5"
 
 #: ../src/editMode.cc:171
 msgid "Set region marker"
-msgstr "Ter¸let kijelˆlÈse"
+msgstr "Ter√ºlet kijel√∂l√©se"
 
 #: ../src/editMode.cc:171
 msgid "Clear marker"
-msgstr "KijelˆlÈs tˆrlÈse"
+msgstr "Kijel√∂l√©s t√∂rl√©se"
 
 #: ../src/editMode.cc:171
 msgid "Copy region"
-msgstr "Ter¸let m·sol·sa"
+msgstr "Ter√ºlet m√°sol√°sa"
 
 #: ../src/editMode.cc:172
 msgid "Paste region"
-msgstr "Ter¸let besz˙r·sa"
+msgstr "Ter√ºlet besz√∫r√°sa"
 
 #: ../src/editMode.cc:173
 msgid "Editor"
-msgstr "Szerkesztı"
+msgstr "Szerkeszt≈ë"
 
 #: ../src/editMode.cc:173
 msgid "Toolbar"
-msgstr "Eszkˆzsor"
+msgstr "Eszk√∂zsor"
 
 #: ../src/editMode.cc:173
 msgid "Status"
-msgstr "¡llapot"
+msgstr "√Ållapot"
 
 #: ../src/editMode.cc:174
 msgid "Birds's eye"
-msgstr "Mad·rt·vlat"
+msgstr "Mad√°rt√°vlat"
 
 #: ../src/editMode.cc:174
 msgid "Rotate view"
-msgstr "NÈzet forgat·sa"
+msgstr "N√©zet forgat√°sa"
 
 #: ../src/editMode.cc:179
 msgid "Trampoline"
@@ -347,57 +343,29 @@ msgstr "Trambulin"
 
 #: ../src/editMode.cc:184
 msgid "Small smooth"
-msgstr "Kis simÌt·s"
+msgstr "Kis sim√≠t√°s"
 
 #: ../src/editMode.cc:185
 msgid "Large smooth"
-msgstr "Nagy simÌt·s"
-
-#: ../src/editMode.cc:299
-#, c-format
-msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
-msgstr "Hiba, %s/.trackballs egy hivatkoz·s. Nem menthetı a p·lya.\n"
-
-#: ../src/editMode.cc:307
-#, c-format
-msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
-msgstr "Hiba, %s/.trackballs/levels egy hivatkoz·s. Nem menthetı a p·lya.\n"
-
-#: ../src/editMode.cc:317
-#, fuzzy, c-format
-msgid ""
-"Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
-msgstr ""
-"Hiba, %s/.trackballs/levels/%s.map egy hivatkoz·s. Nem menthetı a p·lya.\n"
-
-#: ../src/editMode.cc:323
-#, c-format
-msgid "Saving map as '%s'\n"
-msgstr "P·lya mentÈse, mint '%s'\n"
+msgstr "Nagy sim√≠t√°s"
 
 #: ../src/editMode.cc:336
 #, c-format
-msgid "Error, %s is a symbolic link. Cannot create default script file\n"
-msgstr ""
-"Hiba, %s egy hivatkoz·s. Az alapÈrtelmezett script f·jl nem hozhatÛ lÈtre.\n"
-
-#: ../src/editMode.cc:342
-#, c-format
 msgid ";;; Track: %s\n"
-msgstr ";;; P·lya: %s\n"
+msgstr ";;; P√°lya: %s\n"
 
-#: ../src/editMode.cc:343
+#: ../src/editMode.cc:337
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
-msgstr ";;; Ez az alapÈrtelmezett script f·jl ehhez a p·ly·hoz.\n"
+msgstr ";;; Ez az alap√©rtelmezett script f√°jl ehhez a p√°ly√°hoz.\n"
 
-#: ../src/editMode.cc:344
+#: ../src/editMode.cc:338
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ""
-";;; Olvasd el a p·lyaszerkesztı dokument·ciÛj·t Ès nÈzd meg a pÈld·kat,\n"
+";;; Olvasd el a p√°lyaszerkeszt≈ë dokument√°ci√≥j√°t √©s n√©zd meg a p√©ld√°kat,\n"
 
-#: ../src/editMode.cc:345
+#: ../src/editMode.cc:339
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -406,53 +374,53 @@ msgstr ""
 "hogy megtanuld, hogyan kell testre szabni.\n"
 "\n"
 
-#: ../src/editMode.cc:485
+#: ../src/editMode.cc:479
 #, c-format
 msgid "Raise: %f"
-msgstr "NˆvelÈs: %f"
+msgstr "N√∂vel√©s: %f"
 
-#: ../src/editMode.cc:489
+#: ../src/editMode.cc:483
 #, c-format
 msgid "Pos: %d,%d"
 msgstr "Poz: %d,%d"
 
-#: ../src/editMode.cc:492
+#: ../src/editMode.cc:486
 #, c-format
 msgid "Feature: %s"
-msgstr "Tulajdons·g: %s"
+msgstr "Tulajdons√°g: %s"
 
-#: ../src/editMode.cc:495
+#: ../src/editMode.cc:489
 #, c-format
 msgid "Color %1.1f %1.1f %1.1f %1.1f"
-msgstr "SzÌn %1.1f %1.1f %1.1f %1.1f"
+msgstr "Sz√≠n %1.1f %1.1f %1.1f %1.1f"
 
-#: ../src/editMode.cc:517
+#: ../src/editMode.cc:511
 msgid "yes"
 msgstr "igen"
 
-#: ../src/editMode.cc:517
+#: ../src/editMode.cc:511
 msgid "no"
 msgstr "nem"
 
-#: ../src/editMode.cc:524
+#: ../src/editMode.cc:518
 msgid "Water height"
-msgstr "VÌzszint"
+msgstr "V√≠zszint"
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Cell height"
-msgstr "Cella magass·ga"
+msgstr "Cella magass√°ga"
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Cell water height"
-msgstr "Cella vÌzszintje"
+msgstr "Cella v√≠zszintje"
 
-#: ../src/editMode.cc:564
+#: ../src/editMode.cc:558
 msgid "Textures"
-msgstr "Text˙r·k"
+msgstr "Text√∫r√°k"
 
 #: ../src/editWindows.cc:396
 msgid "Quit without saving?"
-msgstr "KilÈpÈs mentÈs nÈlk¸l?"
+msgstr "Kil√©p√©s ment√©s n√©lk√ºl?"
 
 #: ../src/editWindows.cc:397 ../src/editWindows.cc:438
 #: ../src/settingsMode.cc:133 ../src/settingsMode.cc:159
@@ -470,280 +438,215 @@ msgstr "Nem"
 
 #: ../src/editWindows.cc:437
 msgid "Save map?"
-msgstr "P·lya mentÈse?"
+msgstr "P√°lya ment√©se?"
 
 #: ../src/editWindows.cc:441
 msgid "Saving"
-msgstr "MentÈs"
+msgstr "Ment√©s"
 
 #: ../src/editWindows.cc:518
 msgid "Name of map"
-msgstr "P·lya neve"
+msgstr "P√°lya neve"
 
 #: ../src/editWindows.cc:520 ../src/editWindows.cc:577
 msgid "Cancel"
-msgstr "MÈgse"
+msgstr "M√©gse"
 
 #: ../src/editWindows.cc:568
 msgid "Open map"
-msgstr "P·lya megnyit·sa"
+msgstr "P√°lya megnyit√°sa"
 
 #: ../src/editWindows.cc:575
 #, c-format
 msgid "page %d / %d"
 msgstr "oldal %d / %d"
 
-#: ../src/gamer.cc:91
-#, c-format
-msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
-msgstr "Hiba, %s/trackballs egy hivatkoz·s. Nem menthetık a be·llÌt·sok.\n"
-
-#: ../src/gamer.cc:99
-#, c-format
-msgid "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
-msgstr ""
-"Hiba, %s/trackballs/%s.gmr egy hivatkoz·s. Nem menthetık a be·llÌt·sok.\n"
-
-#: ../src/gamer.cc:140
-#, c-format
-msgid "Warning. Profile format error for player %s\n"
-msgstr ""
-
-#: ../src/gamer.cc:175
-#, c-format
-msgid "Error: Profile for %s contains info for unknown levelset %s\n"
-msgstr ""
-
-#: ../src/glHelp.cc:320
+#: ../src/enterHighScoreMode.cc:74
 #, fuzzy, c-format
-msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
-msgstr "FigyelmeztetÈs: nem siker¸lt %d byte lefoglal·sa kÈpernyımentÈshez.\n"
+msgid "You got %d points"
+msgstr "%d pont"
 
-#: ../src/glHelp.cc:346
+#: ../src/enterHighScoreMode.cc:79
 #, c-format
-msgid "Warning: cannot create file '%s'. Abort\n"
-msgstr "FigyelmeztetÈs: %s f·jlt nem siker¸lt lÈtrehozni.\n"
-
-#: ../src/glHelp.cc:480
-#, c-format
-msgid "Error creating surface from RGB file: %s\n"
-msgstr "Hiba lÈpett fel %s RGB f·jlbÛl valÛ fel¸letkÈszÌtÈs kˆzben.\n"
-
-#: ../src/glHelp.cc:500
-#, c-format
-msgid ""
-"Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+msgid "Enter your name: %s"
 msgstr ""
-"FigyelmeztetÈs: a text˙r·k sz·ma elÈrte a maximumot (%d). %s text˙ra nem "
-"ker¸lt betˆltÈsre.\n"
 
-#: ../src/glHelp.cc:513 ../src/glHelp.cc:810
-#, c-format
-msgid "Warning: Failed to load texture %s\n"
-msgstr "FigyelmeztetÈs: %s text˙ra betˆltÈse nem siker¸lt.\n"
-
-#: ../src/glHelp.cc:834
-#, c-format
-msgid "Warning: too fast framerate (%f)\n"
-msgstr "FigyelmeztetÈs: t˙l gyors kÈpfrissÌtÈs (%f)\n"
-
-#: ../src/glHelp.cc:845
+#: ../src/glHelp.cc:783
 #, c-format
 msgid "Framerate: %.1f"
-msgstr "KÈpfrissÌtÈs: %.1f"
+msgstr "K√©pfriss√≠t√©s: %.1f"
 
-#: ../src/glHelp.cc:847
+#: ../src/glHelp.cc:785
 #, c-format
 msgid "Framerate unknown"
-msgstr "Ismeretlen kÈpfrissÌtÈs"
+msgstr "Ismeretlen k√©pfriss√≠t√©s"
 
-#: ../src/glHelp.cc:849
+#: ../src/glHelp.cc:787
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/glHelp.cc:1143
-#, c-format
-msgid "Warning: Rescaling images before loading them as textures.\n"
-msgstr ""
-"FigyelmeztetÈs: KÈp·tmÈretezÈs tˆrtÈnt text˙rakÈnt valÛ betˆltÈs elıtt.\n"
-
-#: ../src/guile.cc:177
-#, c-format
-msgid "Warning. Could not find file %s\n"
-msgstr ""
-
-#: ../src/guile.cc:186
-#, c-format
-msgid "Warning. File '%s' unusually large\n"
-msgstr ""
-
-#: ../src/helpMode.cc:81 ../src/helpMode.cc:97
-#, fuzzy, c-format
-msgid "Error: failed to load %s\n"
-msgstr "Hiba: nem siker¸lt %s-t betˆlteni\n"
-
-#: ../src/helpMode.cc:113
+#: ../src/helpMode.cc:101
 msgid "MORE HELP"
-msgstr "Tov·bbi segÌtsÈg"
+msgstr "Tov√°bbi seg√≠ts√©g"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:170
 msgid "Your marble:"
-msgstr "A labd·d:"
+msgstr "A labd√°d:"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:170
 msgid "Steer this with your mouse, numpad or arrows. "
-msgstr "Gˆrgesd az egÈrrel, numerikus billenty˚kkel vagy a nyilakkal. "
+msgstr "G√∂rgesd az eg√©rrel, numerikus billenty≈±kkel vagy a nyilakkal. "
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:171
 msgid "Left mouse or spacebar is jump."
-msgstr "Ugr·s a bal egÈrgombbal vagy a szÛkˆzzel."
+msgstr "Ugr√°s a bal eg√©rgombbal vagy a sz√≥k√∂zzel."
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:172
 msgid "Shift gives top speed when using keyboard."
-msgstr "A Shift billenty˚ megnyom·sa max. sebessÈget eredmÈnyez."
+msgstr "A Shift billenty≈± megnyom√°sa max. sebess√©get eredm√©nyez."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:173
 msgid "Mr Black:"
 msgstr "Mr Black:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:173
 msgid "Your enemy. Defeat with Modpill - Spike."
-msgstr "Az ellensÈg. T¸ske mÛdosÌtÛval legyızhetı."
+msgstr "Az ellens√©g. T√ºske m√≥dos√≠t√≥val legy≈ëzhet≈ë."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:174
 msgid "Modpill Speed:"
-msgstr "SebessÈg mÛdosÌtÛ:"
+msgstr "Sebess√©g m√≥dos√≠t√≥:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:174
 msgid "Makes you go faster for short period of time."
-msgstr "Rˆvid ideig nagyobb sebessÈg."
+msgstr "R√∂vid ideig nagyobb sebess√©g."
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:175
 msgid "Modpill Spikes:"
-msgstr "T¸ske mÛdosÌtÛ:"
+msgstr "T√ºske m√≥dos√≠t√≥:"
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:175
 msgid "Weapon against Mr Black and grip for icy terrain."
-msgstr "Mr Black elleni fegyver Ès cs˙sz·sg·tlÛ jeges talajon."
+msgstr "Mr Black elleni fegyver √©s cs√∫sz√°sg√°tl√≥ jeges talajon."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:176
 msgid "Modpill Freeze:"
-msgstr "Fagyaszt·s mÛdosÌtÛ:"
+msgstr "Fagyaszt√°s m√≥dos√≠t√≥:"
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:176
 msgid "This will freeze you - avoid it."
-msgstr "Lefagyaszt - Ûvakodj tıle."
+msgstr "Lefagyaszt - √≥vakodj t≈ële."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:177
 msgid "Modpill Glass:"
-msgstr "‹veg mÛdosÌtÛ:"
+msgstr "√úveg m√≥dos√≠t√≥:"
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:177
 msgid "Protects you from acid, but makes you more fragile."
-msgstr "MegvÈd a savtÛl, de tˆrÈkenyebbÈ tesz."
+msgstr "Megv√©d a savt√≥l, de t√∂r√©kenyebb√© tesz."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:178
 msgid "Modpill Nitro:"
-msgstr "Nitro mÛdosÌtÛ:"
+msgstr "Nitro m√≥dos√≠t√≥:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:178
 msgid "Move really fast. Active nitro with second button."
-msgstr "Nagyon gyors mozg·s. A m·sodik gombbal aktiv·lhatÛ."
+msgstr "Nagyon gyors mozg√°s. A m√°sodik gombbal aktiv√°lhat√≥."
 
-#: ../src/helpMode.cc:191
+#: ../src/helpMode.cc:179
 msgid "Switch:"
-msgstr "KapcsolÛ:"
+msgstr "Kapcsol√≥:"
 
-#: ../src/helpMode.cc:191
+#: ../src/helpMode.cc:179
 msgid "Activates/deactivates some object/element in the level."
-msgstr "Bekacsol/kikapcsol valamilyen t·rgyat a p·ly·n."
+msgstr "Bekacsol/kikapcsol valamilyen t√°rgyat a p√°ly√°n."
 
-#: ../src/helpMode.cc:192
+#: ../src/helpMode.cc:180
 msgid "Moving spike:"
-msgstr "MozgÛ t¸ske:"
+msgstr "Mozg√≥ t√ºske:"
 
-#: ../src/helpMode.cc:192
+#: ../src/helpMode.cc:180
 msgid "Obstacle to avoid."
-msgstr "Ker¸ld el."
+msgstr "Ker√ºld el."
 
-#: ../src/helpMode.cc:193
+#: ../src/helpMode.cc:181
 msgid "Flag:"
-msgstr "Z·szlÛ:"
+msgstr "Z√°szl√≥:"
 
-#: ../src/helpMode.cc:193
+#: ../src/helpMode.cc:181
 msgid "Collect for bonus points."
-msgstr "BÛnusz pontokÈrt gy˚jthetı."
+msgstr "B√≥nusz pontok√©rt gy≈±jthet≈ë."
 
-#: ../src/helpMode.cc:194
+#: ../src/helpMode.cc:182
 msgid "Normal terrain:"
-msgstr "Norm·l talaj:"
+msgstr "Norm√°l talaj:"
 
-#: ../src/helpMode.cc:194
+#: ../src/helpMode.cc:182
 msgid "Can be of any color and is safe to move on."
-msgstr "B·rmilyen szÌn˚ lehet, a rajta valÛ mozg·s biztons·gos."
+msgstr "B√°rmilyen sz√≠n≈± lehet, a rajta val√≥ mozg√°s biztons√°gos."
 
-#: ../src/helpMode.cc:195
+#: ../src/helpMode.cc:183
 msgid "Acid terrain:"
-msgstr "Savas ter¸let:"
+msgstr "Savas ter√ºlet:"
 
-#: ../src/helpMode.cc:195
+#: ../src/helpMode.cc:183
 msgid "Will kill your marble unless you have a glass modpill."
-msgstr "‹veg mÛdosÌtÛ nÈlk¸l elpusztÌtja a labd·t."
+msgstr "√úveg m√≥dos√≠t√≥ n√©lk√ºl elpuszt√≠tja a labd√°t."
 
-#: ../src/helpMode.cc:196
+#: ../src/helpMode.cc:184
 msgid "Icy terrain:"
 msgstr "Jeges talaj:"
 
-#: ../src/helpMode.cc:196
+#: ../src/helpMode.cc:184
 msgid "Slippery terrain unless you have a spikes modpill."
-msgstr "Cs˙szÛs t¸ske mÛdosÌtÛ nÈlk¸l "
+msgstr "Cs√∫sz√≥s t√ºske m√≥dos√≠t√≥ n√©lk√ºl "
 
-#: ../src/helpMode.cc:197
+#: ../src/helpMode.cc:185
 msgid "Sandy terrain:"
 msgstr "Homokos talaj:"
 
-#: ../src/helpMode.cc:197
+#: ../src/helpMode.cc:185
 msgid "Soft to land on but will slow you down."
-msgstr "Kˆnny˚ fˆldet ÈrÈst biztosÌt, de lelassÌt."
+msgstr "K√∂nny≈± f√∂ldet √©r√©st biztos√≠t, de lelass√≠t."
 
-#: ../src/helpMode.cc:198
+#: ../src/helpMode.cc:186
 msgid "Goal:"
-msgstr "CÈl:"
+msgstr "C√©l:"
 
-#: ../src/helpMode.cc:198
+#: ../src/helpMode.cc:186
 msgid "Will take you to the next level. "
-msgstr "A kˆvetkezı p·ly·ra juttat. "
+msgstr "A k√∂vetkez≈ë p√°ly√°ra juttat. "
 
-#: ../src/helpMode.cc:199
+#: ../src/helpMode.cc:187
 msgid "Get here before time runs out."
-msgstr "Ide kell jutni mielıtt az idı letelik."
+msgstr "Ide kell jutni miel≈ëtt az id≈ë letelik."
 
-#: ../src/helpMode.cc:200
+#: ../src/helpMode.cc:188
 msgid "Force Field:"
-msgstr "ErıtÈr:"
+msgstr "Er≈ët√©r:"
 
-#: ../src/helpMode.cc:200
+#: ../src/helpMode.cc:188
 msgid "You cannot pass this unless you switch it off."
-msgstr "Kikapcsol·sa nÈlk¸l nem lehet rajta ·thaladni."
+msgstr "Kikapcsol√°sa n√©lk√ºl nem lehet rajta √°thaladni."
 
-#: ../src/helpMode.cc:201
+#: ../src/helpMode.cc:189
 msgid "Some are lethal and some are one way."
-msgstr "NÈmelyik hal·los, nÈmelyik egyir·ny˙."
+msgstr "N√©melyik hal√°los, n√©melyik egyir√°ny√∫."
 
-#: ../src/helpMode.cc:202
+#: ../src/helpMode.cc:190
 msgid "Tunnel:"
-msgstr "Csı:"
+msgstr "Cs≈ë:"
 
-#: ../src/helpMode.cc:202
+#: ../src/helpMode.cc:190
 msgid "Takes you places, sometimes with great speed."
-msgstr "M·s helyre juttat, idınkÈnt nagy sebessÈggel."
+msgstr "M√°s helyre juttat, id≈ënk√©nt nagy sebess√©ggel."
 
-#: ../src/helpMode.cc:246
+#: ../src/helpMode.cc:234
 msgid "More Help"
-msgstr "Tov·bbi segÌtsÈg"
+msgstr "Tov√°bbi seg√≠ts√©g"
 
-#: ../src/helpMode.cc:248 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
 msgid "Back"
 msgstr "Vissza"
 
@@ -752,61 +655,36 @@ msgstr "Vissza"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/highScore.cc:65
-#, fuzzy, c-format
-msgid "Error, %s is a symbolic link. Cannot load highscores\n"
-msgstr "Hiba, %s egy hivatkoz·s. A toplista nem menthetı.\n"
-
-#: ../src/highScore.cc:73
-#, c-format
-msgid "Warning. Incorrect format for highscore file %s\n"
-msgstr ""
-
-#: ../src/highScore.cc:96
-#, c-format
-msgid "Warning. Highscores contains info about unknown levelset %s\n"
-msgstr ""
-
-#: ../src/highScore.cc:139
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot save highscores\n"
-msgstr "Hiba, %s egy hivatkoz·s. A toplista nem menthetı.\n"
-
-#: ../src/highScore.cc:147
-#, c-format
-msgid "Warning. Cannot save highscores at %s, check file permissions\n"
-msgstr ""
-
-#: ../src/hofMode.cc:136 ../src/setupMode.cc:183
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
 msgid "Level Set"
-msgstr "P·lyacsoport"
+msgstr "P√°lyacsoport"
 
-#: ../src/hofMode.cc:153
+#: ../src/hofMode.cc:147
 #, c-format
 msgid "%d points"
 msgstr "%d pont"
 
 #: ../src/mainMode.cc:179
 msgid "Track:"
-msgstr "P·lya:"
+msgstr "P√°lya:"
 
 #: ../src/mainMode.cc:181
 msgid "Author:"
-msgstr "Szerzı:"
+msgstr "Szerz≈ë:"
 
 #: ../src/mainMode.cc:183
 msgid "Press spacebar to begin"
-msgstr "KezdÈs a szÛkˆz megnyom·s·val"
+msgstr "Kezd√©s a sz√≥k√∂z megnyom√°s√°val"
 
 #: ../src/mainMode.cc:200 ../src/mainMode.cc:209 ../src/mainMode.cc:250
 #: ../src/mainMode.cc:264
 #, c-format
 msgid "Press spacebar to continue"
-msgstr "Folytat·s a szÛkˆz megnyom·s·val"
+msgstr "Folytat√°s a sz√≥k√∂z megnyom√°s√°val"
 
 #: ../src/mainMode.cc:201
 msgid "Game over"
-msgstr "VÈge a j·tÈknak"
+msgstr "V√©ge a j√°t√©knak"
 
 #: ../src/mainMode.cc:209
 msgid "Oops"
@@ -818,33 +696,33 @@ msgstr "Pillanatstop"
 
 #: ../src/mainMode.cc:250
 msgid "Bonus level complete"
-msgstr "Jutalomp·lya teljesÌtve"
+msgstr "Jutalomp√°lya teljes√≠tve"
 
 #: ../src/mainMode.cc:264
 msgid "Level complete"
-msgstr "P·lya teljesÌtve"
+msgstr "P√°lya teljes√≠tve"
 
 #: ../src/mainMode.cc:271
 msgid "Congratulations"
-msgstr "Gratul·lok"
+msgstr "Gratul√°lok"
 
 #: ../src/mainMode.cc:271
 msgid "You have completed the game!"
-msgstr "TeljesÌtetted a j·tÈkot"
+msgstr "Teljes√≠tetted a j√°t√©kot"
 
 #: ../src/mainMode.cc:513 ../src/mainMode.cc:529
 msgid "Good luck!"
-msgstr "Sok szerencsÈt!"
+msgstr "Sok szerencs√©t!"
 
 #: ../src/mainMode.cc:621
 #, c-format
 msgid "Level bonuses"
-msgstr "P·lya bÛnuszok"
+msgstr "P√°lya b√≥nuszok"
 
 #: ../src/mainMode.cc:623
 #, c-format
 msgid "Lives left:"
-msgstr "Megmaradt Èletek:"
+msgstr "Megmaradt √©letek:"
 
 #: ../src/mainMode.cc:624
 #, c-format
@@ -854,7 +732,7 @@ msgstr "%d x 100 = %d pont"
 #: ../src/mainMode.cc:625
 #, c-format
 msgid "Time left:"
-msgstr "H·tralÈvı idı:"
+msgstr "H√°tral√©v≈ë id≈ë:"
 
 #: ../src/mainMode.cc:626
 #, c-format
@@ -864,30 +742,30 @@ msgstr "%d perc = %d pont"
 #: ../src/mainMode.cc:628
 #, c-format
 msgid "Difficulty:"
-msgstr "NehÈzsÈgi szint:"
+msgstr "Neh√©zs√©gi szint:"
 
 #: ../src/mainMode.cc:630
 msgid "easy"
-msgstr "kˆnny˚"
+msgstr "k√∂nny≈±"
 
 #: ../src/mainMode.cc:630 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
-msgstr "norm·l"
+msgstr "norm√°l"
 
 #: ../src/mainMode.cc:630
 msgid "hard"
-msgstr "nehÈz"
+msgstr "neh√©z"
 
 #: ../src/map.cc:263
 #, c-format
 msgid "Unknown track"
-msgstr "Ismeretlen p·lya"
+msgstr "Ismeretlen p√°lya"
 
 #: ../src/map.cc:264
 #, c-format
 msgid "Unknown author"
-msgstr "Ismeretlen szerzı"
+msgstr "Ismeretlen szerz≈ë"
 
 #: ../src/menuMode.cc:72
 msgid ""
@@ -899,229 +777,175 @@ msgid ""
 "out.                                               You steer the ball using "
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
-"A Trackballs egy j·tÈk, amely hasonlÌt a '80-as Èvekbeli Marble Madness "
-"klasszikusra. A j·tÈkos egy labd·t ir·nyÌt a hegyes t¸skÈkkel, savtavakkal "
-"Ès m·s veszÈlyekkel teli ˙tvesztın kereszt¸l, ahol pontokat gy˚jt. Mikor a "
-"labda elÈri a cÈlt, a j·tÈk a kˆvetkezı, nehezebb p·ly·n folytatÛdik, mÌg az "
-"idı el nem fogy.A labda az egÈrrel ir·nyÌthatÛ, a szÛkˆz billenty˚ "
-"megnyom·s·ra pedig ugrik."
+"A Trackballs egy j√°t√©k, amely hasonl√≠t a '80-as √©vekbeli Marble Madness "
+"klasszikusra. A j√°t√©kos egy labd√°t ir√°ny√≠t a hegyes t√ºsk√©kkel, savtavakkal "
+"√©s m√°s vesz√©lyekkel teli √∫tveszt≈ën kereszt√ºl, ahol pontokat gy≈±jt. Mikor a "
+"labda el√©ri a c√©lt, a j√°t√©k a k√∂vetkez≈ë, nehezebb p√°ly√°n folytat√≥dik, m√≠g az "
+"id≈ë el nem fogy.A labda az eg√©rrel ir√°ny√≠that√≥, a sz√≥k√∂z billenty≈± "
+"megnyom√°s√°ra pedig ugrik."
 
 #: ../src/menuMode.cc:121
 msgid "New Game"
-msgstr "⁄j j·tÈk"
+msgstr "√öj j√°t√©k"
 
 #: ../src/menuMode.cc:122
 msgid "Quit"
-msgstr "KilÈpÈs"
+msgstr "Kil√©p√©s"
 
 #: ../src/menuMode.cc:123
 msgid "Settings"
-msgstr "Be·llÌt·sok"
+msgstr "Be√°ll√≠t√°sok"
 
 #: ../src/menuMode.cc:124
 msgid "Hall of Fame"
-msgstr "DicsısÈgt·bla"
+msgstr "Dics≈ës√©gt√°bla"
 
 #: ../src/menuMode.cc:125
 msgid "Help"
-msgstr "S˙gÛ"
+msgstr "S√∫g√≥"
 
 #: ../src/menuMode.cc:126
 msgid "Map Editor"
-msgstr "P·lyaszerkesztı"
+msgstr "P√°lyaszerkeszt≈ë"
 
-#: ../src/mmad.cc:199
+#: ../src/mmad.cc:198
 #, c-format
 msgid ""
 "Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
 msgstr ""
-"Haszn·lat: %s [-w, -m] [-e, -l -t <p·lya>] [-r <szÈlessÈg>] [-s "
-"<ÈrzÈkenysÈg>]\n"
+"Haszn√°lat: %s [-w, -m] [-e, -l -t <p√°lya>] [-r <sz√©less√©g>] [-s "
+"<√©rz√©kenys√©g>]\n"
+
+#: ../src/mmad.cc:200
+#, c-format
+msgid "   -h  --help            Display this usage information.\n"
+msgstr "   -h  --help            Megjelen√≠ti ezt a haszn√°lati √∫tmutat√≥t.\n"
 
 #: ../src/mmad.cc:201
 #, c-format
-msgid "   -h  --help            Display this usage information.\n"
-msgstr "   -h  --help            MegjelenÌti ezt a haszn·lati ˙tmutatÛt.\n"
+msgid "   -l  --level           Start from level.\n"
+msgstr "   -l  --level           Ind√≠t√°s p√°ly√°t√≥l.\n"
 
 #: ../src/mmad.cc:202
 #, c-format
-msgid "   -e  --edit            Start as level editor.\n"
-msgstr "   -e  --edit            P·lyaszerkesztı indÌt·sa.\n"
+msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
+msgstr ""
+"   -w  --windowed        Ablakban futtat√°s (teljes k√©perny≈ës az "
+"alap√©rtelmezett)\n"
 
 #: ../src/mmad.cc:203
 #, c-format
-msgid "   -l  --level           Start from level.\n"
-msgstr "   -l  --level           IndÌt·s p·ly·tÛl.\n"
+msgid "   -m  --mute            Mute sound.\n"
+msgstr "   -m  --mute            Hang eln√©m√≠t√°sa.\n"
 
 #: ../src/mmad.cc:204
 #, c-format
-msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
+msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
 msgstr ""
-"   -w  --windowed        Ablakban futtat·s (teljes kÈpernyıs az "
-"alapÈrtelmezett)\n"
+"   -r  --resolution      Felbont√°s be√°ll√≠t√°sa 640, 800 vagy 1024 √©rt√©kre.\n"
 
 #: ../src/mmad.cc:205
 #, c-format
-msgid "   -m  --mute            Mute sound.\n"
-msgstr "   -m  --mute            Hang elnÈmÌt·sa.\n"
+msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
+msgstr "   -s  --sensitivity     Eg√©r √©rz√©kenys√©g, 1.0 az alap√©rtelmezett.\n"
 
 #: ../src/mmad.cc:206
 #, c-format
-msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
-msgstr ""
-"   -r  --resolution      Felbont·s be·llÌt·sa 640, 800 vagy 1024 ÈrtÈkre.\n"
+msgid "   -f  --fps             Displays framerate\n"
+msgstr "   -f  --fps             K√©pfriss√≠t√©si gyorsas√°g megjelen√≠t√©se.\n"
 
 #: ../src/mmad.cc:207
 #, c-format
-msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     EgÈr ÈrzÈkenysÈg, 1.0 az alapÈrtelmezett.\n"
+msgid "   -v  --version         Prints current version number\n"
+msgstr "   -v  --version         Aktu√°lis verzi√≥sz√°m ki√≠r√°sa.\n"
 
 #: ../src/mmad.cc:208
 #, c-format
-msgid "   -f  --fps             Displays framerate\n"
-msgstr "   -f  --fps             KÈpfrissÌtÈsi gyorsas·g megjelenÌtÈse.\n"
+msgid "   -t  --touch           Updates a map to the latest format\n"
+msgstr ""
+"   -t  --touch           Aktualiz√°lja a p√°ly√°t a legut√≥bbi form√°tumra.\n"
 
 #: ../src/mmad.cc:209
 #, c-format
-msgid "   -q  --quiet           Do not print anything to stdout\n"
-msgstr "   -q  --quiet           Ne Ìrjon ki semmit a standard kimenetre.\n"
+msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
+msgstr "   -y  --low-memory      Kevesebb mem√≥ri√°t haszn√°l.\n"
 
 #: ../src/mmad.cc:210
 #, c-format
-msgid "   -v  --version         Prints current version number\n"
-msgstr "   -v  --version         Aktu·lis verziÛsz·m kiÌr·sa.\n"
-
-#: ../src/mmad.cc:211
-#, c-format
-msgid "   -t  --touch           Updates a map to the latest format\n"
-msgstr ""
-"   -t  --touch           Aktualiz·lja a p·ly·t a legutÛbbi form·tumra.\n"
+msgid "   -j  --repair-joystick Correct for bad joysticks\n"
+msgstr "   -j  --repair-joystick Hib√°s botkorm√°ny jav√≠t√°sa.\n"
 
 #: ../src/mmad.cc:212
 #, c-format
-msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
-msgstr "   -y  --low-memory      Kevesebb memÛri·t haszn·l.\n"
+msgid "Important keyboard shortcuts\n"
+msgstr "Fontos gyorsbillenty≈±k\n"
 
 #: ../src/mmad.cc:213
 #, c-format
-msgid "   -j  --repair-joystick Correct for bad joysticks\n"
-msgstr "   -j  --repair-joystick Hib·s botkorm·ny javÌt·sa.\n"
+msgid "   Escape     Soft quit\n"
+msgstr "   Escape     Kil√©p√©s\n"
+
+#: ../src/mmad.cc:214
+#, c-format
+msgid "   CapsLock   Unhide mouse pointer\n"
+msgstr "   Caps Lock   Eg√©rmutat√≥ megjelen√≠t√©se\n"
 
 #: ../src/mmad.cc:215
 #, c-format
-msgid "Important keyboard shortcuts\n"
-msgstr "Fontos gyorsbillenty˚k\n"
+msgid "   CTRL-q     Quit the game immediatly\n"
+msgstr "   CTRL-q     Azonnali kil√©p√©s\n"
 
 #: ../src/mmad.cc:216
 #, c-format
-msgid "   Escape     Soft quit\n"
-msgstr "   Escape     KilÈpÈs\n"
+msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
+msgstr "   CTRL-f     V√°lt√°s teljes k√©perny≈ës/ablakos m√≥d k√∂z√∂tt\n"
 
 #: ../src/mmad.cc:217
 #, c-format
-msgid "   CapsLock   Unhide mouse pointer\n"
-msgstr "   Caps Lock   EgÈrmutatÛ megjelenÌtÈse\n"
-
-#: ../src/mmad.cc:218
-#, c-format
-msgid "   CTRL-q     Quit the game immediatly\n"
-msgstr "   CTRL-q     Azonnali kilÈpÈs\n"
-
-#: ../src/mmad.cc:219
-#, c-format
-msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
-msgstr "   CTRL-f     V·lt·s teljes kÈpernyıs/ablakos mÛd kˆzˆtt\n"
-
-#: ../src/mmad.cc:220
-#, c-format
 msgid "   k          Kill the ball\n"
-msgstr "   k          J·tÈk felad·sa\n"
+msgstr "   k          J√°t√©k felad√°sa\n"
 
-#: ../src/mmad.cc:304
-#, c-format
-msgid ""
-"Commandline switch -e is deprecated, use the editor button the main menu "
-"instead\n"
-msgstr ""
-"Az -e parancssori kapcsolÛ elavult, helyette a fımen¸ben lÈvı szerkesztı "
-"gomb haszn·lhatÛ.\n"
-
-#: ../src/mmad.cc:331
+#: ../src/mmad.cc:320
 #, c-format
 msgid "Unknown screen resolution of width %d\n"
-msgstr "Ismeretlen kÈpernyıfelbont·s %d szÈlessÈggel\n"
+msgstr "Ismeretlen k√©perny≈ëfelbont√°s %d sz√©less√©ggel\n"
 
-#: ../src/mmad.cc:366
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Welcome to Trackballs. \n"
-msgstr "‹dvˆzˆllek a Trackballs j·tÈkban. \n"
+msgstr "√údv√∂z√∂llek a Trackballs j√°t√©kban. \n"
 
-#: ../src/mmad.cc:367
+#: ../src/mmad.cc:352
 #, c-format
 msgid "Using %s as gamedata directory.\n"
-msgstr "%s haszn·lata adatkˆnyvt·rnak.\n"
-
-#: ../src/mmad.cc:372
-#, c-format
-msgid ""
-"Could not initialize libSDL.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Nem siker¸lt be·llÌtani a libSDL-t.\n"
-"Hiba¸zenet: \"%s\"\n"
-
-#: ../src/mmad.cc:380
-#, c-format
-msgid ""
-"Could not initialize screen resolution.\n"
-"Error message: '%s'\n"
-msgstr ""
-"Nem siker¸lt be·llÌtani a kÈpernyıfelbont·st.\n"
-"Hiba¸zenet: \"%s\"\n"
-
-#: ../src/settings.cc:78
-msgid "Configuration file should be a series of (key value) tuples."
-msgstr ""
-
-#: ../src/settings.cc:79
-msgid "Error in value associated with:"
-msgstr ""
-
-#: ../src/settings.cc:219
-msgid "Unidentified setting:"
-msgstr ""
-
-#: ../src/settings.cc:325 ../src/settings.cc:332
-#, c-format
-msgid "Error, %s is a symbolic link. Cannot save settings\n"
-msgstr "Hiba, %s egy hivatkoz·s. Nem menthetık a be·llÌt·sok.\n"
+msgstr "%s haszn√°lata adatk√∂nyvt√°rnak.\n"
 
 #: ../src/settingsMode.cc:82
 msgid "Game Settings"
-msgstr "J·tÈk be·llÌt·sok"
+msgstr "J√°t√©k be√°ll√≠t√°sok"
 
 #: ../src/settingsMode.cc:95
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
-msgstr "Rendben van a %dx%dx%d kÈpernyıfelbont·s?"
+msgstr "Rendben van a %dx%dx%d k√©perny≈ëfelbont√°s?"
 
 #: ../src/settingsMode.cc:98
 #, fuzzy, c-format
 msgid "Is resolution Auto-%d ok?"
-msgstr "Rendben van a %dx%dx%d kÈpernyıfelbont·s?"
+msgstr "Rendben van a %dx%dx%d k√©perny≈ëfelbont√°s?"
 
 #: ../src/settingsMode.cc:102
 msgid "Ok, use this resolution"
-msgstr "Rendben, haszn·ld ezt a felbont·st"
+msgstr "Rendben, haszn√°ld ezt a felbont√°st"
 
 #: ../src/settingsMode.cc:103
 msgid "No, revert to old resolution"
-msgstr "Nem, visszatÈrÈs az elızı felbont·shoz"
+msgstr "Nem, visszat√©r√©s az el≈ëz≈ë felbont√°shoz"
 
 #: ../src/settingsMode.cc:105
 #, c-format
 msgid "Timeout in %d seconds"
-msgstr "Lej·r az idı %d m·sodperc m˙lva"
+msgstr "Lej√°r az id≈ë %d m√°sodperc m√∫lva"
 
 #: ../src/settingsMode.cc:119
 msgid "Graphics"
@@ -1134,15 +958,15 @@ msgstr ""
 
 #: ../src/settingsMode.cc:128
 msgid "  Resolution"
-msgstr "  Felbont·s"
+msgstr "  Felbont√°s"
 
 #: ../src/settingsMode.cc:129
 msgid "  Test this resolution"
-msgstr "  Ennek a felbont·snak a tesztelÈse"
+msgstr "  Ennek a felbont√°snak a tesztel√©se"
 
 #: ../src/settingsMode.cc:132
 msgid "  Fullscreen"
-msgstr "  Teljes kÈpernyı"
+msgstr "  Teljes k√©perny≈ë"
 
 #: ../src/settingsMode.cc:138
 #, c-format
@@ -1152,17 +976,17 @@ msgstr "Nincs"
 #: ../src/settingsMode.cc:141
 #, c-format
 msgid "Minimalistic"
-msgstr "Minim·lis"
+msgstr "Minim√°lis"
 
 #: ../src/settingsMode.cc:144
 #, c-format
 msgid "Simple"
-msgstr "Egyszer˚"
+msgstr "Egyszer≈±"
 
 #: ../src/settingsMode.cc:147
 #, c-format
 msgid "Standard"
-msgstr "¡ltal·nos"
+msgstr "√Åltal√°nos"
 
 #: ../src/settingsMode.cc:150
 #, c-format
@@ -1176,11 +1000,11 @@ msgstr "Minden"
 
 #: ../src/settingsMode.cc:156
 msgid "  Details"
-msgstr "  RÈszletek"
+msgstr "  R√©szletek"
 
 #: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
 msgid "  Reflections (beta)"
-msgstr "  T¸krˆzıdÈs (beta)"
+msgstr "  T√ºkr√∂z≈ëd√©s (beta)"
 
 #: ../src/settingsMode.cc:163
 msgid "  VSync"
@@ -1189,7 +1013,7 @@ msgstr ""
 #: ../src/settingsMode.cc:172
 #, fuzzy, c-format
 msgid "Frame rate"
-msgstr "KÈpfrissÌtÈs: %.1f"
+msgstr "K√©pfriss√≠t√©s: %.1f"
 
 #: ../src/settingsMode.cc:175
 #, c-format
@@ -1198,19 +1022,19 @@ msgstr ""
 
 #: ../src/settingsMode.cc:178
 msgid "  Show FPS"
-msgstr "  FPS mutat·sa"
+msgstr "  FPS mutat√°sa"
 
 #: ../src/settingsMode.cc:184
 msgid "Controls"
-msgstr "Ir·nyÌt·s"
+msgstr "Ir√°ny√≠t√°s"
 
 #: ../src/settingsMode.cc:187
 msgid "  Use mouse"
-msgstr "  EgÈr haszn·lata"
+msgstr "  Eg√©r haszn√°lata"
 
 #: ../src/settingsMode.cc:193
 msgid "  Sensitivity"
-msgstr "  …rzÈkenysÈg"
+msgstr "  √ârz√©kenys√©g"
 
 #: ../src/settingsMode.cc:200
 #, c-format
@@ -1224,16 +1048,16 @@ msgstr "-%d fok"
 
 #: ../src/settingsMode.cc:203
 msgid "  Steering"
-msgstr "  Korm·nyz·s"
+msgstr "  Korm√°nyz√°s"
 
 #: ../src/settingsMode.cc:210
 #, c-format
 msgid "no joystick found"
-msgstr "Nem tal·lhatÛ botkorm·ny"
+msgstr "Nem tal√°lhat√≥ botkorm√°ny"
 
 #: ../src/settingsMode.cc:214
 msgid "  Joystick:"
-msgstr "  Botkorm·ny:"
+msgstr "  Botkorm√°ny:"
 
 #: ../src/settingsMode.cc:224
 msgid "Other"
@@ -1251,88 +1075,186 @@ msgstr "  Effektek hangereje"
 msgid "  Language"
 msgstr "  Nyelv"
 
-#: ../src/setupMode.cc:71 ../src/setupMode.cc:362
-#, fuzzy, c-format
-msgid "Error: Failed to load %s\n"
-msgstr "Hiba: nem siker¸lt %s-t betˆlteni\n"
-
-#: ../src/setupMode.cc:175
+#: ../src/setupMode.cc:172
 msgid "Setup new game"
-msgstr "⁄j j·tÈk be·llÌt·sa"
+msgstr "√öj j√°t√©k be√°ll√≠t√°sa"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:176
 msgid "Player Name"
-msgstr "J·tÈkos neve"
+msgstr "J√°t√©kos neve"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:182
 msgid "N/A"
 msgstr "Nincs"
 
-#: ../src/setupMode.cc:191
+#: ../src/setupMode.cc:188
 msgid "Level"
-msgstr "P·lya"
+msgstr "P√°lya"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:196
 msgid "Difficulty"
-msgstr "NehÈzsÈg"
+msgstr "Neh√©zs√©g"
+
+#: ../src/setupMode.cc:201
+msgid "Sandbox (Easy)"
+msgstr "Homokoz√≥ (K√∂nny≈±)"
+
+#: ../src/setupMode.cc:202
+msgid "Sandbox (Normal)"
+msgstr "Homokoz√≥ (Norm√°l)"
+
+#: ../src/setupMode.cc:202
+msgid "Sandbox (Hard)"
+msgstr "Homokoz√≥ (Neh√©z)"
 
 #: ../src/setupMode.cc:204
-msgid "Sandbox (Easy)"
-msgstr "HomokozÛ (Kˆnny˚)"
-
-#: ../src/setupMode.cc:205
-msgid "Sandbox (Normal)"
-msgstr "HomokozÛ (Norm·l)"
-
-#: ../src/setupMode.cc:205
-msgid "Sandbox (Hard)"
-msgstr "HomokozÛ (NehÈz)"
-
-#: ../src/setupMode.cc:207
 msgid "Easy"
-msgstr "Kˆnny˚"
+msgstr "K√∂nny≈±"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:205
 msgid "Normal"
-msgstr "Norm·l"
+msgstr "Norm√°l"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:205
 msgid "Hard"
-msgstr "NehÈz"
+msgstr "Neh√©z"
 
-#: ../src/setupMode.cc:212
+#: ../src/setupMode.cc:209
 msgid "Start Game"
-msgstr "J·tÈk indÌt·sa"
+msgstr "J√°t√©k ind√≠t√°sa"
 
-#: ../src/setupMode.cc:216
+#: ../src/setupMode.cc:213
 #, c-format
 msgid "Total games played: %d"
-msgstr "÷sszes eddigi j·tÈk: %d"
+msgstr "√ñsszes eddigi j√°t√©k: %d"
 
-#: ../src/setupMode.cc:220
+#: ../src/setupMode.cc:217
 #, c-format
 msgid "Average score: %d"
-msgstr "¡tlagos pontsz·m: %d"
+msgstr "√Åtlagos pontsz√°m: %d"
+
+#: ../src/setupMode.cc:219
+#, c-format
+msgid "Average score: N/A"
+msgstr "√Åtlagos pontsz√°m: nincs"
 
 #: ../src/setupMode.cc:222
 #, c-format
-msgid "Average score: N/A"
-msgstr "¡tlagos pontsz·m: nincs"
-
-#: ../src/setupMode.cc:225
-#, c-format
 msgid "Levels completed: %d"
-msgstr "TeljesÌtett p·ly·k: %d"
+msgstr "Teljes√≠tett p√°ly√°k: %d"
+
+#~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
+#~ msgstr "Hiba, CalibrateJoystickMode megh√≠v√°sa botkorm√°ny n√©lk√ºl.\n"
+
+#~ msgid "Error, %s/.trackballs is a symbolic link. Cannot save map\n"
+#~ msgstr "Hiba, %s/.trackballs egy hivatkoz√°s. Nem menthet≈ë a p√°lya.\n"
+
+#~ msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
+#~ msgstr "Hiba, %s/.trackballs/levels egy hivatkoz√°s. Nem menthet≈ë a p√°lya.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
+#~ msgstr ""
+#~ "Hiba, %s/.trackballs/levels/%s.map egy hivatkoz√°s. Nem menthet≈ë a p√°lya.\n"
+
+#~ msgid "Saving map as '%s'\n"
+#~ msgstr "P√°lya ment√©se, mint '%s'\n"
+
+#~ msgid "Error, %s is a symbolic link. Cannot create default script file\n"
+#~ msgstr ""
+#~ "Hiba, %s egy hivatkoz√°s. Az alap√©rtelmezett script f√°jl nem hozhat√≥ "
+#~ "l√©tre.\n"
+
+#~ msgid "Error, %s/.trackballs is a symbolic link. Cannot save settings\n"
+#~ msgstr "Hiba, %s/trackballs egy hivatkoz√°s. Nem menthet≈ëk a be√°ll√≠t√°sok.\n"
+
+#~ msgid ""
+#~ "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
+#~ msgstr ""
+#~ "Hiba, %s/trackballs/%s.gmr egy hivatkoz√°s. Nem menthet≈ëk a be√°ll√≠t√°sok.\n"
+
+#, fuzzy
+#~ msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
+#~ msgstr ""
+#~ "Figyelmeztet√©s: nem siker√ºlt %d byte lefoglal√°sa k√©perny≈ëment√©shez.\n"
+
+#~ msgid "Warning: cannot create file '%s'. Abort\n"
+#~ msgstr "Figyelmeztet√©s: %s f√°jlt nem siker√ºlt l√©trehozni.\n"
+
+#~ msgid "Error creating surface from RGB file: %s\n"
+#~ msgstr "Hiba l√©pett fel %s RGB f√°jlb√≥l val√≥ fel√ºletk√©sz√≠t√©s k√∂zben.\n"
+
+#~ msgid ""
+#~ "Warning: max. number of textures reached (%d). Texture '%s' not loaded.\n"
+#~ msgstr ""
+#~ "Figyelmeztet√©s: a text√∫r√°k sz√°ma el√©rte a maximumot (%d). %s text√∫ra nem "
+#~ "ker√ºlt bet√∂lt√©sre.\n"
+
+#~ msgid "Warning: Failed to load texture %s\n"
+#~ msgstr "Figyelmeztet√©s: %s text√∫ra bet√∂lt√©se nem siker√ºlt.\n"
+
+#~ msgid "Warning: too fast framerate (%f)\n"
+#~ msgstr "Figyelmeztet√©s: t√∫l gyors k√©pfriss√≠t√©s (%f)\n"
+
+#~ msgid "Warning: Rescaling images before loading them as textures.\n"
+#~ msgstr ""
+#~ "Figyelmeztet√©s: K√©p√°tm√©retez√©s t√∂rt√©nt text√∫rak√©nt val√≥ bet√∂lt√©s el≈ëtt.\n"
+
+#, fuzzy
+#~ msgid "Error: failed to load %s\n"
+#~ msgstr "Hiba: nem siker√ºlt %s-t bet√∂lteni\n"
+
+#, fuzzy
+#~ msgid "Error, %s is a symbolic link. Cannot load highscores\n"
+#~ msgstr "Hiba, %s egy hivatkoz√°s. A toplista nem menthet≈ë.\n"
+
+#~ msgid "Error, %s is a symbolic link. Cannot save highscores\n"
+#~ msgstr "Hiba, %s egy hivatkoz√°s. A toplista nem menthet≈ë.\n"
+
+#~ msgid "   -e  --edit            Start as level editor.\n"
+#~ msgstr "   -e  --edit            P√°lyaszerkeszt≈ë ind√≠t√°sa.\n"
+
+#~ msgid "   -q  --quiet           Do not print anything to stdout\n"
+#~ msgstr "   -q  --quiet           Ne √≠rjon ki semmit a standard kimenetre.\n"
+
+#~ msgid ""
+#~ "Commandline switch -e is deprecated, use the editor button the main menu "
+#~ "instead\n"
+#~ msgstr ""
+#~ "Az -e parancssori kapcsol√≥ elavult, helyette a f≈ëmen√ºben l√©v≈ë szerkeszt≈ë "
+#~ "gomb haszn√°lhat√≥.\n"
+
+#~ msgid ""
+#~ "Could not initialize libSDL.\n"
+#~ "Error message: '%s'\n"
+#~ msgstr ""
+#~ "Nem siker√ºlt be√°ll√≠tani a libSDL-t.\n"
+#~ "Hiba√ºzenet: \"%s\"\n"
+
+#~ msgid ""
+#~ "Could not initialize screen resolution.\n"
+#~ "Error message: '%s'\n"
+#~ msgstr ""
+#~ "Nem siker√ºlt be√°ll√≠tani a k√©perny≈ëfelbont√°st.\n"
+#~ "Hiba√ºzenet: \"%s\"\n"
+
+#~ msgid "Error, %s is a symbolic link. Cannot save settings\n"
+#~ msgstr "Hiba, %s egy hivatkoz√°s. Nem menthet≈ëk a be√°ll√≠t√°sok.\n"
+
+#, fuzzy
+#~ msgid "Error: Failed to load %s\n"
+#~ msgstr "Hiba: nem siker√ºlt %s-t bet√∂lteni\n"
 
 #, fuzzy
 #~ msgid "Open..."
-#~ msgstr "Megnyit·s"
+#~ msgstr "Megnyit√°s"
 
 #~ msgid "Error: file %s is a symlink.\n"
-#~ msgstr "Hiba: %s f·jl egy hivatkoz·s.\n"
+#~ msgstr "Hiba: %s f√°jl egy hivatkoz√°s.\n"
 
 #~ msgid "Error: Failed to load font %s\n"
-#~ msgstr "Hiba: %s bet˚kÈszlet betˆltÈse nem siker¸lt.\n"
+#~ msgstr "Hiba: %s bet≈±k√©szlet bet√∂lt√©se nem siker√ºlt.\n"
 
 #~ msgid "Error: Failed to load fonts\n"
-#~ msgstr "Hiba: bet˚kÈszletek betˆltÈse nem siker¸lt.\n"
+#~ msgstr "Hiba: bet≈±k√©szletek bet√∂lt√©se nem siker√ºlt.\n"

@@ -244,10 +244,7 @@ void MenuMode::loadSlide() {
   /* Load the image */
   snprintf(str, sizeof(str), "%s/images/slide-%02d.jpg", SHARE_DIR, (rand() % NUM_SLIDES) + 1);
   slide = IMG_Load(str);
-  if (!slide) {
-    printf("Error: failed to load %s\n", str);
-    exit(0);
-  }
+  if (!slide) { error("failed to load %s", str); }
 
   /* Create a texture of it, and free the image data */
   GLfloat texcoord[4];
@@ -314,9 +311,9 @@ void MenuMode::drawSlide(int slide, double time) {
   }
 
   if ((viewWidth + viewOffsetX > slideWidth || viewHeight + viewOffsetY > slideHeight) && 0) {
-    printf(
-        "ERROR\n mode: %d\n time: %f\n slideWidth=%f\n slideHeight=%f\n viewWidth=%f\n "
-        "viewHeight=%f\n oX: %f\n oY: %f\n",
+    warning(
+        "mode: %d\n time: %f\n slideWidth=%f\n slideHeight=%f\n viewWidth=%f\n "
+        "viewHeight=%f\n oX: %f\n oY: %f",
         slideMode[slide], time, slideWidth, slideHeight, viewWidth, viewHeight, viewOffsetX,
         viewOffsetY);
   }
