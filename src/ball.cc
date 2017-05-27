@@ -476,23 +476,28 @@ void Ball::draw2() {
 
 extern float fps;
 void Ball::doExpensiveComputations() {
-  /* TODO. Better test for when to render environment. Eg, only if ball is
-     visible etc. */
-  if (reflectivity > 0.0 && Settings::settings->doReflections) {
-    double dx = position[0] - MainMode::mainMode->camFocus[0];
-    double dy = position[1] - MainMode::mainMode->camFocus[1];
-    double dist = sqrt(dx * dx + dy * dy);
-    if (dist < 10) {
-      int update = 20; /* How often to update environment map (on average) */
-      if (Settings::settings->gfx_details == 4) update = 10;
-      if (Settings::settings->gfx_details == 5) update = 5;
-      if (((rand() >> 7) % update) == 0 || 1) {
-        if (environmentTexture == 0) glGenTextures(1, &environmentTexture);
-        dontReflectSelf = 1;
-        MainMode::mainMode->renderEnvironmentTexture(environmentTexture, position);
-        dontReflectSelf = 0;
-      }
-    }
+  if (reflectivity < 0.0 || !Settings::settings->doReflections) return;
+
+  // Skip if far enough from camera
+  double dx = position[0] - MainMode::mainMode->camFocus[0];
+  double dy = position[1] - MainMode::mainMode->camFocus[1];
+  if (dx * dx + dy * dy > 50 * 50) { return; }
+
+  int vis =
+      testBboxClip(position[0] + boundingBox[0][0], position[0] + boundingBox[1][0],
+                   position[1] + boundingBox[0][1], position[1] + boundingBox[1][1],
+                   position[2] + boundingBox[0][2], position[2] + boundingBox[1][2],
+                   MainMode::mainMode->cameraModelView, MainMode::mainMode->cameraProjection);
+  if (!vis) return;
+
+  int update = 20; /* How often to update environment map (on average) */
+  if (Settings::settings->gfx_details == 4) update = 10;
+  if (Settings::settings->gfx_details == 5) update = 5;
+  if (((rand() >> 7) % update) == 0 || 1) {
+    if (environmentTexture == 0) glGenTextures(1, &environmentTexture);
+    dontReflectSelf = 1;
+    MainMode::mainMode->renderEnvironmentTexture(environmentTexture, position);
+    dontReflectSelf = 0;
   }
 }
 
@@ -550,6 +555,12 @@ void Ball::tick(Real time) {
       phase = 1.0;
     radius /= 1.0 + phase;
   }
+  boundingBox[0][0] = -radius;
+  boundingBox[0][1] = -radius;
+  boundingBox[0][2] = -radius;
+  boundingBox[1][0] = radius;
+  boundingBox[1][1] = radius;
+  boundingBox[1][2] = radius;
   physics(time);
 }
 

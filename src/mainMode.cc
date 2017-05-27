@@ -64,6 +64,8 @@ void MainMode::init() {
 MainMode::MainMode() {
   this->go_to_pause = 0;
   this->pause_time = 0.;
+  memset(&this->cameraModelView[0], 0, 16 * sizeof(double));
+  memset(&this->cameraProjection[0], 0, 16 * sizeof(double));
 }
 MainMode::~MainMode() {}
 
@@ -120,6 +122,10 @@ void MainMode::display() {
               10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * sin(zAngle * M_PI / 2.),
               camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2]);
   }
+
+  /* record modelview/projection matrices for item visibility testing */
+  glGetDoublev(GL_MODELVIEW_MATRIX, this->cameraModelView);
+  glGetDoublev(GL_PROJECTION_MATRIX, this->cameraProjection);
 
   /* Some standard GL settings needed */
   glEnable(GL_CULL_FACE);
