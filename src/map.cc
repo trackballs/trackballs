@@ -150,12 +150,12 @@ void Cell::getWaterNormal(Coord3d normal, int vertex) const {
     v2[2] = waterHeights[CENTER] - waterHeights[NORTH + WEST];
     break;
   case CENTER:
-    getNormal(normal, SOUTH + WEST);
-    getNormal(v1, SOUTH + EAST);
+    getWaterNormal(normal, SOUTH + WEST);
+    getWaterNormal(v1, SOUTH + EAST);
     add(v1, normal, normal);
-    getNormal(v1, NORTH + WEST);
+    getWaterNormal(v1, NORTH + WEST);
     add(v1, normal, normal);
-    getNormal(v1, NORTH + EAST);
+    getWaterNormal(v1, NORTH + EAST);
     add(v1, normal, normal);
     normalize(normal);
     return;
