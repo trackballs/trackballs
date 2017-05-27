@@ -1443,18 +1443,18 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
   // Load region into memory
   Map *map = Game::current->map;
   int w = abs(ix0 - ix1) + 1;
-  int h = abs(ix0 - ix1) + 1;
+  int h = abs(iy0 - iy1) + 1;
   int xs = ix1 > ix0 ? 1 : -1;
   int ys = iy1 > iy0 ? 1 : -1;
   Cell *buf = new Cell[w * h];
   for (int x = 0; x < w; x++) {
-    for (int y = 0; y < w; y++) { buf[y * w + x] = map->cell(ix0 + xs * x, iy0 + ys * y); }
+    for (int y = 0; y < h; y++) { buf[y * w + x] = map->cell(ix0 + xs * x, iy0 + ys * y); }
   }
   // Paste with transformation
   xs *= fx ? -1 : 1;
   ys *= fy ? -1 : 1;
   for (int x = 0; x < w; x++) {
-    for (int y = 0; y < w; y++) {
+    for (int y = 0; y < h; y++) {
       int dx, dy;
       if (fxy) {
         dx = tx + ys * y;
