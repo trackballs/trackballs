@@ -48,7 +48,7 @@
 (define satan (new-mr-black 243 233))
 (set-horizon satan 100)
 
-(sign (_ "Hells entrance") 1 30 -1 243 246)
+(sign (_ "Hell's entrance") 1 30 -1 243 246)
 (sign (_ "Hell's gate") 1 30 -1 243 234)
 (sign (_ "Hell's castle") 1 30 -1 228 235)
 (sign (_ "Hell's fire") 1 30 -1 238 216)

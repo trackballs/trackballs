@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 10:25-0400\n"
-"PO-Revision-Date: 2017-05-27 22:41-0400\n"
+"POT-Creation-Date: 2017-05-28 11:25-0400\n"
+"PO-Revision-Date: 2017-05-28 11:51-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -484,7 +484,7 @@ msgstr "Taux d'images par seconde inconnu"
 #: ../src/glHelp.cc:834
 #, c-format
 msgid "%.1f ms/Frame"
-msgstr ""
+msgstr "%.1f ms/Image"
 
 #: ../src/helpMode.cc:164
 msgid "Your marble:"
@@ -650,7 +650,7 @@ msgstr "Retour"
 #: ../src/highScore.cc:39
 #, c-format
 msgid "Anonymous Coward"
-msgstr ""
+msgstr "Lâche anonyme"
 
 #: ../src/hofMode.cc:130 ../src/setupMode.cc:175
 msgid "Level Set"
@@ -757,12 +757,12 @@ msgstr "difficile"
 #: ../src/map.cc:263
 #, c-format
 msgid "Unknown track"
-msgstr ""
+msgstr "Piste inconnue"
 
 #: ../src/map.cc:264
 #, c-format
 msgid "Unknown author"
-msgstr ""
+msgstr "Auteur inconnu"
 
 #: ../src/menuMode.cc:72
 msgid ""
@@ -1007,14 +1007,14 @@ msgid "  VSync"
 msgstr ""
 
 #: ../src/settingsMode.cc:172
-#, fuzzy, c-format
+#, c-format
 msgid "Frame rate"
-msgstr "Images/sec: %.1f"
+msgstr "Taux d'images"
 
 #: ../src/settingsMode.cc:175
 #, c-format
 msgid "Frame time"
-msgstr ""
+msgstr "Temps d'image"
 
 #: ../src/settingsMode.cc:178
 msgid "  Show FPS"
@@ -1131,7 +1131,7 @@ msgid "Average score: %d"
 msgstr "Score moyen : %d"
 
 #: ../src/setupMode.cc:214
-#, fuzzy, c-format
+#, c-format
 msgid "Average score: N/A"
 msgstr "Score moyen : N/A"
 
@@ -1206,7 +1206,7 @@ msgstr ""
 
 #: ../share/levels/contrib.set:1
 msgid "The Con Tribe"
-msgstr ""
+msgstr "Le tribu des escrocs"
 
 #: ../share/levels/contrib.set:3 ../share/levels/con1.scm:3
 msgid "Steep"
@@ -1274,7 +1274,7 @@ msgstr ""
 
 #: ../share/levels/frg.set:1
 msgid "Great Escape"
-msgstr ""
+msgstr "La grande évasion"
 
 #: ../share/levels/frg.set:3 ../share/levels/lv.set:3
 #: ../share/levels/frg1.scm:1 ../share/levels/lv1.scm:9
@@ -1318,7 +1318,6 @@ msgid "be done eventually!"
 msgstr ""
 
 #: ../share/levels/ki.set:1
-#, fuzzy
 msgid "Kidz"
 msgstr "Gaminz"
 
@@ -1338,9 +1337,10 @@ msgstr ""
 msgid "simple at first. Made by Keith Winston."
 msgstr ""
 
+# "A long way home" (in levelset context) can have either the sense of extending a journey (by choice) or of being unconditionally far from home/safety (not by choice) and needing to face trials/etc.
 #: ../share/levels/lv.set:1
 msgid "A long way home"
-msgstr ""
+msgstr "Le long voyage"
 
 #: ../share/levels/lv.set:4
 msgid "This is the original levelset for Trackballs containing"
@@ -1356,15 +1356,15 @@ msgstr ""
 
 #: ../share/levels/lv.set:8
 msgid "By: Mathias Broxvall"
-msgstr ""
+msgstr "Par: Mathias Broxvall"
 
 #: ../share/levels/mhm.set:1
 msgid "Marble Mayhem"
-msgstr ""
+msgstr "Grabuge des marbres"
 
 #: ../share/levels/mhm.set:3 ../share/levels/mhm1.scm:4
 msgid "Spyballs"
-msgstr ""
+msgstr "Les balles qui espionnent"
 
 #: ../share/levels/mhm.set:4
 msgid "A set of three skillfully made levels by Warren D Ober."
@@ -1376,11 +1376,11 @@ msgstr ""
 
 #: ../share/levels/motion1.set:1 ../share/levels/motion1.scm:1
 msgid "Pendulum Motion"
-msgstr ""
+msgstr "Mouvement pendulaire"
 
 #: ../share/levels/motion1.set:3
 msgid "Motion One"
-msgstr ""
+msgstr "Mouvement 1"
 
 #: ../share/levels/motion1.set:4
 msgid "This is a single level in a level set by Warren D. Ober."
@@ -1392,11 +1392,11 @@ msgstr ""
 
 #: ../share/levels/sl.set:1
 msgid "Six Levels"
-msgstr ""
+msgstr "Six niveaux"
 
 #: ../share/levels/sl.set:3
 msgid "The Desert"
-msgstr ""
+msgstr "Le désert"
 
 #: ../share/levels/sl.set:4
 msgid "\"Six Levels\" is, of course,"
@@ -1420,11 +1420,11 @@ msgstr ""
 
 #: ../share/levels/bonusb.scm:1
 msgid "Bonus Level"
-msgstr ""
+msgstr "Niveau bonus"
 
 #: ../share/levels/bonusb.scm:28
 msgid "You made it to the end!"
-msgstr ""
+msgstr "Vous avez fini!"
 
 #: ../share/levels/bonus.scm:39
 msgid "Spikes, 400pt"
@@ -1444,15 +1444,15 @@ msgstr "Quatre portes"
 
 #: ../share/levels/bx2.scm:294
 msgid "4 hidden switches open exit doors."
-msgstr ""
+msgstr "4 interrupteurs cachés ouvrent les portes de sortie."
 
 #: ../share/levels/bx2.scm:296
 msgid "A switch is nearby."
-msgstr ""
+msgstr "Un interrupteur est à proximité."
 
 #: ../share/levels/bx2.scm:298
 msgid "Peace."
-msgstr ""
+msgstr "Paix."
 
 #: ../share/levels/bx3.scm:4
 msgid "Azteca"
@@ -1460,55 +1460,55 @@ msgstr "Aztèques"
 
 #: ../share/levels/bx3.scm:108
 msgid "You have access to the complex."
-msgstr ""
+msgstr "Vous avez accès au complexe."
 
 #: ../share/levels/bx3.scm:126
 msgid "The way is opened across the sand."
-msgstr ""
+msgstr "La voie est ouverte sur le sable."
 
 #: ../share/levels/bx3.scm:136
 msgid "You must enter the Arena."
-msgstr ""
+msgstr "Vous devez entrer dans l'Arène."
 
 #: ../share/levels/bx3.scm:196 ../share/levels/bx3.scm:203
 msgid "A wall has been lowered."
-msgstr ""
+msgstr "Un mur a été abaissé."
 
 #: ../share/levels/bx3.scm:210
 msgid "A roof has been raised."
-msgstr ""
+msgstr "Un toit a été élevé."
 
 #: ../share/levels/bx3.scm:226
 msgid "Stairs are in place."
-msgstr ""
+msgstr "Les escaliers sont en place."
 
 #: ../share/levels/bx3.scm:236
 msgid "You may enter upper complex."
-msgstr ""
+msgstr "Vous pouvez entrer dans le complexe supérieur."
 
 #: ../share/levels/bx3.scm:250
 msgid "The exit is now open."
-msgstr ""
+msgstr "La sortie est ouverte."
 
 #: ../share/levels/castle2.scm:8
 msgid "Night Watch"
-msgstr ""
+msgstr "La veille de nuit"
 
 #: ../share/levels/castle3.scm:8
 msgid "Stronghold"
-msgstr ""
+msgstr "Bastion"
 
 #: ../share/levels/castle4.scm:13
 msgid "Ice and Glass"
-msgstr ""
+msgstr "Glace et verre"
 
 #: ../share/levels/castle4.scm:65
 msgid "Maze of PI"
-msgstr ""
+msgstr "Labyrinthe de PI"
 
 #: ../share/levels/castle4.scm:66
 msgid "Secret stairs somewhere"
-msgstr ""
+msgstr "Escalier secret quelque part"
 
 #: ../share/levels/child2.scm:9
 msgid "Christmas"
@@ -1532,35 +1532,35 @@ msgstr "Pyramide"
 
 #: ../share/levels/con2.scm:5
 msgid "Stairway to Heaven"
-msgstr ""
+msgstr "Escalier au paradis"
 
 #: ../share/levels/con3.scm:8
 msgid "Hell"
-msgstr ""
+msgstr "L'Enfer"
 
 #: ../share/levels/con3.scm:51
-msgid "Hells entrance"
-msgstr ""
+msgid "Hell's entrance"
+msgstr "Entrée de l'enfer"
 
 #: ../share/levels/con3.scm:52
 msgid "Hell's gate"
-msgstr ""
+msgstr "Porte de l'enfer"
 
 #: ../share/levels/con3.scm:53
 msgid "Hell's castle"
-msgstr ""
+msgstr "Château de l'enfer"
 
 #: ../share/levels/con3.scm:54
 msgid "Hell's fire"
-msgstr ""
+msgstr "Le feu de l'enfer"
 
 #: ../share/levels/con3.scm:55
 msgid "Hell freezing over"
-msgstr ""
+msgstr "L'enfer gelant"
 
 #: ../share/levels/con4.scm:4
 msgid "Scary"
-msgstr ""
+msgstr "Effrayant"
 
 #: ../share/levels/con4.scm:34 ../share/levels/con4.scm:62
 #: ../share/levels/con4.scm:66 ../share/levels/lv1.scm:72
@@ -1569,31 +1569,31 @@ msgstr "M. Black"
 
 #: ../share/levels/con5.scm:4
 msgid "Snowbord"
-msgstr ""
+msgstr "Snowboard"
 
 #: ../share/levels/dn1.scm:4
 msgid "Strange indeed!"
-msgstr ""
+msgstr "Étrange en effet!"
 
 #: ../share/levels/dn2.scm:4
 msgid "Horrible"
-msgstr ""
+msgstr "Horrible"
 
 #: ../share/levels/dn3.scm:4
 msgid "Water jumping"
-msgstr ""
+msgstr "Sauter sur l'eau"
 
 #: ../share/levels/dn4.scm:4
 msgid "Oh my god!"
-msgstr ""
+msgstr "Mon Dieu!"
 
 #: ../share/levels/dn5.scm:4
 msgid "Get wet!"
-msgstr ""
+msgstr "Mouillez!"
 
 #: ../share/levels/dn6.scm:7
 msgid "Final and the last"
-msgstr ""
+msgstr "Finale et dernière"
 
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
@@ -1617,7 +1617,7 @@ msgstr "L'été"
 
 #: ../share/levels/fourSeasons_3.scm:30
 msgid "Remember to breathe"
-msgstr ""
+msgstr "Souvenez-vous de respirer"
 
 #: ../share/levels/fourSeasons_4.scm:7
 msgid "Autumn"
@@ -1625,19 +1625,19 @@ msgstr "L'automne"
 
 #: ../share/levels/frg10.scm:1
 msgid "Well done!"
-msgstr ""
+msgstr "Bravo!"
 
 #: ../share/levels/frg10.scm:28
 msgid "Amazing! You won the entire game!"
-msgstr ""
+msgstr "Incroyable! Vous avez gagné tout le jeu!"
 
 #: ../share/levels/frg2.scm:1
 msgid "Deja Vu"
-msgstr ""
+msgstr "Déjà vu"
 
 #: ../share/levels/frg3.scm:1
 msgid "Towers of Heaven"
-msgstr ""
+msgstr "Tours du paradis"
 
 #: ../share/levels/frg4.scm:1
 msgid "Blue"
@@ -1645,27 +1645,27 @@ msgstr "Bleu"
 
 #: ../share/levels/frg5.scm:1
 msgid "Upside Down"
-msgstr ""
+msgstr "À l'envers"
 
 #: ../share/levels/frg6.scm:1
 msgid "High Nausea Rating"
-msgstr ""
+msgstr "Haute nausée"
 
 #: ../share/levels/frg7.scm:2
 msgid "Jump'n Roll"
-msgstr ""
+msgstr "Sauter et rouler"
 
 #: ../share/levels/frg8.scm:1
 msgid "Azure Fortress"
-msgstr ""
+msgstr "Forteresse d'azur"
 
 #: ../share/levels/frg9.scm:1
 msgid "Ultimate"
-msgstr ""
+msgstr "Ultime"
 
 #: ../share/levels/frgb.scm:1
 msgid "Chess Champion"
-msgstr ""
+msgstr "Champion d'échecs"
 
 #: ../share/levels/jump2.scm:5
 msgid "Megajump"
@@ -1701,39 +1701,39 @@ msgstr ""
 
 #: ../share/levels/lv1.scm:94
 msgid "and his Minions"
-msgstr ""
+msgstr "et ses Larbins"
 
 #: ../share/levels/lv2.scm:72
 msgid "Jump!"
-msgstr ""
+msgstr "Sautez!"
 
 #: ../share/levels/lv3.scm:3
 msgid "Nightime"
-msgstr ""
+msgstr "Nuit"
 
 #: ../share/levels/lv4.scm:4
 msgid "Labyrinth"
-msgstr ""
+msgstr "Labyrinthe"
 
 #: ../share/levels/lv6.scm:3
 msgid "Cannon"
-msgstr ""
+msgstr "Canon"
 
 #: ../share/levels/lv7.scm:3
 msgid "Slalom"
-msgstr ""
+msgstr "Slalom"
 
 #: ../share/levels/lv8.scm:8
 msgid "Crazy Factory"
-msgstr ""
+msgstr "Usine folle"
 
 #: ../share/levels/lv9.scm:4
 msgid "Water world"
-msgstr ""
+msgstr "Monde de l'eau"
 
 #: ../share/levels/mhm2.scm:3
 msgid "Mayhem"
-msgstr ""
+msgstr "Grabuge"
 
 #: ../share/levels/mhm3.scm:3
 msgid "The Castle"
@@ -1741,12 +1741,11 @@ msgstr "Le château"
 
 #: ../share/levels/mhm3.scm:25
 msgid "Stay on the path or else!"
-msgstr ""
+msgstr "Restez sur le chemin!"
 
 #: ../share/levels/Shop1.scm:6
-#, fuzzy
 msgid "Speed-pill 2 minutes: 300 points"
-msgstr "%d minutes = %d points"
+msgstr ""
 
 #: ../share/levels/Shop1.scm:10
 msgid "Extra Life: 800 points"
@@ -1770,7 +1769,7 @@ msgstr ""
 
 #: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
 msgid "No jumping!"
-msgstr ""
+msgstr "Ne pas sauter!"
 
 #: ../share/levels/sl2.scm:9
 msgid "Scale the Mountain"

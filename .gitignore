@@ -3,6 +3,7 @@ build/
 html/
 *.x
 *.gmo
+*.mo
 Makefile
 trackballs
 install_manifest.txt
