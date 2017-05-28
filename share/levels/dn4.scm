@@ -1,7 +1,7 @@
 ;;; DevNull- level 4
 
 (day)                           ;; Sets daylight for this level. M
-(set-track-name "Oh my god!")         ;; The name of the levelM
+(set-track-name (_ "Oh my god!"))         ;; The name of the levelM
 (set-author "Francek") ;;
 (start-time 200)                ;; We have two minutes to complete levelM
 (set-start-position 250.5 251.5)

@@ -2,7 +2,7 @@
 ;;; Note. This is meant to be an adult level.
 
 (day)
-(set-track-name "Stairway to Heaven")
+(set-track-name (_ "Stairway to Heaven"))
 (set-author "Keith Winston")
 
 (set-start-position 252.5 252.5)

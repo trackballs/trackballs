@@ -1,8 +1,7 @@
-Great Escape
-frg1
-Warmup
-Prepare for the real Marble Madness-like adventure in this game! 
-Race down one of the many hills, and beat the time limit and avoid
- badguys and hazards. Can you finish all the nine levels?
-
-Made by: Ulrik Enstad.
+(name (_ "Great Escape"))
+(first-level-file "frg1")
+(first-level-name (_ "Warmup"))
+(desc1 (_ "Prepare for the real Marble Madness-like adventure in this game! "))
+(desc2 (_ "Race down one of the many hills, and beat the time limit and avoid"))
+(desc3 (_ "badguys and hazards. Can you finish all the nine levels?"))
+(desc5 (_ "Made by: Ulrik Enstad."))

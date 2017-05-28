@@ -4,7 +4,7 @@
 (fog 0.3)
 (fog-color 0.5 0.5 0.5)
 (rain 0.6)
-(set-track-name "Autumn")
+(set-track-name (_ "Autumn"))
 (set-author "Mathias Broxvall")
 (map-is-transparent #f)
 

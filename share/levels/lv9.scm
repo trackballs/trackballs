@@ -1,7 +1,7 @@
 ;;; waterworld
 
 (day)
-(set-track-name "Water world")
+(set-track-name (_ "Water world"))
 (set-author "Mathias Broxvall")
 (map-is-transparent #t)
 (add-goal 188 191 #t "")

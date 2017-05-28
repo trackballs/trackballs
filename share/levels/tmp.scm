@@ -1,7 +1,7 @@
 ;;; tmp
 
 (day)
-(set-track-name "Acid")
+(set-track-name (_ "Acid"))
 (set-author "Mathias Broxvall")
 (map-is-transparent #t)
 

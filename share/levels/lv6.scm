@@ -1,6 +1,6 @@
 ;;; level6 - cannon
 
-(set-track-name "Cannon") (day)
+(set-track-name (_ "Cannon")) (day)
 (set-author "Mathias Broxvall")
 
 (start-time 120)

@@ -144,7 +144,7 @@ void Settings::loadLevelSets() {
 
   /* ugly fix to make levelset lv.set the first level set */
   snprintf(str, sizeof(str), "%s/levels/lv.set", SHARE_DIR);
-  loadLevelSet(str);
+  loadLevelSet(str, "lv.set");
 
   snprintf(str, sizeof(str), "%s/levels", SHARE_DIR);
   DIR *dir = opendir(str);
@@ -155,7 +155,7 @@ void Settings::loadLevelSets() {
         strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
       if (strcmp(dirent->d_name, "lv.set")) {
         snprintf(str, sizeof(str), "%s/levels/%s", SHARE_DIR, dirent->d_name);
-        loadLevelSet(str);
+        loadLevelSet(str, dirent->d_name);
       }
     }
   }
@@ -168,7 +168,7 @@ void Settings::loadLevelSets() {
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
         snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels/%s", getenv("HOME"),
                  dirent->d_name);
-        loadLevelSet(str);
+        loadLevelSet(str, dirent->d_name);
       }
     }
 
@@ -176,54 +176,94 @@ void Settings::loadLevelSets() {
     error("failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
   }
 }
-void Settings::loadLevelSet(char *setname) {
-  char imagename[256];
-  FILE *fp = fopen(setname, "r");
-  FILE *fp2;
-  int lineno;
+void Settings::loadLevelSet(const char *setname, const char *shortname) {
+  const char *reqmnt =
+      "Levelset file %s should be a series of (key \"value\") or (key (_ \"value\")) tuples.";
 
-  if (!fp)
-    warning("Failure reading levelSet %s", setname);
-  else {
-    fgets(levelSets[nLevelSets].name, 256, fp);
-    if (levelSets[nLevelSets].name[strlen(levelSets[nLevelSets].name) - 1] == '\n')
-      levelSets[nLevelSets].name[strlen(levelSets[nLevelSets].name) - 1] = 0;
-    fgets(levelSets[nLevelSets].startLevel, 256, fp);
-    if (levelSets[nLevelSets].startLevel[strlen(levelSets[nLevelSets].startLevel) - 1] == '\n')
-      levelSets[nLevelSets].startLevel[strlen(levelSets[nLevelSets].startLevel) - 1] = 0;
-    fgets(levelSets[nLevelSets].startLevelName, 256, fp);
-    if (levelSets[nLevelSets]
-            .startLevelName[strlen(levelSets[nLevelSets].startLevelName) - 1] == '\n')
-      levelSets[nLevelSets].startLevelName[strlen(levelSets[nLevelSets].startLevelName) - 1] =
-          0;
+  strncpy(levelSets[nLevelSets].path, shortname, 256);
+  // Null terminate everything in case fields are not set
+  levelSets[nLevelSets].name[0] = 0;
+  levelSets[nLevelSets].startLevel[0] = 0;
+  levelSets[nLevelSets].startLevelName[0] = 0;
+  levelSets[nLevelSets].imagename[0] = 0;
+  levelSets[nLevelSets].description[0][0] = 0;
+  levelSets[nLevelSets].description[1][0] = 0;
+  levelSets[nLevelSets].description[2][0] = 0;
+  levelSets[nLevelSets].description[3][0] = 0;
+  levelSets[nLevelSets].description[4][0] = 0;
 
-    /* This reads a descriptive text about the level */
-    for (lineno = 0; lineno < 5; lineno++) levelSets[nLevelSets].description[lineno][0] = 0;
-    for (lineno = 0; lineno < 5; lineno++) {
-      if (!fgets(levelSets[nLevelSets].description[lineno], 70, fp)) break;
-      if (levelSets[nLevelSets]
-              .description[lineno][strlen(levelSets[nLevelSets].description[lineno]) - 1] !=
-          '\n') {
-        warning("malformed descriptions for levelset %s", setname);
+  if (access(setname, R_OK) == -1) {
+    warning("Did not have read access to level set file %s", setname);
+    return;
+  }
+  SCM ip = scm_open_file(scm_from_utf8_string(setname), scm_from_utf8_string("r"));
+  for (int i = 0; i < 1000; i++) {
+    SCM contents = scm_read(ip);
+    if (SCM_EOF_OBJECT_P(contents)) { break; }
+    if (!scm_to_bool(scm_list_p(contents)) || scm_to_int(scm_length(contents)) != 2) {
+      warning(reqmnt, setname);
+      continue;
+    }
+    SCM key = SCM_CAR(contents);
+    SCM val = SCM_CADR(contents);
+    if (!scm_is_symbol(key) || (!scm_is_string(val) && !scm_to_bool(scm_list_p(contents)))) {
+      warning(reqmnt, setname);
+      continue;
+    }
+    char *sval = NULL;
+    char *eval = NULL;
+    if (scm_is_string(val)) {
+      eval = scm_to_utf8_string(val);
+      sval = eval;
+      int len = strlen(sval);
+      if (len > 0 && sval[len - 1] == '\n') { sval[len - 1] = 0; }
+    } else {
+      if (scm_to_int(scm_length(val)) != 2 || SCM_CAR(val) != scm_from_utf8_symbol("_") ||
+          !scm_is_string(SCM_CADR(val))) {
+        warning(reqmnt, setname);
+        continue;
       }
-      /* Remove final newline character */
-      levelSets[nLevelSets]
-          .description[lineno][strlen(levelSets[nLevelSets].description[lineno]) - 1] = 0;
+      char *eval = scm_to_utf8_string(SCM_CADR(val));
+      sval = gettext(eval);
     }
 
-    strncpy(imagename, setname, sizeof(imagename));
-    strcpy(imagename + strlen(imagename) - 4, ".jpg");
-    fp2 = fopen(setname, "r");
-    if (fp2)
-      fclose(fp2);
-    else
-      imagename[0] = 0;
-    strncpy(levelSets[nLevelSets].imagename, imagename,
-            sizeof(levelSets[nLevelSets].imagename));
+    char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
+    if (!strcmp(skey, "name")) {
+      strncpy(levelSets[nLevelSets].name, sval, 256);
+    } else if (!strcmp(skey, "first-level-file")) {
+      strncpy(levelSets[nLevelSets].startLevel, sval, 256);
+    } else if (!strcmp(skey, "first-level-name")) {
+      strncpy(levelSets[nLevelSets].startLevelName, sval, 256);
+    } else if (!strcmp(skey, "desc1")) {
+      strncpy(&levelSets[nLevelSets].description[0][0], sval, 80);
+    } else if (!strcmp(skey, "desc2")) {
+      strncpy(&levelSets[nLevelSets].description[1][0], sval, 80);
+    } else if (!strcmp(skey, "desc3")) {
+      strncpy(&levelSets[nLevelSets].description[2][0], sval, 80);
+    } else if (!strcmp(skey, "desc4")) {
+      strncpy(&levelSets[nLevelSets].description[3][0], sval, 80);
+    } else if (!strcmp(skey, "desc5")) {
+      strncpy(&levelSets[nLevelSets].description[4][0], sval, 80);
+    } else {
+      warning("Unidentified key '%s' in level set file %s", skey, setname);
+    }
 
-    nLevelSets++;
-    fclose(fp);
+    free(skey);
+    free(eval);
   }
+  scm_close_input_port(ip);
+
+  char imagename[256];
+  strncpy(imagename, setname, sizeof(imagename));
+  strncpy(imagename + strlen(imagename) - 4, ".jpg", sizeof(imagename) - strlen(imagename));
+  FILE *fp2 = fopen(setname, "r");
+  if (fp2)
+    fclose(fp2);
+  else
+    imagename[0] = 0;
+  strncpy(levelSets[nLevelSets].imagename, imagename, sizeof(levelSets[nLevelSets].imagename));
+
+  nLevelSets++;
 }
 
 void Settings::save() {

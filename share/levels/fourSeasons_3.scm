@@ -3,7 +3,7 @@
 (day)
 (fog 0.01)
 (fog-color 0.8 0.8 1.0)
-(set-track-name "Summer")
+(set-track-name (_ "Summer"))
 (set-author "Mathias Broxvall")
 (map-is-transparent #t)
 (scale-oxygen 4.0)  ;; Let player be under water longer
@@ -27,7 +27,7 @@
 
 (define pipes (multi-pipe '((201.0 199.5 -6.9) (208.0 199.5 -10.5) (230.0 199.5 -10.5)) 0.4 #f))
 ;;(map (lambda (pipe) (set-primary-color pipe 0.5 0.5 0.5 0.5)) pipes)
-(set-primary-color (sign "Remember to breath" 1.0 15.0 0.0 212.5 199.5 -8.0) 1.0 1.0 0.4)
+(set-primary-color (sign (_ "Remember to breathe") 1.0 15.0 0.0 212.5 199.5 -8.0) 1.0 1.0 0.4)
 (add-flag 212 199 100 0 1.0) 
 
 (diamond 234.5 193.5)

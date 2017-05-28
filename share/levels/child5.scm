@@ -9,7 +9,7 @@
 
 (map-is-transparent #t)
 
-(set-track-name "Wonderland")
+(set-track-name (_ "Wonderland"))
 (set-author "Attila Boros")
 
 ;; Start

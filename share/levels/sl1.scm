@@ -6,7 +6,7 @@
 
 
 (day)
-(set-track-name "No jumping!")
+(set-track-name (_ "No jumping!"))
 (set-author "Ulrik Enstad")
 (cond
  ((= (difficulty) *easy*)
@@ -24,7 +24,7 @@
 (restart-time 0)
 
 ;; sign
-(sign "No jumping!" 1 20.0 -1 249.5 249.5)
+(sign (_ "No jumping!") 1 20.0 -1 249.5 249.5)
 
 ;; the cannon
 (set-wind (pipe 251.7 243.5 4.8 249.0 243.5 4.8 0.3) 16.0 0.0)

@@ -6,7 +6,7 @@
 
 
 (day)
-(set-track-name "The Longest Pipe in the World")
+(set-track-name (_ "The Longest Pipe in the World"))
 (set-author "Ulrik Enstad")
 (set-start-position 234.5 70.5)
 (cond
@@ -150,7 +150,7 @@
 (diamond 235 86)
 
 ;; sign
-(sign "smash some badguys and see what happens" 0.5 20 -1 225 92)
+(sign (_ "Smash some badguys and see what happens") 0.5 20 -1 225 92)
 
 ;; hints to win level
 ;; kill the blue marble to remove the ice

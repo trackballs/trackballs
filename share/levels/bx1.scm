@@ -1,7 +1,7 @@
 ;;; boxOfun
 
 (day)
-(set-track-name "Box-O'-Fun")
+(set-track-name (_ "Box-O'-Fun"))
 (set-author "Warren D Ober")
 (map-is-transparent #t)
 (start-time 340) 

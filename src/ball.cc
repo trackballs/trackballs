@@ -476,7 +476,7 @@ void Ball::draw2() {
 
 extern float fps;
 void Ball::doExpensiveComputations() {
-  if (reflectivity < 0.0 || !Settings::settings->doReflections) return;
+  if (reflectivity <= 0.0 || !Settings::settings->doReflections) return;
 
   // Skip if far enough from camera
   double dx = position[0] - MainMode::mainMode->camFocus[0];

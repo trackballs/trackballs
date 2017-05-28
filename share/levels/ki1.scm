@@ -4,7 +4,7 @@
 ;;; simple at first.
 
 (day)
-(set-track-name "Right Angles")
+(set-track-name (_ "Right Angles"))
 (set-author "Keith Winston")
 
 (set-start-position 252.5 252.5)

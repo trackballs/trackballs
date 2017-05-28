@@ -1,6 +1,6 @@
 ;;; steep
 
-(set-track-name "Steep")
+(set-track-name (_ "Steep"))
 (set-author "Russell Valentine")
 
 (start-time 120) 

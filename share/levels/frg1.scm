@@ -1,4 +1,4 @@
-(set-track-name "Warmup")
+(set-track-name (_ "Warmup"))
 (set-author "Ulrik Enstad")
 (set-start-position 250.5 250.5)
 (map-is-transparent #t)

@@ -5,7 +5,7 @@
 
 (day)
 
-(set-track-name "Maze")
+(set-track-name (_ "Maze"))
 (set-author "Attila Boros")
 
 ;; Start

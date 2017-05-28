@@ -1,7 +1,7 @@
 ;;; DevNull- level 2
 
 (day)                           ;; Sets daylight for this level. M
-(set-track-name "Get wet!")         ;; The name of the levelM
+(set-track-name (_ "Get wet!"))         ;; The name of the levelM
 (set-author "Francek") ;;
 (start-time 110)                ;; We have two minutes to complete levelM
 (set-start-position 237.5 249.5) ;; Where the player appearsM

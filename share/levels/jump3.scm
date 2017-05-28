@@ -1,7 +1,7 @@
 ;;; upstairs.scm
 
 (day)
-(set-track-name "upstairs")
+(set-track-name (_ "Upstairs"))
 (fog)
 (set-author "Gerard Pudenz")
 (start-time 60)

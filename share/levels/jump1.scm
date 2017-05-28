@@ -1,7 +1,7 @@
 ;;; bridge.scm
 
 (day)
-(set-track-name "bridge")
+(set-track-name (_ "Bridge"))
 (fog)
 (set-author "Gerard Pudenz")
 (start-time 60)

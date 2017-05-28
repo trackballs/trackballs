@@ -1,6 +1,6 @@
-Kidz
-ki1
-Right Angles
-This is meant to be a very easy and basic level for ages 4-5.
-Also, since I am a beginner at designing levels, I want to keep it
-simple at first. Made by Keith Winston.
+(name (_ "Kidz"))
+(first-level-file "ki1")
+(first-level-name (_ "Right Angles"))
+(desc1 (_ "This is meant to be a very easy and basic level for ages 4-5."))
+(desc2 (_ "Also, since I am a beginner at designing levels, I want to keep it"))
+(desc3 (_ "simple at first. Made by Keith Winston."))

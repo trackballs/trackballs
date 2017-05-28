@@ -5,7 +5,7 @@
 (fog-color 0.2 0.2 0.2)
 (animator 5.0 0.0 1.0 0.2 0.5 *animator-bounce*
       (lambda (v) (fog-color v (+ 0.1 (* 0.5 v)) 0.2)))
-(set-track-name "Crazy Factory")
+(set-track-name (_ "Crazy Factory"))
 (set-author "Mathias Broxvall")
 
 (start-time 150) 

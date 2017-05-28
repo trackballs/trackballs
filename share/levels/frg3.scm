@@ -1,4 +1,4 @@
-(set-track-name "Towers of Heaven")
+(set-track-name (_ "Towers of Heaven"))
 (set-author "Ulrik Enstad")
 (set-start-position 248.5 247.5)
 (map-is-transparent #t)

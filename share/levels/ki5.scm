@@ -2,7 +2,7 @@
 ;;; Note. This is meant to be a very easy and basic level for children
 
 (day)
-(set-track-name "Half-pipe")
+(set-track-name (_ "Half-pipe"))
 (set-author "Keith Winston")
 
 (set-start-position 251.5 252.5)

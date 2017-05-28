@@ -1,6 +1,6 @@
 ; This classic will go down in history like  "War and Peace". ;-)
 
-(set-track-name "Castle of Darius the Mede")
+(set-track-name (_ "Castle of Darius the Mede"))
 ; A historical figure from The Book of Daniel - chapter 6.
 
 (set-author "Dietrich Radel")
@@ -97,7 +97,7 @@
 (add-cyclic-platform 250 246 250 246 -8. -4. 6. .5)
 
 ; For the Homer Simpsons out ther, a sign to warn that icy pond will kill the marble.
-(set-primary-color (sign "Danger!" 1.0 15.0 0.0 232.5 181.5) 0.8 0.8 0.4)
+(set-primary-color (sign (_ "Danger!") 1.0 15.0 0.0 232.5 181.5) 0.8 0.8 0.4)
 
 ; Not just one, but a whole bunch of Mr Black's! Muhahahahahah!!!!!
 (define mr-black1 (new-mr-black 197.5 237.5))
@@ -158,7 +158,7 @@
 (add-flag 249 230 250 1 0.1)
 (add-flag 215 205 150 1 0.1)
 (add-flag 247 196 750 1 0.1) ; Ok, I guess this one is worth getting though.
-(set-primary-color (sign "Eternity" 1.0 15.0 0.0 249.5 196.5) 0.8 0.4 0.8)
+(set-primary-color (sign (_ "Eternity") 1.0 15.0 0.0 249.5 196.5) 0.8 0.4 0.8)
 (add-flag 239 181 150 1 0.1)
 (add-flag 223 181 250 1 0.1)
 (add-flag 190 192 150 1 0.1)

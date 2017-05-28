@@ -1,4 +1,4 @@
-(set-track-name "Deja Vu")
+(set-track-name (_ "Deja Vu"))
 (set-author "Ulrik Enstad")
 
 (set-start-position 250 250)

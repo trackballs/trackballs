@@ -1,4 +1,4 @@
-(set-track-name "Chess Champion")
+(set-track-name (_ "Chess Champion"))
 (set-author "Ulrik Enstad")
 (cond
  ((= (difficulty) *easy*)

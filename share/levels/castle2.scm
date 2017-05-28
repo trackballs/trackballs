@@ -5,7 +5,7 @@
 
 (night)
 
-(set-track-name "Night Watch")
+(set-track-name (_ "Night Watch"))
 (set-author "Attila Boros")
 
 ;; Start

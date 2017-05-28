@@ -1,7 +1,7 @@
 ;;; dangerousjump.scm
 
 (day)
-(set-track-name "dangerous jump")
+(set-track-name (_ "Dangerous Jump"))
 (fog)
 (set-author "Gerard Pudenz")
 (start-time 120)

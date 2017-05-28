@@ -1,5 +1,5 @@
 
-(set-track-name "Jump'n Roll")
+(set-track-name (_ "Jump'n Roll"))
 (set-author "Ulrik Enstad")
 (set-start-position 248.5 250.5)
 (night)

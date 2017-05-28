@@ -1,4 +1,4 @@
-(set-track-name "bonus level")
+(set-track-name (_ "Bonus Level"))
 (set-author "ulrik")
 (start-time 60)
 (set-start-position 250.5 247.5)
@@ -25,7 +25,7 @@
 (add-flag 157 245 5000 0 0.5)
 (add-flag 157 246 5000 0 0.5)
 
-(set-primary-color (sign "you made it to the end!" 1 20 -1 149 246) 0.0 1.0 0.0)
+(set-primary-color (sign (_ "You made it to the end!") 1 20 -1 149 246) 0.0 1.0 0.0)
  
 (set-bonus-level bonus-goto)
 

@@ -1,4 +1,4 @@
-The Four Seasons
-fourSeasons_1
-Winter
-Play all year round! First comes the winter, then comes the...
+(name (_ "The Four Seasons"))
+(first-level-file "fourSeasons_1")
+(first-level-name (_ "Winter"))
+(desc1 (_ "Play all year round! First comes the winter, then comes the..."))

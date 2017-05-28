@@ -5,7 +5,7 @@
 (fog)
 (fog-color .0 .4 .4)
 
-(set-track-name "Hell")
+(set-track-name (_ "Hell"))
 (set-author "Wouter Tellier")
 (add-goal 246 248 #t "con4")
 
@@ -48,8 +48,8 @@
 (define satan (new-mr-black 243 233))
 (set-horizon satan 100)
 
-(sign "Hells entrance" 1 30 -1 243 246)
-(sign "Hells gate" 1 30 -1 243 234)
-(sign "Hells castle" 1 30 -1 228 235)
-(sign "Hells fire" 1 30 -1 238 216)
-(sign "Hell freezing over" 1 30 -1 253 242)
+(sign (_ "Hells entrance") 1 30 -1 243 246)
+(sign (_ "Hell's gate") 1 30 -1 243 234)
+(sign (_ "Hell's castle") 1 30 -1 228 235)
+(sign (_ "Hell's fire") 1 30 -1 238 216)
+(sign (_ "Hell freezing over") 1 30 -1 253 242)

@@ -1,6 +1,7 @@
-Jump
-jump1
-Bridge
-A set of very difficult levels by Gerard Pudenz. Don't worry 
-if you can't make it on the first attempt. I promise, it can 
-be done eventually!
+(name (_ "Jump"))
+(first-level-file "jump1")
+(first-level-name (_ "Bridge"))
+(desc1 (_ "A set of very difficult levels by Gerard Pudenz. Don't worry"))
+(desc2 (_ "if you can't make it on the first attempt. I promise, it can"))
+(desc3 (_ "be done eventually!"))
+

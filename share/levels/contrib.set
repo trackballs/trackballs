@@ -1,6 +1,6 @@
-The Con Tribe
-con1
-Steep
-How do you stand up in the international tribe where no level
-is like the other? This is a collection of levels created by 
-different people all around the world. Enjoy!
+(name (_ "The Con Tribe"))
+(first-level-file "con1")
+(first-level-name (_ "Steep"))
+(desc1 (_ "How do you stand up in the international tribe where no level"))
+(desc2 (_ "is like the other? This is a collection of levels created by"))
+(desc3 (_ "different people all around the world. Enjoy!"))

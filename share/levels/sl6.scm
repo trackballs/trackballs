@@ -6,7 +6,7 @@
 
 
 (day)
-(set-track-name "The Marble HQ")
+(set-track-name (_ "The Marble HQ"))
 (set-author "Ulrik Enstad")
 (cond
  ((= (difficulty) *easy*)
@@ -197,7 +197,7 @@
 
 
 
-(sign "The Marble HQ - Do not Enter!" 0.8 20 -1 156.5 75)
+(sign (_ "The Marble HQ - Do not Enter!") 0.8 20 -1 156.5 75)
 
 
 
@@ -338,7 +338,7 @@
 ;; (bonus)
 
 
-(sign "bonus" 0.8 20.0 -1 233 109)
+(sign (_ "Bonus") 0.8 20.0 -1 233 109)
 
 
 (trigger 232.5 100.5 0.5
@@ -518,7 +518,7 @@
 
 
 
-(sign "Commander's Hall" 0.8 20 -1 249.5 90.5)
+(sign (_ "Commander's Hall") 0.8 20 -1 249.5 90.5)
 
 
 

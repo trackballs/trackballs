@@ -4,7 +4,7 @@
 ;;; Enjoy your life! ;-)      
 
 (day)                           ;; Sets daylight for this level. M
-(set-track-name "Final and the last")         ;; The name of the levelM
+(set-track-name (_ "Final and the last"))         ;; The name of the levelM
 (set-author "Francek") ;;
 (start-time 210)                ;; We have two minutes to complete levelM
 (set-start-position 200.5 200.5) ;; Where the player appearsM

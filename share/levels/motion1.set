@@ -1,5 +1,5 @@
-Pendulum Motion
-motion1
-Motion One
-This is a single level in a level set by Warren D. Ober.
-Be prepared for some fast paced action here.
+(name (_ "Pendulum Motion"))
+(first-level-file "motion1")
+(first-level-name (_ "Motion One"))
+(desc1 (_ "This is a single level in a level set by Warren D. Ober."))
+(desc2 (_ "Be prepared for some fast paced action here."))

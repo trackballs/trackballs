@@ -1,4 +1,4 @@
-(set-track-name "Ultimate")
+(set-track-name (_ "Ultimate"))
 (set-author "Ulrik Enstad")
 (set-start-position 250.5 250.5)
 

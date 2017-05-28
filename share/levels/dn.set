@@ -1,6 +1,6 @@
-Strange
-dn1
-1st Stranger
-A strange set of levels with a strange name -
-All made by Francek.
+(name (_ "Strange"))
+(first-level-file "dn1")
+(first-level-name (_ "1st Stranger"))
+(desc1 (_ "A strange set of levels with a strange name -"))
+(desc2 (_ "All made by Francek."))
 

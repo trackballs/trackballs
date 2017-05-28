@@ -75,6 +75,12 @@ void Gamer::levelStarted() {
     nKnownLevels[Game::current->currentLevelSet]++;
     nLevelsCompleted++;
     save();
+  } else if (strncmp(levels[Game::current->currentLevelSet][i].name,
+                     Game::current->map->mapname, 64) != 0) {
+    /* level name change, i.e. due to translation or order change. */
+    strncpy(levels[Game::current->currentLevelSet][i].fileName, level, 64);
+    strncpy(levels[Game::current->currentLevelSet][i].name, Game::current->map->mapname, 64);
+    save();
   }
 }
 
@@ -110,7 +116,7 @@ void Gamer::save() {
     gzprintf(gp, "(sandbox %d)\n", Settings::settings->sandbox);
     gzprintf(gp, "(levelsets %d\n", Settings::settings->nLevelSets);
     for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++) {
-      char *name = ascm_format(settings->levelSets[levelSet].name);
+      char *name = ascm_format(settings->levelSets[levelSet].path);
       gzprintf(gp, "  (%s %d\n", name, nKnownLevels[levelSet]);
       free(name);
       for (int i = 0; i < nKnownLevels[levelSet]; i++) {
@@ -166,12 +172,13 @@ void Gamer::update() {
         char *lsname = scm_to_utf8_string(SCM_CAR(block));
         int levelSet;
         for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
-          if (strcmp(lsname, Settings::settings->levelSets[levelSet].name) == 0) break;
-        free(lsname);
+          if (strcmp(lsname, Settings::settings->levelSets[levelSet].path) == 0) break;
         if (levelSet == Settings::settings->nLevelSets) {
-          warning("Error: Profile for %s contains info for unknown levelset %s", str, lsname);
+          warning("Profile %s contains info for unknown levelset %s", str, lsname);
+          free(lsname);
           break;
         }
+        free(lsname);
         nKnownLevels[levelSet] = scm_to_int32(SCM_CADR(block));
         for (int i = 0; i < nKnownLevels[levelSet]; i++) {
           SCM cell = scm_list_ref(block, scm_from_int32(i + 2));

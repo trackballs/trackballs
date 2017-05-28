@@ -5,7 +5,7 @@
 
 (day)
 
-(set-track-name "Stronghold")
+(set-track-name (_ "Stronghold"))
 (set-author "Attila Boros")
 
 ;; Start

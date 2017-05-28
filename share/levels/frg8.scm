@@ -1,4 +1,4 @@
-(set-track-name "Azure Fortress")
+(set-track-name (_ "Azure Fortress"))
 (set-author "Ulrik Enstad")
 (set-start-position 249.5 249.5)
 (rain 0.7)

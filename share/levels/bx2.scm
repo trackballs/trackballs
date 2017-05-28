@@ -2,7 +2,7 @@
 
 ;; Environment Section. (defines Level settings)
 
-(set-track-name "Four Doors")
+(set-track-name (_ "Four Doors"))
 (set-author "Warren D. Ober")
 (set-start-position  14 2)     ;try these: 31 44)  82 24)  66 63)
 (start-time 720)
@@ -291,11 +291,11 @@
 ;;Procedure Section. (Gameplay starts.)
 
 
-(set-primary-color (sign "4 hidden switches open exit doors." 0.8 0.0 -0.1 14.5 22.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "4 hidden switches open exit doors.") 0.8 0.0 -0.1 14.5 22.5) 0.2 0.5 1.0 1.0)
 
-(set-primary-color (sign "A switch is nearby." 0.8 0.0 -0.1 13.5 48.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "A switch is nearby.") 0.8 0.0 -0.1 13.5 48.5) 0.2 0.5 1.0 1.0)
 
-(set-primary-color (sign "Peace." 0.8 0.0 -0.1 15.5 66.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "Peace.") 0.8 0.0 -0.1 15.5 66.5) 0.2 0.5 1.0 1.0)
  
 
 ;;Extra life near start.

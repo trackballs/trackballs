@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-27 13:36-0400\n"
+"POT-Creation-Date: 2017-05-27 19:51-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -199,7 +199,8 @@ msgstr "Aumenta la trasparenza"
 msgid "Ice"
 msgstr "Ghiaccio"
 
-#: ../src/editMode.cc:165 ../src/editMode.cc:178
+#: ../src/editMode.cc:165 ../src/editMode.cc:178 ../share/levels/lv2.scm:4
+#: ../share/levels/tmp.scm:4
 msgid "Acid"
 msgstr "Acido"
 
@@ -666,96 +667,96 @@ msgstr "Livelloteca:"
 msgid "%d points"
 msgstr "%d punti"
 
-#: ../src/mainMode.cc:179
+#: ../src/mainMode.cc:185
 msgid "Track:"
 msgstr "Traccia:"
 
-#: ../src/mainMode.cc:181
+#: ../src/mainMode.cc:187
 msgid "Author:"
 msgstr "Autore:"
 
-#: ../src/mainMode.cc:183
+#: ../src/mainMode.cc:189
 msgid "Press spacebar to begin"
 msgstr "Premere spazio per iniziare"
 
-#: ../src/mainMode.cc:200 ../src/mainMode.cc:209 ../src/mainMode.cc:250
-#: ../src/mainMode.cc:264
+#: ../src/mainMode.cc:206 ../src/mainMode.cc:215 ../src/mainMode.cc:256
+#: ../src/mainMode.cc:270
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Premere spazio per continuare."
 
-#: ../src/mainMode.cc:201
+#: ../src/mainMode.cc:207
 msgid "Game over"
 msgstr "Game over"
 
-#: ../src/mainMode.cc:209
+#: ../src/mainMode.cc:215
 msgid "Oops"
 msgstr "Oops"
 
-#: ../src/mainMode.cc:242
+#: ../src/mainMode.cc:248
 msgid "Paused"
 msgstr "Pausa"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:256
 msgid "Bonus level complete"
 msgstr "Livello bonus completato"
 
-#: ../src/mainMode.cc:264
+#: ../src/mainMode.cc:270
 msgid "Level complete"
 msgstr "Livello completato"
 
-#: ../src/mainMode.cc:271
+#: ../src/mainMode.cc:277
 msgid "Congratulations"
 msgstr "Complimenti,"
 
-#: ../src/mainMode.cc:271
+#: ../src/mainMode.cc:277
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: ../src/mainMode.cc:513 ../src/mainMode.cc:529
+#: ../src/mainMode.cc:519 ../src/mainMode.cc:535
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: ../src/mainMode.cc:621
+#: ../src/mainMode.cc:627
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: ../src/mainMode.cc:623
+#: ../src/mainMode.cc:629
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:624
+#: ../src/mainMode.cc:630
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: ../src/mainMode.cc:625
+#: ../src/mainMode.cc:631
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:626
+#: ../src/mainMode.cc:632
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: ../src/mainMode.cc:628
+#: ../src/mainMode.cc:634
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:636
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:630 ../src/settingsMode.cc:198
+#: ../src/mainMode.cc:636 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:636
 msgid "hard"
 msgstr "difficile"
 
@@ -1146,6 +1147,699 @@ msgstr "Punteggio medio: N/D"
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"
+
+#: ../share/levels/bx.set:1 ../share/levels/bx1.scm:4
+msgid "Box-O'-Fun"
+msgstr ""
+
+#: ../share/levels/bx.set:3
+msgid "Box of Fun"
+msgstr ""
+
+#: ../share/levels/bx.set:4
+msgid "This is a set of three quite large levels created by Warren D. Ober."
+msgstr ""
+
+#: ../share/levels/bx.set:5
+msgid "Here you will find some interesting use of pipes and other objects."
+msgstr ""
+
+#: ../share/levels/bx.set:6
+msgid "Hint: If you have difficult entering a pipe try to jump a little."
+msgstr ""
+
+#: ../share/levels/castles.set:1
+msgid "Castles"
+msgstr ""
+
+#: ../share/levels/castles.set:3 ../share/levels/castle1.scm:9
+msgid "Blue Castle"
+msgstr ""
+
+#: ../share/levels/castles.set:4
+msgid "Do YOU dare to enter and brave these four castles? Only the most"
+msgstr ""
+
+#: ../share/levels/castles.set:5
+msgid "experienced and skilled Trackballs players will make it as far"
+msgstr ""
+
+#: ../share/levels/castles.set:6
+msgid "as to the thoughest Ice and Glass castle - a place where you may"
+msgstr ""
+
+#: ../share/levels/castles.set:7
+msgid "need to think twice to find you way through the maze. Use the digits"
+msgstr ""
+
+#: ../share/levels/castles.set:8
+msgid "of PI as a clue in the last maze."
+msgstr ""
+
+#: ../share/levels/child.set:1
+msgid "Child of Tales"
+msgstr ""
+
+#: ../share/levels/child.set:3 ../share/levels/child1.scm:8
+msgid "Maze"
+msgstr ""
+
+#: ../share/levels/child.set:4
+msgid "This is an easy and short level for young children made by Attila"
+msgstr ""
+
+#: ../share/levels/child.set:5
+msgid "Boros. It was created for my little goddaughter."
+msgstr ""
+
+#: ../share/levels/contrib.set:1
+msgid "The Con Tribe"
+msgstr ""
+
+#: ../share/levels/contrib.set:3 ../share/levels/con1.scm:3
+msgid "Steep"
+msgstr ""
+
+#: ../share/levels/contrib.set:4
+msgid "How do you stand up in the international tribe where no level"
+msgstr ""
+
+#: ../share/levels/contrib.set:5
+msgid "is like the other? This is a collection of levels created by"
+msgstr ""
+
+#: ../share/levels/contrib.set:6
+msgid "different people all around the world. Enjoy!"
+msgstr ""
+
+#: ../share/levels/dn.set:1
+msgid "Strange"
+msgstr ""
+
+#: ../share/levels/dn.set:3
+msgid "1st Stranger"
+msgstr ""
+
+#: ../share/levels/dn.set:4
+msgid "A strange set of levels with a strange name -"
+msgstr ""
+
+#: ../share/levels/dn.set:5
+msgid "All made by Francek."
+msgstr ""
+
+#: ../share/levels/elite.set:1
+msgid "Elite"
+msgstr ""
+
+#: ../share/levels/elite.set:3
+msgid "Castle"
+msgstr ""
+
+#: ../share/levels/elite.set:4
+msgid "This is a single level set consiting of a huge level made"
+msgstr ""
+
+#: ../share/levels/elite.set:5
+msgid "by Dietrich Radel. This classic will go down in history like"
+msgstr ""
+
+#: ../share/levels/elite.set:6
+msgid "\"War and Peace\". ;-)"
+msgstr ""
+
+#: ../share/levels/fourSeasons.set:1
+msgid "The Four Seasons"
+msgstr ""
+
+#: ../share/levels/fourSeasons.set:3 ../share/levels/fourSeasons_1.scm:7
+#, fuzzy
+msgid "Winter"
+msgstr "Centro"
+
+#: ../share/levels/fourSeasons.set:4
+msgid "Play all year round! First comes the winter, then comes the..."
+msgstr ""
+
+#: ../share/levels/frg.set:1
+msgid "Great Escape"
+msgstr ""
+
+#: ../share/levels/frg.set:3 ../share/levels/lv.set:3
+#: ../share/levels/frg1.scm:1 ../share/levels/lv1.scm:9
+msgid "Warmup"
+msgstr ""
+
+#: ../share/levels/frg.set:4
+msgid "Prepare for the real Marble Madness-like adventure in this game! "
+msgstr ""
+
+#: ../share/levels/frg.set:5
+msgid "Race down one of the many hills, and beat the time limit and avoid"
+msgstr ""
+
+#: ../share/levels/frg.set:6
+msgid "badguys and hazards. Can you finish all the nine levels?"
+msgstr ""
+
+#: ../share/levels/frg.set:7
+msgid "Made by: Ulrik Enstad."
+msgstr ""
+
+#: ../share/levels/jump.set:1 ../share/levels/lv5.scm:4
+msgid "Jump"
+msgstr ""
+
+#: ../share/levels/jump.set:3 ../share/levels/jump1.scm:4
+msgid "Bridge"
+msgstr ""
+
+#: ../share/levels/jump.set:4
+msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
+msgstr ""
+
+#: ../share/levels/jump.set:5
+msgid "if you can't make it on the first attempt. I promise, it can"
+msgstr ""
+
+#: ../share/levels/jump.set:6
+msgid "be done eventually!"
+msgstr ""
+
+#: ../share/levels/ki.set:1
+msgid "Kidz"
+msgstr ""
+
+#: ../share/levels/ki.set:3 ../share/levels/ki1.scm:7
+#, fuzzy
+msgid "Right Angles"
+msgstr "Angolo destro"
+
+#: ../share/levels/ki.set:4
+msgid "This is meant to be a very easy and basic level for ages 4-5."
+msgstr ""
+
+#: ../share/levels/ki.set:5
+msgid "Also, since I am a beginner at designing levels, I want to keep it"
+msgstr ""
+
+#: ../share/levels/ki.set:6
+msgid "simple at first. Made by Keith Winston."
+msgstr ""
+
+#: ../share/levels/lv.set:1
+msgid "A long way home"
+msgstr ""
+
+#: ../share/levels/lv.set:4
+msgid "This is the original levelset for Trackballs containing"
+msgstr ""
+
+#: ../share/levels/lv.set:5
+msgid "9 levels of varying difficulty. It does not have any"
+msgstr ""
+
+#: ../share/levels/lv.set:6
+msgid "central theme and is meant to show most features of the game."
+msgstr ""
+
+#: ../share/levels/lv.set:8
+msgid "By: Mathias Broxvall"
+msgstr ""
+
+#: ../share/levels/mhm.set:1
+msgid "Marble Mayhem"
+msgstr ""
+
+#: ../share/levels/mhm.set:3 ../share/levels/mhm1.scm:4
+msgid "Spyballs"
+msgstr ""
+
+#: ../share/levels/mhm.set:4
+msgid "A set of three skillfully made levels by Warren D Ober."
+msgstr ""
+
+#: ../share/levels/mhm.set:5
+msgid "May the mayhem begin!"
+msgstr ""
+
+#: ../share/levels/motion1.set:1 ../share/levels/motion1.scm:1
+msgid "Pendulum Motion"
+msgstr ""
+
+#: ../share/levels/motion1.set:3
+msgid "Motion One"
+msgstr ""
+
+#: ../share/levels/motion1.set:4
+msgid "This is a single level in a level set by Warren D. Ober."
+msgstr ""
+
+#: ../share/levels/motion1.set:5
+msgid "Be prepared for some fast paced action here."
+msgstr ""
+
+#: ../share/levels/sl.set:1
+#, fuzzy
+msgid "Six Levels"
+msgstr "Livello"
+
+#: ../share/levels/sl.set:3
+msgid "The Desert"
+msgstr ""
+
+#: ../share/levels/sl.set:4
+msgid "\"Six Levels\" is, of course,"
+msgstr ""
+
+#: ../share/levels/sl.set:5
+msgid "a level set containing six levels. Prepare to scale mountains,"
+msgstr ""
+
+#: ../share/levels/sl.set:6
+msgid "kill bosses, roll through the world's longest pipe and"
+msgstr ""
+
+#: ../share/levels/sl.set:7
+msgid "much more. Can you beat all the six levels?"
+msgstr ""
+
+#: ../share/levels/sl.set:8
+msgid "Made By Ulrik Enstad, ulrik.enstad@gmail.com"
+msgstr ""
+
+#: ../share/levels/bonusb.scm:1
+#, fuzzy
+msgid "Bonus Level"
+msgstr "Prova livello"
+
+#: ../share/levels/bonusb.scm:28
+msgid "You made it to the end!"
+msgstr ""
+
+#: ../share/levels/bonus.scm:39
+msgid "Spikes, 400pt"
+msgstr ""
+
+#: ../share/levels/bonus.scm:43
+msgid "Speed, 300pt"
+msgstr ""
+
+#: ../share/levels/bonus.scm:47
+msgid "Jump, 200pt"
+msgstr ""
+
+#: ../share/levels/bx2.scm:5
+msgid "Four Doors"
+msgstr ""
+
+#: ../share/levels/bx2.scm:294
+msgid "4 hidden switches open exit doors."
+msgstr ""
+
+#: ../share/levels/bx2.scm:296
+msgid "A switch is nearby."
+msgstr ""
+
+#: ../share/levels/bx2.scm:298
+msgid "Peace."
+msgstr ""
+
+#: ../share/levels/bx3.scm:4
+msgid "Azteca"
+msgstr ""
+
+#: ../share/levels/bx3.scm:108
+#, fuzzy
+msgid "You have access to the complex."
+msgstr "Hai terminato il gioco!"
+
+#: ../share/levels/bx3.scm:126
+msgid "The way is opened across the sand."
+msgstr ""
+
+#: ../share/levels/bx3.scm:136
+msgid "You must enter the Arena."
+msgstr ""
+
+#: ../share/levels/bx3.scm:196 ../share/levels/bx3.scm:203
+msgid "A wall has been lowered."
+msgstr ""
+
+#: ../share/levels/bx3.scm:210
+msgid "A roof has been raised."
+msgstr ""
+
+#: ../share/levels/bx3.scm:226
+msgid "Stairs are in place."
+msgstr ""
+
+#: ../share/levels/bx3.scm:236
+msgid "You may enter upper complex."
+msgstr ""
+
+#: ../share/levels/bx3.scm:250
+msgid "The exit is now open."
+msgstr ""
+
+#: ../share/levels/castle2.scm:8
+msgid "Night Watch"
+msgstr ""
+
+#: ../share/levels/castle3.scm:8
+msgid "Stronghold"
+msgstr ""
+
+#: ../share/levels/castle4.scm:13
+msgid "Ice and Glass"
+msgstr ""
+
+#: ../share/levels/castle4.scm:65
+msgid "Maze of PI"
+msgstr ""
+
+#: ../share/levels/castle4.scm:66
+msgid "Secret stairs somewhere"
+msgstr ""
+
+#: ../share/levels/child2.scm:9
+msgid "Christmas"
+msgstr ""
+
+#: ../share/levels/child3.scm:9
+msgid "Pinky"
+msgstr ""
+
+#: ../share/levels/child4.scm:9
+msgid "Big Jump"
+msgstr ""
+
+#: ../share/levels/child5.scm:12
+msgid "Wonderland"
+msgstr ""
+
+#: ../share/levels/child6.scm:8
+msgid "Pyramid"
+msgstr ""
+
+#: ../share/levels/con2.scm:5
+msgid "Stairway to Heaven"
+msgstr ""
+
+#: ../share/levels/con3.scm:8
+msgid "Hell"
+msgstr ""
+
+#: ../share/levels/con3.scm:51
+msgid "Hells entrance"
+msgstr ""
+
+#: ../share/levels/con3.scm:52
+msgid "Hell's gate"
+msgstr ""
+
+#: ../share/levels/con3.scm:53
+msgid "Hell's castle"
+msgstr ""
+
+#: ../share/levels/con3.scm:54
+msgid "Hell's fire"
+msgstr ""
+
+#: ../share/levels/con3.scm:55
+msgid "Hell freezing over"
+msgstr ""
+
+#: ../share/levels/con4.scm:4
+msgid "Scary"
+msgstr ""
+
+#: ../share/levels/con4.scm:34 ../share/levels/con4.scm:62
+#: ../share/levels/con4.scm:66 ../share/levels/lv1.scm:72
+#, fuzzy
+msgid "Mr. Black"
+msgstr "Mr Black:"
+
+#: ../share/levels/con5.scm:4
+msgid "Snowbord"
+msgstr ""
+
+#: ../share/levels/dn1.scm:4
+msgid "Strange indeed!"
+msgstr ""
+
+#: ../share/levels/dn2.scm:4
+msgid "Horrible"
+msgstr ""
+
+#: ../share/levels/dn3.scm:4
+#, fuzzy
+msgid "Water jumping"
+msgstr "Profondità acqua"
+
+#: ../share/levels/dn4.scm:4
+msgid "Oh my god!"
+msgstr ""
+
+#: ../share/levels/dn5.scm:4
+msgid "Get wet!"
+msgstr ""
+
+#: ../share/levels/dn6.scm:7
+msgid "Final and the last"
+msgstr ""
+
+#: ../share/levels/elite1.scm:3
+msgid "Castle of Darius the Mede"
+msgstr ""
+
+#: ../share/levels/elite1.scm:100
+msgid "Danger!"
+msgstr ""
+
+#: ../share/levels/elite1.scm:161
+msgid "Eternity"
+msgstr ""
+
+#: ../share/levels/fourSeasons_2.scm:7
+#, fuzzy
+msgid "Spring"
+msgstr "  Direzione"
+
+#: ../share/levels/fourSeasons_3.scm:6
+msgid "Summer"
+msgstr ""
+
+#: ../share/levels/fourSeasons_3.scm:30
+msgid "Remember to breathe"
+msgstr ""
+
+#: ../share/levels/fourSeasons_4.scm:7
+msgid "Autumn"
+msgstr ""
+
+#: ../share/levels/frg10.scm:1
+msgid "Well done!"
+msgstr ""
+
+#: ../share/levels/frg10.scm:28
+msgid "Amazing! You won the entire game!"
+msgstr ""
+
+#: ../share/levels/frg2.scm:1
+msgid "Deja Vu"
+msgstr ""
+
+#: ../share/levels/frg3.scm:1
+msgid "Towers of Heaven"
+msgstr ""
+
+#: ../share/levels/frg4.scm:1
+msgid "Blue"
+msgstr ""
+
+#: ../share/levels/frg5.scm:1
+msgid "Upside Down"
+msgstr ""
+
+#: ../share/levels/frg6.scm:1
+msgid "High Nausea Rating"
+msgstr ""
+
+#: ../share/levels/frg7.scm:2
+msgid "Jump'n Roll"
+msgstr ""
+
+#: ../share/levels/frg8.scm:1
+msgid "Azure Fortress"
+msgstr ""
+
+#: ../share/levels/frg9.scm:1
+msgid "Ultimate"
+msgstr ""
+
+#: ../share/levels/frgb.scm:1
+msgid "Chess Champion"
+msgstr ""
+
+#: ../share/levels/jump2.scm:5
+msgid "Megajump"
+msgstr ""
+
+#: ../share/levels/jump3.scm:4
+msgid "Upstairs"
+msgstr ""
+
+#: ../share/levels/jump4.scm:4
+msgid "Speedjump"
+msgstr ""
+
+#: ../share/levels/jump5.scm:4
+msgid "Dangerous Jump"
+msgstr ""
+
+#: ../share/levels/ki2.scm:5
+msgid "At the Beach"
+msgstr ""
+
+#: ../share/levels/ki3.scm:5
+msgid "Ice Skating Rink"
+msgstr ""
+
+#: ../share/levels/ki4.scm:4
+msgid "Clowning Around"
+msgstr ""
+
+#: ../share/levels/ki5.scm:5
+msgid "Half-pipe"
+msgstr ""
+
+#: ../share/levels/lv1.scm:94
+msgid "and his Minions"
+msgstr ""
+
+#: ../share/levels/lv2.scm:72
+msgid "Jump!"
+msgstr ""
+
+#: ../share/levels/lv3.scm:3
+msgid "Nightime"
+msgstr ""
+
+#: ../share/levels/lv4.scm:4
+msgid "Labyrinth"
+msgstr ""
+
+#: ../share/levels/lv6.scm:3
+msgid "Cannon"
+msgstr ""
+
+#: ../share/levels/lv7.scm:3
+msgid "Slalom"
+msgstr ""
+
+#: ../share/levels/lv8.scm:8
+msgid "Crazy Factory"
+msgstr ""
+
+#: ../share/levels/lv9.scm:4
+msgid "Water world"
+msgstr ""
+
+#: ../share/levels/mhm2.scm:3
+msgid "Mayhem"
+msgstr ""
+
+#: ../share/levels/mhm3.scm:3
+msgid "The Castle"
+msgstr ""
+
+#: ../share/levels/mhm3.scm:25
+msgid "Stay on the path or else!"
+msgstr ""
+
+#: ../share/levels/Shop1.scm:6
+#, fuzzy
+msgid "Speed-pill 2 minutes: 300 points"
+msgstr "%d minuti = %d punti"
+
+#: ../share/levels/Shop1.scm:10
+msgid "Extra Life: 800 points"
+msgstr ""
+
+#: ../share/levels/Shop2.scm:7
+msgid "Extra life: 800 points"
+msgstr ""
+
+#: ../share/levels/Shop2.scm:11
+msgid "Giant-package half a minute: 200 points"
+msgstr ""
+
+#: ../share/levels/Shop2.scm:15
+msgid "Speed-pill one minute: 200 points"
+msgstr ""
+
+#: ../share/levels/Shop2.scm:19
+msgid "Nitro-speed two minutes: 1000 points"
+msgstr ""
+
+#: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
+#, fuzzy
+msgid "No jumping!"
+msgstr "Profondità acqua"
+
+#: ../share/levels/sl2.scm:9
+msgid "Scale the Mountain"
+msgstr ""
+
+#: ../share/levels/sl2.scm:64
+#, fuzzy
+msgid "Kill me!"
+msgstr "Assassino"
+
+#: ../share/levels/sl3.scm:9
+msgid "The Longest Pipe in the World"
+msgstr ""
+
+#: ../share/levels/sl3.scm:153
+msgid "Smash some badguys and see what happens"
+msgstr ""
+
+#: ../share/levels/sl4.scm:9
+msgid "Hurry up!"
+msgstr ""
+
+#: ../share/levels/sl5.scm:5
+msgid "The Marble Mansion"
+msgstr ""
+
+#: ../share/levels/sl5.scm:49
+msgid "Pull twice"
+msgstr ""
+
+#: ../share/levels/sl5.scm:57
+msgid "You may check out the roof again"
+msgstr ""
+
+#: ../share/levels/sl5.scm:84
+msgid "Oxygen"
+msgstr ""
+
+#: ../share/levels/sl6.scm:9
+msgid "The Marble HQ"
+msgstr ""
+
+#: ../share/levels/sl6.scm:200
+msgid "The Marble HQ - Do not Enter!"
+msgstr ""
+
+#: ../share/levels/sl6.scm:341
+msgid "Bonus"
+msgstr ""
+
+#: ../share/levels/sl6.scm:521
+msgid "Commander's Hall"
+msgstr ""
 
 #~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 #~ msgstr ""

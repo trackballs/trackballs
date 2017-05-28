@@ -6,7 +6,7 @@
 (day)
 (fog 0.3)
 
-(set-track-name "Pinky")
+(set-track-name (_ "Pinky"))
 (set-author "Attila Boros")
 
 ;; Start

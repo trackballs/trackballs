@@ -6,7 +6,7 @@
 
 
 (day)
-(set-track-name "Scale the Mountain")
+(set-track-name (_ "Scale the Mountain"))
 (set-author "Ulrik Enstad")
 (cond
  ((= (difficulty) *easy*)
@@ -61,7 +61,7 @@
 ))
 
 ;; sign: kill me!
-(sign "kill me" 0.8 20.0 -1 179 192)
+(sign (_ "Kill me!") 0.8 20.0 -1 179 192)
 
 ;; cactuses
 (add-cactus 147 173 0.3)

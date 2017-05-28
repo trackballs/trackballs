@@ -1,7 +1,7 @@
 ;;; highjump.scm
 
 (day)
-(set-track-name "speedjump")
+(set-track-name (_ "Speedjump"))
 (fog)
 (set-author "Gerard Pudenz")
 (start-time 120)

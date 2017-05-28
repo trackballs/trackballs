@@ -1,7 +1,7 @@
 ;;; azteca
 
 (day)
-(set-track-name "Azteca")
+(set-track-name (_ "Azteca"))
 (set-author "Warren D Ober")
 (map-is-transparent #t)
 (start-time 1140) 
@@ -105,7 +105,7 @@
 (set-cell-heights 122 106 130 103 -3.0 -3.0 -3.0 -3.0)
 (set-cell-heights 123 104 129 103 -2.5 -2.5 -2.5 -2.5)
 (set-cell-heights 124 103 128 103 -2.0 -2.0 -2.0 -2.0)
-(set-primary-color (sign "You have access to the complex." 0.8 1.0 -0.1 128.5 124.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "You have access to the complex.") 0.8 1.0 -0.1 128.5 124.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker1 #f)
 ;(set-onoff tempsign #f)
 ))
@@ -123,12 +123,7 @@
 (set-cell-flag 87 116 101 119  *cell-nogrid* #f)
 (set-cell-flag 79 119 86 116  *cell-acid* #t)
 (set-cell-flag 79 119 86 116  *cell-nogrid* #t)
-;(set-cell-colors 87 116 101 119 ‘cell-ne’ 0.9 0.9 0.9)
-;(set-cell-colors 87 116 101 119 ‘cell-nw’ 0.9 0.9 0.9)
-;(set-cell-colors 87 116 101 119 ‘cell-se’ 0.9 0.9 0.9)
-;(set-cell-colors 87 116 101 119 ‘cell-sw’ 0.9 0.9 0.9)
-;(set-cell-colors 87 116 101 119 ‘cell-center’ 0.9 0.9 0.9)
-(set-primary-color (sign "The way is opened across the sand." 0.8 1.0 -0.1 119.5 54.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "The way is opened across the sand.") 0.8 1.0 -0.1 119.5 54.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker2 #f)
 ))
 
@@ -138,7 +133,7 @@
 (define blinker3 (add-colormodifier 3 64 118 0.5 1.0 0.5 1.0))
 (trigger 64 118 0.5 (lambda ()
 (set-cell-heights 57 102 77 102 -7.0 -7.0 -7.0 -7.0)
-(set-primary-color (sign "You must enter the Arena." 0.8 1.0 -0.1 64.5 118.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "You must enter the Arena.") 0.8 1.0 -0.1 64.5 118.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker3 #f)
 ))
 
@@ -198,21 +193,21 @@
 (define blinker4 (add-colormodifier 3 103 73 0.5 1.0 0.5 1.0))
 (trigger 103 73 0.5 (lambda ()
 (set-cell-heights 103 61 104 53 -3.5 -3.5 -3.5 -3.5)
-(set-primary-color (sign "A wall has been lowered." 0.8 1.0 -0.1 103.5 73.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "A wall has been lowered.") 0.8 1.0 -0.1 103.5 73.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker4 #f)
 ))
 
 (define blinker5 (add-colormodifier 3 103 92 0.5 1.0 0.5 1.0))
 (trigger 103 92 0.5 (lambda ()
 (set-cell-heights 115 93 116 91 -1.5 -1.5 -1.5 -1.5)
-(set-primary-color (sign "A wall has been lowered." 0.8 1.0 -0.1 103.5 92.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "A wall has been lowered.") 0.8 1.0 -0.1 103.5 92.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker5 #f)
 ))
 
 (define blinker6 (add-colormodifier 3 83 73 0.5 1.0 0.5 1.0))
 (trigger 83 73 0.5 (lambda ()
 (set-cell-heights 66 80 72 66 -0.5 -0.5 -0.5 -0.5)
-(set-primary-color (sign "A roof has been raised." 0.8 1.0 -0.1 83.5 73.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "A roof has been raised.") 0.8 1.0 -0.1 83.5 73.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker6 #f)
 ))
 
@@ -228,7 +223,7 @@
 (set-cell-heights 81 152 81 154 -5.0 -5.0 -5.0 -5.0)
 (set-cell-heights 82 152 82 154 -5.5 -5.5 -5.5 -5.5)
 (set-cell-heights 83 152 86 154 -6.0 -6.0 -6.0 -6.0)
-(set-primary-color (sign "Stairs are in place." 0.8 1.0 -0.1 83.5 92.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "Stairs are in place.") 0.8 1.0 -0.1 83.5 92.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker7 #f)
 ))
 
@@ -238,7 +233,7 @@
 (set-cell-heights 59 52 66 52 -3.5 -3.5 -3.5 -3.5)
 (set-cell-heights 59 51 66 51 -3.0 -3.0 -3.0 -3.0)
 
-(set-primary-color (sign "You may enter upper complex." 0.8 1.0 -0.1 75.5 162.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "You may enter upper complex.") 0.8 1.0 -0.1 75.5 162.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker8 #f)
 ))
 
@@ -252,7 +247,7 @@
 (define blinker9 (add-colormodifier 3 53 101 0.5 1.0 0.5 1.0))
 (trigger 53 101 0.5 (lambda ()
 (set-cell-heights 119 77 125 77 4.0 4.0 4.0 4.0)
-(set-primary-color (sign "The exit is now open." 0.8 1.0 -0.1 53.5 101.5) 0.2 0.5 1.0 1.0)
+(set-primary-color (sign (_ "The exit is now open.") 0.8 1.0 -0.1 53.5 101.5) 0.2 0.5 1.0 1.0)
 (set-onoff blinker9 #f)
 ))
 

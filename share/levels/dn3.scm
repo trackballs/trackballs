@@ -1,7 +1,7 @@
 ;;; DevNull- level 3
 
 (day)                           ;; Sets daylight for this level. M
-(set-track-name "Water jumping")         ;; The name of the levelM
+(set-track-name (_ "Water jumping"))         ;; The name of the levelM
 (set-author "Francek") ;;
 (start-time 100)                ;; We have two minutes to complete levelM
 (set-start-position 253.5 254.5) ;; Where the player appearsM

@@ -5,7 +5,7 @@
 
 (day)
 
-(set-track-name "Pyramid")
+(set-track-name (_ "Pyramid"))
 (set-author "Attila Boros")
 
 ;; Start

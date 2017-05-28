@@ -10,7 +10,7 @@
 (fog 0.0)
 (map-is-transparent #t)
 
-(set-track-name "Ice and Glass")
+(set-track-name (_ "Ice and Glass"))
 (set-author "Attila Boros")
 
 ;; Start
@@ -62,8 +62,8 @@
 (trigger  8.5 32.5 3.0  (lambda() (fog 1.0)))
 (trigger 38.5 35.5 1.0 (lambda() (fog 0.0)))
 (trigger  5.5  5.5 1.0 (lambda() (fog 0.0)))
-(sign "Maze of PI" 1.0 50.0 -10.0 9.5 33.5)
-(sign "Secret stairs somewhere" 1.0 50.0 -10.0 10.5 39.5)
+(sign (_ "Maze of PI") 1.0 50.0 -10.0 9.5 33.5)
+(sign (_ "Secret stairs somewhere") 1.0 50.0 -10.0 10.5 39.5)
 
 ;; Stairs is appear
 (trigger 12 74 1 (lambda() 

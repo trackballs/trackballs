@@ -6,7 +6,7 @@
 (day)
 (fog 0.5)
 
-(set-track-name "Blue Castle")
+(set-track-name (_ "Blue Castle"))
 (set-author "Attila Boros")
 
 ;; Start

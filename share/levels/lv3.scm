@@ -1,6 +1,6 @@
 ;;; level 3
 
-(set-track-name "Nightime")
+(set-track-name (_ "Nightime"))
 (set-author "Mathias Broxvall")
 (set-start-position 253.5 253.5)
 (start-time (- 150 (* 15 (difficulty))))

@@ -1,6 +1,6 @@
 ;;; lv7 - slalom
 
-(set-track-name "Slalom") (day)
+(set-track-name (_ "Slalom")) (day)
 (set-author "Mathias Broxvall")
 (start-time (- 120 (* (difficulty) 30)))
 (set-start-position 238.5 232.5)

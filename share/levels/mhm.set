@@ -1,5 +1,5 @@
-Marble Mayhem
-mhm1
-Spyballs
-A set of three skillfully made levels by Warren D Ober.
-May the mayhem begin!
+(name (_ "Marble Mayhem"))
+(first-level-file "mhm1")
+(first-level-name (_ "Spyballs"))
+(desc1 (_ "A set of three skillfully made levels by Warren D Ober."))
+(desc2 (_ "May the mayhem begin!"))

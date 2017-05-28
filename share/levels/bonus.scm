@@ -36,14 +36,14 @@
 
 (add-modpill 227.5 243.5 *mod-spike* 120 0) 
 (add-flag 227 243 -250 0 0.5)
-(sign "Spikes, 400pt" 1.0 0.0 0.0 227.5 243.5)
+(sign (_ "Spikes, 400pt") 1.0 0.0 0.0 227.5 243.5)
 
 (add-modpill 225.5 243.5 *mod-speed* 120 0) 
 (add-flag 225 243 -250 0 0.5)
-(sign "Speed, 300pt" 1.0 0.0 0.0 225.5 243.5)
+(sign (_ "Speed, 300pt") 1.0 0.0 0.0 225.5 243.5)
 
 (add-modpill 223.5 243.5 *mod-jump* 120 0) 
 (add-flag 223 243 -250 0 0.5)
-(sign "Jump, 200pt" 1.0 0.0 0.0 223.5 243.5)
+(sign (_ "Jump, 200pt") 1.0 0.0 0.0 223.5 243.5)
 
 ;; modpills: 227 243 .. 224 243

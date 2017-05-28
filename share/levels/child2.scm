@@ -6,7 +6,7 @@
 (day)
 (snow 0.5)
 
-(set-track-name "Christmas")
+(set-track-name (_ "Christmas"))
 (set-author "Attila Boros")
 
 ;; Start

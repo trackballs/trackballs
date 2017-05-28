@@ -1,7 +1,7 @@
 ;;; lv4
 
 (day)
-(set-track-name "Labyrinth")
+(set-track-name (_ "Labyrinth"))
 (set-author "Mathias Broxvall")
 (jump 0.8) ;; To avoid cheating
 (set-start-position 251.5 251.5)

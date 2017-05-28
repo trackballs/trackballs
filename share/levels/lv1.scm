@@ -6,7 +6,7 @@
 ;; you have gotten started you might look here for some ideas.
 
 (day)
-(set-track-name "Warmup")
+(set-track-name (_ "Warmup"))
 (set-author "Mathias Broxvall")
 (fog)
 
@@ -35,11 +35,6 @@
                0.5 *ff-kill*))
     (switch 252.5 249.5 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
     ))
-
-
-;(smart-trigger 252.5 249.5 1.0 
-;        (lambda()(sign "Entering" 1.0 0.0 2.0 252.5 249.5))  
-;        (lambda()(sign "Leaving" 1.0 0.0 2.0 252.5 249.5)))
 
 ;; This is the goal
 (add-goal 219 204 #f "lv2")
@@ -74,7 +69,7 @@
 (add-sidespike 247.5 245.5 speed 0.1 4)
 (add-sidespike 249.5 245.5 speed 0.2 4)
 
-(set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 241.5 245.5) 0.8 0.8 0.4)
+(set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 241.5 245.5) 0.8 0.8 0.4)
 (define mr-black (new-mr-black 241.5 245.5))
 (if (= (difficulty) *hard*) (set-modtime mr-black *mod-spike* -1.))
 (set-acceleration mr-black 2.0)
@@ -96,7 +91,7 @@
 ;(set-primary-color mr-black 0.5 1.0 0.5)
 ;(set-specular-color mr-black 0.5 1.0 0.5)
 
-(set-primary-color (sign "and his Minions" 1.0 15.0 0.0 233.5 245.5) 0.8 0.8 0.4)
+(set-primary-color (sign (_ "and his Minions") 1.0 15.0 0.0 233.5 245.5) 0.8 0.8 0.4)
 (new-baby 233.5 245.5)
 (new-baby 232.2 245.0)
 (new-baby 233.5 246.0)
@@ -153,17 +148,5 @@
 
 ;; Calls your lambda expression when player is close to X,Y
 ;(trigger X Y R (lambda () <something to do>))
-
-;; Sets the players position
-;(set-ply-position X Y Z)
-
-;; Sets the players velocity
-;(set-ply-position X Y Z)
-
-;; Gets position / velocity
-;(ply-x) (ply-y) (ply-z)
-;(ply-dx) (ply-dy) (ply-dz)
-
-
 
 (sign "debug test" 1.0 15.0 0.0 10.5 10.5)

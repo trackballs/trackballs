@@ -2,8 +2,8 @@
 ;; Marble Mansion
 
 (day)
-(set-track-name "The Marble Mansion")
-(set-author "Ulrik Entad")
+(set-track-name (_ "The Marble Mansion"))
+(set-author "Ulrik Enstad")
 (set-start-position 96 78)
 (start-time 1000)
 (map-is-transparent #t)
@@ -46,7 +46,7 @@
 ;; first floor roof and hidden area
 (add-cyclic-platform 89 119 89 119 6.5 9.6 1. .5)
 
-(sign "pull twice" 1 20 -1 54 96)
+(sign (_ "Pull twice") 1 20 -1 54 96)
 (switch 54.5 96.5
  (lambda ()
   (set-cell-heights 86 119 86 119 5.1 5.1 5.1 5.1)
@@ -54,7 +54,7 @@
   (set-cell-heights 85 118 85 118 4.0 4.0 4.0 4.0)
   (set-cell-heights 84 118 84 118 3.5 3.5 3.5 3.5)
   (set-cell-heights 84 119 84 119 3.0 3.0 3.0 3.0)
-  (sign "you may check out the roof again" 0.8 20.0 -1 54.5 96.5)
+  (sign (_ "You may check out the roof again") 0.8 20.0 -1 54.5 96.5)
  )
  (lambda ()
   (day)
@@ -81,7 +81,7 @@
 
 (set-primary-color (add-flag 100 114 0 1 0.1) 1.0 0.5 0.0)
 (trigger 100.5 114.5 0.3 (lambda () (scale-oxygen 3.0)))
-(sign "Oxygen" 0.8 20.0 -1 100.5 114.5)
+(sign (_ "Oxygen") 0.8 20.0 -1 100.5 114.5)
 
 (define mr-grey
  (set-primary-color

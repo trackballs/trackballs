@@ -1,6 +1,6 @@
 ;;; Madness
 
-(set-track-name "Mayhem")
+(set-track-name (_ "Mayhem"))
 (set-author "Warren D. Ober")
 (set-start-position 252 250) 
 (start-time 180)

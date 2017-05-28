@@ -1,4 +1,4 @@
-(set-track-name "Upside Down")
+(set-track-name (_ "Upside Down"))
 (set-author "Ulrik Enstad")
 
 (set-start-position 172 172)

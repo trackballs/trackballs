@@ -1,7 +1,7 @@
 ;;; lv2
 
 (day)
-(set-track-name "Acid")
+(set-track-name (_ "Acid"))
 (set-author "Mathias Broxvall")
 
 (start-time 150) 
@@ -69,7 +69,7 @@
 (if (= (difficulty) *easy*)
   (add-modpill 232.5 244.5 *mod-jump* 10 30))
 (diamond 228.5 244.5)
-(sign "Jump!" 1.0 0.0 0.0 230.5 235.5)
+(sign (_ "Jump!") 1.0 0.0 0.0 230.5 235.5)
 (add-flag 230 228 100 1 0.1)
 (add-flag 230 225 250 1 0.1)
 

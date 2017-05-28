@@ -1,7 +1,7 @@
 ;; new level
 
 (day)
-(set-track-name "Snowbord")
+(set-track-name (_ "Snowbord"))
 (set-author "Yannick Perret")
 (fog)
 (map-is-transparent #t)

@@ -515,6 +515,8 @@ void MainMode::startGame() {
   playEffect(SFX_START);
   Coord3d pos;
   assign(Game::current->map->startPosition, pos);
+  Game::current->gamer->levelStarted();
+
   pos[2] += 2.0;
   new Sign(_("Good luck!"), 6, 1.0, 60.0, pos);
   Game::current->player1->position[2] += 1.0;

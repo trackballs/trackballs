@@ -1,7 +1,7 @@
 ;;; lv5.scm
 
 (day)                           ;; Sets daylight for this level. 
-(set-track-name "Jump")         ;; The name of the level
+(set-track-name (_ "Jump"))         ;; The name of the level
 (set-author "Mathias BroxvalL") ;;
 (start-time 120)                ;; We have two minutes to complete level
 (set-start-position 251.5 251.5) ;; Where the player appears

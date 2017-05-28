@@ -1,8 +1,8 @@
-A long way home
-lv1
-Warmup
-This is the original levelset for Trackballs containing 9 levels of 
-varying difficulty. It does not have any central theme and is meant 
-to show most features of the game.
-
-By: Mathias Broxvall
+(name (_ "A long way home"))
+(first-level-file "lv1")
+(first-level-name (_ "Warmup"))
+(desc1 (_ "This is the original levelset for Trackballs containing"))
+(desc2 (_ "9 levels of varying difficulty. It does not have any"))
+(desc3 (_ "central theme and is meant to show most features of the game."))
+(desc4 "")
+(desc5 (_ "By: Mathias Broxvall"))

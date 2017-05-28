@@ -1,6 +1,6 @@
 ;;; The Castle
 
-(set-track-name "The Castle")
+(set-track-name (_ "The Castle"))
 (set-author "Warren D. Ober")
 (set-start-position 102 168) 
 (start-time 600)
@@ -22,7 +22,7 @@
 
 ;Warning sign.
 
-(set-primary-color (sign "Stay on the path or else!" 2.0 -0.1 4.0 107.5 172.5) 0.9 0.6 0.0 1.0)
+(set-primary-color (sign (_ "Stay on the path or else!") 2.0 -0.1 4.0 107.5 172.5) 0.9 0.6 0.0 1.0)
 
 
 

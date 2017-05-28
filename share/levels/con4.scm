@@ -1,7 +1,7 @@
 ;;; Scary track
 
 (day)
-(set-track-name "Scary")
+(set-track-name (_ "Scary"))
 (set-start-position 254.5 252.5)
 (add-goal 254 216 #t "con5")
 (set-author "Dietrich Radel")
@@ -31,7 +31,7 @@
 
 
 ;;; mr black for upstairs
-(set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 228 245) 0.8 0.8 0.4)
+(set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 228 245) 0.8 0.8 0.4)
 (define mr-black (new-mr-black 228 245))
 
 
@@ -59,11 +59,11 @@
 ;;; Mr Black for the lower level.
 (define mr-black (cond
  ((= (difficulty) *normal*)
-   (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
+   (set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
    (new-mr-black 248 238)
  )
  ((= (difficulty) *hard*)
-   (set-primary-color (sign "Mr. Black" 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
+   (set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 248 238) 0.8 0.8 0.4)
    (new-mr-black 248 238)
  )
 ))

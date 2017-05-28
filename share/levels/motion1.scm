@@ -1,4 +1,4 @@
-(set-track-name "motion1")
+(set-track-name (_ "Pendulum Motion"))
 (set-author "Warren D. Ober")
 (set-start-position  144 125)  
 (start-time 720)

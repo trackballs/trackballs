@@ -6,7 +6,7 @@
 
 
 (day)
-(set-track-name "Hurry up!")
+(set-track-name (_ "Hurry up!"))
 (set-author "Ulrik Enstad")
 (cond
  ((= (difficulty) *easy*)

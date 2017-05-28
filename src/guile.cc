@@ -199,6 +199,19 @@ char *ascm_format(const char *str) {
   return scm_to_utf8_string(keystr);
 }
 
+/******************** _ a.k.a. gettext  ********************/
+SCM_DEFINE(underscore, "_", 1, 0, 0, (SCM str), "Translate string if translation available")
+#define FUNC_NAME s_underscore
+{
+  SCM_ASSERT(scm_is_string(str), str, SCM_ARG1, FUNC_NAME);
+  char *text = scm_to_utf8_string(str);
+  char *trans = gettext(text);
+  SCM out = scm_from_utf8_string(trans);
+  free(text);
+  return out;
+}
+#undef FUNC_NAME
+
 /*=======================================================*/
 /*===========   creating ANIMATED objects    ============*/
 /*=======================================================*/
@@ -1063,7 +1076,8 @@ SCM_DEFINE(set_track_name, "set-track-name", 1, 0, 0, (SCM name),
   SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, s_set_track_name);
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
-    strcpy(Game::current->map->mapname, sname);
+    strncpy(Game::current->map->mapname, sname, 255);
+    free(sname);
   }
   return SCM_UNSPECIFIED;
 }
@@ -1077,7 +1091,8 @@ SCM_DEFINE(set_author, "set-author", 1, 0, 0, (SCM name),
   SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, s_set_author);
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
-    strcpy(Game::current->map->author, sname);
+    strncpy(Game::current->map->author, sname, 255);
+    free(sname);
   }
   return SCM_UNSPECIFIED;
 }

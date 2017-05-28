@@ -2,7 +2,7 @@
 ;;; Note. This is meant to be a very easy and basic level for children
 
 (day)
-(set-track-name "Ice Skating Rink")
+(set-track-name (_ "Ice Skating Rink"))
 (set-author "Keith Winston")
 
 (set-start-position 252.5 252.5)

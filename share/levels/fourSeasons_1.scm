@@ -4,7 +4,7 @@
 (snow 0.3)
 (fog 0.1)
 (fog-color 0.7 0.7 0.9)
-(set-track-name "Winter")
+(set-track-name (_ "Winter"))
 (set-author "Mathias Broxvall")
 
 (start-time 180) 

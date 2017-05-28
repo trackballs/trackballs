@@ -1,4 +1,4 @@
-(set-track-name "High Nausea Rating")
+(set-track-name (_ "High Nausea Rating"))
 (set-author "Ulrik Enstad")
 (set-start-position 238.5 238.5)
 

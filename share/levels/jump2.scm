@@ -2,7 +2,7 @@
 
 (day)
 (fog)
-(set-track-name "megajump")
+(set-track-name (_ "Megajump"))
 (set-author "Gerard Pudenz")
 (start-time (- 60 (* 15 (difficulty))))
 (set-start-position 240.5 240.5)

@@ -30,6 +30,7 @@
 
 class LevelSet {
  public:
+  char path[256];
   char name[256];
   char startLevel[256];
   char startLevelName[256];
@@ -80,7 +81,7 @@ class Settings {
   static int nLanguages;
 
  private:
-  void loadLevelSet(char *name);
+  void loadLevelSet(const char *path, const char *filename);
 };
 
 #endif

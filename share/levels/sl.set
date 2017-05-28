@@ -1,8 +1,8 @@
-Six Levels
-sl1
-The Desert
-"Six Levels" is, of course,
-a level set containing six levels. Prepare to scale mountains,
-kill bosses, roll through the world's longest pipe and
-much more. Can you beat all the six levels?
-Made By Ulrik Enstad, ulrik.enstad@gmail.com
+(name (_ "Six Levels"))
+(first-level-file "sl1")
+(first-level-name (_ "The Desert"))
+(desc1 (_ "\"Six Levels\" is, of course,"))
+(desc2 (_ "a level set containing six levels. Prepare to scale mountains,"))
+(desc3 (_ "kill bosses, roll through the world's longest pipe and"))
+(desc4 (_ "much more. Can you beat all the six levels?"))
+(desc5 (_ "Made By Ulrik Enstad, ulrik.enstad@gmail.com"))

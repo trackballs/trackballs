@@ -2,7 +2,7 @@
 ;;; Note. This is meant to be a very easy and basic level for children
 
 (day)
-(set-track-name "At the Beach")
+(set-track-name (_ "At the Beach"))
 (set-author "Keith Winston")
 
 (set-start-position 252.5 252.5)

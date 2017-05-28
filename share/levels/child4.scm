@@ -6,7 +6,7 @@
 (day)
 (fog 0.1)
 
-(set-track-name "Big Jump")
+(set-track-name (_ "Big Jump"))
 (set-author "Attila Boros")
 
 ;; Start

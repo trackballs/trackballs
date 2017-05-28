@@ -1,7 +1,7 @@
 ;;; Clowning Around
 ;;; a kids level that is semi-hard.
 
-(set-track-name "Clowning Around")
+(set-track-name (_ "Clowning Around"))
 (set-author "Dietrich Radel")
 
 (set-start-position 234.5 232.5)
