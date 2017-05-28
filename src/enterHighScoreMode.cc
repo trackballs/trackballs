@@ -74,13 +74,13 @@ void EnterHighScoreMode::display() {
   snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
   TTF_SizeText(menuFont, str, &w, &h);
   h += 5;
-  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 0 * h, 220,
-               220, 64);
+  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 0 * h,
+               220 / 255., 220 / 255., 64 / 225., 255);
   snprintf(str, sizeof(str), _("Enter your name: %s"), name);
   TTF_SizeText(menuFont, str, &w, &h);
   h += 5;
-  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 1 * h, 220,
-               220, 64);
+  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 1 * h,
+               220 / 255., 220 / 255., 64 / 225., 1.0);
 
   /*
   int x=350;

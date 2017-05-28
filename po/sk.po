@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-27 19:51-0400\n"
+"POT-Creation-Date: 2017-05-28 10:25-0400\n"
 "PO-Revision-Date: 2017-05-27 13:43-0400\n"
 "Last-Translator: Jozef ÅÃ­ha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -468,182 +468,178 @@ msgstr "%d bodov"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:783
+#: ../src/glHelp.cc:830
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "RÃ½chlosÅ¥ snÃ­mkov: %.1f"
 
-#: ../src/glHelp.cc:785
+#: ../src/glHelp.cc:832
 #, c-format
 msgid "Framerate unknown"
 msgstr "RÃ½chlosÅ¥ snÃ­mkov neznÃ¡ma"
 
-#: ../src/glHelp.cc:787
+#: ../src/glHelp.cc:834
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/helpMode.cc:101
-msgid "MORE HELP"
-msgstr "ÄALÅ IA POMOC"
-
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Your marble:"
 msgstr "VaÅ¡a guliÄka:"
 
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr "NavÃ¡dzaj guliÄku pomocou myÅ¡i, numerickej klÃ¡vesnice a Å¡Ã­piek."
 
-#: ../src/helpMode.cc:171
+#: ../src/helpMode.cc:165
 msgid "Left mouse or spacebar is jump."
 msgstr "Ä½avÃ½m tlaÄidlom myÅ¡i alebo medzernÃ­kom sa skÃ¡Äe."
 
-#: ../src/helpMode.cc:172
+#: ../src/helpMode.cc:166
 msgid "Shift gives top speed when using keyboard."
 msgstr "Shift prepne na najvyÅ¡Å¡iu rÃ½chlosÅ¥ pri pouÅ¾Ã­vanÃ­ klÃ¡vesnice."
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Mr Black:"
 msgstr "PÃ¡n Äierny:"
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "VÃ¡Å¡ nepriateÄ¾. PoraziÅ¥ sa dÃ¡ s Modpill - Bodce"
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Modpill Speed:"
 msgstr "Modpill RÃ½chlosÅ¥:"
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Makes you go faster for short period of time."
 msgstr "ZvÃ¤ÄÅ¡Ã­ na krÃ¡tky Äas vaÅ¡u rÃ½chlosÅ¥"
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Modpill Spikes:"
 msgstr "Modpill Bodce:"
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "ZbraÅ proti p. Äiernom a ochrana pred zÄ¾adovatelÃ½m povrchom."
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "Modpill Freeze:"
 msgstr "Modpill MrÃ¡z:"
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "This will freeze you - avoid it."
 msgstr "Toto vÃ¡s zamrazÃ­ - vyhnite sa jej."
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Modpill Glass:"
 msgstr "Modpill Sklo:"
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Protects you from acid, but makes you more fragile."
 msgstr "OchrÃ¡ni vÃ¡s pred kyselinou, ale za cenu vÃ¤ÄÅ¡ej zraniteÄ¾nosti."
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Modpill Nitro:"
 msgstr "Modpill Nitro:"
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Switch:"
 msgstr "PrepnÃºÅ¥:"
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Aktivuje/deaktivuje urÄitÃ½ objekt/element v leveli."
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Moving spike:"
 msgstr ""
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Obstacle to avoid."
 msgstr "PrekÃ¡Å¾ka"
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Flag:"
 msgstr "Vlajka:"
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Collect for bonus points."
 msgstr "Zbierajte na zÃ­skanie bonusovÃ½ch bodov."
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Normal terrain:"
 msgstr "NormÃ¡lny povrch:"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Can be of any color and is safe to move on."
 msgstr "MÃ´Å¾e byÅ¥ Ä¾ubovoÄ¾nej farby a je bezpeÄnÃ½ pre pohyb."
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Acid terrain:"
 msgstr "Povrch kyselina:"
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr "PokiaÄ¾ nemÃ¡te Modpill Sklo, zabije vÃ¡s."
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Icy terrain:"
 msgstr "ZÄ¾adovatelÃ½ povrch:"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Å mykÄ¾avÃ½ povrch, ak nemÃ¡te Modpill Bodce."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Sandy terrain:"
 msgstr "PiesoÄnÃ½ povrch:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Soft to land on but will slow you down."
 msgstr "MÃ¤kkÃ½ na pristÃ¡tie, ale spomalÃ­ vÃ¡s."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Goal:"
 msgstr "CieÄ¾:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Will take you to the next level. "
 msgstr "Vezme vÃ¡s do dalÅ¡ieho levelu. "
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:181
 msgid "Get here before time runs out."
 msgstr "DostaÅte sa sem pred vyprÅ¡anÃ­m Äasu."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "Force Field:"
 msgstr ""
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "You cannot pass this unless you switch it off."
 msgstr "NemÃ´Å¾ete prejsÅ¥ cez toto, pokiaÄ¾ ho nevypnete."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:183
 msgid "Some are lethal and some are one way."
 msgstr "NiektorÃ© sÃº smrtiaci a inÃ© jednosmerky."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Tunnel:"
 msgstr "Tunel:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Takes you places, sometimes with great speed."
 msgstr "Presunie vÃ¡s na inÃ© miesto, niekedy pridÃ¡ rÃ½chlosÅ¥."
 
-#: ../src/helpMode.cc:234
+#: ../src/helpMode.cc:210
 msgid "More Help"
 msgstr "ÄalÅ¡ia pomoc"
 
-#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:212 ../src/settingsMode.cc:240
 msgid "Back"
 msgstr "SpÃ¤Å¥"
 
@@ -652,11 +648,11 @@ msgstr "SpÃ¤Å¥"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:175
 msgid "Level Set"
 msgstr ""
 
-#: ../src/hofMode.cc:147
+#: ../src/hofMode.cc:146
 #, c-format
 msgid "%d points"
 msgstr "%d bodov"
@@ -707,50 +703,50 @@ msgstr "Gratulujem"
 msgid "You have completed the game!"
 msgstr "ÃspeÅ¡ne ste ukonÄili hru!"
 
-#: ../src/mainMode.cc:519 ../src/mainMode.cc:535
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "VeÄ¾a Å¡Å¥astia!"
 
-#: ../src/mainMode.cc:627
+#: ../src/mainMode.cc:628
 #, c-format
 msgid "Level bonuses"
 msgstr "BonusovÃ© levely"
 
-#: ../src/mainMode.cc:629
+#: ../src/mainMode.cc:630
 #, c-format
 msgid "Lives left:"
 msgstr "EÅ¡te Å¾ivotov:"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:631
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d bodov"
 
-#: ../src/mainMode.cc:631
+#: ../src/mainMode.cc:632
 #, c-format
 msgid "Time left:"
 msgstr "EÅ¡te Äasu:"
 
-#: ../src/mainMode.cc:632
+#: ../src/mainMode.cc:633
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minÃºt = %d bodov"
 
-#: ../src/mainMode.cc:634
+#: ../src/mainMode.cc:635
 #, c-format
 msgid "Difficulty:"
 msgstr "NÃ¡roÄnosÅ¥"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "easy"
 msgstr "Ä¾ahkÃ¡"
 
-#: ../src/mainMode.cc:636 ../src/settingsMode.cc:198
+#: ../src/mainMode.cc:637 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
 msgstr "beÅ¾nÃ¡"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "hard"
 msgstr "Å¥aÅ¾kÃ¡"
 
@@ -1068,70 +1064,70 @@ msgstr "  HlasitosÅ¥ efektov"
 msgid "  Language"
 msgstr "  Jazyk"
 
-#: ../src/setupMode.cc:172
+#: ../src/setupMode.cc:167
 msgid "Setup new game"
 msgstr "NastaviÅ¥ novÃº hru"
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:171
 msgid "Player Name"
 msgstr "Meno hrÃ¡Äa"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:177
 msgid "N/A"
 msgstr "N/A"
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:183
 msgid "Level"
 msgstr "Level"
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:191
 msgid "Difficulty"
 msgstr "NÃ¡roÄnosÅ¥"
 
-#: ../src/setupMode.cc:201
+#: ../src/setupMode.cc:196
 msgid "Sandbox (Easy)"
 msgstr "Sandbox (Ä½ahkÃ¡)"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Normal)"
 msgstr "Sandbox (BeÅ¾nÃ¡)"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Hard)"
 msgstr "Sandbox (Å¤aÅ¾kÃ¡)"
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:199
 msgid "Easy"
 msgstr "Ä½ahkÃ¡"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Normal"
 msgstr "BeÅ¾nÃ¡"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Hard"
 msgstr "Å¤aÅ¾kÃ¡"
 
-#: ../src/setupMode.cc:209
+#: ../src/setupMode.cc:204
 msgid "Start Game"
 msgstr "SpustiÅ¥ hru"
 
-#: ../src/setupMode.cc:213
+#: ../src/setupMode.cc:208
 #, c-format
 msgid "Total games played: %d"
 msgstr "VÅ¡etkÃ½ch odohranÃ½ch hier: %d"
 
-#: ../src/setupMode.cc:217
+#: ../src/setupMode.cc:212
 #, c-format
 msgid "Average score: %d"
 msgstr "PriemernÃ© skÃ³re: %d"
 
-#: ../src/setupMode.cc:219
+#: ../src/setupMode.cc:214
 #, c-format
 msgid "Average score: N/A"
 msgstr "PriemernÃ© skÃ³re: nedostupnÃ©"
 
-#: ../src/setupMode.cc:222
+#: ../src/setupMode.cc:217
 #, c-format
 msgid "Levels completed: %d"
 msgstr "HotovÃ½ch levelov: %d"
@@ -1828,6 +1824,9 @@ msgstr ""
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
+
+#~ msgid "MORE HELP"
+#~ msgstr "ÄALÅ IA POMOC"
 
 #~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 #~ msgstr ""

@@ -245,8 +245,8 @@ void MainMode::display() {
     Leave2DMode();
     // print 'paused'
     glColor4f(1., 1., 1., 1.);
-    Font::drawCenterSimpleText(0, _("Paused"), screenWidth / 2, screenHeight / 2 - 16, 16.,
-                               16., 1.0, 1.0, 1.0, 0.75);
+    Font::drawCenterSimpleText(_("Paused"), screenWidth / 2, screenHeight / 2 - 16, 16, 1.0,
+                               1.0, 1.0, 0.75);
     break;
   case statusBonusLevelComplete:
     map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
@@ -298,8 +298,7 @@ void MainMode::display() {
     snprintf(str, 255, "Joy: %d, %d -> %.1f, %.1f", Settings::settings->joystickRawX(),
              Settings::settings->joystickRawY(), Settings::settings->joystickX(),
              Settings::settings->joystickY());
-    Font::drawCenterSimpleText(0, str, screenWidth / 2, screenHeight - 16, 8., 8., 0.6, 0.6,
-                               0.6, 0.6);
+    Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight - 16, 8, 0.6, 0.6, 0.6, 0.6);
     Leave2DMode();
   }
 
@@ -567,14 +566,14 @@ void MainMode::showInfo() {
 
   // Score
   snprintf(str, sizeof(str), "%d", player->score);
-  Font::drawRightSimpleText(0, str, 152, 52, 8., 8., 0.0, 0.0, 0.0, 1.0);
+  Font::drawRightSimpleText(str, 152, 52, 8, 0.0, 0.0, 0.0, 1.0);
 
   // Time left
   snprintf(str, sizeof(str), "%2.2d:%2.2d", player->timeLeft / 60, player->timeLeft % 60);
   if (player->timeLeft < 15 && player->timeLeft % 2)
-    Font::drawRightSimpleText(0, str, 152, 81, 8., 8., 1.0, 1.0, 1.0, 1.0);
+    Font::drawRightSimpleText(str, 152, 81, 8, 1.0, 1.0, 1.0, 1.0);
   else
-    Font::drawRightSimpleText(0, str, 152, 81, 8., 8., 0.0, 0.0, 0.0, 1.0);
+    Font::drawRightSimpleText(str, 152, 81, 8, 0.0, 0.0, 0.0, 1.0);
 
   // Health
   glDisable(GL_TEXTURE_2D);

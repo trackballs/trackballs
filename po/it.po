@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-27 19:51-0400\n"
+"POT-Creation-Date: 2017-05-28 10:25-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -469,187 +469,183 @@ msgstr "%d punti"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:783
+#: ../src/glHelp.cc:830
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/glHelp.cc:785
+#: ../src/glHelp.cc:832
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: ../src/glHelp.cc:787
+#: ../src/glHelp.cc:834
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/helpMode.cc:101
-msgid "MORE HELP"
-msgstr "CONTINUA"
-
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Your marble:"
 msgstr "La tua sfera"
 
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr ""
 "Guidala utilizzando il tuo mouse, il tastierino numerico, oppure i tasti "
 "freccia."
 
-#: ../src/helpMode.cc:171
+#: ../src/helpMode.cc:165
 msgid "Left mouse or spacebar is jump."
 msgstr "Salta utilizzando il click destro del mouse o la barra spaziatrice"
 
-#: ../src/helpMode.cc:172
+#: ../src/helpMode.cc:166
 msgid "Shift gives top speed when using keyboard."
 msgstr "MAIUSC dà la velocità massima quando si utilizza la tastiera."
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Mr Black:"
 msgstr "Mr Black:"
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "Il tuo nemico. Sconfiggilo utilizzando la pillola-spina."
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Modpill Speed:"
 msgstr "Pillola della velocità:"
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Makes you go faster for short period of time."
 msgstr ""
 "Ti permette di procedere più velocemente per un breve periodo di tempo."
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Modpill Spikes:"
 msgstr "Pillola-spina:"
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "Arma contro Mr Black, inoltre rampichino per il terreno ghiacciato."
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "Modpill Freeze:"
 msgstr "Pillola congelante:"
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "This will freeze you - avoid it."
 msgstr "Ti congela. Evitala."
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Modpill Glass:"
 msgstr "Pillola di vetro:"
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Protects you from acid, but makes you more fragile."
 msgstr "Ti protegge dall'acido, ma ti rende più fragile."
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Modpill Nitro:"
 msgstr "Pillola a steroidi:"
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 #, fuzzy
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
 "Ti sposta veramente in fretta. Attivate gli steroidi con il bottone n°2."
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Switch:"
 msgstr "Interruttore:"
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Attiva/disattiva alcuni oggetti/elementi all'interno del livello."
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Moving spike:"
 msgstr "Aculeo semovente:"
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Obstacle to avoid."
 msgstr "Ostacolo da evitare."
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Flag:"
 msgstr "Bandierina:"
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Collect for bonus points."
 msgstr "Raccoglila per ottenere punti extra."
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Normal terrain:"
 msgstr "Terreno normale:"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Can be of any color and is safe to move on."
 msgstr "Può essere di qualunque colore ed è sicuro procedervi sopra."
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Acid terrain:"
 msgstr "Terreno acido:"
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr "Ti ucciderà, a meno che tu non sia protetto dalla pillola di vetro."
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Icy terrain:"
 msgstr "Terreno ghiacciato:"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Terreno scivoloso, a meno che tu utilizzi la pillola-spina."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Sandy terrain:"
 msgstr "Terreno sabbioso:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Soft to land on but will slow you down."
 msgstr "Superficie morbida per atterrare, ma ti rallenterà."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Goal:"
 msgstr "Obbiettivo:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Will take you to the next level. "
 msgstr "Ti condurrà al livello successivo."
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:181
 msgid "Get here before time runs out."
 msgstr "Arriva qui prima che scada il tempo."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "Force Field:"
 msgstr "Campo di forza:"
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "You cannot pass this unless you switch it off."
 msgstr "Non puoi oltrepassarlo, a meno che tu non non lo disattivi."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:183
 msgid "Some are lethal and some are one way."
 msgstr "Alcuni sono letali, altri sono a senso unico."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Tunnel:"
 msgstr "Tunnel:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Takes you places, sometimes with great speed."
 msgstr "Ti porta in un altro luogo, a volte a gran velocità."
 
-#: ../src/helpMode.cc:234
+#: ../src/helpMode.cc:210
 msgid "More Help"
 msgstr "Avanti"
 
-#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:212 ../src/settingsMode.cc:240
 msgid "Back"
 msgstr "Indietro"
 
@@ -658,11 +654,11 @@ msgstr "Indietro"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:175
 msgid "Level Set"
 msgstr "Livelloteca:"
 
-#: ../src/hofMode.cc:147
+#: ../src/hofMode.cc:146
 #, c-format
 msgid "%d points"
 msgstr "%d punti"
@@ -713,50 +709,50 @@ msgstr "Complimenti,"
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: ../src/mainMode.cc:519 ../src/mainMode.cc:535
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: ../src/mainMode.cc:627
+#: ../src/mainMode.cc:628
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: ../src/mainMode.cc:629
+#: ../src/mainMode.cc:630
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:631
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: ../src/mainMode.cc:631
+#: ../src/mainMode.cc:632
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:632
+#: ../src/mainMode.cc:633
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: ../src/mainMode.cc:634
+#: ../src/mainMode.cc:635
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:636 ../src/settingsMode.cc:198
+#: ../src/mainMode.cc:637 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "hard"
 msgstr "difficile"
 
@@ -1079,71 +1075,71 @@ msgstr "  Volume effetti"
 msgid "  Language"
 msgstr ""
 
-#: ../src/setupMode.cc:172
+#: ../src/setupMode.cc:167
 msgid "Setup new game"
 msgstr "Prepara nuovo gioco."
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:171
 msgid "Player Name"
 msgstr "Nome del giocatore"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:177
 msgid "N/A"
 msgstr "N/D"
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:183
 msgid "Level"
 msgstr "Livello"
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:191
 msgid "Difficulty"
 msgstr "Difficoltà:"
 
-#: ../src/setupMode.cc:201
+#: ../src/setupMode.cc:196
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 #, fuzzy
 msgid "Sandbox (Hard)"
 msgstr "Standard"
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:199
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:209
+#: ../src/setupMode.cc:204
 msgid "Start Game"
 msgstr "Gioca!"
 
-#: ../src/setupMode.cc:213
+#: ../src/setupMode.cc:208
 #, c-format
 msgid "Total games played: %d"
 msgstr "Partite giocate: %d"
 
-#: ../src/setupMode.cc:217
+#: ../src/setupMode.cc:212
 #, c-format
 msgid "Average score: %d"
 msgstr "Punteggio medio: %d"
 
-#: ../src/setupMode.cc:219
+#: ../src/setupMode.cc:214
 #, c-format
 msgid "Average score: N/A"
 msgstr "Punteggio medio: N/D"
 
-#: ../src/setupMode.cc:222
+#: ../src/setupMode.cc:217
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"
@@ -1840,6 +1836,9 @@ msgstr ""
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
+
+#~ msgid "MORE HELP"
+#~ msgstr "CONTINUA"
 
 #~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 #~ msgstr ""

@@ -141,12 +141,11 @@ void HallOfFameMode::display() {
   for (int i = 0; i < 10; i++) {
     // draw2DString(menuFont,&highscore->names[levelSet][i][0],screenWidth/2 -
     // x,y+dy*i,220,220,64);
-    Font::drawSimpleText(0, &highscore->names[levelSet][i][0], screenWidth / 2 - x,
-                         y + dy * i - size, size * 0.9, size, 220 / 256., 220 / 256.,
-                         64 / 256., 1.0);
+    Font::drawSimpleText(&highscore->names[levelSet][i][0], screenWidth / 2 - x,
+                         y + dy * i - size, size, 220 / 256., 220 / 256., 64 / 256., 1.0);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
-    Font::drawRightSimpleText(0, str, screenWidth / 2 + x + size / 2, y + dy * i - size,
-                              size * 0.9, size, 220 / 256., 220 / 256., 64 / 256., 1.0);
+    Font::drawRightSimpleText(str, screenWidth / 2 + x + size / 2, y + dy * i - size, size,
+                              220 / 256., 220 / 256., 64 / 256., 1.0);
     // TTF_SizeText(menuFont,str,&w,&h);
     // draw2DString(menuFont,str,screenWidth/2 + x - w,y+dy*i,220,220,64);
   }

@@ -127,11 +127,9 @@ void SetupMode::display() {
   int INFO_BASE = screenHeight - 70;
   int INFO_DELTA = 20;
   int INFO_RIGHT = 20;
-  double INFO_WIDTH = 10.0, INFO_HEIGHT = 10.0, INFO_R = 1.0, INFO_G = 1.0, INFO_B = 1.0,
-         INFO_A = 1.0;
+  double INFO_SIZE = 10.0, INFO_R = 1.0, INFO_G = 1.0, INFO_B = 1.0, INFO_A = 1.0;
 
-  double DESC_WIDTH = 14.0, DESC_HEIGHT = 14.0, DESC_R = 1.0, DESC_G = 1.0, DESC_B = 1.0,
-         DESC_A = 1.0;
+  double DESC_SIZE = 14.0, DESC_R = 1.0, DESC_G = 1.0, DESC_B = 1.0, DESC_A = 1.0;
 
   /* Special fix for lower screen resolutions */
   if (screenWidth == 640) {
@@ -141,12 +139,10 @@ void SetupMode::display() {
     col1 = screenWidth / 2 + 50;
     rowSep = fontSize + 5;
 
-    INFO_WIDTH = 8;
-    INFO_HEIGHT = 8;
+    INFO_SIZE = 8;
     INFO_DELTA = 16;
 
-    DESC_WIDTH = 8.0;
-    DESC_HEIGHT = 8.0;
+    DESC_SIZE = 8.0;
   }
   if (screenWidth == 800) {
     fontSize = 32;
@@ -155,8 +151,7 @@ void SetupMode::display() {
     col1 = screenWidth / 2 + 75;
     rowSep = fontSize + 5;
 
-    DESC_WIDTH = 10.0;
-    DESC_HEIGHT = 10.0;
+    DESC_SIZE = 10.0;
 
     /*
     INFO_WIDTH=8;
@@ -164,9 +159,9 @@ void SetupMode::display() {
     INFO_DELTA=16;    */
   }
 
-  int DESC_RIGHT = (int)(col0 - DESC_WIDTH);
+  int DESC_RIGHT = (int)(col0 - DESC_SIZE);
   int DESC_BASE = (int)(row0 + rowSep * 4);
-  int DESC_DELTA = (int)(DESC_HEIGHT * 2);
+  int DESC_DELTA = (int)(DESC_SIZE * 2);
 
   /* Draw title */
   addText_Center(0, titleFontSize / 2, 64, _("Setup new game"), screenWidth / 2);
@@ -211,24 +206,24 @@ void SetupMode::display() {
 
   /* Info */
   snprintf(str, sizeof(str), _("Total games played: %d"), gamer->timesPlayed);
-  Font::drawSimpleText(0, str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 0, INFO_WIDTH, INFO_HEIGHT,
-                       INFO_R, INFO_G, INFO_B, INFO_A);
+  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 0, INFO_SIZE, INFO_R, INFO_G,
+                       INFO_B, INFO_A);
   if (gamer->timesPlayed)
     snprintf(str, sizeof(str), _("Average score: %d"), gamer->totalScore / gamer->timesPlayed);
   else
     snprintf(str, sizeof(str), _("Average score: N/A"));
-  Font::drawSimpleText(0, str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 1, INFO_WIDTH, INFO_HEIGHT,
-                       INFO_R, INFO_G, INFO_B, INFO_A);
+  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 1, INFO_SIZE, INFO_R, INFO_G,
+                       INFO_B, INFO_A);
   snprintf(str, sizeof(str), _("Levels completed: %d"), gamer->nLevelsCompleted);
-  Font::drawSimpleText(0, str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 2, INFO_WIDTH, INFO_HEIGHT,
-                       INFO_R, INFO_G, INFO_B, INFO_A);
+  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 2, INFO_SIZE, INFO_R, INFO_G,
+                       INFO_B, INFO_A);
 
   /* Descriptive level text */
   int lineno;
   for (lineno = 0; lineno < 5; lineno++)
-    Font::drawSimpleText(0, settings->levelSets[levelSet].description[lineno], DESC_RIGHT,
-                         DESC_BASE + DESC_DELTA * lineno, DESC_WIDTH, DESC_HEIGHT, DESC_R,
-                         DESC_G, DESC_B, DESC_A);
+    Font::drawSimpleText(settings->levelSets[levelSet].description[lineno], DESC_RIGHT,
+                         DESC_BASE + DESC_DELTA * lineno, DESC_SIZE, DESC_R, DESC_G, DESC_B,
+                         DESC_A);
 
   /*                      */
   /* Draw the player ball */

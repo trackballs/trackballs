@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-27 19:51-0400\n"
+"POT-Creation-Date: 2017-05-28 10:25-0400\n"
 "PO-Revision-Date: 2017-05-27 13:44-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -473,184 +473,180 @@ msgstr "%d poang"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:783
+#: ../src/glHelp.cc:830
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Framerate: %.1f"
 
-#: ../src/glHelp.cc:785
+#: ../src/glHelp.cc:832
 #, c-format
 msgid "Framerate unknown"
 msgstr "Okänd framerate"
 
-#: ../src/glHelp.cc:787
+#: ../src/glHelp.cc:834
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/helpMode.cc:101
-msgid "MORE HELP"
-msgstr "MER HJÄLP"
-
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Your marble:"
 msgstr "Din kula"
 
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr "Styr den här med din mus, tangentbordet eller pilarna. "
 
-#: ../src/helpMode.cc:171
+#: ../src/helpMode.cc:165
 msgid "Left mouse or spacebar is jump."
 msgstr "Vänster knapp eller mellanslag för att hoppa."
 
-#: ../src/helpMode.cc:172
+#: ../src/helpMode.cc:166
 msgid "Shift gives top speed when using keyboard."
 msgstr "Shift ger högre fart med tangentbordet"
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Mr Black:"
 msgstr "Mr Black:"
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "Din fiende. Bekämpa med Modification - Taggar."
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Modpill Speed:"
 msgstr "Modifikation Hastighet:"
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Makes you go faster for short period of time."
 msgstr "Snabbare hastighet för en tid."
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Modpill Spikes:"
 msgstr "Modifikation Tagggar:"
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "Vapen mot Mr Black och bra grepp på is."
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "Modpill Freeze:"
 msgstr "Modifikation Freeze:"
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "This will freeze you - avoid it."
 msgstr "Får dig att frysa - undvik."
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Modpill Glass:"
 msgstr "Modifikation Glas:"
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Protects you from acid, but makes you more fragile."
 msgstr "Skyddar mot syra, men ömtålig."
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 #, fuzzy
 msgid "Modpill Nitro:"
 msgstr "Modifikation Tagggar:"
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Switch:"
 msgstr "Spak:"
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Slår av/på någonting i banan."
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Moving spike:"
 msgstr "Rörlig spik:"
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Obstacle to avoid."
 msgstr "Hinder att undika."
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Flag:"
 msgstr "Flagga:"
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Collect for bonus points."
 msgstr "Samla för bonus poang."
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Normal terrain:"
 msgstr "Normal terrang:"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Can be of any color and is safe to move on."
 msgstr "Kan ha olika färger och är säker att röra sig på."
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Acid terrain:"
 msgstr "Terräng Syra:"
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr "Farlig om du inte har Modifikation Glas."
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Icy terrain:"
 msgstr "Terräng Is:"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Halt om du inte har taggar."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Sandy terrain:"
 msgstr "Terräng Sand:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Soft to land on but will slow you down."
 msgstr "Mjuk att landa på men långsam att röra sig i."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Goal:"
 msgstr "Mål:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Will take you to the next level. "
 msgstr "Tar dig till nästa bana."
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:181
 msgid "Get here before time runs out."
 msgstr "Åk hit innann tiden har gatt ut."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "Force Field:"
 msgstr "Kraftfält"
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "You cannot pass this unless you switch it off."
 msgstr "Kan inte passeras om du inte slår av den först."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:183
 msgid "Some are lethal and some are one way."
 msgstr "Några är farliga, några enkelriktade."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Tunnel:"
 msgstr "Tunnel:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Takes you places, sometimes with great speed."
 msgstr "Tar dig till andra platser, ibland snabbt."
 
-#: ../src/helpMode.cc:234
+#: ../src/helpMode.cc:210
 #, fuzzy
 msgid "More Help"
 msgstr "Hjälp"
 
-#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:212 ../src/settingsMode.cc:240
 #, fuzzy
 msgid "Back"
 msgstr "Spår"
@@ -660,12 +656,12 @@ msgstr "Spår"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:175
 #, fuzzy
 msgid "Level Set"
 msgstr "LevelSet: %s"
 
-#: ../src/hofMode.cc:147
+#: ../src/hofMode.cc:146
 #, c-format
 msgid "%d points"
 msgstr "%d poang"
@@ -717,50 +713,50 @@ msgstr ""
 msgid "You have completed the game!"
 msgstr ""
 
-#: ../src/mainMode.cc:519 ../src/mainMode.cc:535
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "Lycka till!"
 
-#: ../src/mainMode.cc:627
+#: ../src/mainMode.cc:628
 #, c-format
 msgid "Level bonuses"
 msgstr "Level bonusar"
 
-#: ../src/mainMode.cc:629
+#: ../src/mainMode.cc:630
 #, c-format
 msgid "Lives left:"
 msgstr "Liv kvar"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:631
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d poang"
 
-#: ../src/mainMode.cc:631
+#: ../src/mainMode.cc:632
 #, c-format
 msgid "Time left:"
 msgstr "Tid kvar:"
 
-#: ../src/mainMode.cc:632
+#: ../src/mainMode.cc:633
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuter = %d poang"
 
-#: ../src/mainMode.cc:634
+#: ../src/mainMode.cc:635
 #, c-format
 msgid "Difficulty:"
 msgstr "Svarighetsgrad"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "easy"
 msgstr "lätt"
 
-#: ../src/mainMode.cc:636 ../src/settingsMode.cc:198
+#: ../src/mainMode.cc:637 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
 msgstr "normalt"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "hard"
 msgstr "svårt"
 
@@ -1083,73 +1079,73 @@ msgstr "  Ljudeffektsvolym"
 msgid "  Language"
 msgstr ""
 
-#: ../src/setupMode.cc:172
+#: ../src/setupMode.cc:167
 msgid "Setup new game"
 msgstr ""
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:171
 msgid "Player Name"
 msgstr ""
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:177
 msgid "N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:183
 msgid "Level"
 msgstr ""
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:191
 #, fuzzy
 msgid "Difficulty"
 msgstr "Svarighetsgrad"
 
-#: ../src/setupMode.cc:201
+#: ../src/setupMode.cc:196
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 #, fuzzy
 msgid "Sandbox (Hard)"
 msgstr "Standard"
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:199
 msgid "Easy"
 msgstr "Lätt"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Normal"
 msgstr "Normalt"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Hard"
 msgstr "Svårt"
 
-#: ../src/setupMode.cc:209
+#: ../src/setupMode.cc:204
 msgid "Start Game"
 msgstr ""
 
-#: ../src/setupMode.cc:213
+#: ../src/setupMode.cc:208
 #, c-format
 msgid "Total games played: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:217
+#: ../src/setupMode.cc:212
 #, c-format
 msgid "Average score: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:219
+#: ../src/setupMode.cc:214
 #, c-format
 msgid "Average score: N/A"
 msgstr ""
 
 # Level fardig
-#: ../src/setupMode.cc:222
+#: ../src/setupMode.cc:217
 #, fuzzy, c-format
 msgid "Levels completed: %d"
 msgstr "Banan avklarad"
@@ -1841,6 +1837,9 @@ msgstr ""
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
+
+#~ msgid "MORE HELP"
+#~ msgstr "MER HJÄLP"
 
 #~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 #~ msgstr "Fel, anropade CalibrateJoystickMode utan giltig joystick!\n"

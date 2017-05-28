@@ -49,7 +49,7 @@ void addArea(int code, int x, int y, int w, int h) {
 
 void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(0, leftStr, fontSize);
+  int width = Font::getTextWidth(leftStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
@@ -59,15 +59,13 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
   sarea->returnCode = code;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
-    Font::drawSimpleText(0, leftStr, leftX, y0, fontSize, fontSize, 220 / 256., 220 / 256.,
-                         220 / 256., 1.);
+    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
   else
-    Font::drawSimpleText(0, leftStr, leftX, y0, fontSize, fontSize, 220 / 256., 220 / 256.,
-                         64 / 256., 1.);
+    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 64 / 256., 1.);
 }
 void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(0, rightStr, fontSize);
+  int width = Font::getTextWidth(rightStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = rightX - width;
@@ -77,15 +75,15 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
   sarea->returnCode = code;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
-    Font::drawSimpleText(0, rightStr, rightX - width, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 220 / 256., 1.);
+    Font::drawSimpleText(rightStr, rightX - width, y0, fontSize, 220 / 256., 220 / 256.,
+                         220 / 256., 1.);
   else
-    Font::drawSimpleText(0, rightStr, rightX - width, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 64 / 256., 1.);
+    Font::drawSimpleText(rightStr, rightX - width, y0, fontSize, 220 / 256., 220 / 256.,
+                         64 / 256., 1.);
 }
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(0, str, fontSize);
+  int width = Font::getTextWidth(str, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = cx - width / 2;
@@ -95,16 +93,16 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   sarea->returnCode = code;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
-    Font::drawSimpleText(0, str, cx - width / 2, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 220 / 256., 1.);
+    Font::drawSimpleText(str, cx - width / 2, y0, fontSize, 220 / 256., 220 / 256., 220 / 256.,
+                         1.);
   else
-    Font::drawSimpleText(0, str, cx - width / 2, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 64 / 256., 1.);
+    Font::drawSimpleText(str, cx - width / 2, y0, fontSize, 220 / 256., 220 / 256., 64 / 256.,
+                         1.);
 }
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,
                        const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int widthR = Font::getTextWidth(0, rightStr, fontSize);
+  int widthR = Font::getTextWidth(rightStr, fontSize);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
@@ -114,15 +112,13 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
   sarea->returnCode = code;
   glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code) {
-    Font::drawSimpleText(0, leftStr, leftX, y0, fontSize, fontSize, 220 / 256., 220 / 256.,
+    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
+    Font::drawSimpleText(rightStr, rightX - widthR, y0, fontSize, 220 / 256., 220 / 256.,
                          220 / 256., 1.);
-    Font::drawSimpleText(0, rightStr, rightX - widthR, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 220 / 256., 1.);
   } else {
-    Font::drawSimpleText(0, leftStr, leftX, y0, fontSize, fontSize, 220 / 256., 220 / 256.,
+    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 64 / 256., 1.);
+    Font::drawSimpleText(rightStr, rightX - widthR, y0, fontSize, 220 / 256., 220 / 256.,
                          64 / 256., 1.);
-    Font::drawSimpleText(0, rightStr, rightX - widthR, y0, fontSize, fontSize, 220 / 256.,
-                         220 / 256., 64 / 256., 1.);
   }
 }
 

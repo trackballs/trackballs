@@ -19,12 +19,12 @@ Slovak Translation	Jozef Riha <jose1711@gmail.com>
 Fonts
 -----
 
-The single truetype font which is used is from UCS Outline Fonts 
-(http://www.nongnu.org/freefont/) and is GPL'ed.
+The sans-serif truetype font used in games came from UCS Outline Fonts 
+(http://www.nongnu.org/freefont/) and is GPL'ed. 
+[The link as of 2017 redirects to GNU FreeFont]
 
-The textured font which are contained as RGB images was created by 
-Yannick Perret using GPL'ed GIMP-fonts.
-
+The bold italic serif truetype menu font comes from the GNU FreeFont
+project (https://www.gnu.org/software/freefont/) and is GPL'ed.
 
 Music
 -----

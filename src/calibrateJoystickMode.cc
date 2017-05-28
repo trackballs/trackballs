@@ -97,51 +97,51 @@ void CalibrateJoystickMode::display() {
     error("called CalibrateJoystickMode without valid joystick!");
   }
 
-  Font::drawCenterSimpleText(0, _("Calibrating Joystick"), screenWidth / 2,
-                             screenHeight / 2 - 230, 20., 20., 1.0, 1.0, 1.0, 1.0);
+  Font::drawCenterSimpleText(_("Calibrating Joystick"), screenWidth / 2,
+                             screenHeight / 2 - 230, 20., 1.0, 1.0, 1.0, 1.0);
   snprintf(str, sizeof(str), "%s",
            SDL_JoystickNameForIndex(Settings::settings->joystickIndex - 1));
-  Font::drawCenterSimpleText(0, str, screenWidth / 2, screenHeight / 2 - 190, 16., 16., 1.0,
-                             1.0, 1.0, 1.0);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 190, 16., 1.0, 1.0, 1.0,
+                             1.0);
 
   switch (stage) {
   case 0:
-    Font::drawCenterSimpleText(0, _("Center joystick"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 20., 1.0, 1.0, 1.0, 1.0);
+    Font::drawCenterSimpleText(_("Center joystick"), screenWidth / 2, screenHeight / 2 - 120,
+                               20., 1.0, 1.0, 1.0, 1.0);
     break;
   case 1:
-    Font::drawCenterSimpleText(0, _("Move joystick left"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 20., 1.0, 1.0, 1.0, 1.0);
+    Font::drawCenterSimpleText(_("Move joystick left"), screenWidth / 2,
+                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
     break;
   case 2:
-    Font::drawCenterSimpleText(0, _("Move joystick right"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 20., 1.0, 1.0, 1.0, 1.0);
+    Font::drawCenterSimpleText(_("Move joystick right"), screenWidth / 2,
+                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
     break;
   case 3:
-    Font::drawCenterSimpleText(0, _("Move joystick up"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 20., 1.0, 1.0, 1.0, 1.0);
+    Font::drawCenterSimpleText(_("Move joystick up"), screenWidth / 2, screenHeight / 2 - 120,
+                               20., 1.0, 1.0, 1.0, 1.0);
     break;
   case 4:
-    Font::drawCenterSimpleText(0, _("Move joystick down"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 20., 1.0, 1.0, 1.0, 1.0);
+    Font::drawCenterSimpleText(_("Move joystick down"), screenWidth / 2,
+                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
     break;
   }
-  Font::drawCenterSimpleText(0, _("Press any button to continue"), screenWidth / 2,
-                             screenHeight / 2 + 190, 16., 16., 1.0, 1.0, 1.0, 1.0);
-  Font::drawCenterSimpleText(0, _("Press escape to cancel"), screenWidth / 2,
-                             screenHeight / 2 + 220, 16., 16., 1.0, 1.0, 1.0, 1.0);
+  Font::drawCenterSimpleText(_("Press any button to continue"), screenWidth / 2,
+                             screenHeight / 2 + 190, 16., 1.0, 1.0, 1.0, 1.0);
+  Font::drawCenterSimpleText(_("Press escape to cancel"), screenWidth / 2,
+                             screenHeight / 2 + 220, 16., 1.0, 1.0, 1.0, 1.0);
 
   snprintf(str, sizeof(str), _("now: %d %d"), Settings::settings->joystickRawX(),
            Settings::settings->joystickRawY());
-  Font::drawCenterSimpleText(0, str, screenWidth / 2, screenHeight / 2 + 300, 12., 12., 1.0,
-                             1.0, 1.0, 0.5);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 300, 12., 1.0, 1.0, 1.0,
+                             0.5);
 
   snprintf(str, sizeof(str), _("center: %d %d left: %d right: %d up: %d down: %d"),
            Settings::settings->joy_center[0], Settings::settings->joy_center[1],
            Settings::settings->joy_left, Settings::settings->joy_right,
            Settings::settings->joy_up, Settings::settings->joy_down);
-  Font::drawCenterSimpleText(0, str, screenWidth / 2, screenHeight / 2 + 320, 12., 12., 1.0,
-                             1.0, 1.0, 0.5);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 320, 12., 1.0, 1.0, 1.0,
+                             0.5);
 
   glColor4f(0.1, 0.1, 0.4, 0.5);
   int CX = screenWidth / 2, CY = screenHeight / 2;

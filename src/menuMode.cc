@@ -132,8 +132,8 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   */
 
   sprintf(str, "v%s", VERSION);
-  Font::drawRightSimpleText(0, str, screenWidth - 15, screenHeight - 15, 10., 10., 0.50, 0.50,
-                            0.50, 0.75);
+  Font::drawRightSimpleText(str, screenWidth - 15, screenHeight - 15, 10, 0.50, 0.50, 0.50,
+                            0.75);
 
   drawMousePointer();
   displayFrameRate();
@@ -203,7 +203,7 @@ void MenuMode::idle(Real td) {
 
   /* This controls the scrolling text */
   offset += 150.0 * td;
-  if (offset > Font::getTextWidth(0, story, 24) + screenWidth) offset = 0;
+  if (offset > Font::getTextWidth(story, 24) + screenWidth) offset = 0;
 }
 void MenuMode::mouseDown(int mouseState, int x, int y) { doSelection(); }
 

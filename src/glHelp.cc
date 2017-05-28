@@ -27,7 +27,7 @@
 #include "font.h"
 #include "SDL2/SDL_image.h"
 #include "sparkle2d.h"
-#include "image.h"
+#include <map>
 
 using namespace std;
 
@@ -60,31 +60,89 @@ SDL_Surface *mousePointer;
 GLuint mousePointerTexture;
 */
 
-void draw2DString(TTF_Font *font, char *string, int x, int y, Uint8 red, Uint8 green,
-                  Uint8 blue) {
+struct StringInfo {
+  TTF_Font *font;
+  char string[256];
+  int x, y;
+  SDL_Color color;
+};
+int operator<(const struct StringInfo &a, const struct StringInfo &b) {
+  return memcmp(&a, &b, sizeof(struct StringInfo)) < 0;
+}
+
+struct StringCache {
+  SDL_Surface *surf;
+  long tick;
+};
+
+static long stringTick = 0;
+static std::map<StringInfo, StringCache> strcache;
+
+void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
+                  float blue, float alpha, int outlined) {
   int w, h;
-  SDL_Color fgColor = {255, 255, 255};
-  SDL_Surface *text;
+  SDL_Color fgColor = {255, 255, 255, 255};
+  SDL_Color blkColor = {0, 0, 0, 0};
+  SDL_Surface *outline;
   GLuint texture;
   GLfloat texcoord[4];
   GLfloat texMinX, texMinY;
   GLfloat texMaxX, texMaxY;
 
-  fgColor.r = red;
-  fgColor.g = green;
-  fgColor.b = blue;
-  text = TTF_RenderText_Blended(font, string, fgColor);
-  texture = LoadTexture(text, texcoord, 1, NULL);
-  w = text->w;
-  h = text->h;
-  SDL_FreeSurface(text);
+  fgColor.r = 255 * red;
+  fgColor.g = 255 * green;
+  fgColor.b = 255 * blue;
+  fgColor.a = 255 * alpha;
+  struct StringInfo inf;
+  inf.color = fgColor;
+  inf.font = font;
+  inf.x = x;
+  inf.y = y;
+  strncpy(inf.string, string, 255);
+  inf.string[255] = '\0';
+  if (strcache.count(inf) <= 0) {
+    struct StringCache newentry;
+    newentry.tick = stringTick;
+    if (outlined) {
+      TTF_SetFontOutline(font, 0);
+      SDL_Surface *inner = TTF_RenderUTF8_Blended(font, string, fgColor);
+      if (!inner) {
+        warning("Failed to render string outline '%s'", string);
+        return;
+      }
+      TTF_SetFontOutline(font, 2);
+      outline = TTF_RenderUTF8_Blended(font, string, blkColor);
+      if (!outline) {
+        warning("Failed to render string inside '%s'", string);
+        return;
+      }
+      SDL_Rect rect = {2, 2, inner->w, inner->h};
+      SDL_SetSurfaceBlendMode(inner, SDL_BLENDMODE_BLEND);
+      SDL_BlitSurface(inner, NULL, outline, &rect);
+      SDL_FreeSurface(inner);
+    } else {
+      outline = TTF_RenderUTF8_Blended(font, string, fgColor);
+      if (!outline) {
+        warning("Failed to render string '%s'", string);
+        return;
+      }
+    }
+    newentry.surf = outline;
+    strcache[inf] = newentry;
+  }
+
+  struct StringCache &cached = strcache[inf];
+  cached.tick = stringTick;
+  texture = LoadTexture(cached.surf, texcoord, 1, NULL);
+  w = cached.surf->w;
+  h = cached.surf->h;
 
   texMinX = texcoord[0];
   texMinY = texcoord[1];
   texMaxX = texcoord[2];
   texMaxY = texcoord[3];
 
-  y -= h;
+  y -= h / 2;
 
   Enter2DMode();
   glBindTexture(GL_TEXTURE_2D, texture);
@@ -102,6 +160,34 @@ void draw2DString(TTF_Font *font, char *string, int x, int y, Uint8 red, Uint8 g
 
   glDeleteTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
+}
+
+void update2DStringCache() {
+  stringTick++;
+  int erased;
+  do {
+    erased = false;
+    for (std::map<StringInfo, StringCache>::iterator i = strcache.begin(); i != strcache.end();
+         ++i) {
+      if (i->second.tick < stringTick - 3) {
+        SDL_FreeSurface(i->second.surf);
+        strcache.erase(i);
+        erased = true;
+        break;
+      }
+    }
+  } while (erased);
+}
+
+TTF_Font *menuFontForSize(int sz) {
+  static std::map<int, TTF_Font *> lookup;
+  if (!lookup.count(sz)) {
+    char str[256];
+    snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "FreeSerifBoldItalic.ttf");
+    lookup[sz] = TTF_OpenFont(str, 2 * sz);  // barbatri
+    if (!lookup[sz]) { error("failed to load font %s", str); }
+  }
+  return lookup[sz];
 }
 
 double mousePointerPhase = 0.0;
@@ -330,8 +416,8 @@ int createSnapshot() {
 void message(char *A, char *B) {
   int size = 16;
   int w1, w2, h1, h2, w;
-  w1 = Font::getTextWidth(0, A, size);
-  w2 = Font::getTextWidth(0, B, size);
+  w1 = Font::getTextWidth(A, size);
+  w2 = Font::getTextWidth(B, size);
   h1 = 32;
   h2 = 32;
 
@@ -353,11 +439,11 @@ void message(char *A, char *B) {
 
   glColor4f(0.5, 1.0, 0.2, 1.0);
   // draw2DString(msgFont,A,screenWidth/2-w1/2,screenHeight/2-1,255,255,255);
-  Font::drawCenterSimpleText(0, A, screenWidth / 2 + size, screenHeight / 2 - size, size, size,
-                             0.5, 1.0, 0.2, 1.0);
+  Font::drawCenterSimpleText(A, screenWidth / 2 + size, screenHeight / 2 - size, size, 0.5,
+                             1.0, 0.2, 1.0);
   // draw2DString(msgFont,B,screenWidth/2-w2/2,screenHeight/2+h2,255,255,255);
-  Font::drawCenterSimpleText(0, B, screenWidth / 2 + size, screenHeight / 2 + 14, size, size,
-                             0.5, 1.0, 0.2, 1.0);
+  Font::drawCenterSimpleText(B, screenWidth / 2 + size, screenHeight / 2 + 14, size, 0.5, 1.0,
+                             0.2, 1.0);
 }
 
 void multiMessage(int nlines, const char *left[], const char *right[]) {
@@ -368,7 +454,7 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
   total_height = 0;
   for (i = 0; i < nlines; i++) {
     // TTF_SizeText(msgFont,left[i],&w,&h);
-    w = Font::getTextWidth(0, left[i], size);
+    w = Font::getTextWidth(left[i], size);
     h = size * 2;
     total_height += h;
   }
@@ -398,14 +484,14 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
     if (left[i]) {
       // TTF_SizeText(msgFont,left[i],&w,&h);
       // draw2DString(msgFont,left[i],screenWidth/2-width/2,screenHeight/2-total_height/2+h_now,255,255,255);
-      Font::drawSimpleText(0, left[i], screenWidth / 2 - width / 2 + size,
-                           screenHeight / 2 - total_height / 2 + h_now, size, size, 0.5, 1.0,
-                           0.2, 1.0);
+      Font::drawSimpleText(left[i], screenWidth / 2 - width / 2 + size,
+                           screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
+                           1.0);
     }
     if (right[i]) {
-      Font::drawRightSimpleText(0, right[i], screenWidth / 2 + width / 2 + size,
-                                screenHeight / 2 - total_height / 2 + h_now, size, size, 0.5,
-                                1.0, 0.2, 1.0);
+      Font::drawRightSimpleText(right[i], screenWidth / 2 + width / 2 + size,
+                                screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0,
+                                0.2, 1.0);
       // TTF_SizeText(msgFont,right[i],&w,&h);
       // draw2DString(msgFont,right[i],screenWidth/2+width/2-w,screenHeight/2-total_height/2+h_now,255,255,255);
     }
@@ -428,28 +514,13 @@ void drawTriangle(Coord3d a, Coord3d b, Coord3d c) {
   glEnd();
 }
 
-SDL_Surface *getSurfaceFromRGB(char *fullPath) {
-  SDL_Surface *surface;
-  int tx, ty;
-  unsigned char *font_data = NULL;
-
-  read_2d_image_rgb(fullPath, &font_data, &tx, &ty);
-  surface = SDL_CreateRGBSurfaceFrom((void *)font_data, tx, ty, 32, tx * 4, 0xFF000000,
-                                     0x00FF0000, 0x0000FF00, 0x000000FF);
-  free(font_data);
-
-  if (!surface) warning("Failed to create surface from RGB file: %s", SDL_GetError());
-  return surface;
-}
-
 /** Loads a texture from file and returns a reference to it.
     It is safe to load the same texture multiple times since the results are cached
 */
-int loadTexture(const char *name, Font *font) {
+int loadTexture(const char *name) {
   GLfloat texCoord[4];
   char str[256];
   SDL_Surface *surface;
-  const char *tempStr;
   int i;
 
   /* Check in cache if texture already loaded */
@@ -463,12 +534,7 @@ int loadTexture(const char *name, Font *font) {
   }
 
   snprintf(str, sizeof(str), "%s/images/%s", SHARE_DIR, name);
-  tempStr = strstr(name, ".rgb");
-  if (tempStr != NULL && strcmp(tempStr, ".rgb") == 0) {
-    surface = getSurfaceFromRGB(str);
-  } else {
-    surface = IMG_Load(str);
-  }
+  surface = IMG_Load(str);
   if (!surface) {
     warning("Failed to load texture %s", str);
     textureNames[numTextures] = strdup(name);
@@ -481,18 +547,6 @@ int loadTexture(const char *name, Font *font) {
         LoadTexture(surface, texCoord, 1, NULL);  // linear filter was: font != NULL
     /*printf("loaded texture[%d]=%d\n",numTextures,textures[numTextures]);*/
     numTextures++;
-
-    /* Strange special case handling when we are called from the FONT routines */
-    if (font != NULL) {
-      if (!(font->figureFontInfo(surface->pixels, surface->w, surface->h))) {
-        --numTextures;
-        free(textureNames[numTextures]);
-        textureNames[numTextures] = NULL;
-        glDeleteTextures(1, &textures[numTextures]);
-        SDL_FreeSurface(surface);
-        return -1;
-      }
-    }
     SDL_FreeSurface(surface);
   }
   return (numTextures - 1);  // ok
@@ -516,7 +570,7 @@ void glHelpInit() {
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
   ingameFont = TTF_OpenFont(str, 30);  // barbatri
   if (!ingameFont) { error("failed to load font %s", str); }
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
+  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "FreeSerifBoldItalic.ttf");
   menuFont = TTF_OpenFont(str, 40);  // barbatri
   if (!menuFont) { error("failed to load font %s", str); }
   snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
@@ -731,19 +785,12 @@ int resetTextures() {
   char str[256];
   SDL_Surface *surface;
   int i;
-  char *tempStr;
   int linear = 0;
 
   for (i = 0; i < numTextures; i++) {
     if (textureNames[i] == NULL) continue;
     snprintf(str, sizeof(str), "%s/images/%s", SHARE_DIR, textureNames[i]);
-    tempStr = strstr(textureNames[i], ".rgb");
-    if (tempStr != NULL && strcmp(tempStr, ".rgb") == 0) {
-      surface = getSurfaceFromRGB(str);
-      linear = 1;
-    } else {
-      surface = IMG_Load(str);
-    }
+    surface = IMG_Load(str);
     if (!surface) {
       warning("Failed to load texture %s", str);
       return 0;  // error (a valid texture entry)
@@ -788,7 +835,7 @@ void displayFrameRate() {
                1e3 * (getSystemTime() - displayStartTime));
     }
     // glColor3f(1.0,1.0,1.0);
-    Font::drawSimpleText(0, str, 15, screenHeight - 15, 10., 10., 1., 1., 0.25, 0.8);
+    Font::drawSimpleText(str, 15, screenHeight - 15, 10., 1., 1., 0.25, 0.8);
   }
 }
 
@@ -962,7 +1009,7 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
     vyh = max(vyh, w[1]);
     vzh = max(vzh, w[2]);
   }
-  // Window frustum is [0,1]^3
+  // Window frustum is [-1,1]x[-1,1]x[0,1]
   if (vxl > 1 || vxh < -1) return 0;
   if (vyl > 1 || vyh < -1) return 0;
   if (vzl > 1 || vzh < 0) return 0;

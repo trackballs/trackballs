@@ -31,7 +31,9 @@ double frand();
 double frand(int);
 
 // displays a 2d text on specific screen coordinates */
-void draw2DString(TTF_Font *, char *, int x, int y, Uint8 r, Uint8 g, Uint8 b);
+void draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
+                  float alpha, int outlined = 0);
+void update2DStringCache();
 void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
 void drawMousePointer();
@@ -78,10 +80,8 @@ void Leave2DMode();
 GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0,
                    GLuint *texture = NULL);
 
-SDL_Surface *getSurfaceFromRGB(char *);
 int loadTexture(
-    const char *name,
-    Font *font = NULL);  // preloads a texture from file and returns position in textures array
+    const char *name);  // preloads a texture from file and returns position in textures array
 int bindTexture(
     const char *name);  // binds texture. Also returns index in textures array used for this.
 int resetTextures();    // Reloads all textures
@@ -100,6 +100,7 @@ extern float fps;
 extern float realTimeNow;
 extern int screenWidth, screenHeight;
 extern TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
+TTF_Font *menuFontForSize(int sz);
 
 /* A set of predefined displaylists for drawing balls of unit size. */
 #define BALL_LORES 0

@@ -95,11 +95,6 @@ void HelpMode::activated() {
   isExiting = 0;
   timeLeft = 1.0;
   page = 0;
-
-  Font::destroyAllText();
-  Font::setColor(0, 1., 1., 1., 1.);
-  Font::addRightText(0, _("MORE HELP"), screenWidth - 15, screenHeight - 20, 15, 15, 0.1, 0.1,
-                     3., 0.5, 0);
 }
 void HelpMode::deactivated() {
   glDeleteTextures(1, &bgTexture);
@@ -110,7 +105,6 @@ void HelpMode::deactivated() {
     SDL_FreeSurface(background);
     background = NULL;
   }
-  Font::destroyAllText();
 }
 void HelpMode::display() {
   // Draw the background using the preloaded texture
@@ -191,39 +185,21 @@ void HelpMode::display() {
 
     // Enter2DMode();
     for (int i = 0; i < 20; i++) {
-      // draw2DString(infoFont,text[i][0],screenWidth/2-310,screenHeight/2-200+i*20,220,220,64);
-      // draw2DString(infoFont,text[i][1],screenWidth/2-150,screenHeight/2-200+i*20,220,220,64);
-      if (screenWidth <= 640) {
-        Font::drawSimpleText(0, text[i][0], screenWidth / 2 - 310,
-                             screenHeight / 2 - 200 + i * 20 + 10, 10.f, 10., 0.9, 0.9, 0.25,
-                             1.);
-        Font::drawSimpleText(0, text[i][1], screenWidth / 2 - 150,
-                             screenHeight / 2 - 200 + i * 20 + 10, 10., 10., 0.9, 0.9, 0.25,
-                             1.);
-        // Font::drawCenterSimpleText(0,"See also the forums at:",screenWidth/2,10,10.,10.,
-        // 0.9,0.9,0.25,1.0);
-        // Font::drawCenterSimpleText(0,"trackballs.theunix.org",screenWidth/2,30,10.,10.,
-        // 0.9,0.9,0.25,1.0);
-      } else if (screenWidth == 800) {
-        Font::drawSimpleText(0, text[i][0], screenWidth / 2 - 330,
-                             screenHeight / 2 - 200 + i * 20 + 10, 10.f, 10., 0.9, 0.9, 0.25,
-                             1.);
-        Font::drawSimpleText(0, text[i][1], screenWidth / 2 - 130,
-                             screenHeight / 2 - 200 + i * 20 + 10, 10., 10., 0.9, 0.9, 0.25,
-                             1.);
-        // Font::drawCenterSimpleText(0,"See also the trackballs forums
-        // at:",screenWidth/2,30,20.,20., 0.9,0.9,0.25,1.0);
-        // Font::drawCenterSimpleText(0,"trackballs.theunix.org",screenWidth/2,70,20.,20.,
-        // 0.9,0.9,0.25,1.0);
-      } else if (screenWidth >= 1024) {
-        Font::drawSimpleText(0, text[i][0], screenWidth / 2 - 360,
-                             screenHeight / 2 - 200 + i * 20, 10.f, 10., 0.9, 0.9, 0.25, 1.);
-        Font::drawSimpleText(0, text[i][1], screenWidth / 2 - 100,
-                             screenHeight / 2 - 200 + i * 20, 10., 10., 0.9, 0.9, 0.25, 1.);
-        // Font::drawCenterSimpleText(0,"See also the trackballs forums
-        // at:",screenWidth/2,30,24.,24., 0.9,0.9,0.25,1.0);
-        // Font::drawCenterSimpleText(0,"trackballs.theunix.org",screenWidth/2,80,24.,24.,
-        // 0.9,0.9,0.25,1.0);
+      if (screenWidth <= 800) {
+        Font::drawSimpleText(text[i][0], 50, screenHeight / 2 - 200 + i * 20 + 10, 10, 0.9,
+                             0.9, 0.25, 1.);
+        Font::drawSimpleText(text[i][1], 210, screenHeight / 2 - 200 + i * 20 + 10, 10, 0.9,
+                             0.9, 0.25, 1.);
+      } else if (screenWidth <= 1280) {
+        Font::drawSimpleText(text[i][0], 70, screenHeight / 2 - 200 + i * 24 + 10, 12, 0.9,
+                             0.9, 0.25, 1.);
+        Font::drawSimpleText(text[i][1], 270, screenHeight / 2 - 200 + i * 24 + 10, 12, 0.9,
+                             0.9, 0.25, 1.);
+      } else {
+        Font::drawSimpleText(text[i][0], 90, screenHeight / 2 - 200 + i * 28, 14, 0.9, 0.9,
+                             0.25, 1.);
+        Font::drawSimpleText(text[i][1], 370, screenHeight / 2 - 200 + i * 28, 14, 0.9, 0.9,
+                             0.25, 1.);
       }
     }
     // Leave2DMode();

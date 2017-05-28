@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-27 19:51-0400\n"
+"POT-Creation-Date: 2017-05-28 10:25-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
 "Language-Team: Hungarian\n"
@@ -472,182 +472,178 @@ msgstr "%d pont"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:783
+#: ../src/glHelp.cc:830
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Képfrissítés: %.1f"
 
-#: ../src/glHelp.cc:785
+#: ../src/glHelp.cc:832
 #, c-format
 msgid "Framerate unknown"
 msgstr "Ismeretlen képfrissítés"
 
-#: ../src/glHelp.cc:787
+#: ../src/glHelp.cc:834
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/helpMode.cc:101
-msgid "MORE HELP"
-msgstr "További segítség"
-
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Your marble:"
 msgstr "A labdád:"
 
-#: ../src/helpMode.cc:170
+#: ../src/helpMode.cc:164
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr "Görgesd az egérrel, numerikus billentyűkkel vagy a nyilakkal. "
 
-#: ../src/helpMode.cc:171
+#: ../src/helpMode.cc:165
 msgid "Left mouse or spacebar is jump."
 msgstr "Ugrás a bal egérgombbal vagy a szóközzel."
 
-#: ../src/helpMode.cc:172
+#: ../src/helpMode.cc:166
 msgid "Shift gives top speed when using keyboard."
 msgstr "A Shift billentyű megnyomása max. sebességet eredményez."
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Mr Black:"
 msgstr "Mr Black:"
 
-#: ../src/helpMode.cc:173
+#: ../src/helpMode.cc:167
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "Az ellenség. Tüske módosítóval legyőzhető."
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Modpill Speed:"
 msgstr "Sebesség módosító:"
 
-#: ../src/helpMode.cc:174
+#: ../src/helpMode.cc:168
 msgid "Makes you go faster for short period of time."
 msgstr "Rövid ideig nagyobb sebesség."
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Modpill Spikes:"
 msgstr "Tüske módosító:"
 
-#: ../src/helpMode.cc:175
+#: ../src/helpMode.cc:169
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "Mr Black elleni fegyver és csúszásgátló jeges talajon."
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "Modpill Freeze:"
 msgstr "Fagyasztás módosító:"
 
-#: ../src/helpMode.cc:176
+#: ../src/helpMode.cc:170
 msgid "This will freeze you - avoid it."
 msgstr "Lefagyaszt - óvakodj tőle."
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Modpill Glass:"
 msgstr "Üveg módosító:"
 
-#: ../src/helpMode.cc:177
+#: ../src/helpMode.cc:171
 msgid "Protects you from acid, but makes you more fragile."
 msgstr "Megvéd a savtól, de törékenyebbé tesz."
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Modpill Nitro:"
 msgstr "Nitro módosító:"
 
-#: ../src/helpMode.cc:178
+#: ../src/helpMode.cc:172
 msgid "Move really fast. Active nitro with second button."
 msgstr "Nagyon gyors mozgás. A második gombbal aktiválható."
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Switch:"
 msgstr "Kapcsoló:"
 
-#: ../src/helpMode.cc:179
+#: ../src/helpMode.cc:173
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Bekacsol/kikapcsol valamilyen tárgyat a pályán."
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Moving spike:"
 msgstr "Mozgó tüske:"
 
-#: ../src/helpMode.cc:180
+#: ../src/helpMode.cc:174
 msgid "Obstacle to avoid."
 msgstr "Kerüld el."
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Flag:"
 msgstr "Zászló:"
 
-#: ../src/helpMode.cc:181
+#: ../src/helpMode.cc:175
 msgid "Collect for bonus points."
 msgstr "Bónusz pontokért gyűjthető."
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Normal terrain:"
 msgstr "Normál talaj:"
 
-#: ../src/helpMode.cc:182
+#: ../src/helpMode.cc:176
 msgid "Can be of any color and is safe to move on."
 msgstr "Bármilyen színű lehet, a rajta való mozgás biztonságos."
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Acid terrain:"
 msgstr "Savas terület:"
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:177
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr "Üveg módosító nélkül elpusztítja a labdát."
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Icy terrain:"
 msgstr "Jeges talaj:"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:178
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Csúszós tüske módosító nélkül "
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Sandy terrain:"
 msgstr "Homokos talaj:"
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:179
 msgid "Soft to land on but will slow you down."
 msgstr "Könnyű földet érést biztosít, de lelassít."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Goal:"
 msgstr "Cél:"
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:180
 msgid "Will take you to the next level. "
 msgstr "A következő pályára juttat. "
 
-#: ../src/helpMode.cc:187
+#: ../src/helpMode.cc:181
 msgid "Get here before time runs out."
 msgstr "Ide kell jutni mielőtt az idő letelik."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "Force Field:"
 msgstr "Erőtér:"
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:182
 msgid "You cannot pass this unless you switch it off."
 msgstr "Kikapcsolása nélkül nem lehet rajta áthaladni."
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:183
 msgid "Some are lethal and some are one way."
 msgstr "Némelyik halálos, némelyik egyirányú."
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Tunnel:"
 msgstr "Cső:"
 
-#: ../src/helpMode.cc:190
+#: ../src/helpMode.cc:184
 msgid "Takes you places, sometimes with great speed."
 msgstr "Más helyre juttat, időnként nagy sebességgel."
 
-#: ../src/helpMode.cc:234
+#: ../src/helpMode.cc:210
 msgid "More Help"
 msgstr "További segítség"
 
-#: ../src/helpMode.cc:236 ../src/settingsMode.cc:240
+#: ../src/helpMode.cc:212 ../src/settingsMode.cc:240
 msgid "Back"
 msgstr "Vissza"
 
@@ -656,11 +652,11 @@ msgstr "Vissza"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:130 ../src/setupMode.cc:180
+#: ../src/hofMode.cc:130 ../src/setupMode.cc:175
 msgid "Level Set"
 msgstr "Pályacsoport"
 
-#: ../src/hofMode.cc:147
+#: ../src/hofMode.cc:146
 #, c-format
 msgid "%d points"
 msgstr "%d pont"
@@ -711,50 +707,50 @@ msgstr "Gratulálok"
 msgid "You have completed the game!"
 msgstr "Teljesítetted a játékot"
 
-#: ../src/mainMode.cc:519 ../src/mainMode.cc:535
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "Sok szerencsét!"
 
-#: ../src/mainMode.cc:627
+#: ../src/mainMode.cc:628
 #, c-format
 msgid "Level bonuses"
 msgstr "Pálya bónuszok"
 
-#: ../src/mainMode.cc:629
+#: ../src/mainMode.cc:630
 #, c-format
 msgid "Lives left:"
 msgstr "Megmaradt életek:"
 
-#: ../src/mainMode.cc:630
+#: ../src/mainMode.cc:631
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d pont"
 
-#: ../src/mainMode.cc:631
+#: ../src/mainMode.cc:632
 #, c-format
 msgid "Time left:"
 msgstr "Hátralévő idő:"
 
-#: ../src/mainMode.cc:632
+#: ../src/mainMode.cc:633
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d perc = %d pont"
 
-#: ../src/mainMode.cc:634
+#: ../src/mainMode.cc:635
 #, c-format
 msgid "Difficulty:"
 msgstr "Nehézségi szint:"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "easy"
 msgstr "könnyű"
 
-#: ../src/mainMode.cc:636 ../src/settingsMode.cc:198
+#: ../src/mainMode.cc:637 ../src/settingsMode.cc:198
 #, c-format
 msgid "normal"
 msgstr "normál"
 
-#: ../src/mainMode.cc:636
+#: ../src/mainMode.cc:637
 msgid "hard"
 msgstr "nehéz"
 
@@ -1076,70 +1072,70 @@ msgstr "  Effektek hangereje"
 msgid "  Language"
 msgstr "  Nyelv"
 
-#: ../src/setupMode.cc:172
+#: ../src/setupMode.cc:167
 msgid "Setup new game"
 msgstr "Új játék beállítása"
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:171
 msgid "Player Name"
 msgstr "Játékos neve"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:177
 msgid "N/A"
 msgstr "Nincs"
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:183
 msgid "Level"
 msgstr "Pálya"
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:191
 msgid "Difficulty"
 msgstr "Nehézség"
 
-#: ../src/setupMode.cc:201
+#: ../src/setupMode.cc:196
 msgid "Sandbox (Easy)"
 msgstr "Homokozó (Könnyű)"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Normal)"
 msgstr "Homokozó (Normál)"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:197
 msgid "Sandbox (Hard)"
 msgstr "Homokozó (Nehéz)"
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:199
 msgid "Easy"
 msgstr "Könnyű"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Normal"
 msgstr "Normál"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:200
 msgid "Hard"
 msgstr "Nehéz"
 
-#: ../src/setupMode.cc:209
+#: ../src/setupMode.cc:204
 msgid "Start Game"
 msgstr "Játék indítása"
 
-#: ../src/setupMode.cc:213
+#: ../src/setupMode.cc:208
 #, c-format
 msgid "Total games played: %d"
 msgstr "Összes eddigi játék: %d"
 
-#: ../src/setupMode.cc:217
+#: ../src/setupMode.cc:212
 #, c-format
 msgid "Average score: %d"
 msgstr "Átlagos pontszám: %d"
 
-#: ../src/setupMode.cc:219
+#: ../src/setupMode.cc:214
 #, c-format
 msgid "Average score: N/A"
 msgstr "Átlagos pontszám: nincs"
 
-#: ../src/setupMode.cc:222
+#: ../src/setupMode.cc:217
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Teljesített pályák: %d"
@@ -1836,6 +1832,9 @@ msgstr ""
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
+
+#~ msgid "MORE HELP"
+#~ msgstr "További segítség"
 
 #~ msgid "Error, called CalibrateJoystickMode without valid joystick!\n"
 #~ msgstr "Hiba, CalibrateJoystickMode meghívása botkormány nélkül.\n"
