@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 11:25-0400\n"
+"POT-Creation-Date: 2017-05-29 11:16-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -469,17 +469,17 @@ msgstr "%d punti"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:830
+#: ../src/glHelp.cc:831
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/glHelp.cc:832
+#: ../src/glHelp.cc:833
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: ../src/glHelp.cc:834
+#: ../src/glHelp.cc:835
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""

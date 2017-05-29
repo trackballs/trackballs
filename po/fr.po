@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-28 11:25-0400\n"
-"PO-Revision-Date: 2017-05-28 11:51-0400\n"
+"POT-Creation-Date: 2017-05-29 11:16-0400\n"
+"PO-Revision-Date: 2017-05-29 11:15-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -164,14 +164,12 @@ msgid "Center"
 msgstr "Centre"
 
 #: ../src/editMode.cc:162
-#, fuzzy
 msgid "Raise increment"
-msgstr "Augmenter l'altitude"
+msgstr "Augmenter l'incrément"
 
 #: ../src/editMode.cc:162
-#, fuzzy
 msgid "Lower increment"
-msgstr "Diminuer l'altitude"
+msgstr "Diminuer l'incrément"
 
 #: ../src/editMode.cc:163
 msgid "*<SHIFT> reversed"
@@ -228,7 +226,7 @@ msgstr "Piste"
 
 #: ../src/editMode.cc:166 ../src/editMode.cc:180
 msgid "Shade flat"
-msgstr ""
+msgstr "Ombrer plat"
 
 #: ../src/editMode.cc:166
 msgid "Texture"
@@ -462,26 +460,26 @@ msgid "page %d / %d"
 msgstr "page %d / %d"
 
 #: ../src/enterHighScoreMode.cc:74
-#, fuzzy, c-format
+#, c-format
 msgid "You got %d points"
-msgstr "%d points"
+msgstr "Vous avez %d points"
 
 #: ../src/enterHighScoreMode.cc:79
 #, c-format
 msgid "Enter your name: %s"
-msgstr ""
+msgstr "Entrez votre nom: %s"
 
-#: ../src/glHelp.cc:830
+#: ../src/glHelp.cc:831
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:832
+#: ../src/glHelp.cc:833
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:834
+#: ../src/glHelp.cc:835
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -872,32 +870,32 @@ msgstr "   -j  --repair-joystick Pour certaines (mauvaises) manettes de jeu\n"
 #: ../src/mmad.cc:212
 #, c-format
 msgid "Important keyboard shortcuts\n"
-msgstr ""
+msgstr "Raccourcis clavier importants:\n"
 
 #: ../src/mmad.cc:213
 #, c-format
 msgid "   Escape     Soft quit\n"
-msgstr ""
+msgstr "   Echap.     Quitter doucement\n"
 
 #: ../src/mmad.cc:214
 #, c-format
 msgid "   CapsLock   Unhide mouse pointer\n"
-msgstr ""
+msgstr "   VerrMaj   Révéler le pointeur de la souris\n"
 
 #: ../src/mmad.cc:215
 #, c-format
 msgid "   CTRL-q     Quit the game immediatly\n"
-msgstr ""
+msgstr "   CTRL-q     Quitter le jeu immédiatement\n"
 
 #: ../src/mmad.cc:216
 #, c-format
 msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
-msgstr ""
+msgstr "   CTRL-f     Basculer entre le mode plein écran / fenêtré\n"
 
 #: ../src/mmad.cc:217
 #, c-format
 msgid "   k          Kill the ball\n"
-msgstr ""
+msgstr "   k          Tuer la balle\n"
 
 #: ../src/mmad.cc:320
 #, c-format
@@ -921,26 +919,25 @@ msgstr "Parametres de jeu"
 #: ../src/settingsMode.cc:95
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
-msgstr ""
+msgstr "La résolution %dx%dx%d est-elle acceptable?"
 
 #: ../src/settingsMode.cc:98
 #, c-format
 msgid "Is resolution Auto-%d ok?"
-msgstr ""
+msgstr "La résolution Auto-%d est-elle acceptable?"
 
 #: ../src/settingsMode.cc:102
-#, fuzzy
 msgid "Ok, use this resolution"
-msgstr "  Resolution"
+msgstr "Oui, utilisez cette résolution"
 
 #: ../src/settingsMode.cc:103
 msgid "No, revert to old resolution"
-msgstr ""
+msgstr "Non, revenir à l'ancienne résolution"
 
 #: ../src/settingsMode.cc:105
 #, c-format
 msgid "Timeout in %d seconds"
-msgstr ""
+msgstr "Délai d'attente en %d secondes"
 
 #: ../src/settingsMode.cc:119
 msgid "Graphics"
@@ -949,16 +946,15 @@ msgstr "Graphismes"
 #: ../src/settingsMode.cc:126
 #, c-format
 msgid "Auto-%d"
-msgstr ""
+msgstr "Auto-%d"
 
 #: ../src/settingsMode.cc:128
 msgid "  Resolution"
 msgstr "  Resolution"
 
 #: ../src/settingsMode.cc:129
-#, fuzzy
 msgid "  Test this resolution"
-msgstr "  Resolution"
+msgstr "Testez cette résolution"
 
 #: ../src/settingsMode.cc:132
 msgid "  Fullscreen"
@@ -1004,7 +1000,7 @@ msgstr "  Reflexions (beta)"
 
 #: ../src/settingsMode.cc:163
 msgid "  VSync"
-msgstr ""
+msgstr "VSYNC"
 
 #: ../src/settingsMode.cc:172
 #, c-format
@@ -1047,9 +1043,9 @@ msgid "  Steering"
 msgstr "  Direction"
 
 #: ../src/settingsMode.cc:210
-#, fuzzy, c-format
+#, c-format
 msgid "no joystick found"
-msgstr "pas de manette de jeu"
+msgstr "Aucun joystick n'a été trouvé"
 
 #: ../src/settingsMode.cc:214
 msgid "  Joystick:"
@@ -1072,9 +1068,8 @@ msgid "  Language"
 msgstr "  Langage"
 
 #: ../src/setupMode.cc:167
-#, fuzzy
 msgid "Setup new game"
-msgstr "Parametrer le nouveau jeu"
+msgstr "Configurer un nouveau jeu"
 
 #: ../src/setupMode.cc:171
 msgid "Player Name"
@@ -1082,7 +1077,7 @@ msgstr "Nom du joueur"
 
 #: ../src/setupMode.cc:177
 msgid "N/A"
-msgstr ""
+msgstr "ND"
 
 #: ../src/setupMode.cc:183
 msgid "Level"
@@ -1234,11 +1229,11 @@ msgstr "1er Étranger"
 
 #: ../share/levels/dn.set:4
 msgid "A strange set of levels with a strange name -"
-msgstr ""
+msgstr "Un ensemble étrange de niveaux avec un nom étrange -"
 
 #: ../share/levels/dn.set:5
 msgid "All made by Francek."
-msgstr ""
+msgstr "Tous faits par Francek."
 
 #: ../share/levels/elite.set:1
 msgid "Elite"
@@ -1270,7 +1265,7 @@ msgstr "L'hiver"
 
 #: ../share/levels/fourSeasons.set:4
 msgid "Play all year round! First comes the winter, then comes the..."
-msgstr ""
+msgstr "Jouez toute l'année! D'abord vient l'hiver, puis vient le ..."
 
 #: ../share/levels/frg.set:1
 msgid "Great Escape"
@@ -1323,7 +1318,7 @@ msgstr "Gaminz"
 
 #: ../share/levels/ki.set:3 ../share/levels/ki1.scm:7
 msgid "Right Angles"
-msgstr "Coin de droite"
+msgstr "Angles droits"
 
 #: ../share/levels/ki.set:4
 msgid "This is meant to be a very easy and basic level for ages 4-5."
@@ -1428,15 +1423,15 @@ msgstr "Vous avez fini!"
 
 #: ../share/levels/bonus.scm:39
 msgid "Spikes, 400pt"
-msgstr ""
+msgstr "Pointes, 400pt"
 
 #: ../share/levels/bonus.scm:43
 msgid "Speed, 300pt"
-msgstr ""
+msgstr "Vitesse, 300pt"
 
 #: ../share/levels/bonus.scm:47
 msgid "Jump, 200pt"
-msgstr ""
+msgstr "Saut, 200pt"
 
 #: ../share/levels/bx2.scm:5
 msgid "Four Doors"
@@ -1669,35 +1664,35 @@ msgstr "Champion d'échecs"
 
 #: ../share/levels/jump2.scm:5
 msgid "Megajump"
-msgstr ""
+msgstr "Saut énorme"
 
 #: ../share/levels/jump3.scm:4
 msgid "Upstairs"
-msgstr ""
+msgstr "En étage"
 
 #: ../share/levels/jump4.scm:4
 msgid "Speedjump"
-msgstr ""
+msgstr "Saut de vitesse"
 
 #: ../share/levels/jump5.scm:4
 msgid "Dangerous Jump"
-msgstr ""
+msgstr "Saut dangereux"
 
 #: ../share/levels/ki2.scm:5
 msgid "At the Beach"
-msgstr ""
+msgstr "À la plage"
 
 #: ../share/levels/ki3.scm:5
 msgid "Ice Skating Rink"
-msgstr ""
+msgstr "Patinoire"
 
 #: ../share/levels/ki4.scm:4
 msgid "Clowning Around"
-msgstr ""
+msgstr "Faire le pitre"
 
 #: ../share/levels/ki5.scm:5
 msgid "Half-pipe"
-msgstr ""
+msgstr "Half-pipe"
 
 #: ../share/levels/lv1.scm:94
 msgid "and his Minions"
@@ -1745,27 +1740,27 @@ msgstr "Restez sur le chemin!"
 
 #: ../share/levels/Shop1.scm:6
 msgid "Speed-pill 2 minutes: 300 points"
-msgstr ""
+msgstr "Pilule de vitesse: 300 points"
 
 #: ../share/levels/Shop1.scm:10
 msgid "Extra Life: 800 points"
-msgstr ""
+msgstr "Vie supplémentaire: 800 points"
 
 #: ../share/levels/Shop2.scm:7
 msgid "Extra life: 800 points"
-msgstr ""
+msgstr "Vie supplémentaire: 800 points"
 
 #: ../share/levels/Shop2.scm:11
 msgid "Giant-package half a minute: 200 points"
-msgstr ""
+msgstr "Géant une demi minute: 200 points"
 
 #: ../share/levels/Shop2.scm:15
 msgid "Speed-pill one minute: 200 points"
-msgstr ""
+msgstr "Pilule de vitesse une minute: 200 points"
 
 #: ../share/levels/Shop2.scm:19
 msgid "Nitro-speed two minutes: 1000 points"
-msgstr ""
+msgstr "Vitesse nitro deux minutes: 1000 points"
 
 #: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
 msgid "No jumping!"
@@ -1773,27 +1768,27 @@ msgstr "Ne pas sauter!"
 
 #: ../share/levels/sl2.scm:9
 msgid "Scale the Mountain"
-msgstr ""
+msgstr "Escalader la montagne"
 
 #: ../share/levels/sl2.scm:64
 msgid "Kill me!"
-msgstr ""
+msgstr "Tuez-moi!"
 
 #: ../share/levels/sl3.scm:9
 msgid "The Longest Pipe in the World"
-msgstr ""
+msgstr "La pipe la plus longue au monde"
 
 #: ../share/levels/sl3.scm:153
 msgid "Smash some badguys and see what happens"
-msgstr ""
+msgstr "Écrasez des méchants et voyez ce qui se passe"
 
 #: ../share/levels/sl4.scm:9
 msgid "Hurry up!"
-msgstr ""
+msgstr "Dépêchez-vous!"
 
 #: ../share/levels/sl5.scm:5
 msgid "The Marble Mansion"
-msgstr ""
+msgstr "Le manoir de marbre"
 
 #: ../share/levels/sl5.scm:49
 msgid "Pull twice"
@@ -1801,7 +1796,7 @@ msgstr "Tirez deux fois"
 
 #: ../share/levels/sl5.scm:57
 msgid "You may check out the roof again"
-msgstr ""
+msgstr "Vous pouvez vérifier le toit à nouveau"
 
 #: ../share/levels/sl5.scm:84
 msgid "Oxygen"
@@ -1809,19 +1804,19 @@ msgstr "Oxygène"
 
 #: ../share/levels/sl6.scm:9
 msgid "The Marble HQ"
-msgstr ""
+msgstr "Le QG de marbre"
 
 #: ../share/levels/sl6.scm:200
 msgid "The Marble HQ - Do not Enter!"
-msgstr ""
+msgstr "Le QG de marbe -- Ne pas entrer!"
 
 #: ../share/levels/sl6.scm:341
 msgid "Bonus"
-msgstr ""
+msgstr "Bonus"
 
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
-msgstr ""
+msgstr "Salle du commandant"
 
 #~ msgid "MORE HELP"
 #~ msgstr "Plus d'aide"
