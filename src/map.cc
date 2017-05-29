@@ -34,7 +34,7 @@ using namespace std;
 
 /* VISRADIUS is half-width of square of drawable cells
    MARGIN    is px zone on edge of screen where cells can be skipped. */
-#define VISRADIUS 50
+#define VISRADIUS 100
 #define CACHE_SIZE (VISRADIUS * 2 + 1)
 #define MARGIN 10
 #define CHUNKSIZE 32

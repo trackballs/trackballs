@@ -564,6 +564,7 @@ void EditMode::doCommand(int command) {
   mouseState = SDL_GetMouseState(&mouseX, &mouseY);
 
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
+  int ctrl = SDL_GetModState() & (KMOD_LCTRL | KMOD_RCTRL);
 
   /* File commands are handled first */
   switch (command) {
@@ -695,16 +696,16 @@ void EditMode::doCommand(int command) {
     break;
 
   case MOVE_UP:
-    x += (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
+    x += (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_DOWN:
-    x -= (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
+    x -= (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_LEFT:
-    y += (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
+    y += (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_RIGHT:
-    y -= (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
+    y -= (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
     break;
 
   case MOVE_SET_MARKER:
