@@ -78,23 +78,49 @@ struct StringCache {
 static long stringTick = 0;
 static std::map<StringInfo, StringCache> strcache;
 
+static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
+  SDL_Surface *outline;
+  if (outlined) {
+    TTF_SetFontOutline(inf.font, 0);
+    SDL_Surface *inner = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
+    if (!inner) {
+      warning("Failed to render string outline '%s'", inf.string);
+      return NULL;
+    }
+    TTF_SetFontOutline(inf.font, 2);
+    SDL_Color blkColor = {0, 0, 0, 0};
+    outline = TTF_RenderUTF8_Blended(inf.font, inf.string, blkColor);
+    if (!outline) {
+      warning("Failed to render string inside '%s'", inf.string);
+      return NULL;
+    }
+    SDL_Rect rect = {2, 2, inner->w, inner->h};
+    SDL_SetSurfaceBlendMode(inner, SDL_BLENDMODE_BLEND);
+    SDL_BlitSurface(inner, NULL, outline, &rect);
+    SDL_FreeSurface(inner);
+  } else {
+    outline = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
+    if (!outline) {
+      warning("Failed to render string '%s'", inf.string);
+      return NULL;
+    }
+  }
+  return outline;
+}
+
 void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
                   float blue, float alpha, int outlined) {
   int w, h;
-  SDL_Color fgColor = {255, 255, 255, 255};
-  SDL_Color blkColor = {0, 0, 0, 0};
-  SDL_Surface *outline;
   GLuint texture;
   GLfloat texcoord[4];
   GLfloat texMinX, texMinY;
   GLfloat texMaxX, texMaxY;
 
-  fgColor.r = 255 * red;
-  fgColor.g = 255 * green;
-  fgColor.b = 255 * blue;
-  fgColor.a = 255 * alpha;
   struct StringInfo inf;
-  inf.color = fgColor;
+  inf.color.r = 255 * red;
+  inf.color.g = 255 * green;
+  inf.color.b = 255 * blue;
+  inf.color.a = 255 * alpha;
   inf.font = font;
   inf.x = x;
   inf.y = y;
@@ -103,31 +129,8 @@ void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, f
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
     newentry.tick = stringTick;
-    if (outlined) {
-      TTF_SetFontOutline(font, 0);
-      SDL_Surface *inner = TTF_RenderUTF8_Blended(font, string, fgColor);
-      if (!inner) {
-        warning("Failed to render string outline '%s'", string);
-        return;
-      }
-      TTF_SetFontOutline(font, 2);
-      outline = TTF_RenderUTF8_Blended(font, string, blkColor);
-      if (!outline) {
-        warning("Failed to render string inside '%s'", string);
-        return;
-      }
-      SDL_Rect rect = {2, 2, inner->w, inner->h};
-      SDL_SetSurfaceBlendMode(inner, SDL_BLENDMODE_BLEND);
-      SDL_BlitSurface(inner, NULL, outline, &rect);
-      SDL_FreeSurface(inner);
-    } else {
-      outline = TTF_RenderUTF8_Blended(font, string, fgColor);
-      if (!outline) {
-        warning("Failed to render string '%s'", string);
-        return;
-      }
-    }
-    newentry.surf = outline;
+    newentry.surf = drawStringToSurface(inf, outlined);
+    if (!newentry.surf) { return; }
     strcache[inf] = newentry;
   }
 
@@ -147,6 +150,7 @@ void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, f
   Enter2DMode();
   glBindTexture(GL_TEXTURE_2D, texture);
   glBegin(GL_TRIANGLE_STRIP);
+  glColor4f(1., 1., 1., 1.);
   glTexCoord2f(texMinX, texMinY);
   glVertex2i(x, y);
   glTexCoord2f(texMaxX, texMinY);
@@ -1083,14 +1087,22 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   texcoord[2] = (GLfloat)surface->w / w; /* Max X */
   texcoord[3] = (GLfloat)surface->h / h; /* Max Y */
 
-  image = SDL_CreateRGBSurface(SDL_SWSURFACE, (int)(w * scale), (int)(h * scale), 32,
-
+  Uint32 mask[4];
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
-                               0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000
+  mask[0] = 0x000000FF;
+  mask[1] = 0x0000FF00;
+  mask[2] = 0x00FF0000;
+  mask[3] = 0xFF000000;
 #else
-                               0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF
+  mask[0] = 0xFF000000;
+  mask[1] = 0x00FF0000;
+  mask[2] = 0x0000FF00;
+  mask[3] = 0x000000FF;
 #endif
-                               );
+
+  image = SDL_CreateRGBSurface(SDL_SWSURFACE, (int)(w * scale), (int)(h * scale), 32, mask[0],
+                               mask[1], mask[2], mask[3]);
+
   if (image == NULL) { return 0; }
 
   /* Save the alpha blending attributes */

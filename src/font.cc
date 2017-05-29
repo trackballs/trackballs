@@ -52,9 +52,6 @@ int Font::drawSimpleText(const char *text, int x, int y, float sz, float r, floa
 
   Enter2DMode();
 
-  glEnable(GL_BLEND);
-  glEnable(GL_TEXTURE_2D);
-
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
   draw2DString(active, text, x, y, r, g, b, a, sz > 10);
