@@ -1569,6 +1569,7 @@ int Map::save(char* pathname, int x, int y) {
   gzwrite(gp, data, sizeof(int32_t) * 1);
   for (i = 0; i < numTextures; i++) {
     char textureName[64];
+    memset(textureName, 0, sizeof(textureName));
     snprintf(textureName, 63, textureNames[i]);
     gzwrite(gp, textureName, 64);
   }

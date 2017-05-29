@@ -537,7 +537,8 @@ int loadTexture(const char *name) {
   surface = IMG_Load(str);
   if (!surface) {
     warning("Failed to load texture %s", str);
-    textureNames[numTextures] = strdup(name);
+    // Override texture name... (to avoid carrying on outdated tex names)
+    textureNames[numTextures] = strdup(textureNames[0]);
     textures[numTextures++] =
         textures[0];  // just assume we managed to load this, better than nothing
     return -1;
