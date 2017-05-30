@@ -49,10 +49,9 @@ class Cell {
   float sunken;           // used for trampoline effect
   float waterHeights[5];  // absolute height of water in cell, values <= -100.0 is treated as
                           // no water.
-  float textureCoords[4][2];  // Texture coordinates of corners. Center is average.
 
   int flags, texture;
-  int displayList, displayListLastCompiled, displayListDirty;
+  int displayListDirty;
 
   void dump(gzFile gp) const;
   void load(class Map *map, gzFile gp, int version);
@@ -97,10 +96,7 @@ class Map {
   void markCellUpdated(int x, int y);
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
-  void drawMapVBO(int birdseye, int x, int y, int stage);
   void fillChunkVBO(Chunk *c) const;
-  void drawCell(int birdsEye, int stage, int x, int y);
-  void drawCellAA(int birdsEye, int x, int y);
   void drawFootprint(int x, int y, int kind);
   inline Real getHeight(Real x, Real y) const {
     int ix = (int)x;

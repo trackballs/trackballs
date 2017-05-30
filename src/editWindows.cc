@@ -196,7 +196,7 @@ void EStatusWindow::draw() {
   int col0 = x + 2 + fontSize / 2;
   int col1 = x + 2 + fontSize / 2 + fontSize * 10;
   int area3x = x + 520;
-  char str[256];
+  char str[512];
 
   snprintf(str, 255, "Pos: %d,%d", EditMode::editMode->x, EditMode::editMode->y);
   addText_Left(0, fontSize / 2, row2, str, col0);
@@ -431,7 +431,7 @@ void ESaveWindow::draw() {
   this->MyWindow::draw();
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
-  char str[256];
+  char str[512];
 
   if (!saveCnt) {
     addText_Center(0, fontSize / 2, row1, _("Save map?"), x + width / 2);

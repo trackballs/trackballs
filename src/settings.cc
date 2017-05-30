@@ -139,7 +139,7 @@ Settings::Settings() {
 }
 void Settings::loadLevelSets() {
   /* Load all levelsets */
-  char str[256];
+  char str[512];
   nLevelSets = 0;
 
   /* ugly fix to make levelset lv.set the first level set */

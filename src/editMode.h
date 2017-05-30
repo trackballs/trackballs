@@ -54,8 +54,8 @@ class EditMode : public GameMode {
   void pasteRegion();
 
   class Map *map;
-  char levelname[512];
-  char pathname[512];
+  char levelname[256];
+  char pathname[256];
   double time;
 
   static EditMode *editMode;

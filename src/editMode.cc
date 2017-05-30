@@ -232,12 +232,12 @@ EditMode::~EditMode() {
 }
 
 void EditMode::loadMap(char* name) {
-  char mapname[256];
+  char mapname[512];
 
   if (map) closeMap();
 
   // Store name of level to edit
-  snprintf(levelname, sizeof(levelname), name);
+  strncpy(levelname, name, sizeof(levelname));
 
   /* Set the pathname under which we will save the map */
   snprintf(pathname, sizeof(pathname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
@@ -291,8 +291,8 @@ void EditMode::closeMap() {
 void EditMode::saveMap() {
   if (!map) return;
 
-  char mapname[256];
-  char str[256];
+  char mapname[768];
+  char str[768];
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
   if (pathIsLink(str)) {
@@ -1510,15 +1510,14 @@ void EditMode::pasteRegion() {
       memcpy(toCell.colors, fromCell.colors, sizeof(toCell.colors));
       memcpy(toCell.wallColors, fromCell.wallColors, sizeof(toCell.wallColors));
       memcpy(toCell.waterHeights, fromCell.waterHeights, sizeof(toCell.waterHeights));
-      memcpy(toCell.textureCoords, fromCell.textureCoords, sizeof(toCell.textureCoords));
       toCell.sunken = fromCell.sunken;
       toCell.flags = fromCell.flags;
       toCell.texture = fromCell.texture;
       map->markCellUpdated(cx + x, cy + y);
       map->markCellUpdated(cx + x - 1, cy + y);
       map->markCellUpdated(cx + x, cy + y + 1);
-      map->markCellUpdated(cx + x - 1, cy + y);
-      map->markCellUpdated(cx + x, cy + y + 1);
+      map->markCellUpdated(cx + x + 1, cy + y);
+      map->markCellUpdated(cx + x, cy + y - 1);
     }
 }
 
