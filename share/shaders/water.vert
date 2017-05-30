@@ -1,3 +1,5 @@
+#version 130
+
 #ifdef GL_ES
 precision mediump int;
 precision mediump float;
@@ -30,7 +32,7 @@ void main(void) {
   // noise2 doesn't do anything?
   vec2 noi = 0.3 * vec2(sin(npa), cos(npa));
 
-  texco = vec2(0.625, 0.125) + 0.125 * in_Texcoord + 0.125 * vel + 0.125 * noi;
+  texco = in_Texcoord + vel + noi;
 
   inormal = vec4(model_matrix*2.*vec4(in_Normal.xyz-0.5,0.)).xyz;
 }

@@ -1,3 +1,5 @@
+#version 130
+
 #ifdef GL_ES
 precision mediump float;
 #endif
@@ -6,10 +8,9 @@ uniform int fog_active;
 uniform int render_stage;
 uniform mat4 model_matrix;
 
-// TODO 1d array!
-uniform sampler2D tex;
+uniform sampler2DArray arrtex;
 varying vec4 fcolor;
-varying vec2 texco;
+varying vec3 texco;
 varying vec3 cpos;
 varying vec3 inormal;
 varying float flatkey;
@@ -28,7 +29,8 @@ void main(void) {
   } else {
     normal = normalize(cross(dFdx(cpos),dFdy(cpos)));
   }
-  vec4 texcolor = fcolor * texture2D(tex, texco);
+  float clamped = max(0, min(8, floor(16.*texco.z+0.5)));
+  vec4 texcolor = fcolor * texture(arrtex, vec3(texco.xy,clamped));
 
   // Lighting model, not tuned very much
   vec3 L = normalize(gl_LightSource[0].position.xyz - cpos);

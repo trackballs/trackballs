@@ -119,8 +119,9 @@ class Map {
   char mapname[256], author[256];
   int indexTranslation[256];  // translates indices when reading map.
 
-  int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Map, tx_1, tx_2, tx_3, tx_4;
+  int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Water, tx_1, tx_2, tx_3, tx_4;
   Coord3d startPosition;
+  GLuint texture_Array;
 
   static const int flagNone, flagFlashCenter, flagTranslucent, flagShowCross;
   static const int mapFormatVersion;

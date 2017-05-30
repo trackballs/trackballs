@@ -1,3 +1,5 @@
+#version 130
+
 #ifdef GL_ES
 precision mediump int;
 precision mediump float;
@@ -10,12 +12,12 @@ uniform float gameTime;
 
 attribute vec3 in_Position;
 attribute vec4 in_Color;
-attribute vec2 in_Texcoord;
+attribute vec4 in_Texcoord;
 attribute vec2 in_Velocity;
 attribute vec4 in_Normal;
 
 varying vec4 fcolor;
-varying vec2 texco;
+varying vec3 texco;
 varying vec3 cpos;
 varying vec3 inormal;
 varying float flatkey;
@@ -26,8 +28,8 @@ void main(void) {
   gl_Position = mvp_matrix * pos;
   cpos = vec4(model_matrix * pos).xyz;
   fcolor = in_Color;
-  vec2 vel = mod(-gameTime * 4. * in_Velocity, 1.);
-  texco = in_Texcoord + 0.125 * vel;
+  vec2 vel = mod(-gameTime * in_Velocity, 1.);
+  texco = vec3(vec2(in_Texcoord.xy + vel).xy,in_Texcoord.z);
 
   if (distance(in_Normal.xyz,vec3(0.5,0.5,0.5)) > 0.1) {
     flatkey = 1.0;
