@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-29 11:16-0400\n"
-"PO-Revision-Date: 2017-05-29 11:15-0400\n"
+"POT-Creation-Date: 2017-05-30 19:09-0400\n"
+"PO-Revision-Date: 2017-05-30 19:29-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -47,7 +47,7 @@ msgstr "Pressez un bouton pour continuer"
 
 #: ../src/calibrateJoystickMode.cc:131
 msgid "Press escape to cancel"
-msgstr "Pressez Echap. pour annuler"
+msgstr "Pressez Échap. pour annuler"
 
 #: ../src/calibrateJoystickMode.cc:134
 #, c-format
@@ -78,7 +78,7 @@ msgstr "Drapeaux"
 
 #: ../src/editMode.cc:151
 msgid "Feature"
-msgstr "Fonctionnalite"
+msgstr "Fonctionnalité"
 
 #: ../src/editMode.cc:151
 msgid "Move"
@@ -86,7 +86,7 @@ msgstr "Deplacer"
 
 #: ../src/editMode.cc:151
 msgid "Window"
-msgstr "Fenetre"
+msgstr "Fenêtre"
 
 #: ../src/editMode.cc:151
 msgid "View"
@@ -133,7 +133,7 @@ msgstr "Changer l'eau"
 
 #: ../src/editMode.cc:160
 msgid "Edit velocity"
-msgstr "Changer la velocite"
+msgstr "Changer la vélocité"
 
 #: ../src/editMode.cc:160
 msgid "Edit lines"
@@ -254,7 +254,7 @@ msgstr "Grande colline"
 
 #: ../src/editMode.cc:167 ../src/editMode.cc:184
 msgid "Huge hill"
-msgstr "Enorme colline"
+msgstr "Énorme colline"
 
 #: ../src/editMode.cc:168
 msgid "Smooth small"
@@ -262,7 +262,7 @@ msgstr "Petite surface lisse"
 
 #: ../src/editMode.cc:168
 msgid "Smooth large"
-msgstr "Grande surface lisse "
+msgstr "Grande surface lisse"
 
 #: ../src/editMode.cc:169
 msgid "/UP Move up"
@@ -282,19 +282,19 @@ msgstr "/DROITE Vers la droite"
 
 #: ../src/editMode.cc:170
 msgid "Shift map up"
-msgstr "Deplacer la carte vers le haut"
+msgstr "Déplacer la carte vers le haut"
 
 #: ../src/editMode.cc:170
 msgid "Shift map down"
-msgstr "Deplacer la carte vers le bas"
+msgstr "Déplacer la carte vers le bas"
 
 #: ../src/editMode.cc:170
 msgid "Shift map left"
-msgstr "Deplacer la carte vers la gauche"
+msgstr "Déplacer la carte vers la gauche"
 
 #: ../src/editMode.cc:170
 msgid "Shift map right"
-msgstr "Deplacer la carte vers la droite"
+msgstr "Déplacer la carte vers la droite"
 
 #: ../src/editMode.cc:171
 msgid "*<SHIFT> x5"
@@ -302,7 +302,7 @@ msgstr "*<SHIFT> x5"
 
 #: ../src/editMode.cc:171
 msgid "Set region marker"
-msgstr "Definir le marqueur de region"
+msgstr "Définir le marqueur de region"
 
 #: ../src/editMode.cc:171
 msgid "Clear marker"
@@ -310,15 +310,15 @@ msgstr "Effacer le marqueur"
 
 #: ../src/editMode.cc:171
 msgid "Copy region"
-msgstr "Copier la region"
+msgstr "Copier la région"
 
 #: ../src/editMode.cc:172
 msgid "Paste region"
-msgstr "Coller la region"
+msgstr "Coller la région"
 
 #: ../src/editMode.cc:173
 msgid "Editor"
-msgstr "Editeur"
+msgstr "Éditeur"
 
 #: ../src/editMode.cc:173
 msgid "Toolbar"
@@ -356,12 +356,12 @@ msgstr ";;; Piste: %s\n"
 #: ../src/editMode.cc:337
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
-msgstr ";;; Ceci est le fichier de script par defaut pour cette piste.\n"
+msgstr ";;; Ceci est le fichier de script par défaut pour cette piste.\n"
 
 #: ../src/editMode.cc:338
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
-msgstr ";;; Lisez la documentation de l'editeur et regardez les exemples\n"
+msgstr ";;; Lisez la documentation de l'éditeur et regardez les exemples\n"
 
 #: ../src/editMode.cc:339
 #, c-format
@@ -385,7 +385,7 @@ msgstr "Pos: %d,%d"
 #: ../src/editMode.cc:486
 #, c-format
 msgid "Feature: %s"
-msgstr "Fonctionnalite: %s"
+msgstr "Fonctionnalité: %s"
 
 #: ../src/editMode.cc:489
 #, c-format
@@ -469,17 +469,17 @@ msgstr "Vous avez %d points"
 msgid "Enter your name: %s"
 msgstr "Entrez votre nom: %s"
 
-#: ../src/glHelp.cc:831
+#: ../src/glHelp.cc:835
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:833
+#: ../src/glHelp.cc:837
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:835
+#: ../src/glHelp.cc:839
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -490,7 +490,7 @@ msgstr "Votre boule :"
 
 #: ../src/helpMode.cc:164
 msgid "Steer this with your mouse, numpad or arrows. "
-msgstr "Deplacez-la avec la souris, le pave numerique ou les fleches. "
+msgstr "Déplacez-la avec la souris, le pave numérique ou les flèches. "
 
 #: ../src/helpMode.cc:165
 msgid "Left mouse or spacebar is jump."
@@ -498,7 +498,7 @@ msgstr "Le bouton gauche de la souris ou espace pour sauter."
 
 #: ../src/helpMode.cc:166
 msgid "Shift gives top speed when using keyboard."
-msgstr "Shift donne de la vitesse quand on utilise le clavier."
+msgstr "Maj donne de la vitesse quand on utilise le clavier."
 
 #: ../src/helpMode.cc:167
 msgid "Mr Black:"
@@ -506,7 +506,7 @@ msgstr "M. Black:"
 
 #: ../src/helpMode.cc:167
 msgid "Your enemy. Defeat with Modpill - Spike."
-msgstr "Votre ennemi. Detruisez-le avec une pilule piquante."
+msgstr "Votre ennemi. Détruisez-le avec une pilule piquante."
 
 #: ../src/helpMode.cc:168
 msgid "Modpill Speed:"
@@ -514,7 +514,7 @@ msgstr "Pilule de vitesse:"
 
 #: ../src/helpMode.cc:168
 msgid "Makes you go faster for short period of time."
-msgstr "Augmente votre vitesse de deplacement temporairement."
+msgstr "Augmente votre vitesse de déplacement temporairement."
 
 #: ../src/helpMode.cc:169
 msgid "Modpill Spikes:"
@@ -530,7 +530,7 @@ msgstr "Pilule de glace:"
 
 #: ../src/helpMode.cc:170
 msgid "This will freeze you - avoid it."
-msgstr "Celle-ci vous congele. Evitez-la."
+msgstr "Celle-ci vous congèle. Évitez-la."
 
 #: ../src/helpMode.cc:171
 msgid "Modpill Glass:"
@@ -538,7 +538,7 @@ msgstr "Pilule de verre:"
 
 #: ../src/helpMode.cc:171
 msgid "Protects you from acid, but makes you more fragile."
-msgstr "Vous protege de l'acide, mais vous rend plus fragile."
+msgstr "Vous protège de l'acide, mais vous rend plus fragile."
 
 #: ../src/helpMode.cc:172
 msgid "Modpill Nitro:"
@@ -547,7 +547,7 @@ msgstr "Pilule de nitro:"
 #: ../src/helpMode.cc:172
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
-"Activee avec le second bouton, elle permet des deplacements tres rapides."
+"Activée avec le second bouton, elle permet des déplacements très rapides."
 
 #: ../src/helpMode.cc:173
 msgid "Switch:"
@@ -555,7 +555,7 @@ msgstr "Interrupteur:"
 
 #: ../src/helpMode.cc:173
 msgid "Activates/deactivates some object/element in the level."
-msgstr "Active/desactive un objet ou element du niveau."
+msgstr "Active/désactive un objet ou élément du niveau."
 
 #: ../src/helpMode.cc:174
 msgid "Moving spike:"
@@ -579,7 +579,7 @@ msgstr "Terrain normal:"
 
 #: ../src/helpMode.cc:176
 msgid "Can be of any color and is safe to move on."
-msgstr "Peut etre de diverses couleurs, et est sans danger."
+msgstr "Peut être de diverses couleurs, et est sans danger."
 
 #: ../src/helpMode.cc:177
 msgid "Acid terrain:"
@@ -591,7 +591,7 @@ msgstr "Tue votre boule a moins que vous ayez pris une pilule de verre."
 
 #: ../src/helpMode.cc:178
 msgid "Icy terrain:"
-msgstr "Terrain gele:"
+msgstr "Terrain gelé:"
 
 #: ../src/helpMode.cc:178
 msgid "Slippery terrain unless you have a spikes modpill."
@@ -603,7 +603,7 @@ msgstr "Terrain ensable:"
 
 #: ../src/helpMode.cc:179
 msgid "Soft to land on but will slow you down."
-msgstr "Mou pour atterrir mais ralentit les deplacements."
+msgstr "Mou pour atterrir mais ralentit les déplacements."
 
 #: ../src/helpMode.cc:180
 msgid "Goal:"
@@ -611,11 +611,11 @@ msgstr "But:"
 
 #: ../src/helpMode.cc:180
 msgid "Will take you to the next level. "
-msgstr "Vous amene au niveau suivant."
+msgstr "Vous amène au niveau suivant."
 
 #: ../src/helpMode.cc:181
 msgid "Get here before time runs out."
-msgstr "Allez-y avant que le temps soit ecoule."
+msgstr "Allez-y avant que le temps soit écoulé."
 
 #: ../src/helpMode.cc:182
 msgid "Force Field:"
@@ -623,7 +623,7 @@ msgstr "Champ de force:"
 
 #: ../src/helpMode.cc:182
 msgid "You cannot pass this unless you switch it off."
-msgstr "Vous ne pouvez pas passer sans le desactiver."
+msgstr "Vous ne pouvez pas passer sans le désactiver."
 
 #: ../src/helpMode.cc:183
 msgid "Some are lethal and some are one way."
@@ -635,7 +635,7 @@ msgstr "Tunnel:"
 
 #: ../src/helpMode.cc:184
 msgid "Takes you places, sometimes with great speed."
-msgstr "Vous amene a un autre endroit, parfois tres rapidement."
+msgstr "Vous amène a un autre endroit, parfois très rapidement."
 
 #: ../src/helpMode.cc:210
 msgid "More Help"
@@ -737,7 +737,7 @@ msgstr "%d minutes = %d points"
 #: ../src/mainMode.cc:635
 #, c-format
 msgid "Difficulty:"
-msgstr "Difficulte:"
+msgstr "Difficulté:"
 
 #: ../src/mainMode.cc:637
 msgid "easy"
@@ -772,13 +772,13 @@ msgid ""
 "out.                                               You steer the ball using "
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
-"Trackballs est un jeu inspire du classique Marble Madness (datant des annees "
+"Trackballs est un jeu inspire du classique Marble Madness (datant des années "
 "80). En manoeuvrant une boule de marbre a travers un labyrinthe rempli de "
 "pics pointus, de bains d'acide et d'autres obstacles vous collectez des "
 "points. Quand la balle atteint la destination, un nouveau niveau, plus "
-"difficile, commence. Bien sÃ»r, le temps est limite.Vous dirigez la boule "
+"difficile, commence. Bien sûr, le temps est limite.Vous dirigez la boule "
 "avec la souris et en pressant la barre d'espace, vous pouvez lui faire "
-"realiser de petits sauts."
+"réaliser de petits sauts."
 
 #: ../src/menuMode.cc:121
 msgid "New Game"
@@ -802,7 +802,7 @@ msgstr "Aide"
 
 #: ../src/menuMode.cc:126
 msgid "Map Editor"
-msgstr "Editeur de cartes"
+msgstr "Éditeur de cartes"
 
 #: ../src/mmad.cc:198
 #, c-format
@@ -825,7 +825,7 @@ msgstr "   -l  --level           Commence a ce niveau.\n"
 #: ../src/mmad.cc:202
 #, c-format
 msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
-msgstr "   -w  --windowed        Mode fenetre (plein ecran par defaut)\n"
+msgstr "   -w  --windowed        Mode fenêtre (plein écran par défaut)\n"
 
 #: ../src/mmad.cc:203
 #, c-format
@@ -835,12 +835,12 @@ msgstr "   -m  --mute            Son muet.\n"
 #: ../src/mmad.cc:204
 #, c-format
 msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
-msgstr "   -r  --resolution      Definit la resolution a 640, 800 ou 1024\n"
+msgstr "   -r  --resolution      Définit la résolution a 640, 800 ou 1024\n"
 
 #: ../src/mmad.cc:205
 #, c-format
 msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     Sensibilite de la souris, 1.0 par defaut\n"
+msgstr "   -s  --sensitivity     Sensibilité de la souris, 1.0 par défaut\n"
 
 #: ../src/mmad.cc:206
 #, c-format
@@ -860,7 +860,7 @@ msgstr "   -t  --touch           Met a jour une carte vers le format actuel\n"
 #: ../src/mmad.cc:209
 #, c-format
 msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
-msgstr "   -y  --low-memory      Essaie de limiter l'utilisation de memoire\n"
+msgstr "   -y  --low-memory      Essaie de limiter l'utilisation de mémoire\n"
 
 #: ../src/mmad.cc:210
 #, c-format
@@ -875,7 +875,7 @@ msgstr "Raccourcis clavier importants:\n"
 #: ../src/mmad.cc:213
 #, c-format
 msgid "   Escape     Soft quit\n"
-msgstr "   Echap.     Quitter doucement\n"
+msgstr "   Échap.     Quitter doucement\n"
 
 #: ../src/mmad.cc:214
 #, c-format
@@ -900,7 +900,7 @@ msgstr "   k          Tuer la balle\n"
 #: ../src/mmad.cc:320
 #, c-format
 msgid "Unknown screen resolution of width %d\n"
-msgstr "Resolution d'ecran inconnue de largeur %d\n"
+msgstr "Résolution d'écran inconnue de largeur %d\n"
 
 #: ../src/mmad.cc:351
 #, c-format
@@ -910,11 +910,55 @@ msgstr "Bienvenue dans Trackballs. \n"
 #: ../src/mmad.cc:352
 #, c-format
 msgid "Using %s as gamedata directory.\n"
-msgstr "Utilise %s comme repertoire de donnees.\n"
+msgstr "Utilise %s comme répertoire de données.\n"
+
+#: ../src/modPill.cc:136
+msgid "Speed ball"
+msgstr "Vitesse"
+
+#: ../src/modPill.cc:136
+msgid "Extra jump"
+msgstr "Saut supplémentaire"
+
+#: ../src/modPill.cc:136
+msgid "Spikes"
+msgstr "Piquante"
+
+#: ../src/modPill.cc:136
+msgid "Glass ball"
+msgstr "Balle de verre"
+
+#: ../src/modPill.cc:137
+msgid "Dizzy!"
+msgstr "Pris de vertige!"
+
+#: ../src/modPill.cc:137
+msgid "Freeze!"
+msgstr "Glacé!"
+
+#: ../src/modPill.cc:137
+msgid "Floating"
+msgstr "Flottant"
+
+#: ../src/modPill.cc:137
+msgid "Extra life"
+msgstr "Vie supplémentaire"
+
+#: ../src/modPill.cc:138
+msgid "Small ball"
+msgstr "Petite balle"
+
+#: ../src/modPill.cc:138
+msgid "Large ball"
+msgstr "Grande balle"
+
+#: ../src/modPill.cc:138
+msgid "Nitro"
+msgstr "Nitro"
 
 #: ../src/settingsMode.cc:82
 msgid "Game Settings"
-msgstr "Parametres de jeu"
+msgstr "Paramètres de jeu"
 
 #: ../src/settingsMode.cc:95
 #, c-format
@@ -950,7 +994,7 @@ msgstr "Auto-%d"
 
 #: ../src/settingsMode.cc:128
 msgid "  Resolution"
-msgstr "  Resolution"
+msgstr "  Résolution"
 
 #: ../src/settingsMode.cc:129
 msgid "  Test this resolution"
@@ -958,7 +1002,7 @@ msgstr "Testez cette résolution"
 
 #: ../src/settingsMode.cc:132
 msgid "  Fullscreen"
-msgstr "  Plein ecran"
+msgstr "  Plein écran"
 
 #: ../src/settingsMode.cc:138
 #, c-format
@@ -992,11 +1036,11 @@ msgstr "Tout"
 
 #: ../src/settingsMode.cc:156
 msgid "  Details"
-msgstr "  Details"
+msgstr "  Détails"
 
 #: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
 msgid "  Reflections (beta)"
-msgstr "  Reflexions (beta)"
+msgstr "  Réflexions (beta)"
 
 #: ../src/settingsMode.cc:163
 msgid "  VSync"
@@ -1026,17 +1070,17 @@ msgstr "  Utiliser la souris"
 
 #: ../src/settingsMode.cc:193
 msgid "  Sensitivity"
-msgstr "  Sensibilite"
+msgstr "  Sensibilité"
 
 #: ../src/settingsMode.cc:200
 #, c-format
 msgid "+%d degrees"
-msgstr "+%d degres"
+msgstr "+%d degrés"
 
 #: ../src/settingsMode.cc:202
 #, c-format
 msgid "-%d degrees"
-msgstr "-%d degres"
+msgstr "-%d degrés"
 
 #: ../src/settingsMode.cc:203
 msgid "  Steering"
@@ -1085,7 +1129,7 @@ msgstr "Niveau"
 
 #: ../src/setupMode.cc:191
 msgid "Difficulty"
-msgstr "Difficulte"
+msgstr "Difficulté"
 
 #: ../src/setupMode.cc:196
 msgid "Sandbox (Easy)"
@@ -1118,7 +1162,7 @@ msgstr "Commencer une partie"
 #: ../src/setupMode.cc:208
 #, c-format
 msgid "Total games played: %d"
-msgstr "Nombre de partie jouees : %d"
+msgstr "Nombre de partie jouées : %d"
 
 #: ../src/setupMode.cc:212
 #, c-format
@@ -1133,7 +1177,7 @@ msgstr "Score moyen : N/A"
 #: ../src/setupMode.cc:217
 #, c-format
 msgid "Levels completed: %d"
-msgstr "Niveaux termines : %d"
+msgstr "Niveaux terminés : %d"
 
 #: ../share/levels/bx.set:1 ../share/levels/bx1.scm:4
 msgid "Box-O'-Fun"
@@ -1294,7 +1338,7 @@ msgstr ""
 
 #: ../share/levels/jump.set:1 ../share/levels/lv5.scm:4
 msgid "Jump"
-msgstr "Sautez"
+msgstr "Saut"
 
 #: ../share/levels/jump.set:3 ../share/levels/jump1.scm:4
 msgid "Bridge"

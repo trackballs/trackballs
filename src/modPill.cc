@@ -37,12 +37,6 @@ using namespace std;
 
 int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-/* Explanations of modpills shown after taking them. Note that only bad
-   ones have an exclamation mark after them */
-const char *modExplanations[NUM_MODS] = {"Speed ball", "Extra jump", "Spikes",   "Glass ball",
-                                         "Dizzy!",     "Freeze!",    "Floating", "Extra life",
-                                         "Small ball", "Large ball", "Nitro"};
-
 ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
     : Ball(), kind(kind), resurrecting(resurrecting), state(STATE_ALIVE), time(time) {
   assign(position, this->position);
@@ -135,6 +129,13 @@ void ModPill::tick(Real t) {
       Coord3d signPos;
       assign(position, signPos);
       signPos[2] += 1.0;
+
+      /* Explanations of modpills shown after taking them. Note that only bad
+         ones have an exclamation mark after them */
+      const char *modExplanations[NUM_MODS] = {
+          _("Speed ball"), _("Extra jump"), _("Spikes"),   _("Glass ball"),
+          _("Dizzy!"),     _("Freeze!"),    _("Floating"), _("Extra life"),
+          _("Small ball"), _("Large ball"), _("Nitro")};
       new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos);
 
       if (kind == MOD_EXTRA_LIFE) {
