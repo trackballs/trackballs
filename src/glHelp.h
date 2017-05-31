@@ -38,7 +38,6 @@ void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
 void drawMousePointer();
 void drawMouse(int x, int y, int w, int h, Real td);
-void drawFuzzySurface(SDL_Surface *, int x, int y, int w, int h);
 void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d);
 
 // generates a snapshot
@@ -73,8 +72,6 @@ int power_of_two(int input);
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                  const double *model, const double *proj);
 
-void drawTriangle(Coord3d, Coord3d, Coord3d);
-
 void Enter2DMode();
 void Leave2DMode();
 GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0,
@@ -85,11 +82,6 @@ int loadTexture(
 int bindTexture(
     const char *name);  // binds texture. Also returns index in textures array used for this.
 int resetTextures();    // Reloads all textures
-
-void createForcefieldTextures(); /** Create a set of special textures for forcefields that are
-                                    animated over time. */
-void resetForcefieldsTextures();
-void getForcefieldTexture(double t0);
 
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures

@@ -36,7 +36,7 @@ add_definitions(-DDEFAULT_RESOLUTION=-1)
 get_directory_property( definitions DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
 set(defstr "")
 foreach( d ${definitions} )
-    set(defstr "${defstr} -D${d}")
+    set(defstr "${defstr}" "-D${d}")
 endforeach()
 
 add_custom_command(OUTPUT guile.cc.x

@@ -284,78 +284,6 @@ void drawMouse(int x, int y, int w, int h, Real td) {
   // glDeleteTextures(1,&texture);
   glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
 }
-void drawFuzzySurface(SDL_Surface *surface, int x, int y, int w, int h) {
-  GLuint texture;
-  GLfloat texcoord[4];
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
-
-  texture = LoadTexture(surface, texcoord, 1, NULL);
-  texMinX = texcoord[0];
-  texMinY = texcoord[1];
-  texMaxX = texcoord[2];
-  texMaxY = texcoord[3];
-
-  Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glEnable(GL_BLEND);
-  glColor4f(1.0, 1.0, 1.0, 0.5);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x - 4, y);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w - 4, y);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x - 4, y + h);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w - 4, y + h);
-  glEnd();
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x + 4, y);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w + 4, y);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x + 4, y + h);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w + 4, y + h);
-  glEnd();
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x, y - 4);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w, y - 4);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x, y + h - 4);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w, y + h - 4);
-  glEnd();
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x, y + 4);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w, y + 4);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x, y + h + 4);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w, y + h + 4);
-  glEnd();
-  glColor4f(1.0, 1.0, 1.0, 1.0);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x, y);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w, y);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x, y + h);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w, y + h);
-  glEnd();
-
-  Leave2DMode();
-  glDeleteTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
-}
 
 /* generates a snapshot of the screen */
 int createSnapshot() {
@@ -500,22 +428,6 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
       // draw2DString(msgFont,right[i],screenWidth/2+width/2-w,screenHeight/2-total_height/2+h_now,255,255,255);
     }
   }
-}
-
-void drawTriangle(Coord3d a, Coord3d b, Coord3d c) {
-  Coord3d ab, ac;
-  sub(b, a, ab);
-  sub(c, a, ac);
-  Coord3d normal;
-  crossProduct(ab, ac, normal);
-  normalize(normal);
-
-  glBegin(GL_TRIANGLES);
-  glNormal3d(normal[0], normal[1], normal[2]);
-  glVertex3d(a[0], a[1], a[2]);
-  glVertex3d(b[0], b[1], b[2]);
-  glVertex3d(c[0], c[1], c[2]);
-  glEnd();
 }
 
 /** Loads a texture from file and returns a reference to it.
@@ -1218,7 +1130,3 @@ void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d) {
   glVertex3dv(c);
   glEnd();
 }
-
-void createForcefieldTextures() {}
-void resetForcefieldTextures() {}
-void bindForcefieldTexture(double t0) {}

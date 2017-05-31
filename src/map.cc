@@ -251,15 +251,6 @@ Map::Map(char* filename) {
   isBonus = 0;
   isTransparent = 0;
 
-  cachedCX = cachedCY = -1, cacheCount = 0;
-
-  /* Data structures for maintaining displaylists.
-         We allocate rad^2 * 2 display lists for rad^2 x/y coordinates and 2 drawing stages
-  */
-  nListsWide = CACHE_SIZE;
-  nLists = nListsWide * nListsWide * 2;
-  displayLists = (int)glGenLists(nLists);
-
   snprintf(mapname, sizeof(mapname), _("Unknown track"));
   snprintf(author, sizeof(author), _("Unknown author"));
   gp = gzopen(filename, "rb");
@@ -351,11 +342,9 @@ Map::Map(char* filename) {
   tx_4 = loadTexture("texture4.png");
   tx_Water = loadTexture("water.png");
 
-  cacheVisible = new char[(2 * VISRADIUS + 1) * (2 * VISRADIUS + 1)];
   chunks.clear();
 
   // Construct texture array
-
   texture_Array = 0;
   glGenTextures(1, &texture_Array);
   glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
@@ -410,10 +399,7 @@ Map::Map(char* filename) {
   glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
 }
 Map::~Map() {
-  //  glDeleteLists(cache[0].lists[0],(width/4)*(height/4));
-  glDeleteLists(displayLists, nLists);
   delete[] cells;
-  delete[] cacheVisible;
   chunks.clear();
 
   glDeleteTextures(1, &texture_Array);

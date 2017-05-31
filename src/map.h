@@ -126,12 +126,6 @@ class Map {
  private:
   Cell *cells;
   std::map<std::pair<int, int>, Chunk> chunks;
-
-  int cachedCX, cachedCY, cacheCount;
-  char *cacheVisible;
-
-  /* For maintaining display lists  */
-  int displayLists, nLists, nListsWide;
 };
 
 #endif

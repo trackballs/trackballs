@@ -105,5 +105,5 @@ void Diamond::onGet() {
   Coord3d signPos;
   assign(position, signPos);
   signPos[2] += 1.0;
-  new Sign("Save point", 6.0, 1.0, 60.0, signPos);
+  new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos);
 }
