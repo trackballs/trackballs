@@ -554,33 +554,22 @@ void MainMode::showInfo() {
     Font::drawRightSimpleText(str, 152, 81, 8, 0.0, 0.0, 0.0, 1.0);
 
   // Health
-  glDisable(GL_TEXTURE_2D);
-  glColor4f(0.5, 0.1, 0.1, 1.0);
-  glBegin(GL_POLYGON);
-  glVertex2i(8, 3);
-  glVertex2i(8 + 144, 3);
-  glVertex2i(8 + 144, 8);
-  glVertex2i(8, 8);
-  glEnd();
-  glBegin(GL_POLYGON);
-  glColor4f(0.8, 0.8, 0.1, 1.0);
-  glVertex2i(8, 3);
-  glColor4f(0.8, 0.1, 0.1, 1.0);
-  glVertex2i(8 + (int)(144.0 * player->health), 3);
-  glVertex2i(8 + (int)(144.0 * player->health), 8);
-  glColor4f(0.8, 0.8, 0.1, 1.0);
-  glVertex2i(8, 8);
-  glEnd();
+  draw2DRectangle(8, 3, 144, 5, 0., 0., 1., 1., 0.5, 0.1, 0.1, 1.0);
+
+  GLfloat vertices[4][2] = {{8.f, 3.f},
+                            {8.f + (144.f * (GLfloat)player->health), 3.f},
+                            {8.f, 8.f},
+                            {8.f + (144.f * (GLfloat)player->health), 8.f}};
+  GLfloat texco[4][2] = {
+      0., 0., 0., 0., 0., 0., 0., 0.,
+  };
+  GLfloat cols[4][4] = {
+      {0.8, 0.8, 0.1, 1.0}, {0.8, 0.1, 0.1, 1.0}, {0.8, 0.8, 0.1, 1.0}, {0.8, 0.1, 0.1, 1.0}};
+  draw2DQuad(vertices, texco, cols);
 
   // Oxygen
-  glEnable(GL_BLEND);
-  glColor4f(0.2, 0.2, 0.7, 0.8);
-  glBegin(GL_POLYGON);
-  glVertex2i(8, 3);
-  glVertex2i(8 + (int)(144.0 * (1. - player->oxygen)), 3);
-  glVertex2i(8 + (int)(144.0 * (1. - player->oxygen)), 8);
-  glVertex2i(8, 8);
-  glEnd();
+  draw2DRectangle(8, 3, (int)(144.0 * (1. - player->oxygen)), 5, 0., 0., 1., 1., 0.2, 0.2, 0.7,
+                  0.8);
 
   Leave2DMode();
   return;

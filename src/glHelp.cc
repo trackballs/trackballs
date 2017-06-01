@@ -210,68 +210,53 @@ void tickMouse(Real td) {
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
                      GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                      GLuint tex) {
-  Require2DMode();
+  GLfloat corners[4][2] = {x, y, x, y + h, x + w, y, x + w, y + h};
+  GLfloat texture[4][2] = {tx, ty, tx, ty + th, tx + tw, ty, tx + tw, ty + th};
+  GLfloat colors[4][4] = {r, g, b, a, r, g, b, a, r, g, b, a, r, g, b, a};
+  draw2DQuad(corners, texture, colors, tex);
+}
 
+void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat col[4][4],
+                GLuint tex) {
+  Require2DMode();
   if (tex == 0) { tex = textures[loadTexture("blank.png")]; }
 
-  if (1) {
-    // Color asa uniform?
-    const GLfloat data[32] = {
-        x,     y,     r, g, b, a, tx,      ty,       //
-        x,     y + h, r, g, b, a, tx,      ty + th,  //
-        x + w, y,     r, g, b, a, tx + tw, ty,       //
-        x + w, y + h, r, g, b, a, tx + tw, ty + th   //
-    };
-    GLuint bufs[2];
-    glGenBuffers(2, bufs);
-    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
-    glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_STREAM_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
-    ushort idxs[6] = {0, 1, 2, 1, 2, 3};
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxs, GL_STREAM_DRAW);
-
-    glBindVertexArray(theVao);
-    glUseProgram(shaderUI);
-
-    glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D, tex);
-
-    glUniform1f(glGetUniformLocation(shaderUI, "screen_width"), (GLfloat)screenWidth);
-    glUniform1f(glGetUniformLocation(shaderUI, "screen_height"), (GLfloat)screenHeight);
-
-    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
-
-    // 2x Position; 4x color; 2x texture coord
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void *)(2 * sizeof(GLfloat)));
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                          (void *)(6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(2, bufs);
-    glUseProgram(0);
-  } else {
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glBegin(GL_TRIANGLE_STRIP);
-    glColor4f(r, g, b, a);
-    glTexCoord2f(tx, ty);
-    glVertex2i(x, y);
-    glTexCoord2f(tx + tw, ty);
-    glVertex2i(x + w, y);
-    glTexCoord2f(tx, ty + th);
-    glVertex2i(x, y + h);
-    glTexCoord2f(tx + tw, ty + th);
-    glVertex2i(x + w, y + h);
-    glEnd();
+  static GLuint idxs = (GLuint)-1;
+  if (idxs == (GLuint)-1) {
+    glGenBuffers(1, &idxs);
+    ushort idxdata[6] = {0, 1, 2, 1, 2, 3};
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxdata, GL_STATIC_DRAW);
   }
+
+  const GLfloat data[32] = {
+      ver[0][0], ver[0][1], col[0][0], col[0][1], col[0][2], col[0][3], txc[0][0], txc[0][1],
+      ver[1][0], ver[1][1], col[1][0], col[1][1], col[1][2], col[1][3], txc[1][0], txc[1][1],
+      ver[2][0], ver[2][1], col[2][0], col[2][1], col[2][2], col[2][3], txc[2][0], txc[2][1],
+      ver[3][0], ver[3][1], col[3][0], col[3][1], col[3][2], col[3][3], txc[3][0], txc[3][1],
+  };
+
+  // May want to convert to streaming by creating oversize buffer and rotating through
+  GLuint buf;
+  glGenBuffers(1, &buf);
+  glBindBuffer(GL_ARRAY_BUFFER, buf);
+  glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindTexture(GL_TEXTURE_2D, tex);
+
+  glBindBuffer(GL_ARRAY_BUFFER, buf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+
+  // Input structure: 2x Position; 4x color; 2x texture coord
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(6 * sizeof(GLfloat)));
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &buf);
 }
 
 void drawMousePointer() {
@@ -282,34 +267,16 @@ void drawMousePointer() {
 }
 
 void drawMouse(int x, int y, int w, int h, Real td) {
-  Require2DMode();
+  GLfloat r1 = 1.0 + 0.1 * cos(mousePointerPhase * 1.8);
+  GLfloat r2 = 1.0 + 0.1 * cos(mousePointerPhase * 1.9);
+  GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 20.0);
+  GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 20.0);
 
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
+  GLfloat colors[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+  GLfloat texco[4][2] = {{0., 0.}, {0., 1.}, {1., 0.}, {1., 1.}};
 
-  bindTexture("mousePointer.png");
-  texMinX = 0.0;
-  texMinY = 0.0;
-  texMaxX = 1.0;
-  texMaxY = 1.0;
-
-  glColor4f(1.0, 1.0, 1.0, 1.0);  // 0.8 + 0.2*cos(3.23*mousePointerPhase));
-  glPushMatrix();
-  glTranslatef(x, y, 0.0);
-  glRotatef(mousePointerPhase * 20.0, 0.0, 0.0, 1.0);
-  glScalef(1.0 + 0.1 * cos(mousePointerPhase * 1.8), 1.0 + 0.1 * cos(mousePointerPhase * 1.9),
-           1.0);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(-w / 2, -h / 2);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(w / 2, -h / 2);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(-w / 2, h / 2);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(w / 2, h / 2);
-  glEnd();
-  glPopMatrix();
+  GLfloat vco[4][2] = {{x - dx, y - dy}, {x - dy, y + dx}, {x + dy, y - dx}, {x + dx, y + dy}};
+  draw2DQuad(vco, texco, colors, textures[loadTexture("mousePointer.png")]);
 }
 
 /* generates a snapshot of the screen */
@@ -948,28 +915,26 @@ void Require2DMode() {
 void Enter2DMode() {
   if (is_2d_mode) { return; }
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_LIGHTING);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glViewport(0, 0, screen->w, screen->h);
+  // Load program, bind VAO, and set up uniforms
+  glUseProgram(shaderUI);
 
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
+  glBindVertexArray(theVao);
 
-  glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, 0.0, 1.0);
+  glUniform1f(glGetUniformLocation(shaderUI, "screen_width"), (GLfloat)screenWidth);
+  glUniform1f(glGetUniformLocation(shaderUI, "screen_height"), (GLfloat)screenHeight);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
 
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
+  glActiveTexture(GL_TEXTURE0 + 0);
 
   is_2d_mode = 1;
 }
@@ -977,13 +942,7 @@ void Enter2DMode() {
 void Leave2DMode() {
   if (!is_2d_mode) { return; }
 
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
-
-  glPopAttrib();
+  glUseProgram(0);
 
   is_2d_mode = 0;
 }

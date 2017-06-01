@@ -205,21 +205,12 @@ void EStatusWindow::draw() {
   snprintf(str, 255, "Edit: %s", editModeNames[EditMode::editMode->currentEditMode]);
   addText_Left(CODE_EDITMODE, fontSize / 2, row4, str, col0);
 
-  glDisable(GL_TEXTURE_2D);
+  //  glDisable(GL_TEXTURE_2D);
 
   /* Small separator between area 1 - 2 */
-  glColor4f(0.5, 0.5, 0.5, 1.0);
-  glBegin(GL_LINES);
-  glVertex2i(col1 - fontSize, y);
-  glVertex2i(col1 - fontSize, y + height);
-  glEnd();
-
+  draw2DRectangle(col1 - fontSize - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
   /* Small separator between area 2 - 3 */
-  glColor4f(0.5, 0.5, 0.5, 1.0);
-  glBegin(GL_LINES);
-  glVertex2i(area3x, y);
-  glVertex2i(area3x, y + height);
-  glEnd();
+  draw2DRectangle(area3x - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
 
   /* TODO. Make the height/colour etc. text selectable areas
          with the same effect as corresponding menu choise */
@@ -273,14 +264,9 @@ void EStatusWindow::draw() {
     addText_Left(CODE_FROM_MENUENTRY(COLOR_ALPHA), fontSize / 2, row1, str,
                  col1 + fontSize * 3);
 
-    glColor4f(EditMode::editMode->color[0], EditMode::editMode->color[1],
-              EditMode::editMode->color[2], EditMode::editMode->color[3]);
-    glBegin(GL_QUADS);
-    glVertex2i(col1 + fontSize * 0, row2);
-    glVertex2i(col1 + fontSize * 0, row4);
-    glVertex2i(col1 + fontSize * 2, row4);
-    glVertex2i(col1 + fontSize * 2, row2);
-    glEnd();
+    draw2DRectangle(col1, row2, 2 * fontSize, row4 - row2, 0., 0., 1., 1.,
+                    EditMode::editMode->color[0], EditMode::editMode->color[1],
+                    EditMode::editMode->color[2], EditMode::editMode->color[3]);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_VELOCITY) {
     Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
     snprintf(str, 255, "dx: %2.2f", cell.velocity[0]);
@@ -289,42 +275,35 @@ void EStatusWindow::draw() {
     addText_Left(0, fontSize / 2, row1, str, col1 + fontSize * 7);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_NOLINES) {
     addText_Left(0, fontSize / 2, row1, "Lines", col1);
-    glLineWidth(3.0);
-    if (Settings::settings->gfx_details >= 4) {
-      glEnable(GL_BLEND);
-      glEnable(GL_LINE_SMOOTH);
-      glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    }
-    glDisable(GL_TEXTURE_2D);
-    glBegin(GL_LINES);
-    {
-      if (cell.flags & CELL_NOLINENORTH)
-        glColor4f(1.0, 1.0, 1.0, 1.0);
-      else
-        glColor4f(0.0, 0.0, 0.0, 1.0);
-      glVertex2i(col1 + fontSize * 0, row3);
-      glVertex2i(col1 + (int)(fontSize * 1.5), row2);
-      if (cell.flags & CELL_NOLINEEAST)
-        glColor4f(1.0, 1.0, 1.0, 1.0);
-      else
-        glColor4f(0.0, 0.0, 0.0, 1.0);
-      glVertex2i(col1 + (int)(fontSize * 1.5), row2);
-      glVertex2i(col1 + fontSize * 3, row3);
-      if (cell.flags & CELL_NOLINESOUTH)
-        glColor4f(1.0, 1.0, 1.0, 1.0);
-      else
-        glColor4f(0.0, 0.0, 0.0, 1.0);
-      glVertex2i(col1 + fontSize * 3, row3);
-      glVertex2i(col1 + (int)(fontSize * 1.5), row4);
-      if (cell.flags & CELL_NOLINEWEST)
-        glColor4f(1.0, 1.0, 1.0, 1.0);
-      else
-        glColor4f(0.0, 0.0, 0.0, 1.0);
-      glVertex2i(col1 + (int)(fontSize * 1.5), row4);
-      glVertex2i(col1 + fontSize * 0, row3);
-    }
-    glEnd();
-    glLineWidth(1.0);
+
+    GLfloat line_off[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+    GLfloat line_on[4][4] = {0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1.};
+    GLfloat txco[4][2] = {0., 0., 0., 0., 0., 0., 0., 0.};
+
+    GLfloat r = 1.5;
+    GLfloat lineA[4][2] = {{col1 + 0.f, row3 - r},
+                           {col1 + 0.f, row3 + r},
+                           {col1 + fontSize * 1.5f, row2 - r},
+                           {col1 + fontSize * 1.5f, row2 + r}};
+    draw2DQuad(lineA, txco, (cell.flags & CELL_NOLINENORTH) ? line_off : line_on);
+
+    GLfloat lineB[4][2] = {{col1 + fontSize * 3.f, row3 - r},
+                           {col1 + fontSize * 3.f, row3 + r},
+                           {col1 + fontSize * 1.5f, row2 - r},
+                           {col1 + fontSize * 1.5f, row2 + r}};
+    draw2DQuad(lineB, txco, (cell.flags & CELL_NOLINEEAST) ? line_off : line_on);
+
+    GLfloat lineC[4][2] = {{col1 + fontSize * 3.f, row3 - r},
+                           {col1 + fontSize * 3.f, row3 + r},
+                           {col1 + fontSize * 1.5f, row4 - r},
+                           {col1 + fontSize * 1.5f, row4 + r}};
+    draw2DQuad(lineC, txco, (cell.flags & CELL_NOLINESOUTH) ? line_off : line_on);
+
+    GLfloat lineD[4][2] = {{col1 + 0.f, row3 - r},
+                           {col1 + 0.f, row3 + r},
+                           {col1 + fontSize * 1.5f, row4 - r},
+                           {col1 + fontSize * 1.5f, row4 + r}};
+    draw2DQuad(lineD, txco, (cell.flags & CELL_NOLINEWEST) ? line_off : line_on);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_FEATURES) {
     const char* feature = "";
     switch (EditMode::editMode->currentFeature) {

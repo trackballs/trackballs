@@ -38,6 +38,8 @@ void update2DStringCache();
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
                      GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                      GLuint tex = 0);
+void draw2DQuad(const GLfloat corners[4][2], const GLfloat texture[4][2],
+                const GLfloat color[4][4], GLuint tex = 0);
 
 void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
