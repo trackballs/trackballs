@@ -73,7 +73,6 @@ void SettingsMode::display() {
 
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);  // | GL_DEPTH_BUFFER_BIT);
-  glColor4f(1.0, 1.0, 1.0, 1.0);
 
   glPushAttrib(GL_ENABLE_BIT);
   Enter2DMode();
@@ -84,7 +83,6 @@ void SettingsMode::display() {
   // drawSurface(title,(screenWidth-title->w)/2,64,title->w,title->h);
 
   char str[256];
-  glColor3f(1.0, 1.0, 1.0);
 
   clearSelectionAreas();
 
@@ -105,7 +103,6 @@ void SettingsMode::display() {
     snprintf(str, sizeof(str), _("Timeout in %d seconds"), (int)(testingResolution + 0.5));
     menuItem_Left(0, menucount++, str);
 
-    glEnable(GL_BLEND);
     drawMousePointer();
     displayFrameRate();
     Leave2DMode();
@@ -239,7 +236,6 @@ void SettingsMode::display() {
   }
   menuItem_Left(MENU_RETURN, 10, _("Back"));
 
-  glEnable(GL_BLEND);
   drawMousePointer();
   displayFrameRate();
   Leave2DMode();

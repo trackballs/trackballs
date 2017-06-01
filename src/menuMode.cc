@@ -85,24 +85,20 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   // int storyText_y = screenHeight / 2 - 20;
 
   Enter2DMode();
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   /* Draw slides */
   if (slideTime < SLIDE_SINGLE) {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    drawSlide(0, slideTime + SLIDE_TRANSITION);
+    drawSlide(0, slideTime + SLIDE_TRANSITION, 1.0);
   } else {
-    glColor4f(1.0, 1.0, 1.0, 1.0 - (slideTime - SLIDE_SINGLE) / (double)SLIDE_TRANSITION);
-    drawSlide(0, slideTime + SLIDE_TRANSITION);
-    glColor4f(1.0, 1.0, 1.0, (slideTime - SLIDE_SINGLE) / (double)SLIDE_TRANSITION);
-    drawSlide(1, slideTime - SLIDE_SINGLE);
+    drawSlide(0, slideTime + SLIDE_TRANSITION,
+              1.0 - (slideTime - SLIDE_SINGLE) / (double)SLIDE_TRANSITION);
+    drawSlide(1, slideTime - SLIDE_SINGLE,
+              (slideTime - SLIDE_SINGLE) / (double)SLIDE_TRANSITION);
   }
 
-  glColor3f(1.0, 1.0, 1.0);
   /* Draw header */
-  bindTexture("header.png");
-  drawTextured2DRectangle(screenWidth / 2 - 512 / 2, 20, 512, 128);
+  draw2DRectangle(screenWidth / 2 - 512 / 2, 20, 512, 128, 0., 0., 1., 1., 1., 1., 1., 1.,
+                  textures[loadTexture("header.png")]);
 
   /* Draw background to story text */
   /*
@@ -118,13 +114,13 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   int baseline = screenHeight - sep * 3;
   int left = fontsize + 10;
   int right = screenWidth - 10;
+
   addText_Left(MENU_NEWGAME, fontsize, baseline + sep * 0, _("New Game"), left);
   addText_Right(MENU_QUIT, fontsize, baseline + sep * 0, _("Quit"), right);
   addText_Left(MENU_SETTINGS, fontsize, baseline + sep * 1, _("Settings"), left);
   addText_Right(MENU_HOF, fontsize, baseline + sep * 1, _("Hall of Fame"), right);
   addText_Left(MENU_HELP, fontsize, baseline + sep * 2, _("Help"), left);
   addText_Right(MENU_EDITOR, fontsize, baseline + sep * 2, _("Map Editor"), right);
-
   /* Draw story text */
   /*
   Font::drawSimpleText(0, story, (int)(screenWidth-offset), storyText_y, 24., 24., 220/256.0,
@@ -137,6 +133,8 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
 
   drawMousePointer();
   displayFrameRate();
+  Leave2DMode();
+
   glPopAttrib();
 }
 void MenuMode::key(int key) {
@@ -258,7 +256,7 @@ void MenuMode::loadSlide() {
   slideTime = 0.0;
 }
 
-void MenuMode::drawSlide(int slide, double time) {
+void MenuMode::drawSlide(int slide, double time, double alpha) {
   double slideWidth = slideMax[slide][0];
   double slideHeight = slideMax[slide][1];
   double screenAspect = screenWidth / (double)screenHeight;
@@ -318,17 +316,6 @@ void MenuMode::drawSlide(int slide, double time) {
         viewOffsetY);
   }
 
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, slides[slide]);
-  glBegin(GL_TRIANGLE_STRIP);
-
-  glTexCoord2f(viewOffsetX + 0.0, viewOffsetY + 0.0);
-  glVertex2i(0, 0);
-  glTexCoord2f(viewOffsetX + viewWidth, viewOffsetY + 0.0);
-  glVertex2i(screenWidth, 0);
-  glTexCoord2f(viewOffsetX + 0.0, viewOffsetY + viewHeight);
-  glVertex2i(0, screenHeight);
-  glTexCoord2f(viewOffsetX + viewWidth, viewOffsetY + viewHeight);
-  glVertex2i(screenWidth, screenHeight);
-  glEnd();
+  draw2DRectangle(0, 0, screenWidth, screenHeight, viewOffsetX, viewOffsetY, viewWidth,
+                  viewHeight, 1., 1., 1., alpha, slides[slide]);
 }

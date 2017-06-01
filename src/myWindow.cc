@@ -72,34 +72,12 @@ void MyWindow::key(int key, int x, int y) {}
 
 void MyWindow::tick() {}
 void MyWindow::draw() {
-  Enter2DMode();
-  glDisable(GL_TEXTURE_2D);
-
-  glColor4f(0.0, 0.0, 0.0, 0.5);
-  glLineWidth(2);
-  glBegin(GL_LINES);
-  glVertex2i(x + width + 2, y + 1);
-  glVertex2i(x + width + 2, y + height + 1);
-  glVertex2i(x + 2, y + height + 1);
-  glVertex2i(x + width + 2, y + height + 1);
-  glEnd();
-
-  glColor4fv(background);
-  glBegin(GL_QUADS);
-  glVertex2i(x, y);
-  glVertex2i(x, y + height);
-  glVertex2i(x + width, y + height);
-  glVertex2i(x + width, y);
-  glEnd();
-  glLineWidth(1);
-  glColor4fv(border);
-  glBegin(GL_LINE_LOOP);
-  glVertex2i(x, y);
-  glVertex2i(x + width, y);
-  glVertex2i(x + width, y + height);
-  glVertex2i(x, y + height);
-  glEnd();
-  Leave2DMode();
+  // 3 overlapping rectangles: shadow, rim, face
+  draw2DRectangle(x + 1, y + 1, width + 2, height + 2, 0., 0., 1., 1., 0., 0., 0., 0.5);
+  draw2DRectangle(x - 1, y - 1, width + 2, height + 2, 0., 0., 1., 1., border[0], border[1],
+                  border[2], border[3]);
+  draw2DRectangle(x, y, width, height, 0., 0., 1., 1., background[0], background[1],
+                  background[2], background[3]);
 }
 void MyWindow::attached() {}
 void MyWindow::removed() {}

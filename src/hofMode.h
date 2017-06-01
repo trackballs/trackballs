@@ -41,8 +41,7 @@ class HallOfFameMode : public GameMode {
   static SDL_Surface *background;
 
   GLuint texture;
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
+  GLfloat texCoord[4];
 };
 
 #endif

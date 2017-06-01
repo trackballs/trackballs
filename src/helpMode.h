@@ -42,9 +42,7 @@ class HelpMode : public GameMode {
   static SDL_Surface *page0, *page1;
 
   GLuint bgTexture, p0Texture, p1Texture;
-  GLfloat texMinX, texMinY, texMaxX, texMaxY;
-  GLfloat p0MinX, p0MinY, p0MaxX, p0MaxY;
-  GLfloat p1MinX, p1MinY, p1MaxX, p1MaxY;
+  GLfloat bgCoord[4], p0coord[4], p1coord[4];
 };
 
 #endif

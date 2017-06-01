@@ -471,86 +471,14 @@ void EditMode::display() {
   else
   */
 
-  // displayFrameRate();
-
-  Enter2DMode();
-#ifdef FOOBARS
-
-  snprintf(str, sizeof(str), _("Raise: %f"), raise);
-  glColor3f(1.0, 1.0, 1.0);
-  draw2DString(infoFont, str, 10, 20 + 0 * 18, 255, 255, 0);
-
-  snprintf(str, sizeof(str), _("Pos: %d,%d"), x, y);
-  draw2DString(infoFont, str, 10, 20 + 1 * 18, 255, 255, 0);
-  if (menuChoise == MENU_HILLS) {
-    snprintf(str, sizeof(str), _("Feature: %s"), hillNames[hill]);
-    draw2DString(infoFont, str, 10, 20 + 2 * 18, 255, 255, 0);
-  } else {
-    snprintf(str, sizeof(str), _("Color %1.1f %1.1f %1.1f %1.1f"), color[0], color[1],
-             color[2], color[3]);
-    draw2DString(infoFont, str, 10, 20 + 2 * 18, 255, 255, 0);
-    glColor4f(color[0], color[1], color[2], color[3]);
-    glBegin(GL_POLYGON);
-    glVertex2i(185, 17 + 1 * 18);
-    glVertex2i(203, 17 + 1 * 18);
-    glVertex2i(203, 13 + 2 * 18);
-    glVertex2i(185, 13 + 2 * 18);
-    glEnd();
-  }
-  glColor3f(1.0, 1.0, 1.0);
-
-  for (i = 0; i < MENU_SIZE; i++) {
-    if (menuChoise == i)
-      draw2DString(infoFont, menuNames[i], 220, 20 + i * 18, 128, 255, 128);
-    else
-      draw2DString(infoFont, menuNames[i], 220, 20 + i * 18, 64, 192, 64);
-  }
-
-  for (i = 0; i < NUM_FLAGS; i++) {
-    snprintf(str, sizeof(str), "%d. %s: %s", i + 1, flagNames[i],
-             map->cell(x, y).flags & (1 << i) ? _("yes") : _("no"));
-    draw2DString(infoFont, str, 350, 20 + i * 18, 128, 255, 128);
-  }
-
-  {
-    Cell& c = map->cell(x, y);
-    if (menuChoise == MENU_WATER) {
-      draw2DString(infoFont, _("Water height"), screenWidth - 280, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.waterHeights[3]);
-      draw2DString(infoFont, str, screenWidth - 70, 20, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.waterHeights[0]);
-      draw2DString(infoFont, str, screenWidth - 70, 60, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.waterHeights[2]);
-      draw2DString(infoFont, str, screenWidth - 30, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.waterHeights[1]);
-      draw2DString(infoFont, str, screenWidth - 110, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.waterHeights[Cell::CENTER]);
-      draw2DString(infoFont, str, screenWidth - 70, 40, 255, 255, 0);
-    } else if (menuChoise == MENU_VELOCITY) {
-      snprintf(str, sizeof(str), "Velocity: %2.1f %2.1f", c.velocity[0], c.velocity[1]);
-      draw2DString(infoFont, str, screenWidth - 260, 40, 255, 255, 0);
-    } else {
-      draw2DString(infoFont, "Height", screenWidth - 200, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.heights[3]);
-      draw2DString(infoFont, str, screenWidth - 70, 20, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.heights[0]);
-      Draw2dstring(infoFont, str, screenWidth - 70, 60, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.heights[2]);
-      draw2DString(infoFont, str, screenWidth - 30, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.heights[1]);
-      draw2DString(infoFont, str, screenWidth - 110, 40, 255, 255, 0);
-      snprintf(str, sizeof(str), "%2.1f", c.heights[Cell::CENTER]);
-      draw2DString(infoFont, str, screenWidth - 70, 40, 255, 255, 0);
-    }
-  }
-
-#endif
-  //  drawMenus();
-  Leave2DMode();
-
   clearSelectionAreas();
+  Enter2DMode();
   MyWindow::drawAll();
+  Leave2DMode();
+  // drawAll messes up the GL state
+  Enter2DMode();
   drawMousePointer();
+  Leave2DMode();
 }
 
 typedef enum { eInfo_Height = 0, eInfo_WaterHeight, eInfo_Textures, nInfos } eCellInfo;

@@ -83,14 +83,13 @@ void SetupMode::display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /* Draw background */
-  Enter2DMode();
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   GLfloat coord[4];
+  GLuint active;
   if (screenshot) {
-    glBindTexture(GL_TEXTURE_2D, screenshot);
+    active = screenshot;
     for (int i = 0; i < 4; i++) coord[i] = scrshtCoord[i];
   } else {
-    glBindTexture(GL_TEXTURE_2D, texture);
+    active = texture;
     for (int i = 0; i < 4; i++) coord[i] = texCoord[i];
   }
   /* avoid distortion */
@@ -103,17 +102,9 @@ void SetupMode::display() {
     coord[0] += delta / 2;
     coord[2] -= delta;
   }
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(coord[0], coord[1]);
-  glVertex2i(0, 0);
-  glTexCoord2f(coord[0] + coord[2], coord[1]);
-  glVertex2i(screenWidth, 0);
-  glTexCoord2f(coord[0], coord[1] + coord[3]);
-  glVertex2i(0, screenHeight);
-  glTexCoord2f(coord[0] + coord[2], coord[1] + coord[3]);
-  glVertex2i(screenWidth, screenHeight);
-  glEnd();
-  Leave2DMode();
+  Enter2DMode();
+  draw2DRectangle(0, 0, screenWidth, screenHeight, coord[0], coord[1], coord[2], coord[3], 1.,
+                  1., 1., 1., active);
 
   char str[256];
   Settings *settings = Settings::settings;
@@ -225,6 +216,8 @@ void SetupMode::display() {
                          DESC_BASE + DESC_DELTA * lineno, DESC_SIZE, DESC_R, DESC_G, DESC_B,
                          DESC_A);
 
+  Leave2DMode();
+
   /*                      */
   /* Draw the player ball */
   /*                      */
@@ -278,8 +271,12 @@ void SetupMode::display() {
             max(10, 4 + 3 * settings->gfx_details));
   glPopAttrib();
 
-  drawMousePointer();
+  Enter2DMode();
+
   displayFrameRate();
+  drawMousePointer();
+
+  Leave2DMode();
 
   glPopAttrib();
 }

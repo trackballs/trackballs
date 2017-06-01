@@ -453,28 +453,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     lastTime = gameTime;
   }
 
-  static GLuint shaderprogram = -1;
-  static GLuint lineprogram = -1;
-  static GLuint waterprogram = -1;
-  static GLuint vao;
-  static GLuint arrtexloc;
-  static GLuint wtextureloc;
-  if (shaderprogram == (GLuint)-1) {
-    shaderprogram = loadProgram("basic.vert", "basic.frag");
-    if (shaderprogram == (GLuint)-1) { return; }
-    lineprogram = loadProgram("line.vert", "line.frag");
-    if (lineprogram == (GLuint)-1) { return; }
-    waterprogram = loadProgram("water.vert", "water.frag");
-    if (waterprogram == (GLuint)-1) { return; }
-    arrtexloc = glGetUniformLocation(shaderprogram, "arrtex");
-    wtextureloc = glGetUniformLocation(waterprogram, "wtex");
-    glGenVertexArrays(1, &vao);
-    // Or: Array_Texture, indexed by short&(short,short)/alpha
-    // (is precise enough to cover animation, save memory, yet wraparound)
-
-    // blank; sand; acid; track; ice; tx1, tx2, tx3, tx4
-  }
-
   // Load matrices from other GL
   GLfloat proj[16];
   GLfloat model[16];
@@ -529,21 +507,21 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   }
 
   // The obligatory VAO
-  glBindVertexArray(vao);
+  glBindVertexArray(theVao);
 
   // Put into shader
-  glUseProgram(shaderprogram);
-  glUniformMatrix4fv(glGetUniformLocation(shaderprogram, "proj_matrix"), 1, GL_FALSE,
+  glUseProgram(shaderTile);
+  glUniformMatrix4fv(glGetUniformLocation(shaderTile, "proj_matrix"), 1, GL_FALSE,
                      (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderprogram, "model_matrix"), 1, GL_FALSE,
+  glUniformMatrix4fv(glGetUniformLocation(shaderTile, "model_matrix"), 1, GL_FALSE,
                      (GLfloat*)&model[0]);
   GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderprogram, "fog_active"), fogActive);
-  glUniform1i(glGetUniformLocation(shaderprogram, "render_stage"), stage);
-  glUniform1f(glGetUniformLocation(shaderprogram, "gameTime"), gameTime);
+  glUniform1i(glGetUniformLocation(shaderTile, "fog_active"), fogActive);
+  glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
+  glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
 
   // Link in texture atlas :-)
-  glUniform1i(arrtexloc, 0);
+  glUniform1i(glGetUniformLocation(shaderTile, "arrtex"), 0);
   glActiveTexture(GL_TEXTURE0 + 0);
   glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
 
@@ -565,14 +543,14 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   }
 
   if (stage == 1) {
-    glUseProgram(waterprogram);
-    glUniformMatrix4fv(glGetUniformLocation(waterprogram, "proj_matrix"), 1, GL_FALSE,
+    glUseProgram(shaderWater);
+    glUniformMatrix4fv(glGetUniformLocation(shaderWater, "proj_matrix"), 1, GL_FALSE,
                        (GLfloat*)&proj[0]);
-    glUniformMatrix4fv(glGetUniformLocation(waterprogram, "model_matrix"), 1, GL_FALSE,
+    glUniformMatrix4fv(glGetUniformLocation(shaderWater, "model_matrix"), 1, GL_FALSE,
                        (GLfloat*)&model[0]);
-    glUniform1f(glGetUniformLocation(waterprogram, "gameTime"), gameTime);
-    glUniform1i(glGetUniformLocation(waterprogram, "fog_active"), fogActive);
-    glUniform1i(wtextureloc, 0);
+    glUniform1f(glGetUniformLocation(shaderWater, "gameTime"), gameTime);
+    glUniform1i(glGetUniformLocation(shaderWater, "fog_active"), fogActive);
+    glUniform1i(glGetUniformLocation(shaderWater, "wtex"), 0);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, textures[tx_Water]);
 
@@ -585,12 +563,12 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     }
   }
 
-  glUseProgram(lineprogram);
-  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "proj_matrix"), 1, GL_FALSE,
+  glUseProgram(shaderTileRim);
+  glUniformMatrix4fv(glGetUniformLocation(shaderTileRim, "proj_matrix"), 1, GL_FALSE,
                      (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(lineprogram, "model_matrix"), 1, GL_FALSE,
+  glUniformMatrix4fv(glGetUniformLocation(shaderTileRim, "model_matrix"), 1, GL_FALSE,
                      (GLfloat*)&model[0]);
-  glUniform1i(glGetUniformLocation(lineprogram, "fog_active"), fogActive);
+  glUniform1i(glGetUniformLocation(shaderTileRim, "fog_active"), fogActive);
 
   glEnable(GL_LINE_SMOOTH);
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);

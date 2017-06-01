@@ -143,15 +143,8 @@ void CalibrateJoystickMode::display() {
   Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 320, 12., 1.0, 1.0, 1.0,
                              0.5);
 
-  glColor4f(0.1, 0.1, 0.4, 0.5);
   int CX = screenWidth / 2, CY = screenHeight / 2;
-  glBegin(GL_POLYGON);
-  glVertex2i(CX - 100, CY - 100);
-  glVertex2i(CX + 100, CY - 100);
-  glVertex2i(CX + 100, CY + 100);
-  glVertex2i(CX - 100, CY + 100);
-  glEnd();
-  glColor4f(1.0, 1.0, 1.0, 1.0);
+  draw2DRectangle(CX - 100, CY - 100, 200, 200, 0., 0., 1., 1., 0.1, 0.1, 0.4, 0.5);
 
   double jx = Settings::settings->joystickX();
   double jy = Settings::settings->joystickY();

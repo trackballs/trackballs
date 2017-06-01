@@ -205,8 +205,6 @@ void EStatusWindow::draw() {
   snprintf(str, 255, "Edit: %s", editModeNames[EditMode::editMode->currentEditMode]);
   addText_Left(CODE_EDITMODE, fontSize / 2, row4, str, col0);
 
-  Enter2DMode();
-  glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
 
   /* Small separator between area 1 - 2 */
@@ -297,7 +295,6 @@ void EStatusWindow::draw() {
       glEnable(GL_LINE_SMOOTH);
       glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     }
-    Enter2DMode();
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_LINES);
     {
@@ -327,7 +324,6 @@ void EStatusWindow::draw() {
       glVertex2i(col1 + fontSize * 0, row3);
     }
     glEnd();
-    Leave2DMode();
     glLineWidth(1.0);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_FEATURES) {
     const char* feature = "";
@@ -361,8 +357,6 @@ void EStatusWindow::draw() {
   snprintf(str, sizeof(str), "%s/%s", EditMode::editMode->pathname,
            EditMode::editMode->levelname);
   addText_Left(0, fontSize / 3, row1, str, area3x + 10);
-
-  Leave2DMode();
 }
 void EStatusWindow::mouseDown(int button, int x, int y) {
   int code = getSelectedArea();

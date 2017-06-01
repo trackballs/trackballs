@@ -52,46 +52,24 @@ EnterHighScoreMode::EnterHighScoreMode() {
   //  snprintf(name,20,getenv("USER"));
 }
 void EnterHighScoreMode::display() {
-  int w, h;
-  char str[256];
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glColor3f(1.0, 1.0, 1.0);
 
   Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(0, 0);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(screenWidth, 0);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(0, screenHeight);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(screenWidth, screenHeight);
-  glEnd();
-  Leave2DMode();
+  draw2DRectangle(0, 0, screenWidth, screenHeight, texMinX, texMinY, texMaxX, texMaxY, 1., 1.,
+                  1., 1., texture);
 
+  char str[256];
   snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
-  TTF_SizeText(menuFont, str, &w, &h);
-  h += 5;
-  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 0 * h,
-               220 / 255., 220 / 255., 64 / 225., 255);
-  snprintf(str, sizeof(str), _("Enter your name: %s"), name);
-  TTF_SizeText(menuFont, str, &w, &h);
-  h += 5;
-  draw2DString(menuFont, str, (screenWidth - w) / 2, (screenHeight - 2 * h) / 2 + 1 * h,
-               220 / 255., 220 / 255., 64 / 225., 1.0);
+  int size = 20;
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 1.3 * size, size, 0.85,
+                             0.85, 0.25, 1.0);
 
-  /*
-  int x=350;
-  if(screenWidth <= 640) x=300;
-  sprintf(str," %s",name);
-  draw2DString(menuFont,str,screenWidth/2-x,screenHeight/2, 220, 220, 64);
-  sprintf(str,"%d points",Game::current->player1->score);
-  TTF_SizeText(menuFont,str,&w,&h); h += 5;
-  draw2DString(menuFont,str,screenWidth/2+x-w,screenHeight/2, 220, 220, 64);
-  */
+  snprintf(str, sizeof(str), _("Enter your name: %s"), name);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 1.3 * size, size, 0.85,
+                             0.85, 0.25, 1.0);
+
   displayFrameRate();
+  Leave2DMode();
 }
 void EnterHighScoreMode::key(int key) {
   int len = strlen(name);

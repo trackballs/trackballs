@@ -30,10 +30,15 @@ GLuint loadProgram(const char *fragment, const char *vertex);
 double frand();
 double frand(int);
 
-// displays a 2d text on specific screen coordinates */
+/* displays a 2d text on specific screen coordinates */
 void draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
                   float alpha, int outlined = 0);
 void update2DStringCache();
+/* Common interface for drawing 2d things on the screen */
+void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
+                     GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                     GLuint tex = 0);
+
 void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
 void drawMousePointer();
@@ -72,6 +77,7 @@ int power_of_two(int input);
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                  const double *model, const double *proj);
 
+void Require2DMode();
 void Enter2DMode();
 void Leave2DMode();
 GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0,
@@ -86,6 +92,8 @@ int resetTextures();    // Reloads all textures
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
+extern GLuint shaderWater, shaderTile, shaderTileRim, shaderUI;
+extern GLuint theVao;
 
 /* Globals */
 extern float fps;

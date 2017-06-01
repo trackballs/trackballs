@@ -59,12 +59,7 @@ void HallOfFameMode::activated() {
   }
 
   /* Loads the background images. */
-  GLfloat texcoord[4];
-  texture = LoadTexture(background, texcoord);
-  texMaxX = texcoord[0];
-  texMinY = texcoord[1];
-  texMinX = texcoord[2];
-  texMaxY = texcoord[3];
+  texture = LoadTexture(background, texCoord);
   isExiting = 0;
   timeLeft = 1.0;
 }
@@ -79,21 +74,9 @@ void HallOfFameMode::display() {
   char str[256];
 
   // Draw the background using the preloaded texture
-  glColor3f(timeLeft, timeLeft, timeLeft);
-
   Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(0, 0);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(screenWidth, 0);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(0, screenHeight);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(screenWidth, screenHeight);
-  glEnd();
-  Leave2DMode();
+  draw2DRectangle(0, 0, screenWidth, screenHeight, texCoord[0], texCoord[1], texCoord[2],
+                  texCoord[3], timeLeft, timeLeft, timeLeft, 1., texture);
 
   int y, dy, size, x;
   if (screenWidth <= 640)
@@ -131,27 +114,20 @@ void HallOfFameMode::display() {
   addText_Right(CODE_LEVELSET, fontSize / 2, y - dy * 2, settings->levelSets[levelSet].name,
                 col1);
 
-  // sprintf(str,_("Level Set: %s"),settings->levelSets[levelSet].name);
-  // TTF_SizeText(menuFont,str,&w,&h);
-  // draw2DString(menuFont,str,screenWidth/2 - w/2,y-dy,0,0,0);
-  // Font::drawCenterSimpleText(0,str,screenWidth/2,(int)(y-dy-size*1.5),size*0.9,size,1.,1.,1.,1.);
-
   HighScore *highscore = HighScore::highScore;
 
   for (int i = 0; i < 10; i++) {
-    // draw2DString(menuFont,&highscore->names[levelSet][i][0],screenWidth/2 -
-    // x,y+dy*i,220,220,64);
     Font::drawSimpleText(&highscore->names[levelSet][i][0], screenWidth / 2 - x,
                          y + dy * i - size, size, 220 / 256., 220 / 256., 64 / 256., 1.0);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
     Font::drawRightSimpleText(str, screenWidth / 2 + x + size / 2, y + dy * i - size, size,
                               220 / 256., 220 / 256., 64 / 256., 1.0);
-    // TTF_SizeText(menuFont,str,&w,&h);
-    // draw2DString(menuFont,str,screenWidth/2 + x - w,y+dy*i,220,220,64);
   }
 
   drawMousePointer();
   displayFrameRate();
+
+  Leave2DMode();
 }
 void HallOfFameMode::key(int key) {
   if (key == SDLK_SPACE) {

@@ -57,7 +57,6 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
     Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
   else
@@ -73,7 +72,6 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
     Font::drawSimpleText(rightStr, rightX - width, y0, fontSize, 220 / 256., 220 / 256.,
                          220 / 256., 1.);
@@ -91,7 +89,6 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code)
     Font::drawSimpleText(str, cx - width / 2, y0, fontSize, 220 / 256., 220 / 256., 220 / 256.,
                          1.);
@@ -110,7 +107,6 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   if (code && getSelectedArea() == code) {
     Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
     Font::drawSimpleText(rightStr, rightX - widthR, y0, fontSize, 220 / 256., 220 / 256.,

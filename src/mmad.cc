@@ -378,31 +378,15 @@ void innerMain(void *closure, int argc, char **argv) {
 
   // Draw the splash screen
   GLfloat texcoord[4];
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
   GLuint splashTexture;
   LoadTexture(splashScreen, texcoord, 0, &splashTexture);
   SDL_FreeSurface(splashScreen);
-  texMinX = texcoord[0];
-  texMinY = texcoord[1];
-  texMaxX = texcoord[2];
-  texMaxY = texcoord[3];
   glColor3f(1.0, 1.0, 1.0);
   for (i = 0; i < 2; i++) {
     Enter2DMode();
-    glBindTexture(GL_TEXTURE_2D, splashTexture);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(texMinX, texMinY);
-    glVertex2i(0, 0);
-    glTexCoord2f(texMaxX, texMinY);
-    glVertex2i(screenWidth, 0);
-    glTexCoord2f(texMinX, texMaxY);
-    glVertex2i(0, screenHeight);
-    glTexCoord2f(texMaxX, texMaxY);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
+    draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
+                    texcoord[3], 1., 1., 1., 1., splashTexture);
     Leave2DMode();
-    glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
     SDL_GL_SwapWindow(window);
   }
 
@@ -465,23 +449,13 @@ void innerMain(void *closure, int argc, char **argv) {
     // Until here 74 megs
   }
 
-  /* Make sure splahsscreen has been shown for atleast 2.5 seconds */
+  /* Make sure splahsscreen has been shown for atleast 1.5 seconds */
   double timeNow = ((double)SDL_GetTicks()) / 1000.0;
-  while (timeNow < bootStart + 2.5) {
+  while (timeNow < bootStart + 1.5) {
     Enter2DMode();
-    glBindTexture(GL_TEXTURE_2D, splashTexture);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(texMinX, texMinY);
-    glVertex2i(0, 0);
-    glTexCoord2f(texMaxX, texMinY);
-    glVertex2i(screenWidth, 0);
-    glTexCoord2f(texMinX, texMaxY);
-    glVertex2i(0, screenHeight);
-    glTexCoord2f(texMaxX, texMaxY);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
+    draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
+                    texcoord[3], 1., 1., 1., 1., splashTexture);
     Leave2DMode();
-    glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
     SDL_GL_SwapWindow(window);
     timeNow = ((double)SDL_GetTicks()) / 1000.0;
   }

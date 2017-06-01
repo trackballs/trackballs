@@ -165,10 +165,7 @@ void Sparkle2D::draw() {
   float *pos;
   Sparkle *skl;
 
-  Enter2DMode();
-  glEnable(GL_BLEND);
-  glDisable(GL_CULL_FACE);
-  bindTexture("glitter.png");
+  GLuint tex = textures[loadTexture("glitter.png")];
   skl = sparkle_first;
   while (skl != NULL) {
     age = skl->age;
@@ -179,30 +176,17 @@ void Sparkle2D::draw() {
         tmp = age / skl->ttl;
       alpha = 1.0 - tmp;
       clr = skl->color;
-      glColor4f(clr[0], clr[1], clr[2], clr[3] * alpha);
+
       tmp = alpha * alpha;
       ex = tmp * skl->size * 0.8;
       ey = tmp * skl->size * 1. + (0.02 * age);
       pos = skl->pos;
-      glPushMatrix();
-      glTranslatef(pos[0], pos[1], pos[2]);
-      glBegin(GL_QUADS);
-      glTexCoord2f(0.0, 0.0);
-      glVertex3f(-ex, ey, 0.0);
-      glTexCoord2f(0.0, 1.0);
-      glVertex3f(-ex, -ey, 0.0);
-      glTexCoord2f(1.0, 1.0);
-      glVertex3f(ex, -ey, 0.0);
-      glTexCoord2f(1.0, 0.0);
-      glVertex3f(ex, ey, 0.0);
-      glEnd();
-      glPopMatrix();
+
+      draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
+                      clr[2], clr[3] * alpha, tex);
     }
     skl = skl->next;
   }
-  glDisable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
-  Leave2DMode();
 }
 
 /*

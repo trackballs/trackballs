@@ -230,23 +230,13 @@ void MainMode::display() {
     Game::current->draw();
     map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
-    // darken the display
+
     Enter2DMode();
-    glEnable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glColor4f(0., 0., 0., pause_time);
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex2i(0, 0);
-    glVertex2i(screenWidth, 0);
-    glVertex2i(0, screenHeight);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
-    glDisable(GL_BLEND);
-    Leave2DMode();
-    // print 'paused'
-    glColor4f(1., 1., 1., 1.);
+    // darken the display
+    draw2DRectangle(0, 0, screenWidth, screenHeight, 0., 0., 1., 1., 0., 0., 0., pause_time);
     Font::drawCenterSimpleText(_("Paused"), screenWidth / 2, screenHeight / 2 - 16, 16, 1.0,
                                1.0, 1.0, 0.75);
+    Leave2DMode();
     break;
   case statusBonusLevelComplete:
     map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
@@ -278,29 +268,21 @@ void MainMode::display() {
     break;
   }
 
+  Enter2DMode();
   if (player1->modTimeLeft[MOD_FROZEN]) {
-    Enter2DMode();
-    glColor4f(0.5, 0.5, 1.0, 0.5 * min(1.0, (double)player1->modTimeLeft[MOD_FROZEN]));
-    ;
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex2i(0, 0);
-    glVertex2i(screenWidth, 0);
-    glVertex2i(0, screenHeight);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
-    Leave2DMode();
+    draw2DRectangle(0, 0, screenWidth, screenHeight, 0., 0., 1., 1., 0.5, 0.5, 1.0,
+                    0.5 * min(1.0, (double)player1->modTimeLeft[MOD_FROZEN]));
   }
-
   displayFrameRate();
   /* Print joystick debugging information */
   if (debug_joystick && Settings::settings->hasJoystick()) {
-    Enter2DMode();
     snprintf(str, 255, "Joy: %d, %d -> %.1f, %.1f", Settings::settings->joystickRawX(),
              Settings::settings->joystickRawY(), Settings::settings->joystickX(),
              Settings::settings->joystickY());
     Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight - 16, 8, 0.6, 0.6, 0.6, 0.6);
-    Leave2DMode();
   }
+
+  Leave2DMode();
 
   /* For debugging, this draws the players environment map on the upper right corner of the
    * screen */
@@ -540,31 +522,27 @@ void MainMode::restartPlayer() {
 /* Shows various information on screen */
 void MainMode::showInfo() {
   if (!Game::current) return;
-  char str[256];
   Player *player = Game::current->player1;
-  int i;
 
   /* Don't draw the panel if we have released the cursor etc. This is
      usefull for screenshots. */
   if (SDL_GetModState() & KMOD_CAPS) return;
 
-  glColor3f(1.0, 1.0, 1.0);
   Enter2DMode();
 
   // the panel
-  bindTexture("left_panel.png");
-  drawTextured2DRectangle(0, 0, 256, 128);
+  draw2DRectangle(0, 0, 256, 128, 0., 0., 1., 1., 1., 1., 1., 1.,
+                  textures[loadTexture("left_panel.png")]);
 
   // lives
-  for (i = 0; i < 4; i++) {
-    if (i < player->lives)
-      bindTexture("life.png");
-    else
-      bindTexture("nolife.png");
-    drawTextured2DRectangle(63 + i * 20, 7, 32, 32);
+  for (int i = 0; i < 4; i++) {
+    const char *name = (i < player->lives) ? "life.png" : "nolife.png";
+    draw2DRectangle(63 + i * 20, 7, 32, 32, 0., 0., 1., 1., 1., 1., 1., 1.,
+                    textures[loadTexture(name)]);
   }
 
   // Score
+  char str[256];
   snprintf(str, sizeof(str), "%d", player->score);
   Font::drawRightSimpleText(str, 152, 52, 8, 0.0, 0.0, 0.0, 1.0);
 
@@ -602,9 +580,9 @@ void MainMode::showInfo() {
   glVertex2i(8 + (int)(144.0 * (1. - player->oxygen)), 3);
   glVertex2i(8 + (int)(144.0 * (1. - player->oxygen)), 8);
   glVertex2i(8, 8);
-  glEnd(),
+  glEnd();
 
-      Leave2DMode();
+  Leave2DMode();
   return;
 }
 void MainMode::levelComplete() {

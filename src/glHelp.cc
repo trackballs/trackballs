@@ -41,6 +41,12 @@ GLUquadricObj *qobj, *qball, *qdiamond;
 /* Precompiled display lists for spheres of varying resolution (dependent on gfx settings) */
 GLuint sphereDisplayLists[3];
 
+GLuint shaderWater = 0;
+GLuint shaderTile = 0;
+GLuint shaderTileRim = 0;
+GLuint shaderUI = 0;
+GLuint theVao = 0;
+
 TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
 extern SDL_Surface *screen;
 extern double displayStartTime;
@@ -71,7 +77,9 @@ int operator<(const struct StringInfo &a, const struct StringInfo &b) {
 }
 
 struct StringCache {
-  SDL_Surface *surf;
+  GLuint texture;
+  GLfloat texcoord[4];
+  int w, h;
   long tick;
 };
 
@@ -110,12 +118,6 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
 
 void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
                   float blue, float alpha, int outlined) {
-  int w, h;
-  GLuint texture;
-  GLfloat texcoord[4];
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
-
   struct StringInfo inf;
   inf.color.r = 255 * red;
   inf.color.g = 255 * green;
@@ -129,41 +131,21 @@ void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, f
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
     newentry.tick = stringTick;
-    newentry.surf = drawStringToSurface(inf, outlined);
-    if (!newentry.surf) { return; }
+    SDL_Surface *surf = drawStringToSurface(inf, outlined);
+    if (!surf) { return; }
+    newentry.texture = LoadTexture(surf, newentry.texcoord, 1, NULL);
+    newentry.w = surf->w;
+    newentry.h = surf->h;
     strcache[inf] = newentry;
   }
 
   struct StringCache &cached = strcache[inf];
   cached.tick = stringTick;
-  texture = LoadTexture(cached.surf, texcoord, 1, NULL);
-  w = cached.surf->w;
-  h = cached.surf->h;
 
-  texMinX = texcoord[0];
-  texMinY = texcoord[1];
-  texMaxX = texcoord[2];
-  texMaxY = texcoord[3];
+  y -= cached.h / 2;
 
-  y -= h / 2;
-
-  Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glBegin(GL_TRIANGLE_STRIP);
-  glColor4f(1., 1., 1., 1.);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(x, y);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(x + w, y);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(x, y + h);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(x + w, y + h);
-  glEnd();
-  Leave2DMode();
-
-  glDeleteTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
+  draw2DRectangle(x, y, cached.w, cached.h, cached.texcoord[0], cached.texcoord[1],
+                  cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1., cached.texture);
 }
 
 void update2DStringCache() {
@@ -174,7 +156,7 @@ void update2DStringCache() {
     for (std::map<StringInfo, StringCache>::iterator i = strcache.begin(); i != strcache.end();
          ++i) {
       if (i->second.tick < stringTick - 3) {
-        SDL_FreeSurface(i->second.surf);
+        glDeleteTextures(1, &i->second.texture);
         strcache.erase(i);
         erased = true;
         break;
@@ -224,32 +206,84 @@ void tickMouse(Real td) {
         0.5 + 0.2 * frandom(), 0.9 - 0.35 * frandom());
   }
 }
-/** Draws a textured 2D rectangle with min texcoord at x, y, max texcoord at x+w,y+h.
-   Uses the texture which is already bound.
-   Suitable for drawing 2D graphics like the panels on the screen.
-*/
-void drawTextured2DRectangle(int x, int y, int w, int h) {
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(0.0, 0.0);
-  glVertex2i(x, y);
-  glTexCoord2f(1.0, 0.0);
-  glVertex2i(x + w, y);
-  glTexCoord2f(0.0, 1.0);
-  glVertex2i(x, y + h);
-  glTexCoord2f(1.0, 1.0);
-  glVertex2i(x + w, y + h);
-  glEnd();
+
+void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
+                     GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
+                     GLuint tex) {
+  Require2DMode();
+
+  if (tex == 0) { tex = textures[loadTexture("blank.png")]; }
+
+  if (1) {
+    // Color asa uniform?
+    const GLfloat data[32] = {
+        x,     y,     r, g, b, a, tx,      ty,       //
+        x,     y + h, r, g, b, a, tx,      ty + th,  //
+        x + w, y,     r, g, b, a, tx + tw, ty,       //
+        x + w, y + h, r, g, b, a, tx + tw, ty + th   //
+    };
+    GLuint bufs[2];
+    glGenBuffers(2, bufs);
+    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_STREAM_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
+    ushort idxs[6] = {0, 1, 2, 1, 2, 3};
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxs, GL_STREAM_DRAW);
+
+    glBindVertexArray(theVao);
+    glUseProgram(shaderUI);
+
+    glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glUniform1f(glGetUniformLocation(shaderUI, "screen_width"), (GLfloat)screenWidth);
+    glUniform1f(glGetUniformLocation(shaderUI, "screen_height"), (GLfloat)screenHeight);
+
+    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
+
+    // 2x Position; 4x color; 2x texture coord
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void *)(2 * sizeof(GLfloat)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (void *)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(2, bufs);
+    glUseProgram(0);
+  } else {
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(r, g, b, a);
+    glTexCoord2f(tx, ty);
+    glVertex2i(x, y);
+    glTexCoord2f(tx + tw, ty);
+    glVertex2i(x + w, y);
+    glTexCoord2f(tx, ty + th);
+    glVertex2i(x, y + h);
+    glTexCoord2f(tx + tw, ty + th);
+    glVertex2i(x + w, y + h);
+    glEnd();
+  }
 }
 
 void drawMousePointer() {
   int mouseX, mouseY;
-  glColor4f(1.0, 1.0, 1.0, 1.0);
   sparkle2D->draw();
   SDL_GetMouseState(&mouseX, &mouseY);
   drawMouse(mouseX, mouseY, 64, 64, 0.01);
 }
 
 void drawMouse(int x, int y, int w, int h, Real td) {
+  Require2DMode();
+
   GLfloat texMinX, texMinY;
   GLfloat texMaxX, texMaxY;
 
@@ -259,10 +293,7 @@ void drawMouse(int x, int y, int w, int h, Real td) {
   texMaxX = 1.0;
   texMaxY = 1.0;
 
-  Enter2DMode();
-  glEnable(GL_BLEND);
   glColor4f(1.0, 1.0, 1.0, 1.0);  // 0.8 + 0.2*cos(3.23*mousePointerPhase));
-  // glBindTexture(GL_TEXTURE_2D, mousePointerTexture);
   glPushMatrix();
   glTranslatef(x, y, 0.0);
   glRotatef(mousePointerPhase * 20.0, 0.0, 0.0, 1.0);
@@ -279,10 +310,6 @@ void drawMouse(int x, int y, int w, int h, Real td) {
   glVertex2i(w / 2, h / 2);
   glEnd();
   glPopMatrix();
-  glDisable(GL_BLEND);
-  Leave2DMode();
-  // glDeleteTextures(1,&texture);
-  glBindTexture(GL_TEXTURE_2D, textures[0]);  // This is needed for mga_dri cards
 }
 
 /* generates a snapshot of the screen */
@@ -355,67 +382,39 @@ void message(char *A, char *B) {
 
   w = max(w1, w2) + 20;
 
-  Enter2DMode();
   int x1 = screenWidth / 2 - w / 2, x2 = screenWidth / 2 + w / 2;
   int y1 = screenHeight / 2 - h1 - 5, y2 = screenHeight / 2 + h2 + 5;
+  Enter2DMode();
+  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
 
-  glColor4f(0.2, 0.5, 0.2, 0.5);
-  glDisable(GL_TEXTURE_2D);
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex2i(x1, y1);
-  glVertex2i(x2, y1);
-  glVertex2i(x1, y2);
-  glVertex2i(x2, y2);
-  glEnd();
-  Leave2DMode();
-
-  glColor4f(0.5, 1.0, 0.2, 1.0);
-  // draw2DString(msgFont,A,screenWidth/2-w1/2,screenHeight/2-1,255,255,255);
   Font::drawCenterSimpleText(A, screenWidth / 2 + size, screenHeight / 2 - size, size, 0.5,
                              1.0, 0.2, 1.0);
-  // draw2DString(msgFont,B,screenWidth/2-w2/2,screenHeight/2+h2,255,255,255);
   Font::drawCenterSimpleText(B, screenWidth / 2 + size, screenHeight / 2 + 14, size, 0.5, 1.0,
                              0.2, 1.0);
+
+  Leave2DMode();
 }
 
 void multiMessage(int nlines, const char *left[], const char *right[]) {
-  int w, h, total_height, width, h_now;
+  int total_height, width, h_now;
   int i;
   int size = 16;
 
   total_height = 0;
-  for (i = 0; i < nlines; i++) {
-    // TTF_SizeText(msgFont,left[i],&w,&h);
-    w = Font::getTextWidth(left[i], size);
-    h = size * 2;
-    total_height += h;
-  }
+  for (i = 0; i < nlines; i++) { total_height += size * 2; }
   width = 600;
 
-  Enter2DMode();
   int x1 = screenWidth / 2 - width / 2 - 5, x2 = screenWidth / 2 + width / 2 + 5;
   int y1 = screenHeight / 2 - total_height / 2 - 5,
       y2 = screenHeight / 2 + total_height / 2 + 30;
 
-  glColor4f(0.2, 0.5, 0.2, 0.5);
-  glDisable(GL_TEXTURE_2D);
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex2i(x1, y1);
-  glVertex2i(x2, y1);
-  glVertex2i(x1, y2);
-  glVertex2i(x2, y2);
-  glEnd();
+  Enter2DMode();
+  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
 
-  Leave2DMode();
-
-  glColor4f(0.5, 1.0, 0.2, 1.0);
   h_now = -size;
-  TTF_SizeText(msgFont, left[0], &w, &h);
   for (i = 0; i < nlines; i++) {
-    h_now += h;
+    h_now += 2 * size;
     if (left[i]) {
-      // TTF_SizeText(msgFont,left[i],&w,&h);
-      // draw2DString(msgFont,left[i],screenWidth/2-width/2,screenHeight/2-total_height/2+h_now,255,255,255);
       Font::drawSimpleText(left[i], screenWidth / 2 - width / 2 + size,
                            screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
                            1.0);
@@ -424,10 +423,9 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
       Font::drawRightSimpleText(right[i], screenWidth / 2 + width / 2 + size,
                                 screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0,
                                 0.2, 1.0);
-      // TTF_SizeText(msgFont,right[i],&w,&h);
-      // draw2DString(msgFont,right[i],screenWidth/2+width/2-w,screenHeight/2-total_height/2+h_now,255,255,255);
     }
   }
+  Leave2DMode();
 }
 
 /** Loads a texture from file and returns a reference to it.
@@ -523,6 +521,15 @@ void glHelpInit() {
   sphereDisplayLists[1] = glGenLists(1);
   sphereDisplayLists[2] = glGenLists(1);
   regenerateSphereDisplaylists();
+
+  // The VAO need only be there :-)
+  glGenVertexArrays(1, &theVao);
+
+  // Errors handled within loadProgram
+  shaderTile = loadProgram("basic.vert", "basic.frag");
+  shaderTileRim = loadProgram("line.vert", "line.frag");
+  shaderWater = loadProgram("water.vert", "water.frag");
+  shaderUI = loadProgram("ui.vert", "ui.frag");
 }
 
 void regenerateSphereDisplaylists() {
@@ -751,7 +758,6 @@ void displayFrameRate() {
       snprintf(str, sizeof(str), _("%.1f ms/Frame"),
                1e3 * (getSystemTime() - displayStartTime));
     }
-    // glColor3f(1.0,1.0,1.0);
     Font::drawSimpleText(str, 15, screenHeight - 15, 10., 1., 1., 0.25, 0.8);
   }
 }
@@ -933,7 +939,15 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
   return 1;
 }
 
+static int is_2d_mode = 0;
+
+void Require2DMode() {
+  if (!is_2d_mode) { warning("Function should only be called in 2D mode"); }
+}
+
 void Enter2DMode() {
+  if (is_2d_mode) { return; }
+
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_CULL_FACE);
@@ -956,9 +970,13 @@ void Enter2DMode() {
   glLoadIdentity();
 
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  is_2d_mode = 1;
 }
 
 void Leave2DMode() {
+  if (!is_2d_mode) { return; }
+
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 
@@ -966,6 +984,8 @@ void Leave2DMode() {
   glPopMatrix();
 
   glPopAttrib();
+
+  is_2d_mode = 0;
 }
 
 int powerOfTwo(int input) {

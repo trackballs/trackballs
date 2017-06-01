@@ -50,13 +50,10 @@ int Font::drawSimpleText(const char *text, int x, int y, float sz, float r, floa
                          float a) {
   if ((text == NULL) || (strlen(text) == 0)) return (0);
 
-  Enter2DMode();
-
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
   draw2DString(active, text, x, y, r, g, b, a, sz > 10);
 
-  Leave2DMode();
   return 0;
 }
 

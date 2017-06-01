@@ -59,12 +59,7 @@ void HelpMode::activated() {
   }
 
   /* Loads the background images. */
-  GLfloat texcoord[4];
-  bgTexture = LoadTexture(background, texcoord);
-  texMaxX = texcoord[0];
-  texMinY = texcoord[1];
-  texMinX = texcoord[2];
-  texMaxY = texcoord[3];
+  bgTexture = LoadTexture(background, bgCoord);
 
   if (screenWidth < 1024)
     snprintf(str, sizeof(str), "%s/images/help0_640.png", SHARE_DIR);
@@ -72,12 +67,8 @@ void HelpMode::activated() {
     snprintf(str, sizeof(str), "%s/images/help0_1024.png", SHARE_DIR);
   page0 = IMG_Load(str);
   if (!page0) { error("Error: failed to load %s", str); }
-  p0Texture = LoadTexture(page0, texcoord);
+  p0Texture = LoadTexture(page0, p0coord);
   SDL_FreeSurface(page0);
-  p0MaxX = texcoord[0];
-  p0MinY = texcoord[1];
-  p0MinX = texcoord[2];
-  p0MaxY = texcoord[3];
 
   if (screenWidth < 1024)
     snprintf(str, sizeof(str), "%s/images/help1_640.png", SHARE_DIR);
@@ -85,12 +76,8 @@ void HelpMode::activated() {
     snprintf(str, sizeof(str), "%s/images/help1_1024.png", SHARE_DIR);
   page1 = IMG_Load(str);
   if (!page1) { error("failed to load %s", str); }
-  p1Texture = LoadTexture(page1, texcoord);
+  p1Texture = LoadTexture(page1, p1coord);
   SDL_FreeSurface(page1);
-  p1MaxX = texcoord[0];
-  p1MinY = texcoord[1];
-  p1MinX = texcoord[2];
-  p1MaxY = texcoord[3];
 
   isExiting = 0;
   timeLeft = 1.0;
@@ -118,46 +105,18 @@ void HelpMode::display() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
   Enter2DMode();
-  glBindTexture(GL_TEXTURE_2D, bgTexture);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(texMaxX, texMinY);
-  glVertex2i(0, 0);
-  glTexCoord2f(texMinX, texMinY);
-  glVertex2i(screenWidth, 0);
-  glTexCoord2f(texMaxX, texMaxY);
-  glVertex2i(0, screenHeight);
-  glTexCoord2f(texMinX, texMaxY);
-  glVertex2i(screenWidth, screenHeight);
-  glEnd();
+  draw2DRectangle(0, 0, screenWidth, screenHeight, bgCoord[0], bgCoord[1], bgCoord[2],
+                  bgCoord[3], 1., 1., 1., 1., bgTexture);
 
   if (page == 0) {
-    glBindTexture(GL_TEXTURE_2D, p0Texture);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(p0MaxX, p0MinY);
-    glVertex2i(0, 0);
-    glTexCoord2f(p0MinX, p0MinY);
-    glVertex2i(screenWidth, 0);
-    glTexCoord2f(p0MaxX, p0MaxY);
-    glVertex2i(0, screenHeight);
-    glTexCoord2f(p0MinX, p0MaxY);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
+    draw2DRectangle(0, 0, screenWidth, screenHeight, p0coord[0], p0coord[1], p0coord[2],
+                    p0coord[3], 1., 1., 1., 1., p0Texture);
   }
 
   if (page == 1) {
-    glBindTexture(GL_TEXTURE_2D, p1Texture);
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(p1MaxX, p1MinY);
-    glVertex2i(0, 0);
-    glTexCoord2f(p1MinX, p1MinY);
-    glVertex2i(screenWidth, 0);
-    glTexCoord2f(p1MaxX, p1MaxY);
-    glVertex2i(0, screenHeight);
-    glTexCoord2f(p1MinX, p1MaxY);
-    glVertex2i(screenWidth, screenHeight);
-    glEnd();
+    draw2DRectangle(0, 0, screenWidth, screenHeight, p1coord[0], p1coord[1], p1coord[2],
+                    p1coord[3], 1., 1., 1., 1., p1Texture);
   }
-  Leave2DMode();
 
   if (page == 2) {
     const char *text[21][2] = {
@@ -183,7 +142,6 @@ void HelpMode::display() {
         {" ", _("Some are lethal and some are one way.")},
         {_("Tunnel:"), _("Takes you places, sometimes with great speed.")}};
 
-    // Enter2DMode();
     for (int i = 0; i < 20; i++) {
       if (screenWidth <= 800) {
         Font::drawSimpleText(text[i][0], 50, screenHeight / 2 - 200 + i * 20 + 10, 10, 0.9,
@@ -202,7 +160,6 @@ void HelpMode::display() {
                              0.25, 1.);
       }
     }
-    // Leave2DMode();
   }
 
   int fontSize = 24;
@@ -210,22 +167,11 @@ void HelpMode::display() {
   addText_Right(CODE_MOREHELP, fontSize / 2, screenHeight - 45, _("More Help"),
                 screenWidth - 16);
   addText_Left(CODE_BACK, fontSize / 2, screenHeight - 45, _("Back"), 16);
-  /*
-  if(selected == 0)
-        drawSurface(moreHelpHigh,screenWidth-moreHelpHigh->w,screenHeight-45,moreHelpHigh->w,moreHelpHigh->h);
-  else
-        drawSurface(moreHelp,screenWidth-moreHelp->w,screenHeight-45,moreHelp->w,moreHelp->h);
-  */
-
-  /*
-  if(selected == 1)
-        drawSurface(backHigh,-40,screenHeight-45,back->w,back->h);
-  else
-        drawSurface(back,-40,screenHeight-45,back->w,back->h);
-  */
 
   drawMousePointer();
   displayFrameRate();
+
+  Leave2DMode();
 }
 void HelpMode::key(int key) {
   if (key == SDLK_SPACE) {
