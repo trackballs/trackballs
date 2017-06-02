@@ -45,6 +45,7 @@ GLuint shaderWater = 0;
 GLuint shaderTile = 0;
 GLuint shaderTileRim = 0;
 GLuint shaderUI = 0;
+GLuint shaderObject = 0;
 GLuint theVao = 0;
 
 TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
@@ -279,6 +280,55 @@ void drawMouse(int x, int y, int w, int h, Real td) {
   draw2DQuad(vco, texco, colors, textures[loadTexture("mousePointer.png")]);
 }
 
+size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
+                        GLfloat color[3], GLfloat normal[3]) {
+  uint32_t *aout = (uint32_t *)dest;
+  GLfloat *fout = (GLfloat *)dest;
+  fout[0] = x;
+  fout[1] = y;
+  fout[2] = z;
+  aout[3] = (((uint32_t)(65535.f * color[1])) << 16) + (uint32_t)(65535.f * color[0]);
+  aout[4] = (((uint32_t)(65535.f * color[3])) << 16) + (uint32_t)(65535.f * color[1]);
+  aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
+  aout[6] = packNormal(normal);
+  return 8 * sizeof(GLfloat);
+}
+void configureObjectAttributes() {
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+  glVertexAttribPointer(1, 4, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void *)(3 * sizeof(GLfloat)));
+  glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void *)(5 * sizeof(GLfloat)));
+  glVertexAttribPointer(4, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void *)(6 * sizeof(GLfloat)));
+}
+
+void setupObjectRenderState() {
+  glUseProgram(shaderObject);
+
+  glBindVertexArray(theVao);
+
+  // Pos, Color, Tex, ~Vel~, Norm
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
+  glEnableVertexAttribArray(4);
+
+  GLfloat proj[16];
+  GLfloat model[16];
+
+  glGetFloatv(GL_PROJECTION_MATRIX, proj);
+  glGetFloatv(GL_MODELVIEW_MATRIX, model);
+
+  glUniformMatrix4fv(glGetUniformLocation(shaderObject, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&proj[0]);
+  glUniformMatrix4fv(glGetUniformLocation(shaderObject, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&model[0]);
+
+  glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
+  glActiveTexture(GL_TEXTURE0 + 0);
+}
+
 /* generates a snapshot of the screen */
 int createSnapshot() {
   static int snap_number = 0;
@@ -497,6 +547,7 @@ void glHelpInit() {
   shaderTileRim = loadProgram("line.vert", "line.frag");
   shaderWater = loadProgram("water.vert", "water.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
+  shaderObject = loadProgram("object.vert", "object.frag");
 }
 
 void regenerateSphereDisplaylists() {
@@ -640,6 +691,7 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
   glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
   glBindAttribLocation(shaderprogram, 3, "in_Velocity");
   glBindAttribLocation(shaderprogram, 4, "in_Normal");
+  glBindAttribLocation(shaderprogram, 5, "in_Specular");
   glLinkProgram(shaderprogram);
   glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&IsLinked);
   glDeleteShader(vertexshader);

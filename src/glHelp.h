@@ -47,6 +47,22 @@ void drawMousePointer();
 void drawMouse(int x, int y, int w, int h, Real td);
 void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d);
 
+size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
+                        GLfloat color[3], GLfloat normal[3]);
+void configureObjectAttributes();
+void setupObjectRenderState();
+inline uint32_t packNormal(const GLfloat n[3]) {
+  uint32_t d = (512 + n[2] * 511.f);
+  uint32_t e = (512 + n[1] * 511.f);
+  uint32_t f = (512 + n[0] * 511.f);
+  uint32_t x = 0;
+  // Alpha (<<30) unused
+  x |= d << 20;
+  x |= e << 10;
+  x |= f << 0;
+  return x;
+}
+
 // generates a snapshot
 int createSnapshot();
 // displays a semitransparent centered sign with two text rows */
@@ -94,7 +110,7 @@ int resetTextures();    // Reloads all textures
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
-extern GLuint shaderWater, shaderTile, shaderTileRim, shaderUI;
+extern GLuint shaderWater, shaderTile, shaderTileRim, shaderUI, shaderObject;
 extern GLuint theVao;
 
 /* Globals */

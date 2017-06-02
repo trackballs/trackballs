@@ -590,18 +590,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   //         1e3 * (t1 - t0), nchunks, stage, birdseye);
 }
 
-static inline uint32_t packNormal(const GLfloat n[3]) {
-  uint32_t d = (512 + n[2] * 511.f);
-  uint32_t e = (512 + n[1] * 511.f);
-  uint32_t f = (512 + n[0] * 511.f);
-  uint32_t x = 0;
-  // Alpha (<<30) is irrelevant; can abuse for flags..
-  x |= d << 20;
-  x |= e << 10;
-  x |= f << 0;
-  return x;
-}
-
 static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
                             const GLfloat* colors, GLfloat tx, GLfloat ty, int txno,
                             float velx, float vely, const GLfloat normal[3]) {

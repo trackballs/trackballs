@@ -44,46 +44,56 @@ Diamond::Diamond(Coord3d pos) {
 
 void Diamond::draw() {}
 void Diamond::draw2() {
-  int i;
+  if (fade <= 0.) { return; }
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
 
-  if (fade <= 0.0) return;
-  glPushAttrib(GL_ENABLE_BIT);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
+  setupObjectRenderState();
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 50.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
   GLfloat color[4];
-  for (i = 0; i < 4; i++) color[i] = primaryColor[i];
+  for (int i = 0; i < 4; i++) color[i] = primaryColor[i];
   color[3] *= fade;
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specularColor);
-  glMaterialf(GL_FRONT, GL_SHININESS, 50.0);
-  glEnable(GL_BLEND);
-  glShadeModel(GL_FLAT);
-  glDisable(GL_CULL_FACE);
+  GLfloat flat[3] = {0.f, 0.f, 0.f};
 
-  glBegin(GL_TRIANGLE_FAN);
-  glVertex3f(0.0, 0.0, -.4);
-  for (i = 0; i <= 6; i++) {
-    double v = i * 2.0 * M_PI / 6.0 + Game::current->gameTime;
-    glVertex3f(sin(v) * 0.25, cos(v) * 0.25, 0.0);
-    glNormal3f(sin(v), cos(v), 0.0);
+  GLfloat data[8 * 8];
+  packObjectVertex(&data[0], position[0], position[1], position[2] - .4, 0., 0., color, flat);
+  for (int i = 0; i < 6; i++) {
+    float v = i * 2.0 * M_PI / 6.0 + Game::current->gameTime;
+    packObjectVertex(&data[(i + 1) * 8], position[0] + std::sin(v) * 0.25,
+                     position[1] + std::cos(v) * 0.25, position[2], 0., 0., color, flat);
   }
-  glEnd();
+  packObjectVertex(&data[7 * 8], position[0], position[1], position[2] + .4, 0., 0., color,
+                   flat);
 
-  glBegin(GL_TRIANGLE_FAN);
-  glVertex3f(0.0, 0.0, +.4);
-  for (i = 6; i >= 0; i--) {
-    double v = i * 2.0 * M_PI / 6.0 + Game::current->gameTime;
-    glVertex3f(sin(v) * 0.25, cos(v) * 0.25, 0.0);
-    glNormal3f(sin(v), cos(v), 0.0);
-  }
-  glEnd();
+  ushort idxs[12][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 6}, {0, 6, 1},
+                        {7, 2, 1}, {7, 3, 2}, {7, 4, 3}, {7, 5, 4}, {7, 6, 5}, {7, 1, 6}};
 
-  glShadeModel(GL_SMOOTH);
-  glPopMatrix();
-  glPopAttrib();
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
 }
 void Diamond::tick(Real t) {
   Coord3d v0;

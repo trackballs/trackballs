@@ -64,65 +64,67 @@ void Bird::draw2() {
 
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
-  glRotatef(rotation / (2.0 * M_PI) * 360.0, 0.0, 0.0, 1.0);
+  setupObjectRenderState();
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
+
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
 
   GLfloat color[4];
   for (i = 0; i < 3; i++) color[i] = primaryColor[i];
   color[3] = 1.0;
 
-  GLfloat specular[4];
-  for (i = 0; i < 3; i++) specular[i] = specularColor[i];
-  specular[3] = 1.0;
-
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glShadeModel(GL_SMOOTH);
-
-  glColor3f(1.0, 1.0, 1.0);
-  /*
-  glNormal3f(0., 0., 1.);
-  glBegin(GL_TRIANGLES);
-  glVertex3f(size, 0., 0);
-  glVertex3f(0., -size/2., 0);
-  glVertex3f(0.,  size/2., 0);
-  glVertex3f(size, 0., 0);
-  glVertex3f(0.,  size/2., 0);
-  glVertex3f(0., -size/2., 0);
-  glEnd();
-  */
-  glDisable(GL_CULL_FACE);
+  GLfloat data[4 * 8];
+  char *pos = (char *)data;
+  GLfloat flat[3] = {0., 0., 0.};
   double angle =
       (0.8 - (animation < 0.5 ? animation * 2.0 : 2.0 - animation * 2.0)) * M_PI / 2.0;
 
-  glEnable(GL_TEXTURE_2D);
-  bindTexture("wings.png");
+  GLfloat dz = 0.5f * size * std::sin(angle);
+  GLfloat loc[4][2] = {{0.f, (GLfloat)size},
+                       {0.f, 0.f},
+                       {-0.5f * (GLfloat)size * std::cos((GLfloat)angle), (GLfloat)size},
+                       {0.5f * (GLfloat)size * std::cos((GLfloat)angle), (GLfloat)size}};
+  for (int i = 0; i < 4; i++) {
+    GLfloat ox = loc[i][0], oy = loc[i][1];
+    loc[i][0] = -std::cos(rotation) * ox - std::sin(rotation) * oy;
+    loc[i][1] = -std::sin(rotation) * ox + std::cos(rotation) * oy;
+  }
 
-  glEnable(GL_BLEND);
+  pos += packObjectVertex(pos, position[0] + loc[0][0], position[1] + loc[0][1], position[2],
+                          1., 1., color, flat);
+  pos += packObjectVertex(pos, position[0] + loc[1][0], position[1] + loc[1][1], position[2],
+                          1., 0., color, flat);
+  pos += packObjectVertex(pos, position[0] + loc[2][0], position[1] + loc[2][1],
+                          position[2] + dz, 0., 1., color, flat);
+  pos += packObjectVertex(pos, position[0] + loc[3][0], position[1] + loc[3][1],
+                          position[2] + dz, 0., 1., color, flat);
 
-  glBegin(GL_TRIANGLES);
-  glNormal3f(-sin(angle), 0.0, cos(angle));
-  glTexCoord2f(1.0, 1.0);
-  glVertex3f(0.0, size, 0.0);
-  glTexCoord2f(1.0, 0.0);
-  glVertex3f(0.0, 0.0, 0.0);
-  glTexCoord2f(0.0, 1.0);
-  glVertex3f(size / 2. * cos(angle), size, size / 2. * sin(angle));
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
-  glNormal3f(sin(angle), 0.0, cos(angle));
-  glTexCoord2f(1.0, 1.0);
-  glVertex3f(0.0, size, 0.0);
-  glTexCoord2f(1.0, 0.0);
-  glVertex3f(0.0, 0.0, 0.0);
-  glTexCoord2f(0.0, 1.0);
-  glVertex3f(-size / 2. * cos(angle), size, size / 2. * sin(angle));
-  glEnd();
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 4 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
-  glPopMatrix();
+  ushort idxs[2][3] = {{0, 1, 2}, {0, 3, 1}};
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

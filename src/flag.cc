@@ -54,96 +54,80 @@ Flag::Flag(int x, int y, int points, int visible, Real radius) {
 }
 
 void Flag::draw() {
-  int i;
-
   if (!visible) return;
-
-  double d1 = Game::current->gameTime * 1.0, d2 = 3.0, d3 = 0.5;
 
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
-  //  glRotatef(life*rotation,0.0,0.0,1.0);
+  setupObjectRenderState();
 
-  GLfloat color[4];
-  for (i = 0; i < 3; i++) color[i] = primaryColor[i];
-  color[3] = 0.0;
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
 
-  GLfloat specular[4];
-  for (i = 0; i < 3; i++) specular[i] = specularColor[i];
-  specular[3] = 0.0;
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glShadeModel(GL_SMOOTH);
+  GLfloat data[14 * 8];
+  memset(data, 0, sizeof(data));
+  ushort idxs[12][3] = {{0, 1, 2},  {1, 2, 3},
 
-  glColor3f(1.0, 1.0, 1.0);
-  glBegin(GL_TRIANGLE_STRIP);
-  {
-    double x1 = 0.0;
-    double x2 = 0.1 * d3 * sin(d1 + d2 * 0.1);
-    double x3 = 0.2 * d3 * sin(d1 + d2 * 0.2);
-    double x4 = 0.3 * d3 * sin(d1 + d2 * 0.3);
-    double x5 = 0.4 * d3 * sin(d1 + d2 * 0.4);
-    Coord3d up = {0.0, 0.0, 1.0}, b = {0.0, 0.0, 0.0}, normal;
+                        {4, 5, 6},  {5, 6, 7},   {6, 7, 8},    {7, 8, 9},
+                        {8, 9, 10}, {9, 10, 11}, {10, 11, 12}, {11, 12, 13}};
 
-    b[0] = x2 - x1;
-    b[1] = 0.1;
+  // The tail
+  GLfloat perp[3] = {-1., -1., 0.};
+  char *pos = (char *)data;
+  GLfloat ox = 0.03;
+  pos += packObjectVertex(pos, position[0] + ox, position[1], position[2], 0., 0.,
+                          secondaryColor, perp);
+  pos += packObjectVertex(pos, position[0] - ox, position[1], position[2], 0., 0.,
+                          secondaryColor, perp);
+  pos += packObjectVertex(pos, position[0] + ox, position[1], position[2] + 0.71, 0., 0.,
+                          secondaryColor, perp);
+  pos += packObjectVertex(pos, position[0] - ox, position[1], position[2] + 0.71, 0., 0.,
+                          secondaryColor, perp);
+
+  float d1 = Game::current->gameTime * 1.0f, d2 = 3.0f, d3 = 0.5f;
+  GLfloat dx[5] = {0.0f, 0.1f * d3 * std::sin(d1 + d2 * 0.1f),
+                   0.2f * d3 * std::sin(d1 + d2 * 0.2f), 0.3f * d3 * std::sin(d1 + d2 * 0.3f),
+                   0.4f * d3 * std::sin(d1 + d2 * 0.4f)};
+  GLfloat dbx[5] = {dx[1] - dx[0], dx[2] - dx[0], dx[3] - dx[1], dx[4] - dx[2], dx[4] - dx[3]};
+  GLfloat dby[5] = {0.1f, 0.2f, 0.2f, 0.2f, 0.1f};
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.0};
+  for (int i = 0; i < 5; i++) {
+    Coord3d b = {dbx[i], dby[i], 0.0};
+    Coord3d up = {0.0, 0.0, 1.0};
+    Coord3d normal;
     crossProduct(up, b, normal);
     normalize(normal);
-    glNormal3dv(normal);
-    glVertex3f(x1, -0.0, 0.7);
-    glVertex3f(x1, -0.0, 0.5);
-
-    b[0] = x3 - x1;
-    b[1] = 0.2;
-    crossProduct(up, b, normal);
-    normalize(normal);
-    glNormal3dv(normal);
-    glVertex3f(x2, -0.1, 0.7);
-    glVertex3f(x2, -0.1, 0.5);
-
-    b[0] = x4 - x2;
-    b[1] = 0.2;
-    crossProduct(up, b, normal);
-    normalize(normal);
-    glNormal3dv(normal);
-    glVertex3f(x3, -0.2, 0.7);
-    glVertex3f(x3, -0.2, 0.5);
-
-    b[0] = x5 - x3;
-    b[1] = 0.2;
-    crossProduct(up, b, normal);
-    normalize(normal);
-    glNormal3dv(normal);
-    glVertex3f(x4, -0.3, 0.7);
-    glVertex3f(x4, -0.3, 0.5);
-
-    b[0] = x5 - x4;
-    b[1] = 0.1;
-    crossProduct(up, b, normal);
-    normalize(normal);
-    glNormal3dv(normal);
-    glVertex3f(x5, -0.4, 0.7);
-    glVertex3f(x5, -0.4, 0.5);
+    GLfloat fnorm[3] = {(GLfloat)normal[0], (GLfloat)normal[1], (GLfloat)normal[2]};
+    pos += packObjectVertex(pos, position[0] + dx[i], position[1] - 0.1 * i, position[2] + 0.7,
+                            0., 0., color, fnorm);
+    pos += packObjectVertex(pos, position[0] + dx[i], position[1] - 0.1 * i, position[2] + 0.5,
+                            0., 0., color, fnorm);
   }
-  glEnd();
 
-  for (i = 0; i < 3; i++) color[i] = secondaryColor[i];
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glBegin(GL_LINES);
-  {
-    glNormal3f(-1., -1., 0.);
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 0.0, 0.71);
-  }
-  glEnd();
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
-  glPopMatrix();
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 14 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 
