@@ -47,58 +47,57 @@ Spike::Spike(Coord3d position, Real speed, Real phase) {
   secondaryColor[0] = 0.9;
   secondaryColor[1] = 0.8;
   secondaryColor[2] = 0.5;
+
+  specularColor[0] = 0.1;
+  specularColor[1] = 0.1;
+  specularColor[2] = 0.1;
 }
 
 void Spike::draw() {
-  int i;
-
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
+  const int nfacets = 6;
 
-  GLfloat white[4] = {0.0, 0.0, 0.0, 0.0};
-  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-  glMaterialf(GL_FRONT, GL_SHININESS, 0.5);
-  glShadeModel(GL_SMOOTH);
-  glColor3f(1.0, 1.0, 1.0);
+  setupObjectRenderState();
 
-  GLfloat colorBase[4];
-  for (i = 0; i < 3; i++) colorBase[i] = primaryColor[i];
-  colorBase[3] = 0.0;
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colorBase);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  double x = position[0], y = position[1], z = position[2];
-  glBegin(GL_TRIANGLE_STRIP);
-  for (i = 0; i <= 6; i++) {
-    glNormal3f(sin(i / 3.0 * M_PI), cos(i / 3.0 * M_PI), 0.0);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z - 5.0);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z + 0.0);
-  }
-  glEnd();
+  GLfloat data[(4 * nfacets) * 8];
+  ushort idxs[3 * nfacets][3];
 
-  GLfloat colorTop[4];
-  for (i = 0; i < 3; i++) colorTop[i] = secondaryColor[i];
-  colorTop[3] = 0.0;
+  Matrix3d rotmtx;
+  Matrix4d frommtx;
+  identityMatrix(frommtx);
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
+  generateSpikeVBO(data, idxs, nfacets, rotmtx, position, primaryColor, secondaryColor, 2.0);
 
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colorTop);
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
-  double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
-  glBegin(GL_TRIANGLES);
-  for (i = 0; i < 6; i++) {
-    glNormal3f(d2 * sin((i + 0.0) / 3.0 * M_PI), d2 * cos((i + 0.0) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z + 0.0);
-    glNormal3f(d2 * sin((i + 1.0) / 3.0 * M_PI), d2 * cos((i + 1.0) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.1 * sin((i + 1) / 3.0 * M_PI), y + 0.1 * cos((i + 1) / 3.0 * M_PI),
-               z + 0.0);
-    glNormal3f(d2 * sin((i + 0.5) / 3.0 * M_PI), d2 * cos((i + 0.5) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.0, y + 0.0, z + 0.3);
-  }
-  glEnd();
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-  glPopMatrix();
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 
@@ -166,5 +165,72 @@ void Spike::tick(Real t) {
     else
       playEffect(SFX_SPIKE, 0.66 * (9. - dist) / 3.);
     soundDone = 1;
+  }
+}
+
+void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
+                      Coord3d position, GLfloat sidec[4], GLfloat tipc[4], GLfloat length) {
+  char *pos = (char *)data;
+
+  double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
+  for (int i = 0; i < 4 * nfacets; i++) {
+    Coord3d local;
+    Coord3d normal;
+    GLfloat *color = NULL;
+
+    int step = i / nfacets;
+    double angle = (i % nfacets) * 2. * M_PI / nfacets;
+    local[0] = 0.1 * std::sin(angle);
+    local[1] = 0.1 * std::cos(angle);
+    if (step == 0) {
+      color = tipc;
+      local[2] = 0.;
+      normal[0] = d2 * std::sin(angle);
+      normal[1] = d2 * std::cos(angle);
+      normal[2] = d1;
+    } else if (step == 1) {
+      color = sidec;
+      local[2] = 0;
+      normal[0] = std::sin(angle);
+      normal[1] = std::cos(angle);
+      normal[2] = 0.;
+    } else if (step == 2) {
+      color = sidec;
+      local[2] = -length;
+      normal[0] = std::sin(angle);
+      normal[1] = std::cos(angle);
+      normal[2] = 0.;
+    } else {
+      color = tipc;
+      local[0] = 0.;
+      local[1] = 0.;
+      local[2] = 0.3;
+      normal[0] = d2 * std::sin(angle + M_PI / nfacets);
+      normal[1] = d2 * std::cos(angle + M_PI / nfacets);
+      normal[2] = d1;
+    }
+    Coord3d tlocal, tnormal;
+    useMatrix(rotmtx, local, tlocal);
+    useMatrix(rotmtx, normal, tnormal);
+    GLfloat flocal[3] = {(GLfloat)tlocal[0], (GLfloat)tlocal[1], (GLfloat)tlocal[2]};
+    GLfloat fnormal[3] = {(GLfloat)tnormal[0], (GLfloat)tnormal[1], (GLfloat)tnormal[2]};
+    pos += packObjectVertex(pos, position[0] + flocal[0], position[1] + flocal[1],
+                            position[2] + flocal[2], 0., 0., color, fnormal);
+  }
+
+  for (int i = 0; i < nfacets; i++) {
+    idxs[i][0] = 3 * nfacets + i;
+    idxs[i][1] = i;
+    idxs[i][2] = (i + 1) % nfacets;
+  }
+  for (int i = 0; i < nfacets; i++) {
+    idxs[nfacets + i][0] = 2 * nfacets + i;
+    idxs[nfacets + i][1] = nfacets + i;
+    idxs[nfacets + i][2] = nfacets + (i + 1) % nfacets;
+  }
+  for (int i = 0; i < nfacets; i++) {
+    idxs[2 * nfacets + i][0] = 2 * nfacets + i;
+    idxs[2 * nfacets + i][1] = 2 * nfacets + (i + 1) % nfacets;
+    idxs[2 * nfacets + i][2] = nfacets + (i + 1) % nfacets;
   }
 }

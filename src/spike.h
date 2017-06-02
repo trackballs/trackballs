@@ -37,4 +37,7 @@ class Spike : public Animated {
   int soundDone;
 };
 
+void generateSpikeVBO(GLfloat* data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
+                      Coord3d position, GLfloat sidec[4], GLfloat tipc[4], GLfloat length);
+
 #endif

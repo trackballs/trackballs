@@ -357,9 +357,9 @@ SCM_DEFINE(add_cactus, "add-cactus", 3, 0, 0, (SCM x, SCM y, SCM radius),
            "Creates a cactus at given position.")
 #define FUNC_NAME s_add_cactus
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, s_add_flag);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, s_add_flag);
-  SCM_ASSERT(SCM_REALP(radius), radius, SCM_ARG5, s_add_cactus);
+  SCM_ASSERT(scm_is_exact_integer(x), x, SCM_ARG1, s_add_flag);
+  SCM_ASSERT(scm_is_exact_integer(y), y, SCM_ARG2, s_add_flag);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, s_add_cactus);
   Cactus *cactus = new Cactus(scm_to_int(x), scm_to_int(y), scm_to_double(radius));
   return smobAnimated_make(cactus);
 }
@@ -370,10 +370,10 @@ SCM_DEFINE(add_spike, "add-spike", 4, 0, 0, (SCM x, SCM y, SCM speed, SCM phase)
            "Creates a lethal spike. Returns an 'animated' object.")
 #define FUNC_NAME s_add_spike
 {
-  SCM_ASSERT(SCM_REALP(x), x, SCM_ARG1, s_add_spike);
-  SCM_ASSERT(SCM_REALP(y), y, SCM_ARG2, s_add_spike);
-  SCM_ASSERT(SCM_REALP(speed), speed, SCM_ARG3, s_add_spike);
-  SCM_ASSERT(SCM_REALP(phase), phase, SCM_ARG4, s_add_spike);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, s_add_spike);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, s_add_spike);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, s_add_spike);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, s_add_spike);
   Coord3d pos;
   pos[0] = scm_to_double(x);
   pos[1] = scm_to_double(y);
@@ -388,11 +388,11 @@ SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
            "Creates a lethal spike (comming from side). Returns an 'animated' object.")
 #define FUNC_NAME s_add_sidespike
 {
-  SCM_ASSERT(SCM_REALP(x), x, SCM_ARG1, s_add_sidespike);
-  SCM_ASSERT(SCM_REALP(y), y, SCM_ARG2, s_add_sidespike);
-  SCM_ASSERT(SCM_REALP(speed), speed, SCM_ARG3, s_add_sidespike);
-  SCM_ASSERT(SCM_REALP(phase), phase, SCM_ARG4, s_add_sidespike);
-  SCM_ASSERT(SCM_NUMBERP(side), side, SCM_ARG5, s_add_sidespike);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, s_add_sidespike);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, s_add_sidespike);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, s_add_sidespike);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, s_add_sidespike);
+  SCM_ASSERT(scm_is_exact_integer(side), side, SCM_ARG5, s_add_sidespike);
   Coord3d pos;
   pos[0] = scm_to_double(x);
   pos[1] = scm_to_double(y);
@@ -407,9 +407,9 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
            "Adds a new goal to the map. Returns an 'animated' object.")
 #define FUNC_NAME s_add_goal
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, s_add_goal);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, s_add_goal);
-  SCM_ASSERT(SCM_BOOLP(rotate), rotate, SCM_ARG3, s_add_goal);
+  SCM_ASSERT(scm_is_exact_integer(x), x, SCM_ARG1, s_add_goal);
+  SCM_ASSERT(scm_is_exact_integer(y), y, SCM_ARG2, s_add_goal);
+  SCM_ASSERT(scm_is_bool(rotate), rotate, SCM_ARG3, s_add_goal);
   SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, s_add_goal);
   char *sname = scm_to_utf8_string(nextLevel);
   if (sname) {

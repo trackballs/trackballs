@@ -137,6 +137,7 @@ void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, f
     newentry.texture = LoadTexture(surf, newentry.texcoord, 1, NULL);
     newentry.w = surf->w;
     newentry.h = surf->h;
+    SDL_FreeSurface(surf);
     strcache[inf] = newentry;
   }
 
@@ -270,8 +271,8 @@ void drawMousePointer() {
 void drawMouse(int x, int y, int w, int h, Real td) {
   GLfloat r1 = 1.0 + 0.1 * cos(mousePointerPhase * 1.8);
   GLfloat r2 = 1.0 + 0.1 * cos(mousePointerPhase * 1.9);
-  GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 20.0);
-  GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 20.0);
+  GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 0.35);
+  GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 0.35);
 
   GLfloat colors[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
   GLfloat texco[4][2] = {{0., 0.}, {0., 1.}, {1., 0.}, {1., 1.}};
@@ -288,7 +289,7 @@ size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx,
   fout[1] = y;
   fout[2] = z;
   aout[3] = (((uint32_t)(65535.f * color[1])) << 16) + (uint32_t)(65535.f * color[0]);
-  aout[4] = (((uint32_t)(65535.f * color[3])) << 16) + (uint32_t)(65535.f * color[1]);
+  aout[4] = (((uint32_t)(65535.f * color[3])) << 16) + (uint32_t)(65535.f * color[2]);
   aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
   aout[6] = packNormal(normal);
   return 8 * sizeof(GLfloat);
@@ -847,7 +848,7 @@ void useMatrix(Matrix4d A, const double B[3], double C[3]) {
 void useMatrix(Matrix3d A, const double B[3], double C[3]) {
   int i, k;
   for (i = 0; i < 3; i++) {
-    C[i] = A[i][3];
+    C[i] = 0.;
     for (k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
   }
 }

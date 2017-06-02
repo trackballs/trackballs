@@ -53,7 +53,7 @@ void Diamond::draw2() {
   glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 50.f / 128.f);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
 
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 

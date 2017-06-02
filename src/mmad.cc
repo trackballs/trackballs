@@ -243,12 +243,12 @@ int testDir() {
   return 1;
 }
 
-void innerMain(void *closure, int argc, char **argv) {
+void innerMain(void * /*closure*/, int argc, char **argv) {
   int is_running = 1;
   int editMode = 0, touchMode = 0;
   int audio = SDL_INIT_AUDIO;
   SDL_Event event;
-  char str[256], *touchName;
+  char str[256], *touchName = 0;
   int i;
 
   const char *const short_options = "he:l:t:wmr:s:fqvyj";

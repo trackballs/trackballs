@@ -67,53 +67,69 @@ void ForceField::draw2() {
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-
-  glShadeModel(GL_SMOOTH);
-  glColor3f(1.0, 1.0, 1.0);
   glEnable(GL_BLEND);
-  glDisable(GL_LIGHTING);
 
-  glColor4f(primaryColor[0], primaryColor[1], primaryColor[2], 0.4 + 0.2 * frandom());
-  // 0.2 * semiRand(47,(int) (Game::current->gameTime*50.0)));
-  glBegin(GL_POLYGON);
-  glNormal3d(direction[1], direction[0], direction[2]);
-  glVertex3d(position[0], position[1], position[2]);
-  glVertex3d(position[0] + direction[0], position[1] + direction[1],
-             position[2] + direction[2]);
-  glVertex3d(position[0] + direction[0], position[1] + direction[1],
-             position[2] + direction[2] + height);
-  glVertex3d(position[0], position[1], position[2] + height);
-  glEnd();
+  setupObjectRenderState();
 
-  glColor4f(secondaryColor[0], secondaryColor[1], secondaryColor[2], 0.6);
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
 
-  //  glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,color);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBegin(GL_LINE_LOOP);
-  glNormal3d(direction[1], direction[0], direction[2]);
-  glVertex3d(position[0], position[1], position[2]);
-  glVertex3d(position[0] + direction[0], position[1] + direction[1],
-             position[2] + direction[2]);
-  glVertex3d(position[0] + direction[0], position[1] + direction[1],
-             position[2] + direction[2] + height);
-  glVertex3d(position[0], position[1], position[2] + height);
-  glEnd();
+  Coord3d ndir;
+  assign(direction, ndir);
+  GLfloat len = length(ndir);
+  normalize(ndir);
+  // Bound edge width by available space
+  GLfloat edge = std::min(std::abs(len), std::abs((GLfloat)height));
+  edge = std::min(edge / 5, 0.03f);
 
-  /*
-  Coord3d a,b,c;
-  assign(position,a);
-  assign(position,b);
-  b[2] += height;
-  add(position,direction,c);
-  drawTriangle(a,b,c);
-  add(position,direction,a);
-  a[2] += height;
-  drawTriangle(a,b,c);
-  */
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2],
+                      0.4f + 0.2f * (GLfloat)frandom()};
+  GLfloat rimco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 0.6};
 
-  glPopMatrix();
+  GLfloat xycoords[12][2] = {{edge, edge},       {edge, (GLfloat)height - edge},
+                             {len - edge, edge}, {len - edge, (GLfloat)height - edge},
+                             {edge, edge},       {edge, (GLfloat)height - edge},
+                             {len - edge, edge}, {len - edge, (GLfloat)height - edge},
+                             {0., 0.},           {0., (GLfloat)height},
+                             {len, 0.},          {len, (GLfloat)height}};
+  GLfloat *colors[12] = {color, color, color, color, rimco, rimco,
+                         rimco, rimco, rimco, rimco, rimco, rimco};
+
+  GLfloat data[12 * 8];
+  char *pos = (char *)data;
+  for (int i = 0; i < 12; i++) {
+    GLfloat flat[3] = {0., 0., 0.};
+    pos += packObjectVertex(
+        pos, position[0] + xycoords[i][0] * ndir[0], position[1] + xycoords[i][0] * ndir[1],
+        position[2] + xycoords[i][0] * ndir[2] + xycoords[i][1], 0., 0., colors[i], flat);
+  }
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 12 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  ushort idxs[10][3] = {{0, 2, 1},  {1, 2, 3},   {4, 9, 8},  {4, 5, 9},  {9, 5, 11},
+                        {5, 7, 11}, {7, 10, 11}, {7, 6, 10}, {6, 8, 10}, {6, 4, 8}};
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 10 * 3, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

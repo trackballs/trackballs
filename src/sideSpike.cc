@@ -28,6 +28,7 @@
 #include "ball.h"
 #include "sound.h"
 #include "sideSpike.h"
+#include "spike.h"
 
 using namespace std;
 
@@ -53,74 +54,78 @@ SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
   secondaryColor[0] = 0.9;
   secondaryColor[1] = 0.8;
   secondaryColor[2] = 0.5;
+
+  specularColor[0] = 0.1;
+  specularColor[1] = 0.1;
+  specularColor[2] = 0.1;
 }
 
 void SideSpike::draw() {
-  int i;
-
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
+  const int nfacets = 6;
 
-  // setup the local axes regards to 'side'
-  glTranslatef(position[0], position[1], position[2] + 0.25);
+  setupObjectRenderState();
+
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLfloat data[(4 * nfacets) * 8];
+  ushort idxs[3 * nfacets][3];
+
+  Matrix4d frommtx;
+  identityMatrix(frommtx);
+
+  Coord3d pos = {position[0], position[1], position[2] + 0.25};
   switch (side) {
   case 1:
-    glRotatef(90., 0., 1., 0.);
+    rotateY(M_PI / 2, frommtx);
+    pos[0] += -0.5 + offset;
     break;
   case 2:
-    glRotatef(-90., 0., 1., 0.);
+    rotateY(-M_PI / 2, frommtx);
+    pos[0] += 0.5 - offset;
     break;
   case 3:
-    glRotatef(-90., 1., 0., 0.);
+    rotateX(M_PI / 2, frommtx);
+    pos[1] += -0.5 + offset;
     break;
   case 4:
-    glRotatef(90., 1., 0., 0.);
+    rotateX(-M_PI / 2, frommtx);
+    pos[1] += 0.5 - offset;
     break;
   }
-  glTranslatef(0., 0., -0.5);
 
-  GLfloat white[4] = {0.0, 0.0, 0.0, 0.0};
-  glMaterialfv(GL_FRONT, GL_SPECULAR, white);
-  glMaterialf(GL_FRONT, GL_SHININESS, 0.5);
-  glShadeModel(GL_SMOOTH);
-  glColor3f(1.0, 1.0, 1.0);
+  Matrix3d rotmtx;
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
+  generateSpikeVBO(data, idxs, nfacets, rotmtx, pos, primaryColor, secondaryColor, 0.7);
 
-  GLfloat colorBase[4];
-  for (i = 0; i < 3; i++) colorBase[i] = primaryColor[i];
-  colorBase[3] = 0.0;
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colorBase);
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
-  double x = 0., y = 0., z = offset;
-  glBegin(GL_TRIANGLE_STRIP);
-  for (i = 0; i <= 6; i++) {
-    glNormal3f(sin(i / 3.0 * M_PI), cos(i / 3.0 * M_PI), 0.0);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z - 0.70);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z + 0.0);
-  }
-  glEnd();
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-  GLfloat colorTop[4];
-  for (i = 0; i < 3; i++) colorTop[i] = secondaryColor[i];
-  colorTop[3] = 0.0;
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, colorTop);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
 
-  double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
-  glBegin(GL_TRIANGLES);
-  for (i = 0; i < 6; i++) {
-    glNormal3f(d2 * sin((i + 0.0) / 3.0 * M_PI), d2 * cos((i + 0.0) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.1 * sin(i / 3.0 * M_PI), y + 0.1 * cos(i / 3.0 * M_PI), z + 0.0);
-    glNormal3f(d2 * sin((i + 1.0) / 3.0 * M_PI), d2 * cos((i + 1.0) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.1 * sin((i + 1) / 3.0 * M_PI), y + 0.1 * cos((i + 1) / 3.0 * M_PI),
-               z + 0.0);
-    glNormal3f(d2 * sin((i + 0.5) / 3.0 * M_PI), d2 * cos((i + 0.5) / 3.0 * M_PI), d1);
-    glVertex3f(x + 0.0, y + 0.0, z + 0.3);
-  }
-  glEnd();
+  configureObjectAttributes();
 
-  glPopMatrix();
+  glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 
