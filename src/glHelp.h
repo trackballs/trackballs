@@ -127,7 +127,7 @@ TTF_Font *menuFontForSize(int sz);
 extern GLuint sphereDisplayLists[3];
 
 extern const GLfloat white[4], black[4];
-extern GLUquadricObj *qdiamond, *qball;
+extern GLUquadricObj *qball;
 // extern SDL_Surface *mousePointer;
 
 /***********************************/

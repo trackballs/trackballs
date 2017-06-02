@@ -8,6 +8,7 @@ uniform int fog_active;
 uniform mat4 model_matrix;
 uniform vec4 specular;
 uniform float shininess;
+uniform float use_lighting;
 
 uniform sampler2D tex;
 varying vec2 texco;
@@ -40,7 +41,12 @@ void main(void) {
   Ispecular = clamp(Ispecular, 0.0, 1.0);
 
   vec4 surfcolor = gl_LightModel.ambient + Iambient + Idiffuse + Ispecular;
-  surfcolor = clamp(surfcolor, 0.0, 1.0);
+  if (use_lighting > 0.) {
+    surfcolor = clamp(surfcolor, 0.0, 1.0);
+  } else {
+    surfcolor = texcolor;
+  }
+
 
   float dist;
   if (fog_active == 0) {

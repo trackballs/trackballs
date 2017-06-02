@@ -26,6 +26,8 @@
 
 using namespace std;
 
+#define SIGN_SCALE 0.007
+
 Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
   assign(pos, position);
   if (l <= 0.0) l = 1e10;
@@ -51,30 +53,28 @@ Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
   mkTexture(string);
 }
 
+Sign::~Sign() {
+  if (texture) glDeleteTextures(1, &texture);
+}
+
 void Sign::mkTexture(const char *string) {
   SDL_Surface *text;
   SDL_Color fgColor = {255, 255, 255};
-  GLfloat texcoord[4];
 
   if (texture) glDeleteTextures(1, &texture);
   text = TTF_RenderUTF8_Blended(ingameFont, string, fgColor);
   texture = LoadTexture(text, texcoord);
   width = text->w;
+  height = text->h;
   SDL_FreeSurface(text);
 
-  texMinX = texcoord[0];
-  texMinY = texcoord[1];
-  texMaxX = texcoord[2];
-  texMaxY = texcoord[3];
-
-  /* Note the slight over approximation of the boundingbox, needed since the sign
-         is rotating. Exact expression would be 0.005*scale*width*sqrt(2) */
-  boundingBox[0][0] = -0.008 * scale * width;
-  boundingBox[1][0] = +0.008 * scale * width;
-  boundingBox[0][1] = -0.008 * scale * width;
-  boundingBox[1][1] = +0.008 * scale * width;
-  boundingBox[0][2] = -0.25 * scale;
-  boundingBox[1][2] = 0.25 * scale;
+  /* Note oversided bounding box since the sign rotates */
+  boundingBox[0][0] = -std::sqrt(2) * SIGN_SCALE * scale * width;
+  boundingBox[1][0] = +std::sqrt(2) * SIGN_SCALE * scale * width;
+  boundingBox[0][1] = -std::sqrt(2) * SIGN_SCALE * scale * width;
+  boundingBox[1][1] = +std::sqrt(2) * SIGN_SCALE * scale * width;
+  boundingBox[0][2] = -SIGN_SCALE * scale * height;
+  boundingBox[1][2] = SIGN_SCALE * scale * height;
 }
 
 void Sign::draw() {}
@@ -82,33 +82,71 @@ void Sign::draw2() {
   glPushAttrib(GL_ENABLE_BIT);
   // Keep the depth function on but trivial so as to record depth values
   glDepthFunc(GL_ALWAYS);
-  glDisable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
   glDisable(GL_LIGHTING);
-
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
-  glRotatef(tot_rot, 0.0, 0.0, 1.0);
+  glEnable(GL_CULL_FACE);
 
-  glColor4f(primaryColor[0], primaryColor[1], primaryColor[2], life > 1.0 ? 1.0 : life);
+  setupObjectRenderState();
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
   glBindTexture(GL_TEXTURE_2D, texture);
-  glBegin(GL_TRIANGLE_STRIP);
-  int swap = tot_rot > 70. && tot_rot < 70. + 180.;
-  glTexCoord2f(swap ? texMinX : texMaxX, texMinY);
-  glVertex3f(+0.005 * scale * width, -0.005 * scale * width, 0.25 * scale);
-  glTexCoord2f(swap ? texMaxX : texMinX, texMinY);
-  glVertex3f(-0.005 * scale * width, +0.005 * scale * width, 0.25 * scale);
-  glTexCoord2f(swap ? texMinX : texMaxX, texMaxY);
-  glVertex3f(+0.005 * scale * width, -0.005 * scale * width, -0.25 * scale);
-  glTexCoord2f(swap ? texMaxX : texMinX, texMaxY);
-  glVertex3f(-0.005 * scale * width, +0.005 * scale * width, -0.25 * scale);
-  glEnd();
 
-  glPopMatrix();
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  GLfloat flat[3] = {0.f, 0.f, 0.f};
+
+  GLfloat data[8 * 8];
+  char *pos = (char *)data;
+  GLfloat dx = std::cos(M_PI * tot_rot / 180.) * SIGN_SCALE * scale * width;
+  GLfloat dy = std::sin(M_PI * tot_rot / 180.) * SIGN_SCALE * scale * width;
+  GLfloat dz = SIGN_SCALE * scale * height;
+
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2],
+                      std::min((GLfloat)life, 1.0f)};
+
+  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
+                          texcoord[0], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
+                          texcoord[0], texcoord[1] + texcoord[3], color, flat);
+  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] + dz,
+                          texcoord[0] + texcoord[2], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] - dz,
+                          texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
+
+  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] + dz,
+                          texcoord[0], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] - dz,
+                          texcoord[0], texcoord[1] + texcoord[3], color, flat);
+  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
+                          texcoord[0] + texcoord[2], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
+                          texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  ushort idxs[4][3] = {{0, 1, 2}, {1, 3, 2}, {4, 5, 6}, {5, 7, 6}};
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 
   glDepthFunc(GL_LEQUAL);
@@ -119,6 +157,7 @@ void Sign::tick(Real t) {
   if (life <= 0) {
     /* time to die... */
     glDeleteTextures(1, &texture);
+    texture = 0;
     remove();
     // delete this;
   }

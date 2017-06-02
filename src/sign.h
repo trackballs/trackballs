@@ -28,18 +28,18 @@
 class Sign : public Animated {
  public:
   Sign(const char *text, Real life, Real scale, Real rotation, Coord3d pos);
+  virtual ~Sign();
   void mkTexture(const char *);
   void draw();
   void draw2();
   void tick(Real);
 
  protected:
-  int width;
+  int width, height;
   Real life, scale, rotation, tot_rot;
   GLuint texture;
 
-  GLfloat texMinX, texMinY;
-  GLfloat texMaxX, texMaxY;
+  GLfloat texcoord[4];
 };
 
 #endif

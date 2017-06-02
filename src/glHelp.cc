@@ -36,7 +36,7 @@ float realTimeNow = 0.0;
 int screenWidth = 640, screenHeight = 480;
 const GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
 const GLfloat black[4] = {0.0, 0.0, 0.0, 1.0};
-GLUquadricObj *qobj, *qball, *qdiamond;
+GLUquadricObj *qball;
 
 /* Precompiled display lists for spheres of varying resolution (dependent on gfx settings) */
 GLuint sphereDisplayLists[3];
@@ -324,6 +324,7 @@ void setupObjectRenderState() {
                      (GLfloat *)&proj[0]);
   glUniformMatrix4fv(glGetUniformLocation(shaderObject, "model_matrix"), 1, GL_FALSE,
                      (GLfloat *)&model[0]);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
 
   glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
   glActiveTexture(GL_TEXTURE0 + 0);
@@ -487,9 +488,6 @@ int loadTexture(const char *name) {
 void glHelpInit() {
   char str[256];
 
-  qobj = gluNewQuadric();
-  gluQuadricDrawStyle(qobj, GLU_FILL);
-
   for (int i = 0; i < 4711; i++) fake_rand[i] = frand();
 
   TTF_Init();
@@ -528,11 +526,6 @@ void glHelpInit() {
   gluQuadricDrawStyle(qball, GLU_FILL);
   gluQuadricNormals(qball, GLU_SMOOTH);
   gluQuadricTexture(qball, GL_TRUE);
-
-  qdiamond = gluNewQuadric();
-  gluQuadricDrawStyle(qdiamond, GLU_FILL);
-  gluQuadricNormals(qdiamond, GLU_SMOOTH);
-  gluQuadricTexture(qdiamond, GL_TRUE);
 
   sphereDisplayLists[0] = glGenLists(1);
   sphereDisplayLists[1] = glGenLists(1);
