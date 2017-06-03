@@ -221,8 +221,6 @@ void SetupMode::display() {
   /* Draw the player ball */
   /*                      */
 
-  glUseProgram(0);
-
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glTranslatef(0.75, -0.75, 0.0);  // 0.7
@@ -244,10 +242,6 @@ void SetupMode::display() {
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
   glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
 
-  glShadeModel(GL_SMOOTH);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
-
   if (settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -256,19 +250,62 @@ void SetupMode::display() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
+  glShadeModel(GL_SMOOTH);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
+
   glColor4f(1.0, 1.0, 1.0, 1.0);
   GLfloat diffuse[4];
   for (int i = 0; i < 3; i++) diffuse[i] = colors[gamer->color][i];
   diffuse[3] = 1.0;
   glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diffuse);
 
-  GLfloat specular[4] = {1.0, 1.0, 1.0, 1.0};
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-  glRotated(t * -50.0, 0.0, 1.0, 0.0);
+  // Create sphere
+  int ntries = 0;
+  int nverts = 0;
+  int detail = 7;
+  countObjectSpherePoints(&ntries, &nverts, detail);
+  GLfloat *data = new GLfloat[nverts * 8];
+  ushort *idxs = new ushort[ntries * 3];
+  GLfloat pos[3] = {0.f, 0.f, 0.f};
+  GLfloat color[4] = {colors[gamer->color][0], colors[gamer->color][1],
+                      colors[gamer->color][2], 1.f};
+  Matrix4d frommtx;
+  identityMatrix(frommtx);
+  rotateY(t * -0.3, frommtx);
+  Matrix3d rotation;
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++) rotation[i][j] = frommtx[i][j];
 
-  gluSphere(qball, 0.8, max(10, 4 + 3 * settings->gfx_details),
-            max(10, 4 + 3 * settings->gfx_details));
+  placeObjectSphere(data, idxs, 0, pos, rotation, 1.0, detail, color);
+
+  // Transfer
+  setupObjectRenderState();
+
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 0.1f);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
 
   Enter2DMode();
 

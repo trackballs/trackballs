@@ -41,6 +41,7 @@ Gamer::Gamer() {
   }
 #endif
 
+  memset(levels, 0, sizeof(levels));
   for (int i = 0; i < Settings::settings->nLevelSets; i++) levels[i] = new KnownLevel[256];
 
   setDefaults();
@@ -49,6 +50,11 @@ Gamer::Gamer() {
   if (nNames > 0) strncpy(name, names[0], 20);
   update();
 }
+Gamer::~Gamer() {
+  for (int i = 0; i < 256; i++)
+    if (levels[i]) delete[] levels[i];
+}
+
 void Gamer::setDefaults() {
   color = 0;
   totalScore = 0;

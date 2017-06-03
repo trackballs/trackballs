@@ -61,7 +61,9 @@ void PipeConnector::drawMe() {
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
   GLfloat pos[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
-  placeObjectSphere(data, idxs, 0, pos, radius, detail, primaryColor);
+  Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
+
+  placeObjectSphere(data, idxs, 0, pos, identity, radius, detail, primaryColor);
 
   // Transfer
   setupObjectRenderState();

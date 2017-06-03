@@ -341,12 +341,12 @@ void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail) {
 
   int radial_count = 4 * detail;
   int nrows = 2 * detail + 1;
-  *nvertices = radial_count * (nrows - 2) + 2;
+  *nvertices = (radial_count + 1) * (nrows - 2) + 2;
   *ntriangles = 2 * radial_count * (nrows - 2);
 }
 
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
-                       GLfloat radius, int detail, GLfloat color[4]) {
+                       Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]) {
   if (detail < 1) {
     warning("Sphere detail level must be > 1. Drawing nothing.");
     return;
@@ -358,43 +358,53 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat pos
   char *pos = (char *)data;
   for (int z = 1; z < nrows - 1; z++) {
     GLfloat theta = z * M_PI / (nrows - 1);
-    for (int t = 0; t < radial_count; t++) {
+    for (int t = 0; t <= radial_count; t++) {
       GLfloat phi = 2 * t * M_PI / radial_count;
-      if (z % 2 == 1) phi += M_PI / radial_count;
+      // Texture handling with staggered rows reqs. passing txcoords > 1
+      // which packObjectVertex doesn't account for as of writing
+      // if (z % 2 == 1) phi += M_PI / radial_count;
 
-      GLfloat local[3] = {std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi),
-                          std::cos(theta)};
-      pos += packObjectVertex(pos, position[0] + radius * local[0],
-                              position[1] + radius * local[1], position[2] + radius * local[2],
-                              theta / M_PI, phi / (2 * M_PI), color, local);
+      Coord3d local = {std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi),
+                       std::cos(theta)};
+      Coord3d off;
+      useMatrix(rotation, local, off);
+      GLfloat foff[3] = {(GLfloat)off[0], (GLfloat)off[1], (GLfloat)off[2]};
+      pos += packObjectVertex(pos, position[0] + radius * off[0],
+                              position[1] + radius * off[1], position[2] + radius * off[2],
+                              phi / (2 * M_PI), theta / M_PI, color, foff);
     }
   }
-  GLfloat pnorm[3] = {0., 0., 1.};
-  GLfloat vnorm[3] = {0., 0., -1};
-  pos += packObjectVertex(pos, position[0], position[1], position[2] + radius, 0., 0.5, color,
-                          pnorm);
-  pos += packObjectVertex(pos, position[0], position[1], position[2] - radius, 1., 0.5, color,
-                          vnorm);
+  Coord3d pnorm = {0., 0., 1.};
+  Coord3d vnorm = {0., 0., -1};
+  Coord3d poff, voff;
+  useMatrix(rotation, pnorm, poff);
+  useMatrix(rotation, vnorm, voff);
+  GLfloat fpoff[3] = {(GLfloat)poff[0], (GLfloat)poff[1], (GLfloat)poff[2]};
+  GLfloat fvoff[3] = {(GLfloat)voff[0], (GLfloat)voff[1], (GLfloat)voff[2]};
+  pos += packObjectVertex(pos, position[0] + radius * poff[0], position[1] + radius * poff[1],
+                          position[2] + radius * poff[2], 0.5, 0., color, fpoff);
+  pos += packObjectVertex(pos, position[0] + radius * voff[0], position[1] + radius * voff[1],
+                          position[2] + radius * voff[2], 0.5, 1., color, fvoff);
 
   // Triangulate end caps
   for (int i = 0; i < radial_count; i++) {
     idxs[6 * i + 0] = first_index + i;
-    idxs[6 * i + 1] = first_index + (i + 1) % radial_count;
-    idxs[6 * i + 2] = first_index + radial_count * (nrows - 2);
-    idxs[6 * i + 3] = first_index + radial_count * (nrows - 3) + (i + 1) % radial_count;
-    idxs[6 * i + 4] = first_index + radial_count * (nrows - 3) + i;
-    idxs[6 * i + 5] = first_index + radial_count * (nrows - 2) + 1;
+    idxs[6 * i + 1] = first_index + i + 1;
+    idxs[6 * i + 2] = first_index + (radial_count + 1) * (nrows - 2);
+    idxs[6 * i + 3] = first_index + (radial_count + 1) * (nrows - 3) + i + 1;
+    idxs[6 * i + 4] = first_index + (radial_count + 1) * (nrows - 3) + i;
+    idxs[6 * i + 5] = first_index + (radial_count + 1) * (nrows - 2) + 1;
   }
   // Triangulate body
   ushort *base = &idxs[2 * 3 * radial_count];
   for (int z = 1; z < nrows - 2; z++) {
     for (int i = 0; i < radial_count; i++) {
-      base[6 * i + 0] = first_index + (z - 1) * radial_count + (i + 1) % radial_count;
-      base[6 * i + 1] = first_index + (z - 1) * radial_count + i;
-      base[6 * i + 2] = first_index + z * radial_count + (i + 1) % radial_count;
-      base[6 * i + 3] = first_index + (z - 1) * radial_count + i;
-      base[6 * i + 4] = first_index + z * radial_count + i;
-      base[6 * i + 5] = first_index + z * radial_count + (i + 1) % radial_count;
+      base[6 * i + 0] = first_index + (z - 1) * (radial_count + 1) + i + 1;
+      base[6 * i + 1] = first_index + (z - 1) * (radial_count + 1) + i;
+      base[6 * i + 2] = first_index + z * (radial_count + 1) + i + 1;
+      base[6 * i + 3] = first_index + (z - 1) * (radial_count + 1) + i;
+      base[6 * i + 4] = first_index + z * (radial_count + 1) + i;
+      base[6 * i + 5] = first_index + z * (radial_count + 1) + i + 1;
     }
     base = &base[6 * radial_count];
   }

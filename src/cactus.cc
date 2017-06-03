@@ -66,7 +66,7 @@ void Cactus::draw() {
   GLfloat data[nsides * 20 + 1][8];
   ushort idxs[nsides * 19][3];
 
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 0.f};
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.f};
   GLfloat spkco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.f};
 
   GLfloat radii[4] = {0.5f, 1.0f, 0.9f, 0.6f};

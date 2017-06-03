@@ -30,6 +30,7 @@ class KnownLevel {
 class Gamer {
  public:
   Gamer();
+  ~Gamer();
   void levelStarted();  // Called when a new level is started, adds to knownLevels
   void save();          // Saves info to disk
   void update();        // Reload info from disk

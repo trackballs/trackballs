@@ -61,7 +61,7 @@ inline uint32_t packNormal(const GLfloat n[3]) {
 }
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
-                       GLfloat radius, int detail, GLfloat color[4]);
+                       Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]);
 
 // generates a snapshot
 int createSnapshot();
