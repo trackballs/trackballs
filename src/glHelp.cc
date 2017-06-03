@@ -43,7 +43,7 @@ GLuint sphereDisplayLists[3];
 
 GLuint shaderWater = 0;
 GLuint shaderTile = 0;
-GLuint shaderTileRim = 0;
+GLuint shaderLine = 0;
 GLuint shaderUI = 0;
 GLuint shaderObject = 0;
 GLuint theVao = 0;
@@ -538,7 +538,7 @@ void glHelpInit() {
 
   // Errors handled within loadProgram
   shaderTile = loadProgram("basic.vert", "basic.frag");
-  shaderTileRim = loadProgram("line.vert", "line.frag");
+  shaderLine = loadProgram("line.vert", "line.frag");
   shaderWater = loadProgram("water.vert", "water.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
   shaderObject = loadProgram("object.vert", "object.frag");

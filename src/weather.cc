@@ -90,82 +90,144 @@ void Weather::tick(Real td) {
 }
 
 void Weather::draw2() {
-  int i, j;
-
   if (Settings::settings->gfx_details <= 1) return;
   if (strength == -1.0) return;
 
-  glMatrixMode(GL_MODELVIEW);
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_LIGHTING);
 
   if (kind == WEATHER_RAIN) {
     /** Draw RAIN particles **/
-    if (Settings::settings->gfx_details >= 4) {
-      glColor4f(0.3, 0.3, 0.4, 0.5);
-      glEnable(GL_BLEND);
-      glLineWidth(1.5);
-    } else {
-      glColor4f(0.3, 0.3, 0.4, 1.0);
-      glDisable(GL_BLEND);
-      glLineWidth(1.0);
-    }
-    glBegin(GL_LINES);
+    glDisable(GL_BLEND);
+    glLineWidth(1.5);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glUseProgram(shaderLine);
+
+    glBindVertexArray(theVao);
+
+    // Pos
+    glEnableVertexAttribArray(0);
+
+    GLfloat proj[16];
+    GLfloat model[16];
+    glGetFloatv(GL_PROJECTION_MATRIX, proj);
+    glGetFloatv(GL_MODELVIEW_MATRIX, model);
+    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
+                       (GLfloat *)&proj[0]);
+    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
+                       (GLfloat *)&model[0]);
+    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
 
     double h = Game::current->player1->position[2] - 6.0;
-    for (i = 0; i < max_weather_particles; i++) {
-      Particle *p = &particles[i];
-      if (p->position[2] < h) continue;
-      glVertex3f(p->position[0], p->position[1], p->position[2] + 0.2 * p->size);
-      glVertex3f(p->position[0], p->position[1], p->position[2]);
+    int nactive = 0;
+    for (int i = 0; i < max_weather_particles; i++) {
+      if (particles[i].position[2] >= h) nactive++;
     }
-    glEnd();
+
+    GLfloat *data = new GLfloat[2 * 3 * nactive];
+    ushort *idxs = new ushort[2 * nactive];
+    int j = 0;
+    for (int i = 0; i < max_weather_particles; i++) {
+      const Particle &p = particles[i];
+      if (p.position[2] < h) continue;
+      data[6 * j + 0] = p.position[0];
+      data[6 * j + 1] = p.position[1];
+      data[6 * j + 2] = p.position[2] + 0.2 * p.size;
+      data[6 * j + 3] = p.position[0];
+      data[6 * j + 4] = p.position[1];
+      data[6 * j + 5] = p.position[2];
+      idxs[2 * j] = 2 * j;
+      idxs[2 * j + 1] = 2 * j + 1;
+      j++;
+    }
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, 2 * 3 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * nactive * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    delete[] data;
+    delete[] idxs;
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+    glDrawElements(GL_LINES, (2 * nactive), GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
+
+    glUseProgram(0);
+
   } else if (kind == WEATHER_SNOW) {
     /** Draw SNOW particles **/
-    glColor4f(0.8, 0.8, 0.85, 1.5);
     glDisable(GL_CULL_FACE);
-    if (Settings::settings->gfx_details >= GFX_DETAILS_EXTRA) {
-      glEnable(GL_BLEND);
-      bindTexture("glitter.png");
-      glEnable(GL_TEXTURE_2D);
-      glBegin(GL_TRIANGLES);
-      double h = Game::current->player1->position[2] - 5.0;
-      for (i = 0; i < max_weather_particles; i++) {
-        Particle *p = &particles[i];
-        if (p->position[2] < h) continue;
-        // glNormal3f(0.0,0.0,1.0);
-        glTexCoord2f(0.5, 0.0);
-        glVertex3f(p->position[0] + p->corners[0][0] * 1.3,
-                   p->position[1] + p->corners[0][1] * 1.3,
-                   p->position[2] + p->corners[0][2] * 1.3);
-        glTexCoord2f(0.0, 1.0);
-        glVertex3f(p->position[0] + p->corners[1][0] * 1.3,
-                   p->position[1] + p->corners[1][1] * 1.3,
-                   p->position[2] + p->corners[1][2] * 1.3);
-        glTexCoord2f(1.0, 1.0);
-        glVertex3f(p->position[0] + p->corners[2][0] * 1.3,
-                   p->position[1] + p->corners[2][1] * 1.3,
-                   p->position[2] + p->corners[2][2] * 1.3);
-      }
-      glEnd();
-      glDisable(GL_TEXTURE_2D);
-    } else {
-      glDisable(GL_BLEND);
-      glBegin(GL_TRIANGLES);
-      double h = Game::current->player1->position[2] - 5.0;
-      for (i = 0; i < max_weather_particles; i++) {
-        Particle *p = &particles[i];
-        if (p->position[2] < h) continue;
-        // glNormal3f(0.0,0.0,1.0);
-        for (j = 0; j < 3; j++)
-          glVertex3f(p->position[0] + p->corners[j][0], p->position[1] + p->corners[j][1],
-                     p->position[2] + p->corners[j][2]);
-      }
-      glEnd();
+    glEnable(GL_BLEND);
+
+    int nactive = 0;
+    double h = Game::current->player1->position[2] - 5.0;
+    for (int i = 0; i < max_weather_particles; i++) {
+      if (particles[i].position[2] >= h) nactive++;
     }
+
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("glitter.png")]);
+
+    GLfloat *data = new GLfloat[3 * 8 * nactive];
+    ushort *idxs = new ushort[3 * nactive];
+
+    GLfloat color[4] = {0.8f, 0.8f, 0.85f, 1.0f};
+    GLfloat flat[3] = {0.f, 0.f, 0.f};
+    GLfloat txc[3][2] = {{0.5f, 0.f}, {0.f, 1.f}, {1.f, 1.f}};
+    GLfloat size = 1.3f;
+
+    int j = 0;
+    char *pos = (char *)data;
+    for (int i = 0; i < max_weather_particles; i++) {
+      const Particle &p = particles[i];
+      if (p.position[2] < h) continue;
+      for (int k = 0; k < 3; k++) {
+        pos += packObjectVertex(pos, p.position[0] + p.corners[k][0] * size,
+                                p.position[1] + p.corners[k][1] * size,
+                                p.position[2] + p.corners[k][2] * size, txc[k][0], txc[k][1],
+                                color, flat);
+        idxs[3 * j + k] = 3 * j + k;
+      }
+      j++;
+    }
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * nactive * sizeof(GLfloat), idxs, GL_STATIC_DRAW);
+    delete[] data;
+    delete[] idxs;
+
+    configureObjectAttributes();
+
+    glDrawElements(GL_TRIANGLES, 3 * nactive, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
+
+    glUseProgram(0);
   }
   glPopAttrib();
-  glPopMatrix();
 }
 
 void Weather::clear() {

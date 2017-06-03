@@ -110,7 +110,7 @@ int resetTextures();    // Reloads all textures
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
-extern GLuint shaderWater, shaderTile, shaderTileRim, shaderUI, shaderObject;
+extern GLuint shaderWater, shaderTile, shaderLine, shaderUI, shaderObject;
 extern GLuint theVao;
 
 /* Globals */

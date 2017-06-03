@@ -46,26 +46,60 @@ Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double streng
 
 void Splash::draw() {}
 void Splash::draw2() {
-  int i;
-
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
 
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_BLEND);
-  glDisable(GL_LIGHTING);
-  glColor4fv(primaryColor);
 
-  if (screenWidth <= 800)
-    glPointSize(2.0);
-  else if (screenWidth == 1024)
-    glPointSize(3.0);
-  else if (screenWidth >= 1280)
-    glPointSize(4.0);
+  glPointSize(1.5 * screenWidth / 600.);
 
-  glBegin(GL_POINTS);
-  for (i = 0; i < nDroplets; i++)
-    glVertex3f(positions[i][0], positions[i][1], positions[i][2]);
-  glEnd();
+  glUseProgram(shaderLine);
+
+  glBindVertexArray(theVao);
+
+  // Pos
+  glEnableVertexAttribArray(0);
+
+  GLfloat proj[16];
+  GLfloat model[16];
+  glGetFloatv(GL_PROJECTION_MATRIX, proj);
+  glGetFloatv(GL_MODELVIEW_MATRIX, model);
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&proj[0]);
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&model[0]);
+  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
+              primaryColor[2], primaryColor[3]);
+
+  GLfloat *data = new GLfloat[3 * nDroplets];
+  ushort *idxs = new ushort[nDroplets];
+  for (int i = 0; i < nDroplets; i++) {
+    data[3 * i + 0] = positions[i][0];
+    data[3 * i + 1] = positions[i][1];
+    data[3 * i + 2] = positions[i][2];
+    idxs[i] = i;
+  }
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 3 * nDroplets * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, nDroplets * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+  glDrawElements(GL_POINTS, nDroplets, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

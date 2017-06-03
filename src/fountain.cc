@@ -48,11 +48,27 @@ void Fountain::draw2() {
 
   glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_BLEND);
-  glDisable(GL_LIGHTING);
-  // glEnable(GL_POINT_SMOOTH);
-  glColor4fv(primaryColor);
-  glPointSize(3.0);
-  glBegin(GL_POINTS);
+
+  glPointSize(1.5 * screenWidth / 600.);
+
+  glUseProgram(shaderLine);
+
+  glBindVertexArray(theVao);
+
+  // Pos
+  glEnableVertexAttribArray(0);
+
+  GLfloat proj[16];
+  GLfloat model[16];
+  glGetFloatv(GL_PROJECTION_MATRIX, proj);
+  glGetFloatv(GL_MODELVIEW_MATRIX, model);
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&proj[0]);
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat *)&model[0]);
+  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
+              primaryColor[2], primaryColor[3]);
+
   Real timeNow = Game::current->gameTime;
 
   while (creationTime[drawFrom] < timeNow - 1.5) {
@@ -61,16 +77,60 @@ void Fountain::draw2() {
   }
   int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;
   if (fps < 5) skip *= 2;
-
+  int npoints = 0;
   if (nextPoint < drawFrom) {
-    for (i = drawFrom; i < 800; i += skip)
-      glVertex3f(positions[i][0], positions[i][1], positions[i][2]);
-    for (i = 0; i < nextPoint; i += skip)
-      glVertex3f(positions[i][0], positions[i][1], positions[i][2]);
+    for (int i = drawFrom; i < 800; i += skip) npoints++;
+    for (int i = 0; i < nextPoint; i += skip) npoints++;
   } else
-    for (i = drawFrom; i < nextPoint; i += skip)
-      glVertex3f(positions[i][0], positions[i][1], positions[i][2]);
-  glEnd();
+    for (int i = drawFrom; i < nextPoint; i += skip) npoints++;
+
+  GLfloat *data = new GLfloat[3 * npoints];
+  ushort *idxs = new ushort[npoints];
+  int j = 0;
+  if (nextPoint < drawFrom) {
+    for (i = drawFrom; i < 800; i += skip) {
+      data[3 * j + 0] = positions[i][0];
+      data[3 * j + 1] = positions[i][1];
+      data[3 * j + 2] = positions[i][2];
+      j++;
+    }
+    for (i = 0; i < nextPoint; i += skip) {
+      data[3 * j + 0] = positions[i][0];
+      data[3 * j + 1] = positions[i][1];
+      data[3 * j + 2] = positions[i][2];
+      j++;
+    }
+  } else {
+    for (i = drawFrom; i < nextPoint; i += skip) {
+      data[3 * j + 0] = positions[i][0];
+      data[3 * j + 1] = positions[i][1];
+      data[3 * j + 2] = positions[i][2];
+      j++;
+    }
+  }
+
+  for (int i = 0; i < npoints; i++) { idxs[i] = i; }
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 3 * npoints * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, npoints * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+  glDrawElements(GL_POINTS, npoints, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

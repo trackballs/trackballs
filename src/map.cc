@@ -563,12 +563,13 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     }
   }
 
-  glUseProgram(shaderTileRim);
-  glUniformMatrix4fv(glGetUniformLocation(shaderTileRim, "proj_matrix"), 1, GL_FALSE,
+  glUseProgram(shaderLine);
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
                      (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderTileRim, "model_matrix"), 1, GL_FALSE,
+  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
                      (GLfloat*)&model[0]);
-  glUniform1i(glGetUniformLocation(shaderTileRim, "fog_active"), fogActive);
+  glUniform1i(glGetUniformLocation(shaderLine, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
 
   glEnable(GL_LINE_SMOOTH);
   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
