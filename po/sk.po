@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 08:53-0400\n"
+"POT-Creation-Date: 2017-06-03 10:08-0400\n"
 "PO-Revision-Date: 2017-05-27 13:43-0400\n"
 "Last-Translator: Jozef ÅÃ­ha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr "teraz: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "stred: %d %d Ä¾avÃ½: %d pravÃ½: %d hornÃ½: %d spodnÃ½: %d"
 
-#: ../src/diamond.cc:108
+#: ../src/diamond.cc:118
 #, fuzzy
 msgid "Save point"
 msgstr "%d bodov"
@@ -103,7 +103,7 @@ msgstr "PohÄ¾ad"
 msgid "New"
 msgstr "NovÃ½"
 
-#: ../src/editMode.cc:159 ../src/editWindows.cc:494
+#: ../src/editMode.cc:159 ../src/editWindows.cc:495
 msgid "Open"
 msgstr "OtvoriÅ¥"
 
@@ -204,7 +204,6 @@ msgid "Ice"
 msgstr "Ä½ad"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178 ../share/levels/lv2.scm:4
-#: ../share/levels/tmp.scm:4
 msgid "Acid"
 msgstr "Kyselina"
 
@@ -376,57 +375,193 @@ msgstr ""
 ";;; pre kurz, ako ho upraviÅ¥\n"
 "\n"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell height"
 msgstr "VÃ½Å¡ka bunky"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell water height"
 msgstr "VÃ½Å¡ka bunky vody"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Textures"
 msgstr "TextÃºry"
 
-#: ../src/editWindows.cc:369
+#: ../src/editWindows.cc:148
+msgid "y"
+msgstr ""
+
+#: ../src/editWindows.cc:152
+#, fuzzy
+msgid "n"
+msgstr "nie"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "height"
+msgstr "UpraviÅ¥ vÃ½Å¡ku"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "color"
+msgstr "Farba"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "water"
+msgstr "UpraviÅ¥ vodu"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "velocity"
+msgstr "UpraviÅ¥ rÃ½chlosÅ¥"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "lines"
+msgstr "UpraviÅ¥ Äiary"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "feature"
+msgstr "VlastnosÅ¥"
+
+#: ../src/editWindows.cc:204
+#, c-format
+msgid "Pos: %d,%d"
+msgstr "Poz: %d,%d"
+
+#: ../src/editWindows.cc:206
+#, c-format
+msgid "Increment: %3.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:208
+#, fuzzy, c-format
+msgid "Edit: %s"
+msgstr "Ãpravy"
+
+#: ../src/editWindows.cc:224
+msgid "Heights"
+msgstr ""
+
+#: ../src/editWindows.cc:240
+#, fuzzy
+msgid "Water heights"
+msgstr "VÃ½Å¡ka vody"
+
+#: ../src/editWindows.cc:256
+#, c-format
+msgid "red: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:258
+#, c-format
+msgid "green: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:261
+#, c-format
+msgid "blue: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:264
+#, c-format
+msgid "alpha: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:273
+#, c-format
+msgid "dx: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:275
+#, c-format
+msgid "dy: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:278
+msgid "Lines"
+msgstr ""
+
+#: ../src/editWindows.cc:312
+#, fuzzy
+msgid "spike"
+msgstr "Bodce"
+
+#: ../src/editWindows.cc:315
+#, fuzzy
+msgid "small hill"
+msgstr "MalÃ½ kopec"
+
+#: ../src/editWindows.cc:318
+#, fuzzy
+msgid "medium hill"
+msgstr "StrednÃ½ kopec"
+
+#: ../src/editWindows.cc:321
+#, fuzzy
+msgid "large hill"
+msgstr "VeÄ¾kÃ½ kopec"
+
+#: ../src/editWindows.cc:324
+#, fuzzy
+msgid "huge hill"
+msgstr "ObrovskÃ½ kopec"
+
+#: ../src/editWindows.cc:327
+msgid "small smooth"
+msgstr ""
+
+#: ../src/editWindows.cc:330
+msgid "large smooth"
+msgstr ""
+
+#: ../src/editWindows.cc:370
 msgid "Quit without saving?"
 msgstr "UkonÄiÅ¥ bez uloÅ¾enia?"
 
-#: ../src/editWindows.cc:370 ../src/editWindows.cc:411
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
+#: ../src/editWindows.cc:460 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:185
 msgid "Yes"
 msgstr "Ãno"
 
-#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:158
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:166
-#: ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:372 ../src/editWindows.cc:413
+#: ../src/editWindows.cc:461 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:166 ../src/settingsMode.cc:185
 #, c-format
 msgid "No"
 msgstr "Nie"
 
-#: ../src/editWindows.cc:410
+#: ../src/editWindows.cc:411
 msgid "Save map?"
 msgstr "UloÅ¾iÅ¥ mapu?"
 
-#: ../src/editWindows.cc:414
+#: ../src/editWindows.cc:415
 msgid "Saving"
 msgstr "Ukladanie"
 
-#: ../src/editWindows.cc:491
+#: ../src/editWindows.cc:459
+#, fuzzy
+msgid "Close without saving?"
+msgstr "UkonÄiÅ¥ bez uloÅ¾enia?"
+
+#: ../src/editWindows.cc:492
 msgid "Name of map"
 msgstr "NÃ¡zov mapy"
 
-#: ../src/editWindows.cc:493 ../src/editWindows.cc:550
+#: ../src/editWindows.cc:494 ../src/editWindows.cc:551
 msgid "Cancel"
 msgstr "ZruÅ¡iÅ¥"
 
-#: ../src/editWindows.cc:541
+#: ../src/editWindows.cc:542
 msgid "Open map"
 msgstr "OtvoriÅ¥ mapu"
 
-#: ../src/editWindows.cc:548
+#: ../src/editWindows.cc:549
 #, c-format
 msgid "page %d / %d"
 msgstr "strÃ¡nka %d / %d"
@@ -441,17 +576,17 @@ msgstr "%d bodov"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:721
+#: ../src/glHelp.cc:767
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "RÃ½chlosÅ¥ snÃ­mkov: %.1f"
 
-#: ../src/glHelp.cc:723
+#: ../src/glHelp.cc:769
 #, c-format
 msgid "Framerate unknown"
 msgstr "RÃ½chlosÅ¥ snÃ­mkov neznÃ¡ma"
 
-#: ../src/glHelp.cc:725
+#: ../src/glHelp.cc:771
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -1850,20 +1985,11 @@ msgstr ""
 #~ msgid "Raise: %f"
 #~ msgstr "DvihnÃºÅ¥: %f"
 
-#~ msgid "Pos: %d,%d"
-#~ msgstr "Poz: %d,%d"
-
 #~ msgid "Feature: %s"
 #~ msgstr "VlastnosÅ¥: %s"
 
 #~ msgid "yes"
 #~ msgstr "Ã¡no"
-
-#~ msgid "no"
-#~ msgstr "nie"
-
-#~ msgid "Water height"
-#~ msgstr "VÃ½Å¡ka vody"
 
 #~ msgid "MORE HELP"
 #~ msgstr "ÄALÅ IA POMOC"

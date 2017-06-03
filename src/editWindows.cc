@@ -36,8 +36,6 @@
 
 using namespace std;
 
-const char* editModeNames[6] = {"height", "color", "water", "velocity", "lines", "feature"};
-
 EMenuWindow::EMenuWindow() : MyWindow(0, 0, screenWidth, 30) {
   int i;
 
@@ -147,10 +145,12 @@ void ESubWindow::draw() {
               EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
           if (cell.flags & (1 << i) || (cell.flags & (1 << 11) && i == 9))
             addText_Left(CODE_FROM_MENUENTRY(id * MAX_MENU_ENTRIES + i), fontSize / 2,
-                         y + 2 + fontSize * i + fontSize / 2, "y", x + 2 + fontSize / 2 + 160);
+                         y + 2 + fontSize * i + fontSize / 2, _("y"),
+                         x + 2 + fontSize / 2 + 160);
           else
             addText_Left(CODE_FROM_MENUENTRY(id * MAX_MENU_ENTRIES + i), fontSize / 2,
-                         y + 2 + fontSize * i + fontSize / 2, "n", x + 2 + fontSize / 2 + 160);
+                         y + 2 + fontSize * i + fontSize / 2, _("n"),
+                         x + 2 + fontSize / 2 + 160);
         }
       } else if (id == FLAGS_MENU && i == 10) {
         /* The current texture can only be added if we have a map loaded */
@@ -198,11 +198,14 @@ void EStatusWindow::draw() {
   int area3x = x + 520;
   char str[512];
 
-  snprintf(str, 255, "Pos: %d,%d", EditMode::editMode->x, EditMode::editMode->y);
+  const char* editModeNames[6] = {_("height"),   _("color"), _("water"),
+                                  _("velocity"), _("lines"), _("feature")};
+
+  snprintf(str, 255, _("Pos: %d,%d"), EditMode::editMode->x, EditMode::editMode->y);
   addText_Left(0, fontSize / 2, row2, str, col0);
-  snprintf(str, 255, "Increment: %3.2f", EditMode::editMode->scale);
+  snprintf(str, 255, _("Increment: %3.2f"), EditMode::editMode->scale);
   addText_Left(CODE_INCREMENT, fontSize / 2, row3, str, col0);
-  snprintf(str, 255, "Edit: %s", editModeNames[EditMode::editMode->currentEditMode]);
+  snprintf(str, 255, _("Edit: %s"), editModeNames[EditMode::editMode->currentEditMode]);
   addText_Left(CODE_EDITMODE, fontSize / 2, row4, str, col0);
 
   //  glDisable(GL_TEXTURE_2D);
@@ -218,7 +221,7 @@ void EStatusWindow::draw() {
   Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
 
   if (EditMode::editMode->currentEditMode == EDITMODE_HEIGHT) {
-    addText_Left(0, fontSize / 2, row1, "Heights", col1 + fontSize * 1);
+    addText_Left(0, fontSize / 2, row1, _("Heights"), col1 + fontSize * 1);
     snprintf(str, sizeof(str), "%2.1f", cell.heights[3]);
     addText_Left(CODE_FROM_MENUENTRY(EDIT_UPPER), fontSize / 2, row2, str,
                  col1 + fontSize * 2);
@@ -234,7 +237,7 @@ void EStatusWindow::draw() {
     addText_Left(CODE_FROM_MENUENTRY(EDIT_BOTTOM), fontSize / 2, row4, str,
                  col1 + fontSize * 2);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_WATER) {
-    addText_Left(0, fontSize / 2, row1, "Water heights", col1 + fontSize * 1);
+    addText_Left(0, fontSize / 2, row1, _("Water heights"), col1 + fontSize * 1);
     snprintf(str, sizeof(str), "%2.1f", cell.waterHeights[3]);
     addText_Left(CODE_FROM_MENUENTRY(EDIT_UPPER), fontSize / 2, row2, str,
                  col1 + fontSize * 2);
@@ -250,17 +253,15 @@ void EStatusWindow::draw() {
     addText_Left(CODE_FROM_MENUENTRY(EDIT_BOTTOM), fontSize / 2, row4, str,
                  col1 + fontSize * 2);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_COLOR) {
-    // addText_Left(0,fontSize/2,row1,"Current colour",col1);
-    /* TODO. Print alpha somewhere? */
-    snprintf(str, 255, "red: %2.2f", EditMode::editMode->color[0]);
+    snprintf(str, 255, _("red: %2.2f"), EditMode::editMode->color[0]);
     addText_Left(CODE_FROM_MENUENTRY(COLOR_RED), fontSize / 2, row2, str, col1 + fontSize * 3);
-    snprintf(str, 255, "green: %2.2f", EditMode::editMode->color[1]);
+    snprintf(str, 255, _("green: %2.2f"), EditMode::editMode->color[1]);
     addText_Left(CODE_FROM_MENUENTRY(COLOR_GREEN), fontSize / 2, row3, str,
                  col1 + fontSize * 3);
-    snprintf(str, 255, "blue: %2.2f", EditMode::editMode->color[2]);
+    snprintf(str, 255, _("blue: %2.2f"), EditMode::editMode->color[2]);
     addText_Left(CODE_FROM_MENUENTRY(COLOR_BLUE), fontSize / 2, row4, str,
                  col1 + fontSize * 3);
-    snprintf(str, 255, "alpha: %2.2f", EditMode::editMode->color[3]);
+    snprintf(str, 255, _("alpha: %2.2f"), EditMode::editMode->color[3]);
     addText_Left(CODE_FROM_MENUENTRY(COLOR_ALPHA), fontSize / 2, row1, str,
                  col1 + fontSize * 3);
 
@@ -269,12 +270,12 @@ void EStatusWindow::draw() {
                     EditMode::editMode->color[2], EditMode::editMode->color[3]);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_VELOCITY) {
     Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
-    snprintf(str, 255, "dx: %2.2f", cell.velocity[0]);
+    snprintf(str, 255, _("dx: %2.2f"), cell.velocity[0]);
     addText_Left(0, fontSize / 2, row1, str, col1 + fontSize * 1);
-    snprintf(str, 255, "dy: %2.2f", cell.velocity[1]);
+    snprintf(str, 255, _("dy: %2.2f"), cell.velocity[1]);
     addText_Left(0, fontSize / 2, row1, str, col1 + fontSize * 7);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_NOLINES) {
-    addText_Left(0, fontSize / 2, row1, "Lines", col1);
+    addText_Left(0, fontSize / 2, row1, _("Lines"), col1);
 
     GLfloat line_off[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
     GLfloat line_on[4][4] = {0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1.};
@@ -308,25 +309,25 @@ void EStatusWindow::draw() {
     const char* feature = "";
     switch (EditMode::editMode->currentFeature) {
     case FEATURE_SPIKE:
-      feature = "spike";
+      feature = _("spike");
       break;
     case FEATURE_SMALL_HILL:
-      feature = "small hill";
+      feature = _("small hill");
       break;
     case FEATURE_MEDIUM_HILL:
-      feature = "medium hill";
+      feature = _("medium hill");
       break;
     case FEATURE_LARGE_HILL:
-      feature = "large hill";
+      feature = _("large hill");
       break;
     case FEATURE_HUGE_HILL:
-      feature = "huge hill";
+      feature = _("huge hill");
       break;
     case FEATURE_SMALL_SMOOTH:
-      feature = "small smooth";
+      feature = _("small smooth");
       break;
     case FEATURE_LARGE_SMOOTH:
-      feature = "large smooth";
+      feature = _("large smooth");
       break;
     }
     addText_Center(0, fontSize / 2, row1, feature, (col1 + area3x) / 2);
@@ -455,9 +456,9 @@ void ECloseWindow::draw() {
   int row1 = y + fontSize + 2;
   int row2 = row1 + fontSize + 2;
 
-  addText_Center(0, fontSize / 2, row1, "Close without saving?", x + width / 2);
-  addText_Center(CODE_YES, fontSize / 2, row2, "Yes", x + fontSize * 5);
-  addText_Center(CODE_NO, fontSize / 2, row2, "No", x + width - fontSize * 5);
+  addText_Center(0, fontSize / 2, row1, _("Close without saving?"), x + width / 2);
+  addText_Center(CODE_YES, fontSize / 2, row2, _("Yes"), x + fontSize * 5);
+  addText_Center(CODE_NO, fontSize / 2, row2, _("No"), x + width - fontSize * 5);
 }
 void ECloseWindow::mouseDown(int state, int x, int y) {
   int code = getSelectedArea();

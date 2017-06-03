@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 08:53-0400\n"
+"POT-Creation-Date: 2017-06-03 10:08-0400\n"
 "PO-Revision-Date: 2017-05-27 13:44-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -61,7 +61,7 @@ msgstr "nu: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "center: %d %d vänster: %d höger: %d up: %d ner: %d"
 
-#: ../src/diamond.cc:108
+#: ../src/diamond.cc:118
 #, fuzzy
 msgid "Save point"
 msgstr "%d poang"
@@ -106,7 +106,7 @@ msgstr "Visa"
 msgid "New"
 msgstr "Ny"
 
-#: ../src/editMode.cc:159 ../src/editWindows.cc:494
+#: ../src/editMode.cc:159 ../src/editWindows.cc:495
 msgid "Open"
 msgstr "Öppna"
 
@@ -208,7 +208,6 @@ msgid "Ice"
 msgstr "Is"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178 ../share/levels/lv2.scm:4
-#: ../share/levels/tmp.scm:4
 msgid "Acid"
 msgstr "Syra"
 
@@ -378,60 +377,194 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Textures"
 msgstr ""
 
-#: ../src/editWindows.cc:369
+#: ../src/editWindows.cc:148
+msgid "y"
+msgstr ""
+
+#: ../src/editWindows.cc:152
+msgid "n"
+msgstr ""
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "height"
+msgstr "Editera höjd"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "color"
+msgstr "Färg"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "water"
+msgstr "Editera vatten"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "velocity"
+msgstr "Editera hastighet"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "lines"
+msgstr "Editera linjer"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "feature"
+msgstr "Textur"
+
+#: ../src/editWindows.cc:204
+#, fuzzy, c-format
+msgid "Pos: %d,%d"
+msgstr "nu: %d %d"
+
+#: ../src/editWindows.cc:206
+#, c-format
+msgid "Increment: %3.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:208
+#, fuzzy, c-format
+msgid "Edit: %s"
+msgstr "Editera"
+
+#: ../src/editWindows.cc:224
+msgid "Heights"
+msgstr ""
+
+#: ../src/editWindows.cc:240
+#, fuzzy
+msgid "Water heights"
+msgstr "Editera höjd"
+
+#: ../src/editWindows.cc:256
+#, c-format
+msgid "red: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:258
+#, c-format
+msgid "green: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:261
+#, c-format
+msgid "blue: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:264
+#, c-format
+msgid "alpha: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:273
+#, c-format
+msgid "dx: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:275
+#, c-format
+msgid "dy: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:278
+msgid "Lines"
+msgstr ""
+
+#: ../src/editWindows.cc:312
+#, fuzzy
+msgid "spike"
+msgstr "Taggar"
+
+#: ../src/editWindows.cc:315
+#, fuzzy
+msgid "small hill"
+msgstr "Liten kulle"
+
+#: ../src/editWindows.cc:318
+#, fuzzy
+msgid "medium hill"
+msgstr "Medium kulle"
+
+#: ../src/editWindows.cc:321
+#, fuzzy
+msgid "large hill"
+msgstr "Stor kulle"
+
+#: ../src/editWindows.cc:324
+#, fuzzy
+msgid "huge hill"
+msgstr "Enorm kulle"
+
+#: ../src/editWindows.cc:327
+msgid "small smooth"
+msgstr ""
+
+#: ../src/editWindows.cc:330
+msgid "large smooth"
+msgstr ""
+
+#: ../src/editWindows.cc:370
 msgid "Quit without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:370 ../src/editWindows.cc:411
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
+#: ../src/editWindows.cc:460 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:185
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:158
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:166
-#: ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:372 ../src/editWindows.cc:413
+#: ../src/editWindows.cc:461 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:166 ../src/settingsMode.cc:185
 #, c-format
 msgid "No"
 msgstr "Nej"
 
-#: ../src/editWindows.cc:410
+#: ../src/editWindows.cc:411
 #, fuzzy
 msgid "Save map?"
 msgstr "Spara"
 
-#: ../src/editWindows.cc:414
+#: ../src/editWindows.cc:415
 #, fuzzy
 msgid "Saving"
 msgstr "Sand"
 
-#: ../src/editWindows.cc:491
+#: ../src/editWindows.cc:459
+msgid "Close without saving?"
+msgstr ""
+
+#: ../src/editWindows.cc:492
 msgid "Name of map"
 msgstr ""
 
-#: ../src/editWindows.cc:493 ../src/editWindows.cc:550
+#: ../src/editWindows.cc:494 ../src/editWindows.cc:551
 msgid "Cancel"
 msgstr ""
 
-#: ../src/editWindows.cc:541
+#: ../src/editWindows.cc:542
 #, fuzzy
 msgid "Open map"
 msgstr "Öppna"
 
-#: ../src/editWindows.cc:548
+#: ../src/editWindows.cc:549
 #, c-format
 msgid "page %d / %d"
 msgstr ""
@@ -446,17 +579,17 @@ msgstr "%d poang"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:721
+#: ../src/glHelp.cc:767
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Framerate: %.1f"
 
-#: ../src/glHelp.cc:723
+#: ../src/glHelp.cc:769
 #, c-format
 msgid "Framerate unknown"
 msgstr "Okänd framerate"
 
-#: ../src/glHelp.cc:725
+#: ../src/glHelp.cc:771
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 08:53-0400\n"
+"POT-Creation-Date: 2017-06-03 10:08-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -59,7 +59,7 @@ msgstr "correntemente: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centro: %d %d sinistra: %d destra: %d alto: %d basso: %d"
 
-#: ../src/diamond.cc:108
+#: ../src/diamond.cc:118
 #, fuzzy
 msgid "Save point"
 msgstr "%d punti"
@@ -104,7 +104,7 @@ msgstr "Visualizza"
 msgid "New"
 msgstr "Nuovo"
 
-#: ../src/editMode.cc:159 ../src/editWindows.cc:494
+#: ../src/editMode.cc:159 ../src/editWindows.cc:495
 msgid "Open"
 msgstr "Apri"
 
@@ -205,7 +205,6 @@ msgid "Ice"
 msgstr "Ghiaccio"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178 ../share/levels/lv2.scm:4
-#: ../share/levels/tmp.scm:4
 msgid "Acid"
 msgstr "Acido"
 
@@ -377,57 +376,195 @@ msgstr ""
 ";;; per imparare come personalizzarlo\n"
 "\n"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell height"
 msgstr "Altezza cella"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell water height"
 msgstr "Altezza acqua nella cella."
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Textures"
 msgstr "Textures"
 
-#: ../src/editWindows.cc:369
+#: ../src/editWindows.cc:148
+msgid "y"
+msgstr ""
+
+#: ../src/editWindows.cc:152
+#, fuzzy
+msgid "n"
+msgstr "no"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "height"
+msgstr "Modifica altezza"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "color"
+msgstr "Colore"
+
+#: ../src/editWindows.cc:201
+#, fuzzy
+msgid "water"
+msgstr "Modifica acqua"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "velocity"
+msgstr "Modifica velocità"
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "lines"
+msgstr "Modifica linee."
+
+#: ../src/editWindows.cc:202
+#, fuzzy
+msgid "feature"
+msgstr "Caratteristiche"
+
+#: ../src/editWindows.cc:204
+#, c-format
+msgid "Pos: %d,%d"
+msgstr "Posiz.: %d,%d"
+
+#: ../src/editWindows.cc:206
+#, c-format
+msgid "Increment: %3.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:208
+#, fuzzy, c-format
+msgid "Edit: %s"
+msgstr "Modifica"
+
+#: ../src/editWindows.cc:224
+msgid "Heights"
+msgstr ""
+
+#: ../src/editWindows.cc:240
+#, fuzzy
+msgid "Water heights"
+msgstr "Profondità acqua"
+
+#: ../src/editWindows.cc:256
+#, c-format
+msgid "red: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:258
+#, c-format
+msgid "green: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:261
+#, c-format
+msgid "blue: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:264
+#, c-format
+msgid "alpha: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:273
+#, c-format
+msgid "dx: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:275
+#, c-format
+msgid "dy: %2.2f"
+msgstr ""
+
+#: ../src/editWindows.cc:278
+msgid "Lines"
+msgstr ""
+
+#: ../src/editWindows.cc:312
+#, fuzzy
+msgid "spike"
+msgstr "Aculeo"
+
+#: ../src/editWindows.cc:315
+#, fuzzy
+msgid "small hill"
+msgstr "Collina piccola"
+
+#: ../src/editWindows.cc:318
+#, fuzzy
+msgid "medium hill"
+msgstr "Collina media"
+
+#: ../src/editWindows.cc:321
+#, fuzzy
+msgid "large hill"
+msgstr "Collina grande"
+
+#: ../src/editWindows.cc:324
+#, fuzzy
+msgid "huge hill"
+msgstr "Collina enorme"
+
+#: ../src/editWindows.cc:327
+#, fuzzy
+msgid "small smooth"
+msgstr "Arrotonda poco"
+
+#: ../src/editWindows.cc:330
+#, fuzzy
+msgid "large smooth"
+msgstr "Arrotonda molto"
+
+#: ../src/editWindows.cc:370
 msgid "Quit without saving?"
 msgstr "Si desidera uscire senza salvare?"
 
-#: ../src/editWindows.cc:370 ../src/editWindows.cc:411
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
+#: ../src/editWindows.cc:460 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:185
 msgid "Yes"
 msgstr "Sì"
 
-#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:158
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:166
-#: ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:372 ../src/editWindows.cc:413
+#: ../src/editWindows.cc:461 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:166 ../src/settingsMode.cc:185
 #, c-format
 msgid "No"
 msgstr "No"
 
-#: ../src/editWindows.cc:410
+#: ../src/editWindows.cc:411
 msgid "Save map?"
 msgstr "Salvare la mappa?"
 
-#: ../src/editWindows.cc:414
+#: ../src/editWindows.cc:415
 msgid "Saving"
 msgstr "Salvataggio"
 
-#: ../src/editWindows.cc:491
+#: ../src/editWindows.cc:459
+#, fuzzy
+msgid "Close without saving?"
+msgstr "Si desidera uscire senza salvare?"
+
+#: ../src/editWindows.cc:492
 msgid "Name of map"
 msgstr "Nome della mappa"
 
-#: ../src/editWindows.cc:493 ../src/editWindows.cc:550
+#: ../src/editWindows.cc:494 ../src/editWindows.cc:551
 msgid "Cancel"
 msgstr "Annulla"
 
-#: ../src/editWindows.cc:541
+#: ../src/editWindows.cc:542
 msgid "Open map"
 msgstr "Carica mappa"
 
-#: ../src/editWindows.cc:548
+#: ../src/editWindows.cc:549
 #, c-format
 msgid "page %d / %d"
 msgstr "Pagina %d / %d"
@@ -442,17 +579,17 @@ msgstr "%d punti"
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:721
+#: ../src/glHelp.cc:767
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/glHelp.cc:723
+#: ../src/glHelp.cc:769
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: ../src/glHelp.cc:725
+#: ../src/glHelp.cc:771
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -1862,9 +1999,6 @@ msgstr ""
 #~ msgid "Raise: %f"
 #~ msgstr "Incremento: %f"
 
-#~ msgid "Pos: %d,%d"
-#~ msgstr "Posiz.: %d,%d"
-
 #~ msgid "Feature: %s"
 #~ msgstr "Caratteristica: %s"
 
@@ -1873,12 +2007,6 @@ msgstr ""
 
 #~ msgid "yes"
 #~ msgstr "sì"
-
-#~ msgid "no"
-#~ msgstr "no"
-
-#~ msgid "Water height"
-#~ msgstr "Profondità acqua"
 
 #~ msgid "MORE HELP"
 #~ msgstr "CONTINUA"

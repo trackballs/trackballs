@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-01 08:53-0400\n"
-"PO-Revision-Date: 2017-05-31 07:36-0400\n"
+"POT-Creation-Date: 2017-06-03 10:08-0400\n"
+"PO-Revision-Date: 2017-06-03 10:11-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -59,7 +59,7 @@ msgstr "maintenant: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centre: %d %d gauche: %d droite: %d haut: %d bas: %d"
 
-#: ../src/diamond.cc:108
+#: ../src/diamond.cc:118
 msgid "Save point"
 msgstr "Point de sauvegarde!"
 
@@ -82,7 +82,7 @@ msgstr "Drapeaux"
 
 #: ../src/editMode.cc:151
 msgid "Feature"
-msgstr "Fonctionnalité"
+msgstr "Caractéristique"
 
 #: ../src/editMode.cc:151
 msgid "Move"
@@ -103,7 +103,7 @@ msgstr "Vue"
 msgid "New"
 msgstr "Nouveau"
 
-#: ../src/editMode.cc:159 ../src/editWindows.cc:494
+#: ../src/editMode.cc:159 ../src/editWindows.cc:495
 msgid "Open"
 msgstr "Ouvrir"
 
@@ -204,7 +204,6 @@ msgid "Ice"
 msgstr "Glace"
 
 #: ../src/editMode.cc:165 ../src/editMode.cc:178 ../share/levels/lv2.scm:4
-#: ../share/levels/tmp.scm:4
 msgid "Acid"
 msgstr "Acide"
 
@@ -376,57 +375,179 @@ msgstr ""
 ";;; pour apprendre a le personnaliser.\n"
 "\n"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell height"
 msgstr "Hauteur de la cellule"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Cell water height"
 msgstr "Hauteur de la cellule d'eau"
 
-#: ../src/editMode.cc:486
+#: ../src/editMode.cc:457
 msgid "Textures"
 msgstr "Textures"
 
-#: ../src/editWindows.cc:369
+#: ../src/editWindows.cc:148
+msgid "y"
+msgstr "y"
+
+#: ../src/editWindows.cc:152
+msgid "n"
+msgstr "n"
+
+#: ../src/editWindows.cc:201
+msgid "height"
+msgstr "Hauteur"
+
+#: ../src/editWindows.cc:201
+msgid "color"
+msgstr "Couleur"
+
+#: ../src/editWindows.cc:201
+msgid "water"
+msgstr "L'eau"
+
+#: ../src/editWindows.cc:202
+msgid "velocity"
+msgstr "La vélocité"
+
+#: ../src/editWindows.cc:202
+msgid "lines"
+msgstr "Lignes"
+
+#: ../src/editWindows.cc:202
+msgid "feature"
+msgstr "Caractéristique"
+
+#: ../src/editWindows.cc:204
+#, c-format
+msgid "Pos: %d,%d"
+msgstr "Pos: %d,%d"
+
+#: ../src/editWindows.cc:206
+#, c-format
+msgid "Increment: %3.2f"
+msgstr "Incrément %3.2f"
+
+#: ../src/editWindows.cc:208
+#, c-format
+msgid "Edit: %s"
+msgstr "Modifier: %s"
+
+#: ../src/editWindows.cc:224
+msgid "Heights"
+msgstr "Hauteur"
+
+#: ../src/editWindows.cc:240
+msgid "Water heights"
+msgstr "Hauteur de l'eau"
+
+#: ../src/editWindows.cc:256
+#, c-format
+msgid "red: %2.2f"
+msgstr "rouge: %2.2f"
+
+#: ../src/editWindows.cc:258
+#, c-format
+msgid "green: %2.2f"
+msgstr "vert: %2.2f"
+
+#: ../src/editWindows.cc:261
+#, c-format
+msgid "blue: %2.2f"
+msgstr "bleu: %2.2f"
+
+#: ../src/editWindows.cc:264
+#, c-format
+msgid "alpha: %2.2f"
+msgstr "alpha: %2.2f"
+
+#: ../src/editWindows.cc:273
+#, c-format
+msgid "dx: %2.2f"
+msgstr "dx: %2.2f"
+
+#: ../src/editWindows.cc:275
+#, c-format
+msgid "dy: %2.2f"
+msgstr "dy: %2.2f"
+
+#: ../src/editWindows.cc:278
+msgid "Lines"
+msgstr "Lignes"
+
+#: ../src/editWindows.cc:312
+msgid "spike"
+msgstr "Pic"
+
+#: ../src/editWindows.cc:315
+msgid "small hill"
+msgstr "Petite colline"
+
+#: ../src/editWindows.cc:318
+msgid "medium hill"
+msgstr "Moyenne colline"
+
+#: ../src/editWindows.cc:321
+msgid "large hill"
+msgstr "Grande colline"
+
+#: ../src/editWindows.cc:324
+msgid "huge hill"
+msgstr "Énorme colline"
+
+#: ../src/editWindows.cc:327
+msgid "small smooth"
+msgstr "Petite surface lisse"
+
+#: ../src/editWindows.cc:330
+msgid "large smooth"
+msgstr "Grande surface lisse"
+
+#: ../src/editWindows.cc:370
 msgid "Quit without saving?"
 msgstr "Quitter sans enregistrer ?"
 
-#: ../src/editWindows.cc:370 ../src/editWindows.cc:411
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
+#: ../src/editWindows.cc:460 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:185
 msgid "Yes"
 msgstr "Oui"
 
-#: ../src/editWindows.cc:371 ../src/editWindows.cc:412
-#: ../src/settingsMode.cc:130 ../src/settingsMode.cc:158
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:166
-#: ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:372 ../src/editWindows.cc:413
+#: ../src/editWindows.cc:461 ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
+#: ../src/settingsMode.cc:166 ../src/settingsMode.cc:185
 #, c-format
 msgid "No"
 msgstr "Non"
 
-#: ../src/editWindows.cc:410
+#: ../src/editWindows.cc:411
 msgid "Save map?"
 msgstr "Enregistrer la carte ?"
 
-#: ../src/editWindows.cc:414
+#: ../src/editWindows.cc:415
 msgid "Saving"
 msgstr "Enregistre"
 
-#: ../src/editWindows.cc:491
+#: ../src/editWindows.cc:459
+msgid "Close without saving?"
+msgstr "Quitter sans enregistrer ?"
+
+#: ../src/editWindows.cc:492
 msgid "Name of map"
 msgstr "Nom de la carte"
 
-#: ../src/editWindows.cc:493 ../src/editWindows.cc:550
+#: ../src/editWindows.cc:494 ../src/editWindows.cc:551
 msgid "Cancel"
 msgstr "Annuler"
 
-#: ../src/editWindows.cc:541
+#: ../src/editWindows.cc:542
 msgid "Open map"
 msgstr "Ouvrir une carte"
 
-#: ../src/editWindows.cc:548
+#: ../src/editWindows.cc:549
 #, c-format
 msgid "page %d / %d"
 msgstr "page %d / %d"
@@ -441,17 +562,17 @@ msgstr "Vous avez %d points"
 msgid "Enter your name: %s"
 msgstr "Entrez votre nom: %s"
 
-#: ../src/glHelp.cc:721
+#: ../src/glHelp.cc:767
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:723
+#: ../src/glHelp.cc:769
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:725
+#: ../src/glHelp.cc:771
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -1016,7 +1137,7 @@ msgstr "  Réflexions (beta)"
 
 #: ../src/settingsMode.cc:160
 msgid "  VSync"
-msgstr "VSYNC"
+msgstr "  VSYNC"
 
 #: ../src/settingsMode.cc:169
 #, c-format
@@ -1837,9 +1958,6 @@ msgstr "Salle du commandant"
 #~ msgid "Raise: %f"
 #~ msgstr "Augmenter: %f"
 
-#~ msgid "Pos: %d,%d"
-#~ msgstr "Pos: %d,%d"
-
 #~ msgid "Feature: %s"
 #~ msgstr "Fonctionnalité: %s"
 
@@ -1848,12 +1966,6 @@ msgstr "Salle du commandant"
 
 #~ msgid "yes"
 #~ msgstr "oui"
-
-#~ msgid "no"
-#~ msgstr "non"
-
-#~ msgid "Water height"
-#~ msgstr "Hauteur de l'eau"
 
 #~ msgid "MORE HELP"
 #~ msgstr "Plus d'aide"
