@@ -50,7 +50,6 @@ void Goal::onGet() {
 }
 void Goal::draw() {
   if (!visible) return;
-  glPushAttrib(GL_ENABLE_BIT);
 
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
@@ -163,8 +162,4 @@ void Goal::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }

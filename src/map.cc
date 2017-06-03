@@ -985,11 +985,9 @@ void Map::markCellUpdated(int x, int y) {
 }
 
 void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glDisable(GL_CULL_FACE);
-  glDisable(GL_LIGHTING);
 
   setupObjectRenderState();
 
@@ -1006,8 +1004,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   int ncells = (std::abs(x1 - x2) + 1) * (std::abs(y1 - y2) + 1);
   if (ncells > 2 * 256 * 256) {
     warning("Footprint requested for too large an area. Drawing nothing.");
-    glUseProgram(0);
-    glPopAttrib();
+    glEnable(GL_DEPTH_TEST);
     return;
   }
 
@@ -1066,9 +1063,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
 
-  glUseProgram(0);
-
-  glPopAttrib();
+  glEnable(GL_DEPTH_TEST);
 }
 
 Chunk* Map::chunk(int cx, int cy) {

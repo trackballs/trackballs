@@ -331,6 +331,75 @@ void setupObjectRenderState() {
   glActiveTexture(GL_TEXTURE0 + 0);
 }
 
+void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail) {
+  if (detail < 1) {
+    warning("Sphere detail level must be > 1");
+    *ntriangles = 0.;
+    *nvertices = 0.;
+    return;
+  }
+
+  int radial_count = 4 * detail;
+  int nrows = 2 * detail + 1;
+  *nvertices = radial_count * (nrows - 2) + 2;
+  *ntriangles = 2 * radial_count * (nrows - 2);
+}
+
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
+                       GLfloat radius, int detail, GLfloat color[4]) {
+  if (detail < 1) {
+    warning("Sphere detail level must be > 1. Drawing nothing.");
+    return;
+  }
+  int radial_count = 4 * detail;
+  int nrows = 2 * detail + 1;
+
+  // Construct vertices
+  char *pos = (char *)data;
+  for (int z = 1; z < nrows - 1; z++) {
+    GLfloat theta = z * M_PI / (nrows - 1);
+    for (int t = 0; t < radial_count; t++) {
+      GLfloat phi = 2 * t * M_PI / radial_count;
+      if (z % 2 == 1) phi += M_PI / radial_count;
+
+      GLfloat local[3] = {std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi),
+                          std::cos(theta)};
+      pos += packObjectVertex(pos, position[0] + radius * local[0],
+                              position[1] + radius * local[1], position[2] + radius * local[2],
+                              theta / M_PI, phi / (2 * M_PI), color, local);
+    }
+  }
+  GLfloat pnorm[3] = {0., 0., 1.};
+  GLfloat vnorm[3] = {0., 0., -1};
+  pos += packObjectVertex(pos, position[0], position[1], position[2] + radius, 0., 0.5, color,
+                          pnorm);
+  pos += packObjectVertex(pos, position[0], position[1], position[2] - radius, 1., 0.5, color,
+                          vnorm);
+
+  // Triangulate end caps
+  for (int i = 0; i < radial_count; i++) {
+    idxs[6 * i + 0] = first_index + i;
+    idxs[6 * i + 1] = first_index + (i + 1) % radial_count;
+    idxs[6 * i + 2] = first_index + radial_count * (nrows - 2);
+    idxs[6 * i + 3] = first_index + radial_count * (nrows - 3) + (i + 1) % radial_count;
+    idxs[6 * i + 4] = first_index + radial_count * (nrows - 3) + i;
+    idxs[6 * i + 5] = first_index + radial_count * (nrows - 2) + 1;
+  }
+  // Triangulate body
+  ushort *base = &idxs[2 * 3 * radial_count];
+  for (int z = 1; z < nrows - 2; z++) {
+    for (int i = 0; i < radial_count; i++) {
+      base[6 * i + 0] = first_index + (z - 1) * radial_count + (i + 1) % radial_count;
+      base[6 * i + 1] = first_index + (z - 1) * radial_count + i;
+      base[6 * i + 2] = first_index + z * radial_count + (i + 1) % radial_count;
+      base[6 * i + 3] = first_index + (z - 1) * radial_count + i;
+      base[6 * i + 4] = first_index + z * radial_count + i;
+      base[6 * i + 5] = first_index + z * radial_count + (i + 1) % radial_count;
+    }
+    base = &base[6 * radial_count];
+  }
+}
+
 /* generates a snapshot of the screen */
 int createSnapshot() {
   static int snap_number = 0;
@@ -988,8 +1057,6 @@ void Enter2DMode() {
 void Leave2DMode() {
   if (!is_2d_mode) { return; }
 
-  glUseProgram(0);
-
   is_2d_mode = 0;
 }
 
@@ -1126,32 +1193,4 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
 
   SDL_FreeSurface(image); /* No longer needed */
   return *texture;
-}
-
-// YP: draw a spike with TRIANGLE_FAN. less time used by C->GL
-//     copies, and reduction of glBegin/glEnd number.
-void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d) {
-  Coord3d ab, ac, ad;
-  Coord3d normal1, normal2, normal3;
-
-  sub(b, a, ab);
-  sub(c, a, ac);
-  sub(d, a, ac);
-  crossProduct(ac, ab, normal1);
-  normalize(normal1);
-  crossProduct(ab, ad, normal2);
-  normalize(normal2);
-  crossProduct(ad, ab, normal3);
-  normalize(normal3);
-
-  glBegin(GL_TRIANGLE_FAN);
-  glNormal3dv(normal1);
-  glVertex3dv(a);
-  glVertex3dv(c);
-  glVertex3dv(b);
-  glNormal3dv(normal2);
-  glVertex3dv(d);
-  glNormal3dv(normal3);
-  glVertex3dv(c);
-  glEnd();
 }

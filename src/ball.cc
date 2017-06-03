@@ -43,6 +43,34 @@ GLuint Ball::dizzyTexture;
 GLfloat Ball::dizzyTexMinX, Ball::dizzyTexMinY, Ball::dizzyTexMaxX, Ball::dizzyTexMaxY;
 extern GLuint hiresSphere;
 
+// YP: draw a spike with TRIANGLE_FAN. less time used by C->GL
+//     copies, and reduction of glBegin/glEnd number.
+void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d) {
+  Coord3d ab, ac, ad;
+  Coord3d normal1, normal2, normal3;
+
+  sub(b, a, ab);
+  sub(c, a, ac);
+  sub(d, a, ac);
+  crossProduct(ac, ab, normal1);
+  normalize(normal1);
+  crossProduct(ab, ad, normal2);
+  normalize(normal2);
+  crossProduct(ad, ab, normal3);
+  normalize(normal3);
+
+  glBegin(GL_TRIANGLE_FAN);
+  glNormal3dv(normal1);
+  glVertex3dv(a);
+  glVertex3dv(c);
+  glVertex3dv(b);
+  glNormal3dv(normal2);
+  glVertex3dv(d);
+  glNormal3dv(normal3);
+  glVertex3dv(c);
+  glEnd();
+}
+
 void Ball::init() {
   balls = new set<Ball *>();
   SDL_Surface *text;
@@ -131,8 +159,9 @@ void Ball::draw() {
   specular[3] = 1.0;
   double shininess = 10.0;
 
+  glUseProgram(0);  // < use fixed function pipeline
+
   glMatrixMode(GL_MODELVIEW);
-  glPushAttrib(GL_ENABLE_BIT);
   glPushMatrix();
   glTranslatef(position[0], position[1], position[2] - sink);
 
@@ -214,8 +243,6 @@ void Ball::draw() {
 
   /* Draw reflection of environment */
   if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
-    // 1 || (Game::current && (Ball*)Game::current->player1 == this &&
-    // Settings::settings->gfx_details > 3)) {
     glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
@@ -257,7 +284,6 @@ void Ball::draw() {
   }
 
   if (modTimeLeft[MOD_SPIKE]) {
-    glPushAttrib(GL_ENABLE_BIT);
     glColor4f(1.0, 1.0, 1.0, 1.0);
 
     phase = min(modTimePhaseIn[MOD_SPIKE] / 2.0, 1.0);
@@ -302,7 +328,6 @@ void Ball::draw() {
         drawSpike(a, b, c, d);
         glPopMatrix();
       }
-    glPopAttrib();
   }
 
   glPopMatrix();
@@ -378,7 +403,6 @@ void Ball::draw() {
     }
   }
 
-  glPopAttrib();
   glPopMatrix();
 }
 /***************************************************
@@ -396,7 +420,6 @@ void Ball::draw2() {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glTranslatef(position[0], position[1], position[2] - sink);
-  glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_BLEND);
 
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
@@ -413,7 +436,6 @@ void Ball::draw2() {
   }
   if (modTimeLeft[MOD_JUMP]) {
     glPushMatrix();
-    glPushAttrib(GL_ENABLE_BIT);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glDisable(GL_LIGHTING);
@@ -436,12 +458,10 @@ void Ball::draw2() {
     glVertex3f(0.0, radius * .6, radius * (z + .9));
 
     glEnd();
-    glPopAttrib();
     glPopMatrix();
   }
   if (modTimeLeft[MOD_DIZZY]) {
     glPushMatrix();
-    glPushAttrib(GL_ENABLE_BIT);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glDisable(GL_LIGHTING);
@@ -467,10 +487,8 @@ void Ball::draw2() {
       glVertex3f(-0.6, 1.5, 0.5 + 0.6);
       glEnd();
     }
-    glPopAttrib();
     glPopMatrix();
   }
-  glPopAttrib();
   glPopMatrix();
 }
 

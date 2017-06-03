@@ -74,7 +74,6 @@ void SettingsMode::display() {
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);  // | GL_DEPTH_BUFFER_BIT);
 
-  glPushAttrib(GL_ENABLE_BIT);
   Enter2DMode();
 
   /* Draw title */
@@ -106,7 +105,6 @@ void SettingsMode::display() {
     drawMousePointer();
     displayFrameRate();
     Leave2DMode();
-    glPopAttrib();
     return;
   }
 
@@ -239,7 +237,6 @@ void SettingsMode::display() {
   drawMousePointer();
   displayFrameRate();
   Leave2DMode();
-  glPopAttrib();
 }
 void SettingsMode::key(int key) {
   if (key == SDLK_SPACE) {

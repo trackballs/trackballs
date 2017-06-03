@@ -54,8 +54,8 @@ Spike::Spike(Coord3d position, Real speed, Real phase) {
 }
 
 void Spike::draw() {
-  glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
 
   const int nfacets = 6;
 
@@ -95,10 +95,6 @@ void Spike::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Spike::tick(Real t) {
@@ -220,8 +216,8 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
 
   for (int i = 0; i < nfacets; i++) {
     idxs[i][0] = 3 * nfacets + i;
-    idxs[i][1] = i;
-    idxs[i][2] = (i + 1) % nfacets;
+    idxs[i][1] = (i + 1) % nfacets;
+    idxs[i][2] = i;
   }
   for (int i = 0; i < nfacets; i++) {
     idxs[nfacets + i][0] = 2 * nfacets + i;
@@ -229,8 +225,8 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
     idxs[nfacets + i][2] = nfacets + (i + 1) % nfacets;
   }
   for (int i = 0; i < nfacets; i++) {
-    idxs[2 * nfacets + i][0] = 2 * nfacets + i;
-    idxs[2 * nfacets + i][1] = 2 * nfacets + (i + 1) % nfacets;
+    idxs[2 * nfacets + i][0] = 2 * nfacets + (i + 1) % nfacets;
+    idxs[2 * nfacets + i][1] = 2 * nfacets + i;
     idxs[2 * nfacets + i][2] = nfacets + (i + 1) % nfacets;
   }
 }

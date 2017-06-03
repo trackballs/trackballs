@@ -76,7 +76,6 @@ When the ball reaches the destination you continue on the next, more difficult, 
 - unless, of course, the time runs out.                                               \
 You steer the ball using the mouse and by pressing >spacebar< you can jump a short distance.");
 
-  glPushAttrib(GL_ENABLE_BIT);
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glColor3f(1.0, 1.0, 1.0);
@@ -134,8 +133,6 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   drawMousePointer();
   displayFrameRate();
   Leave2DMode();
-
-  glPopAttrib();
 }
 void MenuMode::key(int key) {
   /*  if(key == SDLK_RIGHT) {

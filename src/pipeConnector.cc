@@ -45,31 +45,61 @@ void PipeConnector::draw2() {
   if (primaryColor[3] < 1.0) drawMe();
 }
 void PipeConnector::drawMe() {
-  int i;
+  if (primaryColor[3] < 1.0f) {
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+  } else {
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+  }
 
-  glPushAttrib(GL_ENABLE_BIT);
-  GLfloat color[4];
-  GLfloat specular[4];
-  for (i = 0; i < 4; i++) color[i] = primaryColor[i];
-  specular[0] = specular[1] = specular[2] = 0.5;
-  specular[3] = 1.0;
-  double shininess = 20.0;
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+  // Create sphere
+  int ntries = 0;
+  int nverts = 0;
+  int detail = 4;
+  countObjectSpherePoints(&ntries, &nverts, detail);
+  GLfloat *data = new GLfloat[nverts * 8];
+  ushort *idxs = new ushort[ntries * 3];
+  GLfloat pos[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
+  placeObjectSphere(data, idxs, 0, pos, radius, detail, primaryColor);
 
-  glEnable(GL_BLEND);
-  glDisable(GL_CULL_FACE);
-  glColor4f(1.0, 1.0, 1.0, 0.5);
+  // Transfer
+  setupObjectRenderState();
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
-  gluSphere(qball, radius, 11, 11);
-  glPopMatrix();
-  glPopAttrib();
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
 }
-void PipeConnector::tick(Real t) {}
+void PipeConnector::tick(Real t) {
+  boundingBox[0][0] = -radius;
+  boundingBox[0][1] = -radius;
+  boundingBox[0][2] = -radius;
+  boundingBox[1][0] = radius;
+  boundingBox[1][1] = radius;
+  boundingBox[1][2] = radius;
+}
 void PipeConnector::onRemove() {
   Animated::onRemove();
   connectors->erase(this);

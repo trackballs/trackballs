@@ -53,8 +53,6 @@ void Pipe::draw2() {
   if (primaryColor[3] < 1.0) drawTrunk();
 }
 void Pipe::drawTrunk() {
-  int i;
-
   up[0] = up[1] = 0.0;
   up[2] = 1.0;
   Coord3d dir;
@@ -71,37 +69,73 @@ void Pipe::drawTrunk() {
     up[2] *= -1.;
   }
 
-  glPushAttrib(GL_ENABLE_BIT);
-
-  GLfloat color[4];
-  GLfloat specular[4];
-  for (i = 0; i < 4; i++) color[i] = primaryColor[i];
-  specular[0] = specular[1] = specular[2] = 0.5;
-  specular[3] = 1.0;
-  double shininess = 20.0;
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, shininess);
-
-  glEnable(GL_BLEND);
+  // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
-  glColor4f(1.0, 1.0, 1.0, 0.5);
-  glBegin(GL_TRIANGLE_STRIP);
-
-  for (i = 0; i <= 10; i++) {
-    double v = ((double)i) * M_PI * 2.0 / 10.0;
-
-    glNormal3f(sin(v) * up[0] + cos(v) * right[0], sin(v) * up[1] + cos(v) * right[1],
-               sin(v) * up[2] + cos(v) * right[2]);
-    glVertex3f(from[0] + radius * sin(v) * up[0] + radius * cos(v) * right[0],
-               from[1] + radius * sin(v) * up[1] + radius * cos(v) * right[1],
-               from[2] + radius * sin(v) * up[2] + radius * cos(v) * right[2]);
-    glVertex3f(to[0] + radius * sin(v) * up[0] + radius * cos(v) * right[0],
-               to[1] + radius * sin(v) * up[1] + radius * cos(v) * right[1],
-               to[2] + radius * sin(v) * up[2] + radius * cos(v) * right[2]);
+  if (primaryColor[3] < 1.f) {
+    glEnable(GL_BLEND);
+  } else {
+    glDisable(GL_BLEND);
   }
-  glEnd();
-  glPopAttrib();
+
+  // Raising this may require level set fixes as new corners may intersect things
+  int nfacets = 10;
+
+  // Draw pipe
+  GLfloat data[2 * nfacets][8];
+  ushort idxs[2 * nfacets][3];
+  char *pos = (char *)data;
+  for (int i = 0; i < nfacets; i++) {
+    GLfloat angle = 2 * i * M_PI / nfacets;
+    GLfloat norm[3] = {std::sin(angle) * (GLfloat)up[0] + std::cos(angle) * (GLfloat)right[0],
+                       std::sin(angle) * (GLfloat)up[1] + std::cos(angle) * (GLfloat)right[1],
+                       std::sin(angle) * (GLfloat)up[2] + std::cos(angle) * (GLfloat)right[2]};
+    pos += packObjectVertex(
+        pos, from[0] + radius * std::sin(angle) * up[0] + radius * std::cos(angle) * right[0],
+        from[1] + radius * std::sin(angle) * up[1] + radius * std::cos(angle) * right[1],
+        from[2] + radius * std::sin(angle) * up[2] + radius * std::cos(angle) * right[2], 0.,
+        0., primaryColor, norm);
+    pos += packObjectVertex(
+        pos, to[0] + radius * std::sin(angle) * up[0] + radius * std::cos(angle) * right[0],
+        to[1] + radius * std::sin(angle) * up[1] + radius * std::cos(angle) * right[1],
+        to[2] + radius * std::sin(angle) * up[2] + radius * std::cos(angle) * right[2], 0., 0.,
+        primaryColor, norm);
+  }
+  for (int i = 0; i < nfacets; i++) {
+    int j = (i + 1) % nfacets;
+    idxs[2 * i][0] = 2 * j;
+    idxs[2 * i][1] = 2 * i;
+    idxs[2 * i][2] = 2 * j + 1;
+    idxs[2 * i + 1][0] = 2 * i;
+    idxs[2 * i + 1][1] = 2 * i + 1;
+    idxs[2 * i + 1][2] = 2 * j + 1;
+  }
+  // Transfer data
+  setupObjectRenderState();
+
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
 }
 void Pipe::tick(Real t) {
   /* TODO. Ugly fix, a better fix is to make from/to etc. *private* variables and add this fn.

@@ -93,9 +93,6 @@ void Weather::draw2() {
   if (Settings::settings->gfx_details <= 1) return;
   if (strength == -1.0) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_LIGHTING);
-
   if (kind == WEATHER_RAIN) {
     /** Draw RAIN particles **/
     glDisable(GL_BLEND);
@@ -160,9 +157,6 @@ void Weather::draw2() {
 
     glDeleteBuffers(1, &databuf);
     glDeleteBuffers(1, &idxbuf);
-
-    glUseProgram(0);
-
   } else if (kind == WEATHER_SNOW) {
     /** Draw SNOW particles **/
     glDisable(GL_CULL_FACE);
@@ -224,10 +218,7 @@ void Weather::draw2() {
 
     glDeleteBuffers(1, &databuf);
     glDeleteBuffers(1, &idxbuf);
-
-    glUseProgram(0);
   }
-  glPopAttrib();
 }
 
 void Weather::clear() {

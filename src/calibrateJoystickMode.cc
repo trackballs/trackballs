@@ -87,7 +87,6 @@ void CalibrateJoystickMode::mouseDown(int state, int x, int y) {
 
 void CalibrateJoystickMode::display() {
   char str[512];
-  glPushAttrib(GL_ENABLE_BIT);
   Enter2DMode();
   glColor4f(1.0, 1.0, 1.0, 1.0);
   glClearColor(0.0, 0.0, 0.0, 0.0);

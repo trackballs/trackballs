@@ -56,8 +56,8 @@ Flag::Flag(int x, int y, int points, int visible, Real radius) {
 void Flag::draw() {
   if (!visible) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
 
   setupObjectRenderState();
 
@@ -125,10 +125,6 @@ void Flag::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Flag::tick(Real t) {

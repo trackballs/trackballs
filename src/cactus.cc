@@ -57,7 +57,6 @@ Cactus::Cactus(int x, int y, Real radius) {
 void Cactus::draw() {
   if (killed == 2) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -175,10 +174,6 @@ void Cactus::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Cactus::tick(Real t) {

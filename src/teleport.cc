@@ -54,8 +54,6 @@ Teleport::Teleport(int x, int y, int dx, int dy, Real radius) {
 }
 
 void Teleport::draw() {
-  glPushAttrib(GL_ENABLE_BIT);
-
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -173,16 +171,11 @@ void Teleport::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Teleport::draw2() {
   if (!is_on) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
@@ -236,10 +229,6 @@ void Teleport::draw2() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Teleport::tick(Real t) {

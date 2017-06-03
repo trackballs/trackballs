@@ -52,8 +52,6 @@ CSwitch::~CSwitch() {
   this->Animated::~Animated();
 }
 void CSwitch::draw() {
-  glPushAttrib(GL_ENABLE_BIT);
-
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -172,8 +170,6 @@ void CSwitch::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
 }
 void CSwitch::tick(Real t) {
   Coord3d v;

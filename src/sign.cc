@@ -79,15 +79,10 @@ void Sign::mkTexture(const char *string) {
 
 void Sign::draw() {}
 void Sign::draw2() {
-  glPushAttrib(GL_ENABLE_BIT);
   // Keep the depth function on but trivial so as to record depth values
-  glDepthFunc(GL_ALWAYS);
-  glEnable(GL_TEXTURE_2D);
-  glDisable(GL_LIGHTING);
   glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
   glEnable(GL_CULL_FACE);
+  glDepthFunc(GL_ALWAYS);
 
   setupObjectRenderState();
   GLint fogActive = (Game::current && Game::current->fogThickness != 0);
@@ -144,10 +139,6 @@ void Sign::draw2() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 
   glDepthFunc(GL_LEQUAL);
 }

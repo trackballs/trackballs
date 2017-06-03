@@ -61,8 +61,8 @@ SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
 }
 
 void SideSpike::draw() {
-  glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
 
   const int nfacets = 6;
 
@@ -123,10 +123,6 @@ void SideSpike::draw() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void SideSpike::tick(Real t) {

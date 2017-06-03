@@ -46,7 +46,6 @@ void Fountain::draw2() {
 
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glEnable(GL_BLEND);
 
   glPointSize(1.5 * screenWidth / 600.);
@@ -128,10 +127,6 @@ void Fountain::draw2() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Fountain::tick(Real t) {

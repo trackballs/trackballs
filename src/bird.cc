@@ -62,7 +62,6 @@ void Bird::draw2() {
 
   if (hide > 0.) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
@@ -122,10 +121,6 @@ void Bird::draw2() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void Bird::tick(Real t) {

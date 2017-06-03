@@ -78,7 +78,6 @@ SetupMode::SetupMode() : GameMode() {
   screenshot = 0;
 }
 void SetupMode::display() {
-  glPushAttrib(GL_ENABLE_BIT);
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -222,6 +221,8 @@ void SetupMode::display() {
   /* Draw the player ball */
   /*                      */
 
+  glUseProgram(0);
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glTranslatef(0.75, -0.75, 0.0);  // 0.7
@@ -266,10 +267,8 @@ void SetupMode::display() {
   glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
   glRotated(t * -50.0, 0.0, 1.0, 0.0);
 
-  glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
   gluSphere(qball, 0.8, max(10, 4 + 3 * settings->gfx_details),
             max(10, 4 + 3 * settings->gfx_details));
-  glPopAttrib();
 
   Enter2DMode();
 
@@ -277,8 +276,6 @@ void SetupMode::display() {
   drawMousePointer();
 
   Leave2DMode();
-
-  glPopAttrib();
 }
 void SetupMode::key(int key) {
   int len = strlen(gamer->name);

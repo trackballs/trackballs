@@ -41,12 +41,9 @@ void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLf
 void draw2DQuad(const GLfloat corners[4][2], const GLfloat texture[4][2],
                 const GLfloat color[4][4], GLuint tex = 0);
 
-void drawTextured2DRectangle(int x, int y, int w, int h);
 void tickMouse(Real td);
 void drawMousePointer();
 void drawMouse(int x, int y, int w, int h, Real td);
-void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d);
-
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
                         const GLfloat color[3], const GLfloat normal[3]);
 void configureObjectAttributes();
@@ -62,6 +59,9 @@ inline uint32_t packNormal(const GLfloat n[3]) {
   x |= f << 0;
   return x;
 }
+void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
+                       GLfloat radius, int detail, GLfloat color[4]);
 
 // generates a snapshot
 int createSnapshot();

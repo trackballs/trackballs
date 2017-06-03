@@ -64,9 +64,7 @@ void ForceField::draw() {}
 void ForceField::draw2() {
   if (!is_on) return;
 
-  glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_CULL_FACE);
-
   glEnable(GL_BLEND);
 
   setupObjectRenderState();
@@ -127,10 +125,6 @@ void ForceField::draw2() {
 
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
-
-  glUseProgram(0);
-
-  glPopAttrib();
 }
 
 void ForceField::tick(Real t) {}

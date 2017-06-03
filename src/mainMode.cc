@@ -76,8 +76,8 @@ void MainMode::display() {
   Map *map = Game::current ? Game::current->map : NULL;
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
+  glUseProgram(0);
   glViewport(0, 0, screenWidth, screenHeight);
-  glPushAttrib(GL_ENABLE_BIT);
 
   if (Game::current->fogThickness)
     glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
@@ -198,11 +198,6 @@ void MainMode::display() {
     showInfo();
     {
       char str[256];
-      /*	  int buyCost;
-      buyCost=(Game::current->player1->score/200)*100+500;
-      if(Game::current->player1->score >= buyCost)
-            snprintf(str,sizeof(str),"Buy continue (%d points)?",buyCost);
-            else*/
       snprintf(str, sizeof(str), _("Press spacebar to continue"));
       message(_("Game over"), str);
     }
@@ -215,15 +210,10 @@ void MainMode::display() {
     message(_("Oops"), _("Press spacebar to continue"));
     break;
   case statusInGame:
-    // printf("before map draw 0\n"); SDL_GL_SwapBuffers(); SDL_GL_SwapBuffers(); getc(stdin);
     map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
-    // printf("before game draw\n"); SDL_GL_SwapBuffers(); SDL_GL_SwapBuffers(); getc(stdin);
     Game::current->draw();
-    // printf("before map draw 1\n"); SDL_GL_SwapBuffers(); SDL_GL_SwapBuffers(); getc(stdin);
     map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
-    // printf("before showinfo\n"); SDL_GL_SwapBuffers(); SDL_GL_SwapBuffers(); getc(stdin);
     showInfo();
-    // printf("after everything\n"); SDL_GL_SwapBuffers(); SDL_GL_SwapBuffers(); getc(stdin);
     break;
   case statusPaused:
     map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
@@ -283,26 +273,6 @@ void MainMode::display() {
   }
 
   Leave2DMode();
-
-  /* For debugging, this draws the players environment map on the upper right corner of the
-   * screen */
-  /*
-  Enter2DMode();
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D,Game::current->player1->environmentTexture);
-  glColor4f(1., 1., 1., 1.0);
-  glEnable(GL_BLEND);
-  glBegin(GL_TRIANGLE_STRIP);
-  glTexCoord2f(1.0,1.0); glVertex2i(screenWidth-0-10, 0);
-  glTexCoord2f(0.0,1.0); glVertex2i(screenWidth-ENVIRONMENT_TEXTURE_SIZE-10, 0);
-  glTexCoord2f(1.0,0.0); glVertex2i(screenWidth-0-10, ENVIRONMENT_TEXTURE_SIZE);
-  glTexCoord2f(0.0,0.0); glVertex2i(screenWidth-ENVIRONMENT_TEXTURE_SIZE-10,
-  ENVIRONMENT_TEXTURE_SIZE);
-  glEnd();
-  Leave2DMode();
-  */
-
-  glPopAttrib();
 }
 void MainMode::doExpensiveComputations() { Game::current->doExpensiveComputations(); }
 
@@ -637,7 +607,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
     glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glPushAttrib(GL_ENABLE_BIT);
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     glEnable(GL_FOG);
     glFogi(GL_FOG_MODE, GL_LINEAR);
@@ -715,8 +684,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   map->draw(birdsEye, 0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
   // map->draw(birdsEye,1, (int) focus[0]+10,(int) focus[1]+10);
-
-  glPopAttrib();
 
   /* Copy rendered image into viewportData */
   if (!viewportData) {
