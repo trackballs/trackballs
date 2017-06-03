@@ -388,18 +388,15 @@ void EditMode::display() {
   glShadeModel(GL_SMOOTH);
 
   /* Draw the map and the current mapcursor/selected region */
-  int x0, y0;
   if (map) {
     map->draw(switchViewpoint | birdsEye, 0, x, y);
     map->draw(switchViewpoint | birdsEye, 1, x, y);
     /* If we have a clipboard selection then display where it will be pasted */
     if (cellClipboard) {
-      for (x0 = x; x0 < x + cellClipboardWidth; x0++)
-        for (y0 = y; y0 < y + cellClipboardHeight; y0++) map->drawFootprint(x0, y0, 1);
+      map->drawFootprint(x, y, x + cellClipboardWidth - 1, y + cellClipboardHeight - 1, 1);
     } else if (markX >= 0) {
       /* Otherwise, if we have a marked region then display footprint over it */
-      for (x0 = min(markX, x); x0 <= max(markX, x); x0++)
-        for (y0 = min(markY, y); y0 <= max(markY, y); y0++) map->drawFootprint(x0, y0, 0);
+      map->drawFootprint(min(markX, x), min(markY, y), max(markX, x), max(markY, y), 0);
     } else if (currentEditMode == editModeFeatures) {
       /* We have currently in the "features" edit mode, display foot
          print of selected feature */
@@ -437,39 +434,13 @@ void EditMode::display() {
         footprintX = 1;
         footprintY = 1;
       }
-      for (x0 = x - footprintX / 2; x0 < x + (footprintX + 1) / 2; x0++)
-        for (y0 = y - footprintY / 2; y0 < y + (footprintY + 1) / 2; y0++)
-          map->drawFootprint(x0, y0, 0);
+      map->drawFootprint(x - footprintX / 2, y - footprintY / 2, x + (footprintX + 1) / 2 - 1,
+                         y + (footprintY + 1) / 2 - 1, 0);
     }
     /* Finally, if no other case then just draw position of cursor */
     else
-      map->drawFootprint(x, y, 0);
+      map->drawFootprint(x, y, x, y, 0);
   }
-
-  /*
-  if(menuChoise == MENU_HILLS)
-        switch(hill) {
-        case HILL_SPIKE:
-          map->drawFootprint(x,y);
-          map->drawFootprint(x-1,y);
-          map->drawFootprint(x,y-1);
-          map->drawFootprint(x-1,y-1);
-          break;
-        case HILL_SMALL: for(x0=x-1;x0<=x+1;x0++) for(y0=y-1;y0<=y+1;y0++)
-  map->drawFootprint(x0,y0); break;
-        case HILL_MEDIUM: for(x0=x-2;x0<=x+2;x0++) for(y0=y-2;y0<=y+2;y0++)
-  map->drawFootprint(x0,y0); break;
-        case HILL_LARGE: for(x0=x-3;x0<=x+3;x0++) for(y0=y-3;y0<=y+3;y0++)
-  map->drawFootprint(x0,y0); break;
-        case HILL_HUGE: for(x0=x-5;x0<=x+5;x0++) for(y0=y-5;y0<=y+5;y0++)
-  map->drawFootprint(x0,y0); break;
-        case SMOOTH_SMALL: for(x0=x-2;x0<=x+2;x0++) for(y0=y-2;y0<=y+2;y0++)
-  map->drawFootprint(x0,y0); break;
-        case SMOOTH_LARGE: for(x0=x-4;x0<=x+4;x0++) for(y0=y-4;y0<=y+4;y0++)
-  map->drawFootprint(x0,y0); break;
-        }
-  else
-  */
 
   clearSelectionAreas();
   Enter2DMode();

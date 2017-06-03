@@ -983,37 +983,90 @@ void Map::markCellUpdated(int x, int y) {
   }
 }
 
-void Map::drawFootprint(int x, int y, int kind) {
-  Cell& center = cell(x, y);
+void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glPushAttrib(GL_ENABLE_BIT);
   glDisable(GL_DEPTH_TEST);
-
-  if (Settings::settings->gfx_details >= 4) {
-    glEnable(GL_BLEND);
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  }
-  glLineWidth(4);
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glTranslatef(0, 0, 0.02);
-
+  glEnable(GL_BLEND);
+  glDisable(GL_CULL_FACE);
   glDisable(GL_LIGHTING);
-  glBegin(GL_LINE_LOOP);
-  {
-    if (kind == 0)
-      glColor4f(0.2, 0.2, 0.5, 1.0);
-    else if (kind == 1)
-      glColor4f(0.5, 0.2, 0.2, 1.0);
-    glVertex3f(x, y, center.heights[Cell::SOUTH + Cell::WEST]);
-    glVertex3f(x + 1, y, center.heights[Cell::SOUTH + Cell::EAST]);
-    glVertex3f(x + 1, y + 1, center.heights[Cell::NORTH + Cell::EAST]);
-    glVertex3f(x, y + 1, center.heights[Cell::NORTH + Cell::WEST]);
-  }
-  glEnd();
 
-  glLineWidth(1);
-  glPopMatrix();
+  setupObjectRenderState();
+
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLfloat color[4] = {kind ? 0.5f : 0.2f, 0.2f, kind ? 0.2f : 0.5f, 1.0f};
+
+  int ncells = (std::abs(x1 - x2) + 1) * (std::abs(y1 - y2) + 1);
+  if (ncells > 2 * 256 * 256) {
+    warning("Footprint requested for too large an area. Drawing nothing.");
+    glUseProgram(0);
+    glPopAttrib();
+    return;
+  }
+
+  GLfloat* data = new GLfloat[8 * 8 * ncells];
+  uint* idxs = new uint[8 * 3 * ncells];
+
+  GLfloat edge = 0.05f;
+  const GLfloat flat[3] = {0.f, 0.f, 0.f};
+
+  int j = 0;
+  for (int x = std::min(x1, x2); x <= std::max(x1, x2); ++x) {
+    for (int y = std::min(y1, y2); y <= std::max(y1, y2); ++y) {
+      Cell& center = cell(x, y);
+      packObjectVertex(&data[j * 8 * 8], x + edge, y + edge,
+                       center.heights[Cell::SOUTH + Cell::WEST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 8], x + 1 - edge, y + edge,
+                       center.heights[Cell::SOUTH + Cell::EAST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 16], x + 1 - edge, y + 1 - edge,
+                       center.heights[Cell::NORTH + Cell::EAST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 24], x + edge, y + 1 - edge,
+                       center.heights[Cell::NORTH + Cell::WEST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 32], x - edge, y - edge,
+                       center.heights[Cell::SOUTH + Cell::WEST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 40], x + 1 + edge, y - edge,
+                       center.heights[Cell::SOUTH + Cell::EAST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 48], x + 1 + edge, y + 1 + edge,
+                       center.heights[Cell::NORTH + Cell::EAST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 56], x - edge, y + 1 + edge,
+                       center.heights[Cell::NORTH + Cell::WEST], 0., 0., color, flat);
+
+      uint local_triangles[8][3] = {{4, 5, 0}, {0, 5, 1}, {6, 1, 5}, {1, 6, 2},
+                                    {7, 2, 6}, {2, 7, 3}, {4, 3, 7}, {3, 4, 0}};
+      for (int i = 0; i < 24; i++) {
+        idxs[j * 24 + i] = local_triangles[i / 3][i % 3] + 8 * j;
+      }
+      j++;
+    }
+  }
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * ncells * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * 3 * ncells * sizeof(uint), idxs, GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 8 * 3 * ncells, GL_UNSIGNED_INT, (void*)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

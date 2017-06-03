@@ -282,7 +282,7 @@ void drawMouse(int x, int y, int w, int h, Real td) {
 }
 
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        GLfloat color[3], GLfloat normal[3]) {
+                        const GLfloat color[3], const GLfloat normal[3]) {
   uint32_t *aout = (uint32_t *)dest;
   GLfloat *fout = (GLfloat *)dest;
   fout[0] = x;

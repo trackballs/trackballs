@@ -97,7 +97,7 @@ class Map {
   int save(char *name, int x, int y);
   void draw(int birdseye, int stage, int x, int y);
   void fillChunkVBO(Chunk *c) const;
-  void drawFootprint(int x, int y, int kind);
+  void drawFootprint(int x1, int y1, int x2, int y2, int kind);
   inline Real getHeight(Real x, Real y) const {
     int ix = (int)x;
     int iy = (int)y;

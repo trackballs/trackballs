@@ -106,8 +106,8 @@ void Sign::draw2() {
 
   GLfloat data[8 * 8];
   char *pos = (char *)data;
-  GLfloat dx = std::cos(M_PI * tot_rot / 180.) * SIGN_SCALE * scale * width;
-  GLfloat dy = std::sin(M_PI * tot_rot / 180.) * SIGN_SCALE * scale * width;
+  GLfloat dx = std::cos(M_PI * (tot_rot - 45.) / 180.) * SIGN_SCALE * scale * width;
+  GLfloat dy = std::sin(M_PI * (tot_rot - 45.) / 180.) * SIGN_SCALE * scale * width;
   GLfloat dz = SIGN_SCALE * scale * height;
 
   GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2],

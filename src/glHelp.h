@@ -48,7 +48,7 @@ void drawMouse(int x, int y, int w, int h, Real td);
 void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d);
 
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        GLfloat color[3], GLfloat normal[3]);
+                        const GLfloat color[3], const GLfloat normal[3]);
 void configureObjectAttributes();
 void setupObjectRenderState();
 inline uint32_t packNormal(const GLfloat n[3]) {
