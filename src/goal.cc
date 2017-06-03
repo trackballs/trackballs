@@ -28,7 +28,7 @@
 
 using namespace std;
 
-Goal::Goal(int x, int y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
+Goal::Goal(int x, int y, int rotate, char* nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strcpy(this->nextLevel, nextLevel);
   this->rotate = rotate;
   primaryColor[0] = 0.9;
@@ -49,138 +49,122 @@ void Goal::onGet() {
   }
 }
 void Goal::draw() {
-  int i;
-
   if (!visible) return;
   glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
-  if (rotate) glRotatef(90.0, 0.0, 0.0, 1.0);
-  glTranslatef(-.5, 0.0, 0.0);
-  GLfloat color[4];
-  for (i = 0; i < 3; i++) color[i] = primaryColor[i];
-  color[3] = 0.0;
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
 
-  GLfloat specular[4];
-  for (i = 0; i < 3; i++) specular[i] = specularColor[i];
-  specular[3] = 0.0;
+  const int nfacets = 11;
+  GLfloat inner_arc[2 + nfacets][2];
+  GLfloat outer_arc[2 + nfacets][2];
+  GLfloat normals[2 + nfacets][2];
 
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, 50.0);
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glShadeModel(GL_SMOOTH);
-  glColor3f(1.0, 1.0, 1.0);
-  glBegin(GL_TRIANGLES);
-  /* Right side, facing down */
-  glNormal3f(0.0, -1.0, 0.0);
-  glVertex3f(1.0, -.1, 0.0);
-  glVertex3f(0.9, -.1, 0.0);
-  glVertex3f(0.9, -.1, 0.6);
-  glVertex3f(0.9, -.1, 0.6);
-  glVertex3f(1.0, -.1, 0.6);
-  glVertex3f(1.0, -.1, 0.0);
+  GLfloat width = 0.1f;
+  GLfloat lift = 0.6f;
+  GLfloat irad = 0.39f;
+  GLfloat orad = 0.49f;
 
-  /* Left side, facing down */
-  glVertex3f(0.0, -.1, 0.0);
-  glVertex3f(0.1, -.1, 0.0);
-  glVertex3f(0.1, -.1, 0.6);
-  glVertex3f(0.1, -.1, 0.6);
-  glVertex3f(0.0, -.1, 0.6);
-  glVertex3f(0.0, -.1, 0.0);
-
-  /* Right side, facing up */
-  glNormal3f(0.0, 1.0, 0.0);
-  glVertex3f(1.0, .1, 0.0);
-  glVertex3f(0.9, .1, 0.0);
-  glVertex3f(0.9, .1, 0.6);
-  glVertex3f(0.9, .1, 0.6);
-  glVertex3f(1.0, .1, 0.6);
-  glVertex3f(1.0, .1, 0.0);
-
-  /* Left side, facing up */
-  glVertex3f(0.0, .1, 0.0);
-  glVertex3f(0.1, .1, 0.0);
-  glVertex3f(0.1, .1, 0.6);
-  glVertex3f(0.1, .1, 0.6);
-  glVertex3f(0.0, .1, 0.6);
-  glVertex3f(0.0, .1, 0.0);
-
-  /* Right, right */
-  glNormal3f(0.0, 1.0, 0.0);
-  glVertex3f(1.0, -.1, 0.0);
-  glVertex3f(1.0, +.1, 0.0);
-  glVertex3f(1.0, +.1, 0.6);
-  glVertex3f(1.0, +.1, 0.6);
-  glVertex3f(1.0, -.1, 0.6);
-  glVertex3f(1.0, -.1, 0.0);
-
-  /* Left, right */
-  glNormal3f(0.0, 1.0, 0.0);
-  glVertex3f(0.1, -.1, 0.0);
-  glVertex3f(0.1, +.1, 0.0);
-  glVertex3f(0.1, +.1, 0.6);
-  glVertex3f(0.1, +.1, 0.6);
-  glVertex3f(0.1, -.1, 0.6);
-  glVertex3f(0.1, -.1, 0.0);
-
-  /* Right, left */
-  glNormal3f(0.0, -1.0, 0.0);
-  glVertex3f(0.9, -.1, 0.0);
-  glVertex3f(0.9, +.1, 0.0);
-  glVertex3f(0.9, +.1, 0.6);
-  glVertex3f(0.9, +.1, 0.6);
-  glVertex3f(0.9, -.1, 0.6);
-  glVertex3f(0.9, -.1, 0.0);
-
-  /* Left, left */
-  glNormal3f(0.0, 1.0, 0.0);
-  glVertex3f(0.0, -.1, 0.0);
-  glVertex3f(0.0, +.1, 0.0);
-  glVertex3f(0.0, +.1, 0.6);
-  glVertex3f(0.0, +.1, 0.6);
-  glVertex3f(0.0, -.1, 0.6);
-  glVertex3f(0.0, -.1, 0.0);
-  glEnd();
-
-  /* Arc, facing down */
-  glBegin(GL_TRIANGLE_STRIP);
-  glNormal3d(0.0, 1.0, 0.0);
-  for (i = 0; i <= 6; i++) {
-    glVertex3d(.5 + .5 * cos(i * M_PI / 6.0), +.1, .6 + .5 * sin(i * M_PI / 6.0));
-    glVertex3d(.5 + .4 * cos(i * M_PI / 6.0), +.1, .6 + .4 * sin(i * M_PI / 6.0));
+  inner_arc[0][0] = irad;
+  inner_arc[0][1] = 0.0;
+  outer_arc[0][0] = orad;
+  outer_arc[0][1] = 0.0;
+  normals[0][0] = -1.;
+  normals[0][1] = 0.;
+  for (int i = 0; i < nfacets; i++) {
+    GLfloat angle = M_PI * i / (nfacets - 1);
+    inner_arc[i + 1][0] = irad * std::cos(angle);
+    inner_arc[i + 1][1] = lift + irad * std::sin(angle);
+    outer_arc[i + 1][0] = orad * std::cos(angle);
+    outer_arc[i + 1][1] = lift + orad * std::sin(angle);
+    normals[i + 1][0] = std::sin(angle);
+    normals[i + 1][1] = std::cos(angle);
   }
-  glEnd();
+  inner_arc[nfacets + 1][0] = -irad;
+  inner_arc[nfacets + 1][1] = 0.0;
+  outer_arc[nfacets + 1][0] = -orad;
+  outer_arc[nfacets + 1][1] = 0.0;
+  normals[nfacets + 1][0] = 1.;
+  normals[nfacets + 1][1] = 0.;
 
-  /* Arc, facing up */
-  glBegin(GL_TRIANGLE_STRIP);
-  glNormal3d(0.0, -1.0, 0.0);
-  for (i = 0; i <= 6; i++) {
-    glVertex3d(.5 + .5 * cos(i * M_PI / 6.0), -.1, .6 + .5 * sin(i * M_PI / 6.0));
-    glVertex3d(.5 + .4 * cos(i * M_PI / 6.0), -.1, .6 + .4 * sin(i * M_PI / 6.0));
+  GLfloat data[8 * (nfacets + 2) * 8];
+  ushort idxs[8 * (nfacets + 1)][3];
+
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.f};
+  GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
+  GLfloat flat[3] = {0.f, 0.f, 0.f};
+
+  // Vertex trails
+  char* pos = (char*)data;
+  // One trail for each point of {+w,-w}x{in,out}x{flat,norm}
+  for (int k = 0; k < 8; k++) {
+    int curved = k / 4;
+    GLfloat delta;
+    int inner;
+    if (curved) {
+      delta = k % 2 ? width : -width;
+      ;
+      inner = ((k / 2) % 2);
+    } else {
+      delta = ((k / 2) % 2) ? width : -width;
+      inner = k % 2;
+    }
+
+    for (int i = 0; i < nfacets + 2; i++) {
+      GLfloat local[3] = {inner ? inner_arc[i][0] : outer_arc[i][0], delta,
+                          inner ? inner_arc[i][1] : outer_arc[i][1]};
+      GLfloat cnormal[3] = {normals[i][0], 0, normals[i][1]};
+      if (!inner) cnormal[0] *= -1;
+      if (!inner) cnormal[2] *= -1;
+      if (rotate) std::swap(local[0], local[1]);
+      if (rotate) std::swap(cnormal[0], cnormal[1]);
+      GLfloat* normal = curved ? cnormal : flat;
+      pos += packObjectVertex(pos, loc[0] + local[0], loc[1] + local[1], loc[2] + local[2],
+                              0.f, 0.f, color, normal);
+    }
   }
-  glEnd();
-
-  /* Arc, facing out */
-  glBegin(GL_TRIANGLE_STRIP);
-  glNormal3d(0.0, -1.0, 0.0);
-  for (i = 0; i <= 6; i++) {
-    glVertex3d(.5 + .5 * cos(i * M_PI / 6.0), +.1, .6 + .5 * sin(i * M_PI / 6.0));
-    glVertex3d(.5 + .5 * cos(i * M_PI / 6.0), -.1, .6 + .5 * sin(i * M_PI / 6.0));
+  // Triangle strips
+  for (int k = 0; k < 4; k++) {
+    int swap = (k == 3 || k == 0) ^ rotate;
+    for (int i = 0; i < nfacets + 1; i++) {
+      idxs[2 * k * (nfacets + 1) + i][0] = 2 * k * (nfacets + 2) + i;
+      idxs[2 * k * (nfacets + 1) + i][1] = (2 * k + 1) * (nfacets + 2) + i + swap;
+      idxs[2 * k * (nfacets + 1) + i][2] = (2 * k + 1) * (nfacets + 2) + i + 1 - swap;
+      idxs[(2 * k + 1) * (nfacets + 1) + i][0] = 2 * k * (nfacets + 2) + i + 1 - swap;
+      idxs[(2 * k + 1) * (nfacets + 1) + i][1] = 2 * k * (nfacets + 2) + i + swap;
+      idxs[(2 * k + 1) * (nfacets + 1) + i][2] = (2 * k + 1) * (nfacets + 2) + i + 1;
+    }
   }
-  glEnd();
 
-  /* Arc, facing in */
-  glBegin(GL_TRIANGLE_STRIP);
-  glNormal3d(0.0, -1.0, 0.0);
-  for (i = 0; i <= 6; i++) {
-    glVertex3d(.5 + .4 * cos(i * M_PI / 6.0), +.1, .6 + .4 * sin(i * M_PI / 6.0));
-    glVertex3d(.5 + .4 * cos(i * M_PI / 6.0), -.1, .6 + .4 * sin(i * M_PI / 6.0));
-  }
-  glEnd();
+  // Draw it!
+  setupObjectRenderState();
 
-  glPopMatrix();
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+
+  glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void*)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
