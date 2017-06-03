@@ -43,9 +43,9 @@ Cactus::Cactus(int x, int y, Real radius) {
   primaryColor[0] = .3;
   primaryColor[1] = 1.;
   primaryColor[2] = .4;
-  secondaryColor[0] = 0.2;
-  secondaryColor[1] = 0.8;
-  secondaryColor[2] = 0.3;
+  secondaryColor[0] = 0.0;
+  secondaryColor[1] = 0.0;
+  secondaryColor[2] = 0.0;
   this->killed = 0;
   this->killed_time = 1.;
   this->base_radius = radius;
@@ -55,215 +55,129 @@ Cactus::Cactus(int x, int y, Real radius) {
 }
 
 void Cactus::draw() {
-  int i;
-
   if (killed == 2) return;
 
   glPushAttrib(GL_ENABLE_BIT);
-  glDisable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2]);
+  int nsides = 6;
+  // Body: 4N+1 verts, 7N faces
+  // Spikes: 16N verts, 12N faces
+  GLfloat data[nsides * 20 + 1][8];
+  ushort idxs[nsides * 19][3];
 
-  GLfloat color[4];
-  for (i = 0; i < 3; i++) color[i] = primaryColor[i];
-  color[3] = 1.0;
+  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 0.f};
+  GLfloat spkco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.f};
 
-  GLfloat specular[4];
-  for (i = 0; i < 3; i++) specular[i] = specularColor[i];
-  specular[3] = 1.0;
-
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, 10.0);
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glShadeModel(GL_SMOOTH);
-
-  glColor3f(1.0, 1.0, 1.0);
-
-#define STEP (2. * 3.14159 / 6.)
-  float t, p1[3], p2[3], p3[3], p4[3];
-
-  glBegin(GL_QUADS);
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    p1[0] = cos(t);
-    p1[1] = sin(t);
-    p1[2] = 0.;
-    p2[0] = cos(t + STEP);
-    p2[1] = sin(t + STEP);
-    p2[2] = 0.;
-    p3[0] = cos(t + STEP);
-    p3[1] = sin(t + STEP);
-    p3[2] = .35;
-    p4[0] = cos(t);
-    p4[1] = sin(t);
-    p4[2] = .35;
-
-    glNormal3f(p1[0], p1[1], -.2);
-    glVertex3f(.5 * radius * p1[0], .5 * radius * p1[1], p1[2]);
-    glNormal3f(p2[0], p2[1], -.2);
-    glVertex3f(.5 * radius * p2[0], .5 * radius * p2[1], p2[2]);
-    glNormal3f(p3[0], p3[1], -.1);
-    glVertex3f(1 * radius * p3[0], 1 * radius * p3[1], p3[2]);
-    glNormal3f(p4[0], p4[1], -.1);
-    glVertex3f(1 * radius * p4[0], 1 * radius * p4[1], p4[2]);
+  GLfloat radii[4] = {0.5f, 1.0f, 0.9f, 0.6f};
+  GLfloat heights[5] = {0., 0.35, 0.6, 0.8, 1.0};
+  GLfloat norm[4][2] = {{1.f, 0.f}, {1.f, 0.1f}, {1.f, 0.3f}, {1.f, 0.7f}};
+  for (int i = 0; i < 4; i++) {
+    norm[i][0] /= std::sqrt(norm[i][0] * norm[i][0] + norm[i][1] * norm[i][1]);
+    norm[i][1] /= std::sqrt(norm[i][0] * norm[i][0] + norm[i][1] * norm[i][1]);
   }
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    p1[0] = cos(t);
-    p1[1] = sin(t);
-    p1[2] = .35;
-    p2[0] = cos(t + STEP);
-    p2[1] = sin(t + STEP);
-    p2[2] = .35;
-    p3[0] = cos(t + STEP);
-    p3[1] = sin(t + STEP);
-    p3[2] = .6;
-    p4[0] = cos(t);
-    p4[1] = sin(t);
-    p4[2] = .6;
 
-    glNormal3f(p1[0], p1[1], -.1);
-    glVertex3f(1 * radius * p1[0], 1 * radius * p1[1], p1[2]);
-    glNormal3f(p2[0], p2[1], -.1);
-    glVertex3f(1 * radius * p2[0], 1 * radius * p2[1], p2[2]);
-    glNormal3f(p3[0], p3[1], .2);
-    glVertex3f(.9 * radius * p3[0], .9 * radius * p3[1], p3[2]);
-    glNormal3f(p4[0], p4[1], .2);
-    glVertex3f(.9 * radius * p4[0], .9 * radius * p4[1], p4[2]);
+  // Draw body
+  char *pos = (char *)data;
+  for (int h = 0; h < 4; h++) {
+    for (int i = 0; i < nsides; i++) {
+      GLfloat angle = 2 * i * M_PI / nsides;
+      GLfloat loc[3] = {radii[h] * (GLfloat)radius * std::cos(angle),
+                        radii[h] * (GLfloat)radius * std::sin(angle), heights[h]};
+      GLfloat normal[3] = {norm[h][0] * std::cos(angle), norm[h][0] * std::sin(angle),
+                           norm[h][1]};
+      pos += packObjectVertex(pos, position[0] + loc[0], position[1] + loc[1],
+                              position[2] + loc[2], 0., 0., color, normal);
+    }
   }
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    p1[0] = cos(t);
-    p1[1] = sin(t);
-    p1[2] = .6;
-    p2[0] = cos(t + STEP);
-    p2[1] = sin(t + STEP);
-    p2[2] = .6;
-    p3[0] = cos(t + STEP);
-    p3[1] = sin(t + STEP);
-    p3[2] = .8;
-    p4[0] = cos(t);
-    p4[1] = sin(t);
-    p4[2] = .8;
+  GLfloat vnormal[3] = {0.f, 0.f, 1.f};
+  pos += packObjectVertex(pos, position[0], position[1], position[2] + heights[4], 0., 0.,
+                          color, vnormal);
 
-    glNormal3f(p1[0], p1[1], 0.2);
-    glVertex3f(.9 * radius * p1[0], .9 * radius * p1[1], p1[2]);
-    glNormal3f(p2[0], p2[1], 0.2);
-    glVertex3f(.9 * radius * p2[0], .9 * radius * p2[1], p2[2]);
-    glNormal3f(p3[0], p3[1], 0.35);
-    glVertex3f(.6 * radius * p3[0], .6 * radius * p3[1], p3[2]);
-    glNormal3f(p4[0], p4[1], 0.35);
-    glVertex3f(.6 * radius * p4[0], .6 * radius * p4[1], p4[2]);
+  for (int k = 0; k < 3; k++) {
+    for (int i = 0; i < nsides; i++) {
+      idxs[2 * k * nsides + 2 * i][0] = k * nsides + i;
+      idxs[2 * k * nsides + 2 * i][1] = (k + 1) * nsides + (i + 1) % nsides;
+      idxs[2 * k * nsides + 2 * i][2] = (k + 1) * nsides + i;
+      idxs[2 * k * nsides + 2 * i + 1][0] = k * nsides + i;
+      idxs[2 * k * nsides + 2 * i + 1][1] = k * nsides + (i + 1) % nsides;
+      idxs[2 * k * nsides + 2 * i + 1][2] = (k + 1) * nsides + (i + 1) % nsides;
+    }
   }
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    p1[0] = cos(t);
-    p1[1] = sin(t);
-    p1[2] = .8;
-    p2[0] = cos(t + STEP);
-    p2[1] = sin(t + STEP);
-    p2[2] = .8;
+  for (int i = 0; i < nsides; i++) {
+    idxs[6 * nsides + i][0] = 3 * nsides + i;
+    idxs[6 * nsides + i][1] = 3 * nsides + (i + 1) % nsides;
+    idxs[6 * nsides + i][2] = 4 * nsides;
+  }
 
-    glNormal3f(p1[0], p1[1], 0.35);
-    glVertex3f(.6 * radius * p1[0], .6 * radius * p1[1], p1[2]);
-    glNormal3f(p2[0], p2[1], 0.35);
-    glVertex3f(.6 * radius * p2[0], .6 * radius * p2[1], p2[2]);
-    glNormal3f(0., 0., 1.);
-    glVertex3f(0., 0., 1.);
-    glNormal3f(0., 0., 1.);
-    glVertex3f(0., 0., 1.);
+  // Draw spikes
+  GLfloat spikewid = 0.05f;
+  GLfloat flat[3] = {0.f, 0.f, 0.f};
+  GLfloat spike_height[4] = {0.17f, 0.39f, 0.68f, 0.89f};
+  GLfloat spike_rad[4] = {0.89f, 1.2f, 0.99f, 0.44f};
+  for (int h = 0; h < 4; h++) {
+    for (int i = 0; i < nsides; i++) {
+      GLfloat angle = 2 * i * M_PI / nsides + M_PI / nsides;
+      GLfloat end[3] = {spike_rad[h] * (GLfloat)radius * std::cos(angle),
+                        spike_rad[h] * (GLfloat)radius * std::sin(angle), spike_height[h]};
+      GLfloat dhs[3][2] = {{0, spikewid}, {-spikewid, -spikewid}, {spikewid, -spikewid}};
+      for (int k = 0; k < 3; k++) {
+        GLfloat central[3] = {-std::sin(angle) * dhs[k][0], std::cos(angle) * dhs[k][0],
+                              dhs[k][1] + spike_height[h]};
+        pos += packObjectVertex(pos, position[0] + central[0], position[1] + central[1],
+                                position[2] + central[2], 0., 0., spkco, flat);
+      }
+      pos += packObjectVertex(pos, position[0] + end[0], position[1] + end[1],
+                              position[2] + end[2], 0., 0., spkco, flat);
+    }
   }
-  glEnd();
 
-  // drawing spikes
-  Coord3d a, b, c, d;
-  glPushMatrix();
-  glColor3f(.85 * color[0], .85 * color[1], .85 * color[2]);
-  glTranslatef(0., 0., .17);
-  a[0] = .89 * radius;
-  a[1] = 0.;
-  a[2] = -0.05;
-  b[0] = 0.;
-  b[1] = 0.;
-  b[2] = .05;
-  c[0] = 0.;
-  c[1] = .05;
-  c[2] = -.05;
-  d[0] = 0.;
-  d[1] = -.05;
-  d[2] = -.05;
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    glPushMatrix();
-    glRotatef((t + STEP / 2.) * 360. / (2. * 3.14159), 0., 0., 1.);
-    drawSpike(a, b, c, d);
-    glPopMatrix();
+  int vbase = 4 * nsides + 1;
+  int ibase = 7 * nsides;
+  for (int i = 0; i < 4 * nsides; i++) {
+    idxs[ibase][0] = vbase + 0;
+    idxs[ibase][1] = vbase + 1;
+    idxs[ibase][2] = vbase + 3;
+    idxs[ibase + 1][0] = vbase + 1;
+    idxs[ibase + 1][1] = vbase + 2;
+    idxs[ibase + 1][2] = vbase + 3;
+    idxs[ibase + 2][0] = vbase + 2;
+    idxs[ibase + 2][1] = vbase + 0;
+    idxs[ibase + 2][2] = vbase + 3;
+    ibase += 3;
+    vbase += 4;
   }
-  glPopMatrix();
-  glPushMatrix();
-  glTranslatef(0., 0., .39);
-  a[0] = 1.2 * radius;
-  a[1] = 0.;
-  a[2] = 0.;
-  b[0] = 0.;
-  b[1] = 0.;
-  b[2] = .05;
-  c[0] = 0.;
-  c[1] = .05;
-  c[2] = -.05;
-  d[0] = 0.;
-  d[1] = -.05;
-  d[2] = -.05;
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    glPushMatrix();
-    glRotatef((t + STEP / 2.) * 360. / (2. * 3.14159), 0., 0., 1.);
-    drawSpike(a, b, c, d);
-    glPopMatrix();
-  }
-  glPopMatrix();
-  glPushMatrix();
-  glTranslatef(0., 0., .68);
-  a[0] = .99 * radius;
-  a[1] = 0.;
-  a[2] = 0.003;
-  b[0] = 0.;
-  b[1] = 0.;
-  b[2] = .05;
-  c[0] = 0.;
-  c[1] = .05;
-  c[2] = -.05;
-  d[0] = 0.;
-  d[1] = -.05;
-  d[2] = -.05;
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    glPushMatrix();
-    glRotatef((t + STEP / 2.) * 360. / (2. * 3.14159), 0., 0., 1.);
-    drawSpike(a, b, c, d);
-    glPopMatrix();
-  }
-  glPopMatrix();
-  glPushMatrix();
-  glTranslatef(0., 0., .89);
-  a[0] = .44 * radius;
-  a[1] = 0.;
-  a[2] = 0.02;
-  b[0] = 0.;
-  b[1] = 0.;
-  b[2] = .05;
-  c[0] = 0.;
-  c[1] = .05;
-  c[2] = -.05;
-  d[0] = 0.;
-  d[1] = -.05;
-  d[2] = -.05;
-  for (t = 0.; t < 2. * 3.14159; t += STEP) {
-    glPushMatrix();
-    glRotatef((t + STEP / 2.) * 360. / (2. * 3.14159), 0., 0., 1.);
-    drawSpike(a, b, c, d);
-    glPopMatrix();
-  }
-  glPopMatrix();
 
-#undef STEP
+  // Transfer
+  setupObjectRenderState();
 
-  glPopMatrix();
+  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+
+  glUseProgram(0);
+
   glPopAttrib();
 }
 

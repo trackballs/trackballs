@@ -133,8 +133,6 @@ void Teleport::draw() {
   for (int i = 0; i < nfacets; i++) {
     GLfloat angle = 2 * i * M_PI / nfacets;
     GLfloat inormal[3] = {std::cos(angle), std::sin(angle), 0.4f};
-    fprintf(stderr, "%f %f %f\n", position[0] + radius * std::cos(angle),
-            position[1] + radius * std::sin(angle), position[2] + 0.1f);
     pos += packObjectVertex(pos, position[0] + radius * std::cos(angle),
                             position[1] + radius * std::sin(angle), position[2] + 0.1f, 0., 0.,
                             white, inormal);
