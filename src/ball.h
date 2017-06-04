@@ -40,6 +40,10 @@
 
 #define NUM_MODS 11
 
+#define BALL_LORES 0
+#define BALL_NORMAL 1
+#define BALL_HIRES 2
+
 /** This class is an ABSTRACT class from which specific balls
     (player/opponents/babies) are inherited */
 class Ball : public Animated {
@@ -93,8 +97,7 @@ class Ball : public Animated {
   int metallic, dontReflectSelf;
 
   static GLuint dizzyTexture;
-  static GLfloat dizzyTexMinX, dizzyTexMinY;
-  static GLfloat dizzyTexMaxX, dizzyTexMaxY;
+  static GLfloat dizzyTexCoords[4];
 
   void generateSandDebris();
   void generateDebris(GLfloat color[4]);

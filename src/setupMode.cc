@@ -223,7 +223,7 @@ void SetupMode::display() {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glTranslatef(0.75, -0.75, 0.0);  // 0.7
+  glTranslatef(0.75, -0.75, 0.0);
   gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20);
 
   glMatrixMode(GL_MODELVIEW);
@@ -284,8 +284,8 @@ void SetupMode::display() {
 
   GLint fogActive = (Game::current && Game::current->fogThickness != 0);
   glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 0.1f);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.3f, 0.3f, 0.3f, 0.3f);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 20.f);
 
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 

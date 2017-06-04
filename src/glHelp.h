@@ -25,7 +25,6 @@
 
 /* Prototypes */
 void glHelpInit();
-void regenerateSphereDisplaylists();
 GLuint loadProgram(const char *fragment, const char *vertex);
 double frand();
 double frand(int);
@@ -119,16 +118,6 @@ extern float realTimeNow;
 extern int screenWidth, screenHeight;
 extern TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
 TTF_Font *menuFontForSize(int sz);
-
-/* A set of predefined displaylists for drawing balls of unit size. */
-#define BALL_LORES 0
-#define BALL_NORMAL 1
-#define BALL_HIRES 2
-extern GLuint sphereDisplayLists[3];
-
-extern const GLfloat white[4], black[4];
-extern GLUquadricObj *qball;
-// extern SDL_Surface *mousePointer;
 
 /***********************************/
 /*  Inlined vector operations      */

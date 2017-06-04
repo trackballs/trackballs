@@ -583,9 +583,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   }
   glDisable(GL_LINE_SMOOTH);
 
-  // Revert to fixed-function
-  glUseProgram(0);
-
   //  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d %d\n", 1e3 * (getSystemTime() -
   //  t1),
   //         1e3 * (t1 - t0), nchunks, stage, birdseye);

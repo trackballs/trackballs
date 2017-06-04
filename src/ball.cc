@@ -40,36 +40,8 @@ using namespace std;
 const Real Ball::physicsResolution = 0.002;
 class set<Ball *> *Ball::balls;
 GLuint Ball::dizzyTexture;
-GLfloat Ball::dizzyTexMinX, Ball::dizzyTexMinY, Ball::dizzyTexMaxX, Ball::dizzyTexMaxY;
+GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
-
-// YP: draw a spike with TRIANGLE_FAN. less time used by C->GL
-//     copies, and reduction of glBegin/glEnd number.
-void drawSpike(Coord3d a, Coord3d b, Coord3d c, Coord3d d) {
-  Coord3d ab, ac, ad;
-  Coord3d normal1, normal2, normal3;
-
-  sub(b, a, ab);
-  sub(c, a, ac);
-  sub(d, a, ac);
-  crossProduct(ac, ab, normal1);
-  normalize(normal1);
-  crossProduct(ab, ad, normal2);
-  normalize(normal2);
-  crossProduct(ad, ab, normal3);
-  normalize(normal3);
-
-  glBegin(GL_TRIANGLE_FAN);
-  glNormal3dv(normal1);
-  glVertex3dv(a);
-  glVertex3dv(c);
-  glVertex3dv(b);
-  glNormal3dv(normal2);
-  glVertex3dv(d);
-  glNormal3dv(normal3);
-  glVertex3dv(c);
-  glEnd();
-}
 
 void Ball::init() {
   balls = new set<Ball *>();
@@ -81,10 +53,10 @@ void Ball::init() {
   // dizzyTexture = LoadTexture(text, texcoord);
   loadTexture("dizzy.png");
   SDL_FreeSurface(text);
-  dizzyTexMinX = 0.0;
-  dizzyTexMinY = 0.0;
-  dizzyTexMaxX = 1.0;
-  dizzyTexMaxY = 1.0;
+  dizzyTexCoords[0] = 0.f;
+  dizzyTexCoords[1] = 0.f;
+  dizzyTexCoords[2] = 1.f;
+  dizzyTexCoords[3] = 1.f;
 }
 void Ball::reset() {
   delete balls;
@@ -142,7 +114,7 @@ Ball::~Ball() {
  draw() - Draws all the opaque parts of ball
 **********************************************/
 void Ball::draw() {
-  int i, u, v;
+  int i;
   GLfloat color[4];
   GLfloat specular[4];
   double blend;
@@ -159,19 +131,9 @@ void Ball::draw() {
   specular[3] = 1.0;
   double shininess = 10.0;
 
-  glUseProgram(0);  // < use fixed function pipeline
+  GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2] - sink);
-
-  glTranslatef(0., 0., 2.);
-  glColor4f(1., 1., 1., 1.);
-  // Font::drawSimpleText3D(0, "test#f", .2, .2);
-  glTranslatef(0., 0., -2.);
-
-  // glScalef(radius,radius,radius);
-  // glCallList(loresSphere);
+  // Handle primary ball..
   if (modTimeLeft[MOD_GLASS]) {
     phase = min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
     if (modTimeLeft[MOD_GLASS] > 0)
@@ -207,292 +169,473 @@ void Ball::draw() {
     shininess = 50.0 * blend + shininess * (1.0 - blend);
     glEnable(GL_BLEND);
   }
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, color);
-  glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-  glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 
-  glPushMatrix();
-  glMultMatrixd((GLdouble *)rotations);
-  if (Settings::settings->gfx_details > 0) {
+  // Create sphere
+  {
+    int ntries = 0;
+    int nverts = 0;
+    int detail;
+    switch (ballResolution) {
+    case BALL_HIRES:
+      detail = 8;
+    default:
+    case BALL_NORMAL:
+      detail = 6;
+    case BALL_LORES:
+      detail = 3;
+    }
+    countObjectSpherePoints(&ntries, &nverts, detail);
+    GLfloat *data = new GLfloat[nverts * 8];
+    ushort *idxs = new ushort[ntries * 3];
+    Matrix3d rotation;
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
-      bindTexture("track.png");
-      // glBindTexture(GL_TEXTURE_2D, textures[3]);
-      glEnable(GL_TEXTURE_2D);
-      glRotated(Game::current->gameTime * 60., 0.0, 0.0, 1.0);
+      Matrix4d ref;
+      identityMatrix(ref);
+      rotateY(M_PI / 3, ref);
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) rotation[i][j] = ref[i][j];
     } else {
-      glEnable(GL_TEXTURE_2D);
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) rotation[j][i] = rotations[i][j];
+    }
+    placeObjectSphere(data, idxs, 0, loc, rotation, radius, detail, color);
+
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
+                specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
+
+    if (modTimeLeft[MOD_EXTRA_LIFE]) {
+      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
+    } else if (texture == 0) {
+      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    } else {
       glBindTexture(GL_TEXTURE_2D, texture);
     }
-  }
 
-  /*
-  specular[0] = 1.0;
-  specular[1] = 1.0;
-  specular[2] = 1.0;
-  glMaterialfv(GL_FRONT,GL_SPECULAR,specular);
-  glMaterialf(GL_FRONT,GL_SHININESS,10.0);
-  */
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
 
-  // gluSphere(qball, radius, resolution, resolution);
-  glPushMatrix();
-  glEnable(GL_NORMALIZE);
-  glScalef(radius, radius, radius);
-  glCallList(sphereDisplayLists[ballResolution]);
-  glDisable(GL_NORMALIZE);
-  glPopMatrix();
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    delete[] data;
+    delete[] idxs;
 
-  /* Draw reflection of environment */
-  if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LIGHTING);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    GLfloat c[4];
-    if (metallic) {
-      c[0] = color[0];
-      c[1] = color[1];
-      c[2] = color[2];
-      c[3] = reflectivity;
-    } else {
-      c[0] = 1.0;
-      c[1] = 1.0;
-      c[2] = 1.0;
-      c[3] = reflectivity;
+    configureObjectAttributes();
+
+    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+
+    if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      GLfloat c[4];
+      if (metallic) {
+        c[0] = color[0];
+        c[1] = color[1];
+        c[2] = color[2];
+        c[3] = reflectivity;
+      } else {
+        c[0] = 1.0;
+        c[1] = 1.0;
+        c[2] = 1.0;
+        c[3] = reflectivity;
+      }
+      glColor4fv(c);
+
+      glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+      glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+      glEnable(GL_TEXTURE_GEN_S);
+      glEnable(GL_TEXTURE_GEN_T);
+
+      // NOTE: requires custom shader to get the mapping correct,
+      // since texture transformations only work in fixed-function
+      // FIXME! (poss rewrite entire reflection routine in the process)
+      glBindTexture(GL_TEXTURE_2D, environmentTexture);
+
+      glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
     }
-    glColor4fv(c);
-    /*
-    glMaterialfv(GL_FRONT,GL_AMBIENT_AND_DIFFUSE,c);
-    // TODO. Apply specular highlighting after environment textures
-    c[0]=1.0; c[1]=1.0; c[2]=1.0; c[3]=0.5;
-    glMaterialfv(GL_FRONT,GL_SPECULAR,c);
-    glMaterialf(GL_FRONT,GL_SHININESS,20.0);*/
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-    glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-    glEnable(GL_TEXTURE_GEN_S);
-    glEnable(GL_TEXTURE_GEN_T);
-    // bindTexture("clouds.png");
-    glBindTexture(GL_TEXTURE_2D, environmentTexture);
 
-    // gluSphere(qball, radius, resolution, resolution);
-    glPushMatrix();
-    glEnable(GL_NORMALIZE);
-    glScalef(radius, radius, radius);
-    glCallList(sphereDisplayLists[ballResolution]);
-    glDisable(GL_NORMALIZE);
-    glPopMatrix();
-    glPopAttrib();
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
   }
 
   if (modTimeLeft[MOD_SPIKE]) {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    // TODO: adjust spikes to be at centers of an icosahedron's faces
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
 
-    phase = min(modTimePhaseIn[MOD_SPIKE] / 2.0, 1.0);
+    GLfloat phase = std::min(modTimePhaseIn[MOD_SPIKE] / 2.0f, 1.0f);
     if (modTimeLeft[MOD_SPIKE] > 0)
-      phase = min(modTimeLeft[MOD_SPIKE] / 2.0, phase);
+      phase = std::min(modTimeLeft[MOD_SPIKE] / 2.0f, phase);
     else
       phase = 1.0;
-    glScalef(0.5 + 0.5 * phase, 0.5 + 0.5 * phase, 0.5 + 0.5 * phase);
+    GLfloat scale = radius * (0.5 + 0.5 * phase);
 
-    for (i = 0; i < 3; i++) color[i] = secondaryColor[i];
-    glColor3f(1.0, 1.0, 1.0);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, color);
-    color[0] = 0.2;
-    color[1] = 0.2;
-    color[2] = 0.2;
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, color);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 10.0);
+    GLfloat sco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.0};
+    GLfloat flat[3] = {0.f, 0.f, 0.f};
 
-    for (u = 0; u < 6; u++)
-      for (v = 0; v < 3; v++) {
-        glPushMatrix();
-        glRotated(v * 60., 1.0, 0.0, 0.0);
-        glRotated(u * 60., 0.0, 1.0, 0.0);
+    GLfloat data[18 * 4][8];
+    ushort idxs[18 * 3][3];
+    char *pos = (char *)data;
+    for (int u = 0; u < 6; u++) {
+      for (int v = -1; v <= +1; v++) {
+        Matrix4d rot, res;
+        identityMatrix(rot);
+        rotateZ(v * M_PI / 3, rot);
+        rotateY(u * M_PI / 3, rot);
+        matrixMult(rot, rotations, res);
+        Matrix3d srot;
+        for (int i = 0; i < 3; i++)
+          for (int j = 0; j < 3; j++) { srot[i][j] = res[j][i]; }
 
-        Coord3d a, b, c, d;
+        Coord3d points[4] = {{scale * 1.3f, 0.f, 0.f},
+                             {0.f, 0.5f * scale, -0.3 * scale},
+                             {0.f, -0.5f * scale, -0.3 * scale},
+                             {0.f, 0, 0.5 * scale}};
 
-        // YP: only calculate the 4 pts, and use the 'drawSpike'
-        //     new function, which draw the 3 triangles at once
-        a[0] = radius * 1.3;
-        a[1] = 0.0;
-        a[2] = 0.0;
-        b[0] = 0.0;
-        b[1] = +0.5 * radius;
-        b[2] = -0.3 * radius;
-        c[0] = 0.0;
-        c[1] = -0.5 * radius;
-        c[2] = -0.3 * radius;
-        d[0] = 0.0;
-        d[1] = 0.0;
-        d[2] = +0.5 * radius;
-
-        drawSpike(a, b, c, d);
-        glPopMatrix();
+        for (int i = 0; i < 4; i++) {
+          Coord3d sub;
+          useMatrix(srot, points[i], sub);
+          pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0.,
+                                  0., sco, flat);
+        }
       }
+    }
+    for (int i = 0; i < 18; i++) {
+      idxs[3 * i][0] = 4 * i;
+      idxs[3 * i][1] = 4 * i + 2;
+      idxs[3 * i][2] = 4 * i + 1;
+
+      idxs[3 * i + 1][0] = 4 * i;
+      idxs[3 * i + 1][1] = 4 * i + 3;
+      idxs[3 * i + 1][2] = 4 * i + 2;
+
+      idxs[3 * i + 2][0] = 4 * i;
+      idxs[3 * i + 2][1] = 4 * i + 1;
+      idxs[3 * i + 2][2] = 4 * i + 3;
+    }
+
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 18 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
   }
 
-  glPopMatrix();
-  glDisable(GL_TEXTURE_2D);
-  if (modTimeLeft[MOD_GLASS] || modTimeLeft[MOD_FROZEN]) glDisable(GL_BLEND);
-
   if (modTimeLeft[MOD_SPEED]) {
-    GLfloat stripes[4] = {5.0, 5.0, 5.0, 0.5};
     glEnable(GL_BLEND);
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, stripes);
-    glMaterialf(GL_FRONT, GL_SHININESS, 0.0);
     glLineWidth(1.0);
-    glBegin(GL_LINES);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    for (i = 1; i < 8; i++) {
-      double angle = M_PI / 9.0 * (i + 0.5) - M_PI / 2.0;
+    glUseProgram(shaderLine);
+    glBindVertexArray(theVao);
+    glEnableVertexAttribArray(0);
+
+    GLfloat proj[16];
+    GLfloat model[16];
+    glGetFloatv(GL_PROJECTION_MATRIX, proj);
+    glGetFloatv(GL_MODELVIEW_MATRIX, model);
+    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
+                       (GLfloat *)&proj[0]);
+    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
+                       (GLfloat *)&model[0]);
+    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
+
+    const int nlines = 8;
+
+    GLfloat data[2 * nlines][3];
+    ushort idxs[2 * nlines];
+    for (int i = 0; i < nlines; i++) {
+      double angle = i * M_PI / (nlines - 1) - M_PI / 2;
+
       Coord3d v;
       assign(velocity, v);
       v[2] = 0.0;
       if (length(v) > 0.8) {
         normalize(v);
         double z = (rand() % 1000) / 1000.0;
-        glVertex3f(sin(angle) * radius * v[1], sin(angle) * radius * -v[0],
-                   cos(angle) * radius * z);
-        glVertex3f(sin(angle) * radius * v[1] - velocity[0] * 0.4 * cos(angle),
-                   sin(angle) * radius * -v[0] - velocity[1] * 0.4 * cos(angle),
-                   cos(angle) * radius * z - velocity[2] * 0.2);
+
+        data[2 * i][0] = loc[0] + std::sin(angle) * radius * v[1];
+        data[2 * i][1] = loc[1] + std::sin(angle) * radius * v[1];
+        data[2 * i][2] = loc[2] + std::cos(angle) * radius * z;
+        data[2 * i + 1][0] =
+            loc[0] + std::sin(angle) * radius * v[1] - velocity[0] * 0.4 * std::cos(angle);
+        data[2 * i + 1][1] =
+            loc[1] + std::sin(angle) * radius * -v[0] - velocity[1] * 0.4 * std::cos(angle);
+        data[2 * i + 1][2] = loc[2] + std::cos(angle) * radius * z - velocity[2] * 0.2;
       }
+
+      idxs[2 * i] = 2 * i;
+      idxs[2 * i + 1] = 2 * i + 1;
     }
-    glEnd();
-    glDisable(GL_BLEND);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+
+    glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
   }
 
+  // Handle modifiers
   if (modTimeLeft[MOD_FLOAT]) {
-    /*	if(Settings::settings->gfx_details >= 4) {
-      glEnable(GL_BLEND);
-      glEnable(GL_LINE_SMOOTH);
-      glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
-    }
-
-    if(screenWidth == 640)
-      glLineWidth(3.0);
-    else
-      glLineWidth(5.0);
-    */
-
-    // glDisable(GL_LIGHTING);
+    glDisable(GL_BLEND);
+    // In case we look from below
     glDisable(GL_CULL_FACE);
-    for (i = 0; i < 10; i++) {
-      glNormal3f(0.0, 0.0, 1.0);
-      const GLfloat stripeA[4] = {1.0, 1.0, 1.0, 1.0};
-      const GLfloat stripeB[4] = {1.0, 0.2, 0.2, 1.0};
-      if (i % 2 == 0)
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, stripeA);
-      else
-        glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, stripeB);
-      double a0 = (i / 10.0) * 2. * M_PI, a1 = ((i + 1) / 10.0) * 2. * M_PI;
 
-      glBegin(GL_TRIANGLE_STRIP);
-      glNormal3f(-sin(a0), -cos(a0), 0.0);
-      glVertex3f(sin(a0) * radius * 1.0, cos(a0) * radius * 1.0, 0.0);
-      glNormal3f(-sin(a1), -cos(a1), 0.0);
-      glVertex3f(sin(a1) * radius * 1.0, cos(a1) * radius * 1.0, 0.0);
-      glNormal3f(0.0, 0.0, 1.0);
-      glVertex3f(sin(a0) * radius * 1.2, cos(a0) * radius * 1.2, 0.2 * radius);
-      glNormal3f(0.0, 0.0, 1.0);
-      glVertex3f(sin(a1) * radius * 1.2, cos(a1) * radius * 1.2, 0.2 * radius);
-      glNormal3f(sin(a0), cos(a0), 0.0);
-      glVertex3f(sin(a0) * radius * 1.4, cos(a0) * radius * 1.4, 0.0);
-      glNormal3f(sin(a1), cos(a1), 0.0);
-      glVertex3f(sin(a1) * radius * 1.4, cos(a1) * radius * 1.4, 0.0);
-      glEnd();
+    const GLfloat stripeA[4] = {1.0, 1.0, 1.0, 1.0};
+    const GLfloat stripeB[4] = {1.0, 0.2, 0.2, 1.0};
+
+    GLfloat data[60][8];
+    ushort idxs[40][3];
+    char *pos = (char *)data;
+    for (int i = 0; i < 10; i++) {
+      GLfloat a0 = (i / 10.0) * 2. * M_PI, a1 = ((i + 1) / 10.0) * 2. * M_PI;
+      const GLfloat *ringcolor = i % 2 ? stripeA : stripeB;
+
+      GLfloat ir = radius * 1.0f, mr = radius * 1.2f, lr = radius * 1.4f, h = radius * 0.2f;
+
+      GLfloat inormal0[3] = {-std::sin(a0), -std::cos(a0), 0.f};
+      GLfloat inormal1[3] = {-std::sin(a1), -std::cos(a1), 0.f};
+      GLfloat onormal0[3] = {std::sin(a0), std::cos(a0), 0.f};
+      GLfloat onormal1[3] = {std::sin(a1), std::cos(a1), 0.f};
+      GLfloat unormal[3] = {0.f, 0.f, 1.f};
+
+      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * ir, loc[1] + std::cos(a0) * ir,
+                              loc[2], 0., 0., ringcolor, inormal0);
+      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * ir, loc[1] + std::cos(a1) * ir,
+                              loc[2], 0., 0., ringcolor, inormal1);
+
+      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * mr, loc[1] + std::cos(a0) * mr,
+                              loc[2] + h, 0., 0., ringcolor, unormal);
+      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * mr, loc[1] + std::cos(a1) * mr,
+                              loc[2] + h, 0., 0., ringcolor, unormal);
+
+      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * lr, loc[1] + std::cos(a0) * lr,
+                              loc[2], 0., 0., ringcolor, onormal0);
+      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * lr, loc[1] + std::cos(a1) * lr,
+                              loc[2], 0., 0., ringcolor, onormal1);
+
+      ushort pts[4][3] = {{1, 0, 3}, {0, 2, 3}, {2, 5, 3}, {2, 4, 5}};
+      for (int k = 0; k < 12; k++) { idxs[4 * i + k / 3][k % 3] = pts[k / 3][k % 3] + 6 * i; }
     }
-  }
 
-  glPopMatrix();
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 40 * 3, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
+  }
 }
 /***************************************************
  draw2() - Draws all the translucent parts of ball
 ***************************************************/
 void Ball::draw2() {
-  int i;
-
   // Fix when rendering environment map to not reflect oneself
   if (dontReflectSelf) return;
 
-  if (!(modTimeLeft[MOD_EXTRA_LIFE] || modTimeLeft[MOD_JUMP] || modTimeLeft[MOD_DIZZY]))
-    return;
-
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glTranslatef(position[0], position[1], position[2] - sink);
-  glEnable(GL_BLEND);
-
+  GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
-    GLfloat specular[4] = {0.0, 0.0, 0.0, 0.0};
-    GLfloat primary[4];
-    for (i = 0; i < 3; i++) primary[i] = primaryColor[i];
-    primary[3] = 0.4;
-    glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, primary);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, 0.0);
-    glPushMatrix();  // TODO: MB This looks unneccesary!
-    gluSphere(qball, radius * 1.25, resolution, resolution);
-    glPopMatrix();
+    glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+
+    int ntries = 0;
+    int nverts = 0;
+    int detail = 5;
+    countObjectSpherePoints(&ntries, &nverts, detail);
+    GLfloat *data = new GLfloat[nverts * 8];
+    ushort *idxs = new ushort[ntries * 3];
+    GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 0.5f};
+    Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
+    placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
+
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    delete[] data;
+    delete[] idxs;
+
+    configureObjectAttributes();
+
+    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
   }
   if (modTimeLeft[MOD_JUMP]) {
-    glPushMatrix();
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
-    glDisable(GL_LIGHTING);
-    glColor4f(1.0, 1.0, 1.0, 0.5);
 
-    glRotatef(Game::current->gameTime * 50.0, 0.0, 0.0, 1.0);
-    glBegin(GL_TRIANGLES);
-    glNormal3f(-1.0, 0.0, 0.0);
-    double z = 1.1 + 1.0 * fmod(Game::current->gameTime, 1.0);
-    glVertex3f(0.0, radius * -.3, radius * z);
-    glVertex3f(0.0, radius * .3, radius * (z + .9));
-    glVertex3f(0.0, radius * .3, radius * z);
+    GLfloat data[9][8];
+    ushort idxs[3][3];
+    char *pos = (char *)data;
+    GLfloat z = 1.1 + 1.0 * fmod(Game::current->gameTime, 1.0);
+    GLfloat frad = (GLfloat)radius;
+    GLfloat corners[9][2] = {
+        {frad * -.3f, frad * z},         {frad * .3f, frad * (z + .9f)},
+        {frad * .3f, frad * z},          {frad * .3f, frad * (z + .9f)},
+        {frad * -.3f, frad * z},         {frad * -.3f, frad * (z + .9f)},
+        {frad * -.6f, frad * (z + .9f)}, {0.f, frad * (z + 2.1f)},
+        {frad * .6f, frad * (z + .9f)},
+    };
 
-    glVertex3f(0.0, radius * .3, radius * (z + .9));
-    glVertex3f(0.0, radius * -.3, radius * z);
-    glVertex3f(0.0, radius * -.3, radius * (z + .9));
-
-    glVertex3f(0.0, radius * -.6, radius * (z + .9));
-    glVertex3f(0.0, 0.0, radius * (z + 2.1));
-    glVertex3f(0.0, radius * .6, radius * (z + .9));
-
-    glEnd();
-    glPopMatrix();
-  }
-  if (modTimeLeft[MOD_DIZZY]) {
-    glPushMatrix();
-    glEnable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_LIGHTING);
-    glEnable(GL_TEXTURE_2D);
-    bindTexture("dizzy.png");
-    glColor4f(1.0, 1.0, 1.0, 0.5);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glScalef(radius, radius, radius);
-
-    glRotatef(Game::current->gameTime * 90.0, 0.0, 0.0, 1.0);
-    for (i = 0; i < 3; i++) {
-      glRotatef(360 / 3.0, 0.0, 0.0, 1.0);
-      glNormal3f(-1.0, 0.0, 0.0);
-      glBegin(GL_QUADS);
-      glTexCoord2f(dizzyTexMaxY, dizzyTexMaxX);
-      glVertex3f(-0.6, 1.5, 0.5 - 0.6);
-      glTexCoord2f(dizzyTexMinY, dizzyTexMaxX);
-      glVertex3f(+0.6, 1.5, 0.5 - 0.6);
-      glTexCoord2f(dizzyTexMinY, dizzyTexMinX);
-      glVertex3f(+0.6, 1.5, 0.5 + 0.6);
-      glTexCoord2f(dizzyTexMaxY, dizzyTexMinX);
-      glVertex3f(-0.6, 1.5, 0.5 + 0.6);
-      glEnd();
+    GLfloat color[4] = {1.f, 1.f, 1.f, 0.5f};
+    GLfloat flat[3] = {0.f, 0.f, 0.f};
+    GLfloat spin = Game::current->gameTime * 0.15;
+    for (int i = 0; i < 9; i++) {
+      pos += packObjectVertex(pos, loc[0] + std::cos(spin) * corners[i][0],
+                              loc[1] + std::sin(spin) * corners[i][0], loc[2] + corners[i][1],
+                              0., 0., color, flat);
+      idxs[i / 3][i % 3] = i;
     }
-    glPopMatrix();
+
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
   }
-  glPopMatrix();
+
+  if (modTimeLeft[MOD_DIZZY]) {
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+
+    GLfloat data[12][8];
+    char *pos = (char *)data;
+    GLfloat color[4] = {1.f, 1.f, 1.f, 0.5f};
+    GLfloat flat[3] = {0.f, 0.f, 0.f};
+    for (int i = 0; i < 3; i++) {
+      GLfloat angle = 0.5 * M_PI * Game::current->gameTime + 2 * i * M_PI / 3;
+      GLfloat frad = radius;
+      GLfloat corners[4][3] = {{-0.6f * frad, 1.5f * frad, -0.1f * frad},
+                               {+0.6f * frad, 1.5f * frad, -0.1f * frad},
+                               {+0.6f * frad, 1.5f * frad, 1.1f * frad},
+                               {-0.6f * frad, 1.5f * frad, 1.1f * frad}};
+      GLfloat txco[4][2] = {
+          {dizzyTexCoords[0], dizzyTexCoords[1] + dizzyTexCoords[3]},
+          {dizzyTexCoords[0] + dizzyTexCoords[2], dizzyTexCoords[1] + dizzyTexCoords[3]},
+          {dizzyTexCoords[0] + dizzyTexCoords[2], dizzyTexCoords[1]},
+          {dizzyTexCoords[0], dizzyTexCoords[1]}};
+      for (int k = 0; k < 4; k++) {
+        pos += packObjectVertex(
+            pos, loc[0] - std::sin(angle) * corners[k][0] + std::cos(angle) * corners[k][1],
+            loc[1] + std::cos(angle) * corners[k][0] + std::sin(angle) * corners[k][1],
+            loc[2] + corners[k][2], txco[k][0], txco[k][1], color, flat);
+      }
+    }
+
+    ushort idxs[6][3] = {{0, 1, 2}, {0, 3, 2}, {4, 5, 6}, {4, 7, 6}, {8, 9, 10}, {8, 11, 10}};
+
+    // Transfer
+    setupObjectRenderState();
+
+    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("dizzy.png")]);
+
+    GLuint databuf, idxbuf;
+    glGenBuffers(1, &databuf);
+    glGenBuffers(1, &idxbuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, (void *)0);
+
+    glDeleteBuffers(1, &databuf);
+    glDeleteBuffers(1, &idxbuf);
+  }
 }
 
-extern float fps;
 void Ball::doExpensiveComputations() {
   if (reflectivity <= 0.0 || !Settings::settings->doReflections) return;
 

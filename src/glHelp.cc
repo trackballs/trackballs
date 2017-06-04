@@ -34,12 +34,6 @@ using namespace std;
 float fps = 50.0;
 float realTimeNow = 0.0;
 int screenWidth = 640, screenHeight = 480;
-const GLfloat white[4] = {1.0, 1.0, 1.0, 1.0};
-const GLfloat black[4] = {0.0, 0.0, 0.0, 1.0};
-GLUquadricObj *qball;
-
-/* Precompiled display lists for spheres of varying resolution (dependent on gfx settings) */
-GLuint sphereDisplayLists[3];
 
 GLuint shaderWater = 0;
 GLuint shaderTile = 0;
@@ -602,16 +596,6 @@ void glHelpInit() {
 
   sparkle2D = new Sparkle2D();
 
-  qball = gluNewQuadric();
-  gluQuadricDrawStyle(qball, GLU_FILL);
-  gluQuadricNormals(qball, GLU_SMOOTH);
-  gluQuadricTexture(qball, GL_TRUE);
-
-  sphereDisplayLists[0] = glGenLists(1);
-  sphereDisplayLists[1] = glGenLists(1);
-  sphereDisplayLists[2] = glGenLists(1);
-  regenerateSphereDisplaylists();
-
   // The VAO need only be there :-)
   glGenVertexArrays(1, &theVao);
 
@@ -621,82 +605,6 @@ void glHelpInit() {
   shaderWater = loadProgram("water.vert", "water.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
   shaderObject = loadProgram("object.vert", "object.frag");
-}
-
-void regenerateSphereDisplaylists() {
-  int resolution = 6;
-
-  glNewList(sphereDisplayLists[0], GL_COMPILE);
-  switch (Settings::settings->gfx_details) {
-  case GFX_DETAILS_NONE:
-    resolution = 6;
-    break;
-  case GFX_DETAILS_MINIMALISTIC:
-    resolution = 8;
-    break;
-  case GFX_DETAILS_SIMPLE:
-    resolution = 8;
-    break;
-  case GFX_DETAILS_NORMAL:
-    resolution = 8;
-    break;
-  case GFX_DETAILS_EXTRA:
-    resolution = 10;
-    break;
-  case GFX_DETAILS_EVERYTHING:
-    resolution = 12;
-    break;
-  }
-  gluSphere(qball, 1.0, resolution, resolution / 2);
-  glEndList();
-
-  glNewList(sphereDisplayLists[1], GL_COMPILE);
-  switch (Settings::settings->gfx_details) {
-  case GFX_DETAILS_NONE:
-    resolution = 6;
-    break;
-  case GFX_DETAILS_MINIMALISTIC:
-    resolution = 8;
-    break;
-  case GFX_DETAILS_SIMPLE:
-    resolution = 10;
-    break;
-  case GFX_DETAILS_NORMAL:
-    resolution = 12;
-    break;
-  case GFX_DETAILS_EXTRA:
-    resolution = 16;
-    break;
-  case GFX_DETAILS_EVERYTHING:
-    resolution = 20;
-    break;
-  }
-  gluSphere(qball, 1.0, resolution, resolution / 2);
-  glEndList();
-
-  glNewList(sphereDisplayLists[2], GL_COMPILE);
-  switch (Settings::settings->gfx_details) {
-  case GFX_DETAILS_NONE:
-    resolution = 8;
-    break;
-  case GFX_DETAILS_MINIMALISTIC:
-    resolution = 10;
-    break;
-  case GFX_DETAILS_SIMPLE:
-    resolution = 12;
-    break;
-  case GFX_DETAILS_NORMAL:
-    resolution = 16;
-    break;
-  case GFX_DETAILS_EXTRA:
-    resolution = 20;
-    break;
-  case GFX_DETAILS_EVERYTHING:
-    resolution = 24;
-    break;
-  }
-  gluSphere(qball, 1.0, resolution, resolution / 2);
-  glEndList();
 }
 
 char *filetobuf(const char *filename) {

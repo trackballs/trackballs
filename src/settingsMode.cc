@@ -57,7 +57,6 @@ void SettingsMode::deactivated() {
   Settings *settings = Settings::settings;
 
   settings->save();
-  regenerateSphereDisplaylists(); /* In case we have changed detail level */
 
   /* Switch back to the last verified resolution */
   if (settings->resolution != restoreResolution || settings->colorDepth != restoreColorDepth) {
@@ -78,8 +77,6 @@ void SettingsMode::display() {
 
   /* Draw title */
   addText_Center(0, titleFontSize / 2, 64, _("Game Settings"), screenWidth / 2);
-
-  // drawSurface(title,(screenWidth-title->w)/2,64,title->w,title->h);
 
   char str[256];
 

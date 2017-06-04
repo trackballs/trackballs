@@ -95,7 +95,7 @@ void Weather::draw2() {
 
   if (kind == WEATHER_RAIN) {
     /** Draw RAIN particles **/
-    glDisable(GL_BLEND);
+    glEnable(GL_BLEND);
     glLineWidth(1.5);
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);

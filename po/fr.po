@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-03 10:08-0400\n"
+"POT-Creation-Date: 2017-06-03 22:48-0400\n"
 "PO-Revision-Date: 2017-06-03 10:11-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
@@ -17,49 +17,49 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.1\n"
 
-#: ../src/calibrateJoystickMode.cc:100
+#: ../src/calibrateJoystickMode.cc:99
 msgid "Calibrating Joystick"
 msgstr "Calibration de la manette de jeu"
 
-#: ../src/calibrateJoystickMode.cc:109
+#: ../src/calibrateJoystickMode.cc:108
 msgid "Center joystick"
 msgstr "Centre de la manette"
 
-#: ../src/calibrateJoystickMode.cc:113
+#: ../src/calibrateJoystickMode.cc:112
 msgid "Move joystick left"
 msgstr "Gauche de la manette"
 
-#: ../src/calibrateJoystickMode.cc:117
+#: ../src/calibrateJoystickMode.cc:116
 msgid "Move joystick right"
 msgstr "Droite de la manette"
 
-#: ../src/calibrateJoystickMode.cc:121
+#: ../src/calibrateJoystickMode.cc:120
 msgid "Move joystick up"
 msgstr "Haut de la manette"
 
-#: ../src/calibrateJoystickMode.cc:125
+#: ../src/calibrateJoystickMode.cc:124
 msgid "Move joystick down"
 msgstr "Bas de la manette"
 
-#: ../src/calibrateJoystickMode.cc:129
+#: ../src/calibrateJoystickMode.cc:128
 msgid "Press any button to continue"
 msgstr "Pressez un bouton pour continuer"
 
-#: ../src/calibrateJoystickMode.cc:131
+#: ../src/calibrateJoystickMode.cc:130
 msgid "Press escape to cancel"
 msgstr "Pressez Échap. pour annuler"
 
-#: ../src/calibrateJoystickMode.cc:134
+#: ../src/calibrateJoystickMode.cc:133
 #, c-format
 msgid "now: %d %d"
 msgstr "maintenant: %d %d"
 
-#: ../src/calibrateJoystickMode.cc:139
+#: ../src/calibrateJoystickMode.cc:138
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centre: %d %d gauche: %d droite: %d haut: %d bas: %d"
 
-#: ../src/diamond.cc:118
+#: ../src/diamond.cc:116
 msgid "Save point"
 msgstr "Point de sauvegarde!"
 
@@ -509,16 +509,16 @@ msgid "Quit without saving?"
 msgstr "Quitter sans enregistrer ?"
 
 #: ../src/editWindows.cc:371 ../src/editWindows.cc:412
-#: ../src/editWindows.cc:460 ../src/settingsMode.cc:130
-#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:161
-#: ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:460 ../src/settingsMode.cc:125
+#: ../src/settingsMode.cc:151 ../src/settingsMode.cc:156
+#: ../src/settingsMode.cc:180
 msgid "Yes"
 msgstr "Oui"
 
 #: ../src/editWindows.cc:372 ../src/editWindows.cc:413
-#: ../src/editWindows.cc:461 ../src/settingsMode.cc:130
-#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:161
-#: ../src/settingsMode.cc:166 ../src/settingsMode.cc:185
+#: ../src/editWindows.cc:461 ../src/settingsMode.cc:125
+#: ../src/settingsMode.cc:153 ../src/settingsMode.cc:156
+#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:180
 #, c-format
 msgid "No"
 msgstr "Non"
@@ -562,17 +562,17 @@ msgstr "Vous avez %d points"
 msgid "Enter your name: %s"
 msgstr "Entrez votre nom: %s"
 
-#: ../src/glHelp.cc:767
+#: ../src/glHelp.cc:754
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:769
+#: ../src/glHelp.cc:756
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:771
+#: ../src/glHelp.cc:758
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -734,7 +734,7 @@ msgstr "Vous amène a un autre endroit, parfois très rapidement."
 msgid "More Help"
 msgstr "Plus d'aide"
 
-#: ../src/helpMode.cc:169 ../src/settingsMode.cc:237
+#: ../src/helpMode.cc:169 ../src/settingsMode.cc:232
 msgid "Back"
 msgstr "Retour"
 
@@ -743,7 +743,7 @@ msgstr "Retour"
 msgid "Anonymous Coward"
 msgstr "Lâche anonyme"
 
-#: ../src/hofMode.cc:113 ../src/setupMode.cc:166
+#: ../src/hofMode.cc:113 ../src/setupMode.cc:165
 msgid "Level Set"
 msgstr "Groupe de niveaux"
 
@@ -752,96 +752,96 @@ msgstr "Groupe de niveaux"
 msgid "%d points"
 msgstr "%d points"
 
-#: ../src/mainMode.cc:185
+#: ../src/mainMode.cc:184
 msgid "Track:"
 msgstr "Piste:"
 
-#: ../src/mainMode.cc:187
+#: ../src/mainMode.cc:186
 msgid "Author:"
 msgstr "Auteur:"
 
-#: ../src/mainMode.cc:189
+#: ../src/mainMode.cc:188
 msgid "Press spacebar to begin"
 msgstr "Pressez espace pour commencer"
 
-#: ../src/mainMode.cc:206 ../src/mainMode.cc:215 ../src/mainMode.cc:246
-#: ../src/mainMode.cc:260
+#: ../src/mainMode.cc:200 ../src/mainMode.cc:209 ../src/mainMode.cc:235
+#: ../src/mainMode.cc:249
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Pressez espace pour continuer"
 
-#: ../src/mainMode.cc:207
+#: ../src/mainMode.cc:201
 msgid "Game over"
 msgstr "Perdu"
 
-#: ../src/mainMode.cc:215
+#: ../src/mainMode.cc:209
 msgid "Oops"
 msgstr "Oups"
 
-#: ../src/mainMode.cc:237
+#: ../src/mainMode.cc:226
 msgid "Paused"
 msgstr "En pause"
 
-#: ../src/mainMode.cc:246
+#: ../src/mainMode.cc:235
 msgid "Bonus level complete"
 msgstr "Niveau bonus termine"
 
-#: ../src/mainMode.cc:260
+#: ../src/mainMode.cc:249
 msgid "Level complete"
 msgstr "Niveau termine"
 
-#: ../src/mainMode.cc:267
+#: ../src/mainMode.cc:256
 msgid "Congratulations"
 msgstr "Congratulations"
 
-#: ../src/mainMode.cc:267
+#: ../src/mainMode.cc:256
 msgid "You have completed the game!"
 msgstr "Vous avez termine le jeu !"
 
-#: ../src/mainMode.cc:502 ../src/mainMode.cc:518
+#: ../src/mainMode.cc:471 ../src/mainMode.cc:487
 msgid "Good luck!"
 msgstr "Bonne chance !"
 
-#: ../src/mainMode.cc:595
+#: ../src/mainMode.cc:564
 #, c-format
 msgid "Level bonuses"
 msgstr "Niveaux bonus"
 
-#: ../src/mainMode.cc:597
+#: ../src/mainMode.cc:566
 #, c-format
 msgid "Lives left:"
 msgstr "Vies restantes:"
 
-#: ../src/mainMode.cc:598
+#: ../src/mainMode.cc:567
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d points"
 
-#: ../src/mainMode.cc:599
+#: ../src/mainMode.cc:568
 #, c-format
 msgid "Time left:"
 msgstr "Temps restant:"
 
-#: ../src/mainMode.cc:600
+#: ../src/mainMode.cc:569
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minutes = %d points"
 
-#: ../src/mainMode.cc:602
+#: ../src/mainMode.cc:571
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficulté:"
 
-#: ../src/mainMode.cc:604
+#: ../src/mainMode.cc:573
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:604 ../src/settingsMode.cc:195
+#: ../src/mainMode.cc:573 ../src/settingsMode.cc:190
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:604
+#: ../src/mainMode.cc:573
 msgid "hard"
 msgstr "difficile"
 
@@ -873,27 +873,27 @@ msgstr ""
 "avec la souris et en pressant la barre d'espace, vous pouvez lui faire "
 "réaliser de petits sauts."
 
-#: ../src/menuMode.cc:118
+#: ../src/menuMode.cc:117
 msgid "New Game"
 msgstr "Nouvelle partie"
 
-#: ../src/menuMode.cc:119
+#: ../src/menuMode.cc:118
 msgid "Quit"
 msgstr "Quitter"
 
-#: ../src/menuMode.cc:120
+#: ../src/menuMode.cc:119
 msgid "Settings"
 msgstr "Parametres"
 
-#: ../src/menuMode.cc:121
+#: ../src/menuMode.cc:120
 msgid "Hall of Fame"
 msgstr "Meilleurs scores"
 
-#: ../src/menuMode.cc:122
+#: ../src/menuMode.cc:121
 msgid "Help"
 msgstr "Aide"
 
-#: ../src/menuMode.cc:123
+#: ../src/menuMode.cc:122
 msgid "Map Editor"
 msgstr "Éditeur de cartes"
 
@@ -1049,225 +1049,225 @@ msgstr "Grande balle"
 msgid "Nitro"
 msgstr "Nitro"
 
-#: ../src/settingsMode.cc:81
+#: ../src/settingsMode.cc:79
 msgid "Game Settings"
 msgstr "Paramètres de jeu"
 
-#: ../src/settingsMode.cc:93
+#: ../src/settingsMode.cc:89
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr "La résolution %dx%dx%d est-elle acceptable?"
 
-#: ../src/settingsMode.cc:96
+#: ../src/settingsMode.cc:92
 #, c-format
 msgid "Is resolution Auto-%d ok?"
 msgstr "La résolution Auto-%d est-elle acceptable?"
 
-#: ../src/settingsMode.cc:100
+#: ../src/settingsMode.cc:96
 msgid "Ok, use this resolution"
 msgstr "Oui, utilisez cette résolution"
 
-#: ../src/settingsMode.cc:101
+#: ../src/settingsMode.cc:97
 msgid "No, revert to old resolution"
 msgstr "Non, revenir à l'ancienne résolution"
 
-#: ../src/settingsMode.cc:103
+#: ../src/settingsMode.cc:99
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr "Délai d'attente en %d secondes"
 
-#: ../src/settingsMode.cc:116
+#: ../src/settingsMode.cc:111
 msgid "Graphics"
 msgstr "Graphismes"
 
-#: ../src/settingsMode.cc:123
+#: ../src/settingsMode.cc:118
 #, c-format
 msgid "Auto-%d"
 msgstr "Auto-%d"
 
-#: ../src/settingsMode.cc:125
+#: ../src/settingsMode.cc:120
 msgid "  Resolution"
 msgstr "  Résolution"
 
-#: ../src/settingsMode.cc:126
+#: ../src/settingsMode.cc:121
 msgid "  Test this resolution"
 msgstr "Testez cette résolution"
 
-#: ../src/settingsMode.cc:129
+#: ../src/settingsMode.cc:124
 msgid "  Fullscreen"
 msgstr "  Plein écran"
 
-#: ../src/settingsMode.cc:135
+#: ../src/settingsMode.cc:130
 #, c-format
 msgid "None"
 msgstr "Aucun"
 
-#: ../src/settingsMode.cc:138
+#: ../src/settingsMode.cc:133
 #, c-format
 msgid "Minimalistic"
 msgstr "Minimalistes"
 
-#: ../src/settingsMode.cc:141
+#: ../src/settingsMode.cc:136
 #, c-format
 msgid "Simple"
 msgstr "Simples"
 
-#: ../src/settingsMode.cc:144
+#: ../src/settingsMode.cc:139
 #, c-format
 msgid "Standard"
 msgstr "Standard"
 
-#: ../src/settingsMode.cc:147
+#: ../src/settingsMode.cc:142
 #, c-format
 msgid "Extra"
 msgstr "Extra"
 
-#: ../src/settingsMode.cc:150
+#: ../src/settingsMode.cc:145
 #, c-format
 msgid "Everything"
 msgstr "Tout"
 
-#: ../src/settingsMode.cc:153
+#: ../src/settingsMode.cc:148
 msgid "  Details"
 msgstr "  Détails"
 
-#: ../src/settingsMode.cc:155 ../src/settingsMode.cc:158
+#: ../src/settingsMode.cc:150 ../src/settingsMode.cc:153
 msgid "  Reflections (beta)"
 msgstr "  Réflexions (beta)"
 
-#: ../src/settingsMode.cc:160
+#: ../src/settingsMode.cc:155
 msgid "  VSync"
 msgstr "  VSYNC"
 
-#: ../src/settingsMode.cc:169
+#: ../src/settingsMode.cc:164
 #, c-format
 msgid "Frame rate"
 msgstr "Taux d'images"
 
-#: ../src/settingsMode.cc:172
+#: ../src/settingsMode.cc:167
 #, c-format
 msgid "Frame time"
 msgstr "Temps d'image"
 
-#: ../src/settingsMode.cc:175
+#: ../src/settingsMode.cc:170
 msgid "  Show FPS"
 msgstr "  Montrer les IPS"
 
-#: ../src/settingsMode.cc:181
+#: ../src/settingsMode.cc:176
 msgid "Controls"
 msgstr "Contrôles"
 
-#: ../src/settingsMode.cc:184
+#: ../src/settingsMode.cc:179
 msgid "  Use mouse"
 msgstr "  Utiliser la souris"
 
-#: ../src/settingsMode.cc:190
+#: ../src/settingsMode.cc:185
 msgid "  Sensitivity"
 msgstr "  Sensibilité"
 
-#: ../src/settingsMode.cc:197
+#: ../src/settingsMode.cc:192
 #, c-format
 msgid "+%d degrees"
 msgstr "+%d degrés"
 
-#: ../src/settingsMode.cc:199
+#: ../src/settingsMode.cc:194
 #, c-format
 msgid "-%d degrees"
 msgstr "-%d degrés"
 
-#: ../src/settingsMode.cc:200
+#: ../src/settingsMode.cc:195
 msgid "  Steering"
 msgstr "  Direction"
 
-#: ../src/settingsMode.cc:207
+#: ../src/settingsMode.cc:202
 #, c-format
 msgid "no joystick found"
 msgstr "Aucun joystick n'a été trouvé"
 
-#: ../src/settingsMode.cc:211
+#: ../src/settingsMode.cc:206
 msgid "  Joystick:"
 msgstr "  Manette de jeu:"
 
-#: ../src/settingsMode.cc:221
+#: ../src/settingsMode.cc:216
 msgid "Other"
 msgstr "Autre"
 
-#: ../src/settingsMode.cc:225
+#: ../src/settingsMode.cc:220
 msgid "  Music volume"
 msgstr "  Volume de la musique"
 
-#: ../src/settingsMode.cc:227
+#: ../src/settingsMode.cc:222
 msgid "  Effects volume"
 msgstr "  Volume des effets"
 
-#: ../src/settingsMode.cc:229
+#: ../src/settingsMode.cc:224
 msgid "  Language"
 msgstr "  Langage"
 
-#: ../src/setupMode.cc:158
+#: ../src/setupMode.cc:157
 msgid "Setup new game"
 msgstr "Configurer un nouveau jeu"
 
-#: ../src/setupMode.cc:162
+#: ../src/setupMode.cc:161
 msgid "Player Name"
 msgstr "Nom du joueur"
 
-#: ../src/setupMode.cc:168
+#: ../src/setupMode.cc:167
 msgid "N/A"
 msgstr "ND"
 
-#: ../src/setupMode.cc:174
+#: ../src/setupMode.cc:173
 msgid "Level"
 msgstr "Niveau"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:181
 msgid "Difficulty"
 msgstr "Difficulté"
 
-#: ../src/setupMode.cc:187
+#: ../src/setupMode.cc:186
 msgid "Sandbox (Easy)"
 msgstr "Contrôle (Facile)"
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:187
 msgid "Sandbox (Normal)"
 msgstr "Contrôle (Normale)"
 
-#: ../src/setupMode.cc:188
+#: ../src/setupMode.cc:187
 msgid "Sandbox (Hard)"
 msgstr "Contrôle (Difficile)"
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:189
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:191
+#: ../src/setupMode.cc:190
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:191
+#: ../src/setupMode.cc:190
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:195
+#: ../src/setupMode.cc:194
 msgid "Start Game"
 msgstr "Commencer une partie"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:198
 #, c-format
 msgid "Total games played: %d"
 msgstr "Nombre de partie jouées : %d"
 
-#: ../src/setupMode.cc:203
+#: ../src/setupMode.cc:202
 #, c-format
 msgid "Average score: %d"
 msgstr "Score moyen : %d"
 
-#: ../src/setupMode.cc:205
+#: ../src/setupMode.cc:204
 #, c-format
 msgid "Average score: N/A"
 msgstr "Score moyen : N/A"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:207
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Niveaux terminés : %d"

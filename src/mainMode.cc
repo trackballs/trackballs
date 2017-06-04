@@ -76,7 +76,6 @@ void MainMode::display() {
   Map *map = Game::current ? Game::current->map : NULL;
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
-  glUseProgram(0);
   glViewport(0, 0, screenWidth, screenHeight);
 
   if (Game::current->fogThickness)
