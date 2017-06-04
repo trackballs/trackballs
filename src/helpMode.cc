@@ -95,11 +95,8 @@ void HelpMode::deactivated() {
 }
 void HelpMode::display() {
   // Draw the background using the preloaded texture
-  glColor3f(timeLeft, timeLeft, timeLeft);
-
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glColor3f(1.0, 1.0, 1.0);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

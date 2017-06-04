@@ -86,25 +86,23 @@ void MainMode::display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
-    glEnable(GL_FOG);
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, max(0.0, 14.0 - 7.0 * Game::current->fogThickness));
-    glFogf(GL_FOG_END, 26.0 - 4.0 * Game::current->fogThickness);
-    glFogfv(GL_FOG_COLOR, Game::current->fogColor);
+    activeView.fog_enabled = 1;
+    assign(Game::current->fogColor, activeView.fog_color);
+    activeView.fog_start = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    activeView.fog_end = 26.0 - 4.0 * Game::current->fogThickness;
   } else
-    glDisable(GL_FOG);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1, 200);
+    activeView.fog_enabled = 0;
 
-  /* Setup openGL matrixes for the camera perspective */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1, 200,
+                    activeView.projection);
 
+  /* Setup matrixes for the camera perspective */
   if (gameStatus == statusBeforeGame) {
-    gluLookAt(map->startPosition[0] - 12 * sin(time), map->startPosition[1] - 12 * cos(time),
-              10.0 + map->startPosition[2], map->startPosition[0], map->startPosition[1],
-              map->startPosition[2], 0.0, 0.0, 1.0);
+    lookAtMatrix(map->startPosition[0] - 12 * sin(time),
+                 map->startPosition[1] - 12 * cos(time), 10.0 + map->startPosition[2],
+                 map->startPosition[0], map->startPosition[1], map->startPosition[2], 0.0, 0.0,
+                 1.0, activeView.modelview);
+
     birdsEye = 1;
   } else {
     birdsEye = 0;
@@ -116,62 +114,56 @@ void MainMode::display() {
     up[1] = cos(angle) * zAngle;
     up[2] = 1.0 - zAngle;
     normalize(up);
-    gluLookAt(camFocus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
-              camFocus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
-              10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * sin(zAngle * M_PI / 2.),
-              camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2]);
+    lookAtMatrix(camFocus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
+                 camFocus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
+                 10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * sin(zAngle * M_PI / 2.),
+                 camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2],
+                 activeView.modelview);
   }
 
   /* record modelview/projection matrices for item visibility testing */
-  glGetDoublev(GL_MODELVIEW_MATRIX, this->cameraModelView);
-  glGetDoublev(GL_PROJECTION_MATRIX, this->cameraProjection);
+  assign(activeView.modelview, this->cameraModelView);
+  assign(activeView.projection, this->cameraProjection);
 
   /* Some standard GL settings needed */
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  glShadeModel(GL_SMOOTH);
 
   /* Debugging for problems with some cards */
-  glDisable(GL_TEXTURE_2D);
-  glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+  GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
   if (Game::current && Game::current->isNight) {
     GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
-    GLfloat lightPosition2[4] = {252.0, 252.0, 10.0, 1.0};
-    lightPosition2[0] = Game::current->player1->position[0];
-    lightPosition2[1] = Game::current->player1->position[1];
-    lightPosition2[2] = Game::current->player1->position[2] + 2.0;
-    GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, black);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse2);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightDiffuse2);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition2);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.25);
-    glEnable(GL_LIGHT0);
+    Coord3d lightPosition2 = {Game::current->player1->position[0],
+                              Game::current->player1->position[1],
+                              Game::current->player1->position[2] + 2.0};
+    assign(lightDiffuse2, activeView.light_diffuse);
+    assign(lightDiffuse2, activeView.light_specular);
+    assign(lightPosition2, activeView.light_position);
+    assign(black, activeView.global_ambient);
+    assign(black, activeView.light_ambient);
+    activeView.quadratic_attenuation = 0.25;
   } else {
-    GLfloat sunLight[] = {0.8, 0.8, 0.8, 1.0};
-    GLfloat sunPosition[] = {-100.0, -50.0, 150.0, 0.0};
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, sunLight);
-    glLightfv(GL_LIGHT0, GL_POSITION, sunPosition);
-    glEnable(GL_LIGHT0);
+    GLfloat sunLight[3] = {0.8, 0.8, 0.8};
+    Coord3d sunPosition = {-100.0, -50.0, 450.0};
+    GLfloat ambient[3] = {0.2, 0.2, 0.2};
+    assign(sunLight, activeView.light_diffuse);
+    assign(sunLight, activeView.light_specular);
+    assign(sunPosition, activeView.light_position);
+    assign(black, activeView.global_ambient);
+    assign(ambient, activeView.light_ambient);
+    activeView.quadratic_attenuation = 0.;
   }
-  GLfloat ambient[] = {0.2, 0.2, 0.2, 1.0};
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
-  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
-  glEnable(GL_LIGHTING);
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glHint(GL_FOG_HINT, GL_NICEST);
   } else {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glHint(GL_FOG_HINT, GL_FASTEST);
   }
 
   switch (gameStatus) {
@@ -607,20 +599,16 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
-    glEnable(GL_FOG);
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, max(0.0, 14.0 - 7.0 * Game::current->fogThickness));
-    glFogf(GL_FOG_END, 26.0 - 4.0 * Game::current->fogThickness);
-    glFogfv(GL_FOG_COLOR, Game::current->fogColor);
+    activeView.fog_enabled = 1;
+    activeView.fog_start = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    activeView.fog_end = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    assign(Game::current->fogColor, activeView.fog_color);
   } else
-    glDisable(GL_FOG);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(140, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.01, 200);
+    activeView.fog_enabled = 0;
+  perspectiveMatrix(140, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.01, 200,
+                    activeView.projection);
 
   /* Setup openGL matrixes for the camera perspective */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
   int birdsEye = 1;
   double angle = xyAngle * M_PI / 2. + M_PI / 4.;
   // TODO. Fixme. This computation is wrong when zAngle > 0.0 !!
@@ -629,53 +617,50 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   up[1] = cos(angle) * zAngle;
   up[2] = 1.0 - zAngle;
   normalize(up);
-  gluLookAt(focus[0], focus[1], focus[2] + 0.0,
-            focus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
-            focus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
-            zAngle > 0.0 ? 10.0 + focus[2] * 0.5 + (10.0 + focus[2]) * sin(zAngle * M_PI / 2.)
-                         : focus[2] + 2.0,
-            up[0], up[1], up[2]);
+  lookAtMatrix(focus[0], focus[1], focus[2] + 0.0,
+               focus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
+               focus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
+               zAngle > 0.0
+                   ? 10.0 + focus[2] * 0.5 + (10.0 + focus[2]) * sin(zAngle * M_PI / 2.)
+                   : focus[2] + 2.0,
+               up[0], up[1], up[2], activeView.modelview);
 
   /* Some standard GL settings needed */
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
 
-  GLfloat lightDiffuse[] = {0.9, 0.9, 0.9, 1.0};
-  GLfloat lightPosition[] = {-100.0, -50.0, 150.0, 0.0};
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  GLfloat ambient[] = {0.2, 0.2, 0.2, 1.0};
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
+  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
+  GLfloat black[3] = {0.0, 0.0, 0.0};
+  Coord3d lightPosition = {-100.0, -50.0, 450.0};
+  GLfloat ambient[3] = {0.2, 0.2, 0.2};
+  assign(lightDiffuse, activeView.light_diffuse);
+  assign(ambient, activeView.light_ambient);
+  assign(lightDiffuse, activeView.light_specular);
+  assign(lightPosition, activeView.light_position);
+  assign(black, activeView.global_ambient);
+  activeView.quadratic_attenuation = 0.0;
 
   if (Game::current && Game::current->isNight) {
-    GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
-    GLfloat lightPosition2[4] = {252.0, 252.0, 10.0, 1.0};
-    lightPosition2[0] = Game::current->player1->position[0];
-    lightPosition2[1] = Game::current->player1->position[1];
-    lightPosition2[2] = Game::current->player1->position[2] + 2.0;
-    GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
-    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, black);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, black);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse2);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightDiffuse2);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition2);
-    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.25);
+    GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
+    Coord3d lightPosition2 = {Game::current->player1->position[0],
+                              Game::current->player1->position[1],
+                              Game::current->player1->position[2] + 2.0};
+    assign(black, activeView.global_ambient);
+    assign(black, activeView.light_ambient);
+    assign(lightDiffuse2, activeView.light_diffuse);
+    assign(lightDiffuse2, activeView.light_specular);
+    assign(lightPosition2, activeView.light_position);
+    activeView.quadratic_attenuation = 0.25;
   }
-
-  glShadeModel(GL_SMOOTH);
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glHint(GL_FOG_HINT, GL_NICEST);
   } else {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glHint(GL_FOG_HINT, GL_FASTEST);
   }
 
   Map *map = Game::current ? Game::current->map : NULL;

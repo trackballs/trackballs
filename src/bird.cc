@@ -68,8 +68,6 @@ void Bird::draw2() {
   setupObjectRenderState();
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
 
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);

@@ -57,14 +57,7 @@ void Fountain::draw2() {
   // Pos
   glEnableVertexAttribArray(0);
 
-  GLfloat proj[16];
-  GLfloat model[16];
-  glGetFloatv(GL_PROJECTION_MATRIX, proj);
-  glGetFloatv(GL_MODELVIEW_MATRIX, model);
-  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat *)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat *)&model[0]);
+  setViewUniforms(shaderLine);
   glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
               primaryColor[2], primaryColor[3]);
 

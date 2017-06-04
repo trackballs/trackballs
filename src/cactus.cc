@@ -151,8 +151,6 @@ void Cactus::draw() {
   // Transfer
   setupObjectRenderState();
 
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);

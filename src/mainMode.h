@@ -59,8 +59,8 @@ class MainMode : public GameMode {
 
   double zAngle, wantedZAngle, xyAngle, wantedXYAngle;
   Coord3d camFocus, camDelta;
-  GLdouble cameraModelView[16];
-  GLdouble cameraProjection[16];
+  Matrix4d cameraModelView;
+  Matrix4d cameraProjection;
 
  protected:
  private:

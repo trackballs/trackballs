@@ -230,7 +230,8 @@ void Game::draw() {
                      anim->position[1] + anim->boundingBox[0][1],
                      anim->position[1] + anim->boundingBox[1][1],
                      anim->position[2] + anim->boundingBox[0][2],
-                     anim->position[2] + anim->boundingBox[1][2], model_matrix, proj_matrix)) {
+                     anim->position[2] + anim->boundingBox[1][2], activeView.modelview,
+                     activeView.projection)) {
       anim->onScreen = 1;
     }
   }
@@ -281,13 +282,13 @@ void Game::drawReflection(Coord3d focus) {
     sub(focus, anim->position, tmp);
     if (length(tmp) > 5.0) continue;
 
-    anim->onScreen =
-        testBboxClip(anim->position[0] + anim->boundingBox[0][0],
-                     anim->position[0] + anim->boundingBox[1][0],
-                     anim->position[1] + anim->boundingBox[0][1],
-                     anim->position[1] + anim->boundingBox[1][1],
-                     anim->position[2] + anim->boundingBox[0][2],
-                     anim->position[2] + anim->boundingBox[1][2], model_matrix, proj_matrix);
+    anim->onScreen = testBboxClip(anim->position[0] + anim->boundingBox[0][0],
+                                  anim->position[0] + anim->boundingBox[1][0],
+                                  anim->position[1] + anim->boundingBox[0][1],
+                                  anim->position[1] + anim->boundingBox[1][1],
+                                  anim->position[2] + anim->boundingBox[0][2],
+                                  anim->position[2] + anim->boundingBox[1][2],
+                                  activeView.modelview, activeView.projection);
   }
 
   /* Draw first pass of all objects */

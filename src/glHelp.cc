@@ -34,6 +34,7 @@ using namespace std;
 float fps = 50.0;
 float realTimeNow = 0.0;
 int screenWidth = 640, screenHeight = 480;
+ViewParameters activeView;
 
 GLuint shaderWater = 0;
 GLuint shaderTile = 0;
@@ -309,16 +310,8 @@ void setupObjectRenderState() {
   glEnableVertexAttribArray(2);
   glEnableVertexAttribArray(4);
 
-  GLfloat proj[16];
-  GLfloat model[16];
+  setViewUniforms(shaderObject);
 
-  glGetFloatv(GL_PROJECTION_MATRIX, proj);
-  glGetFloatv(GL_MODELVIEW_MATRIX, model);
-
-  glUniformMatrix4fv(glGetUniformLocation(shaderObject, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat *)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderObject, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat *)&model[0]);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
 
   glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
@@ -402,6 +395,73 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat pos
     }
     base = &base[6 * radial_count];
   }
+}
+
+void perspectiveMatrix(GLdouble fovy_deg, GLdouble aspect, GLdouble zNear, GLdouble zFar,
+                       Matrix4d out) {
+  GLdouble f = 1. / std::tan(fovy_deg * M_PI / 360.0);
+  Matrix4d mat = {{f / aspect, 0., 0., 0.},
+                  {0., f, 0., 0.},
+                  {0., 0., (zFar + zNear) / (zNear - zFar), -1.},
+                  {0., 0., 2 * zFar * zNear / (zNear - zFar), 0.}};
+  assign(mat, out);
+}
+
+void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
+                  GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
+                  Matrix4d out) {
+  Coord3d eye = {eyeX, eyeY, eyeZ};
+  Coord3d center = {centerX, centerY, centerZ};
+  Coord3d up = {upX, upY, upZ};
+  Coord3d f, s, u;
+  sub(center, eye, f);
+  normalize(f);
+  normalize(up);
+  crossProduct(f, up, s);
+  normalize(s);
+  crossProduct(s, f, u);
+
+  Matrix4d mat = {{s[0], u[0], -f[0], 0.},
+                  {s[1], u[1], -f[1], 0.},
+                  {s[2], u[2], -f[2], 0.},
+                  {0., 0., 0., 1.}};
+  Matrix4d trans = {
+      {1., 0., 0., 0.}, {0., 1., 0., 0.}, {0., 0., 1., 0.}, {-eye[0], -eye[1], -eye[2], 1.}};
+  matrixMult(trans, mat, out);
+}
+
+void setViewUniforms(GLuint shader) {
+  GLfloat lproj[16], lmodel[16];
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      lproj[4 * i + j] = activeView.projection[i][j];
+      lmodel[4 * i + j] = activeView.modelview[i][j];
+    }
+  }
+
+  glUniformMatrix4fv(glGetUniformLocation(shader, "proj_matrix"), 1, GL_FALSE,
+                     (GLfloat *)lproj);
+  glUniformMatrix4fv(glGetUniformLocation(shader, "model_matrix"), 1, GL_FALSE,
+                     (GLfloat *)lmodel);
+  glUniform1i(glGetUniformLocation(shader, "fog_active"), activeView.fog_enabled);
+  glUniform3f(glGetUniformLocation(shader, "fog_color"), activeView.fog_color[0],
+              activeView.fog_color[1], activeView.fog_color[2]);
+  glUniform1f(glGetUniformLocation(shader, "fog_start"), activeView.fog_start);
+  glUniform1f(glGetUniformLocation(shader, "fog_end"), activeView.fog_end);
+
+  glUniform3f(glGetUniformLocation(shader, "light_position"),
+              (GLfloat)activeView.light_position[0], (GLfloat)activeView.light_position[1],
+              (GLfloat)activeView.light_position[2]);
+  glUniform3f(glGetUniformLocation(shader, "light_ambient"), activeView.light_ambient[0],
+              activeView.light_ambient[1], activeView.light_ambient[2]);
+  glUniform3f(glGetUniformLocation(shader, "light_diffuse"), activeView.light_diffuse[0],
+              activeView.light_diffuse[1], activeView.light_diffuse[2]);
+  glUniform3f(glGetUniformLocation(shader, "light_specular"), activeView.light_specular[0],
+              activeView.light_specular[1], activeView.light_specular[2]);
+  glUniform3f(glGetUniformLocation(shader, "global_ambient"), activeView.global_ambient[0],
+              activeView.global_ambient[1], activeView.global_ambient[2]);
+  glUniform1f(glGetUniformLocation(shader, "quadratic_attenuation"),
+              activeView.quadratic_attenuation);
 }
 
 /* generates a snapshot of the screen */
@@ -605,6 +665,33 @@ void glHelpInit() {
   shaderWater = loadProgram("water.vert", "water.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
   shaderObject = loadProgram("object.vert", "object.frag");
+
+  // Setup view state
+  activeView.fog_enabled = 0;
+  activeView.fog_color[0] = 1.f;
+  activeView.fog_color[1] = 1.f;
+  activeView.fog_color[2] = 1.f;
+  activeView.fog_start = 10.f;
+  activeView.fog_end = 20.f;
+
+  activeView.light_position[0] = 0.;
+  activeView.light_position[1] = 0.;
+  activeView.light_position[2] = 10.;
+  activeView.light_ambient[0] = 0.2f;
+  activeView.light_ambient[1] = 0.2f;
+  activeView.light_ambient[2] = 0.2f;
+  activeView.light_diffuse[0] = 1.f;
+  activeView.light_diffuse[1] = 1.f;
+  activeView.light_diffuse[2] = 1.f;
+  activeView.light_specular[0] = 0.5f;
+  activeView.light_specular[1] = 0.5f;
+  activeView.light_specular[2] = 0.5f;
+  activeView.global_ambient[0] = 0.f;
+  activeView.global_ambient[1] = 0.f;
+  activeView.global_ambient[2] = 0.f;
+  activeView.quadratic_attenuation = 0.f;
+
+  glEnable(GL_TEXTURE_2D);
 }
 
 char *filetobuf(const char *filename) {
@@ -906,7 +993,7 @@ void rotateZ(double v, Matrix4d m) {
 void zero(double v[3]) { v[0] = v[1] = v[2] = 0.0; }
 
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                 const double *model, const double *proj) {
+                 const Matrix4d model, const Matrix4d proj) {
   // Construct axis-aligned bounding box in window space
   double vxl = 1e99, vyl = 1e99, vzl = 1e99;
   double vxh = -1e99, vyh = -1e99, vzh = -1e99;
@@ -990,9 +1077,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   int w, h;
   SDL_Surface *image;
   SDL_Rect area;
-  //   Uint32 saved_flags;
-  //   Uint8 saved_alpha;
-  int useMipmaps = 0;
 
   /* Use the surface width and height expanded to powers of 2 */
   w = powerOfTwo(surface->w);
@@ -1027,21 +1111,11 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
 
   if (image == NULL) { return 0; }
 
-  /* Save the alpha blending attributes */
-  //   saved_flags = surface->flags & (SDL_SRCALPHA | SDL_RLEACCELOK);
-  //   int alpha_valid = !SDL_GetSurfaceAlphaMod(surface, &saved_alpha);
-  //   if (alpha_valid) SDL_SetSurfaceAlphaMod(surface, 0);
-  //   if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) {
-
-  //   }
-
   /* Copy the surface into the GL texture image */
   area.x = 0;
   area.y = 0;
   area.w = (int)(surface->w * scale);
   area.h = (int)(surface->h * scale);
-
-  if (useMipmaps) scale = 1.0;  // this looks like a bug!
 
   if (scale == 1.0)
     // Easy, no scaling needed
@@ -1069,11 +1143,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
     SDL_FreeSurface(source);
   }
 
-  /* Restore the alpha blending attributes */
-  //   if ((saved_flags & SDL_SRCALPHA) == SDL_SRCALPHA) {
-  //   if (alpha_valid) SDL_SetSurfaceAlphaMod(surface, /*saved_flags,*/ saved_alpha);
-  //   }
-
   /* Create an OpenGL texture for the image */
   GLuint freshTexture = 0;
   if (texture == NULL) texture = &freshTexture;
@@ -1084,30 +1153,16 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
 
   glBindTexture(GL_TEXTURE_2D, *texture);
   if (linearFilter) {
-    if (useMipmaps) {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    } else {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
   } else {
-    if (useMipmaps) {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    } else {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
-  if (useMipmaps)
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, (int)(w * scale), (int)(h * scale), GL_RGBA,
-                      GL_UNSIGNED_BYTE, image->pixels);
-  else
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)(w * scale), (int)(h * scale), 0, GL_RGBA,
-                 GL_UNSIGNED_BYTE, image->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)(w * scale), (int)(h * scale), 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, image->pixels);
 
   SDL_FreeSurface(image); /* No longer needed */
   return *texture;

@@ -33,10 +33,8 @@
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>
 #include <GL/glext.h>
-#include <GL/glu.h>
 
-//#include <g++-3/set.h>   //TODO: Fix configure.in
-#include <set>  //TODO: Fix configure.in
+#include <set>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_ttf.h>

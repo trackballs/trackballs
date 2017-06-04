@@ -78,10 +78,6 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
 
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glColor3f(1.0, 1.0, 1.0);
-  // drawSurface(header,(screenWidth-550)/2,20,550,100);
-
-  // int storyText_y = screenHeight / 2 - 20;
 
   Enter2DMode();
 
@@ -99,14 +95,6 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   draw2DRectangle(screenWidth / 2 - 512 / 2, 20, 512, 128, 0., 0., 1., 1., 1., 1., 1., 1.,
                   textures[loadTexture("header.png")]);
 
-  /* Draw background to story text */
-  /*
-  glDisable(GL_TEXTURE_2D);
-  glColor4f(220/256.0, 220/256.0, 64/256.0, 0.50);
-  drawTextured2DRectangle(0, storyText_y - 24 - 10, screenWidth, 24+24+20);
-  Leave2DMode();
-  */
-
   clearSelectionAreas();
   int fontsize = 24;
   int sep = 64;
@@ -120,6 +108,7 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   addText_Right(MENU_HOF, fontsize, baseline + sep * 1, _("Hall of Fame"), right);
   addText_Left(MENU_HELP, fontsize, baseline + sep * 2, _("Help"), left);
   addText_Right(MENU_EDITOR, fontsize, baseline + sep * 2, _("Map Editor"), right);
+
   /* Draw story text */
   /*
   Font::drawSimpleText(0, story, (int)(screenWidth-offset), storyText_y, 24., 24., 220/256.0,

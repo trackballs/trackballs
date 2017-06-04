@@ -381,7 +381,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   GLuint splashTexture;
   LoadTexture(splashScreen, texcoord, 0, &splashTexture);
   SDL_FreeSurface(splashScreen);
-  glColor3f(1.0, 1.0, 1.0);
   for (i = 0; i < 2; i++) {
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],

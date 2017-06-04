@@ -8,6 +8,4 @@ uniform sampler2D tex;
 varying vec4 color;
 varying vec2 texco;
 
-void main(void) {
-  gl_FragColor = color * texture(tex, texco);
-}
+void main(void) { gl_FragColor = color * texture(tex, texco); }

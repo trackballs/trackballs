@@ -138,8 +138,6 @@ void Goal::draw() {
   // Draw it!
   setupObjectRenderState();
 
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
               specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);

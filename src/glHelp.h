@@ -62,6 +62,31 @@ void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
                        Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]);
 
+typedef struct _viewpa {
+  Matrix4d modelview;
+  Matrix4d projection;
+  int fog_enabled;
+  GLfloat fog_color[3];
+  GLfloat fog_start;
+  GLfloat fog_end;
+
+  Coord3d light_position;
+  GLfloat light_ambient[3];
+  GLfloat light_diffuse[3];
+  GLfloat light_specular[3];
+  GLfloat global_ambient[3];
+  GLfloat quadratic_attenuation;
+} ViewParameters;
+
+extern ViewParameters activeView;
+
+void perspectiveMatrix(GLdouble fovy_deg, GLdouble aspect, GLdouble zNear, GLdouble zFar,
+                       Matrix4d out);
+void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
+                  GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
+                  Matrix4d out);
+void setViewUniforms(GLuint shader);
+
 // generates a snapshot
 int createSnapshot();
 // displays a semitransparent centered sign with two text rows */
@@ -89,10 +114,9 @@ void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);
 void rotateY(double, Matrix4d);
 void rotateZ(double, Matrix4d);
-void makeProjectionMatrix(const Coord3d p1, const Coord3d p2, const Coord3d p3, Matrix3d m);
 int power_of_two(int input);
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                 const double *model, const double *proj);
+                 const Matrix4d model, const Matrix4d proj);
 
 void Require2DMode();
 void Enter2DMode();

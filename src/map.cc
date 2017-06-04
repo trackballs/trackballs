@@ -453,16 +453,6 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
     lastTime = gameTime;
   }
 
-  // Load matrices from other GL
-  GLfloat proj[16];
-  GLfloat model[16];
-  GLdouble proj_d[16];
-  GLdouble model_d[16];
-  glGetFloatv(GL_PROJECTION_MATRIX, proj);
-  glGetFloatv(GL_MODELVIEW_MATRIX, model);
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_d);
-  glGetDoublev(GL_MODELVIEW_MATRIX, model_d);
-
   int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
   int prad = (VISRADIUS / CHUNKSIZE) + 1;
 
@@ -478,7 +468,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
         update = cur->is_updated;
 
         int visible = testBboxClip(cur->xm, cur->xm + CHUNKSIZE, cur->ym, cur->ym + CHUNKSIZE,
-                                   cur->minHeight, cur->maxHeight, model_d, proj_d);
+                                   cur->minHeight, cur->maxHeight, activeView.modelview,
+                                   activeView.projection);
 
         // Current cell is in viewport
         int ox = hx + CHUNKSIZE / 2;
@@ -511,12 +502,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   // Put into shader
   glUseProgram(shaderTile);
-  glUniformMatrix4fv(glGetUniformLocation(shaderTile, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderTile, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&model[0]);
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderTile, "fog_active"), fogActive);
+  setViewUniforms(shaderTile);
   glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
   glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
 
@@ -544,12 +530,8 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
 
   if (stage == 1) {
     glUseProgram(shaderWater);
-    glUniformMatrix4fv(glGetUniformLocation(shaderWater, "proj_matrix"), 1, GL_FALSE,
-                       (GLfloat*)&proj[0]);
-    glUniformMatrix4fv(glGetUniformLocation(shaderWater, "model_matrix"), 1, GL_FALSE,
-                       (GLfloat*)&model[0]);
+    setViewUniforms(shaderWater);
     glUniform1f(glGetUniformLocation(shaderWater, "gameTime"), gameTime);
-    glUniform1i(glGetUniformLocation(shaderWater, "fog_active"), fogActive);
     glUniform1i(glGetUniformLocation(shaderWater, "wtex"), 0);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, textures[tx_Water]);
@@ -564,11 +546,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
   }
 
   glUseProgram(shaderLine);
-  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&proj[0]);
-  glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat*)&model[0]);
-  glUniform1i(glGetUniformLocation(shaderLine, "fog_active"), fogActive);
+  setViewUniforms(shaderLine);
   glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
 
   glEnable(GL_LINE_SMOOTH);
@@ -988,8 +966,6 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
 
   setupObjectRenderState();
 
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

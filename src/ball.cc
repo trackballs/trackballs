@@ -203,8 +203,6 @@ void Ball::draw() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
                 specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
@@ -247,8 +245,7 @@ void Ball::draw() {
         c[2] = 1.0;
         c[3] = reflectivity;
       }
-      glColor4fv(c);
-
+      (void)c;
       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
       glEnable(GL_TEXTURE_GEN_S);
@@ -325,8 +322,6 @@ void Ball::draw() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -356,14 +351,7 @@ void Ball::draw() {
     glBindVertexArray(theVao);
     glEnableVertexAttribArray(0);
 
-    GLfloat proj[16];
-    GLfloat model[16];
-    glGetFloatv(GL_PROJECTION_MATRIX, proj);
-    glGetFloatv(GL_MODELVIEW_MATRIX, model);
-    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
-                       (GLfloat *)&proj[0]);
-    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
-                       (GLfloat *)&model[0]);
+    setViewUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
 
     const int nlines = 8;
@@ -457,8 +445,6 @@ void Ball::draw() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -503,8 +489,6 @@ void Ball::draw2() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
 
@@ -558,8 +542,6 @@ void Ball::draw2() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
@@ -613,8 +595,6 @@ void Ball::draw2() {
     // Transfer
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

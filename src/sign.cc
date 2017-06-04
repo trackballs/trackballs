@@ -85,8 +85,6 @@ void Sign::draw2() {
   glDepthFunc(GL_ALWAYS);
 
   setupObjectRenderState();
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

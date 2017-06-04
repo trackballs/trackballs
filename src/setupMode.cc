@@ -221,26 +221,31 @@ void SetupMode::display() {
   /* Draw the player ball */
   /*                      */
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glTranslatef(0.75, -0.75, 0.0);
-  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20);
+  Matrix4d persp_trans = {{1.f, 0.f, 0.f, 0.f},
+                          {0.f, 1.f, 0.f, 0.f},
+                          {0.f, 0.f, 1.f, 0.f},
+                          {0.75f, -0.75f, 0.f, 1.f}};
+  Matrix4d persp_tmp;
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20,
+                    persp_tmp);
+  matrixMult(persp_tmp, persp_trans, activeView.projection);
 
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(-6.5, -6.5, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+  lookAtMatrix(-6.5, -6.5, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, activeView.modelview);
+
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  GLfloat lightDiffuse[] = {0.9, 0.9, 0.9, 1.0};
-  GLfloat lightPosition[] = {-100.0, -50.0, 150.0, 0.0};
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  GLfloat ambient[] = {0.2, 0.2, 0.2, 1.0};
-  glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient);
-  glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
+  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
+  GLfloat ambient[3] = {0.2, 0.2, 0.2};
+  GLfloat black[3] = {0., 0., 0.};
+  Coord3d lightPosition = {-100.0, -50.0, 150.0};
+  assign(lightPosition, activeView.light_position);
+  assign(lightDiffuse, activeView.light_diffuse);
+  assign(lightDiffuse, activeView.light_specular);
+  assign(black, activeView.global_ambient);
+  assign(ambient, activeView.light_ambient);
+  activeView.quadratic_attenuation = 0.0;
+  activeView.fog_enabled = 0;
 
   if (settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -249,16 +254,6 @@ void SetupMode::display() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
-
-  glShadeModel(GL_SMOOTH);
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
-
-  glColor4f(1.0, 1.0, 1.0, 1.0);
-  GLfloat diffuse[4];
-  for (int i = 0; i < 3; i++) diffuse[i] = colors[gamer->color][i];
-  diffuse[3] = 1.0;
-  glMaterialfv(GL_FRONT, GL_AMBIENT_AND_DIFFUSE, diffuse);
 
   // Create sphere
   int ntries = 0;
@@ -282,8 +277,6 @@ void SetupMode::display() {
   // Transfer
   setupObjectRenderState();
 
-  GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-  glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.3f, 0.3f, 0.3f, 0.3f);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 20.f);
 

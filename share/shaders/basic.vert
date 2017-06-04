@@ -29,14 +29,14 @@ void main(void) {
   cpos = vec4(model_matrix * pos).xyz;
   fcolor = in_Color;
   vec2 vel = mod(-gameTime * in_Velocity, 1.);
-  texco = vec3(vec2(in_Texcoord.xy + vel).xy,in_Texcoord.z);
+  texco = vec3(vec2(in_Texcoord.xy + vel).xy, in_Texcoord.z);
 
-  if (distance(in_Normal.xyz,vec3(0.5,0.5,0.5)) > 0.1) {
+  if (distance(in_Normal.xyz, vec3(0.5, 0.5, 0.5)) > 0.1) {
     flatkey = 1.0;
   } else {
     flatkey = -1.0;
   }
 
   // As model_matrix M is orthogonal, M = transpose(inverse(M))
-  inormal = vec4(model_matrix*2.*vec4(in_Normal.xyz-0.5,0.)).xyz;
+  inormal = vec4(model_matrix * 2. * vec4(in_Normal.xyz - 0.5, 0.)).xyz;
 }

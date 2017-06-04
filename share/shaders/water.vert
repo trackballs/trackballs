@@ -34,5 +34,5 @@ void main(void) {
 
   texco = in_Texcoord + vel + noi;
 
-  inormal = vec4(model_matrix*2.*vec4(in_Normal.xyz-0.5,0.)).xyz;
+  inormal = vec4(model_matrix * 2. * vec4(in_Normal.xyz - 0.5, 0.)).xyz;
 }

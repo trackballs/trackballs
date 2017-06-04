@@ -16,8 +16,8 @@ varying vec4 color;
 varying vec2 texco;
 
 void main(void) {
-  gl_Position = vec4(2*in_Position.x / screen_width-1,
-                     1-2*in_Position.y / screen_height,0.,1.);
+  gl_Position = vec4(2 * in_Position.x / screen_width - 1,
+                     1 - 2 * in_Position.y / screen_height, 0., 1.);
   color = in_Color;
   texco = in_Texcoord;
 }

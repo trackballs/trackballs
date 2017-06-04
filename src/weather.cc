@@ -101,20 +101,12 @@ void Weather::draw2() {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
     glUseProgram(shaderLine);
-
     glBindVertexArray(theVao);
 
     // Pos
     glEnableVertexAttribArray(0);
 
-    GLfloat proj[16];
-    GLfloat model[16];
-    glGetFloatv(GL_PROJECTION_MATRIX, proj);
-    glGetFloatv(GL_MODELVIEW_MATRIX, model);
-    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "proj_matrix"), 1, GL_FALSE,
-                       (GLfloat *)&proj[0]);
-    glUniformMatrix4fv(glGetUniformLocation(shaderLine, "model_matrix"), 1, GL_FALSE,
-                       (GLfloat *)&model[0]);
+    setViewUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
 
     double h = Game::current->player1->position[2] - 6.0;
@@ -170,8 +162,6 @@ void Weather::draw2() {
 
     setupObjectRenderState();
 
-    GLint fogActive = (Game::current && Game::current->fogThickness != 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "fog_active"), fogActive);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

@@ -29,11 +29,11 @@ void main(void) {
   fcolor = in_Color;
   texco = in_Texcoord;
 
-  if (distance(in_Normal.xyz,vec3(0.5,0.5,0.5)) > 0.1) {
+  if (distance(in_Normal.xyz, vec3(0.5, 0.5, 0.5)) > 0.1) {
     flatkey = 1.0;
   } else {
     flatkey = -1.0;
   }
   // As model_matrix M is orthogonal, M = transpose(inverse(M))
-  inormal = vec4(model_matrix*2.*vec4(in_Normal.xyz-0.5,0.)).xyz;
+  inormal = vec4(model_matrix * 2. * vec4(in_Normal.xyz - 0.5, 0.)).xyz;
 }

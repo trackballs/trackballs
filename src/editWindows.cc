@@ -208,8 +208,6 @@ void EStatusWindow::draw() {
   snprintf(str, 255, _("Edit: %s"), editModeNames[EditMode::editMode->currentEditMode]);
   addText_Left(CODE_EDITMODE, fontSize / 2, row4, str, col0);
 
-  //  glDisable(GL_TEXTURE_2D);
-
   /* Small separator between area 1 - 2 */
   draw2DRectangle(col1 - fontSize - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
   /* Small separator between area 2 - 3 */

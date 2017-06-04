@@ -356,11 +356,10 @@ void EditMode::display() {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20);
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20,
+                    activeView.projection);
 
-  /* Setup openGL matrixes for the camera perspective */
+  /* Setup matrixes for the camera perspective */
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   if (map) {
@@ -368,24 +367,31 @@ void EditMode::display() {
   } else
     h = 0.0;
 
-  if (!switchViewpoint)
-    gluLookAt(x - 7.0, y - 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0);
-  else
-    gluLookAt(x + 7.0, y + 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0);
+  if (!switchViewpoint) {
+    lookAtMatrix(x - 7.0, y - 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
+                 activeView.modelview);
+  } else {
+    lookAtMatrix(x + 7.0, y + 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
+                 activeView.modelview);
+  }
 
   /* Some standard GL settings needed */
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
 
-  GLfloat lightDiffuse[] = {0.9, 0.9, 0.9, 0};
-  GLfloat lightPosition[] = {-100.0, -50.0, 150.0, 0.0};
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-  glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
+  activeView.fog_enabled = 0;
+  activeView.quadratic_attenuation = 0.;
 
-  glShadeModel(GL_SMOOTH);
+  Coord3d lightPosition = {-100., -50., 200.};
+  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
+  GLfloat ambient[3] = {0.2, 0.2, 0.2};
+  GLfloat black[3] = {0., 0., 0.};
+  assign(black, activeView.global_ambient);
+  assign(ambient, activeView.light_ambient);
+  assign(lightDiffuse, activeView.light_diffuse);
+  assign(lightDiffuse, activeView.light_specular);
+  assign(lightPosition, activeView.light_position);
 
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
