@@ -49,7 +49,7 @@ add_custom_command(OUTPUT guile.cc.x
 include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} GL GLU SDL2 SDL2_mixer SDL2_image SDL2_ttf z m)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} GL SDL2 SDL2_mixer SDL2_image SDL2_ttf z m)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files

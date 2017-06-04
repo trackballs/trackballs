@@ -2,19 +2,19 @@
 The people behind trackballs
 ----------------------------
 
-Mathias Broxvall	project founder and administrator
-Dietrich Radel		graphics, music, levels, documentation, bugs etc.
-Yannick Perret		extra coder: 
-Samuel Listopad		windows port
-Ari Pollak		Debian packaging, security & build patches
+Mathias Broxvall    project founder and administrator
+Dietrich Radel        graphics, music, levels, documentation, bugs etc.
+Yannick Perret        extra coder: 
+Samuel Listopad        windows port
+Ari Pollak        Debian packaging, security & build patches
 
 Translators
 -----------
-English Translation	Mathias Broxvall        
-Swedish Translation	Mathias Broxvall        
-Italian Translation	Francesco Guatieri      
-French Translation 	Guillaume Bedot         
-Slovak Translation	Jozef Riha <jose1711@gmail.com>
+English Translation    Mathias Broxvall        
+Swedish Translation    Mathias Broxvall        
+Italian Translation    Francesco Guatieri      
+French Translation     Guillaume Bedot         
+Slovak Translation    Jozef Riha <jose1711@gmail.com>
 
 Fonts
 -----
@@ -49,40 +49,40 @@ Sound effects
 The sound effects are taken from KDE, from Benoit Rouits and from 
 Joshua Harding. They are of course all GPL'ed.
 
-blackDie.wav			- Benoit Rouits
-ff_death.wav  			- Benoit Rouits
-levelComplete.wav  		- Benoit Rouits
-start.wav			- Benoit Rouits
-die.wav       			- Benoit Rouits
-flag.wav      			- KDE
-sandcrash.wav      		- Benoit Rouits
-time_warning.wav		- Benoit Rouits
-switch.wav			- Benoit Rouits
-badpill.wav			- Joshua Harding
-godppill.wav			- Joshua Harding
-savepoint.wav			- Joshua Harding
-timeout.wav			- Joshua Harding
-capuchmonk.wav			- Rusty Johnson, http://www.WildlifeLectures.com
-fall_death.wav		        Laurent           http://www.tplm.com
-Kill_death.wav		        Bob Bailey        http://www.a1freesoundeffects.com
-crash.wav		        Justus            http://www.sq7.org/Community/sounds
-roll_sound.wav       		Warren D.Ober     Contributor
-machine_loop.wav     		Warren D.Ober     Contributor
-click.wav                       Warren D.Ober     Contributor
-ball_sinks.wav                  Warren D.Ober     Contributor
-ball_sinks2.wav                 Warren D.Ober     Contributor
+blackDie.wav         - Benoit Rouits
+ff_death.wav         - Benoit Rouits
+levelComplete.wav    - Benoit Rouits
+start.wav            - Benoit Rouits
+die.wav              - Benoit Rouits
+flag.wav             - KDE
+sandcrash.wav        - Benoit Rouits
+time_warning.wav     - Benoit Rouits
+switch.wav           - Benoit Rouits
+badpill.wav          - Joshua Harding
+godppill.wav         - Joshua Harding
+savepoint.wav        - Joshua Harding
+timeout.wav          - Joshua Harding
+capuchmonk.wav       - Rusty Johnson     http://www.WildlifeLectures.com
+fall_death.wav       - Laurent           http://www.tplm.com
+Kill_death.wav       - Bob Bailey        http://www.a1freesoundeffects.com
+crash.wav            - Justus            http://www.sq7.org/Community/sounds
+roll_sound.wav       - Warren D.Ober     Contributor
+machine_loop.wav     - Warren D.Ober     Contributor
+click.wav            - Warren D.Ober     Contributor
+ball_sinks.wav       - Warren D.Ober     Contributor
+ball_sinks2.wav      - Warren D.Ober     Contributor
 
 
 Also, for one of the sound effects I have promised to include this
 notice:
 
-       **				      **
+       **                                     **
        **  The sample of the Capuchin Monkey  **
        **  call is provided courtesy of:      **
-       **				      **
-       **        Rusty Johnson 		      **
+       **                                     **
+       **        Rusty Johnson                   **
        **        The Aylazon Foundation       **
-       **        WildlifeLectures.com	      **
+       **        WildlifeLectures.com         **
        **                                     **
 
 

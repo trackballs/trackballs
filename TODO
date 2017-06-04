@@ -6,32 +6,9 @@ This is a list of feature requests, bugs and known inconsistencies.
 It is divided into the sections: known bugs, feature requests, 
 code cleanup and documentation
 
-FIX THAT DAMN LOCALE SUPPORT!
-
-
-UNSORTED
-
-Fix LOCALEDIR option as suggested by mikael. See below:
-
---------
-This doesn't work very
-well on Gentoo since the games data files go under /usr/share/games but
-the preferred location for locale files is /usr/share/locale.
-
-Hacking up src/Makefile.in and po/Makefile.in.in by changing the localedir
-variable but then the source doesn't honor the LOCALEDIR define that
-is set in src/Makefile.in (DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@).
-Instead, it uses effectiveShareDir.
-
-Ideally, a localedir parameter would be added to configure but having
-the settings code honor the LOCALEDIR would be fine as well.
 -----------
 
 Add a shadow under the ball, this would improve realism greatly.
-
-Nice parsing of the *.set files, allowing multiple languages etc. for
-the descriptive texts.
-
 
 
 ********************************************************************
@@ -40,7 +17,7 @@ the descriptive texts.
 
 ********************************************************************
 
-Bugs marked with a (?) after the title *may* alread have been fixed. 
+Bugs marked with a (?) after the title *may* already have been fixed. 
 Verify if these bugs still are present.
 
 1.3        Up-arrow stuck (?)          MAYBE FIXED
@@ -55,7 +32,7 @@ drawn up on it.
 1.7        Broken physics 
 
 Sometimes the ball can get stuck on an edge. Clue to find bug: print out the position
-of the ball continusly, play until such a position is found and restart from that 
+of the ball continuously, play until such a position is found and restart from that 
 position while debugging.
 
 1.8        Ground physics
@@ -99,17 +76,17 @@ Implement multiplayer modes in the game. Possible variations:
 
 2.3         Resizable windows
 
-Ability to resize window (when in windowed mode) and/or posibility to
+Ability to resize window (when in windowed mode) and/or possibility to
 give exact window size (not just selections like "1024x768").
 
 2.5         Choose level
 
-In the setup screen: Allow left/right arrow to switch between choosen 
+In the setup screen: Allow left/right arrow to switch between chosen 
 level easier.
 
 2.6         Initial menu - speed
 
-Inncrease the speed of the initial menu. 10fps on my computer is too slow.
+Increase the speed of the initial menu.
 
 2.7         First use::calibration of mouse
 
@@ -124,7 +101,7 @@ co-ordinates and can now adjust the amount of sensitivity needed. If the
 distance is big, then reduce sensitivity. If the distance is short, increase
 sensitivity.
 
-2.8         Disappering ground
+2.8         Disappearing ground
 
 Ground that disappears when moving on it.
 
@@ -135,16 +112,11 @@ Ground that disappears when moving on it.
 Saving snapshots etc. as png instead of ppm. Also, using automatic snapshots together with the 
 highscores file.
 
-2.11        Editor - use menus
-
-Implement a menu system in the editor. See TODO.editor
-
-
 2.12        Mr. Black
 
 Determine what features etc. he should be afraid of.
 
-2.13        Alternative difficuly settings
+2.13        Alternative difficulty settings
 
 alternative difficulty settings "sandbox" (just for playing around) and "champion" (see below).
 
@@ -164,22 +136,22 @@ Use it to create flags with a callback function.
 
 2.15        General wind
 
-2.16        Poison pill, Medicin pill
+2.16        Poison pill, Medicine pill
 
 2.17        Alternative opponents
 
-Add more controll flags for Mr. Black and create alternative opponents.
+Add more control flags for Mr. Black and create alternative opponents.
 Pendulum, Hammer, ..., 
 Fireballs, 
 Laser beams
 
-2.17b       Better controll of opponent behaviours
-Allow some (level designer) control of the opponent behviours. Ie, the path
+2.17b       Better control of opponent behaviours
+Allow some (level designer) control of the opponent behaviours. Ie, the path
 they can take or the area they have to stay within. What they are afraid of etc.
 
 
 2.18        Visual effects
-Add clouds, fumes emtted from pipes etc.
+Add clouds, fumes emitted from pipes etc.
 
 2.19        Lava
 
@@ -192,10 +164,6 @@ Make a visible overview map
 
 locked levelsets, have to complete X other levelsets first.
 
-2.22        AA polygons
-
-Implement polygon AA for all map polygons (if the graphics card support it).
-
 2.23        Environment map         (DONE)
 
 2.24        Fonts etc. on settings screens
@@ -207,11 +175,9 @@ Implement polygon AA for all map polygons (if the graphics card support it).
 Display "fortunes"... eg. small tips scrolling by on bottom of screen. 
 display names of songs ( "Life by Design", "Genesis (In The Beginning)" )
 
-2.27        Finish boxes and their physics
-
 2.28        Editor :: visualize flags
 
-Possiblity to visualise ground flags in editor. Esp. the "kill" flag.
+Possibility to visualize ground flags in editor. Esp. the "kill" flag.
 
 2.29        Speed bumps
 
@@ -221,9 +187,9 @@ Possiblity to visualise ground flags in editor. Esp. the "kill" flag.
 
 2.32        Editor :: check file permissions
 
-2.33        Accellerate key      FINISHED
+2.33        Accelerate key      FINISHED
 
-Create new user key (right mousebutton, joystick 2) that can accellerate the
+Create new user key (right mousebutton, joystick 2) that can accelerate the
 player in the current direction. Configurable if it should be allowed to use.
 Maybe changes the effect of the "speed" modification.
 
@@ -238,16 +204,16 @@ as adding extra time.
 
 2.36        Multiple layers of ground
 
-Probably impossible to do under current architecture. Maybe possible to fake
-by creating special "bridge" objects which acts as a second layer just like pipes
-but are drawn as normal ground.
+Tricky to do under current architecture. Fixing this would best be begun
+by making water into a distinct layer; that way physics and representation don't 
+have to be updated at the same time when the ground layering is done.
 
 2.37       Rotation of map in editor and in game
 
 2.38       Handle .scm files in editor
 
 Maybe by having special comments for automatically manipulated sections
-of the file. 
+of the file, or loading entities with editor-specific draw code
 
 
 2.39       Add a way of skipping a too difficult level
@@ -270,7 +236,7 @@ that it works and fall back it it doesn't. Fix crash between
 16bpp/32bpp switch. Allow arbitrary resolutions (like 117 x 42...)
 
 
-2.44       Mr. Black / Baby - controll area
+2.44       Mr. Black / Baby - control area
 
 Add possibility to control the area the other balls are allowed to wander into.
 
@@ -281,7 +247,7 @@ Add possibility to control the area the other balls are allowed to wander into.
 Give both position, focus and 'up' from a script.
 
 2.47       Improve graphics for speed improvement
-Eg. make lines transparent, maybe somewhat like a "komet", leaving trails (glowing particles?)
+Eg. make lines transparent, maybe somewhat like a "comet", leaving trails (glowing particles?)
 
 2.48       Sound effects
 
@@ -301,19 +267,19 @@ Perhaps even screenshots?
 
 *******************************************************************
 
-3.1         Standardised menusystem             FINISHED
+3.1         Standardized menusystem             FINISHED
 
 3.2         Desktop install
 
 Use the desktop-file-install script (if possible) to install the 
 desktop file in the right place(s).
 
-3.3         Drawing frustrum and objects        FINISHED
+3.3         Drawing frustum and objects        FINISHED
 
 3.4         api:: integers vs. real
 
 Fix all inconsistencies when integers or reals are used in a backwards 
-compatible way. Also, what positions are given in aboslute vs. map 
+compatible way. Also, what positions are given in absolute vs. map 
 relative z-coordinates.
 
 3.5         Loading images / textures          FINISHED
@@ -339,7 +305,7 @@ Many levels can be polished some more by fixing background colors etc.
 
 4.1         Keys in menus
 
-Document how the keys are used instead of the mouse in the meny 
+Document how the keys are used instead of the mouse in the menu 
 system.
 
 4.2         Modpills
@@ -358,7 +324,7 @@ Double check that all functions are documented.
 
 4.5         editor
 
-Document all keys/menu entires in the editor.
+Document all keys/menu entries in the editor.
 Esp: the "smooth" feature
 
 4.6         help screen
@@ -370,9 +336,9 @@ help1_*.png. Just have to add description text
 
 Document the default values for all configurable values.
 
-4.8         API faq
+4.8         API FAQ
 
-Create a separate faq with examples and ideas of how the api can be used.
+Create a separate FAQ with examples and ideas of how the api can be used.
 
 4.9         Tutorial Map
 
@@ -387,10 +353,9 @@ how things are done and texts on the map when testing it.
 
 *********************************************************************
 
-Before the v1.1.0 release
+Before the v1.1.1 release
 
-- Get most features (95%) of editor working. Not neccessarily the scheme editor etc.
-- Integrate all of Warrens maps.
+- Get most features (95%) of editor working. Not necessarily the scheme editor etc.
 - Get some more languages ported.
 
 
