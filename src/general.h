@@ -19,7 +19,6 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-// #include <config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <zlib.h>
@@ -45,11 +44,6 @@
 #ifdef __MINGW32__
 #include <io.h>
 #define mkdir(a, ...) mkdir(a)
-#endif
-
-/* YP: if present, include the 'config.h' */
-#ifdef HAVE_CONFIG_H
-#include "config.h"
 #endif
 
 #undef SHARE_DIR

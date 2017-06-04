@@ -777,20 +777,6 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
 
 #define FRAME 50
 
-int bindTexture(const char *name) {
-  int i;
-  for (i = 0; i < numTextures; i++)
-    if (strcmp(name, textureNames[i]) == 0) {
-      glBindTexture(GL_TEXTURE_2D, textures[i]);
-      return i;
-    }
-  // YP: if the texture is not found, try to load it
-  //     and add it in the list
-  i = loadTexture(name);
-  if (i >= 0) glBindTexture(GL_TEXTURE_2D, textures[i]);
-  return i;
-}
-
 int resetTextures() {
   GLfloat texCoord[4];
   char str[256];

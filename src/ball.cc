@@ -81,9 +81,9 @@ Ball::Ball() : Animated() {
   primaryColor[0] = 0.8;
   primaryColor[1] = 0.8;
   primaryColor[2] = 0.8;
-  secondaryColor[0] = 0.5;
-  secondaryColor[1] = 0.5;
-  secondaryColor[2] = 0.5;
+  secondaryColor[0] = 0.1;
+  secondaryColor[1] = 0.1;
+  secondaryColor[2] = 0.1;
 
   gravity = 8.0;
   bounceFactor = 0.8;

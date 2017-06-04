@@ -124,11 +124,9 @@ void Leave2DMode();
 GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0,
                    GLuint *texture = NULL);
 
-int loadTexture(
-    const char *name);  // preloads a texture from file and returns position in textures array
-int bindTexture(
-    const char *name);  // binds texture. Also returns index in textures array used for this.
-int resetTextures();    // Reloads all textures
+// preloads texture from file (if not already loaded); returns texture array position
+int loadTexture(const char *name);
+int resetTextures();  // Reloads all textures
 
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
