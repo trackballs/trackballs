@@ -100,19 +100,11 @@ void Weather::draw2() {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    glUseProgram(shaderLine);
-    glBindVertexArray(theVao);
-
-    // Pos
-    glEnableVertexAttribArray(0);
-
-    setViewUniforms(shaderLine);
-    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
-
     double h = Game::current->player1->position[2] - 6.0;
     int nactive = 0;
     for (int i = 0; i < max_weather_particles; i++) {
-      if (particles[i].position[2] >= h) nactive++;
+      if (particles[i].position[2] < h) continue;
+      nactive++;
     }
 
     GLfloat *data = new GLfloat[2 * 3 * nactive];
@@ -132,10 +124,16 @@ void Weather::draw2() {
       j++;
     }
 
+    // Transfer data
+    glUseProgram(shaderLine);
+    glBindVertexArray(theVao);
+    glEnableVertexAttribArray(0);
+    setViewUniforms(shaderLine);
+    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
+
     GLuint databuf, idxbuf;
     glGenBuffers(1, &databuf);
     glGenBuffers(1, &idxbuf);
-
     glBindBuffer(GL_ARRAY_BUFFER, databuf);
     glBufferData(GL_ARRAY_BUFFER, 2 * 3 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
@@ -144,7 +142,6 @@ void Weather::draw2() {
     delete[] idxs;
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
     glDrawElements(GL_LINES, (2 * nactive), GL_UNSIGNED_SHORT, (void *)0);
 
     glDeleteBuffers(1, &databuf);
@@ -157,16 +154,10 @@ void Weather::draw2() {
     int nactive = 0;
     double h = Game::current->player1->position[2] - 5.0;
     for (int i = 0; i < max_weather_particles; i++) {
-      if (particles[i].position[2] >= h) nactive++;
+      // Note that < and >= or not opposite for nan
+      if (particles[i].position[2] < h) continue;
+      nactive++;
     }
-
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("glitter.png")]);
 
     GLfloat *data = new GLfloat[3 * 8 * nactive];
     ushort *idxs = new ushort[3 * nactive];
@@ -191,19 +182,24 @@ void Weather::draw2() {
       j++;
     }
 
+    // Transfer data
+    setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("glitter.png")]);
+
     GLuint databuf, idxbuf;
     glGenBuffers(1, &databuf);
     glGenBuffers(1, &idxbuf);
-
     glBindBuffer(GL_ARRAY_BUFFER, databuf);
     glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * nactive * sizeof(GLfloat), idxs, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * nactive * sizeof(ushort), idxs, GL_STATIC_DRAW);
     delete[] data;
     delete[] idxs;
 
     configureObjectAttributes();
-
     glDrawElements(GL_TRIANGLES, 3 * nactive, GL_UNSIGNED_SHORT, (void *)0);
 
     glDeleteBuffers(1, &databuf);
@@ -212,6 +208,8 @@ void Weather::draw2() {
 }
 
 void Weather::clear() {
+  // Zero in case of changes
+  memset(particles, 0, sizeof(particles));
   int i;
   for (i = 0; i < max_weather_particles; i++) { particles[i].position[2] = -10.0; }
   next = 0;
