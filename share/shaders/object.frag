@@ -38,6 +38,9 @@ void main(void) {
     normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
   }
   vec4 texcolor = fcolor * texture(tex, texco);
+  if (texcolor.w < 0.001) {
+    discard;
+  }
 
   // Lighting model, not tuned very much
   vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
