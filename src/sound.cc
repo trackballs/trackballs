@@ -103,6 +103,13 @@ double musicFade = 1.0;
 void soundIdle() {
   if (mute) return;
 
+  int nomusic = Settings::settings->musicVolume < 1e-3;
+  if (nomusic) {
+    Mix_PauseMusic();
+  } else {
+    Mix_ResumeMusic();
+  }
+
   if (doSpecialSfx) {
     musicFade = max(0.0, musicFade - 0.3 / fps);
     if (musicFade == 0.0) {
@@ -112,9 +119,12 @@ void soundIdle() {
     }
   } else if (!Mix_Playing(1))
     musicFade = min(1.0, musicFade + 0.3 / fps);
-  Mix_VolumeMusic((int)(musicFade * 127.0 * Settings::settings->musicVolume));
 
-  if (!Mix_PlayingMusic() && n_songs) { playNextSong(); }
+  if (!nomusic) {
+    Mix_VolumeMusic((int)(musicFade * 127.0 * Settings::settings->musicVolume));
+
+    if (!Mix_PlayingMusic() && n_songs) { playNextSong(); }
+  }
 }
 
 void playNextSong() {
@@ -153,7 +163,7 @@ void playNextSong() {
 void playEffect(int e, float vol) {
   if (mute) return;
   vol = vol * Settings::settings->sfxVolume;
-  if (e >= 0 && e < N_EFFECTS && effects[e]) {
+  if (e >= 0 && e < N_EFFECTS && effects[e] && vol > 1e-3) {
     if (strcmp(wavs[e], SFX_LV_COMPLETE) == 0) {
       doSpecialSfx = e;
       musicFade = 1.0;
