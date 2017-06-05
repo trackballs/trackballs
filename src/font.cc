@@ -33,11 +33,11 @@ using namespace std;
 void Font::init() {}
 
 // returns the effective width of the text
-int Font::getTextWidth(const char *text, float sz) {
+int Font::getTextWidth(const char *text, float size) {
   if ((text == NULL) || (strlen(text) == 0)) return (0);
 
   int w, h;
-  TTF_Font *active = menuFontForSize((int)sz);
+  TTF_Font *active = menuFontForSize(size);
   TTF_SetFontOutline(active, 2);
   TTF_SizeUTF8(active, text, &w, &h);
   TTF_SetFontOutline(active, 0);
@@ -48,21 +48,27 @@ void Font::tick(Real t) { update2DStringCache(); }
 
 int Font::drawSimpleText(const char *text, int x, int y, float sz, float r, float g, float b,
                          float a) {
-  if ((text == NULL) || (strlen(text) == 0)) return (0);
+  if ((text == NULL) || (strlen(text) == 0)) return 0;
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  draw2DString(active, text, x, y, r, g, b, a, sz > 10);
-
-  return 0;
+  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 0);
 }
 
 int Font::drawRightSimpleText(const char *text, int x, int y, float sz, float r, float g,
                               float b, float a) {
-  return drawSimpleText(text, x - getTextWidth(text, sz), y, sz, r, g, b, a);
+  if ((text == NULL) || (strlen(text) == 0)) return 0;
+
+  int size = (int)sz;
+  TTF_Font *active = menuFontForSize(size);
+  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 2);
 }
 
 int Font::drawCenterSimpleText(const char *text, int x, int y, float sz, float r, float g,
                                float b, float a) {
-  return drawSimpleText(text, x - getTextWidth(text, sz) / 2, y, sz, r, g, b, a);
+  if ((text == NULL) || (strlen(text) == 0)) return 0;
+
+  int size = (int)sz;
+  TTF_Font *active = menuFontForSize(size);
+  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 1);
 }

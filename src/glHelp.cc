@@ -47,6 +47,9 @@ TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
 extern SDL_Surface *screen;
 extern double displayStartTime;
 
+const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
+const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
+
 double fake_rand[4711];
 double frand(int i) { return fake_rand[i % 4711]; }
 double frand() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
@@ -65,7 +68,6 @@ GLuint mousePointerTexture;
 struct StringInfo {
   TTF_Font *font;
   char string[256];
-  int x, y;
   SDL_Color color;
 };
 int operator<(const struct StringInfo &a, const struct StringInfo &b) {
@@ -112,23 +114,22 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
   return outline;
 }
 
-void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
-                  float blue, float alpha, int outlined) {
+int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
+                 float blue, float alpha, int outlined, int align) {
   struct StringInfo inf;
   inf.color.r = 255 * red;
   inf.color.g = 255 * green;
   inf.color.b = 255 * blue;
   inf.color.a = 255 * alpha;
   inf.font = font;
-  inf.x = x;
-  inf.y = y;
+  memset(inf.string, 0, 256);
   strncpy(inf.string, string, 255);
   inf.string[255] = '\0';
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
     newentry.tick = stringTick;
     SDL_Surface *surf = drawStringToSurface(inf, outlined);
-    if (!surf) { return; }
+    if (!surf) { return 0; }
     newentry.texture = LoadTexture(surf, newentry.texcoord, 1, NULL);
     newentry.w = surf->w;
     newentry.h = surf->h;
@@ -141,8 +142,10 @@ void draw2DString(TTF_Font *font, const char *string, int x, int y, float red, f
 
   y -= cached.h / 2;
 
-  draw2DRectangle(x, y, cached.w, cached.h, cached.texcoord[0], cached.texcoord[1],
-                  cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1., cached.texture);
+  draw2DRectangle(x - align * cached.w / 2, y, cached.w, cached.h, cached.texcoord[0],
+                  cached.texcoord[1], cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1.,
+                  cached.texture);
+  return cached.w;
 }
 
 void update2DStringCache() {
@@ -152,7 +155,7 @@ void update2DStringCache() {
     erased = false;
     for (std::map<StringInfo, StringCache>::iterator i = strcache.begin(); i != strcache.end();
          ++i) {
-      if (i->second.tick < stringTick - 3) {
+      if (i->second.tick < stringTick - 10) {
         glDeleteTextures(1, &i->second.texture);
         strcache.erase(i);
         erased = true;

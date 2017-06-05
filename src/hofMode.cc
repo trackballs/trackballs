@@ -118,10 +118,11 @@ void HallOfFameMode::display() {
 
   for (int i = 0; i < 10; i++) {
     Font::drawSimpleText(&highscore->names[levelSet][i][0], screenWidth / 2 - x,
-                         y + dy * i - size, size, 220 / 256., 220 / 256., 64 / 256., 1.0);
+                         y + dy * i - size, size, menuColor[0], menuColor[1], menuColor[2],
+                         menuColor[3]);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
     Font::drawRightSimpleText(str, screenWidth / 2 + x + size / 2, y + dy * i - size, size,
-                              220 / 256., 220 / 256., 64 / 256., 1.0);
+                              menuColor[0], menuColor[1], menuColor[2], menuColor[3]);
   }
 
   drawMousePointer();

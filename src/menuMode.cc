@@ -187,7 +187,9 @@ void MenuMode::idle(Real td) {
 
   /* This controls the scrolling text */
   offset += 150.0 * td;
-  if (offset > Font::getTextWidth(story, 24) + screenWidth) offset = 0;
+  static int stwidth = -1;
+  if (stwidth < 0) { stwidth = Font::getTextWidth(story, 24); }
+  if (offset > stwidth + screenWidth) offset = 0;
 }
 void MenuMode::mouseDown(int mouseState, int x, int y) { doSelection(); }
 

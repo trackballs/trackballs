@@ -29,9 +29,9 @@ GLuint loadProgram(const char *fragment, const char *vertex);
 double frand();
 double frand(int);
 
-/* displays a 2d text on specific screen coordinates */
-void draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
-                  float alpha, int outlined = 0);
+/* displays a 2d text on specific screen coordinates, returning width */
+int draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
+                 float alpha, int outlined, int align);
 void update2DStringCache();
 /* Common interface for drawing 2d things on the screen */
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
@@ -140,6 +140,7 @@ extern float realTimeNow;
 extern int screenWidth, screenHeight;
 extern TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
 TTF_Font *menuFontForSize(int sz);
+extern const GLfloat menuColorSelected[4], menuColor[4];
 
 /***********************************/
 /*  Inlined vector operations      */

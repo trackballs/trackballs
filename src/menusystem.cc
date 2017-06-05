@@ -49,7 +49,9 @@ void addArea(int code, int x, int y, int w, int h) {
 
 void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(leftStr, fontSize);
+  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int width = Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2],
+                                   color[3]);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
@@ -57,14 +59,12 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  if (code && getSelectedArea() == code)
-    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
-  else
-    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 64 / 256., 1.);
 }
 void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(rightStr, fontSize);
+  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int width = Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1],
+                                        color[2], color[3]);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = rightX - width;
@@ -72,16 +72,12 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  if (code && getSelectedArea() == code)
-    Font::drawSimpleText(rightStr, rightX - width, y0, fontSize, 220 / 256., 220 / 256.,
-                         220 / 256., 1.);
-  else
-    Font::drawSimpleText(rightStr, rightX - width, y0, fontSize, 220 / 256., 220 / 256.,
-                         64 / 256., 1.);
 }
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int width = Font::getTextWidth(str, fontSize);
+  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int width = Font::drawCenterSimpleText(str, cx, y0, fontSize, color[0], color[1], color[2],
+                                         color[3]);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = cx - width / 2;
@@ -89,17 +85,14 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  if (code && getSelectedArea() == code)
-    Font::drawSimpleText(str, cx - width / 2, y0, fontSize, 220 / 256., 220 / 256., 220 / 256.,
-                         1.);
-  else
-    Font::drawSimpleText(str, cx - width / 2, y0, fontSize, 220 / 256., 220 / 256., 64 / 256.,
-                         1.);
 }
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,
                        const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  int widthR = Font::getTextWidth(rightStr, fontSize);
+  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2], color[3]);
+  Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1], color[2],
+                            color[3]);
   int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
@@ -107,15 +100,6 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
-  if (code && getSelectedArea() == code) {
-    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 220 / 256., 1.);
-    Font::drawSimpleText(rightStr, rightX - widthR, y0, fontSize, 220 / 256., 220 / 256.,
-                         220 / 256., 1.);
-  } else {
-    Font::drawSimpleText(leftStr, leftX, y0, fontSize, 220 / 256., 220 / 256., 64 / 256., 1.);
-    Font::drawSimpleText(rightStr, rightX - widthR, y0, fontSize, 220 / 256., 220 / 256.,
-                         64 / 256., 1.);
-  }
 }
 
 int getSelectedArea() {
