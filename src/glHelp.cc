@@ -221,14 +221,6 @@ void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat 
   Require2DMode();
   if (tex == 0) { tex = textures[loadTexture("blank.png")]; }
 
-  static GLuint idxs = (GLuint)-1;
-  if (idxs == (GLuint)-1) {
-    glGenBuffers(1, &idxs);
-    ushort idxdata[6] = {0, 1, 2, 1, 2, 3};
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxdata, GL_STATIC_DRAW);
-  }
-
   const GLfloat data[32] = {
       ver[0][0], ver[0][1], col[0][0], col[0][1], col[0][2], col[0][3], txc[0][0], txc[0][1],
       ver[1][0], ver[1][1], col[1][0], col[1][1], col[1][2], col[1][3], txc[1][0], txc[1][1],
@@ -236,16 +228,24 @@ void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat 
       ver[3][0], ver[3][1], col[3][0], col[3][1], col[3][2], col[3][3], txc[3][0], txc[3][1],
   };
 
-  // May want to convert to streaming by creating oversize buffer and rotating through
-  GLuint buf;
-  glGenBuffers(1, &buf);
-  glBindBuffer(GL_ARRAY_BUFFER, buf);
-  glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  static GLuint idxs = (GLuint)-1;
+  static GLuint buf = (GLuint)-1;
+  if (idxs == (GLuint)-1) {
+    glGenBuffers(1, &idxs);
+    ushort idxdata[6] = {0, 1, 2, 1, 2, 3};
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxdata, GL_STATIC_DRAW);
+
+    glGenBuffers(1, &buf);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_DYNAMIC_DRAW);
+  } else {
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 32 * sizeof(GLfloat), data);
+  }
 
   glBindTexture(GL_TEXTURE_2D, tex);
-
-  glBindBuffer(GL_ARRAY_BUFFER, buf);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
 
   // Input structure: 2x Position; 4x color; 2x texture coord
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
@@ -255,8 +255,6 @@ void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat 
                         (void *)(6 * sizeof(GLfloat)));
 
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &buf);
 }
 
 void drawMousePointer() {
