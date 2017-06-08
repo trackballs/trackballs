@@ -28,13 +28,11 @@ using namespace std;
 
 Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength,
                double radius) {
-  int i;
-
   timeLeft = 3.0;
   nDroplets = (int)strength;
   if (nDroplets > 32) nDroplets = 32;
-  for (i = 0; i < 4; i++) primaryColor[i] = color[i];
-  for (i = 0; i < nDroplets; i++) {
+  for (int i = 0; i < 4; i++) primaryColor[i] = color[i];
+  for (int i = 0; i < nDroplets; i++) {
     positions[i][0] = center[0] + (frandom() - 0.5) * 2.0 * radius;
     positions[i][1] = center[1] + (frandom() - 0.5) * 2.0 * radius;
     positions[i][2] = center[2];
@@ -92,12 +90,10 @@ void Splash::draw2() {
 }
 
 void Splash::tick(Real t) {
-  int i, j;
-
   timeLeft -= t;
   if (t < 0.0) remove();
-  for (i = 0; i < nDroplets; i++) {
-    for (j = 0; j < 3; j++) positions[i][j] += velocities[i][j] * t;
+  for (int i = 0; i < nDroplets; i++) {
+    for (int j = 0; j < 3; j++) positions[i][j] += velocities[i][j] * t;
     velocities[i][2] -= t * 2.0;
   }
 }

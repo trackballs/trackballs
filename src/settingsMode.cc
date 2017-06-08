@@ -42,7 +42,15 @@ extern int screenResolutions[5][2], nScreenResolutions;
 extern void changeScreenResolution();
 
 void SettingsMode::init() { settingsMode = new SettingsMode(); }
-SettingsMode::SettingsMode() {}
+SettingsMode::SettingsMode() {
+  resolution = 0;
+  colorDepth = 0;
+  restoreResolution = 0;
+  restoreColorDepth = 0;
+  testingResolution = 0.;
+  selected = 0;
+  subscreen = SUBSCREEN_GRAPHICS;
+}
 void SettingsMode::activated() {
   Settings *settings = Settings::settings;
 
@@ -66,7 +74,6 @@ void SettingsMode::deactivated() {
   }
 }
 void SettingsMode::display() {
-  int i;
   int menucount;
   int titleFontSize = 64;
 
@@ -195,9 +202,9 @@ void SettingsMode::display() {
     menuItem_LeftRight(MENU_STEERING, menucount++, _("  Steering"), str);
 
     /* Joystick */
-    i = Settings::settings->joystickIndex;
-    if (i)
-      snprintf(str, 255, "%s", SDL_JoystickNameForIndex(i - 1));
+    if (Settings::settings->joystickIndex)
+      snprintf(str, 255, "%s",
+               SDL_JoystickNameForIndex(Settings::settings->joystickIndex - 1));
     else if (SDL_NumJoysticks() == 0)
       snprintf(str, 255, _("no joystick found"));
     else
@@ -287,7 +294,7 @@ void SettingsMode::idle(Real td) {
   }
 }
 
-void SettingsMode::mouseDown(int button, int x, int y) {
+void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
   int up;
   if (button == 1)
     up = 1;

@@ -43,7 +43,7 @@ void addArea(int code, int x, int y, int w, int h) {
   sarea->x0 = x;
   sarea->x1 = x + w;
   sarea->y0 = y;
-  sarea->y1 = y + w;
+  sarea->y1 = y + h;
   sarea->returnCode = code;
 }
 

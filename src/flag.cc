@@ -125,7 +125,7 @@ void Flag::draw() {
   glDeleteBuffers(1, &idxbuf);
 }
 
-void Flag::tick(Real t) {
+void Flag::tick(Real /*t*/) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   Player *p = Game::current->player1;
   Coord3d diff;

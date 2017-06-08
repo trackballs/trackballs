@@ -37,31 +37,26 @@
 using namespace std;
 
 EMenuWindow::EMenuWindow() : MyWindow(0, 0, screenWidth, 30) {
-  int i;
-
   activeSubID = -1;
   activeSubWindow = NULL;
   spacing = screenWidth / N_SUBMENUS;
-  for (i = 0; i < N_SUBMENUS; i++) subWindows[i] = new ESubWindow(i, spacing * i, 30);
+  for (int i = 0; i < N_SUBMENUS; i++) subWindows[i] = new ESubWindow(i, spacing * i, 30);
 }
 EMenuWindow::~EMenuWindow() {
-  int i;
-
-  for (i = 0; i < N_SUBMENUS; i++) delete subWindows[i];
+  for (int i = 0; i < N_SUBMENUS; i++) delete subWindows[i];
 }
 void EMenuWindow::draw() {
-  int i;
   int fontSize = 20;  // 16;
   char str[256];
 
   this->MyWindow::draw();
-  for (i = 0; i < N_SUBMENUS; i++) {
+  for (int i = 0; i < N_SUBMENUS; i++) {
     snprintf(str, sizeof(str), "F%d %s", i + 1, cMenuNames[i]);
     addText_Center(CODE_FROM_MENU(i), fontSize / 2, height / 2, str,
                    spacing * i + spacing / 2);
   }
 }
-void EMenuWindow::mouseDown(int state, int x, int y) {
+void EMenuWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   int menu = CODE_TO_MENU(code);
   if (menu >= 0 && menu < N_SUBMENUS) openSubMenu(menu);
@@ -77,8 +72,6 @@ void EMenuWindow::openSubMenu(int id) {
   activeSubWindow->attach();
 }
 int EMenuWindow::keyToMenuEntry(int key, int shift) {
-  int i, j;
-
   /* Convert keypad numbers to normal numbers */
   if (key >= SDLK_KP_0 && key <= SDLK_KP_9) key = '0' + key - SDLK_KP_0;
   if (key == SDLK_KP_PLUS) key = '+';
@@ -93,12 +86,12 @@ int EMenuWindow::keyToMenuEntry(int key, int shift) {
   if (key == SDLK_DOWN) key = 'D';
 
   /* Search current menu first */
-  i = activeSubID;
+  int i = activeSubID;
   if (i != -1)
-    for (j = 0; cKeyShortcuts[i][j]; j++)
+    for (int j = 0; cKeyShortcuts[i][j]; j++)
       if (cKeyShortcuts[i][j] == key) return i * MAX_MENU_ENTRIES + j;
   for (i = 0; i < N_SUBMENUS; i++)
-    for (j = 0; cKeyShortcuts[i][j]; j++)
+    for (int j = 0; cKeyShortcuts[i][j]; j++)
       if (cKeyShortcuts[i][j] == key) return i * MAX_MENU_ENTRIES + j;
   return -1;
 }
@@ -121,11 +114,10 @@ ESubWindow::ESubWindow(int id, int x, int y) : MyWindow(x, y, 100, 0) {
 }
 
 void ESubWindow::draw() {
-  int i;
   char str[256];
 
   this->MyWindow::draw();
-  for (i = 0; i < rows; i++) {
+  for (int i = 0; i < rows; i++) {
     if (cMenuEntries[id][i][0] == '*') {
       snprintf(str, 255, "%s", cMenuEntries[id][i] + 1);
       addText_Left(0, fontSize / 2, y + 2 + fontSize * i + fontSize / 2, str,
@@ -169,13 +161,12 @@ void ESubWindow::draw() {
 /** Count how many menu entries exists for a given menu. Uses the length of the shortcut key
  * string for this */
 int ESubWindow::countRows() {
-  int i;
-  for (i = 0; i < MAX_MENU_ENTRIES; i++)
+  for (int i = 0; i < MAX_MENU_ENTRIES; i++)
     if (!cMenuEntries[id][i]) return i;
-  return i;
+  return MAX_MENU_ENTRIES;
 }
 
-void ESubWindow::mouseDown(int state, int x, int y) {
+void ESubWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   int menuentry = CODE_TO_MENUENTRY(code);
   if (menuentry >= id * MAX_MENU_ENTRIES && menuentry < (id + 1) * MAX_MENU_ENTRIES)
@@ -336,7 +327,7 @@ void EStatusWindow::draw() {
            EditMode::editMode->levelname);
   addText_Left(0, fontSize / 3, row1, str, area3x + 10);
 }
-void EStatusWindow::mouseDown(int button, int x, int y) {
+void EStatusWindow::mouseDown(int button, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   if (code == CODE_INCREMENT) {
     if (button == SDL_BUTTON_LEFT)
@@ -369,7 +360,7 @@ void EQuitWindow::draw() {
   addText_Center(CODE_YES, fontSize / 2, row2, _("Yes"), x + fontSize * 5);
   addText_Center(CODE_NO, fontSize / 2, row2, _("No"), x + width - fontSize * 5);
 }
-void EQuitWindow::mouseDown(int state, int x, int y) {
+void EQuitWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   if (code == CODE_YES)
     yes();
@@ -430,7 +421,7 @@ void ESaveWindow::draw() {
     } while (t0 + 3.0 > t1);
   }
 }
-void ESaveWindow::mouseDown(int state, int x, int y) {
+void ESaveWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   if (code == CODE_YES)
     yes();
@@ -458,7 +449,7 @@ void ECloseWindow::draw() {
   addText_Center(CODE_YES, fontSize / 2, row2, _("Yes"), x + fontSize * 5);
   addText_Center(CODE_NO, fontSize / 2, row2, _("No"), x + width - fontSize * 5);
 }
-void ECloseWindow::mouseDown(int state, int x, int y) {
+void ECloseWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   if (code == CODE_YES)
     yes();
@@ -492,7 +483,7 @@ void ENewWindow::draw() {
   addText_Left(CODE_CANCEL, fontSize / 2, row3, _("Cancel"), x + fontSize / 2 + 2 + 10);
   addText_Right(CODE_OK, fontSize / 2, row3, _("Open"), x + width - fontSize / 2 - 2);
 }
-void ENewWindow::mouseDown(int state, int x, int y) {
+void ENewWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   if (code == CODE_CANCEL)
     remove();
@@ -501,7 +492,7 @@ void ENewWindow::mouseDown(int state, int x, int y) {
     remove();
   }
 }
-void ENewWindow::key(int key, int x, int y) {
+void ENewWindow::key(int key, int /*x*/, int /*y*/) {
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
 
   if (key == SDLK_BACKSPACE) {
@@ -524,6 +515,8 @@ void ENewWindow::key(int key, int x, int y) {
 EOpenWindow::EOpenWindow()
     : MyWindow(screenWidth / 2 - 200, screenHeight / 2 - 150, 400, 300) {
   nNames = 0;
+  currPage = 0;
+  memset(names, 0, sizeof(names));
 }
 void EOpenWindow::draw() {
   int fontSize = 24;
@@ -534,11 +527,10 @@ void EOpenWindow::draw() {
   int rowN = y + 300 - fontSize;
   int col0 = x + 2 + fontSize / 2;
   int colN = x + 400 - fontSize / 2;
-  int i;
   char str[256];
 
   addText_Center(0, fontSize / 2, row1, _("Open map"), x + width / 2);
-  for (i = 0; i < PAGE_SIZE; i++) {
+  for (int i = 0; i < PAGE_SIZE; i++) {
     int n = i + currPage * PAGE_SIZE;
     if (n < nNames)
       addText_Left(CODE_MAP0 + n, fontSize / 2, row1 + fontSize * (i + 1), names[n], col0);
@@ -548,7 +540,7 @@ void EOpenWindow::draw() {
   addText_Left(CODE_PAGE, fontSize / 2, rowN, str, col0);
   addText_Right(CODE_CANCEL, fontSize / 2, rowN, _("Cancel"), colN);
 }
-void EOpenWindow::mouseDown(int button, int x, int y) {
+void EOpenWindow::mouseDown(int button, int /*x*/, int /*y*/) {
   int code = getSelectedArea();
   int nPages = (nNames + PAGE_SIZE - 1) / PAGE_SIZE;
 
@@ -577,7 +569,6 @@ void EOpenWindow::refreshMapList() {
   char str[512];
   struct dirent* dirent;
   DIR* dir;
-  int i;
 
   nNames = 0;
   currPage = 0;
@@ -602,7 +593,7 @@ void EOpenWindow::refreshMapList() {
   int divNames = nNames;
 
   /* Add all maps from the share directory */
-  snprintf(str, sizeof(str), "%s/levels", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/levels", effectiveShareDir);
   dir = opendir(str);
   if (dir) {
     /* This iteratives over all files there */
@@ -613,6 +604,7 @@ void EOpenWindow::refreshMapList() {
           (strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".map") == 0)) {
         strncpy(str, dirent->d_name, sizeof(str));
         str[strlen(str) - 4] = 0; /* Remove .map ending */
+        int i;
         for (i = 0; i < nNames; i++)
           if (strncasecmp(str, names[i], 256) == 0) break;
         if (i == nNames) strncpy(names[nNames++], str, 256);

@@ -68,7 +68,6 @@ class SettingsMode : public GameMode {
 
   };
 
-  // static SDL_Surface *title;
   int resolution, colorDepth; /* The resolution/depth displayed in the window */
   int restoreResolution,
       restoreColorDepth; /* What the settings->res/depth will be set to when exiting */

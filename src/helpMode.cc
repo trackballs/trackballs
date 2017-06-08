@@ -41,19 +41,23 @@ void HelpMode::init() {
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }
 
   helpMode = new HelpMode();
 }
-HelpMode::HelpMode() {}
+HelpMode::HelpMode() {
+  timeLeft = 0.;
+  isExiting = 0;
+  page = 0;
+}
 void HelpMode::activated() {
   char str[256];
 
   if (!background) {
-    snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/helpBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s\n", str); }
   }
@@ -62,18 +66,18 @@ void HelpMode::activated() {
   bgTexture = LoadTexture(background, bgCoord);
 
   if (screenWidth < 1024)
-    snprintf(str, sizeof(str), "%s/images/help0_640.png", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/help0_640.png", effectiveShareDir);
   else
-    snprintf(str, sizeof(str), "%s/images/help0_1024.png", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/help0_1024.png", effectiveShareDir);
   page0 = IMG_Load(str);
   if (!page0) { error("Error: failed to load %s", str); }
   p0Texture = LoadTexture(page0, p0coord);
   SDL_FreeSurface(page0);
 
   if (screenWidth < 1024)
-    snprintf(str, sizeof(str), "%s/images/help1_640.png", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/help1_640.png", effectiveShareDir);
   else
-    snprintf(str, sizeof(str), "%s/images/help1_1024.png", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/help1_1024.png", effectiveShareDir);
   page1 = IMG_Load(str);
   if (!page1) { error("failed to load %s", str); }
   p1Texture = LoadTexture(page1, p1coord);
@@ -222,7 +226,7 @@ void HelpMode::idle(Real td) {
     timeLeft = min(1.0, timeLeft + td);
   if (timeLeft < 0.0) MenuMode::activate(MenuMode::menuMode);
 }
-void HelpMode::mouseDown(int button, int x, int y) {
+void HelpMode::mouseDown(int button, int /*x*/, int /*y*/) {
   int selected = getSelectedArea();
 
   if (selected == CODE_MOREHELP) {

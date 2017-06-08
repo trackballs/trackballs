@@ -40,6 +40,7 @@ Diamond::Diamond(Coord3d pos) {
   primaryColor[2] = 0.9;
   primaryColor[3] = 0.7;
   fade = 1.0;
+  taken = 0;
 }
 
 void Diamond::draw() {}

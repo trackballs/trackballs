@@ -44,7 +44,7 @@ int Font::getTextWidth(const char *text, float size) {
   return w;
 }
 
-void Font::tick(Real t) { update2DStringCache(); }
+void Font::tick(Real /*t*/) { update2DStringCache(); }
 
 int Font::drawSimpleText(const char *text, int x, int y, float sz, float r, float g, float b,
                          float a) {

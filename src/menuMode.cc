@@ -61,6 +61,9 @@ void MenuMode::init() { menuMode = new MenuMode(); }
 MenuMode::MenuMode() {
   offset = 0.0;
   slides[0] = 0, slides[1] = 0;
+  slideTime = 0.;
+  slideMode[0] = SLIDE_MODE_STATIC;
+  slideMode[1] = SLIDE_MODE_STATIC;
 }
 
 char *story;
@@ -123,7 +126,7 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   displayFrameRate();
   Leave2DMode();
 }
-void MenuMode::key(int key) {
+void MenuMode::key(int /*key*/) {
   /*  if(key == SDLK_RIGHT) {
         selection++;
         if(selection >= MENU_LAST) selection = 0;
@@ -191,7 +194,7 @@ void MenuMode::idle(Real td) {
   if (stwidth < 0) { stwidth = Font::getTextWidth(story, 24); }
   if (offset > stwidth + screenWidth) offset = 0;
 }
-void MenuMode::mouseDown(int mouseState, int x, int y) { doSelection(); }
+void MenuMode::mouseDown(int /*mouseState*/, int /*x*/, int /*y*/) { doSelection(); }
 
 void MenuMode::activated() {
   loadSlide();
@@ -228,7 +231,8 @@ void MenuMode::loadSlide() {
   slideMode[0] = slideMode[1];
 
   /* Load the image */
-  snprintf(str, sizeof(str), "%s/images/slide-%02d.jpg", SHARE_DIR, (rand() % NUM_SLIDES) + 1);
+  snprintf(str, sizeof(str), "%s/images/slide-%02d.jpg", effectiveShareDir,
+           (rand() % NUM_SLIDES) + 1);
   slide = IMG_Load(str);
   if (!slide) { error("failed to load %s", str); }
 

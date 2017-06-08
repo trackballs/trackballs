@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-04 12:32-0400\n"
+"POT-Creation-Date: 2017-06-08 19:25-0400\n"
 "PO-Revision-Date: 2017-05-27 19:56-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -19,49 +19,49 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.1\n"
 
-#: ../src/calibrateJoystickMode.cc:98
+#: ../src/calibrateJoystickMode.cc:96
 msgid "Calibrating Joystick"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:107
+#: ../src/calibrateJoystickMode.cc:105
 msgid "Center joystick"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:111
+#: ../src/calibrateJoystickMode.cc:109
 msgid "Move joystick left"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:115
+#: ../src/calibrateJoystickMode.cc:113
 msgid "Move joystick right"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:119
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Move joystick up"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:123
+#: ../src/calibrateJoystickMode.cc:121
 msgid "Move joystick down"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:127
+#: ../src/calibrateJoystickMode.cc:125
 msgid "Press any button to continue"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:129
+#: ../src/calibrateJoystickMode.cc:127
 msgid "Press escape to cancel"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:132
+#: ../src/calibrateJoystickMode.cc:130
 #, c-format
 msgid "now: %d %d"
 msgstr ""
 
-#: ../src/calibrateJoystickMode.cc:137
+#: ../src/calibrateJoystickMode.cc:135
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr ""
 
-#: ../src/diamond.cc:114
+#: ../src/diamond.cc:115
 msgid "Save point"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: ../src/editMode.cc:159 ../src/editWindows.cc:493
+#: ../src/editMode.cc:159 ../src/editWindows.cc:484
 #, fuzzy
 msgid "Open"
 msgstr "Öffnen"
@@ -354,509 +354,513 @@ msgstr ""
 msgid "Large smooth"
 msgstr ""
 
-#: ../src/editMode.cc:336
+#: ../src/editMode.cc:337
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ""
 
-#: ../src/editMode.cc:337
+#: ../src/editMode.cc:338
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ""
 
-#: ../src/editMode.cc:338
+#: ../src/editMode.cc:339
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ""
 
-#: ../src/editMode.cc:339
+#: ../src/editMode.cc:340
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
 "\n"
 msgstr ""
 
-#: ../src/editMode.cc:463
+#: ../src/editMode.cc:464
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:463
+#: ../src/editMode.cc:464
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:463
+#: ../src/editMode.cc:464
 msgid "Textures"
 msgstr ""
 
-#: ../src/editWindows.cc:148
+#: ../src/editWindows.cc:140
 msgid "y"
 msgstr ""
 
-#: ../src/editWindows.cc:152
+#: ../src/editWindows.cc:144
 #, fuzzy
 msgid "n"
 msgstr "nein"
 
-#: ../src/editWindows.cc:201
+#: ../src/editWindows.cc:192
 msgid "height"
 msgstr ""
 
-#: ../src/editWindows.cc:201
+#: ../src/editWindows.cc:192
 msgid "color"
 msgstr ""
 
-#: ../src/editWindows.cc:201
+#: ../src/editWindows.cc:192
 msgid "water"
 msgstr ""
 
-#: ../src/editWindows.cc:202
+#: ../src/editWindows.cc:193
 msgid "velocity"
 msgstr ""
 
-#: ../src/editWindows.cc:202
+#: ../src/editWindows.cc:193
 msgid "lines"
 msgstr ""
 
-#: ../src/editWindows.cc:202
+#: ../src/editWindows.cc:193
 msgid "feature"
 msgstr ""
 
-#: ../src/editWindows.cc:204
+#: ../src/editWindows.cc:195
 #, c-format
 msgid "Pos: %d,%d"
 msgstr ""
 
-#: ../src/editWindows.cc:206
+#: ../src/editWindows.cc:197
 #, c-format
 msgid "Increment: %3.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:208
+#: ../src/editWindows.cc:199
 #, c-format
 msgid "Edit: %s"
 msgstr ""
 
-#: ../src/editWindows.cc:222
+#: ../src/editWindows.cc:213
 msgid "Heights"
 msgstr ""
 
-#: ../src/editWindows.cc:238
+#: ../src/editWindows.cc:229
 msgid "Water heights"
 msgstr ""
 
-#: ../src/editWindows.cc:254
+#: ../src/editWindows.cc:245
 #, c-format
 msgid "red: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:256
+#: ../src/editWindows.cc:247
 #, c-format
 msgid "green: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:259
+#: ../src/editWindows.cc:250
 #, c-format
 msgid "blue: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:262
+#: ../src/editWindows.cc:253
 #, c-format
 msgid "alpha: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:271
+#: ../src/editWindows.cc:262
 #, c-format
 msgid "dx: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:273
+#: ../src/editWindows.cc:264
 #, c-format
 msgid "dy: %2.2f"
 msgstr ""
 
-#: ../src/editWindows.cc:276
+#: ../src/editWindows.cc:267
 msgid "Lines"
 msgstr ""
 
-#: ../src/editWindows.cc:310
+#: ../src/editWindows.cc:301
 msgid "spike"
 msgstr ""
 
-#: ../src/editWindows.cc:313
+#: ../src/editWindows.cc:304
 msgid "small hill"
 msgstr ""
 
-#: ../src/editWindows.cc:316
+#: ../src/editWindows.cc:307
 msgid "medium hill"
 msgstr ""
 
-#: ../src/editWindows.cc:319
+#: ../src/editWindows.cc:310
 msgid "large hill"
 msgstr ""
 
-#: ../src/editWindows.cc:322
+#: ../src/editWindows.cc:313
 msgid "huge hill"
 msgstr ""
 
-#: ../src/editWindows.cc:325
+#: ../src/editWindows.cc:316
 msgid "small smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:328
+#: ../src/editWindows.cc:319
 msgid "large smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:368
+#: ../src/editWindows.cc:359
 msgid "Quit without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:369 ../src/editWindows.cc:410
-#: ../src/editWindows.cc:458 ../src/settingsMode.cc:125
-#: ../src/settingsMode.cc:151 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:180
+#: ../src/editWindows.cc:360 ../src/editWindows.cc:401
+#: ../src/editWindows.cc:449 ../src/settingsMode.cc:132
+#: ../src/settingsMode.cc:158 ../src/settingsMode.cc:163
+#: ../src/settingsMode.cc:187
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/editWindows.cc:370 ../src/editWindows.cc:411
-#: ../src/editWindows.cc:459 ../src/settingsMode.cc:125
-#: ../src/settingsMode.cc:153 ../src/settingsMode.cc:156
-#: ../src/settingsMode.cc:161 ../src/settingsMode.cc:180
+#: ../src/editWindows.cc:361 ../src/editWindows.cc:402
+#: ../src/editWindows.cc:450 ../src/settingsMode.cc:132
+#: ../src/settingsMode.cc:160 ../src/settingsMode.cc:163
+#: ../src/settingsMode.cc:168 ../src/settingsMode.cc:187
 #, c-format
 msgid "No"
 msgstr "Nein"
 
-#: ../src/editWindows.cc:409
+#: ../src/editWindows.cc:400
 msgid "Save map?"
 msgstr ""
 
-#: ../src/editWindows.cc:413
+#: ../src/editWindows.cc:404
 msgid "Saving"
 msgstr ""
 
-#: ../src/editWindows.cc:457
+#: ../src/editWindows.cc:448
 msgid "Close without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:490
+#: ../src/editWindows.cc:481
 msgid "Name of map"
 msgstr ""
 
-#: ../src/editWindows.cc:492 ../src/editWindows.cc:549
+#: ../src/editWindows.cc:483 ../src/editWindows.cc:541
 msgid "Cancel"
 msgstr ""
 
-#: ../src/editWindows.cc:540
+#: ../src/editWindows.cc:532
 msgid "Open map"
 msgstr ""
 
-#: ../src/editWindows.cc:547
+#: ../src/editWindows.cc:539
 #, c-format
 msgid "page %d / %d"
 msgstr ""
 
-#: ../src/enterHighScoreMode.cc:62
+#: ../src/enterHighScoreMode.cc:60
 #, c-format
 msgid "You got %d points"
 msgstr ""
 
-#: ../src/enterHighScoreMode.cc:67
+#: ../src/enterHighScoreMode.cc:65
 #, c-format
 msgid "Enter your name: %s"
 msgstr ""
 
-#: ../src/glHelp.cc:827
+#: ../src/gamer.cc:35
+msgid "John Doe"
+msgstr ""
+
+#: ../src/glHelp.cc:825
 #, c-format
 msgid "Framerate: %.1f"
 msgstr ""
 
-#: ../src/glHelp.cc:829
+#: ../src/glHelp.cc:827
 #, c-format
 msgid "Framerate unknown"
 msgstr ""
 
-#: ../src/glHelp.cc:831
+#: ../src/glHelp.cc:829
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
 
-#: ../src/helpMode.cc:120
+#: ../src/helpMode.cc:124
 msgid "Your marble:"
 msgstr ""
 
-#: ../src/helpMode.cc:120
+#: ../src/helpMode.cc:124
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr ""
 
-#: ../src/helpMode.cc:121
+#: ../src/helpMode.cc:125
 msgid "Left mouse or spacebar is jump."
 msgstr ""
 
-#: ../src/helpMode.cc:122
+#: ../src/helpMode.cc:126
 msgid "Shift gives top speed when using keyboard."
 msgstr ""
 
-#: ../src/helpMode.cc:123
+#: ../src/helpMode.cc:127
 msgid "Mr Black:"
 msgstr ""
 
-#: ../src/helpMode.cc:123
+#: ../src/helpMode.cc:127
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr ""
 
-#: ../src/helpMode.cc:124
+#: ../src/helpMode.cc:128
 msgid "Modpill Speed:"
 msgstr ""
 
-#: ../src/helpMode.cc:124
+#: ../src/helpMode.cc:128
 msgid "Makes you go faster for short period of time."
 msgstr ""
 
-#: ../src/helpMode.cc:125
+#: ../src/helpMode.cc:129
 msgid "Modpill Spikes:"
 msgstr ""
 
-#: ../src/helpMode.cc:125
+#: ../src/helpMode.cc:129
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr ""
 
-#: ../src/helpMode.cc:126
+#: ../src/helpMode.cc:130
 msgid "Modpill Freeze:"
 msgstr ""
 
-#: ../src/helpMode.cc:126
+#: ../src/helpMode.cc:130
 msgid "This will freeze you - avoid it."
 msgstr ""
 
-#: ../src/helpMode.cc:127
+#: ../src/helpMode.cc:131
 msgid "Modpill Glass:"
 msgstr ""
 
-#: ../src/helpMode.cc:127
+#: ../src/helpMode.cc:131
 msgid "Protects you from acid, but makes you more fragile."
 msgstr ""
 
-#: ../src/helpMode.cc:128
+#: ../src/helpMode.cc:132
 msgid "Modpill Nitro:"
 msgstr ""
 
-#: ../src/helpMode.cc:128
+#: ../src/helpMode.cc:132
 msgid "Move really fast. Active nitro with second button."
 msgstr ""
 
-#: ../src/helpMode.cc:129
+#: ../src/helpMode.cc:133
 msgid "Switch:"
 msgstr ""
 
-#: ../src/helpMode.cc:129
+#: ../src/helpMode.cc:133
 msgid "Activates/deactivates some object/element in the level."
 msgstr ""
 
-#: ../src/helpMode.cc:130
+#: ../src/helpMode.cc:134
 msgid "Moving spike:"
 msgstr ""
 
-#: ../src/helpMode.cc:130
+#: ../src/helpMode.cc:134
 msgid "Obstacle to avoid."
 msgstr ""
 
-#: ../src/helpMode.cc:131
+#: ../src/helpMode.cc:135
 msgid "Flag:"
 msgstr ""
 
-#: ../src/helpMode.cc:131
+#: ../src/helpMode.cc:135
 msgid "Collect for bonus points."
 msgstr ""
 
-#: ../src/helpMode.cc:132
+#: ../src/helpMode.cc:136
 msgid "Normal terrain:"
 msgstr ""
 
-#: ../src/helpMode.cc:132
+#: ../src/helpMode.cc:136
 msgid "Can be of any color and is safe to move on."
 msgstr ""
 
-#: ../src/helpMode.cc:133
+#: ../src/helpMode.cc:137
 msgid "Acid terrain:"
 msgstr ""
 
-#: ../src/helpMode.cc:133
+#: ../src/helpMode.cc:137
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr ""
 
-#: ../src/helpMode.cc:134
+#: ../src/helpMode.cc:138
 msgid "Icy terrain:"
 msgstr ""
 
-#: ../src/helpMode.cc:134
+#: ../src/helpMode.cc:138
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr ""
 
-#: ../src/helpMode.cc:135
+#: ../src/helpMode.cc:139
 msgid "Sandy terrain:"
 msgstr ""
 
-#: ../src/helpMode.cc:135
+#: ../src/helpMode.cc:139
 msgid "Soft to land on but will slow you down."
 msgstr ""
 
-#: ../src/helpMode.cc:136
+#: ../src/helpMode.cc:140
 msgid "Goal:"
 msgstr ""
 
-#: ../src/helpMode.cc:136
+#: ../src/helpMode.cc:140
 msgid "Will take you to the next level. "
 msgstr ""
 
-#: ../src/helpMode.cc:137
+#: ../src/helpMode.cc:141
 msgid "Get here before time runs out."
 msgstr ""
 
-#: ../src/helpMode.cc:138
+#: ../src/helpMode.cc:142
 msgid "Force Field:"
 msgstr ""
 
-#: ../src/helpMode.cc:138
+#: ../src/helpMode.cc:142
 msgid "You cannot pass this unless you switch it off."
 msgstr ""
 
-#: ../src/helpMode.cc:139
+#: ../src/helpMode.cc:143
 msgid "Some are lethal and some are one way."
 msgstr ""
 
-#: ../src/helpMode.cc:140
+#: ../src/helpMode.cc:144
 msgid "Tunnel:"
 msgstr ""
 
-#: ../src/helpMode.cc:140
+#: ../src/helpMode.cc:144
 msgid "Takes you places, sometimes with great speed."
 msgstr ""
 
-#: ../src/helpMode.cc:164
+#: ../src/helpMode.cc:168
 msgid "More Help"
 msgstr ""
 
-#: ../src/helpMode.cc:166 ../src/settingsMode.cc:232
+#: ../src/helpMode.cc:170 ../src/settingsMode.cc:239
 msgid "Back"
 msgstr ""
 
-#: ../src/highScore.cc:39
+#: ../src/highScore.cc:38
 #, c-format
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:113 ../src/setupMode.cc:165
+#: ../src/hofMode.cc:117 ../src/setupMode.cc:167
 msgid "Level Set"
 msgstr ""
 
-#: ../src/hofMode.cc:122
+#: ../src/hofMode.cc:127
 #, c-format
 msgid "%d points"
 msgstr ""
 
-#: ../src/mainMode.cc:176
+#: ../src/mainMode.cc:180
 msgid "Track:"
 msgstr ""
 
-#: ../src/mainMode.cc:178
+#: ../src/mainMode.cc:182
 msgid "Author:"
 msgstr ""
 
-#: ../src/mainMode.cc:180
+#: ../src/mainMode.cc:184
 msgid "Press spacebar to begin"
 msgstr ""
 
-#: ../src/mainMode.cc:192 ../src/mainMode.cc:201 ../src/mainMode.cc:227
-#: ../src/mainMode.cc:241
+#: ../src/mainMode.cc:196 ../src/mainMode.cc:205 ../src/mainMode.cc:231
+#: ../src/mainMode.cc:245
 #, c-format
 msgid "Press spacebar to continue"
 msgstr ""
 
-#: ../src/mainMode.cc:193
+#: ../src/mainMode.cc:197
 msgid "Game over"
 msgstr ""
 
-#: ../src/mainMode.cc:201
+#: ../src/mainMode.cc:205
 msgid "Oops"
 msgstr ""
 
-#: ../src/mainMode.cc:218
+#: ../src/mainMode.cc:222
 msgid "Paused"
 msgstr ""
 
-#: ../src/mainMode.cc:227
+#: ../src/mainMode.cc:231
 msgid "Bonus level complete"
 msgstr ""
 
-#: ../src/mainMode.cc:241
+#: ../src/mainMode.cc:245
 msgid "Level complete"
 msgstr ""
 
-#: ../src/mainMode.cc:248
+#: ../src/mainMode.cc:252
 msgid "Congratulations"
 msgstr ""
 
-#: ../src/mainMode.cc:248
+#: ../src/mainMode.cc:252
 msgid "You have completed the game!"
 msgstr ""
 
-#: ../src/mainMode.cc:463 ../src/mainMode.cc:479
+#: ../src/mainMode.cc:467 ../src/mainMode.cc:483
 msgid "Good luck!"
-msgstr ""
-
-#: ../src/mainMode.cc:556
-#, c-format
-msgid "Level bonuses"
-msgstr ""
-
-#: ../src/mainMode.cc:558
-#, c-format
-msgid "Lives left:"
-msgstr ""
-
-#: ../src/mainMode.cc:559
-#, c-format
-msgid "%d x 100 = %d points"
 msgstr ""
 
 #: ../src/mainMode.cc:560
 #, c-format
-msgid "Time left:"
+msgid "Level bonuses"
 msgstr ""
 
-#: ../src/mainMode.cc:561
+#: ../src/mainMode.cc:562
 #, c-format
-msgid "%d minutes = %d points"
+msgid "Lives left:"
 msgstr ""
 
 #: ../src/mainMode.cc:563
 #, c-format
-msgid "Difficulty:"
+msgid "%d x 100 = %d points"
+msgstr ""
+
+#: ../src/mainMode.cc:564
+#, c-format
+msgid "Time left:"
 msgstr ""
 
 #: ../src/mainMode.cc:565
+#, c-format
+msgid "%d minutes = %d points"
+msgstr ""
+
+#: ../src/mainMode.cc:567
+#, c-format
+msgid "Difficulty:"
+msgstr ""
+
+#: ../src/mainMode.cc:569
 msgid "easy"
 msgstr ""
 
-#: ../src/mainMode.cc:565 ../src/settingsMode.cc:190
+#: ../src/mainMode.cc:569 ../src/settingsMode.cc:197
 #, c-format
 msgid "normal"
 msgstr ""
 
-#: ../src/mainMode.cc:565
+#: ../src/mainMode.cc:569
 msgid "hard"
 msgstr ""
 
-#: ../src/map.cc:254
+#: ../src/map.cc:260
 #, c-format
 msgid "Unknown track"
 msgstr ""
 
-#: ../src/map.cc:255
+#: ../src/map.cc:261
 #, c-format
 msgid "Unknown author"
 msgstr ""
 
-#: ../src/menuMode.cc:72
+#: ../src/menuMode.cc:75
 msgid ""
 "Trackballs is a game similar to the classical game Marble Madness from the "
 "80's. By steering a marble ball through a labyrinth filled with sharp "
@@ -867,400 +871,400 @@ msgid ""
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
 
-#: ../src/menuMode.cc:105
+#: ../src/menuMode.cc:108
 msgid "New Game"
 msgstr ""
 
-#: ../src/menuMode.cc:106
+#: ../src/menuMode.cc:109
 msgid "Quit"
 msgstr ""
 
-#: ../src/menuMode.cc:107
+#: ../src/menuMode.cc:110
 msgid "Settings"
 msgstr ""
 
-#: ../src/menuMode.cc:108
+#: ../src/menuMode.cc:111
 msgid "Hall of Fame"
 msgstr ""
 
-#: ../src/menuMode.cc:109
+#: ../src/menuMode.cc:112
 msgid "Help"
 msgstr "Hilfe"
 
-#: ../src/menuMode.cc:110
+#: ../src/menuMode.cc:113
 msgid "Map Editor"
 msgstr ""
 
-#: ../src/mmad.cc:199
+#: ../src/mmad.cc:198
 #, c-format
 msgid ""
 "Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
 msgstr ""
 
-#: ../src/mmad.cc:201
+#: ../src/mmad.cc:200
 #, c-format
 msgid "   -h  --help            Display this usage information.\n"
 msgstr ""
 
-#: ../src/mmad.cc:202
+#: ../src/mmad.cc:201
 #, c-format
 msgid "   -l  --level           Start from level.\n"
 msgstr ""
 
-#: ../src/mmad.cc:203
+#: ../src/mmad.cc:202
 #, c-format
 msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
 msgstr ""
 
-#: ../src/mmad.cc:204
+#: ../src/mmad.cc:203
 #, c-format
 msgid "   -m  --mute            Mute sound.\n"
 msgstr ""
 
-#: ../src/mmad.cc:205
+#: ../src/mmad.cc:204
 #, c-format
 msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
 msgstr ""
 
-#: ../src/mmad.cc:206
+#: ../src/mmad.cc:205
 #, c-format
 msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
 msgstr ""
 
-#: ../src/mmad.cc:207
+#: ../src/mmad.cc:206
 #, c-format
 msgid "   -f  --fps             Displays framerate\n"
 msgstr ""
 
-#: ../src/mmad.cc:208
+#: ../src/mmad.cc:207
 #, c-format
 msgid "   -v  --version         Prints current version number\n"
 msgstr ""
 
-#: ../src/mmad.cc:209
+#: ../src/mmad.cc:208
 #, c-format
 msgid "   -t  --touch           Updates a map to the latest format\n"
 msgstr ""
 
-#: ../src/mmad.cc:210
+#: ../src/mmad.cc:209
 #, c-format
 msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
 msgstr ""
 
-#: ../src/mmad.cc:211
+#: ../src/mmad.cc:210
 #, c-format
 msgid "   -j  --repair-joystick Correct for bad joysticks\n"
 msgstr ""
 
-#: ../src/mmad.cc:213
+#: ../src/mmad.cc:212
 #, c-format
 msgid "Important keyboard shortcuts\n"
 msgstr ""
 
-#: ../src/mmad.cc:214
+#: ../src/mmad.cc:213
 #, c-format
 msgid "   Escape     Soft quit\n"
 msgstr ""
 
-#: ../src/mmad.cc:215
+#: ../src/mmad.cc:214
 #, c-format
 msgid "   CapsLock   Unhide mouse pointer\n"
 msgstr ""
 
-#: ../src/mmad.cc:216
+#: ../src/mmad.cc:215
 #, c-format
 msgid "   CTRL-q     Quit the game immediatly\n"
 msgstr ""
 
-#: ../src/mmad.cc:217
+#: ../src/mmad.cc:216
 #, c-format
 msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
 msgstr ""
 
-#: ../src/mmad.cc:218
+#: ../src/mmad.cc:217
 #, c-format
 msgid "   k          Kill the ball\n"
 msgstr ""
 
-#: ../src/mmad.cc:321
+#: ../src/mmad.cc:320
 #, c-format
 msgid "Unknown screen resolution of width %d\n"
 msgstr ""
 
-#: ../src/mmad.cc:352
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Welcome to Trackballs. \n"
 msgstr ""
 
-#: ../src/mmad.cc:353
+#: ../src/mmad.cc:352
 #, c-format
 msgid "Using %s as gamedata directory.\n"
 msgstr ""
 
-#: ../src/modPill.cc:136
+#: ../src/modPill.cc:130
 msgid "Speed ball"
 msgstr ""
 
-#: ../src/modPill.cc:136
+#: ../src/modPill.cc:130
 msgid "Extra jump"
 msgstr ""
 
-#: ../src/modPill.cc:136
+#: ../src/modPill.cc:130
 msgid "Spikes"
 msgstr ""
 
-#: ../src/modPill.cc:136
+#: ../src/modPill.cc:130
 msgid "Glass ball"
 msgstr ""
 
-#: ../src/modPill.cc:137
+#: ../src/modPill.cc:131
 msgid "Dizzy!"
 msgstr ""
 
-#: ../src/modPill.cc:137
+#: ../src/modPill.cc:131
 msgid "Freeze!"
 msgstr ""
 
-#: ../src/modPill.cc:137
+#: ../src/modPill.cc:131
 msgid "Floating"
 msgstr ""
 
-#: ../src/modPill.cc:137
+#: ../src/modPill.cc:131
 msgid "Extra life"
 msgstr ""
 
-#: ../src/modPill.cc:138
+#: ../src/modPill.cc:132
 msgid "Small ball"
 msgstr ""
 
-#: ../src/modPill.cc:138
+#: ../src/modPill.cc:132
 msgid "Large ball"
 msgstr ""
 
-#: ../src/modPill.cc:138
+#: ../src/modPill.cc:132
 msgid "Nitro"
 msgstr ""
 
-#: ../src/settingsMode.cc:79
+#: ../src/settingsMode.cc:86
 msgid "Game Settings"
 msgstr ""
 
-#: ../src/settingsMode.cc:89
+#: ../src/settingsMode.cc:96
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr ""
 
-#: ../src/settingsMode.cc:92
+#: ../src/settingsMode.cc:99
 #, c-format
 msgid "Is resolution Auto-%d ok?"
 msgstr ""
 
-#: ../src/settingsMode.cc:96
+#: ../src/settingsMode.cc:103
 msgid "Ok, use this resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:97
+#: ../src/settingsMode.cc:104
 msgid "No, revert to old resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:99
+#: ../src/settingsMode.cc:106
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr ""
 
-#: ../src/settingsMode.cc:111
+#: ../src/settingsMode.cc:118
 msgid "Graphics"
 msgstr ""
 
-#: ../src/settingsMode.cc:118
+#: ../src/settingsMode.cc:125
 #, c-format
 msgid "Auto-%d"
 msgstr ""
 
-#: ../src/settingsMode.cc:120
+#: ../src/settingsMode.cc:127
 msgid "  Resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:121
+#: ../src/settingsMode.cc:128
 msgid "  Test this resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:124
+#: ../src/settingsMode.cc:131
 msgid "  Fullscreen"
 msgstr ""
 
-#: ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:137
 #, c-format
 msgid "None"
 msgstr ""
 
-#: ../src/settingsMode.cc:133
+#: ../src/settingsMode.cc:140
 #, c-format
 msgid "Minimalistic"
 msgstr ""
 
-#: ../src/settingsMode.cc:136
+#: ../src/settingsMode.cc:143
 #, c-format
 msgid "Simple"
 msgstr ""
 
-#: ../src/settingsMode.cc:139
+#: ../src/settingsMode.cc:146
 #, c-format
 msgid "Standard"
 msgstr ""
 
-#: ../src/settingsMode.cc:142
+#: ../src/settingsMode.cc:149
 #, c-format
 msgid "Extra"
 msgstr ""
 
-#: ../src/settingsMode.cc:145
+#: ../src/settingsMode.cc:152
 #, c-format
 msgid "Everything"
 msgstr ""
 
-#: ../src/settingsMode.cc:148
+#: ../src/settingsMode.cc:155
 msgid "  Details"
 msgstr ""
 
-#: ../src/settingsMode.cc:150 ../src/settingsMode.cc:153
+#: ../src/settingsMode.cc:157 ../src/settingsMode.cc:160
 msgid "  Reflections (beta)"
 msgstr ""
 
-#: ../src/settingsMode.cc:155
+#: ../src/settingsMode.cc:162
 msgid "  VSync"
 msgstr ""
 
-#: ../src/settingsMode.cc:164
+#: ../src/settingsMode.cc:171
 #, c-format
 msgid "Frame rate"
 msgstr ""
 
-#: ../src/settingsMode.cc:167
+#: ../src/settingsMode.cc:174
 #, c-format
 msgid "Frame time"
 msgstr ""
 
-#: ../src/settingsMode.cc:170
+#: ../src/settingsMode.cc:177
 msgid "  Show FPS"
 msgstr ""
 
-#: ../src/settingsMode.cc:176
+#: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr ""
 
-#: ../src/settingsMode.cc:179
+#: ../src/settingsMode.cc:186
 msgid "  Use mouse"
 msgstr ""
 
-#: ../src/settingsMode.cc:185
+#: ../src/settingsMode.cc:192
 msgid "  Sensitivity"
 msgstr ""
 
-#: ../src/settingsMode.cc:192
+#: ../src/settingsMode.cc:199
 #, c-format
 msgid "+%d degrees"
 msgstr ""
 
-#: ../src/settingsMode.cc:194
+#: ../src/settingsMode.cc:201
 #, c-format
 msgid "-%d degrees"
 msgstr ""
 
-#: ../src/settingsMode.cc:195
+#: ../src/settingsMode.cc:202
 msgid "  Steering"
 msgstr ""
 
-#: ../src/settingsMode.cc:202
+#: ../src/settingsMode.cc:209
 #, c-format
 msgid "no joystick found"
 msgstr ""
 
-#: ../src/settingsMode.cc:206
+#: ../src/settingsMode.cc:213
 msgid "  Joystick:"
 msgstr ""
 
-#: ../src/settingsMode.cc:216
+#: ../src/settingsMode.cc:223
 msgid "Other"
 msgstr ""
 
-#: ../src/settingsMode.cc:220
+#: ../src/settingsMode.cc:227
 msgid "  Music volume"
 msgstr ""
 
-#: ../src/settingsMode.cc:222
+#: ../src/settingsMode.cc:229
 msgid "  Effects volume"
 msgstr ""
 
-#: ../src/settingsMode.cc:224
+#: ../src/settingsMode.cc:231
 #, fuzzy
 msgid "  Language"
 msgstr "Sprache"
 
-#: ../src/setupMode.cc:157
+#: ../src/setupMode.cc:159
 msgid "Setup new game"
 msgstr ""
 
-#: ../src/setupMode.cc:161
+#: ../src/setupMode.cc:163
 msgid "Player Name"
 msgstr ""
 
-#: ../src/setupMode.cc:167
+#: ../src/setupMode.cc:169
 msgid "N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:173
+#: ../src/setupMode.cc:175
 msgid "Level"
 msgstr ""
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:183
 msgid "Difficulty"
 msgstr ""
 
-#: ../src/setupMode.cc:186
+#: ../src/setupMode.cc:188
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:187
+#: ../src/setupMode.cc:189
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:187
+#: ../src/setupMode.cc:189
 msgid "Sandbox (Hard)"
 msgstr ""
 
-#: ../src/setupMode.cc:189
+#: ../src/setupMode.cc:191
 msgid "Easy"
 msgstr ""
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:192
 msgid "Normal"
 msgstr ""
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:192
 msgid "Hard"
 msgstr ""
 
-#: ../src/setupMode.cc:194
+#: ../src/setupMode.cc:196
 msgid "Start Game"
 msgstr ""
 
-#: ../src/setupMode.cc:198
+#: ../src/setupMode.cc:200
 #, c-format
 msgid "Total games played: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:204
 #, c-format
 msgid "Average score: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:204
+#: ../src/setupMode.cc:206
 #, c-format
 msgid "Average score: N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:207
+#: ../src/setupMode.cc:209
 #, c-format
 msgid "Levels completed: %d"
 msgstr ""

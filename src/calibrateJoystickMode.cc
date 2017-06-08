@@ -31,7 +31,7 @@ using namespace std;
 
 CalibrateJoystickMode *CalibrateJoystickMode::calibrateJoystickMode;
 
-CalibrateJoystickMode::CalibrateJoystickMode() {}
+CalibrateJoystickMode::CalibrateJoystickMode() { stage = 0; }
 
 void CalibrateJoystickMode::init() { calibrateJoystickMode = new CalibrateJoystickMode(); }
 
@@ -39,7 +39,7 @@ void CalibrateJoystickMode::activated() { stage = 0; }
 
 void CalibrateJoystickMode::deactivated() {}
 
-void CalibrateJoystickMode::idle(Real t) {
+void CalibrateJoystickMode::idle(Real /*t*/) {
   if (!Settings::settings->hasJoystick()) return;
   int pressed = SDL_JoystickGetButton(Settings::settings->joystick, 0) ||
                 SDL_JoystickGetButton(Settings::settings->joystick, 1) ||
@@ -81,9 +81,7 @@ void CalibrateJoystickMode::nextStage() {
   }
 }
 
-void CalibrateJoystickMode::mouseDown(int state, int x, int y) {
-  // nextStage();
-}
+void CalibrateJoystickMode::mouseDown(int /*state*/, int /*x*/, int /*y*/) {}
 
 void CalibrateJoystickMode::display() {
   char str[512];
@@ -149,8 +147,7 @@ void CalibrateJoystickMode::display() {
   int x = (int)(screenWidth / 2 + 50.0 * jx);
   int y = (int)(screenHeight / 2 + 50.0 * jy);
 
-  drawMouse(x - 32, y - 32, 64, 64, 0.0);
-  // drawSurface(mousePointer,x-32,y-32,64,64);
+  drawMouse(x - 32, y - 32, 64, 64);
   Leave2DMode();
 }
 

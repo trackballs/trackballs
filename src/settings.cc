@@ -71,6 +71,12 @@ Settings::Settings() {
   doReflections = 0;
   language = 0;
   vsynced = 1;
+  doSpecialLevel = 0;
+  nLevelSets = 0;
+  joy_center[0] = 0;
+  joy_center[1] = 0;
+  memset(specialLevel, 0, sizeof(specialLevel));
+  memset(levelSets, 0, sizeof(levelSets));
 
   /* Load all settings from a scheme-syntaxed config file */
   char str[256];
@@ -143,10 +149,10 @@ void Settings::loadLevelSets() {
   nLevelSets = 0;
 
   /* ugly fix to make levelset lv.set the first level set */
-  snprintf(str, sizeof(str), "%s/levels/lv.set", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/levels/lv.set", effectiveShareDir);
   loadLevelSet(str, "lv.set");
 
-  snprintf(str, sizeof(str), "%s/levels", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/levels", effectiveShareDir);
   DIR *dir = opendir(str);
   if (!dir) { error("Can't find the %s/ directory", str); }
   struct dirent *dirent;
@@ -154,7 +160,7 @@ void Settings::loadLevelSets() {
     if (strlen(dirent->d_name) > 4 &&
         strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
       if (strcmp(dirent->d_name, "lv.set")) {
-        snprintf(str, sizeof(str), "%s/levels/%s", SHARE_DIR, dirent->d_name);
+        snprintf(str, sizeof(str), "%s/levels/%s", effectiveShareDir, dirent->d_name);
         loadLevelSet(str, dirent->d_name);
       }
     }
@@ -173,7 +179,7 @@ void Settings::loadLevelSets() {
     }
 
   if (!nLevelSets) {
-    error("failed to load any levelsets, place levels in %s/levels/", SHARE_DIR);
+    error("failed to load any levelsets, place levels in %s/levels/", effectiveShareDir);
   }
 }
 void Settings::loadLevelSet(const char *setname, const char *shortname) {
@@ -255,13 +261,16 @@ void Settings::loadLevelSet(const char *setname, const char *shortname) {
 
   char imagename[256];
   strncpy(imagename, setname, sizeof(imagename));
+  imagename[255] = '\0';
   strncpy(imagename + strlen(imagename) - 4, ".jpg", sizeof(imagename) - strlen(imagename));
+  imagename[255] = '\0';
   FILE *fp2 = fopen(setname, "r");
   if (fp2)
     fclose(fp2);
   else
     imagename[0] = 0;
   strncpy(levelSets[nLevelSets].imagename, imagename, sizeof(levelSets[nLevelSets].imagename));
+  levelSets[nLevelSets].imagename[255] = '\0';
 
   nLevelSets++;
 }

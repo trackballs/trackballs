@@ -36,7 +36,7 @@ SmartTrigger::~SmartTrigger() {
   if (leaving) scm_gc_unprotect_object(leaving);
   this->GameHook::~GameHook();
 }
-void SmartTrigger::tick(Real t) {
+void SmartTrigger::tick(Real /*t*/) {
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;

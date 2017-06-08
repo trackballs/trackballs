@@ -34,7 +34,7 @@ Trigger::~Trigger() {
   scm_gc_unprotect_object(expr);
   this->GameHook::~GameHook();
 }
-void Trigger::tick(Real t) {
+void Trigger::tick(Real /*t*/) {
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;

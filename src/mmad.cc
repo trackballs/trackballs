@@ -19,7 +19,6 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-const char *SHARE_DIR_DEFAULT = SHARE_DIR;
 #include "general.h"
 #include "gameMode.h"
 #include "mainMode.h"
@@ -137,7 +136,7 @@ void changeScreenResolution() {
 
     mainContext = SDL_GL_CreateContext(window);
     char str[256];
-    snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", effectiveShareDir);
     SDL_Surface *wmIcon = IMG_Load(str);
     if (wmIcon) { SDL_SetWindowIcon(window, wmIcon); }
   }
@@ -250,7 +249,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   int audio = SDL_INIT_AUDIO;
   SDL_Event event;
   char str[256], *touchName = 0;
-  int i;
 
   const char *const short_options = "he:l:t:wmr:s:fqvyj";
   const struct option long_options[] = {{"help", 0, NULL, 'h'},
@@ -292,10 +290,11 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     long_options, NULL);
 #endif
     */
-
+    int i;
     switch (next_option) {
     case 'h':
       print_usage(stdout, 0);
+      break;
     case 'l':
       snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
                "%s", optarg);
@@ -350,7 +349,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   } while (next_option != -1);
 
   printf(_("Welcome to Trackballs. \n"));
-  printf(_("Using %s as gamedata directory.\n"), SHARE_DIR);
+  printf(_("Using %s as gamedata directory.\n"), effectiveShareDir);
 
   /* Initialize SDL */
   if ((SDL_Init(SDL_INIT_VIDEO | audio | SDL_INIT_JOYSTICK) == -1)) {
@@ -372,7 +371,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   // set the name of the window
 
   double bootStart = ((double)SDL_GetTicks()) / 1000.0;
-  snprintf(str, sizeof(str), "%s/images/splashScreen.jpg", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/images/splashScreen.jpg", effectiveShareDir);
   SDL_Surface *splashScreen = IMG_Load(str);
   if (!splashScreen) { error("failed to load %s", str); }
   glViewport(0, 0, screenWidth, screenHeight);
@@ -382,7 +381,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   GLuint splashTexture;
   LoadTexture(splashScreen, texcoord, 0, &splashTexture);
   SDL_FreeSurface(splashScreen);
-  for (i = 0; i < 2; i++) {
+  for (int i = 0; i < 2; i++) {
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
                     texcoord[3], 1., 1., 1., 1., splashTexture);
@@ -412,7 +411,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
              touchName);
     if (!fileExists(mapname))
-      snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", SHARE_DIR, touchName);
+      snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, touchName);
     if (!fileExists(mapname)) snprintf(mapname, sizeof(mapname), "%s", touchName);
     printf("Touching map %s\n", mapname);
     Map *map = new Map(mapname);
@@ -546,6 +545,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
           }
         } else
           GameMode::current->keyUp(event.key.keysym.sym);
+        break;
       case SDL_KEYDOWN:
 
         /* Always quit if the 'q' key is pressed */
@@ -611,11 +611,11 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   if (GameMode::current) delete (GameMode::current);
 
   /* TODO. Delete all gamemodes, including the editor */
+  glHelpCleanup();
   SDL_Quit();
 }
 
 int main(int argc, char **argv) {
-  int i;
   char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
   program_name = argv[0];
 
@@ -630,6 +630,7 @@ int main(int argc, char **argv) {
     char thisDir[256];
     /* From arg0/share/trackballs  */
     snprintf(thisDir, sizeof(thisDir), "%s", program_name);
+    int i;
     for (i = strlen(thisDir) - 1; i >= 0; i--)
       if (thisDir[i] == '/'
 #ifdef WIN32
@@ -659,7 +660,7 @@ int main(int argc, char **argv) {
 
           if (!testDir()) {
             /* From compilation default */
-            snprintf(effectiveShareDir, sizeof(effectiveShareDir), "%s", SHARE_DIR_DEFAULT);
+            snprintf(effectiveShareDir, sizeof(effectiveShareDir), "%s", SHARE_DIR);
 
             if (!testDir()) {
               error("Could not find resource directory(%s)\n", effectiveShareDir);

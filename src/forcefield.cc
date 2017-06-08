@@ -125,4 +125,4 @@ void ForceField::draw2() {
   glDeleteBuffers(1, &idxbuf);
 }
 
-void ForceField::tick(Real t) {}
+void ForceField::tick(Real /*t*/) {}

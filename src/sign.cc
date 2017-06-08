@@ -49,21 +49,21 @@ Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
     primaryColor[2] = 1.0;
   }
 
-  texture = 0;
+  textimg = 0;
   mkTexture(string);
 }
 
 Sign::~Sign() {
-  if (texture) glDeleteTextures(1, &texture);
+  if (textimg) glDeleteTextures(1, &textimg);
 }
 
 void Sign::mkTexture(const char *string) {
   SDL_Surface *text;
-  SDL_Color fgColor = {255, 255, 255};
+  SDL_Color fgColor = {255, 255, 255, 255};
 
-  if (texture) glDeleteTextures(1, &texture);
+  if (textimg) glDeleteTextures(1, &textimg);
   text = TTF_RenderUTF8_Blended(ingameFont, string, fgColor);
-  texture = LoadTexture(text, texcoord);
+  textimg = LoadTexture(text, texcoord);
   width = text->w;
   height = text->h;
   SDL_FreeSurface(text);
@@ -83,17 +83,6 @@ void Sign::draw2() {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
   glDepthFunc(GL_ALWAYS);
-
-  setupObjectRenderState();
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
-  glBindTexture(GL_TEXTURE_2D, texture);
-
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
@@ -123,6 +112,18 @@ void Sign::draw2() {
                           texcoord[0] + texcoord[2], texcoord[1], color, flat);
   pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
                           texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
+
+  // Transfer data
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
+  glBindTexture(GL_TEXTURE_2D, textimg);
+
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
 
   glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);

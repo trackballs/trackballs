@@ -40,7 +40,7 @@ Animator::~Animator() {
   if (fun) scm_gc_unprotect_object(fun);
   this->GameHook::~GameHook();
 }
-Real Animator::getValue() {
+Real Animator::getValue() const {
   return value0 * (1.0 - position / length) + position / length * value1;
 }
 void Animator::tick(Real td) {

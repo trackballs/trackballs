@@ -44,6 +44,8 @@ Animated::Animated() : GameHook() {
 
   scoreOnDeath = 0;
   timeOnDeath = 0;
+  flags = 0;
+  onScreen = 0;
 }
 Animated::~Animated() {}
 void Animated::has_moved() {
@@ -68,6 +70,8 @@ void Animated::computeBoundingBox() {
 void Animated::tick(Real dt) { GameHook::tick(dt); }
 
 void Animated::die(int how) {
+  (void)how;
+
   double pos[3];
 
   /* Trigger any callbacks to guile if registered */

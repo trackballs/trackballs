@@ -105,4 +105,4 @@ SCM GameHook::getHook(GameHookEvent event) {
   return hooks[event];
 }
 
-void GameHook::tick(Real dt) { triggerHook(GameHookEvent_Tick, NULL); }
+void GameHook::tick(Real /*dt*/) { triggerHook(GameHookEvent_Tick, NULL); }

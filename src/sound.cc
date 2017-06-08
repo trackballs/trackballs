@@ -61,13 +61,13 @@ void soundInit() {
 
   clearMusicPreferences();
 
-  snprintf(str, sizeof(str), "%s/sfx", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/sfx", effectiveShareDir);
   dir = opendir(str);
   if (dir) {
     while ((dirent = readdir(dir))) {
       if (strlen(dirent->d_name) > 4 &&
           (strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".wav") == 0)) {
-        snprintf(str, sizeof(str), "%s/sfx/%s", SHARE_DIR, dirent->d_name);
+        snprintf(str, sizeof(str), "%s/sfx/%s", effectiveShareDir, dirent->d_name);
         effects[n_effects] = Mix_LoadWAV(str);
         if (effects[n_effects]) {
           wavs[n_effects] = strdup(dirent->d_name);
@@ -80,14 +80,14 @@ void soundInit() {
   }
 
   n_songs = 0;
-  snprintf(str, sizeof(str), "%s/music", SHARE_DIR);
+  snprintf(str, sizeof(str), "%s/music", effectiveShareDir);
   dir = opendir(str);
   if (dir) {
     while ((dirent = readdir(dir))) {
       if (strlen(dirent->d_name) > 4 &&
           (strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".ogg") == 0 ||
            strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".mp3") == 0)) {
-        snprintf(str, sizeof(str), "%s/music/%s", SHARE_DIR, dirent->d_name);
+        snprintf(str, sizeof(str), "%s/music/%s", effectiveShareDir, dirent->d_name);
         music[n_songs] = Mix_LoadMUS(str);
         songName[n_songs] = strdup(dirent->d_name);
         if (!music[n_songs++]) warning("Failed to load '%s'", str);
@@ -128,13 +128,13 @@ void soundIdle() {
 }
 
 void playNextSong() {
-  int i, tries, r;
+  int i;
   static int oldSong = -1;
 
-  for (tries = 0; tries < 2; tries++) {
+  for (int tries = 0; tries < 2; tries++) {
     if (hasMusicPreferences) {
       /* Pick one of the selected songs, with weights */
-      r = random() % hasMusicPreferences;
+      int r = random() % hasMusicPreferences;
       for (i = 0; i < n_songs; i++) {
         r -= musicPreferences[i];
         if (r <= 0) break;

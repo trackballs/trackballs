@@ -28,13 +28,12 @@
 #include "math.h"
 #include "sound.h"
 #include "settings.h"
-#include "gamer.h"
 #include "splash.h"
 #include "settings.h"
 
 using namespace std;
 
-Player::Player(Gamer *gamer) : Ball() {
+Player::Player() : Ball() {
   inTheAir = 0;
   inPipe = 0;
   lives = 3;
@@ -320,7 +319,6 @@ void Player::die(int how) {
   playing = false;
   health = 0.0;
 
-  int i, j;
   Coord3d pos, vel;
   if (how == DIE_ACID) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
@@ -330,8 +328,8 @@ void Player::die(int how) {
     center[2] = map->getHeight(center[0], center[1]);
     new Splash(center, vel, acidColor, 32.0, radius);
   } else
-    for (i = 0; i < 4; i++)
-      for (j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++) {
         Real a = i / 4.0 * M_PI2;
         Real b = (j + 0.5) / 4.0 * M_PI;
         pos[0] = position[0] + cos(a) * 0.25 * sin(b) * 2.0;
@@ -381,7 +379,7 @@ void Player::restart(Coord3d pos) {
   /*for(i=0;i<NUM_MODS;i++)
     modTimeLeft[i] = 0.0;*/
 }
-void Player::mouse(int state, int x, int y) {}
+void Player::mouse(int /*state*/, int /*x*/, int /*y*/) {}
 void Player::newLevel() { Ball::balls->insert(this); }
 void Player::setHealth(Real d) {
   if (d < health) health = d;

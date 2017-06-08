@@ -58,8 +58,6 @@ Bird::Bird(int x, int y, int dx, int dy, Real size, Real speed) {
 }
 
 void Bird::draw2() {
-  int i;
-
   if (hide > 0.) return;
 
   glDisable(GL_CULL_FACE);
@@ -73,7 +71,7 @@ void Bird::draw2() {
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
 
   GLfloat color[4];
-  for (i = 0; i < 3; i++) color[i] = primaryColor[i];
+  for (int i = 0; i < 3; i++) color[i] = primaryColor[i];
   color[3] = 1.0;
 
   GLfloat data[4 * 8];

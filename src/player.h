@@ -27,7 +27,7 @@
 
 class Player : public Ball {
  public:
-  Player(class Gamer *gamer);
+  Player();
   virtual ~Player();
 
   void draw();

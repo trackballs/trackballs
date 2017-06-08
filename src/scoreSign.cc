@@ -28,15 +28,15 @@
 using namespace std;
 
 ScoreSign::ScoreSign(int points, Coord3d position) : Sign("++++", 4.0, 1.0, 100.0, position) {
-  init(points, position, SCORESIGN_SCORE);
+  init(points, SCORESIGN_SCORE);
 }
 
 ScoreSign::ScoreSign(int points, Coord3d position, int type)
     : Sign("++++", 4.0, 1.0, 100.0, position) {
-  init(points, position, type);
+  init(points, type);
 }
 
-void ScoreSign::init(int points, Coord3d position, int type) {
+void ScoreSign::init(int points, int type) {
   this->type = type;
   this->points = 0.0;
   pointsLeft = points;

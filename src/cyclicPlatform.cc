@@ -48,6 +48,7 @@ void CyclicPlatform::tick(Real dt) {
   Real t = Game::current->gameTime + offset;
   t -= ((int)(t/cycleTime)) * cycleTime;*/
   Map *map = Game::current->map;
+  if (!map) return;
 
   Real h, oldHeight = map->cell(x1, y1).heights[0];
 
@@ -60,7 +61,6 @@ void CyclicPlatform::tick(Real dt) {
   else
     h = high + (low - high) * (t - timeLow - timeRise - timeHigh) / timeFall;
 
-  if (!map) return;
   for (int x = x1; x <= x2; x++)
     for (int y = y1; y <= y2; y++) {
       Cell &c = map->cell(x, y);

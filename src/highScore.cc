@@ -32,9 +32,8 @@ char highScorePath[256];
 
 HighScore* HighScore::highScore;
 HighScore::HighScore() {
-  int i;
   for (int levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
-    for (i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; i++) {
       points[levelSet][i] = 1000 - i * 100;
       snprintf(names[levelSet][i], sizeof(names[levelSet][i]), _("Anonymous Coward"));
     }
@@ -59,7 +58,7 @@ HighScore::HighScore() {
   }
 
 #else
-  snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", SHARE_DIR);
+  snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", effectiveShareDir);
 #endif
   if (pathIsLink(highScorePath)) {
     warning("%s is a symbolic link. Cannot load highscores\n", highScorePath);
@@ -117,14 +116,14 @@ int HighScore::isHighScore(int score) {
   return score > points[Game::current->currentLevelSet][9];
 }
 void HighScore::addHighScore(int score, char* name) {
-  int i, j;
   int levelSet = Game::current->currentLevelSet;
   if (levelSet < 0) return;
 
+  int i;
   for (i = 0; i < 10; i++)
     if (score > points[levelSet][i]) break;
   if (i < 10) {
-    for (j = 9; j > i; j--) {
+    for (int j = 9; j > i; j--) {
       strcpy(names[levelSet][j], names[levelSet][j - 1]);
       points[levelSet][j] = points[levelSet][j - 1];
     }

@@ -191,7 +191,7 @@ void EditMode::init() {
 
 EditMode::EditMode() {
   map = NULL;
-  strcpy(levelname, "");
+  memset(levelname, 0, sizeof(levelname));
   mapIsWritable = 0;
 
   /*
@@ -238,6 +238,7 @@ void EditMode::loadMap(char* name) {
 
   // Store name of level to edit
   strncpy(levelname, name, sizeof(levelname));
+  levelname[255] = '\0';
 
   /* Set the pathname under which we will save the map */
   snprintf(pathname, sizeof(pathname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
@@ -247,7 +248,7 @@ void EditMode::loadMap(char* name) {
 
   if (!fileExists(mapname))
     // Alternativly from the share directory
-    snprintf(mapname, sizeof(mapname) - 1, "%s/levels/%s.map", SHARE_DIR, name);
+    snprintf(mapname, sizeof(mapname) - 1, "%s/levels/%s.map", effectiveShareDir, name);
 
   /* Note. not a problem here even if the map does not exists, it will use default values
    * instead */
@@ -322,7 +323,7 @@ void EditMode::saveMap() {
   doAskSave = 0;
 
   /* Check if there already exists a script file for this map */
-  snprintf(str, sizeof(str), "%s/levels/%s.scm", SHARE_DIR, levelname);
+  snprintf(str, sizeof(str), "%s/levels/%s.scm", effectiveShareDir, levelname);
   if (!pathIsFile(str)) {
     snprintf(str, sizeof(str), "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
     if (!pathIsFile(str)) {
@@ -395,8 +396,8 @@ void EditMode::display() {
 
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
-    map->draw(switchViewpoint | birdsEye, 0, x, y);
-    map->draw(switchViewpoint | birdsEye, 1, x, y);
+    map->draw(0, x, y);
+    map->draw(1, x, y);
     /* If we have a clipboard selection then display where it will be pasted */
     if (cellClipboard) {
       map->drawFootprint(x, y, x + cellClipboardWidth - 1, y + cellClipboardHeight - 1, 1);
@@ -918,395 +919,8 @@ void EditMode::key(int key) {
   menuWindow->key(key, shift);
 
   return;
-
-#ifdef FOOBARS
-
-  if (menuChoise == MENU_HILLS && key >= '1' && key < '1' + N_HILLS) { hill = key - '1'; }
-
-  /* These keys preloads rotated and scaled textures */
-  /*
-  if(menuChoise == MENU_TEXTURE && key >= '1' && key <= '8') {
-        for(x1=xLow;x1<=xHigh;x1++)
-          for(y1=yLow;y1<=yHigh;y1++) {
-                Cell& c2=map->cell(x1,y1);
-                for(north=0;north<2;north++)
-                  for(east=0;east<2;east++) {
-                        double angle=(2.0*M_PI * (key-'1'))/8.0;
-                        c2.textureCoords[Cell::NORTH*north+Cell::EAST*east][0] =
-                          ((x1+east)*cos(angle) + (y1+north)*sin(angle))*raise/4.0 *
-  (shift?-1.:1.);
-                        c2.textureCoords[Cell::NORTH*north+Cell::EAST*east][1] =
-                          (- (x1+east)*sin(angle) + (y1+north)*cos(angle))*raise/4.0;
-                  }
-          }
-          }*/
-
-  int mx, my;
-  switch (key) {
-  case 'w':
-  case SDLK_UP:
-    /*
-    if(menuChoise == MENU_TRANSLATE) {
-      if(!switchViewpoint)
-            for(mx=map->width-1;mx>0;mx--)
-              for(my=0;my<map->height;my++)
-                    map->cell(mx,my) = map->cell(mx-1,my);
-      else
-            for(mx=0;mx<map->width-1;mx++)
-              for(my=0;my<map->height;my++)
-                    map->cell(mx,my) = map->cell(mx+1,my);
-    } else
-      if (shift && ctrl)  {
-        if (c.flags & CELL_NOLINENORTH)
-          c.flags = ~((~c.flags) & CELL_NOLINENORTH);
-        else
-          c.flags |= CELL_NOLINENORTH; }
-      else
-      x+=(switchViewpoint?-1:1)*(shift?5:1);
-    */
-    break;
-  case 's':
-  case 'x':
-  case SDLK_DOWN:
-    if (menuChoise == MENU_TRANSLATE) {
-      if (!switchViewpoint)
-        for (mx = 0; mx < map->width - 1; mx++)
-          for (my = 0; my < map->height; my++) map->cell(mx, my) = map->cell(mx + 1, my);
-      else
-        for (mx = map->width - 1; mx > 0; mx--)
-          for (my = 0; my < map->height; my++) map->cell(mx, my) = map->cell(mx - 1, my);
-    } else if (shift && ctrl) {
-      if (c.flags & CELL_NOLINESOUTH)
-        c.flags = ~((~c.flags) & CELL_NOLINESOUTH);
-      else
-        c.flags |= CELL_NOLINESOUTH;
-    } else
-      x -= (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
-    break;
-  case 'a':
-  case SDLK_LEFT:
-    if (menuChoise == MENU_TRANSLATE) {
-      if (!switchViewpoint)
-        for (my = map->height; my > 0; my--)
-          for (mx = 0; mx < map->width; mx++) map->cell(mx, my) = map->cell(mx, my - 1);
-      else
-        for (my = 0; my < map->height - 1; my++)
-          for (mx = 0; mx < map->width; mx++) map->cell(mx, my) = map->cell(mx, my + 1);
-    } else if (shift && ctrl) {
-      if (c.flags & CELL_NOLINEWEST)
-        c.flags = ~((~c.flags) & CELL_NOLINEWEST);
-      else
-        c.flags |= CELL_NOLINEWEST;
-    } else
-      y += (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
-    break;
-  case 'd':
-  case SDLK_RIGHT:
-    if (menuChoise == MENU_TRANSLATE) {
-      if (!switchViewpoint)
-        for (my = 0; my < map->height - 1; my++)
-          for (mx = 0; mx < map->width; mx++) map->cell(mx, my) = map->cell(mx, my + 1);
-      else
-        for (my = map->height; my > 0; my--)
-          for (mx = 0; mx < map->width; mx++) map->cell(mx, my) = map->cell(mx, my - 1);
-    } else if (shift && ctrl) {
-      if (c.flags & CELL_NOLINEEAST)
-        c.flags = ~((~c.flags) & CELL_NOLINEEAST);
-      else
-        c.flags |= CELL_NOLINEEAST;
-    } else
-      y -= (switchViewpoint ? -1 : 1) * (shift ? 5 : 1);
-    break;
-  case 'q':
-    raise -= shift ? 1.0 : 0.1;
-    break;
-  case 'e':
-    raise += shift ? 1.0 : 0.1;
-    break;
-  case 'b':
-    birdsEye = birdsEye ? 0 : 1;
-    break;
-  case 't':
-    if (map->flags & Map::flagTranslucent)
-      map->flags &= ~Map::flagTranslucent;
-    else
-      map->flags |= Map::flagTranslucent;
-    break;
-
-  case 'c':
-    if (map->flags & Map::flagShowCross)
-      map->flags &= ~Map::flagShowCross;
-    else
-      map->flags |= Map::flagShowCross;
-    break;
-
-  case 'u':
-  case 'h':
-  case 'm':
-  case 'k':
-
-    if (menuChoise == MENU_TEXTURE) {
-      for (x1 = xLow; x1 <= xHigh; x1++)
-        for (y1 = yLow; y1 <= yHigh; y1++) {
-          Cell& c2 = map->cell(x1, y1);
-          for (i = 0; i < 4; i++) {
-            if (key == 'u') c2.textureCoords[i][1] += shift ? 0.5 / 4. : 0.1 / 4.;
-            if (key == 'm') c2.textureCoords[i][1] -= shift ? 0.5 / 4. : 0.1 / 4.;
-            if (key == 'h') c2.textureCoords[i][0] -= shift ? 0.5 / 4. : 0.1 / 4.;
-            if (key == 'k') c2.textureCoords[i][0] += shift ? 0.5 / 4. : 0.1 / 4.;
-          }
-        }
-      break;
-    }
-
-    if (key == 'u')
-      corner = Cell::NORTH + Cell::EAST;
-    else if (key == 'h')
-      corner = Cell::NORTH + Cell::WEST;
-    else if (key == 'm')
-      corner = Cell::SOUTH + Cell::WEST;
-    else if (key == 'k')
-      corner = Cell::SOUTH + Cell::EAST;
-
-    else if (menuChoise == MENU_COLOR) {
-      for (x1 = xLow; x1 <= xHigh; x1++)
-        for (y1 = yLow; y1 <= yHigh; y1++) {
-          Cell& c2 = map->cell(x1, y1);
-
-          if (shift) /* Pick up color */
-            if (ctrl)
-              for (i = 0; i < 4; i++) color[i] = c2.wallColors[corner][i];
-            else
-              for (i = 0; i < 4; i++) color[i] = c2.colors[corner][i];
-          else
-              /* Write color */
-              if (ctrl)
-            for (i = 0; i < 4; i++) c2.wallColors[corner][i] = color[i];
-          else
-            for (i = 0; i < 4; i++) c2.colors[corner][i] = color[i];
-        }
-    }
-    break;
-
-  case SDLK_TAB:
-    // smooth the cells if a selection is active
-    /*
-    if(menuChoise == MENU_HEIGHT) {
-
-      if (ctrl) {
-        c.heights[Cell::CENTER] =
-               (c.heights[Cell::NORTH+Cell::WEST] +
-                c.heights[Cell::SOUTH+Cell::WEST] +
-                c.heights[Cell::NORTH+Cell::EAST] +
-                c.heights[Cell::SOUTH+Cell::EAST]) / 4.;
-        c.heights[Cell::NORTH+Cell::WEST] =
-          c.heights[Cell::SOUTH+Cell::WEST] =
-          c.heights[Cell::NORTH+Cell::EAST] =
-          c.heights[Cell::SOUTH+Cell::EAST] =
-              c.heights[Cell::CENTER];
-        break;
-      }
-
-      if (markX == -1) {
-            c.heights[Cell::CENTER] =
-               (c.heights[Cell::NORTH+Cell::WEST] +
-                c.heights[Cell::SOUTH+Cell::WEST] +
-                c.heights[Cell::NORTH+Cell::EAST] +
-                c.heights[Cell::SOUTH+Cell::EAST]) / 4.;
-      break;
-      }
-
-      // smooth edges
-      for(x1=xLow+1;x1<=xHigh;x1++)
-            for(y1=yLow;y1<=yHigh-1;y1++) {
-              Cell& cur=map->cell(x1,y1);
-              Cell& ca1=map->cell(x1,y1+1);
-              Cell& ca2=map->cell(x1-1,y1);
-              Cell& ca3=map->cell(x1-1,y1+1);
-
-              cur.heights[Cell::NORTH+Cell::WEST] =
-              ca1.heights[Cell::SOUTH+Cell::WEST] =
-              ca2.heights[Cell::NORTH+Cell::EAST] =
-              ca3.heights[Cell::SOUTH+Cell::EAST] =
-                 (cur.heights[Cell::NORTH+Cell::WEST] +
-                  ca1.heights[Cell::SOUTH+Cell::WEST] +
-                  ca2.heights[Cell::NORTH+Cell::EAST] +
-                  ca3.heights[Cell::SOUTH+Cell::EAST]) / 4.;
-            }
-
-      // smooth the center of the cell
-      for(x1=xLow;x1<=xHigh;x1++)
-            for(y1=yLow;y1<=yHigh;y1++) {
-              Cell& cur=map->cell(x1,y1);
-
-              cur.heights[Cell::CENTER] =
-                 (cur.heights[Cell::NORTH+Cell::WEST] +
-                  cur.heights[Cell::SOUTH+Cell::WEST] +
-                  cur.heights[Cell::NORTH+Cell::EAST] +
-                  cur.heights[Cell::SOUTH+Cell::EAST]) / 4.;
-            }
-
-    }
-    */
-    break;
-
-  case 'j':
-    /*
-    if(menuChoise == MENU_VELOCITY) {
-      for(x1=xLow;x1<=xHigh;x1++)
-            for(y1=yLow;y1<=yHigh;y1++) {
-              Cell& c2=map->cell(x1,y1);
-              c2.velocity[0] = c2.velocity[1] = 0.0;
-            }
-      break;
-    }
-    */
-
-    if (menuChoise == MENU_HEIGHT) {
-      for (x1 = xLow; x1 <= xHigh; x1++)
-        for (y1 = yLow; y1 <= yHigh; y1++) {
-          Cell& c2 = map->cell(x1, y1);
-          if (ctrl)
-            if (shift) {
-              for (i = 0; i < 5; i++)
-                c2.heights[i] = c.heights[Cell::CENTER];  // note the use of 'c' here!
-            } else
-              c2.heights[Cell::CENTER] =
-                  (c2.heights[0] + c2.heights[1] + c2.heights[2] + c2.heights[3]) / 4.0;
-          else
-            c2.heights[Cell::CENTER] += (shift ? -raise : raise);
-        }
-    } else if (menuChoise == MENU_COLOR) {
-      if (shift) /* Pick up color */
-        for (i = 0; i < 4; i++) color[i] = c.colors[Cell::CENTER][i];
-      else
-          /* Write color */
-          if (!ctrl)
-        for (i = 0; i < 4; i++) c.colors[Cell::CENTER][i] = color[i];
-    }
-
-    break;
-  case ' ':
-    if (menuChoise == MENU_HILLS) {
-      switch (hill) {
-      case HILL_SPIKE:
-        map->cell(x, y).heights[Cell::SOUTH + Cell::WEST] += shift ? -raise : raise;
-        map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += shift ? -raise : raise;
-        map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += shift ? -raise : raise;
-        map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] += shift ? -raise : raise;
-        break;
-      case HILL_SMALL:
-        // makeHill(1);
-        map->cell(x, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 1.2;
-        for (i = 0; i < 4; i++) map->cell(x, y).heights[i] += (shift ? -raise : raise) * 1.0;
-        map->cell(x, y + 1).heights[Cell::SOUTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x, y + 1).heights[Cell::SOUTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x, y - 1).heights[Cell::NORTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x + 1, y).heights[Cell::SOUTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x + 1, y).heights[Cell::NORTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x - 1, y).heights[Cell::NORTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x + 1, y + 1).heights[Cell::SOUTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x - 1, y + 1).heights[Cell::SOUTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x + 1, y - 1).heights[Cell::NORTH + Cell::WEST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] +=
-            (shift ? -raise : raise) * 1.0;
-        map->cell(x + 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
-        map->cell(x - 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
-        map->cell(x + 1, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
-        map->cell(x - 1, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
-        map->cell(x + 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
-        map->cell(x - 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
-        map->cell(x, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
-        map->cell(x, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
-        break;
-      case HILL_MEDIUM:
-        makeHill(2);
-        break;
-      case HILL_LARGE:
-        makeHill(3);
-        break;
-      case HILL_HUGE:
-        makeHill(5);
-        break;
-      case SMOOTH_SMALL:
-        doSmooth(2);
-        break;
-      case SMOOTH_LARGE:
-        doSmooth(4);
-        break;
-      }
-      return;
-    } else if (menuChoise == MENU_TEXTURE) {
-      int newTexture = mymod(c.texture + 1 + (shift ? 1 : -1), numTextures + 1) - 1;
-      for (x1 = xLow; x1 <= xHigh; x1++)
-        for (y1 = yLow; y1 <= yHigh; y1++) {
-          Cell& c2 = map->cell(x1, y1);
-          c2.texture = newTexture;
-        }
-    }
-
-    /* Pickup color works only for a specific corner of cell */
-    if (menuChoise == MENU_COLOR && shift) break;
-
-    for (x1 = xLow; x1 <= xHigh; x1++)
-      for (y1 = yLow; y1 <= yHigh; y1++) {
-        Cell& c2 = map->cell(x1, y1);
-        if (menuChoise == MENU_HEIGHT)
-          for (i = 0; i < 5; i++) c2.heights[i] += (shift ? -raise : raise);
-        else if (menuChoise == MENU_WATER)
-          for (i = 0; i < 5; i++) {
-            if (c2.waterHeights[i] <= -100.0)
-              c2.waterHeights[i] = c2.heights[i] + (shift ? -raise : raise);
-            else
-              c2.waterHeights[i] += (shift ? -raise : raise);
-          }
-        else if (menuChoise == MENU_COLOR) {
-          if (ctrl)
-            for (i = 0; i < 4; i++)
-              for (j = 0; j < 4; j++) c2.wallColors[i][j] = color[j];
-          else
-            for (i = 0; i < 5; i++)
-              for (j = 0; j < 4; j++) c2.colors[i][j] = color[j];
-        }
-      }
-    break;
-  case '1':
-    color[0] += 0.1;
-    if (color[0] > 1.0) color[0] = 0.0;
-    break;
-  case '2':
-    color[1] += 0.1;
-    if (color[1] > 1.0) color[1] = 0.0;
-    break;
-  case '3':
-    color[2] += 0.1;
-    if (color[2] > 1.0) color[2] = 0.0;
-    break;
-  case '4':
-    color[3] += 0.1;
-    if (color[3] > 1.0) color[3] = 0.0;
-    break;
-  }
-#endif
-
-  /*
-case SDLK_DOWN: menuChoise++; if(menuChoise >= MENU_SIZE) menuChoise = 0; break;
-case SDLK_UP: menuChoise--; if(menuChoise < 0) menuChoise = MENU_SIZE-1; break;*/
 }
-void EditMode::special(int key, int mx, int my) { printf("editmode: %d\n", key); }
+void EditMode::special(int key, int /*mx*/, int /*my*/) { printf("editmode: %d\n", key); }
 void EditMode::idle(Real td) {
   int x, y;
   tickMouse(td);

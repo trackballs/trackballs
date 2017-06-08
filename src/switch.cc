@@ -41,6 +41,7 @@ CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) {
   secondaryColor[0] = 0.0;
   secondaryColor[1] = 0.0;
   secondaryColor[2] = 0.0;
+  is_touched = 0;
   this->on = on;
   this->off = off;
   scm_gc_protect_object(on);
@@ -169,7 +170,7 @@ void CSwitch::draw() {
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
 }
-void CSwitch::tick(Real t) {
+void CSwitch::tick(Real /*t*/) {
   Coord3d v;
   Player* player = Game::current->player1;
   sub(position, Game::current->player1->position, v);

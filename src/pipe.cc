@@ -135,7 +135,7 @@ void Pipe::drawTrunk() {
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
 }
-void Pipe::tick(Real t) {
+void Pipe::tick(Real /*t*/) {
   /* TODO. Ugly fix, a better fix is to make from/to etc. *private* variables and add this fn.
          inside the accessor methods */
   computeBoundingBox();

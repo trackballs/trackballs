@@ -32,7 +32,7 @@ class ScoreSign : public Sign {
  public:
   ScoreSign(int points, Coord3d position);
   ScoreSign(int points, Coord3d position, int type);
-  void init(int points, Coord3d position, int type);
+  void init(int points, int type);
 
   void tick(Real);
 

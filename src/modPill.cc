@@ -43,9 +43,6 @@ ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
   no_physics = 1;
   realRadius = 0.2;
   radius = realRadius;
-  resolution = 8;
-  if (Settings::settings->gfx_details >= 4) resolution = 9;
-  if (Settings::settings->gfx_details >= 5) resolution = 10;
 
   /* Change our color to red */
   primaryColor[0] = 1.0;
@@ -60,9 +57,6 @@ ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
   clock = 0.0;
 
   if (kind == MOD_EXTRA_LIFE) {
-    resolution = 9;
-    if (Settings::settings->gfx_details >= 4) resolution = 10;
-    if (Settings::settings->gfx_details >= 5) resolution = 12;
     realRadius = 0.3;
     radius = realRadius;
     primaryColor[0] = 1.0;
@@ -163,7 +157,7 @@ void ModPill::tick(Real t) {
   }
 }
 void ModPill::playerRestarted() {}
-void ModPill::die(int how) {
+void ModPill::die(int /*how*/) {
   state = STATE_DEAD;
   if (!resurrecting) delete this;
 }

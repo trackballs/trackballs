@@ -46,7 +46,7 @@ extern GLuint hiresSphere;
 void Ball::init() {
   balls = new set<Ball *>();
   SDL_Surface *text;
-  SDL_Color fgColor = {255, 255, 255};
+  SDL_Color fgColor = {255, 255, 255, 255};
   // GLfloat texcoord[4];
 
   text = TTF_RenderText_Blended(ingameFont, " ? ", fgColor);
@@ -68,8 +68,6 @@ void Ball::onRemove() {
 }
 
 Ball::Ball() : Animated() {
-  int i;
-
   sink = 0.0;
 
   ballResolution = BALL_LORES;
@@ -92,7 +90,7 @@ Ball::Ball() : Animated() {
   no_physics = 0;
   inPipe = 0;
 
-  for (i = 0; i < NUM_MODS; i++) {
+  for (int i = 0; i < NUM_MODS; i++) {
     modTimeLeft[i] = 0.0;
     modTimePhaseIn[i] = 0.0;
   }
@@ -114,7 +112,6 @@ Ball::~Ball() {
  draw() - Draws all the opaque parts of ball
 **********************************************/
 void Ball::draw() {
-  int i;
   GLfloat color[4];
   GLfloat specular[4];
   double blend;
@@ -123,7 +120,7 @@ void Ball::draw() {
   // Fix when rendering environment map to not reflect oneself
   if (dontReflectSelf) return;
 
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     color[i] = primaryColor[i];
     specular[i] = specularColor[i];
   }
@@ -178,11 +175,14 @@ void Ball::draw() {
     switch (ballResolution) {
     case BALL_HIRES:
       detail = 8;
+      break;
     default:
     case BALL_NORMAL:
       detail = 6;
+      break;
     case BALL_LORES:
       detail = 3;
+      break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
     GLfloat *data = new GLfloat[nverts * 8];
@@ -212,7 +212,7 @@ void Ball::draw() {
     } else if (texture == 0) {
       glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
     } else {
-      glBindTexture(GL_TEXTURE_2D, texture);
+      glBindTexture(GL_TEXTURE_2D, textures[texture]);
     }
 
     GLuint databuf, idxbuf;
@@ -643,12 +643,11 @@ void Ball::doExpensiveComputations() {
 }
 
 void Ball::tick(Real time) {
-  int i;
   double phase;
 
   Animated::tick(time);
 
-  for (i = 0; i < NUM_MODS; i++) {
+  for (int i = 0; i < NUM_MODS; i++) {
     if (!modTimeLeft[i])
       modTimePhaseIn[i] = 0.0;
     else
@@ -735,7 +734,6 @@ Boolean Ball::physics(Real time) {
   rotateX(-rotation[1] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
   rotateY(-rotation[0] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
 
-  int i;
   Real t = 0;
   do {
     Cell &c = map->cell((int)position[0], (int)position[1]);
@@ -926,12 +924,12 @@ Boolean Ball::physics(Real time) {
       if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
       if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
     }
-    for (i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++)
       velocity[i] = velocity[i] - (velocity[i] - c.velocity[i]) * effective_friction;
     velocity[2] *= 1.0 - effective_friction;
     if (inTheAir && velocity[2] > 5.0) velocity[2] *= 0.995;
 
-    for (i = 0; i < 3; i++) position[i] += physicsResolution * velocity[i];
+    for (int i = 0; i < 3; i++) position[i] += physicsResolution * velocity[i];
 
     if (!inPipe) {
       handleEdges();
@@ -963,8 +961,6 @@ Boolean Ball::physics(Real time) {
 Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
   Real dh = position[2] - sqrt(radius * radius - x * x - y * y) -
             map->getHeight(position[0] + x, position[1] + y);
-  int i;
-
   if (dh < 0.02) {
     if (inTheAir) {
       /* We where in the air and have now hit the ground. Calculate
@@ -999,7 +995,7 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
         if (cell.flags & CELL_TRAMPOLINE) {
           Real dh = 1.0 * speed * radius * radius * radius;
           effective_bounceFactor += 0.6;
-          for (i = 0; i < 5; i++) cell.heights[i] -= dh;
+          for (int i = 0; i < 5; i++) cell.heights[i] -= dh;
           if (cell.sunken <= 0.0) new Trampoline(tx, ty);
           cell.sunken += dh;
         }
@@ -1022,7 +1018,7 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
           velocity[1] *= 0.5;
           velocity[2] *= 0.5;
           if (radius > 0.2)
-            for (i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
               if (frandom() < (speed - 1.0) * 0.2) generateSandDebris();
           if (speed > 4.0) playEffect(SFX_SAND_CRASH);
         }
@@ -1068,7 +1064,7 @@ Boolean Ball::crash(Real speed) {
 
   return true;
 }
-Boolean Ball::crash(Real speed, Ball *ball) { return this->crash(speed); }
+
 void Ball::generateSandDebris() {
   Coord3d pos, vel;
   Real a = frandom() * 2.0 * M_PI;
@@ -1109,8 +1105,6 @@ void Ball::generateDebris(GLfloat color[4]) {
 }
 
 void Ball::handleBallCollisions() {
-  int i;
-
   set<Ball *>::iterator iter = balls->begin();
   set<Ball *>::iterator end = balls->end();
   Coord3d v;
@@ -1136,9 +1130,9 @@ void Ball::handleBallCollisions() {
              totWeight = myWeight + hisWeight;
       myWeight /= totWeight;
       hisWeight /= totWeight;
-      this->crash(speed * hisWeight * 1.5 * (ball->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0), ball);
-      ball->crash(speed * myWeight * 1.5 * (this->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0), this);
-      for (i = 0; i < 3; i++) {
+      this->crash(speed * hisWeight * 1.5 * (ball->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0));
+      ball->crash(speed * myWeight * 1.5 * (this->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0));
+      for (int i = 0; i < 3; i++) {
         velocity[i] -= speed * v[i] * 3.0 * hisWeight;
         ball->velocity[i] += speed * v[i] * 3.0 * myWeight;
       }
@@ -1347,7 +1341,6 @@ void Ball::handleEdges() {
   }
 }
 void Ball::handlePipes() {
-  int i;
   inPipe = false;
 
   set<Pipe *>::iterator iter = Pipe::pipes->begin();
@@ -1366,7 +1359,7 @@ void Ball::handlePipes() {
                             dotProduct(v0, dirNorm) /
                                 length(direction)));  // where along pipe ball is projected
     Coord3d proj;                                     // where (as pos) the ball is projected
-    for (i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
+    for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
     Coord3d v1;  // projection point -> ball position
     sub(position, proj, v1);
     double distance = length(v1);  // how far away from the pipe the ball is
@@ -1381,10 +1374,9 @@ void Ball::handlePipes() {
         normalize(normal);
         double speed = -dotProduct(velocity, normal);
         if (speed > 0)
-          for (i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
+          for (int i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
         double correction = radius - distance;
-        for (i = 0; i < 3; i++)
-          for (i = 0; i < 3; i++) position[i] += correction * normal[i];
+        for (int i = 0; i < 3; i++) position[i] += correction * normal[i];
       } else if (distance < pipe->radius + radius && l != 0.0 && l != 1.0 && !inPipe) {
         /* Collision from outside */
         if ((pipe->flags & PIPE_SOFT_ENTER) && l < 0.2 / pipeLength) continue;
@@ -1395,10 +1387,9 @@ void Ball::handlePipes() {
         normalize(normal);
         double speed = -dotProduct(velocity, normal);
         if (speed > 0)
-          for (i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
+          for (int i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
         double correction = pipe->radius + radius - distance;
-        for (i = 0; i < 3; i++)
-          for (i = 0; i < 3; i++) position[i] += correction * normal[i];
+        for (int i = 0; i < 3; i++) position[i] += correction * normal[i];
       }
     } else {
       /* Ball is on the inside */
@@ -1410,10 +1401,9 @@ void Ball::handlePipes() {
         normalize(normal);
         double speed = dotProduct(velocity, normal);
         if (speed > 0)
-          for (i = 0; i < 3; i++) velocity[i] -= speed * normal[i] * 1.5;
+          for (int i = 0; i < 3; i++) velocity[i] -= speed * normal[i] * 1.5;
         double correction = distance - (pipe->radius * 0.97 - radius);
-        for (i = 0; i < 3; i++)
-          for (i = 0; i < 3; i++) position[i] -= correction * normal[i];
+        for (int i = 0; i < 3; i++) position[i] -= correction * normal[i];
       }
 
       double zHere = (1.0 - l) * pipe->from[2] + l * pipe->to[2];
@@ -1431,10 +1421,10 @@ void Ball::handlePipes() {
 
       /* Wind */
       if (dotProduct(velocity, dirNorm) > 0.0)
-        for (i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
           velocity[i] += pipe->windForward * physicsResolution * dirNorm[i];
       else
-        for (i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
           velocity[i] += pipe->windBackward * physicsResolution * dirNorm[i];
     }
   }
@@ -1455,10 +1445,9 @@ void Ball::handlePipes() {
           normalize(v0);
           double speed = dotProduct(velocity, v0);
           if (speed > 0)
-            for (i = 0; i < 3; i++) velocity[i] -= speed * v0[i] * 1.5;
+            for (int i = 0; i < 3; i++) velocity[i] -= speed * v0[i] * 1.5;
           double correction = connector->radius + radius - dist;
-          for (i = 0; i < 3; i++)
-            for (i = 0; i < 3; i++) position[i] -= correction * v0[i];
+          for (int i = 0; i < 3; i++) position[i] -= correction * v0[i];
         }
       } else {
         /* Ball is inside connector */
@@ -1469,10 +1458,9 @@ void Ball::handlePipes() {
           normalize(v0);
           double speed = dotProduct(velocity, v0);
           if (speed > 0)
-            for (i = 0; i < 3; i++) velocity[i] += speed * v0[i] * 1.5;
+            for (int i = 0; i < 3; i++) velocity[i] += speed * v0[i] * 1.5;
           double correction = dist - (connector->radius * 0.97 - radius);
-          for (i = 0; i < 3; i++)
-            for (i = 0; i < 3; i++) position[i] += correction * v0[i];
+          for (int i = 0; i < 3; i++) position[i] += correction * v0[i];
         }
         if (dist > connector->radius * 0.94 - radius && position[2] < connector->position[2]) {
           /* Ball is touching lower part of connector */

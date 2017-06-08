@@ -25,21 +25,12 @@
 using namespace std;
 
 Debris::Debris(Ball *ball, Coord3d pos, Coord3d vel, double dur) {
-  int i;
   assign(pos, position);
   assign(vel, velocity);
-  if (Settings::settings->gfx_details <= GFX_DETAILS_NONE)
-    resolution = 4;
-  else if (Settings::settings->gfx_details == GFX_DETAILS_SIMPLE)
-    resolution = 5;
-  else if (Settings::settings->gfx_details == GFX_DETAILS_NORMAL)
-    resolution = 6;
-  else if (Settings::settings->gfx_details >= GFX_DETAILS_EXTRA)
-    resolution = 8;
   crashTolerance = 10000;
   if (ball) {
-    for (i = 0; i < 3; i++) primaryColor[i] = ball->primaryColor[i];
-    for (i = 0; i < NUM_MODS; i++) modTimeLeft[i] = ball->modTimeLeft[i];
+    for (int i = 0; i < 3; i++) primaryColor[i] = ball->primaryColor[i];
+    for (int i = 0; i < NUM_MODS; i++) modTimeLeft[i] = ball->modTimeLeft[i];
     modTimeLeft[MOD_DIZZY] = 0.0;
     modTimeLeft[MOD_NITRO] = 0.0;
     texture = ball->texture;
@@ -51,6 +42,7 @@ Debris::Debris(Ball *ball, Coord3d pos, Coord3d vel, double dur) {
   endingSize = 0.0;
   duration = dur;
   elapsedTime = 0.0;
+  floatingUp = false;
   calcRadius();
 }
 void Debris::calcRadius() {
@@ -69,7 +61,4 @@ void Debris::tick(Real t) {
     Ball::tick(t);
 }
 void Debris::draw() { Ball::draw(); }
-void Debris::die(int how) {
-  remove();
-  // delete this;
-}
+void Debris::die(int /*how*/) { remove(); }

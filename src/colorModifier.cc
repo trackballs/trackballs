@@ -61,28 +61,27 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
 
 void ColorModifier::draw() {}
 
-void ColorModifier::tick(Real t) {
-  int i;
+void ColorModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
   if (!is_on) return;
   float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * 3.14159)) / 2.;
   switch (colors) {
   case 0:
-    for (i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; i++) {
       c.colors[i][0] = v;
       c.colors[i][1] = v;
       c.colors[i][2] = v;
     }
     break;
   case 1:
-    for (i = 0; i < 5; i++) c.colors[i][0] = v;
+    for (int i = 0; i < 5; i++) c.colors[i][0] = v;
     break;
   case 2:
-    for (i = 0; i < 5; i++) c.colors[i][1] = v;
+    for (int i = 0; i < 5; i++) c.colors[i][1] = v;
     break;
   case 3:
-    for (i = 0; i < 5; i++) c.colors[i][2] = v;
+    for (int i = 0; i < 5; i++) c.colors[i][2] = v;
     break;
   }
   Game::current->map->markCellUpdated(x, y);

@@ -31,7 +31,9 @@
 using namespace std;
 
 Gamer::Gamer() {
-  strcpy(name, "John Doe");
+  memset(name, 0, sizeof(name));
+  strncpy(name, _("John Doe"), sizeof(name));
+  name[19] = '\0';
   if (NULL != getenv("USER")) {
     snprintf(name, 20, "%s", getenv("USER"));
   }
@@ -48,7 +50,9 @@ Gamer::Gamer() {
   update();
   reloadNames();
   if (nNames > 0) strncpy(name, names[0], 20);
+  name[19] = '\0';
   update();
+  currentLevelSet = 0;
 }
 Gamer::~Gamer() {
   for (int i = 0; i < 256; i++)

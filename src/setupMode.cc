@@ -65,7 +65,7 @@ void SetupMode::init() {
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }
@@ -76,6 +76,8 @@ SetupMode::SetupMode() : GameMode() {
   gamer = new Gamer();
   levelSet = level = 0;
   screenshot = 0;
+  t = 0.;
+  name = 0;
 }
 void SetupMode::display() {
   glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -372,7 +374,7 @@ void SetupMode::activated() {
   gamer->reloadNames();
 
   if (!background) {
-    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("Failed to load %s", str); }
   }

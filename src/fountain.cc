@@ -39,6 +39,9 @@ Fountain::Fountain(double randomSpeed, double radius, double strength)
   createPoint = 0.0;
   nextPoint = 0;
   drawFrom = 0;
+  memset(positions, 0, sizeof(positions));
+  memset(velocities, 0, sizeof(velocities));
+  memset(creationTime, 0, sizeof(creationTime));
 }
 
 void Fountain::draw2() {

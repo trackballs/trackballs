@@ -57,9 +57,8 @@ class Ball : public Animated {
   void doExpensiveComputations();
   void onRemove();
   void setReflectivity(double reflectivity, int metallic);
+  /* When we crash into something. Returns if we are still alive */
   virtual Boolean crash(Real speed);
-  /* When we crash into another ball. Returns if we are still alive */
-  virtual Boolean crash(Real speed, Ball *);
   virtual void die(int how);
 
   static void init();
@@ -74,7 +73,7 @@ class Ball : public Animated {
   Real radius, realRadius;
   Real friction, gravity, bounceFactor;
   Real crashTolerance;
-  int resolution, no_physics;
+  int no_physics;
   /** 0 for low resolution balls (eg. debris), 1 for normal balls, 2
        for high res balls (eg. player) */
   int ballResolution;

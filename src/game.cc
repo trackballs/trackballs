@@ -64,10 +64,10 @@ Game::Game(char *name, Gamer *g) {
 
   /* Load the bootup script */
   char scmname[256];
-  snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", SHARE_DIR);
+  snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   loadScript(scmname);
 
-  player1 = new Player(gamer);
+  player1 = new Player();
   loadLevel(name);
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
@@ -91,7 +91,7 @@ void Game::loadLevel(char *name) {
   if (player1) {
     // level scripts might have modified our appearance. Reset them
     for (int i = 0; i < 3; i++) player1->primaryColor[i] = colors[gamer->color][i];
-    player1->texture = textures[gamer->textureNum];
+    player1->texture = gamer->textureNum;
   }
 
   setDefaults();
@@ -103,9 +103,9 @@ void Game::loadLevel(char *name) {
   snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
   snprintf(scmname, sizeof(scmname) - 1, "%s/.trackballs/levels/%s.scm", getenv("HOME"), name);
   if (!fileExists(mapname))
-    snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", SHARE_DIR, name);
+    snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, name);
   if (!fileExists(scmname))
-    snprintf(scmname, sizeof(scmname), "%s/levels/%s.scm", SHARE_DIR, name);
+    snprintf(scmname, sizeof(scmname), "%s/levels/%s.scm", effectiveShareDir, name);
   snprintf(levelName, sizeof(levelName), "%s", name);
 
   if (map) delete map;

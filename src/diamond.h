@@ -33,7 +33,7 @@ class Diamond : public Animated {
   virtual void onGet();
 
  protected:
-  Real radius, fade;
+  Real fade;
   int taken;
 };
 

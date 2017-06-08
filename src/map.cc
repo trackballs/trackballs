@@ -57,6 +57,10 @@ Cell::Cell() {
   for (int i = 0; i < 16; i++) wallColors[i / 4][i % 4] = 1.;
   for (int i = 0; i < 5; i++) heights[i] = -8.0;
   for (int i = 0; i < 5; i++) waterHeights[i] = -20.0;
+  velocity[0] = 0.;
+  velocity[1] = 1.;
+  sunken = 0.;
+  displayListDirty = 0;
 }
 
 /* Returns the normal for a point on the edge of the cell */
@@ -233,6 +237,8 @@ Chunk::Chunk() {
   // exact range would be calculated
   maxHeight = 1e3;
   minHeight = 1e-3;
+  xm = 0;
+  ym = 0;
 }
 
 Chunk::~Chunk() {
@@ -357,7 +363,7 @@ Map::Map(char* filename) {
 
   for (int i = 0; i < nsubtextures; i++) {
     char impath[256];
-    snprintf(impath, 255, "%s/images/%s", SHARE_DIR, texs[i]);
+    snprintf(impath, 255, "%s/images/%s", effectiveShareDir, texs[i]);
     SDL_Surface* orig = IMG_Load(impath);
     Uint32 mask[4];
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
@@ -433,7 +439,7 @@ static void configureCellAttributes(int water) {
 }
 
 /* Draws the map on the screen from current viewpoint */
-void Map::draw(int birdsEye, int stage, int cx, int cy) {
+void Map::draw(int stage, int cx, int cy) {
   if (stage == 0) {
     glDisable(GL_BLEND);
   } else {
@@ -464,7 +470,7 @@ void Map::draw(int birdsEye, int stage, int cx, int cy) {
       Chunk* cur = chunk(hx, hy);
       int update = 0;
       if (stage == 0) {
-        // Detect if update needed. Birdseye does't require retexturing
+        // Detect if update needed.
         update = cur->is_updated;
 
         int visible = testBboxClip(cur->xm, cur->xm + CHUNKSIZE, cur->ym, cur->ym + CHUNKSIZE,
@@ -1072,7 +1078,7 @@ Chunk* Map::chunk(int cx, int cy) {
 
 /** Saves the map to file in compressed binary or compressed ascii format */
 int Map::save(char* pathname, int x, int y) {
-  int i, version = mapFormatVersion;
+  int version = mapFormatVersion;
 
   if (pathIsLink(pathname)) {
     warning("%s is a link, cannot save map", pathname);
@@ -1085,7 +1091,7 @@ int Map::save(char* pathname, int x, int y) {
   startPosition[1] = y;
   startPosition[2] = cell(x, y).heights[Cell::CENTER];
   int32_t data[6];
-  for (i = 0; i < 3; i++)
+  for (int i = 0; i < 3; i++)
     data[i] = saveInt((int32_t)startPosition[i]);  // no decimal part needed
   data[3] = saveInt((int32_t)width);
   data[4] = saveInt((int32_t)height);
@@ -1095,33 +1101,32 @@ int Map::save(char* pathname, int x, int y) {
   /* new from version 7, save texture names */
   data[0] = saveInt(numTextures);
   gzwrite(gp, data, sizeof(int32_t) * 1);
-  for (i = 0; i < numTextures; i++) {
+  for (int i = 0; i < numTextures; i++) {
     char textureName[64];
     memset(textureName, 0, sizeof(textureName));
-    snprintf(textureName, 63, textureNames[i]);
+    strncpy(textureName, textureNames[i], 63);
     gzwrite(gp, textureName, 64);
   }
 
-  for (i = 0; i < width * height; i++) cells[i].dump(gp);
+  for (int i = 0; i < width * height; i++) cells[i].dump(gp);
   gzclose(gp);
   return 1;
 }
 
 void Cell::dump(gzFile gp) const {
   int32_t data[8];
-  int i, j;
-  for (i = 0; i < 5; i++) data[i] = saveInt((int32_t)(heights[i] / 0.0025));
+  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)(heights[i] / 0.0025));
   gzwrite(gp, data, sizeof(int32_t) * 5);
-  for (i = 0; i < 5; i++) {
-    for (j = 0; j < 4; j++) data[j] = saveInt((int32_t)(colors[i][j] / 0.01));
+  for (int i = 0; i < 5; i++) {
+    for (int j = 0; j < 4; j++) data[j] = saveInt((int32_t)(colors[i][j] / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
   data[0] = saveInt((int32_t)flags);
   data[1] = saveInt((int32_t)texture);
   gzwrite(gp, data, sizeof(int32_t) * 2);
 
-  for (i = 0; i < 4; i++) {
-    for (j = 0; j < 4; j++) data[j] = saveInt((int32_t)(wallColors[i][j] / 0.01));
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) data[j] = saveInt((int32_t)(wallColors[i][j] / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
 
@@ -1129,10 +1134,10 @@ void Cell::dump(gzFile gp) const {
   data[1] = saveInt((int32_t)(velocity[1] / 0.01));
   gzwrite(gp, data, sizeof(int32_t) * 2);
 
-  for (i = 0; i < 5; i++) data[i] = saveInt((int32_t)(waterHeights[i] / 0.0025));
+  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)(waterHeights[i] / 0.0025));
   gzwrite(gp, data, sizeof(int32_t) * 5);
 
-  for (i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; i++) {
     /* used to refer to texture coordinates */
     data[i * 2] = 0;
     data[i * 2 + 1] = 0;
@@ -1142,46 +1147,45 @@ void Cell::dump(gzFile gp) const {
 
 void Cell::load(Map* map, gzFile gp, int version) {
   int32_t data[8];
-  int i, j;
 
   gzread(gp, data, sizeof(int32_t) * 5);
-  for (i = 0; i < 5; i++) heights[i] = 0.0025 * loadInt(data[i]);
-  for (i = 0; i < 5; i++) {
+  for (int i = 0; i < 5; i++) heights[i] = 0.0025 * loadInt(data[i]);
+  for (int i = 0; i < 5; i++) {
     if (version < 4) {
       // old maps do not have an alpha channel defined
       gzread(gp, data, sizeof(int32_t) * 3);
-      for (j = 0; j < 3; j++) colors[i][j] = 0.01 * loadInt(data[j]);
+      for (int j = 0; j < 3; j++) colors[i][j] = 0.01 * loadInt(data[j]);
       colors[i][3] = 1.0;
     } else {
       gzread(gp, data, sizeof(int32_t) * 4);
-      for (j = 0; j < 4; j++) colors[i][j] = 0.01 * loadInt(data[j]);
+      for (int j = 0; j < 4; j++) colors[i][j] = 0.01 * loadInt(data[j]);
     }
   }
 
   gzread(gp, data, sizeof(int32_t) * 2);
   flags = loadInt(data[0]);
   if (version <= 1) flags = flags & (CELL_ICE | CELL_ACID);
-  i = loadInt(data[1]);
-  texture = (i >= 0 && i < numTextures ? map->indexTranslation[i] : -1);
+  int k = loadInt(data[1]);
+  texture = (k >= 0 && k < numTextures ? map->indexTranslation[k] : -1);
   // in older maps, this field was not initialized
   if (version < 5) texture = -1;
   if (version < 3) { /* Old maps do not have wallColors defined */
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
       wallColors[i][0] = 0.7;
       wallColors[i][1] = 0.2;
       wallColors[i][2] = 0.2;
       wallColors[i][3] = 1.0;
     }
   } else {
-    for (i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; i++) {
       if (version < 4) {
         // old maps do not have an alpha channel defined
         gzread(gp, data, sizeof(int32_t) * 3);
-        for (j = 0; j < 3; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
+        for (int j = 0; j < 3; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
         wallColors[i][3] = 1.0;
       } else {
         gzread(gp, data, sizeof(int32_t) * 4);
-        for (j = 0; j < 4; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
+        for (int j = 0; j < 4; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
       }
     }
   }
@@ -1198,9 +1202,9 @@ void Cell::load(Map* map, gzFile gp, int version) {
   // currently we just reset the ground water
   if (version >= 6) {
     gzread(gp, data, sizeof(int32_t) * 5);
-    for (i = 0; i < 5; i++) waterHeights[i] = 0.0025 * loadInt(data[i]);
+    for (int i = 0; i < 5; i++) waterHeights[i] = 0.0025 * loadInt(data[i]);
   } else {
-    for (i = 0; i < 5; i++) waterHeights[i] = heights[i] - 0.5;
+    for (int i = 0; i < 5; i++) waterHeights[i] = heights[i] - 0.5;
   }
   sunken = 0.0;
 

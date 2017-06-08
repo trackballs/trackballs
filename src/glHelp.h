@@ -25,6 +25,7 @@
 
 /* Prototypes */
 void glHelpInit();
+void glHelpCleanup();
 GLuint loadProgram(const char *fragment, const char *vertex);
 double frand();
 double frand(int);
@@ -42,9 +43,9 @@ void draw2DQuad(const GLfloat corners[4][2], const GLfloat texture[4][2],
 
 void tickMouse(Real td);
 void drawMousePointer();
-void drawMouse(int x, int y, int w, int h, Real td);
+void drawMouse(int x, int y, int w, int h);
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        const GLfloat color[3], const GLfloat normal[3]);
+                        const GLfloat color[4], const GLfloat normal[3]);
 void configureObjectAttributes();
 void setupObjectRenderState();
 inline uint32_t packNormal(const GLfloat n[3]) {
@@ -138,7 +139,7 @@ extern GLuint theVao;
 extern float fps;
 extern float realTimeNow;
 extern int screenWidth, screenHeight;
-extern TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
+extern TTF_Font *ingameFont;
 TTF_Font *menuFontForSize(int sz);
 extern const GLfloat menuColorSelected[4], menuColor[4];
 

@@ -38,7 +38,6 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_ttf.h>
 #include "libguile.h"
-#include "libguile/numbers.h"  // Eliminate this line if it gives you any troubles
 #include <stdint.h>
 
 #ifdef __MINGW32__
@@ -46,9 +45,7 @@
 #define mkdir(a, ...) mkdir(a)
 #endif
 
-#undef SHARE_DIR
 extern char effectiveShareDir[];
-#define SHARE_DIR effectiveShareDir
 
 /*** More includes follows after typedeclarations ***/
 

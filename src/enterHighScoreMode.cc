@@ -43,14 +43,12 @@ void EnterHighScoreMode::init() {
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }
 }
-EnterHighScoreMode::EnterHighScoreMode() {
-  //  snprintf(name,20,getenv("USER"));
-}
+EnterHighScoreMode::EnterHighScoreMode() { memset(name, 0, sizeof(name)); }
 void EnterHighScoreMode::display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -94,7 +92,7 @@ void EnterHighScoreMode::key(int key) {
 void EnterHighScoreMode::activated() {
   char str[256];
   if (!background) {
-    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }

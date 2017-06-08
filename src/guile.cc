@@ -73,8 +73,8 @@ SCM smobGameHook_make(GameHook *h) {
   SCM_NEWSMOB(smob, smobGameHook_tag, h);
   return smob;
 }
-size_t smobAnimated_free(SCM smob) { return 0; }
-size_t smobGameHook_free(SCM smob) { return 0; }
+size_t smobAnimated_free(SCM /*smob*/) { return 0; }
+size_t smobGameHook_free(SCM /*smob*/) { return 0; }
 
 static SCM load_proc(void *body_data) {
   const char *scmname = (const char *)body_data;
@@ -87,7 +87,7 @@ static SCM preunwind_proc(void *handler_data, SCM, SCM) {
   return SCM_UNSPECIFIED;
 }
 
-static SCM error_proc(void *bd, SCM key, SCM parameters) {
+static SCM error_proc(void *, SCM key, SCM parameters) {
   SCM display = scm_variable_ref(scm_c_lookup("display"));
   SCM keystr = scm_object_to_string(key, display);
   SCM parameterstr = scm_object_to_string(parameters, display);
@@ -822,7 +822,7 @@ SCM_DEFINE(set_texture, "set-texture", 2, 0, 0, (SCM obj, SCM tname),
   for (int i = 0; i < numTextures; i++)
     if (strcmp(name, textureNames[i]) == 0) {
       Animated *anim = (Animated *)SCM_CDR(obj);
-      anim->texture = textures[i];
+      anim->texture = i;
       return obj;
     }
   return SCM_BOOL(false);

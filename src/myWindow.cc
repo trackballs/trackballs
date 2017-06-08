@@ -32,6 +32,8 @@ MyWindow::MyWindow(int x, int y, int width, int height) {
   next = NULL;
   isDragging = 0;
   isDraggable = 1;
+  dragStartX = 0;
+  dragStartY = 0;
 
   moveTo(x, y);
   resize(width, height);
@@ -52,7 +54,7 @@ MyWindow::MyWindow(int x, int y, int width, int height) {
 /*                               */
 /* Default for virtual functions */
 /*                               */
-void MyWindow::mouseDown(int button, int x, int y) {
+void MyWindow::mouseDown(int /*button*/, int x, int y) {
   if (isDraggable) isDragging = 1;
   dragStartX = x;
   dragStartY = y;
@@ -68,7 +70,7 @@ void MyWindow::mouse(int state, int x, int y) {
     }
   }
 }
-void MyWindow::key(int key, int x, int y) {}
+void MyWindow::key(int /*key*/, int /*x*/, int /*y*/) {}
 
 void MyWindow::tick() {}
 void MyWindow::draw() {

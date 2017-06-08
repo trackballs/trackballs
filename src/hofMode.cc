@@ -42,18 +42,22 @@ void HallOfFameMode::init() {
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }
   hallOfFameMode = new HallOfFameMode();
 }
-HallOfFameMode::HallOfFameMode() { levelSet = 0; }
+HallOfFameMode::HallOfFameMode() {
+  levelSet = 0;
+  timeLeft = 0.;
+  isExiting = 0;
+}
 void HallOfFameMode::activated() {
   char str[256];
 
   if (!background) {
-    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", SHARE_DIR);
+    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", effectiveShareDir);
     background = IMG_Load(str);
     if (!background) { error("failed to load %s", str); }
   }
@@ -170,7 +174,7 @@ void HallOfFameMode::idle(Real td) {
   if (timeLeft <= 0.0) MenuMode::activate(MenuMode::menuMode);
   tickMouse(td);
 }
-void HallOfFameMode::mouseDown(int state, int mouseX, int mouseY) {
+void HallOfFameMode::mouseDown(int state, int /*mouseX*/, int /*mouseY*/) {
   int selection = getSelectedArea();
   if (selection == CODE_LEVELSET) {
     levelSet = mymod((levelSet + (state == 1 ? 1 : -1)), Settings::settings->nLevelSets);

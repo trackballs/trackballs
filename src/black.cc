@@ -60,13 +60,12 @@ Black::Black(double x, double y) : Ball() {
   timeOnDeath = Game::defaultScores[SCORE_BLACK][1];
 }
 void Black::die(int how) {
-  int i, j;
   Ball::die(how);
 
   if (alive) {
     Coord3d pos, vel;
-    for (i = 0; i < 4; i++)
-      for (j = 0; j < 4; j++) {
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++) {
         Real a = i / 4.0 * M_PI2;
         Real b = (j + 0.5) / 4.0 * M_PI;
         pos[0] = position[0] + cos(a) * 0.25 * sin(b);

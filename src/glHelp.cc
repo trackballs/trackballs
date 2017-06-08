@@ -43,7 +43,7 @@ GLuint shaderUI = 0;
 GLuint shaderObject = 0;
 GLuint theVao = 0;
 
-TTF_Font *msgFont, *infoFont, *ingameFont, *menuFont, *scrollFont;
+TTF_Font *ingameFont;
 extern SDL_Surface *screen;
 extern double displayStartTime;
 
@@ -58,6 +58,8 @@ double frand() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
 GLuint textures[GLHELP_MAX_TEXTURES] = {0};  // added init. to 0 (no texture)
 char *textureNames[GLHELP_MAX_TEXTURES] = {NULL};
 int numTextures;
+
+static std::map<int, TTF_Font *> menuFontLookup;
 
 Sparkle2D *sparkle2D = NULL;
 /*
@@ -166,14 +168,13 @@ void update2DStringCache() {
 }
 
 TTF_Font *menuFontForSize(int sz) {
-  static std::map<int, TTF_Font *> lookup;
-  if (!lookup.count(sz)) {
+  if (!menuFontLookup.count(sz)) {
     char str[256];
-    snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "FreeSerifBoldItalic.ttf");
-    lookup[sz] = TTF_OpenFont(str, 2 * sz);  // barbatri
-    if (!lookup[sz]) { error("failed to load font %s", str); }
+    snprintf(str, sizeof(str), "%s/fonts/%s", effectiveShareDir, "FreeSerifBoldItalic.ttf");
+    menuFontLookup[sz] = TTF_OpenFont(str, 2 * sz);  // barbatri
+    if (!menuFontLookup[sz]) { error("failed to load font %s", str); }
   }
-  return lookup[sz];
+  return menuFontLookup[sz];
 }
 
 double mousePointerPhase = 0.0;
@@ -261,10 +262,10 @@ void drawMousePointer() {
   int mouseX, mouseY;
   sparkle2D->draw();
   SDL_GetMouseState(&mouseX, &mouseY);
-  drawMouse(mouseX, mouseY, 64, 64, 0.01);
+  drawMouse(mouseX, mouseY, 64, 64);
 }
 
-void drawMouse(int x, int y, int w, int h, Real td) {
+void drawMouse(int x, int y, int w, int h) {
   GLfloat r1 = 1.0 + 0.1 * cos(mousePointerPhase * 1.8);
   GLfloat r2 = 1.0 + 0.1 * cos(mousePointerPhase * 1.9);
   GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 0.35);
@@ -278,7 +279,7 @@ void drawMouse(int x, int y, int w, int h, Real td) {
 }
 
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        const GLfloat color[3], const GLfloat normal[3]) {
+                        const GLfloat color[4], const GLfloat normal[3]) {
   uint32_t *aout = (uint32_t *)dest;
   GLfloat *fout = (GLfloat *)dest;
   fout[0] = x;
@@ -550,11 +551,10 @@ void message(char *A, char *B) {
 
 void multiMessage(int nlines, const char *left[], const char *right[]) {
   int total_height, width, h_now;
-  int i;
   int size = 16;
 
   total_height = 0;
-  for (i = 0; i < nlines; i++) { total_height += size * 2; }
+  for (int i = 0; i < nlines; i++) { total_height += size * 2; }
   width = 600;
 
   int x1 = screenWidth / 2 - width / 2 - 5, x2 = screenWidth / 2 + width / 2 + 5;
@@ -565,7 +565,7 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
   draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
 
   h_now = -size;
-  for (i = 0; i < nlines; i++) {
+  for (int i = 0; i < nlines; i++) {
     h_now += 2 * size;
     if (left[i]) {
       Font::drawSimpleText(left[i], screenWidth / 2 - width / 2 + size,
@@ -588,10 +588,9 @@ int loadTexture(const char *name) {
   GLfloat texCoord[4];
   char str[256];
   SDL_Surface *surface;
-  int i;
 
   /* Check in cache if texture already loaded */
-  for (i = 0; i < numTextures; i++)
+  for (int i = 0; i < numTextures; i++)
     if (strcmp(textureNames[i], name) == 0) return i;
 
   if (numTextures >= GLHELP_MAX_TEXTURES) {
@@ -600,7 +599,7 @@ int loadTexture(const char *name) {
     return 0;
   }
 
-  snprintf(str, sizeof(str), "%s/images/%s", SHARE_DIR, name);
+  snprintf(str, sizeof(str), "%s/images/%s", effectiveShareDir, name);
   surface = IMG_Load(str);
   if (!surface) {
     warning("Failed to load texture %s", str);
@@ -621,27 +620,13 @@ int loadTexture(const char *name) {
 }
 
 void glHelpInit() {
-  char str[256];
-
   for (int i = 0; i < 4711; i++) fake_rand[i] = frand();
 
   TTF_Init();
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
-  msgFont = TTF_OpenFont(str, 30);  // 30 astron
-  if (!msgFont) { error("failed to load font %s", str); }
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
-  infoFont = TTF_OpenFont(str, 18);
-  if (!infoFont) { error("failed to load font %s", str); }
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
-  ingameFont = TTF_OpenFont(str, 30);  // barbatri
+  char str[256];
+  snprintf(str, sizeof(str), "%s/fonts/%s", effectiveShareDir, "menuFont.ttf");
+  ingameFont = TTF_OpenFont(str, 30);
   if (!ingameFont) { error("failed to load font %s", str); }
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "FreeSerifBoldItalic.ttf");
-  menuFont = TTF_OpenFont(str, 40);  // barbatri
-  if (!menuFont) { error("failed to load font %s", str); }
-  snprintf(str, sizeof(str), "%s/fonts/%s", SHARE_DIR, "menuFont.ttf");
-  scrollFont = TTF_OpenFont(str, 18);
-  if (!(msgFont && infoFont && ingameFont)) { error("Error: failed to load fonts"); }
-  TTF_SetFontStyle(msgFont, TTF_STYLE_NORMAL);
 
   /* Note: all textures must be powers of 2 since we ignore texcoords */
   loadTexture("ice.png");
@@ -693,6 +678,36 @@ void glHelpInit() {
   activeView.quadratic_attenuation = 0.f;
 
   glEnable(GL_TEXTURE_2D);
+}
+void glHelpCleanup() {
+  if (shaderTile) glDeleteProgram(shaderTile);
+  if (shaderLine) glDeleteProgram(shaderLine);
+  if (shaderWater) glDeleteProgram(shaderWater);
+  if (shaderUI) glDeleteProgram(shaderUI);
+  if (shaderObject) glDeleteProgram(shaderObject);
+  if (theVao) glDeleteVertexArrays(1, &theVao);
+  shaderLine = 0;
+  shaderTile = 0;
+  shaderWater = 0;
+  shaderUI = 0;
+  shaderObject = 0;
+  theVao = 0;
+
+  if (sparkle2D) delete sparkle2D;
+
+  /* Invalidate all strings so they get cleaned up */
+  stringTick += 100000;
+  update2DStringCache();
+
+  for (std::map<int, TTF_Font *>::iterator i = menuFontLookup.begin();
+       i != menuFontLookup.end(); ++i) {
+    TTF_CloseFont(i->second);
+  }
+  menuFontLookup.clear();
+  TTF_CloseFont(ingameFont);
+  ingameFont = 0;
+
+  for (int i = 0; i < numTextures; i++) { glDeleteTextures(1, &textures[i]); }
 }
 
 char *filetobuf(const char *filename) {
@@ -782,12 +797,11 @@ int resetTextures() {
   GLfloat texCoord[4];
   char str[256];
   SDL_Surface *surface;
-  int i;
   int linear = 0;
 
-  for (i = 0; i < numTextures; i++) {
+  for (int i = 0; i < numTextures; i++) {
     if (textureNames[i] == NULL) continue;
-    snprintf(str, sizeof(str), "%s/images/%s", SHARE_DIR, textureNames[i]);
+    snprintf(str, sizeof(str), "%s/images/%s", effectiveShareDir, textureNames[i]);
     surface = IMG_Load(str);
     if (!surface) {
       warning("Failed to load texture %s", str);
@@ -885,48 +899,43 @@ void debugMatrix(Matrix4d m) {
 
 /* C <- A * B */
 void matrixMult(const Matrix4d A, const Matrix4d B, Matrix4d C) {
-  int i, j, k;
-  for (i = 0; i < 4; i++)
-    for (j = 0; j < 4; j++) {
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) {
       C[i][j] = 0.0;
-      for (k = 0; k < 4; k++) C[i][j] += A[i][k] * B[k][j];
+      for (int k = 0; k < 4; k++) C[i][j] += A[i][k] * B[k][j];
     }
 }
 
 /* C <- A(B) */
 void useMatrix(Matrix4d A, const double B[3], double C[3]) {
-  int i, k;
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     C[i] = A[i][3];
-    for (k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
+    for (int k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
   }
   double h = A[3][3];
-  for (k = 0; k < 3; k++) h += A[3][k];
-  for (k = 0; k < 3; k++) C[k] /= h;
+  for (int k = 0; k < 3; k++) h += A[3][k];
+  for (int k = 0; k < 3; k++) C[k] /= h;
 }
 
 /* C <- A(B) */
 void useMatrix(Matrix3d A, const double B[3], double C[3]) {
-  int i, k;
-  for (i = 0; i < 3; i++) {
+  for (int i = 0; i < 3; i++) {
     C[i] = 0.;
-    for (k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
+    for (int k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
   }
 }
 
 /* C <- A */
 void assign(const Matrix4d A, Matrix4d C) {
-  int i, j;
-  for (i = 0; i < 4; i++)
-    for (j = 0; j < 4; j++) C[i][j] = A[i][j];
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) C[i][j] = A[i][j];
 }
 
 /* C <- A */
 void transpose(const Matrix4d A, Matrix4d C) {
   Matrix4d B;
-  int i, j;
-  for (i = 0; i < 4; i++)
-    for (j = 0; j < 4; j++) B[j][i] = A[i][j];
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) B[j][i] = A[i][j];
   assign(C, B);
 }
 
@@ -945,9 +954,8 @@ void assign(const float A[3], float C[3]) {
 }
 
 void identityMatrix(Matrix4d m) {
-  int i, j;
-  for (i = 0; i < 4; i++)
-    for (j = 0; j < 4; j++) m[i][j] = i == j ? 1.0 : 0.0;
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) m[i][j] = i == j ? 1.0 : 0.0;
 }
 
 void rotateX(double v, Matrix4d m) {

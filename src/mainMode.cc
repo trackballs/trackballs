@@ -51,7 +51,7 @@ const int MainMode::statusPaused = 8;
 // SDL_Surface *MainMode::panel,*MainMode::life,*MainMode::nolife;
 
 MainMode *MainMode::mainMode = NULL;
-char *MainMode::viewportData, *MainMode::environmentTextureData;
+uchar *MainMode::viewportData, *MainMode::environmentTextureData;
 
 void MainMode::init() {
   mainMode = new MainMode();
@@ -59,20 +59,28 @@ void MainMode::init() {
   /* Reflection maps */
   viewportData = NULL;
   environmentTextureData =
-      (char *)malloc(sizeof(char) * 4 * ENVIRONMENT_TEXTURE_SIZE * ENVIRONMENT_TEXTURE_SIZE);
+      (uchar *)malloc(sizeof(uchar) * 4 * ENVIRONMENT_TEXTURE_SIZE * ENVIRONMENT_TEXTURE_SIZE);
 }
 MainMode::MainMode() {
+  flash = 0;
+  zAngle = 0.;
+  wantedZAngle = 0.;
+  xyAngle = 0.;
+  wantedXYAngle = 0.;
+  memset(camFocus, 0, sizeof(camFocus));
+  memset(camDelta, 0, sizeof(camDelta));
+  gameStatus = 0;
+  statusCount = 0.;
+  time = 0.;
   this->go_to_pause = 0;
   this->pause_time = 0.;
   memset(&this->cameraModelView[0], 0, 16 * sizeof(double));
   memset(&this->cameraProjection[0], 0, 16 * sizeof(double));
+  mapname = NULL;
 }
 MainMode::~MainMode() {}
 
 void MainMode::display() {
-  char str[256];
-  int birdsEye = 0;
-
   Map *map = Game::current ? Game::current->map : NULL;
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
@@ -103,11 +111,7 @@ void MainMode::display() {
                  map->startPosition[0], map->startPosition[1], map->startPosition[2], 0.0, 0.0,
                  1.0, activeView.modelview);
 
-    birdsEye = 1;
   } else {
-    birdsEye = 0;
-    if (zAngle > 0.25 || xyAngle > 0.3 || xyAngle < -.3) birdsEye = 1;
-
     double angle = xyAngle * M_PI / 2. + M_PI / 4.;
     Coord3d up;
     up[0] = sin(angle) * zAngle;
@@ -168,9 +172,9 @@ void MainMode::display() {
 
   switch (gameStatus) {
   case statusBeforeGame:
-    if (map) map->draw(1, 0, (int)map->startPosition[0], (int)map->startPosition[1]);
+    if (map) map->draw(0, (int)map->startPosition[0], (int)map->startPosition[1]);
     Game::current->draw();
-    if (map) map->draw(1, 1, (int)map->startPosition[0], (int)map->startPosition[1]);
+    if (map) map->draw(1, (int)map->startPosition[0], (int)map->startPosition[1]);
     {
       const char *lp[3], *rp[3];
       lp[0] = _("Track:");
@@ -183,9 +187,9 @@ void MainMode::display() {
     }
     break;
   case statusGameOver:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     {
       char str[256];
@@ -194,22 +198,22 @@ void MainMode::display() {
     }
     break;
   case statusRestartPlayer:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     message(_("Oops"), _("Press spacebar to continue"));
     break;
   case statusInGame:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     break;
   case statusPaused:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
 
     Enter2DMode();
@@ -220,30 +224,30 @@ void MainMode::display() {
     Leave2DMode();
     break;
   case statusBonusLevelComplete:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     message(_("Bonus level complete"), _("Press spacebar to continue"));
     break;
   case statusLevelComplete:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     showBonus();
     break;
   case statusNextLevel:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     message(_("Level complete"), _("Press spacebar to continue"));
     break;
   case statusVictory:
-    map->draw(birdsEye, 0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
     Game::current->draw();
-    map->draw(birdsEye, 1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
     showInfo();
     message(_("Congratulations"), _("You have completed the game!"));
     break;
@@ -257,6 +261,7 @@ void MainMode::display() {
   displayFrameRate();
   /* Print joystick debugging information */
   if (debug_joystick && Settings::settings->hasJoystick()) {
+    char str[256];
     snprintf(str, 255, "Joy: %d, %d -> %.1f, %.1f", Settings::settings->joystickRawX(),
              Settings::settings->joystickRawY(), Settings::settings->joystickX(),
              Settings::settings->joystickY());
@@ -333,12 +338,11 @@ void MainMode::key(int key) {
     break;
   }
 }
-void MainMode::special(int key, int x, int y) {}
+void MainMode::special(int /*key*/, int /*x*/, int /*y*/) {}
 void MainMode::idle(Real td) {
   Player *player1 = Game::current ? Game::current->player1 : NULL;
   //   Map *map = Game::current ? Game::current->map : NULL;
   double t;
-  int i;
 
   time += td;
   flash -= td;
@@ -393,7 +397,7 @@ void MainMode::idle(Real td) {
 
     Game::current->tick(td);
     for (t = td; t >= 0.0; t -= 0.01)
-      for (i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; i++) {
         camDelta[i] = camDelta[i] * 0.9 + 0.002 * (player1->position[i] - camFocus[i]);
         camFocus[i] += camDelta[i];
       }
@@ -447,7 +451,7 @@ void MainMode::playerDie() { gameStatus = statusRestartPlayer; }
 void MainMode::mouse(int state, int x, int y) {
   if (Game::current) Game::current->player1->mouse(state, x, y);
 }
-void MainMode::mouseDown(int button, int x, int y) {
+void MainMode::mouseDown(int button, int /*x*/, int /*y*/) {
   if (button == SDL_BUTTON_LMASK) key(' ');
 }
 /* Starts the current game */
@@ -545,10 +549,10 @@ void MainMode::showBonus() {
   char right[16][256];
   const char *left_pointers[16];
   const char *right_pointers[16];
-  int i, difficulty = Settings::settings->difficulty;
+  int difficulty = Settings::settings->difficulty;
   Player *player = Game::current->player1;
 
-  for (i = 0; i < 16; i++) {
+  for (int i = 0; i < 16; i++) {
     left_pointers[i] = &left[i][0];
     right_pointers[i] = &right[i][0];
   }
@@ -609,7 +613,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
                     activeView.projection);
 
   /* Setup openGL matrixes for the camera perspective */
-  int birdsEye = 1;
   double angle = xyAngle * M_PI / 2. + M_PI / 4.;
   // TODO. Fixme. This computation is wrong when zAngle > 0.0 !!
   Coord3d up;
@@ -665,13 +668,13 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
 
   Map *map = Game::current ? Game::current->map : NULL;
 
-  map->draw(birdsEye, 0, (int)focus[0] + 10, (int)focus[1] + 10);
+  map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
   // map->draw(birdsEye,1, (int) focus[0]+10,(int) focus[1]+10);
 
   /* Copy rendered image into viewportData */
   if (!viewportData) {
-    viewportData = (char *)malloc(sizeof(char) * screenWidth * screenHeight * 3);
+    viewportData = (uchar *)malloc(sizeof(uchar) * screenWidth * screenHeight * 3);
   }
   // approx 1-2 ms */
   glReadPixels(0, 0, viewportSize, viewportSize, GL_RGB, GL_UNSIGNED_BYTE,
@@ -699,12 +702,11 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
 }
 
 /* Creates a 128x128 fisheye texture from viewport data */
-void MainMode::convertToFisheye(char *data, char *viewport, int viewportSize) {
+void MainMode::convertToFisheye(uchar *data, uchar *viewport, int viewportSize) {
   /* TODO. Let the environment map sample multiple viewport pixels.
          Encode an alpha value directly in the translationmap and let the alpha value increase
          as the angle away from the observer increases.
   */
-  int i, j, x2, y2;
   static short *translationMap = NULL;
   static short translationViewportSize = 0;
   if (!translationMap)
@@ -760,14 +762,14 @@ void MainMode::convertToFisheye(char *data, char *viewport, int viewportSize) {
   }
 
   int size = ENVIRONMENT_TEXTURE_SIZE * ENVIRONMENT_TEXTURE_SIZE;
-  for (i = 0; i < size; i++) {
-    x2 = translationMap[i * 2 + 0];
-    y2 = translationMap[i * 2 + 1];
+  for (int i = 0; i < size; i++) {
+    int x2 = translationMap[i * 2 + 0];
+    int y2 = translationMap[i * 2 + 1];
     if (x2 == -1)
       data[i * 4 + 3] = 0;
     else {
-      char *viewportPntr = &viewport[(x2 + y2 * viewportSize) * 3];
-      for (j = 0; j < 3; j++) data[i * 4 + j] = viewportPntr[j];
+      uchar *viewportPntr = &viewport[(x2 + y2 * viewportSize) * 3];
+      for (int j = 0; j < 3; j++) data[i * 4 + j] = viewportPntr[j];
       data[i * 4 + 3] = 255;
     }
   }

@@ -37,8 +37,8 @@ class Sign : public Animated {
  protected:
   int width, height;
   Real life, scale, rotation, tot_rot;
-  GLuint texture;
 
+  GLuint textimg;
   GLfloat texcoord[4];
 };
 

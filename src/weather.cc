@@ -36,7 +36,6 @@ Weather::Weather() {
 }
 
 void Weather::tick(Real td) {
-  int i, j, k;
   static double count = 0.0;
   static double snowDrift = 0.0;
 
@@ -55,8 +54,8 @@ void Weather::tick(Real td) {
       p->velocity[0] = (frandom() - 0.5) * 1.0;
       p->velocity[1] = (frandom() - 0.5) * 1.0;
       p->velocity[2] = -1.0 - frandom();
-      for (j = 0; j < 3; j++)
-        for (k = 0; k < 3; k++) p->corners[j][k] = frandom() * 0.06;
+      for (int j = 0; j < 3; j++)
+        for (int k = 0; k < 3; k++) p->corners[j][k] = frandom() * 0.06;
     }
     /* Make it look like the snow particles is drifting in the wind by changing
        their velocities randomly once every 2 seconds. */
@@ -81,7 +80,7 @@ void Weather::tick(Real td) {
     }
   }
 
-  for (i = 0; i < max_weather_particles; i++) {
+  for (int i = 0; i < max_weather_particles; i++) {
     Particle *p = &particles[i];
     p->position[0] += p->velocity[0] * td;
     p->position[1] += p->velocity[1] * td;
@@ -210,8 +209,7 @@ void Weather::draw2() {
 void Weather::clear() {
   // Zero in case of changes
   memset(particles, 0, sizeof(particles));
-  int i;
-  for (i = 0; i < max_weather_particles; i++) { particles[i].position[2] = -10.0; }
+  for (int i = 0; i < max_weather_particles; i++) { particles[i].position[2] = -10.0; }
   next = 0;
   nextSnowDrift = 0;
   strength = -1.0;
