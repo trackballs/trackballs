@@ -186,7 +186,6 @@ void changeScreenResolution() {
   if (SDL_GetModState() & KMOD_CAPS || 1) {
     SDL_SetWindowGrab(window, SDL_FALSE);
   } else {
-    SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
     SDL_SetWindowGrab(window, SDL_TRUE);
   }
   SDL_ShowCursor(SDL_DISABLE);
@@ -466,7 +465,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
   double oldTime, t, td;
   oldTime = ((double)SDL_GetTicks()) / 1000.0;
-  SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
 
   /* Initialize random number generator */
   int seed = (int)getSystemTime();

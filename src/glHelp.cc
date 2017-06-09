@@ -43,7 +43,6 @@ GLuint shaderObject = 0;
 GLuint theVao = 0;
 
 TTF_Font *ingameFont;
-extern SDL_Surface *screen;
 extern double displayStartTime;
 
 const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};

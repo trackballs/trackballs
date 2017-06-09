@@ -32,7 +32,6 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_surface.h>
 
-extern SDL_Window *window;
 HallOfFameMode *HallOfFameMode::hallOfFameMode;
 SDL_Surface *HallOfFameMode::background;
 
@@ -139,26 +138,6 @@ void HallOfFameMode::key(int key) {
   }
 }
 void HallOfFameMode::idle(Real td) {
-  int x, y;
-  SDL_GetMouseState(&x, &y);
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_LEFT]) {
-    x -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_RIGHT]) {
-    x += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_UP]) {
-    y -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_DOWN]) {
-    y += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-
   if (isExiting)
     timeLeft = fmax(0.0, timeLeft - td);
   else

@@ -31,8 +31,6 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-extern SDL_Window *window;
-// SDL_Surface *SettingsMode::title;
 SettingsMode *SettingsMode::settingsMode;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
@@ -254,37 +252,15 @@ void SettingsMode::key(int key) {
   if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
 }
 void SettingsMode::idle(Real td) {
-  int x, y;
-  Settings *settings = Settings::settings;
-
   tickMouse(td);
-
-  SDL_GetMouseState(&x, &y);
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_LEFT]) {
-    x -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_RIGHT]) {
-    x += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_UP]) {
-    y -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_DOWN]) {
-    y += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
 
   /* Check against timeouts when testing a new resolution */
   if (testingResolution > 0.0) {
     testingResolution -= td;
     if (testingResolution <= 0.0) {
       testingResolution = 0.0;
-      settings->resolution = restoreResolution;
-      settings->colorDepth = restoreColorDepth;
+      Settings::settings->resolution = restoreResolution;
+      Settings::settings->colorDepth = restoreColorDepth;
       resolution = restoreResolution;
       colorDepth = restoreColorDepth;
       changeScreenResolution();
@@ -370,10 +346,10 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     break;
   case MENU_SENSITIVITY:
     Settings::settings->mouseSensitivity += up ? 0.25 : -0.25;
-    if (Settings::settings->mouseSensitivity > 5.001)
+    if (Settings::settings->mouseSensitivity > 10.001)
       Settings::settings->mouseSensitivity = 0.0;
     if (Settings::settings->mouseSensitivity < 0.000)
-      Settings::settings->mouseSensitivity = 5.00;
+      Settings::settings->mouseSensitivity = 10.00;
     break;
   case MENU_STEERING:
     settings->rotateSteering = mymod(settings->rotateSteering + 3 + (up ? 1 : -1), 8) - 3;

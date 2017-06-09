@@ -47,7 +47,6 @@
 #define CODE_START 5
 #define CODE_COLOR 6
 
-extern SDL_Window *window;
 SetupMode *SetupMode::setupMode = NULL;
 SDL_Surface *SetupMode::background;
 
@@ -335,27 +334,7 @@ void SetupMode::key(int key) {
   }
 }
 void SetupMode::idle(Real td) {
-  int x, y;
-
   tickMouse(td);
-  SDL_GetMouseState(&x, &y);
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_LEFT]) {
-    x -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_RIGHT]) {
-    x += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_UP]) {
-    y -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_DOWN]) {
-    y += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
 
   t += td;
 }

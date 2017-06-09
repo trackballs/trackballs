@@ -29,7 +29,6 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_surface.h>
 
-extern SDL_Window *window;
 HelpMode *HelpMode::helpMode;
 SDL_Surface *HelpMode::background;
 SDL_Surface *HelpMode::page0, *HelpMode::page1;
@@ -176,38 +175,7 @@ void HelpMode::key(int key) {
   }
 }
 void HelpMode::idle(Real td) {
-  int x, y;
-
   tickMouse(td);
-
-  SDL_GetMouseState(&x, &y);
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_LEFT]) {
-    x -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_RIGHT]) {
-    x += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_UP]) {
-    y -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_DOWN]) {
-    y += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-
-  /*
-  Uint8 mouseState=SDL_GetMouseState(&mouseX,&mouseY);
-  if(mouseX >= screenWidth-moreHelp->w && mouseY > screenHeight-50)
-        selected=0;
-  else if(mouseX <= back->w && mouseY > screenHeight-50)
-        selected=1;
-  else
-        selected=-1;
-  */
 
   if (isExiting)
     timeLeft -= td;

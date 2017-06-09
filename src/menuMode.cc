@@ -31,7 +31,6 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-extern SDL_Window *window;
 MenuMode *MenuMode::menuMode = NULL;
 
 #define MENU_NEWGAME 1
@@ -158,30 +157,11 @@ void MenuMode::doSelection() {
 }
 
 void MenuMode::idle(Real td) {
-  int x, y;
-
   slideTime += td;
   if (slideTime > SLIDE_TOTAL) loadSlide();
 
   tickMouse(td);
-  SDL_GetMouseState(&x, &y);
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  if (keystate[SDL_SCANCODE_LEFT]) {
-    x -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_RIGHT]) {
-    x += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_UP]) {
-    y -= (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
-  if (keystate[SDL_SCANCODE_DOWN]) {
-    y += (int)(150 / fps);
-    SDL_WarpMouseInWindow(window, x, y);
-  }
   if (keystate[SDL_SCANCODE_SPACE] || keystate[SDL_SCANCODE_RETURN]) doSelection();
 
   /* This controls the scrolling text */

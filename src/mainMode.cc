@@ -38,7 +38,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern SDL_Window *window;
 #define ENVIRONMENT_TEXTURE_SIZE 128
 
 const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
@@ -349,11 +348,14 @@ void MainMode::idle(Real td) {
 
   switch (gameStatus) {
   case statusBeforeGame:
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     break;
   case statusGameOver: /* rotate view? */
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     Game::current->tick(td);
     break;
   case statusLevelComplete: {
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     int old_status = (int)statusCount;
     statusCount += 0.8 * td;
     Player *player = Game::current->player1;
@@ -382,6 +384,7 @@ void MainMode::idle(Real td) {
   // note. No break here!
   case statusNextLevel:
   case statusInGame:
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     if (wantedZAngle > zAngle)
       zAngle += std::min(0.4 * td, wantedZAngle - zAngle);
     else if (wantedZAngle < zAngle)
@@ -402,6 +405,7 @@ void MainMode::idle(Real td) {
       }
     break;
   case statusPaused:
+    SDL_SetRelativeMouseMode(SDL_FALSE);
     if (go_to_pause) {
       if (pause_time > 0.5) {
         pause_time = 0.5;
@@ -418,6 +422,7 @@ void MainMode::idle(Real td) {
     }
     break;
   case statusRestartPlayer:
+    SDL_SetRelativeMouseMode(SDL_TRUE);
     Game::current->tick(td);
     //    assign(map->startPosition,camFocus); zero(camDelta);
     break;
@@ -429,7 +434,7 @@ void MainMode::activated() {
   zero(camFocus);
   zero(camDelta);
   gameStatus = statusBeforeGame;
-  SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
+  SDL_SetRelativeMouseMode(SDL_TRUE);
 
   camFocus[0] = Game::current->map->startPosition[0] - 5;
   camFocus[1] = Game::current->map->startPosition[1] - 5;
@@ -437,6 +442,8 @@ void MainMode::activated() {
   flash = 0.0;
 }
 void MainMode::deactivated() {
+  SDL_SetRelativeMouseMode(SDL_FALSE);
+
   free(viewportData);
   viewportData = NULL;
 }

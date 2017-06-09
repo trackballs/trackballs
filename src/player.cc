@@ -31,7 +31,6 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-extern SDL_Window *window;
 Player::Player() : Ball() {
   inTheAir = 0;
   inPipe = 0;
@@ -142,10 +141,7 @@ void Player::tick(Real t) {
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
     int mouseX, mouseY;
 
-    Uint8 mouseState = SDL_GetMouseState(&mouseX, &mouseY);
-    mouseX -= screenWidth / 2;
-    mouseY -= screenHeight / 2;
-    SDL_WarpMouseInWindow(window, screenWidth / 2, screenHeight / 2);
+    Uint32 mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
 
     if (mouseState & SDL_BUTTON_RMASK) superAccelerate = 1;
     if ((mouseX || mouseY)) {
