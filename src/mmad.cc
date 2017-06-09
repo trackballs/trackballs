@@ -373,9 +373,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   // set the name of the window
 
   double bootStart = ((double)SDL_GetTicks()) / 1000.0;
-  snprintf(str, sizeof(str), "%s/images/splashScreen.jpg", effectiveShareDir);
-  SDL_Surface *splashScreen = IMG_Load(str);
-  if (!splashScreen) { error("failed to load %s", str); }
+  SDL_Surface *splashScreen = loadImage("splashScreen.jpg");
   glViewport(0, 0, screenWidth, screenHeight);
 
   // Draw the splash screen

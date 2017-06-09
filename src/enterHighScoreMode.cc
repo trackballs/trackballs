@@ -26,7 +26,7 @@
 #include "menuMode.h"
 #include "player.h"
 
-#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_surface.h>
 #include <string.h>
@@ -35,14 +35,11 @@ EnterHighScoreMode *EnterHighScoreMode::enterHighScoreMode;
 SDL_Surface *EnterHighScoreMode::background;
 
 void EnterHighScoreMode::init() {
-  char str[256];
   enterHighScoreMode = new EnterHighScoreMode();
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("failed to load %s", str); }
+    background = loadImage("enterHighscoreBackground.jpg");
   }
 }
 EnterHighScoreMode::EnterHighScoreMode() { memset(name, 0, sizeof(name)); }
@@ -87,12 +84,7 @@ void EnterHighScoreMode::key(int key) {
   }
 }
 void EnterHighScoreMode::activated() {
-  char str[256];
-  if (!background) {
-    snprintf(str, sizeof(str), "%s/images/enterHighscoreBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("failed to load %s", str); }
-  }
+  if (!background) { background = loadImage("enterHighscoreBackground.jpg"); }
 
   snprintf(name, sizeof(name), "%s", Game::current->gamer->name);
   if (!HighScore::highScore->isHighScore(Game::current->player1->score))

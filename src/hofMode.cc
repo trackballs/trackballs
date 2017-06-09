@@ -27,7 +27,10 @@
 #include "menusystem.h"
 #include "settings.h"
 
-#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_surface.h>
 
 extern SDL_Window *window;
 HallOfFameMode *HallOfFameMode::hallOfFameMode;
@@ -36,13 +39,10 @@ SDL_Surface *HallOfFameMode::background;
 #define CODE_LEVELSET 1
 
 void HallOfFameMode::init() {
-  char str[256];
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("failed to load %s", str); }
+    background = loadImage("displayHighscoreBackground.jpg");
   }
   hallOfFameMode = new HallOfFameMode();
 }
@@ -52,13 +52,7 @@ HallOfFameMode::HallOfFameMode() {
   isExiting = 0;
 }
 void HallOfFameMode::activated() {
-  char str[256];
-
-  if (!background) {
-    snprintf(str, sizeof(str), "%s/images/displayHighscoreBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("failed to load %s", str); }
-  }
+  if (!background) { background = loadImage("displayHighscoreBackground.jpg"); }
 
   /* Loads the background images. */
   texture = LoadTexture(background, texCoord);

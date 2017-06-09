@@ -1160,3 +1160,13 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   SDL_FreeSurface(image); /* No longer needed */
   return *texture;
 }
+
+SDL_Surface *loadImage(const char *imagename) {
+  char path[512];
+  snprintf(path, 511, "%s/images/%s", effectiveShareDir, imagename);
+  path[511] = '\0';
+
+  SDL_Surface *img = IMG_Load(path);
+  if (!img) { error("Failed to load image '%s'", img); }
+  return img;
+}

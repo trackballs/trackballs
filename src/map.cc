@@ -358,9 +358,9 @@ Map::Map(char* filename) {
                          "texture2.png", "texture3.png", "texture4.png"};
 
   for (int i = 0; i < nsubtextures; i++) {
-    char impath[256];
-    snprintf(impath, 255, "%s/images/%s", effectiveShareDir, texs[i]);
-    SDL_Surface* orig = IMG_Load(impath);
+    /* loadImage aborts with error if any of the above textures DNE */
+    SDL_Surface* orig = loadImage(texs[i]);
+
     Uint32 mask[4];
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
     mask[0] = 0x000000FF;

@@ -28,7 +28,6 @@
 #include "settingsMode.h"
 #include "setupMode.h"
 
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
@@ -228,10 +227,8 @@ void MenuMode::loadSlide() {
   slideMode[0] = slideMode[1];
 
   /* Load the image */
-  snprintf(str, sizeof(str), "%s/images/slide-%02d.jpg", effectiveShareDir,
-           (rand() % NUM_SLIDES) + 1);
-  slide = IMG_Load(str);
-  if (!slide) { error("failed to load %s", str); }
+  snprintf(str, sizeof(str), "slide-%02d.jpg", (rand() % NUM_SLIDES) + 1);
+  slide = loadImage(str);
 
   /* Create a texture of it, and free the image data */
   GLfloat texcoord[4];

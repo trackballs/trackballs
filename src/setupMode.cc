@@ -55,14 +55,10 @@ GLfloat colors[5][3] = {
     {1.0, 0.2, 0.2}, {0.2, 1.0, 0.2}, {0.5, 0.5, 1.0}, {1.0, 1.0, 0.2}, {1.0, 1.0, 1.0}};
 
 void SetupMode::init() {
-  char str[256];
-
   if (low_memory)
     background = NULL;
   else {
-    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("failed to load %s", str); }
+    background = loadImage("setupBackground.jpg");
   }
 
   setupMode = new SetupMode();
@@ -364,15 +360,9 @@ void SetupMode::idle(Real td) {
   t += td;
 }
 void SetupMode::activated() {
-  char str[256];
-
   gamer->reloadNames();
 
-  if (!background) {
-    snprintf(str, sizeof(str), "%s/images/setupBackground.jpg", effectiveShareDir);
-    background = IMG_Load(str);
-    if (!background) { error("Failed to load %s", str); }
-  }
+  if (!background) { background = loadImage("setupBackground.jpg"); }
 
   /* Preloads the background texture. */
   texture = LoadTexture(background, texCoord);
