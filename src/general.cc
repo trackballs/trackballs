@@ -19,36 +19,17 @@
 */
 
 #include "general.h"
-#include "gameMode.h"
-#include "menuMode.h"
-#include "SDL2/SDL_opengl.h"
-#include "font.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
-#include <sys/time.h>
+
 #include <dirent.h>
-#include <sys/types.h>
+#include <stdarg.h>
+#include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 
-using namespace std;
-
-int randData1[4711];
-int randData2[4827];
-int randData3[5613];
 int low_memory;
 
-void generalInit() {
-  int i;
-  for (i = 0; i < 4711; i++) randData1[i] = rand() % 65536;
-  for (i = 0; i < 4827; i++) randData2[i] = rand() % 65536;
-  for (i = 0; i < 5613; i++) randData3[i] = rand() % 65536;
-}
-double semiRand(int x, int y) {
-  return (randData2[(randData1[x % 4711] + y) % 4827]) / 65536.0;
-}
-double semiRand(int x, int y, int z) {
-  return randData3[(randData2[(randData1[x % 4711] + y) % 4827] + z) % 5613] / 65536.0;
-}
+void generalInit() {}
+
 double frandom() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
 
 int mymod(int v, int m) {
@@ -88,42 +69,6 @@ int pathIsLink(char *path) {
   if (lstat(path, &m)) return 0;
   if (S_ISLNK(m.st_mode)) return 1;
   return 0;
-}
-
-/* Note. this function is currently not used anywhere */
-const char *locateFile(char *basename, char *mode) {
-  FILE *fp;
-  static char str[512];
-  char *home = getenv("HOME");
-
-  /* First attempt $HOME/.trackballs */
-  if (home) {
-    snprintf(str, 511, "%s/.trackballs/%s", home, basename);
-    fp = fopen(str, mode);
-    if (fp) {
-      fclose(fp);
-      return str;
-    }
-  }
-
-  /* Next at the current dir */
-  snprintf(str, 511, "./%s", basename);
-  fp = fopen(str, mode);
-  if (fp) {
-    fclose(fp);
-    return str;
-  }
-
-  /* Lastly, in the configured share directory */
-  snprintf(str, 511, "%s/%s", effectiveShareDir, basename);
-  fp = fopen(str, mode);
-  if (fp) {
-    fclose(fp);
-    return str;
-  }
-
-  warning("failed to open resource file %s in mode '%s'", basename, mode);
-  return "";
 }
 
 /* Returns the real time right now measured in seconds. Mostly useful for debugging and

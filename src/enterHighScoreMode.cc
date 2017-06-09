@@ -18,21 +18,18 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
 #include "enterHighScoreMode.h"
-#include "glHelp.h"
+#include "font.h"
 #include "game.h"
-#include "player.h"
-#include "SDL2/SDL_ttf.h"
-#include "SDL2/SDL_opengl.h"
-#include "SDL2/SDL_image.h"
-#include "menuMode.h"
-#include "ctype.h"
-#include "highScore.h"
 #include "gamer.h"
+#include "highScore.h"
+#include "menuMode.h"
+#include "player.h"
 
-using namespace std;
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_surface.h>
+#include <string.h>
 
 EnterHighScoreMode *EnterHighScoreMode::enterHighScoreMode;
 SDL_Surface *EnterHighScoreMode::background;

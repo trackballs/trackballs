@@ -18,18 +18,16 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "map.h"
-#include "game.h"
-#include "gameHook.h"
 #include "trampoline.h"
 
-using namespace std;
+#include "game.h"
+#include "map.h"
 
 Trampoline::Trampoline(int x, int y) : GameHook(), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
-  Cell& c = Game::current->map->cell(cx, cy);
-  Real dh = min(0.5 * t, c.sunken - 1e-5);
+  Map* map = Game::current->map;
+  Cell& c = map->cell(cx, cy);
+  Real dh = std::min(0.5 * t, c.sunken - 1e-5);
   for (int i = 0; i < 5; i++) c.heights[i] += dh;
   c.sunken -= dh;
   if (abs(c.sunken) < 2e-5 && abs(dh) < 1e-10) {
@@ -38,9 +36,9 @@ void Trampoline::tick(Real t) {
     for (int i = 0; i < 5; i++) c.heights[i] += c.sunken;
     c.sunken = 0.;
   }
-  Game::current->map->markCellUpdated(cx, cy);
-  Game::current->map->markCellUpdated(cx + 1, cy);
-  Game::current->map->markCellUpdated(cx - 1, cy);
-  Game::current->map->markCellUpdated(cx, cy + 1);
-  Game::current->map->markCellUpdated(cx, cy - 1);
+  map->markCellUpdated(cx, cy);
+  map->markCellUpdated(cx + 1, cy);
+  map->markCellUpdated(cx - 1, cy);
+  map->markCellUpdated(cx, cy + 1);
+  map->markCellUpdated(cx, cy - 1);
 }

@@ -20,13 +20,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "animated.h"
 #include "game.h"
 #include "map.h"
 #include "scoreSign.h"
-
-using namespace std;
 
 Animated::Animated() : GameHook() {
   Game::current->add(this);

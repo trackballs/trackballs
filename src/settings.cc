@@ -18,17 +18,16 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "settings.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
 
+#include "general.h"
 #include "guile.h"
 
-using namespace std;
+#include <SDL2/SDL_joystick.h>
+#include <dirent.h>
+#include <locale.h>
+#include <string.h>
+#include <sys/stat.h>
 
 /* These are the names/codes codes of languages available from the settings
    menu. The name of languages should appear in the respective native

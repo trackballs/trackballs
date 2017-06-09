@@ -21,9 +21,8 @@
 #ifndef MAINMODE_H
 #define MAINMODE_H
 
-#ifndef GAMEMODE_H
 #include "gameMode.h"
-#endif
+#include "glHelp.h"
 
 class MainMode : public GameMode {
  public:
@@ -41,7 +40,7 @@ class MainMode : public GameMode {
   void activated();
   void deactivated();
 
-  void playerLoose();
+  void playerLose();
   void playerDie();
   void startGame();
   void restartPlayer();

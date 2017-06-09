@@ -20,17 +20,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "map.h"
-#include "SDL2/SDL_endian.h"
-#include "SDL2/SDL_image.h"
-
-#include "settings.h"
-#include "game.h"
-#include "gameMode.h"
 #include "editMode.h"
+#include "game.h"
 
-using namespace std;
+#include <SDL2/SDL_endian.h>
+#include <SDL2/SDL_image.h>
+#include <zlib.h>
 
 /* VISRADIUS is half-width of square of drawable cells
    MARGIN    is px zone on edge of screen where cells can be skipped. */
@@ -586,8 +582,8 @@ static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
                   ((uint32_t)(1023.f * (txno / 16.f)) << 20);
   aout[5] = txco;
 
-  int vx = max(min((int)(32677.f * (velx)), 32677), -32677);
-  int vy = max(min((int)(32677.f * (vely)), 32677), -32677);
+  int vx = std::max(std::min((int)(32677.f * (velx)), 32677), -32677);
+  int vy = std::max(std::min((int)(32677.f * (vely)), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
   aout[7] = packNormal(normal);
 }
@@ -601,18 +597,10 @@ static inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat 
   aout[3] = -1;
   aout[4] = -1;
   aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
-  int vx = max(min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
-  int vy = max(min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
+  int vx = std::max(std::min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
+  int vy = std::max(std::min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
   aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
   aout[7] = packNormal(normal);
-}
-
-inline double smoothSemiRand(int x, int y, double scale) {
-  double dt =
-      (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time) * scale;
-  int t = (int)dt;
-  double frac = dt - t;
-  return semiRand(x, y, t) * (1. - frac) + semiRand(x, y, t + 1) * frac;
 }
 
 static inline int cmp(float l, float r) {
@@ -650,10 +638,10 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       Cell& c = cell(x, y);
       c.displayListDirty |= first_time;
       for (int k = 0; k < 5; k++) {
-        minz = min(minz, c.heights[k]);
-        minz = min(minz, c.waterHeights[k]);
-        maxz = max(maxz, c.heights[k]);
-        maxz = max(maxz, c.waterHeights[k]);
+        minz = std::min(minz, c.heights[k]);
+        minz = std::min(minz, c.waterHeights[k]);
+        maxz = std::max(maxz, c.heights[k]);
+        maxz = std::max(maxz, c.waterHeights[k]);
       }
     }
   }
@@ -957,10 +945,10 @@ void Map::markCellUpdated(int x, int y) {
 
     // Extend bounding box
     for (int k = 0; k < 5; k++) {
-      z.minHeight = min(z.minHeight, c.heights[k]);
-      z.minHeight = min(z.minHeight, c.waterHeights[k]);
-      z.maxHeight = max(z.maxHeight, c.heights[k]);
-      z.maxHeight = max(z.maxHeight, c.waterHeights[k]);
+      z.minHeight = std::min(z.minHeight, c.heights[k]);
+      z.minHeight = std::min(z.minHeight, c.waterHeights[k]);
+      z.maxHeight = std::max(z.maxHeight, c.heights[k]);
+      z.maxHeight = std::max(z.maxHeight, c.waterHeights[k]);
     }
   }
 }
@@ -1066,8 +1054,8 @@ Chunk* Map::chunk(int cx, int cy) {
       for (int dy = c.xm; dy < c.xm + CHUNKSIZE; dy++) {
         const Cell& w = cell(dx, dy);
         for (int k = 0; k < 5; k++) {
-          c.maxHeight = max(c.maxHeight, max(w.heights[k], w.waterHeights[k]));
-          c.minHeight = min(c.minHeight, min(w.heights[k], w.waterHeights[k]));
+          c.maxHeight = std::max(c.maxHeight, std::max(w.heights[k], w.waterHeights[k]));
+          c.minHeight = std::min(c.minHeight, std::min(w.heights[k], w.waterHeights[k]));
         }
       }
     }

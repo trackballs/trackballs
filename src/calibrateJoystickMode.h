@@ -21,6 +21,8 @@
 #ifndef CALIBRATEJOYSTICK_H
 #define CALIBRATEJOYSTICK_H
 
+#include "gameMode.h"
+
 class CalibrateJoystickMode : public GameMode {
  public:
   CalibrateJoystickMode();

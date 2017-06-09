@@ -18,21 +18,20 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "player.h"
-#include "map.h"
-#include "gameMode.h"
-#include "mainMode.h"
-#include "game.h"
+
 #include "debris.h"
-#include "math.h"
+#include "game.h"
+#include "mainMode.h"
+#include "map.h"
+#include "settings.h"
 #include "sound.h"
-#include "settings.h"
 #include "splash.h"
-#include "settings.h"
 
-using namespace std;
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 
+extern SDL_Window *window;
 Player::Player() : Ball() {
   inTheAir = 0;
   inPipe = 0;
@@ -122,7 +121,7 @@ void Player::tick(Real t) {
         (t / (12.0 - 2.0 * Settings::settings->difficulty)) / Game::current->oxygenFactor;
     if (oxygen <= 0.0) die(DIE_OTHER);
   } else
-    oxygen = min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
+    oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
 
   /* Joysticks */
   if (Settings::settings->hasJoystick()) {
@@ -211,7 +210,7 @@ void Player::tick(Real t) {
   /* Limit size of actual movement according to "cap" */
   /* Uses a trick to avoid capping away movements from integer only devices (eg. mouse) while
    * having a high FPS */
-  moveBurst = min(cap * 0.2, moveBurst + cap * t);
+  moveBurst = std::min(cap * 0.2, moveBurst + cap * t);
   double len = sqrt(dx * dx + dy * dy);
   if (len > moveBurst) {
     dx = dx * moveBurst / len;
@@ -291,7 +290,7 @@ void Player::jump() {
     double dh = position[2] - Game::current->map->getHeight(position[0], position[1]);
     if (dh > 0.20)
       dh = 0.20;  // we are not supposed to be not "inTheAir" and also have dh > 0.20!
-    position[2] += min(0.2, 0.20 - dh);
+    position[2] += std::min(0.2, 0.20 - dh);
     inTheAir = true;
   }
 }
@@ -349,7 +348,7 @@ void Player::die(int how) {
     playEffect(SFX_FF_DEATH);
 
   if (lives <= 0)
-    ((MainMode *)GameMode::current)->playerLoose();
+    ((MainMode *)GameMode::current)->playerLose();
   else
     ((MainMode *)GameMode::current)->playerDie();
   alive = 0;

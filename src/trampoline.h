@@ -21,6 +21,8 @@
 #ifndef TRAMPOLINE_H
 #define TRAMPOLINE_H
 
+#include "gameHook.h"
+
 class Trampoline : public GameHook {
  public:
   Trampoline(int x, int y);

@@ -19,37 +19,37 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "ball.h"
-#include "map.h"
-#include "gameMode.h"
-#include "mainMode.h"
-#include "game.h"
+
 #include "debris.h"
-#include "trampoline.h"
 #include "forcefield.h"
-#include "sound.h"
-#include "settings.h"
-#include "font.h"
+#include "game.h"
+#include "mainMode.h"
+#include "map.h"
 #include "pipe.h"
 #include "pipeConnector.h"
+#include "settings.h"
+#include "sound.h"
 #include "splash.h"
+#include "trampoline.h"
 
-using namespace std;
+#include <SDL2/SDL_ttf.h>
+#include <math.h>
+#include <set>
 
 const Real Ball::physicsResolution = 0.002;
-class set<Ball *> *Ball::balls;
+class std::set<Ball *> *Ball::balls;
 GLuint Ball::dizzyTexture;
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
 
 void Ball::init() {
-  balls = new set<Ball *>();
+  balls = new std::set<Ball *>();
   SDL_Surface *text;
   SDL_Color fgColor = {255, 255, 255, 255};
   // GLfloat texcoord[4];
 
-  text = TTF_RenderText_Blended(ingameFont, " ? ", fgColor);
+  text = TTF_RenderUTF8_Blended(ingameFont, " ? ", fgColor);
   // dizzyTexture = LoadTexture(text, texcoord);
   loadTexture("dizzy.png");
   SDL_FreeSurface(text);
@@ -60,7 +60,7 @@ void Ball::init() {
 }
 void Ball::reset() {
   delete balls;
-  balls = new set<Ball *>();
+  balls = new std::set<Ball *>();
 }
 void Ball::onRemove() {
   Animated::onRemove();
@@ -132,9 +132,9 @@ void Ball::draw() {
 
   // Handle primary ball..
   if (modTimeLeft[MOD_GLASS]) {
-    phase = min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
+    phase = std::min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
     if (modTimeLeft[MOD_GLASS] > 0)
-      phase = min(modTimeLeft[MOD_GLASS] / 2.0, phase);
+      phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
     else
       phase = 1.0;
     blend = phase;
@@ -149,9 +149,9 @@ void Ball::draw() {
     shininess = 50.0 * blend + shininess * (1.0 - blend);
     glEnable(GL_BLEND);
   } else if (modTimeLeft[MOD_FROZEN]) {
-    phase = min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
+    phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
     if (modTimeLeft[MOD_FROZEN] > 0)
-      phase = min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
+      phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
     else
       phase = 1.0;
     blend = phase;
@@ -680,17 +680,17 @@ void Ball::tick(Real time) {
 
   radius = realRadius;
   if (modTimeLeft[MOD_LARGE]) {
-    phase = min(modTimePhaseIn[MOD_LARGE] / 5.0, 1.0);
+    phase = std::min(modTimePhaseIn[MOD_LARGE] / 5.0, 1.0);
     if (modTimeLeft[MOD_LARGE] > 0)
-      phase = min(modTimeLeft[MOD_LARGE] / 3.0, phase);
+      phase = std::min(modTimeLeft[MOD_LARGE] / 3.0, phase);
     else
       phase = 1.0;
     radius *= 1.0 + phase;
   }
   if (modTimeLeft[MOD_SMALL]) {
-    phase = min(modTimePhaseIn[MOD_SMALL] / 5.0, 1.0);
+    phase = std::min(modTimePhaseIn[MOD_SMALL] / 5.0, 1.0);
     if (modTimeLeft[MOD_SMALL] > 0)
-      phase = min(modTimeLeft[MOD_SMALL] / 3.0, phase);
+      phase = std::min(modTimeLeft[MOD_SMALL] / 3.0, phase);
     else
       phase = 1.0;
     radius /= 1.0 + phase;
@@ -821,7 +821,7 @@ Boolean Ball::physics(Real time) {
           velocity[1] += 0.01 * rotation[1];
           new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
         }
-        double fric = 0.004 * min(1.0, depth / (2. * radius));  // an extra water friction
+        double fric = 0.004 * std::min(1.0, depth / (2. * radius));  // an extra water friction
         velocity[0] = velocity[0] * (1. - fric) + c.velocity[0] * fric;
         velocity[1] = velocity[1] * (1. - fric) + c.velocity[1] * fric;
         fric = 0.008;
@@ -849,13 +849,13 @@ Boolean Ball::physics(Real time) {
         center[2] = map->getHeight(center[0], center[1]);
         new Splash(center, velocity, acidColor, speed * radius, radius);
       }
-      if (modTimeLeft[MOD_GLASS]) sink = min(sink, 0.3);
+      if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
       if (sink > radius * 2.0) {
         die(DIE_ACID);
         return false;
       }
     } else
-      sink = max(0.0, sink - 2.0 * physicsResolution);
+      sink = std::max(0.0, sink - 2.0 * physicsResolution);
 
     /*                                      */
     /* Ground "grip" - Also works in pipes! */
@@ -1105,8 +1105,8 @@ void Ball::generateDebris(GLfloat color[4]) {
 }
 
 void Ball::handleBallCollisions() {
-  set<Ball *>::iterator iter = balls->begin();
-  set<Ball *>::iterator end = balls->end();
+  std::set<Ball *>::iterator iter = balls->begin();
+  std::set<Ball *>::iterator end = balls->end();
   Coord3d v;
   double dist, err, speed;
   Ball *ball;
@@ -1140,8 +1140,8 @@ void Ball::handleBallCollisions() {
   }
 }
 void Ball::handleForcefieldCollisions() {
-  set<ForceField *>::iterator iter = ForceField::forcefields->begin();
-  set<ForceField *>::iterator end = ForceField::forcefields->end();
+  std::set<ForceField *>::iterator iter = ForceField::forcefields->begin();
+  std::set<ForceField *>::iterator end = ForceField::forcefields->end();
   for (; iter != end; iter++) {
     ForceField *ff = *iter;
     if (!ff->is_on) continue;
@@ -1343,8 +1343,8 @@ void Ball::handleEdges() {
 void Ball::handlePipes() {
   inPipe = false;
 
-  set<Pipe *>::iterator iter = Pipe::pipes->begin();
-  set<Pipe *>::iterator end = Pipe::pipes->end();
+  std::set<Pipe *>::iterator iter = Pipe::pipes->begin();
+  std::set<Pipe *>::iterator end = Pipe::pipes->end();
   for (; iter != end; iter++) {
     Pipe *pipe = *iter;
     Coord3d direction;  // direction of pipe
@@ -1355,10 +1355,11 @@ void Ball::handlePipes() {
     normalize(dirNorm);
     Coord3d v0;  // pipe enterance -> ball position
     sub(position, pipe->from, v0);
-    double l = max(0.0, min(1.0,
-                            dotProduct(v0, dirNorm) /
-                                length(direction)));  // where along pipe ball is projected
-    Coord3d proj;                                     // where (as pos) the ball is projected
+    double l =
+        std::max(0.0, std::min(1.0,
+                               dotProduct(v0, dirNorm) /
+                                   length(direction)));  // where along pipe ball is projected
+    Coord3d proj;  // where (as pos) the ball is projected
     for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
     Coord3d v1;  // projection point -> ball position
     sub(position, proj, v1);
@@ -1431,8 +1432,8 @@ void Ball::handlePipes() {
 
   /* Check for pipeConnectors to support ball, only if we are not inside a pipe already */
   if (!inPipe) {
-    set<PipeConnector *>::iterator iter2 = PipeConnector::connectors->begin();
-    set<PipeConnector *>::iterator end2 = PipeConnector::connectors->end();
+    std::set<PipeConnector *>::iterator iter2 = PipeConnector::connectors->begin();
+    std::set<PipeConnector *>::iterator end2 = PipeConnector::connectors->end();
     for (; iter2 != end2; iter2++) {
       PipeConnector *connector = *iter2;
       Coord3d v0;  // ball -> connector

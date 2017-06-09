@@ -20,17 +20,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "ball.h"
-#include "black.h"
 #include "baby.h"
 #include "game.h"
-#include "sign.h"
-#include "scoreSign.h"
-#include "sound.h"
 #include "map.h"
-
-using namespace std;
+#include "sound.h"
 
 Baby::Baby(double x, double y) : Black(x, y) {
   acceleration = 1.0;

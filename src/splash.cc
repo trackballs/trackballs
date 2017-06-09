@@ -18,13 +18,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "animated.h"
 #include "splash.h"
-#include "glHelp.h"
-#include "settings.h"
 
-using namespace std;
+#include "settings.h"
 
 Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength,
                double radius) {

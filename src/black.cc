@@ -19,17 +19,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "black.h"
-#include "map.h"
-#include "game.h"
-#include "player.h"
 #include "debris.h"
-#include "sign.h"
-#include "scoreSign.h"
+#include "game.h"
+#include "map.h"
+#include "player.h"
 #include "sound.h"
-
-using namespace std;
 
 Black::Black(double x, double y) : Ball() {
   realRadius = 0.4;

@@ -21,9 +21,7 @@
 #ifndef DEBRIS_H
 #define DEBRIS_H
 
-#ifndef BALL_H
 #include "ball.h"
-#endif
 
 class Debris : public Ball {
  public:

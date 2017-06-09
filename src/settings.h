@@ -28,6 +28,8 @@
 #define GFX_DETAILS_EXTRA 4
 #define GFX_DETAILS_EVERYTHING 5
 
+typedef struct _SDL_Joystick SDL_Joystick;
+
 class LevelSet {
  public:
   char path[256];

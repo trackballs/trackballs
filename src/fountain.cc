@@ -18,15 +18,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "animated.h"
 #include "fountain.h"
-#include "player.h"
-#include "map.h"
 #include "game.h"
+#include "player.h"
 #include "settings.h"
-
-using namespace std;
 
 Fountain::Fountain(double randomSpeed, double radius, double strength)
     : Animated(), randomSpeed(randomSpeed), radius(radius), strength(strength) {

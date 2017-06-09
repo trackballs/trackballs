@@ -18,13 +18,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "weather.h"
+
 #include "game.h"
 #include "player.h"
 #include "settings.h"
-
-using namespace std;
 
 Weather::Weather() {
   if (Settings::settings->gfx_details <= 2) max_weather_particles = 500;

@@ -19,19 +19,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
 #include "cactus.h"
 #include "ball.h"
-#include "player.h"
-#include "sign.h"
-#include "scoreSign.h"
+#include "game.h"
+#include "map.h"
 #include "sound.h"
-
-using namespace std;
 
 Cactus::Cactus(int x, int y, Real radius) {
   this->x = x;
@@ -194,8 +186,8 @@ void Cactus::tick(Real t) {
 
   // do I parse all the balls (incl. Mr Black) or just the player ?
   Ball *ball;
-  set<Ball *>::iterator iter = Ball::balls->begin();
-  set<Ball *>::iterator end = Ball::balls->end();
+  std::set<Ball *>::iterator iter = Ball::balls->begin();
+  std::set<Ball *>::iterator end = Ball::balls->end();
   for (; iter != end; iter++) {
     ball = *iter;
     if (!ball->alive) continue;

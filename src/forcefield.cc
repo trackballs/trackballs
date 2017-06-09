@@ -18,21 +18,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameHook.h"
-#include "animated.h"
-#include "game.h"
-#include "map.h"
 #include "forcefield.h"
 
-using namespace std;
+std::set<ForceField *> *ForceField::forcefields;
 
-class set<ForceField *> *ForceField::forcefields;
-
-void ForceField::init() { forcefields = new set<ForceField *>(); }
+void ForceField::init() { forcefields = new std::set<ForceField *>(); }
 void ForceField::reset() {
   delete forcefields;
-  forcefields = new set<ForceField *>();
+  forcefields = new std::set<ForceField *>();
 }
 
 ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {

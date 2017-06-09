@@ -19,15 +19,15 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "highScore.h"
-#include <string>
-#include "settings.h"
+
 #include "game.h"
-
+#include "general.h"
 #include "guile.h"
+#include "settings.h"
 
-using namespace std;
+#include <zlib.h>
+
 char highScorePath[256];
 
 HighScore* HighScore::highScore;

@@ -22,7 +22,7 @@
 #ifndef FONT_H
 #define FONT_H
 
-#include <GL/gl.h>
+#include "general.h"
 
 class Font {
  public:
@@ -41,11 +41,6 @@ class Font {
   static int drawCenterSimpleText(const char *text, int x, int y, float sz, float r, float g,
                                   float b, float a);
   static int getTextWidth(const char *text, float sz);
-
- protected:
-  Font();
-  ~Font();
-  static float color[4];
 };
 
 #endif

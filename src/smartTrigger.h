@@ -21,9 +21,7 @@
 #ifndef SMARTTRIGGER_H
 #define SMARTTRIGGER_H
 
-#ifndef GAMEHOOK_H
 #include "gameHook.h"
-#endif
 
 class SmartTrigger : public GameHook {
  public:

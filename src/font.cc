@@ -19,16 +19,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <string.h>
-#include <math.h>
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
 #include "font.h"
+#include "glHelp.h"
 
-using namespace std;
+#include <SDL2/SDL_ttf.h>
 
 void Font::init() {}
 

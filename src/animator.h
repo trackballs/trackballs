@@ -30,6 +30,8 @@
 #define ANIMATOR_1_BOUNCE 64
 #define ANIMATOR_1_WRAP 128
 
+#include "gameHook.h"
+
 class Animator : public GameHook {
  public:
   Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat, SCM fun);

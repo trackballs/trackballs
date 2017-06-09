@@ -18,23 +18,18 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include <ctype.h>
-#include <dirent.h>
-
-#include "glHelp.h"
-#include "myWindow.h"
-#include "editMode_codes.h"
 #include "editWindows.h"
-#include "gameMode.h"
 #include "editMode.h"
-#include "menusystem.h"
-#include "font.h"
 #include "map.h"
-#include "settings.h"
 #include "menuMode.h"
+#include "menusystem.h"
+#include "settings.h"
 
-using namespace std;
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_timer.h>
+#include <dirent.h>
 
 EMenuWindow::EMenuWindow() : MyWindow(0, 0, screenWidth, 30) {
   activeSubID = -1;
@@ -417,7 +412,7 @@ void ESaveWindow::draw() {
     double t1;
     do {
       t1 = ((double)SDL_GetTicks()) / 1000.0;
-      usleep(1000);
+      SDL_Delay(10);
     } while (t0 + 3.0 > t1);
   }
 }

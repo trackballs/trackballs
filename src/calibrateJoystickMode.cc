@@ -18,16 +18,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
 #include "calibrateJoystickMode.h"
-#include "settingsMode.h"
 #include "font.h"
+#include "glHelp.h"
 #include "settings.h"
-#include "menuMode.h"
-#include "settings.h"
+#include "settingsMode.h"
 
-using namespace std;
+#include <SDL2/SDL_joystick.h>
+#include <SDL2/SDL_keycode.h>
 
 CalibrateJoystickMode *CalibrateJoystickMode::calibrateJoystickMode;
 

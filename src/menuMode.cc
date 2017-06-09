@@ -18,24 +18,21 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "mainMode.h"
 #include "menuMode.h"
-#include "SDL2/SDL_opengl.h"
+
+#include "editMode.h"
 #include "font.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
-#include "highScore.h"
+#include "helpMode.h"
 #include "hofMode.h"
+#include "menusystem.h"
 #include "settingsMode.h"
 #include "setupMode.h"
-#include "helpMode.h"
-#include "menusystem.h"
-#include "editMode.h"
 
-using namespace std;
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 
+extern SDL_Window *window;
 MenuMode *MenuMode::menuMode = NULL;
 
 #define MENU_NEWGAME 1

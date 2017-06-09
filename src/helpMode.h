@@ -22,6 +22,9 @@
 #ifndef HELPMODE_H
 #define HELPMODE_H
 
+#include "gameMode.h"
+#include "glHelp.h"
+
 class HelpMode : public GameMode {
  public:
   HelpMode();

@@ -21,9 +21,8 @@
 
 #ifndef COLORMODIFIER_H
 #define COLORMODIFIER_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class ColorModifier : public Animated {
  public:

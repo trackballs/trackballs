@@ -25,6 +25,8 @@
 #ifndef GAMEMODE_H
 #define GAMEMODE_H
 
+#include "general.h"
+
 class GameMode {
  public:
   GameMode();

@@ -18,18 +18,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameHook.h"
-#include "animated.h"
-#include "game.h"
-#include "map.h"
 #include "switch.h"
-#include "ball.h"
+
+#include "game.h"
+#include "guile.h"
+#include "map.h"
 #include "player.h"
 #include "sound.h"
-#include "guile.h"
-
-using namespace std;
 
 CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) {
   position[0] = x;

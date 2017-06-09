@@ -21,6 +21,8 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
+#include "animated.h"
+
 class CSwitch : public Animated {
  public:
   CSwitch(Real x, Real y, SCM on, SCM off);

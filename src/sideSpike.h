@@ -21,9 +21,8 @@
 
 #ifndef SIDESPIKE_H
 #define SIDESPIKE_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class SideSpike : public Animated {
  public:

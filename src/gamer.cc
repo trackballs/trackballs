@@ -18,17 +18,19 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "gamer.h"
-#include "settings.h"
 #include "game.h"
-#include "map.h"
+#include "general.h"
 #include "guile.h"
+#include "map.h"
 #include "player.h"
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "settings.h"
+
 #include <dirent.h>
-using namespace std;
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <zlib.h>
 
 Gamer::Gamer() {
   memset(name, 0, sizeof(name));
@@ -232,7 +234,7 @@ void Gamer::update() {
   scm_close_input_port(ip);
   return;
 }
-void Gamer::playerLoose() {
+void Gamer::playerLose() {
   timesPlayed++;
   totalScore += Game::current->player1->score;
   save();

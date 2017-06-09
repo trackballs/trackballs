@@ -18,19 +18,13 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "animated.h"
-#include "ball.h"
-#include "game.h"
 #include "pipeConnector.h"
 
-using namespace std;
-
-class set<PipeConnector *> *PipeConnector::connectors;
-void PipeConnector::init() { connectors = new set<PipeConnector *>(); }
+std::set<PipeConnector *> *PipeConnector::connectors;
+void PipeConnector::init() { connectors = new std::set<PipeConnector *>(); }
 void PipeConnector::reset() {
   delete connectors;
-  connectors = new set<PipeConnector *>();
+  connectors = new std::set<PipeConnector *>();
 }
 PipeConnector::PipeConnector(Coord3d pos, Real r) : Animated() {
   assign(pos, position);

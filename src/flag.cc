@@ -18,19 +18,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
 #include "flag.h"
-#include "ball.h"
+#include "game.h"
+#include "map.h"
 #include "player.h"
-#include "sign.h"
-#include "scoreSign.h"
 #include "sound.h"
-
-using namespace std;
 
 Flag::Flag(int x, int y, int points, int visible, Real radius) {
   scoreOnDeath = Game::defaultScores[SCORE_FLAG][0];

@@ -21,6 +21,8 @@
 #ifndef EDITMODE_H
 #define EDITMODE_H
 
+#include "gameMode.h"
+
 class EditMode : public GameMode {
  public:
   EditMode();

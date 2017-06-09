@@ -21,9 +21,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#ifndef BALL_H
 #include "ball.h"
-#endif
 
 class Player : public Ball {
  public:

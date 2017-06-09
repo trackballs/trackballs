@@ -18,15 +18,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "goal.h"
-#include "sound.h"
-#include "mainMode.h"
-#include "player.h"
 #include "game.h"
+#include "mainMode.h"
 #include "map.h"
-
-using namespace std;
+#include "player.h"
 
 Goal::Goal(int x, int y, int rotate, char* nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strcpy(this->nextLevel, nextLevel);

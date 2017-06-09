@@ -22,9 +22,9 @@
 #ifndef ANIMATED_H
 #define ANIMATED_H
 
-#ifndef GAMEHOOK_H
 #include "gameHook.h"
-#endif
+#include "general.h"
+#include "glHelp.h"
 
 #define DIE_CRASH 0
 #define DIE_FF 1

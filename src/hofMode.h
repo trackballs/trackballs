@@ -21,6 +21,9 @@
 #ifndef HOF_H
 #define HOF_H
 
+#include "gameMode.h"
+#include "glHelp.h"
+
 class HallOfFameMode : public GameMode {
  public:
   HallOfFameMode();

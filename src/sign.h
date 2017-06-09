@@ -21,9 +21,7 @@
 #ifndef SIGN_H
 #define SIGN_H
 
-#ifndef ANIMATED_H
 #include "animated.h"
-#endif
 
 class Sign : public Animated {
  public:

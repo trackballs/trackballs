@@ -29,6 +29,14 @@
 #define SCORE_FLAG 5
 #define SCORE_MAX 6
 
+#include <set>
+#include "general.h"
+#include "glHelp.h"
+
+class Map;
+class Player;
+class Weather;
+
 class Game {
  public:
   Game(char *, class Gamer *gamer);
@@ -50,11 +58,11 @@ class Game {
   double fogThickness, wantedFogThickness;
   double jumpFactor, oxygenFactor;
 
-  class Player *player1;
-  class Map *map;
+  Player *player1;
+  Map *map;
   Real gameTime;
-  class Gamer *gamer;
-  class Weather *weather;
+  Gamer *gamer;
+  Weather *weather;
 
   static Game *current;
 
@@ -70,8 +78,8 @@ class Game {
  private:
   void setDefaults();
 
-  class std::set<class Animated *> *objects;
-  class std::set<class GameHook *> *hooks;
+  std::set<Animated *> *objects;
+  std::set<GameHook *> *hooks;
 };
 
 #endif

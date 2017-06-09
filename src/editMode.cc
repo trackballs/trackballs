@@ -20,21 +20,18 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
 #include "editMode.h"
-#include "glHelp.h"
-#include "map.h"
-#include "settings.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include "menusystem.h"
-#include "myWindow.h"
-#include "editWindows.h"
 #include "editMode_codes.h"
+#include "editWindows.h"
+#include "map.h"
+#include "menusystem.h"
+#include "settings.h"
 #include "setupMode.h"
 
-using namespace std;
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
+#include <string.h>
+#include <sys/stat.h>
 
 /* See cMenuNames_i18n inside EditMode::init for the values here */
 char* cMenuNames[N_SUBMENUS];
@@ -357,7 +354,7 @@ void EditMode::display() {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20,
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 1.0, 1e20,
                     activeView.projection);
 
   /* Setup matrixes for the camera perspective */
@@ -403,7 +400,8 @@ void EditMode::display() {
       map->drawFootprint(x, y, x + cellClipboardWidth - 1, y + cellClipboardHeight - 1, 1);
     } else if (markX >= 0) {
       /* Otherwise, if we have a marked region then display footprint over it */
-      map->drawFootprint(min(markX, x), min(markY, y), max(markX, x), max(markY, y), 0);
+      map->drawFootprint(std::min(markX, x), std::min(markY, y), std::max(markX, x),
+                         std::max(markY, y), 0);
     } else if (currentEditMode == editModeFeatures) {
       /* We have currently in the "features" edit mode, display foot
          print of selected feature */
@@ -502,10 +500,10 @@ void EditMode::doCommand(int command) {
   int x1, y1;
   int xLow, xHigh, yLow, yHigh;
   if (markX >= 0) {
-    xLow = min(x, markX);
-    xHigh = max(x, markX);
-    yLow = min(y, markY);
-    yHigh = max(y, markY);
+    xLow = std::min(x, markX);
+    xHigh = std::max(x, markX);
+    yLow = std::min(y, markY);
+    yHigh = std::max(y, markY);
   } else {
     xLow = xHigh = x;
     yLow = yHigh = y;
@@ -681,10 +679,10 @@ void EditMode::doCellAction(int code, int direction) {
   }
 
   if (markX >= 0) {
-    xLow = min(x, markX);
-    xHigh = max(x, markX);
-    yLow = min(y, markY);
-    yHigh = max(y, markY);
+    xLow = std::min(x, markX);
+    xHigh = std::max(x, markX);
+    yLow = std::min(y, markY);
+    yHigh = std::max(y, markY);
   } else {
     xLow = xHigh = x;
     yLow = yHigh = y;
@@ -1001,10 +999,10 @@ void EditMode::doSmooth(int radius) {
 }
 void EditMode::copyRegion() {
   if (markX < 0) return;
-  int x0 = min(x, markX);
-  int x1 = max(x, markX);
-  int y0 = min(y, markY);
-  int y1 = max(y, markY);
+  int x0 = std::min(x, markX);
+  int x1 = std::max(x, markX);
+  int y0 = std::min(y, markY);
+  int y1 = std::max(y, markY);
   int width = x1 - x0 + 1;
   int height = y1 - y0 + 1;
   if (cellClipboard) delete[] cellClipboard;

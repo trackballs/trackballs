@@ -22,8 +22,10 @@
 #ifndef SOUND_H
 #define SOUND_H
 
+#include "general.h"
+
 void soundInit();
-void soundIdle();
+void soundIdle(Real td);
 void playEffect(int, float vol);
 void playEffect(int);
 void volumeChanged();

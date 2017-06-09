@@ -21,6 +21,9 @@
 #ifndef SETUPMODE_H
 #define SETUPMODE_H
 
+#include "gameMode.h"
+#include "glHelp.h"
+
 class SetupMode : public GameMode {
  public:
   SetupMode();

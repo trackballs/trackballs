@@ -19,19 +19,17 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "menuMode.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
-#include "highScore.h"
 #include "hofMode.h"
-#include "settings.h"
+
 #include "font.h"
+#include "highScore.h"
+#include "menuMode.h"
 #include "menusystem.h"
+#include "settings.h"
 
-using namespace std;
+#include <SDL2/SDL_image.h>
 
+extern SDL_Window *window;
 HallOfFameMode *HallOfFameMode::hallOfFameMode;
 SDL_Surface *HallOfFameMode::background;
 
@@ -168,9 +166,9 @@ void HallOfFameMode::idle(Real td) {
   }
 
   if (isExiting)
-    timeLeft = max(0.0, timeLeft - td);
+    timeLeft = fmax(0.0, timeLeft - td);
   else
-    timeLeft = min(1.0, timeLeft + td);
+    timeLeft = fmin(1.0, timeLeft + td);
   if (timeLeft <= 0.0) MenuMode::activate(MenuMode::menuMode);
   tickMouse(td);
 }

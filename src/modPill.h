@@ -21,9 +21,7 @@
 #ifndef MODPILL_H
 #define MODPILL_H
 
-#ifndef BALL_H
 #include "ball.h"
-#endif
 
 class ModPill : public Ball {
  public:

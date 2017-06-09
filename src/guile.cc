@@ -19,41 +19,41 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "black.h"
-#include "cyclicPlatform.h"
-#include "game.h"
-#include "player.h"
-#include "flag.h"
-#include "cactus.h"
-#include "bird.h"
-#include "teleport.h"
-#include "goal.h"
-#include "game.h"
-#include "colorModifier.h"
-#include "heightModifier.h"
-#include "spike.h"
-#include "sideSpike.h"
-#include "map.h"
-#include "trigger.h"
-#include "modPill.h"
+#include "guile.h"
+
+#include "animator.h"
 #include "baby.h"
-#include <libguile.h>
-#include "sign.h"
+#include "bird.h"
+#include "black.h"
+#include "cactus.h"
+#include "colorModifier.h"
+#include "cyclicPlatform.h"
+#include "diamond.h"
+#include "flag.h"
 #include "forcefield.h"
-#include "switch.h"
-#include "settings.h"
-#include "smartTrigger.h"
+#include "fountain.h"
+#include "game.h"
+#include "general.h"
+#include "goal.h"
+#include "heightModifier.h"
+#include "mainMode.h"
+#include "map.h"
+#include "modPill.h"
 #include "pipe.h"
 #include "pipeConnector.h"
-#include "diamond.h"
+#include "player.h"
+#include "settings.h"
+#include "sideSpike.h"
+#include "sign.h"
+#include "smartTrigger.h"
 #include "sound.h"
-#include "animator.h"
-#include "mainMode.h"
-#include "fountain.h"
+#include "spike.h"
+#include "switch.h"
+#include "teleport.h"
+#include "trigger.h"
 #include "weather.h"
 
-using namespace std;
+#include <zlib.h>
 
 scm_t_bits smobAnimated_tag;
 scm_t_bits smobGameHook_tag;
@@ -1256,8 +1256,8 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
   SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG6, FUNC_NAME);
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1),
       iflag = scm_to_int(flag);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       Game::current->map->markCellUpdated(x, y);
       if (SCM_FALSEP(state))
@@ -1281,8 +1281,8 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
   SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG6, FUNC_NAME);
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       Game::current->map->markCellUpdated(x, y);
       c.velocity[0] = scm_to_double(vx);
@@ -1308,8 +1308,8 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       c.heights[0] = scm_to_double(h0);
       c.heights[1] = scm_to_double(h1);
@@ -1346,8 +1346,8 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       c.waterHeights[0] = scm_to_double(h0);
       c.waterHeights[1] = scm_to_double(h1);
@@ -1383,8 +1383,8 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
   SCM_ASSERT(i >= 0 && i <= 5, corner, SCM_ARG5, FUNC_NAME);
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       c.colors[i][0] = (GLfloat)scm_to_double(r);
       c.colors[i][1] = (GLfloat)scm_to_double(g);
@@ -1421,8 +1421,8 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
   SCM_ASSERT(i >= 0 && i <= 4, corner, SCM_ARG5, FUNC_NAME);
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = min(ix0, ix1); x <= max(ix0, ix1); x++)
-    for (int y = min(iy0, iy1); y <= max(iy0, iy1); y++) {
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+    for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
       c.wallColors[i][0] = (GLfloat)scm_to_double(r);
       c.wallColors[i][1] = (GLfloat)scm_to_double(g);

@@ -22,9 +22,7 @@
 #ifndef CYCLICPLATFORM_H
 #define CYCLICPLATFORM_H
 
-#ifndef GAMEHOOK_H
 #include "gameHook.h"
-#endif
 
 class CyclicPlatform : public GameHook {
  public:

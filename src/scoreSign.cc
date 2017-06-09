@@ -17,15 +17,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "sign.h"
 #include "scoreSign.h"
+
 #include "game.h"
 #include "player.h"
-
-using namespace std;
 
 ScoreSign::ScoreSign(int points, Coord3d position) : Sign("++++", 4.0, 1.0, 100.0, position) {
   init(points, SCORESIGN_SCORE);

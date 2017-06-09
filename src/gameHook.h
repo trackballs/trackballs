@@ -23,6 +23,9 @@
 #ifndef GAMEHOOK_H
 #define GAMEHOOK_H
 
+#include <libguile.h>
+#include "general.h"
+
 typedef enum {
   GameHookEvent_Death = 0,
   GameHookEvent_Spawn,
@@ -63,7 +66,6 @@ class GameHook {
 
  private:
   static int nextId;
-  static class std::set<GameHook *> *deadObjects;
   SCM hooks[GameHookEvent_MaxHooks];
 };
 

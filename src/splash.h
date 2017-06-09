@@ -21,6 +21,8 @@
 #ifndef SPLASH_H
 #define SPLASH_H
 
+#include "animated.h"
+
 class Splash : public Animated {
  public:
   Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength, double radius);

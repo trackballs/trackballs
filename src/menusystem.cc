@@ -19,14 +19,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "menusystem.h"
-#include "glHelp.h"
+
 #include "font.h"
+#include "glHelp.h"
+
+#include <SDL2/SDL_mouse.h>
 
 #define MAX_MENUS 256
-
-using namespace std;
 
 typedef struct sSelectionArea {
   int x0, y0, x1, y1;

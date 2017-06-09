@@ -18,12 +18,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "menusystem.h"
 #include "myWindow.h"
 
-using namespace std;
+#include <SDL2/SDL_mouse.h>
 
 MyWindow *MyWindow::allWindows = NULL;
 

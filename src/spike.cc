@@ -20,17 +20,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
-#include "player.h"
-#include "ball.h"
-#include "sound.h"
 #include "spike.h"
 
-using namespace std;
+#include "game.h"
+#include "map.h"
+#include "player.h"
+#include "sound.h"
 
 Spike::Spike(Coord3d position, Real speed, Real phase) {
   assign(position, this->position);
@@ -96,8 +91,8 @@ void Spike::draw() {
 }
 
 void Spike::tick(Real t) {
-  set<Ball *>::iterator iter = Ball::balls->begin();
-  set<Ball *>::iterator end = Ball::balls->end();
+  std::set<Ball *>::iterator iter = Ball::balls->begin();
+  std::set<Ball *>::iterator end = Ball::balls->end();
   Ball *ball;
   double dist, dx, dy, speed, h;
   int is_sinking = 0;

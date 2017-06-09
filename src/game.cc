@@ -19,23 +19,19 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "game.h"
-#include "map.h"
-#include "player.h"
-#include "animated.h"
-#include "guile.h"
-#include "gameHook.h"
-#include "gamer.h"
-#include "forcefield.h"
-#include "settings.h"
-#include "pipe.h"
-#include "weather.h"
-#include "sound.h"
-
 #define MARGIN 10
 
-using namespace std;
+#include "game.h"
+#include "ball.h"
+#include "forcefield.h"
+#include "gamer.h"
+#include "guile.h"
+#include "map.h"
+#include "pipe.h"
+#include "player.h"
+#include "settings.h"
+#include "sound.h"
+#include "weather.h"
 
 Game *Game::current = NULL;
 
@@ -49,8 +45,8 @@ Game::Game(char *name, Gamer *g) {
   Pipe::reset();
 
   current = this;
-  objects = new set<class Animated *>();
-  hooks = new set<class GameHook *>();
+  objects = new std::set<class Animated *>();
+  hooks = new std::set<class GameHook *>();
   map = NULL;
   player1 = NULL;
   gameTime = 0.0;
@@ -161,9 +157,9 @@ void Game::clearLevel() {
   weather->clear();
   clearMusicPreferences();
   if (hooks) {
-    set<GameHook *> *old_hooks = new set<GameHook *>(*hooks);
-    set<GameHook *>::iterator ih = old_hooks->begin();
-    set<GameHook *>::iterator endh = old_hooks->end();
+    std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
+    std::set<GameHook *>::iterator ih = old_hooks->begin();
+    std::set<GameHook *>::iterator endh = old_hooks->end();
 
     for (; ih != endh; ih++)
       if (*ih != player1) (*ih)->remove();
@@ -180,13 +176,13 @@ void Game::clearLevel() {
 void Game::tick(Real t) {
   gameTime += t;
   if (fogThickness < wantedFogThickness)
-    fogThickness += min(0.3 * t, wantedFogThickness - fogThickness);
+    fogThickness += std::min(0.3 * t, wantedFogThickness - fogThickness);
   if (fogThickness > wantedFogThickness)
-    fogThickness -= min(0.3 * t, fogThickness - wantedFogThickness);
+    fogThickness -= std::min(0.3 * t, fogThickness - wantedFogThickness);
 
-  set<GameHook *> *old_hooks = new set<GameHook *>(*hooks);
-  set<GameHook *>::iterator ih = old_hooks->begin();
-  set<GameHook *>::iterator endh = old_hooks->end();
+  std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
+  std::set<GameHook *>::iterator ih = old_hooks->begin();
+  std::set<GameHook *>::iterator endh = old_hooks->end();
 
   for (; ih != endh; ih++) (*ih)->tick(t);
   delete old_hooks;
@@ -194,9 +190,9 @@ void Game::tick(Real t) {
   weather->tick(t);
 }
 void Game::doExpensiveComputations() {
-  set<GameHook *> *old_hooks = new set<GameHook *>(*hooks);
-  set<GameHook *>::iterator ih = old_hooks->begin();
-  set<GameHook *>::iterator endh = old_hooks->end();
+  std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
+  std::set<GameHook *>::iterator ih = old_hooks->begin();
+  std::set<GameHook *>::iterator endh = old_hooks->end();
 
   for (; ih != endh; ih++) (*ih)->doExpensiveComputations();
   delete old_hooks;
@@ -216,8 +212,8 @@ void Game::draw() {
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
-  set<Animated *>::iterator i = objects->begin();
-  set<Animated *>::iterator end = objects->end();
+  std::set<Animated *>::iterator i = objects->begin();
+  std::set<Animated *>::iterator end = objects->end();
 
   /* Compute visibility of all objects */
   for (; i != end; i++) {
@@ -270,8 +266,8 @@ void Game::drawReflection(Coord3d focus) {
   glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
   glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
-  set<Animated *>::iterator i = objects->begin();
-  set<Animated *>::iterator end = objects->end();
+  std::set<Animated *>::iterator i = objects->begin();
+  std::set<Animated *>::iterator end = objects->end();
 
   /* Compute visibility of all objects */
   for (; i != end; i++) {

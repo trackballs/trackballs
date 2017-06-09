@@ -18,20 +18,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "animated.h"
 #include "pipe.h"
-#include "ball.h"
-#include "game.h"
 
-using namespace std;
+std::set<Pipe *> *Pipe::pipes;
 
-class set<Pipe *> *Pipe::pipes;
-
-void Pipe::init() { pipes = new set<Pipe *>(); }
+void Pipe::init() { pipes = new std::set<Pipe *>(); }
 void Pipe::reset() {
   delete pipes;
-  pipes = new set<Pipe *>();
+  pipes = new std::set<Pipe *>();
 }
 Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated() {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */

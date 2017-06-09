@@ -18,13 +18,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
 #include "sign.h"
+
 #include "game.h"
 
-using namespace std;
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_ttf.h>
 
 #define SIGN_SCALE 0.007
 

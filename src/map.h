@@ -23,6 +23,7 @@
 #define MAP_H
 
 #include <map>
+#include "glHelp.h"
 
 // more simple like this...
 #define CELL_ICE (1 << 0)
@@ -37,6 +38,8 @@
 #define CELL_NOLINEEAST (1 << 9)
 #define CELL_NOLINEWEST (1 << 10)
 #define CELL_SHADE_FLAT (1 << 11)
+
+typedef struct gzFile_s *gzFile;
 
 class Cell {
  public:

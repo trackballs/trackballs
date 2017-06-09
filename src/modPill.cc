@@ -18,19 +18,15 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "animated.h"
 #include "modPill.h"
+
+#include "debris.h"
 #include "game.h"
+#include "mainMode.h"
 #include "map.h"
 #include "player.h"
-#include "sound.h"
-#include "mainMode.h"
-#include "settings.h"
-#include "debris.h"
 #include "sign.h"
-
-using namespace std;
+#include "sound.h"
 
 #define STATE_DEAD 0
 #define STATE_ALIVE 1
@@ -133,7 +129,7 @@ void ModPill::tick(Real t) {
       new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos);
 
       if (kind == MOD_EXTRA_LIFE) {
-        player->lives = min(4, player->lives + 1);
+        player->lives = std::min(4, player->lives + 1);
       } else {
         if (time >= 0.0)
           player->modTimeLeft[kind] += time;

@@ -18,13 +18,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "smartTrigger.h"
-#include "game.h"
-#include "player.h"
-#include "guile.h"
 
-using namespace std;
+#include "game.h"
+#include "guile.h"
+#include "player.h"
 
 SmartTrigger::SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leaving)
     : GameHook(), wasIn(0), x(x), y(y), radius(radius), entering(entering), leaving(leaving) {

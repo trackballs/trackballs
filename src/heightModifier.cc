@@ -19,24 +19,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/*
-  WARNING: no check for bounds of cells. NEVER try to modify heights of a
-           bordering cell !!! (core dump!)
-           To be corrected.
-*/
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
 #include "heightModifier.h"
-#include "ball.h"
-#include "player.h"
-#include "sign.h"
-#include "scoreSign.h"
-#include "sound.h"
 
-using namespace std;
+#include "game.h"
+#include "map.h"
 
 HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Real freq,
                                Real phase, int not1, int not2, int not3) {

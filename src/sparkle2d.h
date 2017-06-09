@@ -22,6 +22,8 @@
 #ifndef SPARKLE2D_H
 #define SPARKLE2D_H
 
+#include "general.h"
+
 /* structure of a sparkle */
 typedef struct _sparkle {
   float pos[3];

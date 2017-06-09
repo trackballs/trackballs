@@ -21,6 +21,9 @@
 #ifndef MENUMODE_H
 #define MENUMODE_H
 
+#include "gameMode.h"
+#include "glHelp.h"
+
 class MenuMode : public GameMode {
  public:
   MenuMode();

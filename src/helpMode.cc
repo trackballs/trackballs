@@ -18,17 +18,16 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "menuMode.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
 #include "helpMode.h"
+
 #include "font.h"
+#include "menuMode.h"
 #include "menusystem.h"
 
-using namespace std;
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_surface.h>
 
+extern SDL_Window *window;
 HelpMode *HelpMode::helpMode;
 SDL_Surface *HelpMode::background;
 SDL_Surface *HelpMode::page0, *HelpMode::page1;
@@ -223,7 +222,7 @@ void HelpMode::idle(Real td) {
   if (isExiting)
     timeLeft -= td;
   else
-    timeLeft = min(1.0, timeLeft + td);
+    timeLeft = fmin(1.0, timeLeft + td);
   if (timeLeft < 0.0) MenuMode::activate(MenuMode::menuMode);
 }
 void HelpMode::mouseDown(int button, int /*x*/, int /*y*/) {

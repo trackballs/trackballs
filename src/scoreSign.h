@@ -21,12 +21,10 @@
 #ifndef SCORESIGN_H
 #define SCORESIGN_H
 
-#ifndef SIGN_H
-#include "sign.h"
-#endif
-
 #define SCORESIGN_SCORE 0
 #define SCORESIGN_TIME 1
+
+#include "sign.h"
 
 class ScoreSign : public Sign {
  public:

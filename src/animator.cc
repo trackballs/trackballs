@@ -18,12 +18,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameHook.h"
 #include "animator.h"
-#include "guile.h"
 
-using namespace std;
+#include "gameHook.h"
+#include "general.h"
+#include "guile.h"
+#include "math.h"
 
 Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat,
                    SCM fun)

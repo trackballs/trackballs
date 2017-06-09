@@ -19,11 +19,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
 #include "sparkle2d.h"
-#include "sound.h"
+
+#include "glHelp.h"
+
+#include <stdlib.h>
 
 /*  structure for */
 

@@ -21,9 +21,8 @@
 
 #ifndef CACTUS_H
 #define CACTUS_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class Cactus : public Animated {
  public:

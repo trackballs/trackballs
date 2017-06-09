@@ -21,9 +21,8 @@
 
 #ifndef TELEPORT_H
 #define TELEPORT_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class Teleport : public Animated {
  public:

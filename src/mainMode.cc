@@ -19,27 +19,26 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
 #include "mainMode.h"
-#include "glHelp.h"
+
+#include "enterHighScoreMode.h"
+#include "font.h"
+#include "game.h"
+#include "gamer.h"
 #include "map.h"
 #include "player.h"
-#include "game.h"
-#include "sound.h"
-#include "flag.h"
-#include "menuMode.h"
-#include "enterHighScoreMode.h"
-#include "sign.h"
-#include "SDL2/SDL_image.h"
-#include "forcefield.h"
-#include "scoreSign.h"
 #include "settings.h"
-#include "gamer.h"
-#include "font.h"
+#include "sign.h"
+#include "sound.h"
 
-using namespace std;
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL_timer.h>
+#include <stdlib.h>
+#include <string.h>
 
+extern SDL_Window *window;
 #define ENVIRONMENT_TEXTURE_SIZE 128
 
 const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
@@ -96,12 +95,12 @@ void MainMode::display() {
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
     assign(Game::current->fogColor, activeView.fog_color);
-    activeView.fog_start = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
     activeView.fog_end = 26.0 - 4.0 * Game::current->fogThickness;
   } else
     activeView.fog_enabled = 0;
 
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.1, 200,
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
                     activeView.projection);
 
   /* Setup matrixes for the camera perspective */
@@ -256,7 +255,7 @@ void MainMode::display() {
   Enter2DMode();
   if (player1->modTimeLeft[MOD_FROZEN]) {
     draw2DRectangle(0, 0, screenWidth, screenHeight, 0., 0., 1., 1., 0.5, 0.5, 1.0,
-                    0.5 * min(1.0, (double)player1->modTimeLeft[MOD_FROZEN]));
+                    0.5 * std::min(1.0, (double)player1->modTimeLeft[MOD_FROZEN]));
   }
   displayFrameRate();
   /* Print joystick debugging information */
@@ -333,7 +332,7 @@ void MainMode::key(int key) {
   case statusVictory:
     if (key == ' ') {
       GameMode::activate(EnterHighScoreMode::enterHighScoreMode);
-      Game::current->gamer->playerLoose();
+      Game::current->gamer->playerLose();
     }
     break;
   }
@@ -384,16 +383,16 @@ void MainMode::idle(Real td) {
   case statusNextLevel:
   case statusInGame:
     if (wantedZAngle > zAngle)
-      zAngle += min(0.4 * td, wantedZAngle - zAngle);
+      zAngle += std::min(0.4 * td, wantedZAngle - zAngle);
     else if (wantedZAngle < zAngle)
-      zAngle -= min(0.4 * td, zAngle - wantedZAngle);
+      zAngle -= std::min(0.4 * td, zAngle - wantedZAngle);
     /* take shortest path under modulo */
     if (abs(xyAngle + 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) { xyAngle += 4.f; }
     if (abs(xyAngle - 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) { xyAngle -= 4.f; }
     if (wantedXYAngle > xyAngle)
-      xyAngle += min(0.4 * td, wantedXYAngle - xyAngle);
+      xyAngle += std::min(0.4 * td, wantedXYAngle - xyAngle);
     else if (wantedXYAngle < xyAngle)
-      xyAngle -= min(0.4 * td, xyAngle - wantedXYAngle);
+      xyAngle -= std::min(0.4 * td, xyAngle - wantedXYAngle);
 
     Game::current->tick(td);
     for (t = td; t >= 0.0; t -= 0.01)
@@ -441,8 +440,8 @@ void MainMode::deactivated() {
   free(viewportData);
   viewportData = NULL;
 }
-void MainMode::playerLoose() {
-  Game::current->gamer->playerLoose();
+void MainMode::playerLose() {
+  Game::current->gamer->playerLose();
   gameStatus = statusGameOver;
 }
 void MainMode::playerDie() { gameStatus = statusRestartPlayer; }
@@ -569,7 +568,7 @@ void MainMode::showBonus() {
            difficulty == 0 ? _("easy") : (difficulty == 1 ? _("normal") : _("hard")),
            difficulty * 500);
 
-  multiMessage(min((int)statusCount + 1, 4), left_pointers, right_pointers);
+  multiMessage(std::min((int)statusCount + 1, 4), left_pointers, right_pointers);
 }
 void MainMode::bonusLevelComplete() {
   gameStatus = statusBonusLevelComplete;
@@ -584,9 +583,9 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   static int currentViewportSize = 512;
   static double currentTime = 0.0;
   if (currentTime > 0.05)
-    currentViewportSize = max(128, currentViewportSize / 2);
+    currentViewportSize = std::max(128, currentViewportSize / 2);
   else if (currentTime < 0.05 / 4.0)
-    currentViewportSize = min(512, currentViewportSize * 2);
+    currentViewportSize = std::min(512, currentViewportSize * 2);
 
   int viewportSize = currentViewportSize;
   if (screenHeight < 512) viewportSize = screenHeight;
@@ -604,13 +603,13 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
 
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
-    activeView.fog_start = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
-    activeView.fog_end = max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
+    activeView.fog_end = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
     assign(Game::current->fogColor, activeView.fog_color);
   } else
     activeView.fog_enabled = 0;
-  perspectiveMatrix(140, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 0.01, 200,
-                    activeView.projection);
+  perspectiveMatrix(140, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.01,
+                    200, activeView.projection);
 
   /* Setup openGL matrixes for the camera perspective */
   double angle = xyAngle * M_PI / 2. + M_PI / 4.;

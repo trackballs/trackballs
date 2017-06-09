@@ -18,29 +18,23 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "menuMode.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
 #include "setupMode.h"
-#include "game.h"
-#include "player.h"
-#include "mainMode.h"
-#include "settings.h"
-#include "gamer.h"
-#include "ctype.h"
-#include "ball.h"
-#include "map.h"
-#include "hofMode.h"
+
 #include "font.h"
+#include "game.h"
+#include "gamer.h"
+#include "hofMode.h"
+#include "mainMode.h"
 #include "menusystem.h"
+#include "player.h"
+#include "settings.h"
 #include "sound.h"
+
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mouse.h>
 
 #define SETUP_NAME 0
 #define NUM_FIELDS 1
-
-using namespace std;
 
 #define Y_BASE (screenHeight / 2 - 30)
 #define Y_DELTA 40
@@ -53,6 +47,7 @@ using namespace std;
 #define CODE_START 5
 #define CODE_COLOR 6
 
+extern SDL_Window *window;
 SetupMode *SetupMode::setupMode = NULL;
 SDL_Surface *SetupMode::background;
 
@@ -95,11 +90,11 @@ void SetupMode::display() {
   }
   /* avoid distortion */
   if (screenWidth * coord[3] > screenHeight * coord[2]) {
-    double delta = coord[3] - coord[2] * screenHeight / (double)max(screenWidth, 1);
+    double delta = coord[3] - coord[2] * screenHeight / (double)fmax(screenWidth, 1);
     coord[1] += delta / 2;
     coord[3] -= delta;
   } else {
-    double delta = coord[2] - coord[3] * screenWidth / (double)max(screenHeight, 1);
+    double delta = coord[2] - coord[3] * screenWidth / (double)fmax(screenHeight, 1);
     coord[0] += delta / 2;
     coord[2] -= delta;
   }
@@ -228,7 +223,7 @@ void SetupMode::display() {
                           {0.f, 0.f, 1.f, 0.f},
                           {0.75f, -0.75f, 0.f, 1.f}};
   Matrix4d persp_tmp;
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)max(screenHeight, 1), 1.0, 1e20,
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1), 1.0, 1e20,
                     persp_tmp);
   matrixMult(persp_tmp, persp_trans, activeView.projection);
 

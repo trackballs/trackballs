@@ -22,10 +22,6 @@
 #ifndef BALL_H
 #define BALL_H
 
-#ifndef ANIMATED_H
-#include "animated.h"
-#endif
-
 #define MOD_SPEED 0
 #define MOD_JUMP 1
 #define MOD_SPIKE 2
@@ -43,6 +39,9 @@
 #define BALL_LORES 0
 #define BALL_NORMAL 1
 #define BALL_HIRES 2
+
+#include <set>
+#include "animated.h"
 
 /** This class is an ABSTRACT class from which specific balls
     (player/opponents/babies) are inherited */
@@ -79,7 +78,7 @@ class Ball : public Animated {
   int ballResolution;
 
   static const Real physicsResolution;
-  static class std::set<Ball *> *balls;
+  static std::set<Ball *> *balls;
 
   /** how far the ball has sunk into acid / sand / etc. */
   double sink;

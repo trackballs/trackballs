@@ -24,6 +24,8 @@
 #define WEATHER_SNOW 0
 #define WEATHER_RAIN 1
 
+#include "general.h"
+
 class Weather {
  public:
   Weather();

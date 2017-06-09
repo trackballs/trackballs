@@ -18,13 +18,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "trigger.h"
-#include "game.h"
-#include "player.h"
-#include "guile.h"
 
-using namespace std;
+#include "game.h"
+#include "guile.h"
+#include "player.h"
 
 Trigger::Trigger(Real x, Real y, Real radius, SCM expr)
     : GameHook(), x(x), y(y), radius(radius), expr(expr) {

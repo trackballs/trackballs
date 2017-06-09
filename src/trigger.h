@@ -21,9 +21,7 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
-#ifndef GAMEHOOK_H
 #include "gameHook.h"
-#endif
 
 class Trigger : public GameHook {
  public:

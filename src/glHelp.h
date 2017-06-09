@@ -21,7 +21,15 @@
 #ifndef GLHELP_H
 #define GLHELP_H
 
-#include "font.h"
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
+#include <GL/glext.h>
+
+#include "general.h"
+#include "math.h"
+
+typedef struct _TTF_Font TTF_Font;
+typedef struct SDL_Surface SDL_Surface;
 
 /* Prototypes */
 void glHelpInit();
@@ -137,7 +145,6 @@ extern GLuint theVao;
 
 /* Globals */
 extern float fps;
-extern float realTimeNow;
 extern int screenWidth, screenHeight;
 extern TTF_Font *ingameFont;
 TTF_Font *menuFontForSize(int sz);

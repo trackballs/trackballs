@@ -21,6 +21,8 @@
 #ifndef SETTINGSMODE_H
 #define SETTINGSMODE_H
 
+#include "gameMode.h"
+
 class SettingsMode : public GameMode {
  public:
   SettingsMode();

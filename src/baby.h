@@ -21,6 +21,8 @@
 #ifndef BABY_H
 #define BABY_H
 
+#include "black.h"
+
 class Baby : public Black {
  public:
   Baby(double x, double y);

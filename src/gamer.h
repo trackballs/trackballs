@@ -34,7 +34,7 @@ class Gamer {
   void levelStarted();  // Called when a new level is started, adds to knownLevels
   void save();          // Saves info to disk
   void update();        // Reload info from disk
-  void playerLoose();   // Called when game is over, updates statistics etc.
+  void playerLose();    // Called when game is over, updates statistics etc.
   void setDefaults();   // Sets defaults for all values
   void reloadNames();
 

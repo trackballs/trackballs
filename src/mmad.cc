@@ -19,40 +19,42 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "mainMode.h"
-#include "editMode.h"
-#include "guile.h"
 #include "ball.h"
-#include "font.h"
-#include "glHelp.h"
-#include "sound.h"
-#include "menuMode.h"
+#include "calibrateJoystickMode.h"
+#include "editMode.h"
 #include "enterHighScoreMode.h"
-#include "highScore.h"
-#include <getopt.h>
-#include "game.h"
+#include "font.h"
 #include "forcefield.h"
+#include "game.h"
+#include "gameMode.h"
+#include "general.h"
+#include "glHelp.h"
+#include "guile.h"
+#include "helpMode.h"
+#include "highScore.h"
 #include "hofMode.h"
-#include <SDL2/SDL_image.h>
-#include <unistd.h>
-#include <settingsMode.h>
-#include <settings.h>
-#include <setupMode.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <sys/time.h>
+#include "mainMode.h"
+#include "map.h"
+#include "menuMode.h"
 #include "pipe.h"
 #include "pipeConnector.h"
-#include "helpMode.h"
-#include "map.h"
-#include "calibrateJoystickMode.h"
+#include "settings.h"
+#include "settingsMode.h"
+#include "setupMode.h"
+#include "sound.h"
+
+#include <SDL2/SDL_image.h>
+#include <dirent.h>
+#include <getopt.h>
+#include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN 1
-#include <windows.h>
 #include <shlobj.h>
+#include <windows.h>
 #endif
 using namespace std;
 
@@ -493,7 +495,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     if (GameMode::current) GameMode::current->idle(td);
 
     /* Make sure music is still playing */
-    soundIdle();
+    soundIdle(td);
 
     /* Draw world */
     glViewport(0, 0, screenWidth, screenHeight);

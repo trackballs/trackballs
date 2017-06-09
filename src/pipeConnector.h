@@ -21,6 +21,10 @@
 #ifndef PIPECONNECTOR_H
 #define PIPECONNECTOR_H
 
+#include "animated.h"
+
+#include <set>
+
 class PipeConnector : public Animated {
  public:
   PipeConnector(Coord3d pos, Real radius);

@@ -18,18 +18,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
-#include "ball.h"
-#include "player.h"
-#include "sound.h"
 #include "diamond.h"
+#include "game.h"
+#include "map.h"
+#include "player.h"
 #include "sign.h"
-
-using namespace std;
+#include "sound.h"
 
 Diamond::Diamond(Coord3d pos) {
   assign(pos, position);
@@ -101,7 +95,7 @@ void Diamond::tick(Real t) {
     taken = 1;
   } else {
     taken = 0;
-    fade = min(1.0, fade + 0.5 * t);
+    fade = std::min(1.0, fade + 0.5 * t);
   }
 }
 void Diamond::onGet() {

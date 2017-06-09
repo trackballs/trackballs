@@ -21,6 +21,8 @@
 #ifndef FOUNTAIN_H
 #define FOUNTAIN_H
 
+#include "animated.h"
+
 class Fountain : public Animated {
  public:
   Fountain(double randomSpeed, double radius, double strength);

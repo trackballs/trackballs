@@ -20,19 +20,18 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "SDL2/SDL_ttf.h"
-#include "SDL2/SDL_opengl.h"
-#include "settings.h"
+#include "glHelp.h"
+
 #include "font.h"
-#include "SDL2/SDL_image.h"
+#include "map.h"
+#include "settings.h"
 #include "sparkle2d.h"
+
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <map>
 
-using namespace std;
-
 float fps = 50.0;
-float realTimeNow = 0.0;
 int screenWidth = 640, screenHeight = 480;
 ViewParameters activeView;
 
@@ -534,7 +533,7 @@ void message(char *A, char *B) {
   h1 = 32;
   h2 = 32;
 
-  w = max(w1, w2) + 20;
+  w = std::max(w1, w2) + 20;
 
   int x1 = screenWidth / 2 - w / 2, x2 = screenWidth / 2 + w / 2;
   int y1 = screenHeight / 2 - h1 - 5, y2 = screenHeight / 2 + h2 + 5;
@@ -834,7 +833,6 @@ void displayFrameRate() {
   } else
     fps = fps * 0.95 + 0.05 / td;
   oldTime = t;
-  realTimeNow = t;
 
   if (Settings::settings->showFPS > 0) {
     if (Settings::settings->showFPS == 1) {
@@ -1006,13 +1004,13 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
     double h = mvp[0][3] * p[0] + mvp[1][3] * p[1] + mvp[2][3] * p[2] + mvp[3][3];
     for (int k = 0; k < 3; k++) w[k] /= h;
 
-    vxl = min(vxl, w[0]);
-    vyl = min(vyl, w[1]);
-    vzl = min(vzl, w[2]);
+    vxl = std::min(vxl, w[0]);
+    vyl = std::min(vyl, w[1]);
+    vzl = std::min(vzl, w[2]);
 
-    vxh = max(vxh, w[0]);
-    vyh = max(vyh, w[1]);
-    vzh = max(vzh, w[2]);
+    vxh = std::max(vxh, w[0]);
+    vyh = std::max(vyh, w[1]);
+    vzh = std::max(vzh, w[2]);
   }
   // Window frustum is [-1,1]x[-1,1]x[0,1]
   if (vxl > 1 || vxh < -1) return 0;
@@ -1081,7 +1079,7 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   GLint maxSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
   double scale = 1.0;
-  if (w > maxSize || h > maxSize) scale = min(maxSize / (double)w, maxSize / (double)h);
+  if (w > maxSize || h > maxSize) scale = std::min(maxSize / (double)w, maxSize / (double)h);
 
   texcoord[0] = 0.0f;                    /* Min X */
   texcoord[1] = 0.0f;                    /* Min Y */

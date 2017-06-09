@@ -22,9 +22,8 @@
 
 #ifndef BIRD_H
 #define BIRD_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 #define BIRD_CONSTANT_HEIGHT 1
 

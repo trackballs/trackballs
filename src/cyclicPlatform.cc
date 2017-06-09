@@ -19,13 +19,11 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "cyclicPlatform.h"
-#include "map.h"
-#include "game.h"
 #include "ball.h"
-
-using namespace std;
+#include "game.h"
+#include "map.h"
+#include "math.h"
 
 Real timeLow = 2.0, timeRise = 3.0, timeHigh = 2.0, timeFall = 3.0;
 
@@ -73,8 +71,8 @@ void CyclicPlatform::tick(Real dt) {
     }
 
   if (h < oldHeight) {
-    set<Ball *>::iterator iter = Ball::balls->begin();
-    set<Ball *>::iterator end = Ball::balls->end();
+    std::set<Ball *>::iterator iter = Ball::balls->begin();
+    std::set<Ball *>::iterator end = Ball::balls->end();
     for (; iter != end; iter++) {
       Ball *ball = *iter;
       if (ball->position[0] >= x1 && ball->position[0] < x2 + 1.0 && ball->position[1] >= y1 &&

@@ -20,9 +20,8 @@
 
 #ifndef FLAG_H
 #define FLAG_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class Flag : public Animated {
  public:

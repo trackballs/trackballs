@@ -21,9 +21,8 @@
 #ifndef EDITWINDOWS_H
 #define EDITWINDOWS_H
 
-#ifndef EDITMODECODES_H
 #include "editMode_codes.h"
-#endif
+#include "myWindow.h"
 
 class EMenuWindow : public MyWindow {
  public:

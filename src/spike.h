@@ -21,9 +21,9 @@
 
 #ifndef SPIKE_H
 #define SPIKE_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
+#include "glHelp.h"
 
 class Spike : public Animated {
  public:

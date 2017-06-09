@@ -21,6 +21,9 @@
 #ifndef ENTERHIGHSCOREMODE_H
 #define ENTERHIGHSCOREMODE_H
 
+#include "gameMode.h"
+#include "glHelp.h"
+
 class EnterHighScoreMode : public GameMode {
  public:
   EnterHighScoreMode();

@@ -18,22 +18,20 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "gameMode.h"
-#include "menuMode.h"
-#include "glHelp.h"
-#include "SDL2/SDL_image.h"
 #include "settingsMode.h"
-#include "game.h"
-#include "settings.h"
-#include "menuMode.h"
-#include "sound.h"
-#include "font.h"
+
 #include "calibrateJoystickMode.h"
+#include "glHelp.h"
+#include "menuMode.h"
 #include "menusystem.h"
+#include "settings.h"
+#include "sound.h"
 
-using namespace std;
+#include <SDL2/SDL_joystick.h>
+#include <SDL2/SDL_keyboard.h>
+#include <SDL2/SDL_mouse.h>
 
+extern SDL_Window *window;
 // SDL_Surface *SettingsMode::title;
 SettingsMode *SettingsMode::settingsMode;
 

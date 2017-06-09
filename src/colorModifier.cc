@@ -19,19 +19,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
 #include "colorModifier.h"
-#include "ball.h"
-#include "player.h"
-#include "sign.h"
-#include "scoreSign.h"
-#include "sound.h"
-
-using namespace std;
+#include "game.h"
+#include "map.h"
 
 ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real freq,
                              Real phase) {

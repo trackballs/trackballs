@@ -20,18 +20,17 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
 #include "gameHook.h"
-#include "game.h"
+#include <set>
 #include "animated.h"
+#include "game.h"
 #include "guile.h"
 
-using namespace std;
-
 int GameHook::nextId = 0;
-std::set<GameHook *> *GameHook::deadObjects;
 
-void GameHook::init() { deadObjects = new set<GameHook *>(); }
+static std::set<GameHook *> *deadObjects;
+
+void GameHook::init() { deadObjects = new std::set<GameHook *>(); }
 GameHook::GameHook() {
   int i;
 
@@ -66,8 +65,8 @@ void GameHook::onRemove() {
   Game::current->remove(this);
 }
 void GameHook::deleteDeadObjects() {
-  set<GameHook *>::iterator iter = deadObjects->begin();
-  set<GameHook *>::iterator end = deadObjects->end();
+  std::set<GameHook *>::iterator iter = deadObjects->begin();
+  std::set<GameHook *>::iterator end = deadObjects->end();
   for (; iter != end; iter++) {
     GameHook *a = *iter;
     delete a;

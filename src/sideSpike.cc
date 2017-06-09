@@ -19,18 +19,14 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "glHelp.h"
-#include "animated.h"
-#include "map.h"
-#include "game.h"
-#include "player.h"
-#include "ball.h"
-#include "sound.h"
 #include "sideSpike.h"
-#include "spike.h"
 
-using namespace std;
+#include "ball.h"
+#include "game.h"
+#include "map.h"
+#include "player.h"
+#include "sound.h"
+#include "spike.h"
 
 SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
   assign(position, this->position);
@@ -124,8 +120,8 @@ void SideSpike::draw() {
 }
 
 void SideSpike::tick(Real t) {
-  set<Ball *>::iterator iter = Ball::balls->begin();
-  set<Ball *>::iterator end = Ball::balls->end();
+  std::set<Ball *>::iterator iter = Ball::balls->begin();
+  std::set<Ball *>::iterator end = Ball::balls->end();
   Ball *ball;
   double dist, h;
 

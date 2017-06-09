@@ -21,6 +21,8 @@
 #ifndef MYWINDOW_H
 #define MYWINDOW_H
 
+#include "glHelp.h"
+
 class MyWindow {
  public:
   MyWindow(int x, int y, int width, int height);

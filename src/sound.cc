@@ -19,15 +19,12 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "general.h"
-#include "SDL2/SDL_mixer.h"
 #include "sound.h"
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
+
 #include "settings.h"
 
-using namespace std;
+#include <SDL2/SDL_mixer.h>
+#include <dirent.h>
 
 SDL_AudioSpec audioFormat;
 
@@ -100,7 +97,7 @@ void soundInit() {
 int doSpecialSfx = 0;
 double musicFade = 1.0;
 
-void soundIdle() {
+void soundIdle(Real td) {
   if (mute) return;
 
   int nomusic = Settings::settings->musicVolume < 1e-3;
@@ -111,14 +108,14 @@ void soundIdle() {
   }
 
   if (doSpecialSfx) {
-    musicFade = max(0.0, musicFade - 0.3 / fps);
+    musicFade = fmax(0.0, musicFade - 0.3 * td);
     if (musicFade == 0.0) {
       Mix_Volume(1, (int)(128 * Settings::settings->sfxVolume));
       Mix_PlayChannel(1, effects[doSpecialSfx], 0);
       doSpecialSfx = 0;
     }
   } else if (!Mix_Playing(1))
-    musicFade = min(1.0, musicFade + 0.3 / fps);
+    musicFade = fmin(1.0, musicFade + 0.3 * td);
 
   if (!nomusic) {
     Mix_VolumeMusic((int)(musicFade * 127.0 * Settings::settings->musicVolume));

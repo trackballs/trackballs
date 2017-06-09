@@ -24,6 +24,9 @@
 #define PIPE_SOFT_ENTER 1
 #define PIPE_SOFT_EXIT 2
 
+#include <set>
+#include "animated.h"
+
 class Pipe : public Animated {
  public:
   Pipe(Coord3d from, Coord3d to, Real radius);
@@ -41,7 +44,7 @@ class Pipe : public Animated {
   Coord3d up, right;
   Real radius;
 
-  static class std::set<Pipe *> *pipes;
+  static std::set<Pipe *> *pipes;
   Real windForward, windBackward;
 
  private:

@@ -21,9 +21,8 @@
 
 #ifndef HEIGHTMODIFIER_H
 #define HEIGHTMODIFIER_H
-#ifndef ANIMATED_H
+
 #include "animated.h"
-#endif
 
 class HeightModifier : public Animated {
  public:

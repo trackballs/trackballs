@@ -22,9 +22,7 @@
 #ifndef BLACK_H
 #define BLACK_H
 
-#ifndef BALL_H
 #include "ball.h"
-#endif
 
 class Black : public Ball {
  public:

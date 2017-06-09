@@ -18,11 +18,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef DIAMON_H
-#define DIAMON_H
-#ifndef ANIMATED_H
+#ifndef DIAMOND_H
+#define DIAMOND_H
+
 #include "animated.h"
-#endif
 
 class Diamond : public Animated {
  public:

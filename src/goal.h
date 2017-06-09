@@ -20,9 +20,7 @@
 #ifndef GOAL_H
 #define GOAL_H
 
-#ifndef FLAG_H
 #include "flag.h"
-#endif
 
 class Goal : public Flag {
  public:
