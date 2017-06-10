@@ -336,7 +336,7 @@ void EStatusWindow::mouseDown(int button, int /*x*/, int /*y*/) {
          ((button == SDL_BUTTON_LEFT) ? 1 : N_EDITMODES - 1)) %
         N_EDITMODES;
 
-  if (CODE_TO_MENUENTRY(code) >= 0 && CODE_TO_MENUENTRY(code) <= 150)
+  if (CODE_TO_MENUENTRY(code) >= 0 && CODE_TO_MENUENTRY(code) <= 170)
     EditMode::editMode->doCommand(CODE_TO_MENUENTRY(code));
 }
 

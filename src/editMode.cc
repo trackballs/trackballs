@@ -62,6 +62,8 @@ const char* cKeyShortcuts[N_SUBMENUS] = {
     "12345678*t",
     /* Features */
     "1234567",
+    /* Repair */
+    "1234567890",
     /* Move */
     "UDLR*******rcxv",
     /* Window */
@@ -111,6 +113,19 @@ enum {
 enum { subTexturesNext = 40, subTexturesPrev, subTexturesRotate };
 
 enum {
+  subRepairCellCont = 50,
+  subRepairWaterCont,
+  subRepairColorCont,
+  subRepairCellCenters,
+  subRepairWaterCenters,
+  subRepairColorCenters,
+  subRepairCellRound,
+  subRepairWaterRound,
+  subRepairColorRound,
+  subRepairVelRound,
+};
+
+enum {
   editModeHeight = 0,
   editModeColor,
   editModeWater,
@@ -144,8 +159,8 @@ EditMode* EditMode::editMode;
 void EditMode::init() {
   char* cMenuNames_i18n[N_SUBMENUS] = {
       /* TRANSLATORS: This is a list of all the menus in the map editor. */
-      _("File"),    _("Edit"), _("Color"),  _("Flags"),
-      _("Feature"), _("Move"), _("Window"), _("View"),
+      _("File"),   _("Edit"), _("Color"),  _("Flags"), _("Feature"),
+      _("Repair"), _("Move"), _("Window"), _("View"),
   };
   memcpy(cMenuNames, cMenuNames_i18n, sizeof(cMenuNames));
 
@@ -163,6 +178,9 @@ void EditMode::init() {
        _("Shade flat"), _("Texture"), _("ch. texture"), NULL},
       {_("Spike"), _("Small hill"), _("Medium hill"), _("Large hill"), _("Huge hill"),
        _("Smooth small"), _("Smooth large"), NULL},
+      {_("Cell cont."), _("Water cont."), _("Color cont."), _("Cell center"),
+       _("Water center"), _("Color center"), _("Cell round"), _("Water round"),
+       _("Color round"), _("Vel. round"), NULL},
       {_("/UP Move up"), _("/DOWN Move down"), _("/LEFT Move left"), _("/RIGHT Move right"),
        "/", _("Shift map up"), _("Shift map down"), _("Shift map left"), _("Shift map right"),
        _("*<SHIFT> x5"), "/", _("Set region marker"), _("Clear marker"), _("Copy region"),
@@ -190,11 +208,6 @@ EditMode::EditMode() {
   map = NULL;
   memset(levelname, 0, sizeof(levelname));
   mapIsWritable = 0;
-
-  /*
-  char mapname[256];
-  snprintf(mapname,sizeof(mapname)-1,"%s/.trackballs/levels/%s.map",getenv("HOME"),Settings::settings->specialLevel);
-  */
 
   /* Load the selected level if we start with one selected */
   if (Settings::settings->doSpecialLevel) loadMap(Settings::settings->specialLevel);
@@ -598,6 +611,123 @@ void EditMode::doCommand(int command) {
     currentEditMode = editModeFeatures;
     currentFeature = command;
     break;
+
+  case REPAIR_CELL_CONT:
+  case REPAIR_WATER_CONT:
+  case REPAIR_COLOR_CONT:
+  case REPAIR_CELL_CENTERS:
+  case REPAIR_WATER_CENTERS:
+  case REPAIR_COLOR_CENTERS:
+  case REPAIR_CELL_ROUND:
+  case REPAIR_WATER_ROUND:
+  case REPAIR_COLOR_ROUND:
+  case REPAIR_VEL_ROUND: {
+    /* given four cells at these relative positions, seq. corners match up */
+    int dir[4][2] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
+
+    for (x1 = xLow; x1 <= xHigh; x1++)
+      for (y1 = yLow; y1 <= yHigh; y1++) {
+        Cell& c = map->cell(x1, y1);
+        switch (command) {
+        /* continuity enforces that corners match the neighbor average */
+        case REPAIR_CELL_CONT:
+          for (int k = 0; k < 4; k++) {
+            c.heights[k] = 0.;
+            for (int m = 0; m < 4; m++) {
+              if (m != k) {
+                c.heights[k] +=
+                    map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
+                        .heights[m] /
+                    3;
+              }
+            }
+          }
+          break;
+        case REPAIR_WATER_CONT:
+          for (int k = 0; k < 4; k++) {
+            c.waterHeights[k] = 0.;
+            for (int m = 0; m < 4; m++) {
+              if (m != k) {
+                c.waterHeights[k] +=
+                    map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
+                        .waterHeights[m] /
+                    3;
+              }
+            }
+          }
+          break;
+        case REPAIR_COLOR_CONT:
+          for (int p = 0; p < 4; p++) {
+            for (int k = 0; k < 4; k++) {
+              c.colors[k][p] = 0.;
+              for (int m = 0; m < 4; m++) {
+                if (m != k) {
+                  c.colors[k][p] +=
+                      map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
+                          .colors[m][p] /
+                      3;
+                }
+              }
+            }
+          }
+
+          break;
+
+        /* cell center repair sets the center as average of corners */
+        case REPAIR_CELL_CENTERS:
+          c.heights[Cell::CENTER] =
+              0.25 * (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]);
+          break;
+        case REPAIR_WATER_CENTERS:
+          c.waterHeights[Cell::CENTER] = 0.25 * (c.waterHeights[0] + c.waterHeights[1] +
+                                                 c.waterHeights[2] + c.waterHeights[3]);
+          break;
+        case REPAIR_COLOR_CENTERS:
+          for (int k = 0; k < 4; k++) {
+            c.colors[Cell::CENTER][k] =
+                0.25 * (c.colors[0][k] + c.colors[1][k] + c.colors[2][k] + c.colors[3][k]);
+          }
+          break;
+
+        /* For rounding routines the central cell has 4x resolution */
+        case REPAIR_CELL_ROUND:
+          for (int k = 0; k < 4; k++) {
+            c.heights[k] = scale * std::round(c.heights[k] / scale);
+          }
+          c.heights[Cell::CENTER] =
+              scale * std::round(4 * c.heights[Cell::CENTER] / scale) / 4;
+          break;
+        case REPAIR_WATER_ROUND:
+          for (int k = 0; k < 4; k++) {
+            c.waterHeights[k] = scale * std::round(c.waterHeights[k] / scale);
+          }
+          c.waterHeights[Cell::CENTER] =
+              scale * std::round(4 * c.waterHeights[Cell::CENTER] / scale) / 4;
+          break;
+        case REPAIR_COLOR_ROUND:
+          for (int m = 0; m < 4; m++) {
+            for (int k = 0; k < 4; k++) {
+              c.colors[k][m] = scale * std::round(c.colors[k][m] / scale);
+            }
+            c.colors[Cell::CENTER][m] =
+                scale * std::round(4 * c.colors[Cell::CENTER][m] / scale) / 4;
+          }
+          break;
+        case REPAIR_VEL_ROUND:
+          c.velocity[0] = scale * std::round(c.velocity[0] / scale);
+          c.velocity[1] = scale * std::round(c.velocity[1] / scale);
+          break;
+        }
+        map->markCellUpdated(x1, y1);
+        if (command == REPAIR_CELL_CONT || command == REPAIR_CELL_ROUND) {
+          /* walls change so neighbors must be rerendered */
+          map->markCellUpdated(x1 - 1, y1);
+          map->markCellUpdated(x1 + 1, y1);
+          map->markCellUpdated(x1, y1 - 1);
+          map->markCellUpdated(x1, y1 + 1);
+        }
+      }
+  } break;
 
   case MOVE_UP:
     x += (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
