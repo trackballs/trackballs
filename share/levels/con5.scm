@@ -4,7 +4,6 @@
 (set-track-name (_ "Snowbord"))
 (set-author "Yannick Perret")
 (fog)
-(map-is-transparent #t)
 
 (restart-time 60.0)
 

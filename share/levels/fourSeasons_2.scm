@@ -6,7 +6,6 @@
 (fog-color 0.95 0.95 1.0)
 (set-track-name (_ "Spring"))
 (set-author "Mathias Broxvall")
-(map-is-transparent #t)
 
 (start-time 180) 
 (set-start-position 199.5 199.5)

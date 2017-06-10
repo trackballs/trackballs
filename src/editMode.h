@@ -23,6 +23,9 @@
 
 #include "gameMode.h"
 
+class Game;
+class Map;
+
 class EditMode : public GameMode {
  public:
   EditMode();
@@ -55,7 +58,9 @@ class EditMode : public GameMode {
   void copyRegion();
   void pasteRegion();
 
-  class Map *map;
+  Game *game;
+  Map *map;
+
   char levelname[256];
   char pathname[256];
   double time;

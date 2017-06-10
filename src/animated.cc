@@ -46,7 +46,7 @@ Animated::Animated() : GameHook() {
 }
 Animated::~Animated() {}
 void Animated::has_moved() {
-  position[2] = Game::current->map->getHeight(position[0], position[2]);
+  position[2] = Game::current->map->getHeight(position[0], position[1]);
 }
 void Animated::onRemove() {
   GameHook::onRemove();

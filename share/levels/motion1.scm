@@ -3,7 +3,6 @@
 (set-start-position  144 125)  
 (start-time 720)
 (restart-time 90)
-(map-is-transparent #t)
 
 ;; SET JUMP TO Default;
 

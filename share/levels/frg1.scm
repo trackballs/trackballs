@@ -1,7 +1,6 @@
 (set-track-name (_ "Warmup"))
 (set-author "Ulrik Enstad")
 (set-start-position 250.5 250.5)
-(map-is-transparent #t)
 (add-goal 230 227 #f "frg2")
 (add-goal 231 227 #f "frg2")
 (restart-time 0)

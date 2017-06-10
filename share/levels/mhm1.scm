@@ -3,7 +3,6 @@
 (day)
 (set-track-name (_ "Spyballs"))
 (set-author "Warren D Ober")
-(map-is-transparent #t)
 (start-time 300)
 (restart-time 15)
 

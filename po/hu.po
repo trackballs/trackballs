@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-09 22:02-0400\n"
+"POT-Creation-Date: 2017-06-10 13:10-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
 "Language-Team: Hungarian\n"
@@ -67,360 +67,368 @@ msgid "Save point"
 msgstr "%d pont"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "File"
 msgstr "Fájl"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Edit"
 msgstr "Szerkesztés"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Color"
 msgstr "Szín"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Flags"
 msgstr "Kapcsolók"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Feature"
 msgstr "Tulajdonság"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Repair"
 msgstr ""
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Move"
 msgstr "Mozgatás"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Window"
 msgstr "Ablak"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "View"
 msgstr "Nézet"
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "New"
 msgstr "Új"
 
-#: ../src/editMode.cc:171 ../src/editWindows.cc:479
+#: ../src/editMode.cc:174 ../src/editWindows.cc:479
 msgid "Open"
 msgstr "Megnyitás"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Close"
 msgstr "Bezárás"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Save"
 msgstr "Mentés"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Exit"
 msgstr "Kilépés"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Test level"
 msgstr "Pálya tesztelése"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit height"
 msgstr "Magasság szerkesztése"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit color"
 msgstr "Szín szerkesztése"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit water"
 msgstr "Víz szerkesztése"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit velocity"
 msgstr "Sebesség szerkesztése"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit lines"
 msgstr "Vonalak szerkesztése"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "*<SPACE> Whole cell"
 msgstr "*<SPACE> Egész cella"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Upper corner"
 msgstr "Felső sarok"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Bottom corner"
 msgstr "Alsó sarok"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Right corner"
 msgstr "Jobb sarok"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Left corner"
 msgstr "Bal sarok"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Center"
 msgstr "Közép"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Raise increment"
 msgstr "Lépésköz növelése"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Lower increment"
 msgstr "Lépésköz csökkentése"
 
-#: ../src/editMode.cc:175
+#: ../src/editMode.cc:178
 msgid "*<SHIFT> reversed"
 msgstr "*<SHIFT> fordított"
 
-#: ../src/editMode.cc:175
+#: ../src/editMode.cc:178
 msgid "*<CTRL> walls"
 msgstr "*<CTRL> falak"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. red"
 msgstr "vörös növ."
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. green"
 msgstr "zöld növ."
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. blue"
 msgstr "kék növ."
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. alpha"
 msgstr "átlátszóság növ."
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193
+#: ../src/editMode.cc:180 ../src/editMode.cc:196
 msgid "Ice"
 msgstr "Jég"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193 ../share/levels/lv2.scm:4
+#: ../src/editMode.cc:180 ../src/editMode.cc:196 ../share/levels/lv2.scm:4
 msgid "Acid"
 msgstr "Sav"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193
+#: ../src/editMode.cc:180 ../src/editMode.cc:196
 msgid "Sand"
 msgstr "Homok"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:194
+#: ../src/editMode.cc:180 ../src/editMode.cc:197
 msgid "Kill"
 msgstr "Halál"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:180
 msgid "Bounce"
 msgstr "Pattogás"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:194
+#: ../src/editMode.cc:180 ../src/editMode.cc:197
 msgid "No grid"
 msgstr "Nincs rács"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:195
+#: ../src/editMode.cc:180 ../src/editMode.cc:198
 msgid "Track"
 msgstr "Pálya"
 
-#: ../src/editMode.cc:178 ../src/editMode.cc:195
+#: ../src/editMode.cc:181 ../src/editMode.cc:198
 msgid "Shade flat"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:181
 msgid "Texture"
 msgstr "Textúra"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:181
 msgid "ch. texture"
 msgstr "Textúra váltás"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Spike"
 msgstr "Tüske"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Small hill"
 msgstr "Kis domb"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Medium hill"
 msgstr "Közepes domb"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:199
+#: ../src/editMode.cc:182 ../src/editMode.cc:202
 msgid "Large hill"
 msgstr "Nagy domb"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:199
+#: ../src/editMode.cc:182 ../src/editMode.cc:202
 msgid "Huge hill"
 msgstr "Óriási domb"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:183
 msgid "Smooth small"
 msgstr "Kis simítás"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:183
 msgid "Smooth large"
 msgstr "Nagy simítás"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:184
 msgid "Cell cont."
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:184
 msgid "Water cont."
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:184
 #, fuzzy
 msgid "Color cont."
 msgstr "Szín"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:184
 #, fuzzy
 msgid "Cell center"
 msgstr "Közép"
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:185
 #, fuzzy
 msgid "Water center"
 msgstr "Vízszint"
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:185
 #, fuzzy
 msgid "Color center"
 msgstr "Közép"
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:185
 msgid "Cell round"
 msgstr ""
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:185
 #, fuzzy
 msgid "Water round"
 msgstr "Vízszint"
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:186
 #, fuzzy
 msgid "Color round"
 msgstr "Szín"
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:186
 msgid "Vel. round"
 msgstr ""
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/UP Move up"
 msgstr "/UP Mozgás fel"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/DOWN Move down"
 msgstr "/DOWN Mozgás le"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/LEFT Move left"
 msgstr "/LEFT Mozgás balra"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/RIGHT Move right"
 msgstr "/RIGHT Mozgás jobbra"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map up"
 msgstr "térkép fel"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map down"
 msgstr "térkép le"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map left"
 msgstr "térkép balra"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map right"
 msgstr "térkép jobbra"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "*<SHIFT> x5"
 msgstr "*<SHIFT> x5"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Set region marker"
 msgstr "Terület kijelölése"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Clear marker"
 msgstr "Kijelölés törlése"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Copy region"
 msgstr "Terület másolása"
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:190
 msgid "Paste region"
 msgstr "Terület beszúrása"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Editor"
 msgstr "Szerkesztő"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Toolbar"
 msgstr "Eszközsor"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Status"
 msgstr "Állapot"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:192
 msgid "Birds's eye"
 msgstr "Madártávlat"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:192
 msgid "Rotate view"
 msgstr "Nézet forgatása"
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:192
+msgid "Load entities"
+msgstr ""
+
+#: ../src/editMode.cc:192
+msgid "Clear entities"
+msgstr ""
+
+#: ../src/editMode.cc:197
 msgid "Trampoline"
 msgstr "Trambulin"
 
-#: ../src/editMode.cc:199
+#: ../src/editMode.cc:202
 msgid "Small smooth"
 msgstr "Kis simítás"
 
-#: ../src/editMode.cc:200
+#: ../src/editMode.cc:203
 msgid "Large smooth"
 msgstr "Nagy simítás"
 
-#: ../src/editMode.cc:347
+#: ../src/editMode.cc:333
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Pálya: %s\n"
 
-#: ../src/editMode.cc:348
+#: ../src/editMode.cc:334
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Ez az alapértelmezett script fájl ehhez a pályához.\n"
 
-#: ../src/editMode.cc:349
+#: ../src/editMode.cc:335
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ""
 ";;; Olvasd el a pályaszerkesztő dokumentációját és nézd meg a példákat,\n"
 
-#: ../src/editMode.cc:350
+#: ../src/editMode.cc:336
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -429,15 +437,15 @@ msgstr ""
 "hogy megtanuld, hogyan kell testre szabni.\n"
 "\n"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Cell height"
 msgstr "Cella magassága"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Cell water height"
 msgstr "Cella vízszintje"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Textures"
 msgstr "Textúrák"
 
@@ -918,12 +926,12 @@ msgstr "normál"
 msgid "hard"
 msgstr "nehéz"
 
-#: ../src/map.cc:256
+#: ../src/map.cc:255
 #, c-format
 msgid "Unknown track"
 msgstr "Ismeretlen pálya"
 
-#: ../src/map.cc:257
+#: ../src/map.cc:256
 #, c-format
 msgid "Unknown author"
 msgstr "Ismeretlen szerző"
@@ -1658,15 +1666,15 @@ msgstr ""
 msgid "Four Doors"
 msgstr ""
 
-#: ../share/levels/bx2.scm:294
+#: ../share/levels/bx2.scm:293
 msgid "4 hidden switches open exit doors."
 msgstr ""
 
-#: ../share/levels/bx2.scm:296
+#: ../share/levels/bx2.scm:295
 msgid "A switch is nearby."
 msgstr ""
 
-#: ../share/levels/bx2.scm:298
+#: ../share/levels/bx2.scm:297
 msgid "Peace."
 msgstr ""
 
@@ -1674,36 +1682,36 @@ msgstr ""
 msgid "Azteca"
 msgstr ""
 
-#: ../share/levels/bx3.scm:108
+#: ../share/levels/bx3.scm:107
 #, fuzzy
 msgid "You have access to the complex."
 msgstr "Teljesítetted a játékot"
 
-#: ../share/levels/bx3.scm:126
+#: ../share/levels/bx3.scm:125
 msgid "The way is opened across the sand."
 msgstr ""
 
-#: ../share/levels/bx3.scm:136
+#: ../share/levels/bx3.scm:135
 msgid "You must enter the Arena."
 msgstr ""
 
-#: ../share/levels/bx3.scm:196 ../share/levels/bx3.scm:203
+#: ../share/levels/bx3.scm:195 ../share/levels/bx3.scm:202
 msgid "A wall has been lowered."
 msgstr ""
 
-#: ../share/levels/bx3.scm:210
+#: ../share/levels/bx3.scm:209
 msgid "A roof has been raised."
 msgstr ""
 
-#: ../share/levels/bx3.scm:226
+#: ../share/levels/bx3.scm:225
 msgid "Stairs are in place."
 msgstr ""
 
-#: ../share/levels/bx3.scm:236
+#: ../share/levels/bx3.scm:235
 msgid "You may enter upper complex."
 msgstr ""
 
-#: ../share/levels/bx3.scm:250
+#: ../share/levels/bx3.scm:249
 msgid "The exit is now open."
 msgstr ""
 
@@ -1715,15 +1723,15 @@ msgstr ""
 msgid "Stronghold"
 msgstr ""
 
-#: ../share/levels/castle4.scm:13
+#: ../share/levels/castle4.scm:12
 msgid "Ice and Glass"
 msgstr ""
 
-#: ../share/levels/castle4.scm:65
+#: ../share/levels/castle4.scm:64
 msgid "Maze of PI"
 msgstr ""
 
-#: ../share/levels/castle4.scm:66
+#: ../share/levels/castle4.scm:65
 msgid "Secret stairs somewhere"
 msgstr ""
 
@@ -1739,7 +1747,7 @@ msgstr ""
 msgid "Big Jump"
 msgstr ""
 
-#: ../share/levels/child5.scm:12
+#: ../share/levels/child5.scm:10
 msgid "Wonderland"
 msgstr ""
 
@@ -1835,7 +1843,7 @@ msgstr "  Kormányzás"
 msgid "Summer"
 msgstr ""
 
-#: ../share/levels/fourSeasons_3.scm:30
+#: ../share/levels/fourSeasons_3.scm:29
 msgid "Remember to breathe"
 msgstr ""
 
@@ -1959,7 +1967,7 @@ msgstr ""
 msgid "The Castle"
 msgstr ""
 
-#: ../share/levels/mhm3.scm:25
+#: ../share/levels/mhm3.scm:24
 msgid "Stay on the path or else!"
 msgstr ""
 
@@ -1997,7 +2005,7 @@ msgstr "Vízszint"
 msgid "Scale the Mountain"
 msgstr ""
 
-#: ../share/levels/sl2.scm:64
+#: ../share/levels/sl2.scm:63
 #, fuzzy
 msgid "Kill me!"
 msgstr "Halál"
@@ -2006,7 +2014,7 @@ msgstr "Halál"
 msgid "The Longest Pipe in the World"
 msgstr ""
 
-#: ../share/levels/sl3.scm:153
+#: ../share/levels/sl3.scm:152
 msgid "Smash some badguys and see what happens"
 msgstr ""
 
@@ -2018,15 +2026,15 @@ msgstr ""
 msgid "The Marble Mansion"
 msgstr ""
 
-#: ../share/levels/sl5.scm:49
+#: ../share/levels/sl5.scm:48
 msgid "Pull twice"
 msgstr ""
 
-#: ../share/levels/sl5.scm:57
+#: ../share/levels/sl5.scm:56
 msgid "You may check out the roof again"
 msgstr ""
 
-#: ../share/levels/sl5.scm:84
+#: ../share/levels/sl5.scm:83
 msgid "Oxygen"
 msgstr ""
 
@@ -2034,15 +2042,15 @@ msgstr ""
 msgid "The Marble HQ"
 msgstr ""
 
-#: ../share/levels/sl6.scm:200
+#: ../share/levels/sl6.scm:199
 msgid "The Marble HQ - Do not Enter!"
 msgstr ""
 
-#: ../share/levels/sl6.scm:341
+#: ../share/levels/sl6.scm:340
 msgid "Bonus"
 msgstr ""
 
-#: ../share/levels/sl6.scm:521
+#: ../share/levels/sl6.scm:520
 msgid "Commander's Hall"
 msgstr ""
 

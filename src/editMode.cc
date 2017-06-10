@@ -21,8 +21,11 @@
 */
 
 #include "editMode.h"
+
 #include "editMode_codes.h"
 #include "editWindows.h"
+#include "game.h"
+#include "guile.h"
 #include "map.h"
 #include "menusystem.h"
 #include "settings.h"
@@ -69,7 +72,7 @@ const char* cKeyShortcuts[N_SUBMENUS] = {
     /* Window */
     "***",
     /* View */
-    "br",
+    "brlc",
 };
 
 #define FLAG_ICE 0
@@ -186,7 +189,7 @@ void EditMode::init() {
        _("*<SHIFT> x5"), "/", _("Set region marker"), _("Clear marker"), _("Copy region"),
        _("Paste region"), NULL},
       {_("Editor"), _("Toolbar"), _("Status"), NULL},
-      {_("Birds's eye"), _("Rotate view"), NULL},
+      {_("Birds's eye"), _("Rotate view"), _("Load entities"), _("Clear entities"), NULL},
   };
   memcpy(cMenuEntries, cMenuEntries_i18n, sizeof(cMenuEntries));
 
@@ -264,38 +267,21 @@ void EditMode::loadMap(char* name) {
    * instead */
   map = new Map(mapname);
   map->flags |= Map::flagFlashCenter;
-  map->isTransparent = 1;
   x = (int)map->startPosition[0];
   y = (int)map->startPosition[1];
+  game = NULL;
 
-  /* Verify that we can save the map in the home directory */
-  /* THIS TEST DOES NOT WORK PROPERLY - CREATES BROKEN MAPS. ALSO SECURITY RISK WITH SYMLINKS
-   */
-  /*
-  snprintf(mapname,sizeof(mapname),"%s/.trackballs/levels/%s.map",getenv("HOME"),name);
-  FILE *fp = fopen(mapname,"ab");
-  if(!fp) mapIsWritable=0;
-  else mapIsWritable=1;
-  if(fp) fclose(fp);
-  */
   mapIsWritable = 1;  // Best guess for now
-
-  // test that we can save the map properly
-  /* This is an old test if if could be saved in eg. the share directory
-  if(!useHome) {
-        FILE *fp = fopen(mapname,"ab");
-        if(!fp) {
-          useHome=1;
-          snprintf(mapname,sizeof(mapname)-1,"%s/.trackballs/levels/%s.map",getenv("HOME"),Settings::settings->specialLevel);
-        }
-        else fclose(fp);
-        }*/
 }
 
 void EditMode::closeMap() {
   if (map) {
     delete map;
     map = NULL;
+  }
+  if (game) {
+    delete game;
+    game = NULL;
   }
 }
 
@@ -407,6 +393,7 @@ void EditMode::display() {
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
     map->draw(0, x, y);
+    if (game) game->draw();
     map->draw(1, x, y);
     /* If we have a clipboard selection then display where it will be pasted */
     if (cellClipboard) {
@@ -463,9 +450,6 @@ void EditMode::display() {
   clearSelectionAreas();
   Enter2DMode();
   MyWindow::drawAll();
-  Leave2DMode();
-  // drawAll messes up the GL state
-  Enter2DMode();
   drawMousePointer();
   Leave2DMode();
 }
@@ -771,6 +755,28 @@ void EditMode::doCommand(int command) {
   case VIEW_ROTATE:
     switchViewpoint = switchViewpoint ? 0 : 1;
     break;
+  case VIEW_CLEAR_ENTITIES:
+    if (game) delete game;
+    game = NULL;
+    break;
+  case VIEW_LOAD_ENTITIES: {
+    /* reset entities and state */
+    if (game) delete game;
+    game = new Game(map);
+
+    /* load scripts */
+    char scmname[512];
+    snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
+    scmname[511] = '\0';
+    loadScript(scmname);
+    snprintf(scmname, 511, "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
+    scmname[511] = '\0';
+    if (!fileExists(scmname)) {
+      snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
+    }
+    scmname[511] = '\0';
+    loadScript(scmname);
+  } break;
 
   default:
     /* TODO. Not implemented yet? */

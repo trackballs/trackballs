@@ -5,7 +5,6 @@
 (fog-color 0.8 0.8 1.0)
 (set-track-name (_ "Summer"))
 (set-author "Mathias Broxvall")
-(map-is-transparent #t)
 (scale-oxygen 4.0)  ;; Let player be under water longer
 
 (start-time 300)

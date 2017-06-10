@@ -3,7 +3,6 @@
 (day)
 (set-track-name (_ "Box-O'-Fun"))
 (set-author "Warren D Ober")
-(map-is-transparent #t)
 (start-time 340) 
 (set-start-position 92.5 88.5)
 

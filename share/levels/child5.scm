@@ -7,8 +7,6 @@
 (rain 0.2)
 (fog  0.1)
 
-(map-is-transparent #t)
-
 (set-track-name (_ "Wonderland"))
 (set-author "Attila Boros")
 

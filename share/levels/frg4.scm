@@ -1,7 +1,6 @@
 (set-track-name (_ "Blue"))
 (set-author "Ulrik Enstad")
 (set-start-position 250.5 250.5)
-(map-is-transparent #t)
 (add-goal 217 212 #f "frg5")
 (add-goal 216 212 #f "frg5")
 

@@ -20,7 +20,6 @@
  )
 )
 (set-start-position 238.5 238.5)
-(map-is-transparent #t)
 
 (add-modpill 217.5 213.5 *mod-large* 20 20)
 

@@ -55,6 +55,7 @@ Game::Game(char *name, Gamer *g) {
   gamer = g;
 
   localPlayers = 1;
+  edit_mode = 0;
 
   weather = new Weather();
 
@@ -70,14 +71,33 @@ Game::Game(char *name, Gamer *g) {
   player1->lives = 4 - Settings::settings->difficulty;
 }
 
+Game::Game(Map *editmap) {
+  Ball::reset();
+  ForceField::reset();
+  Pipe::reset();
+  map = editmap;
+  localPlayers = 0;
+  player1 = NULL;
+  gameTime = 0.0;
+  nextLevel[0] = 0;
+  weather = NULL;
+  objects = new std::set<class Animated *>();
+  hooks = new std::set<class GameHook *>();
+  map = editmap;
+  edit_mode = 1;
+
+  current = this;
+}
+
 Game::~Game() {
   clearLevel();
 
   delete player1;
-  delete map;
   delete objects;
   delete hooks;
   delete weather;
+  if (!edit_mode) delete map;
+  if (current == this) { current = NULL; }
 }
 
 void Game::loadLevel(char *name) {
@@ -154,7 +174,7 @@ void Game::clearLevel() {
   Ball::reset();
   ForceField::reset();
 
-  weather->clear();
+  if (weather) weather->clear();
   clearMusicPreferences();
   if (hooks) {
     std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
@@ -248,7 +268,7 @@ void Game::draw() {
     if (anim->onScreen) anim->draw2();
   }
 
-  weather->draw2();
+  if (weather) weather->draw2();
 }
 
 /* Draws the world as normal but with the assumption that we are drawing a reflected version

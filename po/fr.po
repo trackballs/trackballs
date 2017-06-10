@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-09 22:02-0400\n"
-"PO-Revision-Date: 2017-06-08 19:22-0400\n"
+"POT-Creation-Date: 2017-06-10 13:10-0400\n"
+"PO-Revision-Date: 2017-06-10 13:30-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -64,362 +64,361 @@ msgid "Save point"
 msgstr "Point de sauvegarde!"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "File"
 msgstr "Fichier"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Edit"
 msgstr "Edition"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Color"
 msgstr "Couleur"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Flags"
 msgstr "Drapeaux"
 
-#: ../src/editMode.cc:162
+#: ../src/editMode.cc:165
 msgid "Feature"
 msgstr "Caractéristique"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Repair"
-msgstr ""
+msgstr "Réparer"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Move"
 msgstr "Deplacer"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "Window"
 msgstr "Fenêtre"
 
-#: ../src/editMode.cc:163
+#: ../src/editMode.cc:166
 msgid "View"
 msgstr "Vue"
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "New"
 msgstr "Nouveau"
 
-#: ../src/editMode.cc:171 ../src/editWindows.cc:479
+#: ../src/editMode.cc:174 ../src/editWindows.cc:479
 msgid "Open"
 msgstr "Ouvrir"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Close"
 msgstr "Fermer"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Save"
 msgstr "Enregistrer"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Exit"
 msgstr "Quitter"
 
-#: ../src/editMode.cc:171
+#: ../src/editMode.cc:174
 msgid "Test level"
 msgstr "Tester le niveau"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit height"
 msgstr "Changer la hauteur"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit color"
 msgstr "Changer la couleur"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit water"
 msgstr "Changer l'eau"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit velocity"
 msgstr "Changer la vélocité"
 
-#: ../src/editMode.cc:172
+#: ../src/editMode.cc:175
 msgid "Edit lines"
 msgstr "Changer les lignes"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "*<SPACE> Whole cell"
 msgstr "*<ESPACE> Toute la cellule"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Upper corner"
 msgstr "Coin du haut"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Bottom corner"
 msgstr "Coin du bas"
 
-#: ../src/editMode.cc:173
+#: ../src/editMode.cc:176
 msgid "Right corner"
 msgstr "Coin de droite"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Left corner"
 msgstr "Coin de gauche"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Center"
 msgstr "Centre"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Raise increment"
 msgstr "Augmenter l'incrément"
 
-#: ../src/editMode.cc:174
+#: ../src/editMode.cc:177
 msgid "Lower increment"
 msgstr "Diminuer l'incrément"
 
-#: ../src/editMode.cc:175
+#: ../src/editMode.cc:178
 msgid "*<SHIFT> reversed"
 msgstr "*<SHIFT> inverser"
 
-#: ../src/editMode.cc:175
+#: ../src/editMode.cc:178
 msgid "*<CTRL> walls"
 msgstr "*<CTRL> murs"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. red"
 msgstr "Aj. rouge"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. green"
 msgstr "Aj. vert"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. blue"
 msgstr "Aj. bleu"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:179
 msgid "Inc. alpha"
 msgstr "Aj. alpha"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193
+#: ../src/editMode.cc:180 ../src/editMode.cc:196
 msgid "Ice"
 msgstr "Glace"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193 ../share/levels/lv2.scm:4
+#: ../src/editMode.cc:180 ../src/editMode.cc:196 ../share/levels/lv2.scm:4
 msgid "Acid"
 msgstr "Acide"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:193
+#: ../src/editMode.cc:180 ../src/editMode.cc:196
 msgid "Sand"
 msgstr "Sable"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:194
+#: ../src/editMode.cc:180 ../src/editMode.cc:197
 msgid "Kill"
 msgstr "Tuer"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:180
 msgid "Bounce"
 msgstr "Rebondir"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:194
+#: ../src/editMode.cc:180 ../src/editMode.cc:197
 msgid "No grid"
 msgstr "Pas de grille"
 
-#: ../src/editMode.cc:177 ../src/editMode.cc:195
+#: ../src/editMode.cc:180 ../src/editMode.cc:198
 msgid "Track"
 msgstr "Piste"
 
-#: ../src/editMode.cc:178 ../src/editMode.cc:195
+#: ../src/editMode.cc:181 ../src/editMode.cc:198
 msgid "Shade flat"
 msgstr "Ombrer plat"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:181
 msgid "Texture"
 msgstr "Texture"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:181
 msgid "ch. texture"
 msgstr "ch. texture"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Spike"
 msgstr "Pic"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Small hill"
 msgstr "Petite colline"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:198
+#: ../src/editMode.cc:182 ../src/editMode.cc:201
 msgid "Medium hill"
 msgstr "Moyenne colline"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:199
+#: ../src/editMode.cc:182 ../src/editMode.cc:202
 msgid "Large hill"
 msgstr "Grande colline"
 
-#: ../src/editMode.cc:179 ../src/editMode.cc:199
+#: ../src/editMode.cc:182 ../src/editMode.cc:202
 msgid "Huge hill"
 msgstr "Énorme colline"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:183
 msgid "Smooth small"
 msgstr "Petite surface lisse"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:183
 msgid "Smooth large"
 msgstr "Grande surface lisse"
 
-#: ../src/editMode.cc:181
-#, fuzzy
+#: ../src/editMode.cc:184
 msgid "Cell cont."
-msgstr "Bravo!"
-
-#: ../src/editMode.cc:181
-#, fuzzy
-msgid "Water cont."
-msgstr "Monde de l'eau"
-
-#: ../src/editMode.cc:181
-#, fuzzy
-msgid "Color cont."
-msgstr "Couleur"
-
-#: ../src/editMode.cc:181
-#, fuzzy
-msgid "Cell center"
-msgstr "Centre"
-
-#: ../src/editMode.cc:182
-#, fuzzy
-msgid "Water center"
-msgstr "Hauteur de l'eau"
-
-#: ../src/editMode.cc:182
-#, fuzzy
-msgid "Color center"
-msgstr "Centre"
-
-#: ../src/editMode.cc:182
-#, fuzzy
-msgid "Cell round"
-msgstr "Faire le pitre"
-
-#: ../src/editMode.cc:182
-#, fuzzy
-msgid "Water round"
-msgstr "Monde de l'eau"
-
-#: ../src/editMode.cc:183
-#, fuzzy
-msgid "Color round"
-msgstr "Faire le pitre"
-
-#: ../src/editMode.cc:183
-msgid "Vel. round"
-msgstr ""
+msgstr "Continuité de hauteur"
 
 #: ../src/editMode.cc:184
+msgid "Water cont."
+msgstr "Continuité de l'eau"
+
+#: ../src/editMode.cc:184
+msgid "Color cont."
+msgstr "Continuité de la couleur"
+
+#: ../src/editMode.cc:184
+msgid "Cell center"
+msgstr "Centrer la hauteur"
+
+#: ../src/editMode.cc:185
+msgid "Water center"
+msgstr "Centrer l'eau"
+
+#: ../src/editMode.cc:185
+msgid "Color center"
+msgstr "Centrer la couleur"
+
+#: ../src/editMode.cc:185
+msgid "Cell round"
+msgstr "Arrondir la hauteur"
+
+#: ../src/editMode.cc:185
+msgid "Water round"
+msgstr "Arrondir l'eau"
+
+#: ../src/editMode.cc:186
+msgid "Color round"
+msgstr "Arrondir la couleur"
+
+#: ../src/editMode.cc:186
+msgid "Vel. round"
+msgstr "Arrondir la vélocité"
+
+#: ../src/editMode.cc:187
 msgid "/UP Move up"
 msgstr "/HAUT Vers le haut"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/DOWN Move down"
 msgstr "/BAS Vers le bas"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/LEFT Move left"
 msgstr "/GAUCHE Vers la gauche"
 
-#: ../src/editMode.cc:184
+#: ../src/editMode.cc:187
 msgid "/RIGHT Move right"
 msgstr "/DROITE Vers la droite"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map up"
 msgstr "Déplacer la carte vers le haut"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map down"
 msgstr "Déplacer la carte vers le bas"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map left"
 msgstr "Déplacer la carte vers la gauche"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:188
 msgid "Shift map right"
 msgstr "Déplacer la carte vers la droite"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "*<SHIFT> x5"
 msgstr "*<SHIFT> x5"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Set region marker"
 msgstr "Définir le marqueur de region"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Clear marker"
 msgstr "Effacer le marqueur"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:189
 msgid "Copy region"
 msgstr "Copier la région"
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:190
 msgid "Paste region"
 msgstr "Coller la région"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Editor"
 msgstr "Éditeur"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Toolbar"
 msgstr "Barre d'outils"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:191
 msgid "Status"
 msgstr "Statut"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:192
 msgid "Birds's eye"
 msgstr "Oeil d'oiseaux"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:192
 msgid "Rotate view"
 msgstr "Tourner la vue"
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:192
+msgid "Load entities"
+msgstr "Charger les entités"
+
+#: ../src/editMode.cc:192
+msgid "Clear entities"
+msgstr "Effacer les entités"
+
+#: ../src/editMode.cc:197
 msgid "Trampoline"
 msgstr "Trampoline"
 
-#: ../src/editMode.cc:199
+#: ../src/editMode.cc:202
 msgid "Small smooth"
 msgstr "Petite surface lisse"
 
-#: ../src/editMode.cc:200
+#: ../src/editMode.cc:203
 msgid "Large smooth"
 msgstr "Grande surface lisse"
 
-#: ../src/editMode.cc:347
+#: ../src/editMode.cc:333
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Piste: %s\n"
 
-#: ../src/editMode.cc:348
+#: ../src/editMode.cc:334
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Ceci est le fichier de script par défaut pour cette piste.\n"
 
-#: ../src/editMode.cc:349
+#: ../src/editMode.cc:335
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Lisez la documentation de l'éditeur et regardez les exemples\n"
 
-#: ../src/editMode.cc:350
+#: ../src/editMode.cc:336
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -428,15 +427,15 @@ msgstr ""
 ";;; pour apprendre a le personnaliser.\n"
 "\n"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Cell height"
 msgstr "Hauteur de la cellule"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Cell water height"
 msgstr "Hauteur de la cellule d'eau"
 
-#: ../src/editMode.cc:475
+#: ../src/editMode.cc:459
 msgid "Textures"
 msgstr "Textures"
 
@@ -617,7 +616,7 @@ msgstr "Entrez votre nom: %s"
 
 #: ../src/gamer.cc:37
 msgid "John Doe"
-msgstr ""
+msgstr "Jean Dupont"
 
 #: ../src/glHelp.cc:839
 #, c-format
@@ -902,12 +901,12 @@ msgstr "normale"
 msgid "hard"
 msgstr "difficile"
 
-#: ../src/map.cc:256
+#: ../src/map.cc:255
 #, c-format
 msgid "Unknown track"
 msgstr "Piste inconnue"
 
-#: ../src/map.cc:257
+#: ../src/map.cc:256
 #, c-format
 msgid "Unknown author"
 msgstr "Auteur inconnu"
@@ -1339,15 +1338,17 @@ msgstr "Boîte d'amusement"
 
 #: ../share/levels/bx.set:4
 msgid "This is a set of three quite large levels created by Warren D. Ober."
-msgstr ""
+msgstr "Ceci est un ensemble de trois grands niveaux créés par Warren D. Ober."
 
 #: ../share/levels/bx.set:5
 msgid "Here you will find some interesting use of pipes and other objects."
 msgstr ""
+"Vous trouverez ici une utilisation intéressante de tuyaux et d'autres objets."
 
 #: ../share/levels/bx.set:6
 msgid "Hint: If you have difficult entering a pipe try to jump a little."
 msgstr ""
+"Astuce: s'il est difficile d'entrer dans un tuyau, essayez de sauter un peu."
 
 #: ../share/levels/castles.set:1
 msgid "Castles"
@@ -1557,11 +1558,11 @@ msgstr "Les balles qui espionnent"
 
 #: ../share/levels/mhm.set:4
 msgid "A set of three skillfully made levels by Warren D Ober."
-msgstr ""
+msgstr "Un ensemble de trois niveaux habilement fabriqués par Warren D Ober."
 
 #: ../share/levels/mhm.set:5
 msgid "May the mayhem begin!"
-msgstr ""
+msgstr "Que le grabuge commence!"
 
 #: ../share/levels/motion1.set:1 ../share/levels/motion1.scm:1
 msgid "Pendulum Motion"
@@ -1631,15 +1632,15 @@ msgstr "Saut, 200pt"
 msgid "Four Doors"
 msgstr "Quatre portes"
 
-#: ../share/levels/bx2.scm:294
+#: ../share/levels/bx2.scm:293
 msgid "4 hidden switches open exit doors."
 msgstr "4 interrupteurs cachés ouvrent les portes de sortie."
 
-#: ../share/levels/bx2.scm:296
+#: ../share/levels/bx2.scm:295
 msgid "A switch is nearby."
 msgstr "Un interrupteur est à proximité."
 
-#: ../share/levels/bx2.scm:298
+#: ../share/levels/bx2.scm:297
 msgid "Peace."
 msgstr "Paix."
 
@@ -1647,35 +1648,35 @@ msgstr "Paix."
 msgid "Azteca"
 msgstr "Aztèques"
 
-#: ../share/levels/bx3.scm:108
+#: ../share/levels/bx3.scm:107
 msgid "You have access to the complex."
 msgstr "Vous avez accès au complexe."
 
-#: ../share/levels/bx3.scm:126
+#: ../share/levels/bx3.scm:125
 msgid "The way is opened across the sand."
 msgstr "La voie est ouverte sur le sable."
 
-#: ../share/levels/bx3.scm:136
+#: ../share/levels/bx3.scm:135
 msgid "You must enter the Arena."
 msgstr "Vous devez entrer dans l'Arène."
 
-#: ../share/levels/bx3.scm:196 ../share/levels/bx3.scm:203
+#: ../share/levels/bx3.scm:195 ../share/levels/bx3.scm:202
 msgid "A wall has been lowered."
 msgstr "Un mur a été abaissé."
 
-#: ../share/levels/bx3.scm:210
+#: ../share/levels/bx3.scm:209
 msgid "A roof has been raised."
 msgstr "Un toit a été élevé."
 
-#: ../share/levels/bx3.scm:226
+#: ../share/levels/bx3.scm:225
 msgid "Stairs are in place."
 msgstr "Les escaliers sont en place."
 
-#: ../share/levels/bx3.scm:236
+#: ../share/levels/bx3.scm:235
 msgid "You may enter upper complex."
 msgstr "Vous pouvez entrer dans le complexe supérieur."
 
-#: ../share/levels/bx3.scm:250
+#: ../share/levels/bx3.scm:249
 msgid "The exit is now open."
 msgstr "La sortie est ouverte."
 
@@ -1687,15 +1688,15 @@ msgstr "La veille de nuit"
 msgid "Stronghold"
 msgstr "Bastion"
 
-#: ../share/levels/castle4.scm:13
+#: ../share/levels/castle4.scm:12
 msgid "Ice and Glass"
 msgstr "Glace et verre"
 
-#: ../share/levels/castle4.scm:65
+#: ../share/levels/castle4.scm:64
 msgid "Maze of PI"
 msgstr "Labyrinthe de PI"
 
-#: ../share/levels/castle4.scm:66
+#: ../share/levels/castle4.scm:65
 msgid "Secret stairs somewhere"
 msgstr "Escalier secret quelque part"
 
@@ -1711,7 +1712,7 @@ msgstr "Rosâtre"
 msgid "Big Jump"
 msgstr "Grand saut"
 
-#: ../share/levels/child5.scm:12
+#: ../share/levels/child5.scm:10
 msgid "Wonderland"
 msgstr "Pays merveilleux"
 
@@ -1804,7 +1805,7 @@ msgstr "Le printemps"
 msgid "Summer"
 msgstr "L'été"
 
-#: ../share/levels/fourSeasons_3.scm:30
+#: ../share/levels/fourSeasons_3.scm:29
 msgid "Remember to breathe"
 msgstr "Souvenez-vous de respirer"
 
@@ -1928,7 +1929,7 @@ msgstr "Grabuge"
 msgid "The Castle"
 msgstr "Le château"
 
-#: ../share/levels/mhm3.scm:25
+#: ../share/levels/mhm3.scm:24
 msgid "Stay on the path or else!"
 msgstr "Restez sur le chemin!"
 
@@ -1964,7 +1965,7 @@ msgstr "Ne pas sauter!"
 msgid "Scale the Mountain"
 msgstr "Escalader la montagne"
 
-#: ../share/levels/sl2.scm:64
+#: ../share/levels/sl2.scm:63
 msgid "Kill me!"
 msgstr "Tuez-moi!"
 
@@ -1972,7 +1973,7 @@ msgstr "Tuez-moi!"
 msgid "The Longest Pipe in the World"
 msgstr "La pipe la plus longue au monde"
 
-#: ../share/levels/sl3.scm:153
+#: ../share/levels/sl3.scm:152
 msgid "Smash some badguys and see what happens"
 msgstr "Écrasez des méchants et voyez ce qui se passe"
 
@@ -1984,15 +1985,15 @@ msgstr "Dépêchez-vous!"
 msgid "The Marble Mansion"
 msgstr "Le manoir de marbre"
 
-#: ../share/levels/sl5.scm:49
+#: ../share/levels/sl5.scm:48
 msgid "Pull twice"
 msgstr "Tirez deux fois"
 
-#: ../share/levels/sl5.scm:57
+#: ../share/levels/sl5.scm:56
 msgid "You may check out the roof again"
 msgstr "Vous pouvez vérifier le toit à nouveau"
 
-#: ../share/levels/sl5.scm:84
+#: ../share/levels/sl5.scm:83
 msgid "Oxygen"
 msgstr "Oxygène"
 
@@ -2000,15 +2001,15 @@ msgstr "Oxygène"
 msgid "The Marble HQ"
 msgstr "Le QG de marbre"
 
-#: ../share/levels/sl6.scm:200
+#: ../share/levels/sl6.scm:199
 msgid "The Marble HQ - Do not Enter!"
 msgstr "Le QG de marbe -- Ne pas entrer!"
 
-#: ../share/levels/sl6.scm:341
+#: ../share/levels/sl6.scm:340
 msgid "Bonus"
 msgstr "Bonus"
 
-#: ../share/levels/sl6.scm:521
+#: ../share/levels/sl6.scm:520
 msgid "Commander's Hall"
 msgstr "Salle du commandant"
 

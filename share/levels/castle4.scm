@@ -8,7 +8,6 @@
 (day)
 (snow 1.0)
 (fog 0.0)
-(map-is-transparent #t)
 
 (set-track-name (_ "Ice and Glass"))
 (set-author "Attila Boros")

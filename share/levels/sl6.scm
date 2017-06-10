@@ -20,7 +20,6 @@
  )
 )
 (set-start-position 156.5 65.5)
-(map-is-transparent #t)
 
 
 ;; turning off the HQ entry Forcefield

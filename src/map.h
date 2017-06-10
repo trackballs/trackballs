@@ -114,7 +114,7 @@ class Map {
 
   int width;
   int height;
-  int flags, isBonus, isTransparent;
+  int flags, isBonus;
   char mapname[256], author[256];
   int indexTranslation[256];  // translates indices when reading map.
 

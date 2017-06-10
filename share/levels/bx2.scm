@@ -7,7 +7,6 @@
 (set-start-position  14 2)     ;try these: 31 44)  82 24)  66 63)
 (start-time 720)
 (restart-time 90)
-(map-is-transparent #t)
 
 ;; SET JUMP TO Default;
 

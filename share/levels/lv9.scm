@@ -3,7 +3,6 @@
 (day)
 (set-track-name (_ "Water world"))
 (set-author "Mathias Broxvall")
-(map-is-transparent #t)
 (add-goal 188 191 #t "")
 
 (start-time (- 180 (* 15 (difficulty)))) 

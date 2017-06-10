@@ -6,7 +6,6 @@
 (rain 0.6)
 (set-track-name (_ "Autumn"))
 (set-author "Mathias Broxvall")
-(map-is-transparent #f)
 
 (start-time 180) 
 (set-start-position 199.5 199.5)

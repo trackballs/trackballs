@@ -40,6 +40,7 @@ class Weather;
 class Game {
  public:
   Game(char *, class Gamer *gamer);
+  explicit Game(Map *editmap);
   virtual ~Game();
 
   void tick(Real);
@@ -57,6 +58,7 @@ class Game {
   int localPlayers, isNight, startTime, currentLevelSet, useGrid;
   double fogThickness, wantedFogThickness;
   double jumpFactor, oxygenFactor;
+  int edit_mode;
 
   Player *player1;
   Map *map;

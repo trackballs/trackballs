@@ -5,7 +5,6 @@
 (set-start-position 252 250) 
 (start-time 180)
 (restart-time 30)
-(map-is-transparent #t)
 ;;Weather conditions.
 
 (day)

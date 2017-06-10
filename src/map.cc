@@ -251,7 +251,6 @@ Map::Map(char* filename) {
   int x, y, i;
 
   isBonus = 0;
-  isTransparent = 0;
 
   snprintf(mapname, sizeof(mapname), _("Unknown track"));
   snprintf(author, sizeof(author), _("Unknown author"));

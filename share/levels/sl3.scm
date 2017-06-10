@@ -20,7 +20,6 @@
          (start-time 200)
  )
 )
-(map-is-transparent #t)
 (restart-time 0)
 
 

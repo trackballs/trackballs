@@ -2,7 +2,6 @@
 (set-author "Ulrik Enstad")
 
 (set-start-position 250 250)
-(map-is-transparent #t)
 
 (diamond 232.5 232.5)
 (restart-time 0)

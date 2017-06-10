@@ -3,7 +3,6 @@
 (day)
 (set-track-name (_ "Azteca"))
 (set-author "Warren D Ober")
-(map-is-transparent #t)
 (start-time 1140) 
 (set-start-position 97.5 176.5)
 

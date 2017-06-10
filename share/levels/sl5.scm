@@ -6,7 +6,6 @@
 (set-author "Ulrik Enstad")
 (set-start-position 96 78)
 (start-time 1000)
-(map-is-transparent #t)
 (scale-oxygen 0.3)
 
 ;; the start

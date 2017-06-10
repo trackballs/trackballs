@@ -20,7 +20,6 @@
  )
 )
 (set-start-position 176.5 175.5)
-(map-is-transparent #t)
 (fog)
 
 

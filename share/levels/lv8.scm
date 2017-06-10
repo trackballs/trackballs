@@ -11,7 +11,6 @@
 (start-time 150) 
 (set-start-position 244.5 244.5)
 ;(set-start-position 225.5 232.5)
-(map-is-transparent #t)
 
 (add-flag 244 231 250 1 0.1)
 (add-flag 236 229 100 1 0.1)

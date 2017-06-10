@@ -41,7 +41,7 @@ GameHook::GameHook() {
   if (Game::current)
     Game::current->add(this);
   else
-    throw "GameHook::GameHook() - no game loaded\n";
+    error("GameHook::GameHook() - no game loaded");
 
   for (i = 0; i < GameHookEvent_MaxHooks; i++) hooks[i] = NULL;
 }

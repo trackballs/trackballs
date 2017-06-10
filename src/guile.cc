@@ -221,7 +221,7 @@ SCM_DEFINE(player, "player", 0, 0, 0, (),
            "Returns the current player as an 'animated' object.")
 #define FUNC_NAME s_player
 {
-  if (Game::current)
+  if (Game::current && Game::current->player1)
     return smobAnimated_make(Game::current->player1);
   else
     return SCM_UNSPECIFIED;
@@ -1123,7 +1123,10 @@ SCM_DEFINE(set_time, "set-time", 1, 0, 0, (SCM t), "Sets the time left for playe
 
 /*********** get_time ************/
 SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player has left.") {
-  return scm_from_int(Game::current->player1->timeLeft);
+  if (Game::current && Game::current->player1) {
+    return scm_from_int(Game::current->player1->timeLeft);
+  }
+  return SCM_UNSPECIFIED;
 }
 
 /*********** add time ************/
@@ -1151,7 +1154,9 @@ SCM_DEFINE(set_score, "set-score", 1, 0, 0, (SCM t), "Sets the score for player.
 
 /*********** get_score ************/
 SCM_DEFINE(get_score, "get-score", 0, 0, 0, (), "Returns the players score.") {
-  return scm_from_int(Game::current->player1->score);
+  if (Game::current && Game::current->player1)
+    return scm_from_int(Game::current->player1->score);
+  return SCM_UNSPECIFIED;
 }
 
 /*********** add_score ************/
@@ -1189,7 +1194,8 @@ SCM_DEFINE(snow, "snow", 1, 0, 0, (SCM strength), "Turns on snow, 0 <= strength 
 #define FUNC_NAME s_snow
 {
   SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG1, FUNC_NAME);
-  Game::current->weather->snow(scm_to_double(strength));
+  if (Game::current && Game::current->weather)
+    Game::current->weather->snow(scm_to_double(strength));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1199,7 +1205,8 @@ SCM_DEFINE(rain, "rain", 1, 0, 0, (SCM strength), "Turns on rain, 0 <= strength 
 #define FUNC_NAME s_rain
 {
   SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG1, FUNC_NAME);
-  Game::current->weather->rain(scm_to_double(strength));
+  if (Game::current && Game::current->weather)
+    Game::current->weather->rain(scm_to_double(strength));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1213,13 +1220,6 @@ SCM_DEFINE(difficulty, "difficulty", 0, 0, 0, (),
 /*********** use-grid ************/
 SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off") {
   Game::current->useGrid = SCM_FALSEP(v) ? 0 : 1;
-  return SCM_UNSPECIFIED;
-}
-
-/*********** map-is-transparent ************/
-SCM_DEFINE(map_is_transparent, "map-is-transparent", 1, 0, 0, (SCM v),
-           "Turns on/off transparency rendering of map.") {
-  Game::current->map->isTransparent = SCM_FALSEP(v) ? 0 : 1;
   return SCM_UNSPECIFIED;
 }
 
@@ -1256,6 +1256,8 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
   SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(flag), flag, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG6, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
+
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1),
       iflag = scm_to_int(flag);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
@@ -1282,6 +1284,8 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
   SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG6, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
+
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
@@ -1308,6 +1312,7 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(h1), h1, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(h2), h2, SCM_ARG7, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
@@ -1346,6 +1351,7 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(h1), h1, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(h2), h2, SCM_ARG7, FUNC_NAME);
   SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
@@ -1383,6 +1389,7 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG7, FUNC_NAME);
   int i = scm_to_int(corner);
   SCM_ASSERT(i >= 0 && i <= 5, corner, SCM_ARG5, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
@@ -1421,6 +1428,7 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
   SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG7, FUNC_NAME);
   int i = scm_to_int(corner);
   SCM_ASSERT(i >= 0 && i <= 4, corner, SCM_ARG5, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
@@ -1454,6 +1462,8 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
   SCM_ASSERT(SCM_BOOLP(flipx), flipx, SCM_ARG7, FUNC_NAME);
   SCM_ASSERT(SCM_BOOLP(flipy), flipy, 8, FUNC_NAME);
   SCM_ASSERT(SCM_BOOLP(transp), transp, 9, FUNC_NAME);
+  if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
+
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   int tx = scm_to_int(x2), ty = scm_to_int(y2);
   int fx = scm_to_bool(flipx), fy = scm_to_bool(flipy), fxy = scm_to_bool(transp);
@@ -1538,7 +1548,8 @@ SCM_DEFINE(restart_time, "restart-time", 1, 0, 0, (SCM t), "Sets the timebonus a
 #define FUNC_NAME s_restart_time
 {
   SCM_ASSERT(SCM_NUMBERP(t), t, SCM_ARG1, FUNC_NAME);
-  Game::current->player1->timeOnDeath = scm_to_double(t);
+  if (Game::current && Game::current->player1)
+    Game::current->player1->timeOnDeath = scm_to_double(t);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME

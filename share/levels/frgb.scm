@@ -13,7 +13,6 @@
 )
 
 (set-start-position 250.5 249.5)
-(map-is-transparent #t)
 
 (jump 0.0)
 (restart-time 0)
