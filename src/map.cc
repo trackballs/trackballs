@@ -438,8 +438,6 @@ void Map::draw(int stage, int cx, int cy) {
   if (stage == 0) {
     glDisable(GL_BLEND);
   } else {
-    glEnable(GL_ALPHA_TEST);
-    glAlphaFunc(GL_GREATER, 0.01);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
@@ -562,9 +560,7 @@ void Map::draw(int stage, int cx, int cy) {
   }
   glDisable(GL_LINE_SMOOTH);
 
-  //  printf("VBO draw time %3.3fms (%3.3fms) on %d chunks. %d %d\n", 1e3 * (getSystemTime() -
-  //  t1),
-  //         1e3 * (t1 - t0), nchunks, stage, birdseye);
+  warnForGLerrors(stage ? "Map drawing 1" : "Map drawing 0");
 }
 
 static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,

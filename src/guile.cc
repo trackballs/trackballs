@@ -357,8 +357,8 @@ SCM_DEFINE(add_cactus, "add-cactus", 3, 0, 0, (SCM x, SCM y, SCM radius),
            "Creates a cactus at given position.")
 #define FUNC_NAME s_add_cactus
 {
-  SCM_ASSERT(scm_is_exact_integer(x), x, SCM_ARG1, s_add_flag);
-  SCM_ASSERT(scm_is_exact_integer(y), y, SCM_ARG2, s_add_flag);
+  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG1, s_add_flag);
+  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG2, s_add_flag);
   SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, s_add_cactus);
   Cactus *cactus = new Cactus(scm_to_int(x), scm_to_int(y), scm_to_double(radius));
   return smobAnimated_make(cactus);
@@ -392,7 +392,7 @@ SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, s_add_sidespike);
   SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, s_add_sidespike);
   SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, s_add_sidespike);
-  SCM_ASSERT(scm_is_exact_integer(side), side, SCM_ARG5, s_add_sidespike);
+  SCM_ASSERT(scm_is_integer(side), side, SCM_ARG5, s_add_sidespike);
   Coord3d pos;
   pos[0] = scm_to_double(x);
   pos[1] = scm_to_double(y);
@@ -407,8 +407,8 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
            "Adds a new goal to the map. Returns an 'animated' object.")
 #define FUNC_NAME s_add_goal
 {
-  SCM_ASSERT(scm_is_exact_integer(x), x, SCM_ARG1, s_add_goal);
-  SCM_ASSERT(scm_is_exact_integer(y), y, SCM_ARG2, s_add_goal);
+  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG1, s_add_goal);
+  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG2, s_add_goal);
   SCM_ASSERT(scm_is_bool(rotate), rotate, SCM_ARG3, s_add_goal);
   SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, s_add_goal);
   char *sname = scm_to_utf8_string(nextLevel);
@@ -1016,17 +1016,27 @@ SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
 /*=======================================================*/
 
 /************* day / night **************/
-SCM_DEFINE(day, "day", 0, 0, 0, (), "Turns on the global light for this level.") {
+SCM_DEFINE(day, "day", 0, 0, 0, (), "Turns on the global light for this level.")
+#define FUNC_NAME s_day
+{
   Game::current->isNight = 0;
   Game::current->wantedFogThickness = 0;
   return SCM_UNSPECIFIED;
 }
-SCM_DEFINE(night, "night", 0, 0, 0, (), "Turns off the global light for this level.") {
+#undef FUNC_NAME
+
+SCM_DEFINE(night, "night", 0, 0, 0, (), "Turns off the global light for this level.")
+#define FUNC_NAME s_night
+{
   Game::current->isNight = 1;
   Game::current->wantedFogThickness = 0;
   return SCM_UNSPECIFIED;
 }
-SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.") {
+#undef FUNC_NAME
+
+SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.")
+#define FUNC_NAME s_fog
+{
   if (!(SCM_NUMBERP(v) && scm_to_double(v) == 0.0)) Game::current->isNight = 0;
   if (SCM_NUMBERP(v))
     Game::current->wantedFogThickness = scm_to_double(v);
@@ -1034,11 +1044,16 @@ SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.") {
     Game::current->wantedFogThickness = 1.0;
   return SCM_UNSPECIFIED;
 }
-SCM_DEFINE(thick_fog, "thick-fog", 0, 0, 0, (), "Turns on a thick fog.") {
+#undef FUNC_NAME
+
+SCM_DEFINE(thick_fog, "thick-fog", 0, 0, 0, (), "Turns on a thick fog.")
+#define FUNC_NAME s_thick_fog
+{
   Game::current->isNight = 0;
   Game::current->wantedFogThickness = 2.0;
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 /************* fog_color **************/
 SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies color of fog")
@@ -1057,8 +1072,10 @@ SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies co
 /************* set_bonus_level ************/
 SCM_DEFINE(set_bonus_level, "set-bonus-level", 1, 0, 0, (SCM name),
            "Makes level a bonus level and specified return level when this level is finished "
-           "or player dies.") {
-  SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, "set-bonus-level");
+           "or player dies.")
+#define FUNC_NAME s_set_bonus_level
+{
+  SCM_ASSERT(scm_is_string(name), name, SCM_ARG1, FUNC_NAME);
   if (Game::current) {
     char *sname = scm_to_utf8_string(name);
     if (strlen(sname) > 0) {
@@ -1069,6 +1086,7 @@ SCM_DEFINE(set_bonus_level, "set-bonus-level", 1, 0, 0, (SCM name),
   }
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 /**************** set_track_name **************/
 SCM_DEFINE(set_track_name, "set-track-name", 1, 0, 0, (SCM name),
@@ -1122,12 +1140,15 @@ SCM_DEFINE(set_time, "set-time", 1, 0, 0, (SCM t), "Sets the time left for playe
 #undef FUNC_NAME
 
 /*********** get_time ************/
-SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player has left.") {
+SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player has left.")
+#define FUNC_NAME s_get_time
+{
   if (Game::current && Game::current->player1) {
     return scm_from_int(Game::current->player1->timeLeft);
   }
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 /*********** add time ************/
 SCM_DEFINE(add_time, "add-time", 1, 0, 0, (SCM t), "Adds time for the user.")
@@ -1153,11 +1174,14 @@ SCM_DEFINE(set_score, "set-score", 1, 0, 0, (SCM t), "Sets the score for player.
 #undef FUNC_NAME
 
 /*********** get_score ************/
-SCM_DEFINE(get_score, "get-score", 0, 0, 0, (), "Returns the players score.") {
+SCM_DEFINE(get_score, "get-score", 0, 0, 0, (), "Returns the players score.")
+#define FUNC_NAME s_get_score
+{
   if (Game::current && Game::current->player1)
     return scm_from_int(Game::current->player1->score);
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 /*********** add_score ************/
 SCM_DEFINE(add_score, "add-score", 1, 0, 0, (SCM t), "Adds points to the players score.")
@@ -1213,15 +1237,21 @@ SCM_DEFINE(rain, "rain", 1, 0, 0, (SCM strength), "Turns on rain, 0 <= strength 
 
 /*********** difficulty ***********/
 SCM_DEFINE(difficulty, "difficulty", 0, 0, 0, (),
-           "Returns the difficulty we are currently playing on.") {
+           "Returns the difficulty we are currently playing on.")
+#define FUNC_NAME s_difficulty
+{
   return scm_from_long(Settings::settings->difficulty);
 }
+#undef FUNC_NAME
 
 /*********** use-grid ************/
-SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off") {
+SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off")
+#define FUNC_NAME s_use_grid
+{
   Game::current->useGrid = SCM_FALSEP(v) ? 0 : 1;
   return SCM_UNSPECIFIED;
 }
+#undef FUNC_NAME
 
 /*********** jump ************/
 SCM_DEFINE(jump, "jump", 1, 0, 0, (SCM v), "Scales maximum jump height of player.")

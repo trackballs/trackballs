@@ -86,7 +86,7 @@ HighScore::HighScore() {
     SCM sname = SCM_CAR(block);
     char* name = scm_to_utf8_string(sname);
     for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
-      if (strcmp(name, Settings::settings->levelSets[levelSet].name) == 0) break;
+      if (strcmp(name, Settings::settings->levelSets[levelSet].path) == 0) break;
     free(name);
     if (levelSet == Settings::settings->nLevelSets) {
       scm_close_input_port(ip);
@@ -144,7 +144,7 @@ void HighScore::addHighScore(int score, char* name) {
   }
   gzprintf(gp, "%d\n", Settings::settings->nLevelSets);
   for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++) {
-    char* lsname = ascm_format(settings->levelSets[levelSet].name);
+    char* lsname = ascm_format(settings->levelSets[levelSet].path);
     gzprintf(gp, "(%s\n", lsname);
     free(lsname);
     for (int i = 0; i < 10; i++) {

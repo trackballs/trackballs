@@ -789,6 +789,13 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
   return shaderprogram;
 }
 
+void warnForGLerrors(const char *where_am_i) {
+  GLenum err;
+  while ((err = glGetError()) != GL_NO_ERROR) {
+    warning("GL error %x at location: %s", err, where_am_i);
+  }
+}
+
 #define FRAME 50
 
 int resetTextures() {
@@ -1166,6 +1173,6 @@ SDL_Surface *loadImage(const char *imagename) {
   path[511] = '\0';
 
   SDL_Surface *img = IMG_Load(path);
-  if (!img) { error("Failed to load image '%s'", img); }
+  if (!img) error("Failed to load image '%s' because: %s", path, IMG_GetError());
   return img;
 }

@@ -354,8 +354,6 @@ void EditMode::display() {
                     activeView.projection);
 
   /* Setup matrixes for the camera perspective */
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
   if (map) {
     h = map->cell(x, y).heights[Cell::CENTER];
   } else
@@ -454,6 +452,8 @@ void EditMode::display() {
 typedef enum { eInfo_Height = 0, eInfo_WaterHeight, eInfo_Textures, nInfos } eCellInfo;
 int cellInfo = 0;
 char* infoNames[nInfos] = {_("Cell height"), _("Cell water height"), _("Textures")};
+
+int roundint(double f) { return (int)(f + 0.5); }
 
 void EditMode::mouseDown(int state, int x, int y) { MyWindow::mouseDownAll(state, x, y); }
 void EditMode::doCommand(int command) {
@@ -673,30 +673,29 @@ void EditMode::doCommand(int command) {
         /* For rounding routines the central cell has 4x resolution */
         case REPAIR_CELL_ROUND:
           for (int k = 0; k < 4; k++) {
-            c.heights[k] = scale * std::round(c.heights[k] / scale);
+            c.heights[k] = scale * roundint(c.heights[k] / scale);
           }
-          c.heights[Cell::CENTER] =
-              scale * std::round(4 * c.heights[Cell::CENTER] / scale) / 4;
+          c.heights[Cell::CENTER] = scale * roundint(4 * c.heights[Cell::CENTER] / scale) / 4;
           break;
         case REPAIR_WATER_ROUND:
           for (int k = 0; k < 4; k++) {
-            c.waterHeights[k] = scale * std::round(c.waterHeights[k] / scale);
+            c.waterHeights[k] = scale * roundint(c.waterHeights[k] / scale);
           }
           c.waterHeights[Cell::CENTER] =
-              scale * std::round(4 * c.waterHeights[Cell::CENTER] / scale) / 4;
+              scale * roundint(4 * c.waterHeights[Cell::CENTER] / scale) / 4;
           break;
         case REPAIR_COLOR_ROUND:
           for (int m = 0; m < 4; m++) {
             for (int k = 0; k < 4; k++) {
-              c.colors[k][m] = scale * std::round(c.colors[k][m] / scale);
+              c.colors[k][m] = scale * roundint(c.colors[k][m] / scale);
             }
             c.colors[Cell::CENTER][m] =
-                scale * std::round(4 * c.colors[Cell::CENTER][m] / scale) / 4;
+                scale * roundint(4 * c.colors[Cell::CENTER][m] / scale) / 4;
           }
           break;
         case REPAIR_VEL_ROUND:
-          c.velocity[0] = scale * std::round(c.velocity[0] / scale);
-          c.velocity[1] = scale * std::round(c.velocity[1] / scale);
+          c.velocity[0] = scale * roundint(c.velocity[0] / scale);
+          c.velocity[1] = scale * roundint(c.velocity[1] / scale);
           break;
         }
         map->markCellUpdated(x1, y1);

@@ -40,8 +40,7 @@ foreach( d ${definitions} )
 endforeach()
 
 add_custom_command(OUTPUT guile.cc.x
-# -pthread
-                  COMMAND CPP=cpp; guile-snarf -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr}   -I${GUILE_INCLUDE_DIRS} -g -O2 -I/usr/include/SDL2 -D_GNU_SOURCE=1 -D_REENTRANT -I./ -I../ 
+                  COMMAND CPP=cpp; guile-snarf -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr} -I${GUILE_INCLUDE_DIRS} -I./ -I../ -D_GNU_SOURCE=1 -D_REENTRANT
                   DEPENDS src/guile.cc
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -49,7 +48,7 @@ add_custom_command(OUTPUT guile.cc.x
 include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} GL SDL2 SDL2_mixer SDL2_image SDL2_ttf z m)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} GL SDL2 SDL2_mixer SDL2_image SDL2_ttf z m gc)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files
@@ -60,7 +59,10 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/music DESTINATION ${TRACKBALLS_SHA
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/shaders DESTINATION ${TRACKBALLS_SHARE_DIR})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE_DIR})
 #todo: set executable setgid to games RX, and highscores to games RW
-install(FILES ${PROJECT_SOURCE_DIR}/share/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
+add_custom_command(OUTPUT highScores
+                   COMMAND echo "0" | gzip -c > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
+add_custom_target(highscores ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/highScores)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
 
 # Documentation
 install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
@@ -72,7 +74,7 @@ file(GLOB icons ${PROJECT_SOURCE_DIR}/share/icons/*.png)
 install(FILES ${icons} DESTINATION ${TRACKBALLS_SHARE_DIR}/icons/)
 
 add_custom_command(OUTPUT execstring
-                  COMMAND echo "Exec=${CMAKE_INSTALL_PREFIX}/bin/trackballs" >> execstring)
+                  COMMAND echo "Exec=${CMAKE_INSTALL_PREFIX}/bin/trackballs" > execstring)
 add_custom_command(OUTPUT trackballs.desktop
                   COMMAND cat ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring > ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop
                   DEPENDS ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring)

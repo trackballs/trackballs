@@ -221,16 +221,9 @@ void Game::doExpensiveComputations() {
 /* Draw all the objects in the world in two stages (nontransparent objects first, transparent
  * objects second) */
 void Game::draw() {
-  GLint viewport[4];
-  GLdouble model_matrix[16], proj_matrix[16];
-
   /* Some GL defaults the objects can rely on being setup */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
-
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
   std::set<Animated *>::iterator i = objects->begin();
   std::set<Animated *>::iterator end = objects->end();
@@ -260,8 +253,6 @@ void Game::draw() {
   }
 
   /* Draw second pass of all objects */
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0.01);  // fixes some problems with overlapping translucent graphics
   i = objects->begin();
   for (; i != end; i++) {
     Animated *anim = *i;
@@ -269,22 +260,17 @@ void Game::draw() {
   }
 
   if (weather) weather->draw2();
+
+  warnForGLerrors("Game drawing");
 }
 
 /* Draws the world as normal but with the assumption that we are drawing a reflected version
    of the world. Does not draw weather or objects far away to save some time.
 */
 void Game::drawReflection(Coord3d focus) {
-  GLint viewport[4];
-  GLdouble model_matrix[16], proj_matrix[16];
-
   /* Some GL defaults the objects can rely on being setup */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
-
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  glGetDoublev(GL_MODELVIEW_MATRIX, model_matrix);
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
 
   std::set<Animated *>::iterator i = objects->begin();
   std::set<Animated *>::iterator end = objects->end();
@@ -315,8 +301,6 @@ void Game::drawReflection(Coord3d focus) {
   }
 
   /* Draw second pass of all objects */
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0.01);  // fixes some problems with overlapping translucent graphics
   i = objects->begin();
   for (; i != end; i++) {
     Animated *anim = *i;

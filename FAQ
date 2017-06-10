@@ -24,7 +24,6 @@ A:  Do you have 3D acceleration working under X11? Make sure DRI is working prop
 Q:  Trackballs is leaking huge amounts of memory
 A:  This seem to be caused by faulty openGL drivers. Try disabling hardware accelleration.
 
-
 Q:  I have too little memory to run trackballs without swapping.
 A:  There are alot of things affecting the memory usage of trackballs. Try using the commandline option
     '--low-memory' which uses 15megs less memory but makes switching screens slightly slower.
@@ -32,6 +31,14 @@ A:  There are alot of things affecting the memory usage of trackballs. Try using
 Q:  Sound is out of sync.
 A:	Shutdown any sound servers you are running (eg. artsd or esd) when playing.
 	Eg. run "skill artsd ; trackballs ; artswrapper"
+
+Q:  Trackballs fails to load complaining about a sound error
+A:      Try turning sound off by running "trackballs -m" 
+
+Q:  Trackballs fails to load an image with a "JPEG error" or "PNG error" even though
+    the image exists and both libraries are present.
+A:      Try linking with a version of SDL2_image that does not dynamically load libjpeg
+        and libpng.
 
 Q:  I cannot change flags/colors in the editor as documented.
 A:  This might be caused by using keyboard layout which needs shift to get the numbers 

@@ -21,6 +21,7 @@
 
 #include <libintl.h>
 #include <stdio.h>
+#include <cmath>
 #define _(String) gettext(String)
 
 #ifdef __MINGW32__

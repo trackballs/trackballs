@@ -6,9 +6,9 @@ Basic Installation
    The build system used for Trackballs is CMake. The required libraries
 or standards are:
 
-   SDL 2.05 (also need SDL_mixer SDL_image SDL_ttf)
-   libGL (OpenGL standard 3.1 or greater)
-   Guile 2.0
+   SDL >=2.0.0 (also need SDL_mixer SDL_image SDL_ttf)
+   libGL (OpenGL standard 3.3 or greater)
+   Guile >=2.0.0 
    libz
    libm
    gettext
@@ -30,3 +30,4 @@ The simplest way to compile this package is:
 
   4. Type `make install' to install the programs and any data files and
      documentation.
+

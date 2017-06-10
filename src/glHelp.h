@@ -35,6 +35,7 @@ typedef struct SDL_Surface SDL_Surface;
 void glHelpInit();
 void glHelpCleanup();
 GLuint loadProgram(const char *fragment, const char *vertex);
+void warnForGLerrors(const char *where_am_i);
 double frand();
 double frand(int);
 

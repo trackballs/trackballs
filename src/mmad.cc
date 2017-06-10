@@ -46,6 +46,7 @@
 #include <SDL2/SDL_image.h>
 #include <dirent.h>
 #include <getopt.h>
+#include <locale.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -95,11 +96,14 @@ void changeScreenResolution() {
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+    /* Version 3.3 is required for UNSIGNED_INT_2_10_10_10_REV packing method
+     * for the VertexAttribPointer function; the 3.2 spec does not permit it */
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-    /* Uncomment to apply basic antialiasing. SDL can't automatically select this. */
+    /* Uncomment to apply basic antialiasing.
+     * SDL can't recover from failure to obtain this if asked for */
     //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 
@@ -154,7 +158,9 @@ void changeScreenResolution() {
       SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     } else {
       SDL_SetWindowFullscreen(window, 0);
+#if SDL_PATCHLEVEL >= 5 && SDL_MAJOR_VERSION >= 2 && SDL_MINOR_VERSION >= 0
       SDL_SetWindowResizable(window, SDL_FALSE);
+#endif
       if (not_yet_windowed) {
         not_yet_windowed = 0;
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -175,7 +181,9 @@ void changeScreenResolution() {
         }
         SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
       }
+#if SDL_PATCHLEVEL >= 5 && SDL_MAJOR_VERSION >= 2 && SDL_MINOR_VERSION >= 0
       SDL_SetWindowResizable(window, SDL_TRUE);
+#endif
     }
   }
 
@@ -358,7 +366,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
   /* Initialize SDL */
   if ((SDL_Init(SDL_INIT_VIDEO | audio | SDL_INIT_JOYSTICK) == -1)) {
-    error("Could not initialize libSDL. Error message: '%s'", SDL_GetError());
+    error("Could not initialize libSDL. Error message: '%s'. Try '-m' if audio is at fault.",
+          SDL_GetError());
   }
   atexit(SDL_Quit);
 
@@ -463,6 +472,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   }
   glDeleteTextures(1, &splashTexture);
 
+  warnForGLerrors("uncaught from initialization");
+
   /*                 */
   /* Main event loop */
   /*                 */
@@ -504,13 +515,14 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     else {
       glClear(GL_COLOR_BUFFER_BIT);
     }
-    // Font::draw();
+    warnForGLerrors("uncaught from display routine");
     SDL_GL_SwapWindow(window);
 
     displayStartTime = getSystemTime();
     /* Expensive computations has to be done *after* tick+draw to keep world in good
        synchronisation. */
     if (GameMode::current) GameMode::current->doExpensiveComputations();
+    warnForGLerrors("uncaught from expensive computation");
 
     /*                */
     /* Process events */

@@ -246,11 +246,12 @@ void Ball::draw() {
         c[3] = reflectivity;
       }
       (void)c;
-      glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      glEnable(GL_TEXTURE_GEN_S);
-      glEnable(GL_TEXTURE_GEN_T);
-
+      // Gen_Mode not available in modern OpenGL
+      //       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+      //       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+      //       glEnable(GL_TEXTURE_GEN_S);
+      //       glEnable(GL_TEXTURE_GEN_T);
+      //
       // NOTE: requires custom shader to get the mapping correct,
       // since texture transformations only work in fixed-function
       // FIXME! (poss rewrite entire reflection routine in the process)

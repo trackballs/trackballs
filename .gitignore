@@ -11,6 +11,7 @@ install_manifest.txt
 CMakeFiles
 CMakeCache.txt
 execstring
+highScores
 
 # Tool Artifacts
 *.directory
@@ -25,3 +26,4 @@ doxyfile
 *~
 *.bak
 *.user
+

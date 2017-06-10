@@ -173,6 +173,7 @@ void MenuMode::idle(Real td) {
 void MenuMode::mouseDown(int /*mouseState*/, int /*x*/, int /*y*/) { doSelection(); }
 
 void MenuMode::activated() {
+  clearSelectionAreas();
   loadSlide();
   loadSlide();
 }
