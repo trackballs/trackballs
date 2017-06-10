@@ -815,7 +815,7 @@ int resetTextures() {
 
 /* Calculates and displays current framerate */
 void displayFrameRate() {
-  static double oldTime = 0.0;
+  static double oldTime = -0.1;
   double t, td;
   char str[256];
 

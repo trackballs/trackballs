@@ -137,10 +137,14 @@ void changeScreenResolution() {
     }
 
     mainContext = SDL_GL_CreateContext(window);
+
     char str[256];
     snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", effectiveShareDir);
     SDL_Surface *wmIcon = IMG_Load(str);
-    if (wmIcon) { SDL_SetWindowIcon(window, wmIcon); }
+    if (wmIcon) {
+      SDL_SetWindowIcon(window, wmIcon);
+      SDL_FreeSurface(wmIcon);
+    }
   }
 
   if (fixed) {
@@ -249,7 +253,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   int editMode = 0, touchMode = 0;
   int audio = SDL_INIT_AUDIO;
   SDL_Event event;
-  char str[256], *touchName = 0;
+  char *touchName = 0;
 
   const char *const short_options = "he:l:t:wmr:s:fqvyj";
   const struct option long_options[] = {{"help", 0, NULL, 'h'},

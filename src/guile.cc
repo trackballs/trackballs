@@ -440,8 +440,10 @@ SCM_DEFINE(sign, "sign", 6, 1, 0,
         pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
       Sign *s = new Sign(sname, scm_to_double(duration), scm_to_double(scale),
                          scm_to_double(rotation), pos);
+      free(sname);
       return smobAnimated_make(s);
     }
+    free(sname);
   }
   return SCM_UNSPECIFIED;
 }

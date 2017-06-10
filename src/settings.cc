@@ -153,21 +153,26 @@ void Settings::loadLevelSets() {
 
   snprintf(str, sizeof(str), "%s/levels", effectiveShareDir);
   DIR *dir = opendir(str);
-  if (!dir) { error("Can't find the %s/ directory", str); }
-  struct dirent *dirent;
-  while ((dirent = readdir(dir))) {
-    if (strlen(dirent->d_name) > 4 &&
-        strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
-      if (strcmp(dirent->d_name, "lv.set")) {
-        snprintf(str, sizeof(str), "%s/levels/%s", effectiveShareDir, dirent->d_name);
-        loadLevelSet(str, dirent->d_name);
+  if (!dir) {
+    error("Can't find the %s/ directory", str);
+  } else {
+    struct dirent *dirent;
+    while ((dirent = readdir(dir))) {
+      if (strlen(dirent->d_name) > 4 &&
+          strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
+        if (strcmp(dirent->d_name, "lv.set")) {
+          snprintf(str, sizeof(str), "%s/levels/%s", effectiveShareDir, dirent->d_name);
+          loadLevelSet(str, dirent->d_name);
+        }
       }
     }
+    closedir(dir);
   }
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels", getenv("HOME"));
   dir = opendir(str);
-  if (dir)
+  if (dir) {
+    struct dirent *dirent;
     while ((dirent = readdir(dir))) {
       if (strlen(dirent->d_name) > 4 &&
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
@@ -176,6 +181,8 @@ void Settings::loadLevelSets() {
         loadLevelSet(str, dirent->d_name);
       }
     }
+    closedir(dir);
+  }
 
   if (!nLevelSets) {
     error("failed to load any levelsets, place levels in %s/levels/", effectiveShareDir);
@@ -228,7 +235,7 @@ void Settings::loadLevelSet(const char *setname, const char *shortname) {
         warning(reqmnt, setname);
         continue;
       }
-      char *eval = scm_to_utf8_string(SCM_CADR(val));
+      eval = scm_to_utf8_string(SCM_CADR(val));
       sval = gettext(eval);
     }
 
