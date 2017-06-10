@@ -1,9 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html>
 <html>
+
 <head>
+<meta charset="utf-8">
 <title> Trackballs - Map Editor </title>
 <link title="Default style" rel="stylesheet" href="default.css" type="text/css">
 </head>
+
 <body>
 
 <div class="toc">
@@ -21,18 +24,191 @@
 
 <h1> The Map Editor </h1>
 
-To start the map editor in trackballs press the "map editor" button in
-the begining of the game. This brings up an empty screen with a menu
-in the top. You can here select "File>Open" or "File>New" if you want
-to open an existing map for editing or if you want to create a new
-one. 
+<p>
+To start the map editor in trackballs press the "map editor" button in the begining of the game. This brings up an empty screen with a menu in the top. You can here select "File>Open" or "File>New" if you want to open an existing map for editing or if you want to create a new one.
 <p/>
 
-For now the map editor is somewhat undocumented, but i hope to fill in
-these pages with better descriptions at a later point in time. (Or if
-anyone could help me with this it would be much be appreciated).
-<p/>
+<h2> Keyboard controls for the Editor </h2>
+<table>
+<tbody>
+<tr>
+<td width="600">
+<table>
+<tbody>
+<tr>
+<td width="220" valign="top">
+<p><b>ESCAPE</b></p>
+</td>
+<td valign="top">
+<p>Exits the editor without saving changes (confirm dialog)
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>F1 - F6</b></p>
+</td>
+<td valign="top">
+<p>Toggles the through the the various MODES:
+<br> &nbsp;
+<tt>Save Map</tt> - Press SPACE to save
+<br> &nbsp;
+<tt>Edit</tt> - Edit terrain structure
+<br> &nbsp;
+<tt>Set Color</tt> - Color and paint terrain
+<br> &nbsp;
+<tt>Flags</tt> - Set cell attributes eg: sand, acid, kill, ice, etc
+<br> &nbsp;
+<tt>Add Feature</tt> - Create hills quickly. Use 1-4 to select size
+<br> &nbsp;
+<tt>Move Map</tt> - Shift entire map in direction you choose
+<br> &nbsp; </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>Q, E</b></p>
+</td>
+<td valign="top">
+<p>Increments or decreases the amount terrain is 'raised' when altering terrain
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>W, A, S, D or ARROW
+KEYS/B&gt;</b></p>
+</td>
+<td valign="top">
+<p>Moves the cursor to another square on the grid.
+<br> &nbsp; </p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td>
+<table>
+<tbody>
+<tr>
+<td width="220" valign="top">
+<p><b>U, H, M, K, J</b></p>
+</td>
+<td valign="top">
+<p>Alter the current square. If in <tt>Edit Height</tt> mode the corresponding corner of the marked square/region is raised/lowered. Otherwise, if in <tt>Set color</tt> mode the correponding corner is coloured with the current color.
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>1,2,3,4,5,6,7,8,9</b></p>
+</td>
+<td valign="top">
+<p>If in <tt>Flags</tt> mode, these keys toggles the flag for the current square. If in <tt>Set color</tt> mode, keys 1,2,3 alter the red/green/blue component of the current color.
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>C</b></p>
+</td>
+<td valign="top">
+<p>Toggles crosshair view.
+<br>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>B</b></p>
+</td>
+<td valign="top">
+<p>Toggles <tt>Birds-Eye View</tt> mode.
+<br>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>L</b></p>
+</td>
+<td valign="top">
+<p>Loads the objects from the .scm file corresponding to the level into the editor. Script actions altering map cell properties will be ignored. The objects will be frozen at their initial location.
+<br>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>V</b></p>
+</td>
+<td valign="top">
+<p>Rotates camera viewpoint 180 degrees.
+<br>&nbsp;</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>R</b></p>
+</td>
+<td valign="top">
+<p>Used to mark and manipulate rectangular regions. Press once to turn on and then move cursor to opposite corner (region is highlighted during this operation). Press once again to turn off.
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>SPACE</b></p>
+</td>
+<td valign="top">
+<p>Alters entire cell in one go - whether modifying terrain height or color.
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>SHIFT</b></p>
+</td>
+<td valign="top">
+<p>Holding down the SHIFT key has a number of functions depending on what additional key is pressed. When in <tt>Edit Height</tt> mode, holding down the SHIFT key while using U, H, M, K, J will lower the terrain instead of raising it. Holding SHIFT while moving the cursor, will make the cursor hop in the direction pressed. Holding SHIFT while raising/lowering the amount to raise/lower with the Q and E keys, while result in the values incrementing/decreasing in larger hops. When in <tt>Set Color</tt> mode, SHIFT-[U,H,M,K] is a color picker. The color in your palette will be copied from the current cell.
+<br> &nbsp; </p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>CTRL</b></p>
+</td>
+<td valign="top">
+<p>When in edit terrain mode, CTRL-J will reset the cell (or selected terrain) to default heights. Useful when you've made a mess and need to start over. CTRL-[U,H,M,K] paints the wall next to the corresponding corner.
+<br> &nbsp;
+</p>
+</td>
+</tr>
+<tr>
+<td valign="top">
+<p><b>TAB</b></p>
+</td>
+<td valign="top">In 'Edit Heights' mode, TAB<b> </b>smooth all the cells heights in the current area selected.
+<br> With the CTRL modifier, it flatten the current cell. </td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
 
+<p/>
 </div>
 </body>
+
 </html>

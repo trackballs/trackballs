@@ -338,9 +338,6 @@ void EditMode::saveMap() {
       fprintf(fp, "(set-author \"%s\")\n      ;; Enter your name here ", getenv("USER"));
       fprintf(fp, "(start-time 180)\n");
       fprintf(fp, "(set-start-position 250.5 250.5)\n");
-      fprintf(fp,
-              "(map-is-transparent #f)    ;; Set to #t if you have any water or other "
-              "transparent parts\n");
       fprintf(fp, "(add-goal 249 250 #f \"\") ;; Add the name of the next level here\n");
       fprintf(fp, "(add-flag 248 250 50 1 0.1)\n");
       fclose(fp);

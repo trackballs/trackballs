@@ -68,7 +68,7 @@
 #define FLAG_5 65
 #define FLAG_6 66
 #define FLAG_7 67
-#define FLAG_CH_TEXTURE 68
+#define FLAG_CH_TEXTURE 69
 
 #define FEATURE_SPIKE 80
 #define FEATURE_SMALL_HILL 81
