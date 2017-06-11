@@ -349,17 +349,15 @@ Map::Map(char* filename) {
   texture_Array = 0;
   glGenTextures(1, &texture_Array);
   glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
-  int nsubtextures = 9;
-  int size = 1 << 8;
-  glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, size, size, nsubtextures);
-  const char* texs[9] = {"blank.png",    "ice.png",      "sand.png",
-                         "acid.png",     "track.png",    "texture.png",
-                         "texture2.png", "texture3.png", "texture4.png"};
-
+  const int nsubtextures = 9;
+  const int size = 1 << 8;
+  const char* texs[nsubtextures] = {"blank.png",    "ice.png",      "sand.png",
+                                    "acid.png",     "track.png",    "texture.png",
+                                    "texture2.png", "texture3.png", "texture4.png"};
+  char* data = new char[nsubtextures * size * size * 4];
   for (int i = 0; i < nsubtextures; i++) {
     /* loadImage aborts with error if any of the above textures DNE */
     SDL_Surface* orig = loadImage(texs[i]);
-
     Uint32 mask[4];
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
     mask[0] = 0x000000FF;
@@ -379,20 +377,13 @@ Map::Map(char* filename) {
     SDL_BlitScaled(orig, &orect, proj, &drect);
     SDL_FreeSurface(orig);
     SDL_LockSurface(proj);
-    glTexSubImage3D(GL_TEXTURE_2D_ARRAY,
-                    0,                 // Mipmap number
-                    0, 0, i,           // xoffset, yoffset, zoffset
-                    size, size, 1,     // width, height, depth
-                    GL_RGBA,           // format
-                    GL_UNSIGNED_BYTE,  // type
-                    proj->pixels);     // pointer to data
+    memcpy(&data[i * size * size * 4], proj->pixels, size * size * 4);
     SDL_UnlockSurface(proj);
-
     SDL_FreeSurface(proj);
   }
-
-  /* Ought to determine if this and GL_MIPMAP_LINEAR are better */
-  //  glGenerateMipmap(texture_Array);
+  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, size, size, nsubtextures, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, data);
+  delete[] data;
 
   glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
