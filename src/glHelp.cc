@@ -40,6 +40,7 @@ GLuint shaderTile = 0;
 GLuint shaderLine = 0;
 GLuint shaderUI = 0;
 GLuint shaderObject = 0;
+GLuint shaderReflection = 0;
 GLuint theVao = 0;
 
 TTF_Font *ingameFont;
@@ -649,6 +650,7 @@ void glHelpInit() {
   shaderWater = loadProgram("water.vert", "water.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
   shaderObject = loadProgram("object.vert", "object.frag");
+  shaderReflection = loadProgram("reflection.vert", "reflection.frag");
 
   // Setup view state
   activeView.fog_enabled = 0;
@@ -683,6 +685,7 @@ void glHelpCleanup() {
   if (shaderWater) glDeleteProgram(shaderWater);
   if (shaderUI) glDeleteProgram(shaderUI);
   if (shaderObject) glDeleteProgram(shaderObject);
+  if (shaderReflection) glDeleteProgram(shaderReflection);
   if (theVao) glDeleteVertexArrays(1, &theVao);
   shaderLine = 0;
   shaderTile = 0;

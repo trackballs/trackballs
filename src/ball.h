@@ -94,7 +94,6 @@ class Ball : public Animated {
   double reflectivity;
   int metallic, dontReflectSelf;
 
-  static GLuint dizzyTexture;
   static GLfloat dizzyTexCoords[4];
 
   void generateSandDebris();

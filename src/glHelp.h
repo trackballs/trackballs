@@ -143,7 +143,7 @@ SDL_Surface *loadImage(const char *imagename);
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
-extern GLuint shaderWater, shaderTile, shaderLine, shaderUI, shaderObject;
+extern GLuint shaderWater, shaderTile, shaderLine, shaderUI, shaderObject, shaderReflection;
 extern GLuint theVao;
 
 /* Globals */

@@ -45,12 +45,12 @@ void main(void) {
   // Lighting model, not tuned very much
   vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
   float light_distance = length(light_pos - cpos);
-  float strength = 1.0 / (1. + quadratic_attenuation*light_distance*light_distance);
+  float strength = 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   vec3 L = normalize(light_pos - cpos);
   vec3 E = normalize(-cpos);
   vec3 R = normalize(-reflect(L, normal));
-  vec3 Iambient = texcolor.xyz * strength*light_ambient;
-  vec3 Idiffuse = texcolor.xyz * strength*light_diffuse * max(dot(normal, L), 0.0);
+  vec3 Iambient = texcolor.xyz * strength * light_ambient;
+  vec3 Idiffuse = texcolor.xyz * strength * light_diffuse * max(dot(normal, L), 0.0);
   Idiffuse = clamp(Idiffuse, 0.0, 1.0);
   vec3 surfcolor = light_ambient + Iambient + Idiffuse;
   surfcolor = clamp(surfcolor, 0.0, 1.0);

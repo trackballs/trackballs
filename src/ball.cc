@@ -33,26 +33,17 @@
 #include "splash.h"
 #include "trampoline.h"
 
-#include <SDL2/SDL_ttf.h>
 #include <math.h>
 #include <set>
 
 const Real Ball::physicsResolution = 0.002;
 class std::set<Ball *> *Ball::balls;
-GLuint Ball::dizzyTexture;
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
 
 void Ball::init() {
   balls = new std::set<Ball *>();
-  SDL_Surface *text;
-  SDL_Color fgColor = {255, 255, 255, 255};
-  // GLfloat texcoord[4];
-
-  text = TTF_RenderUTF8_Blended(ingameFont, " ? ", fgColor);
-  // dizzyTexture = LoadTexture(text, texcoord);
   loadTexture("dizzy.png");
-  SDL_FreeSurface(text);
   dizzyTexCoords[0] = 0.f;
   dizzyTexCoords[1] = 0.f;
   dizzyTexCoords[2] = 1.f;
@@ -245,16 +236,13 @@ void Ball::draw() {
         c[2] = 1.0;
         c[3] = reflectivity;
       }
-      (void)c;
-      // Gen_Mode not available in modern OpenGL
-      //       glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      //       glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
-      //       glEnable(GL_TEXTURE_GEN_S);
-      //       glEnable(GL_TEXTURE_GEN_T);
-      //
-      // NOTE: requires custom shader to get the mapping correct,
-      // since texture transformations only work in fixed-function
-      // FIXME! (poss rewrite entire reflection routine in the process)
+
+      glUseProgram(shaderReflection);
+      setViewUniforms(shaderReflection);
+      glUniform4f(glGetUniformLocation(shaderReflection, "refl_color"), c[0], c[1], c[2],
+                  c[3]);
+      glUniform1i(glGetUniformLocation(shaderReflection, "tex"), 0);
+      glActiveTexture(GL_TEXTURE0 + 0);
       glBindTexture(GL_TEXTURE_2D, environmentTexture);
 
       glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
