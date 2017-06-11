@@ -79,3 +79,5 @@ Q:  Sometimes when I'm playing with a joystick the ball just start rolling of in
 A:  You might have a broken joystick which gives incorrect wrapover's on your axises. Try using the '--repair-joystick' 
     option. Possibly in conjunction with '--debug-joystick'
 
+Q:  Translations work for some languages but not others, even though translations are installed.
+A:  Check that the matching locales (i.e., like "de_DE.UTF-8") for the languages are enabled on your system.

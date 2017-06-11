@@ -32,6 +32,7 @@ class EditMode : public GameMode {
   ~EditMode();
 
   static void init();
+  static void loadStrings();
 
   void loadMap(char *mapname);
   void closeMap();

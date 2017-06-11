@@ -159,7 +159,7 @@ int selectedMenu = -1;
 
 EditMode* EditMode::editMode;
 
-void EditMode::init() {
+void EditMode::loadStrings() {
   char* cMenuNames_i18n[N_SUBMENUS] = {
       /* TRANSLATORS: This is a list of all the menus in the map editor. */
       _("File"),   _("Edit"), _("Color"),  _("Flags"), _("Feature"),
@@ -202,6 +202,10 @@ void EditMode::init() {
                                    _("Large hill"),  _("Huge hill"),  _("Small smooth"),
                                    _("Large smooth")};
   memcpy(hillNames, hillNames_i18n, sizeof(hillNames));
+}
+
+void EditMode::init() {
+  loadStrings();
 
   /* Create the editmode object */
   new EditMode();

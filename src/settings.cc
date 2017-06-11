@@ -20,6 +20,7 @@
 
 #include "settings.h"
 
+#include "editMode.h"
 #include "general.h"
 #include "guile.h"
 
@@ -37,11 +38,11 @@ const char *Settings::languageCodes[7][3] = {{"", "", ""},
                                              {"de", "de_DE", "de_DE.utf8"},
                                              {"fr", "fr_FR", "fr_FR.utf8"},
                                              {"it", "it_IT", "it_IT.utf8"},
-                                             {"hu", "hu_Hu", "hu_Hu.utf8"},
+                                             {"hu", "hu_HU", "hu_HU.utf8"},
                                              {"sk", "sk_SK", "sk_SK.utf8"},
-                                             {"sv", "sk_SK", "sk_SK.utf8"}};
-const char *Settings::languageNames[7] = {"Default",  "Deutsch", "Francais", "Magyar",
-                                          "Italiano", "Slovak",  "Svenska"};
+                                             {"sv", "sv_SE", "sv_SE.utf8"}};
+const char *Settings::languageNames[7] = {"Default", "Deutsch", "Francais", "Italiano",
+                                          "Magyar",  "Slovak",  "Svenska"};
 int Settings::nLanguages = 7;
 
 Settings *Settings::settings;
@@ -434,4 +435,10 @@ void Settings::setLocale() {
     ret = setlocale(LC_MESSAGES, languageCodes[language][i]);
     if (ret) { break; }
   }
+  if (ret == NULL) {
+    warning("Setting the locale (%s %s %s) failed", languageCodes[language][0],
+            languageCodes[language][1], languageCodes[language][2]);
+  }
+
+  EditMode::loadStrings();
 }

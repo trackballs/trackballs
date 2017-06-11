@@ -59,7 +59,7 @@ void HelpMode::activated() {
   if (screenWidth < 1024)
     page0 = loadImage("help0_640.png");
   else
-    page0 = loadImage("help1_640.png");
+    page0 = loadImage("help0_1024.png");
   p0Texture = LoadTexture(page0, p0coord);
   SDL_FreeSurface(page0);
 
