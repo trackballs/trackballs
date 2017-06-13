@@ -30,15 +30,18 @@
 #include "settings.h"
 #include "sign.h"
 #include "sound.h"
+#include "weather.h"
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
-#include <SDL2/SDL_timer.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define ENVIRONMENT_TEXTURE_SIZE 128
+
+Coord3d sunPosition = {-20, -40, 40};
+Coord3d moonPosition = {0, 0, 2};
 
 const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
           MainMode::statusInGame = 2;
@@ -46,7 +49,8 @@ const int MainMode::statusRestartPlayer = 3, MainMode::statusNextLevel = 4,
           MainMode::statusVictory = 5;
 const int MainMode::statusLevelComplete = 6, MainMode::statusBonusLevelComplete = 7;
 const int MainMode::statusPaused = 8;
-// SDL_Surface *MainMode::panel,*MainMode::life,*MainMode::nolife;
+
+static int debug_shadowmap = 0;
 
 MainMode *MainMode::mainMode = NULL;
 uchar *MainMode::viewportData, *MainMode::environmentTextureData;
@@ -81,6 +85,10 @@ MainMode::~MainMode() {}
 void MainMode::display() {
   Map *map = Game::current ? Game::current->map : NULL;
   Player *player1 = Game::current ? Game::current->player1 : NULL;
+
+  /* lighting must be set before we render the shadow map */
+  setupLighting();
+  renderShadowMap(camFocus, map, Game::current);
 
   glViewport(0, 0, screenWidth, screenHeight);
 
@@ -127,6 +135,9 @@ void MainMode::display() {
   assign(activeView.modelview, this->cameraModelView);
   assign(activeView.projection, this->cameraProjection);
 
+  /* for shadow map */
+  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
   /* Some standard GL settings needed */
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
@@ -134,30 +145,6 @@ void MainMode::display() {
 
   /* Debugging for problems with some cards */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-  GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
-  if (Game::current && Game::current->isNight) {
-    GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
-    Coord3d lightPosition2 = {Game::current->player1->position[0],
-                              Game::current->player1->position[1],
-                              Game::current->player1->position[2] + 2.0};
-    assign(lightDiffuse2, activeView.light_diffuse);
-    assign(lightDiffuse2, activeView.light_specular);
-    assign(lightPosition2, activeView.light_position);
-    assign(black, activeView.global_ambient);
-    assign(black, activeView.light_ambient);
-    activeView.quadratic_attenuation = 0.25;
-  } else {
-    GLfloat sunLight[3] = {0.8, 0.8, 0.8};
-    Coord3d sunPosition = {-100.0, -50.0, 450.0};
-    GLfloat ambient[3] = {0.2, 0.2, 0.2};
-    assign(sunLight, activeView.light_diffuse);
-    assign(sunLight, activeView.light_specular);
-    assign(sunPosition, activeView.light_position);
-    assign(black, activeView.global_ambient);
-    assign(ambient, activeView.light_ambient);
-    activeView.quadratic_attenuation = 0.;
-  }
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
@@ -266,6 +253,62 @@ void MainMode::display() {
     Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight - 16, 8, 0.6, 0.6, 0.6, 0.6);
   }
 
+  if (debug_shadowmap) {
+    glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+    GLfloat *imgd =
+        new GLfloat[activeView.shadowMapTexsize * activeView.shadowMapTexsize * 4 * 6]();
+
+    GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                      GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                      GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+    GLuint locations[6][2] = {{2, 1}, {0, 1}, {1, 1}, {3, 1}, {1, 0}, {1, 2}};
+    for (int i = 0; i < 6; i++) {
+      glGetTexImage(dirs[i], 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                    &imgd[activeView.shadowMapTexsize * activeView.shadowMapTexsize * i]);
+    }
+
+    GLfloat maxf = 0;
+    GLfloat minf = FLT_MAX;
+
+    for (int i = 0; i < (int)(activeView.shadowMapTexsize * activeView.shadowMapTexsize) * 6;
+         i++) {
+      maxf = std::max(maxf, imgd[i]);
+      minf = std::min(minf, imgd[i]);
+    }
+    if (maxf <= minf) {
+      maxf = 1;
+      minf = 0;
+    }
+
+    for (int i = (int)(activeView.shadowMapTexsize * activeView.shadowMapTexsize) * 6 * 4 - 1;
+         i >= 0; --i) {
+      imgd[i] = (imgd[i / 4] - minf) / (maxf - minf);
+      if (i % 4 == 3) imgd[i] = 1.;
+    }
+
+    for (int i = 0; i < 6; i++) {
+      glActiveTexture(GL_TEXTURE0);
+      GLuint cpy;
+      glGenTextures(1, &cpy);
+      /* must bind cpy or we overwrite random textures */
+      glBindTexture(GL_TEXTURE_2D, cpy);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, activeView.shadowMapTexsize,
+                   activeView.shadowMapTexsize, 0, GL_RGBA, GL_FLOAT,
+                   &imgd[4 * activeView.shadowMapTexsize * activeView.shadowMapTexsize * i]);
+
+      draw2DRectangle(50 + 110 * locations[i][0], 50 + 110 * locations[i][1], 100, 100,  // ssp
+                      0., 0., 1., 1.,                                                    // tx
+                      0.9, 0.8, 0.8, 1.,  // rgba
+                      cpy);
+
+      glDeleteTextures(1, &cpy);
+    }
+
+    delete[] imgd;
+  }
   Leave2DMode();
 }
 void MainMode::doExpensiveComputations() { Game::current->doExpensiveComputations(); }
@@ -598,8 +641,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   if (screenHeight < 512) viewportSize = screenHeight;
   // viewportSize=256;
 
-  double t0 = ((double)SDL_GetTicks()) / 1000.0;
-
   glViewport(0, 0, viewportSize, viewportSize);
   if (Game::current->fogThickness)
     glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
@@ -639,29 +680,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
 
-  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
-  GLfloat black[3] = {0.0, 0.0, 0.0};
-  Coord3d lightPosition = {-100.0, -50.0, 450.0};
-  GLfloat ambient[3] = {0.2, 0.2, 0.2};
-  assign(lightDiffuse, activeView.light_diffuse);
-  assign(ambient, activeView.light_ambient);
-  assign(lightDiffuse, activeView.light_specular);
-  assign(lightPosition, activeView.light_position);
-  assign(black, activeView.global_ambient);
-  activeView.quadratic_attenuation = 0.0;
-
-  if (Game::current && Game::current->isNight) {
-    GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
-    Coord3d lightPosition2 = {Game::current->player1->position[0],
-                              Game::current->player1->position[1],
-                              Game::current->player1->position[2] + 2.0};
-    assign(black, activeView.global_ambient);
-    assign(black, activeView.light_ambient);
-    assign(lightDiffuse2, activeView.light_diffuse);
-    assign(lightDiffuse2, activeView.light_specular);
-    assign(lightPosition2, activeView.light_position);
-    activeView.quadratic_attenuation = 0.25;
-  }
+  setupLighting();
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
@@ -688,7 +707,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
 
   // Converts viewport data to fisheye environment perspective
   // approx 10 ms */
-  // double t0_5 = ((double)SDL_GetTicks()) / 1000.0;
   convertToFisheye(environmentTextureData, viewportData, viewportSize);
 
   /* Takes approx 1-2 ms */
@@ -699,12 +717,37 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
                GL_RGBA,  // GL_RGBA
                ENVIRONMENT_TEXTURE_SIZE, ENVIRONMENT_TEXTURE_SIZE, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, environmentTextureData);
-  double t1 = ((double)SDL_GetTicks()) / 1000.0;
-  currentTime = t1 - t0;
-  // printf("SIZE: %d, TD: %f + %f = %f\n",viewportSize,t0_5-t0,t1-t0_5,t1-t0);
 
   // Restore graphics details
   Settings::settings->gfx_details = gfx_details;
+}
+
+void MainMode::setupLighting() {
+  GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
+  if (Game::current && Game::current->isNight) {
+    GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
+    Coord3d lightPosition2 = {Game::current->player1->position[0] + moonPosition[0],
+                              Game::current->player1->position[1] + moonPosition[1],
+                              Game::current->player1->position[2] + moonPosition[2]};
+    assign(lightDiffuse2, activeView.light_diffuse);
+    assign(lightDiffuse2, activeView.light_specular);
+    assign(lightPosition2, activeView.light_position);
+    assign(black, activeView.global_ambient);
+    assign(black, activeView.light_ambient);
+    activeView.quadratic_attenuation = 0.25;
+  } else {
+    GLfloat sunLight[3] = {0.8, 0.8, 0.8};
+    GLfloat ambient[3] = {0.2, 0.2, 0.2};
+    Coord3d lightPosition = {Game::current->player1->position[0] + sunPosition[0],
+                             Game::current->player1->position[1] + sunPosition[1],
+                             Game::current->player1->position[2] + sunPosition[2]};
+    assign(sunLight, activeView.light_diffuse);
+    assign(sunLight, activeView.light_specular);
+    assign(lightPosition, activeView.light_position);
+    assign(black, activeView.global_ambient);
+    assign(ambient, activeView.light_ambient);
+    activeView.quadratic_attenuation = 0.;
+  }
 }
 
 /* Creates a 128x128 fisheye texture from viewport data */

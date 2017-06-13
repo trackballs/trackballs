@@ -56,6 +56,7 @@ void ForceField::onRemove() {
 void ForceField::draw() {}
 void ForceField::draw2() {
   if (!is_on) return;
+  if (activeView.calculating_shadows) return;
 
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);

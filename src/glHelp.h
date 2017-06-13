@@ -30,6 +30,8 @@
 
 typedef struct _TTF_Font TTF_Font;
 typedef struct SDL_Surface SDL_Surface;
+class Map;
+class Game;
 
 /* Prototypes */
 void glHelpInit();
@@ -86,6 +88,10 @@ typedef struct _viewpa {
   GLfloat light_specular[3];
   GLfloat global_ambient[3];
   GLfloat quadratic_attenuation;
+
+  GLuint shadowMapTexture;
+  GLuint shadowMapTexsize;
+  int calculating_shadows;
 } ViewParameters;
 
 extern ViewParameters activeView;
@@ -96,6 +102,7 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
                   Matrix4d out);
 void setViewUniforms(GLuint shader);
+void renderShadowMap(Coord3d focus, Map *mp, Game *gm);
 
 // generates a snapshot
 int createSnapshot();
@@ -131,8 +138,7 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
 void Require2DMode();
 void Enter2DMode();
 void Leave2DMode();
-GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0,
-                   GLuint *texture = NULL);
+GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0);
 
 // preloads texture from file (if not already loaded); returns texture array position
 int loadTexture(const char *name);

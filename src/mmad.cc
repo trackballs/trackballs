@@ -382,18 +382,20 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     warning("capslock is on, the mouse will be visible and not grabbed");
   }
 
-  // set the name of the window
+  /* initialize OpenGL setup before we draw anything */
+  glHelpInit();  // MB: 1.5 megs
 
+  // set the name of the window
   double bootStart = ((double)SDL_GetTicks()) / 1000.0;
   SDL_Surface *splashScreen = loadImage("splashScreen.jpg");
   glViewport(0, 0, screenWidth, screenHeight);
 
   // Draw the splash screen
   GLfloat texcoord[4];
-  GLuint splashTexture;
-  LoadTexture(splashScreen, texcoord, 0, &splashTexture);
+  GLuint splashTexture = LoadTexture(splashScreen, texcoord, 0);
   SDL_FreeSurface(splashScreen);
   for (int i = 0; i < 2; i++) {
+    glClear(GL_COLOR_BUFFER_BIT);
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
                     texcoord[3], 1., 1., 1., 1., splashTexture);
@@ -407,7 +409,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Initialize all modules */
   initGuileInterface();  // MB: 0 megs
   generalInit();         // MB: 0 megs
-  glHelpInit();          // MB: 1.5 megs
 
   // MB: Until here we are using 49 megs of memory.
 
@@ -463,6 +464,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Make sure splahsscreen has been shown for atleast 1.5 seconds */
   double timeNow = ((double)SDL_GetTicks()) / 1000.0;
   while (timeNow < bootStart + 1.5) {
+    glClear(GL_COLOR_BUFFER_BIT);
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
                     texcoord[3], 1., 1., 1., 1., splashTexture);

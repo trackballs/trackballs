@@ -18,10 +18,12 @@ attribute vec4 in_Normal;
 varying vec4 fcolor;
 varying vec2 texco;
 varying vec3 cpos;
+varying vec3 worldpos;
 varying vec3 inormal;
 varying float flatkey;
 
 void main(void) {
+  worldpos = in_Position;
   vec4 pos = vec4(in_Position.x, in_Position.y, in_Position.z, 1.);
   mat4 mvp_matrix = proj_matrix * model_matrix;
   gl_Position = mvp_matrix * pos;

@@ -117,7 +117,7 @@ void Ball::draw() {
   }
   color[3] = 1.0;
   specular[3] = 1.0;
-  double shininess = 10.0;
+  double shininess = 20.0;
 
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
 
@@ -330,7 +330,7 @@ void Ball::draw() {
     glDeleteBuffers(1, &idxbuf);
   }
 
-  if (modTimeLeft[MOD_SPEED]) {
+  if (modTimeLeft[MOD_SPEED] && !activeView.calculating_shadows) {
     glEnable(GL_BLEND);
     glLineWidth(1.0);
     glEnable(GL_LINE_SMOOTH);
@@ -458,7 +458,9 @@ void Ball::draw() {
 ***************************************************/
 void Ball::draw2() {
   // Fix when rendering environment map to not reflect oneself
+  // (issue: then balls don't reflect other balls' transparent elements)
   if (dontReflectSelf) return;
+  if (activeView.calculating_shadows) return;
 
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
   if (modTimeLeft[MOD_EXTRA_LIFE]) {

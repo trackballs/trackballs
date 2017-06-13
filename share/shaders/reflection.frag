@@ -41,5 +41,5 @@ void main(void) {
     dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
   }
   // Force override alpha
-  gl_FragColor = vec4(mix(surfcolor, fog_color, dist), refl_color.w);
+  gl_FragColor = vec4(mix(surfcolor, fog_color, dist), texcolor.w);
 }

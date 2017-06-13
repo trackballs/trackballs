@@ -535,21 +535,23 @@ void Map::draw(int stage, int cx, int cy) {
     }
   }
 
-  glUseProgram(shaderLine);
-  setViewUniforms(shaderLine);
-  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
+  if (!activeView.calculating_shadows) {
+    glUseProgram(shaderLine);
+    setViewUniforms(shaderLine);
+    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
 
-  glEnable(GL_LINE_SMOOTH);
-  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-  glLineWidth(2.0f);
-  for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->line_vbo[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->line_vbo[1]);
-    glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    glLineWidth(2.0f);
+    for (int i = 0; i < nchunks; i++) {
+      glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->line_vbo[0]);
+      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+      glEnableVertexAttribArray(0);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->line_vbo[1]);
+      glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
+    }
+    glDisable(GL_LINE_SMOOTH);
   }
-  glDisable(GL_LINE_SMOOTH);
 
   warnForGLerrors(stage ? "Map drawing 1" : "Map drawing 0");
 }

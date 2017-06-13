@@ -78,6 +78,8 @@ void Sign::mkTexture(const char *string) {
 
 void Sign::draw() {}
 void Sign::draw2() {
+  if (activeView.calculating_shadows) return;
+
   // Keep the depth function on but trivial so as to record depth values
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);

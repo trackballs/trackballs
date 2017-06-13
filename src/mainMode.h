@@ -49,6 +49,7 @@ class MainMode : public GameMode {
   void levelComplete();
   void bonusLevelComplete();
 
+  void setupLighting();
   void renderEnvironmentTexture(GLuint texture, Coord3d focus);
   void convertToFisheye(uchar *convertedData, uchar *originalData, int originalSize);
   Real flash;

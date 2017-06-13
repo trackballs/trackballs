@@ -89,6 +89,7 @@ void Weather::tick(Real td) {
 void Weather::draw2() {
   if (Settings::settings->gfx_details <= 1) return;
   if (strength == -1.0) return;
+  if (activeView.calculating_shadows) return;
 
   if (kind == WEATHER_RAIN) {
     /** Draw RAIN particles **/

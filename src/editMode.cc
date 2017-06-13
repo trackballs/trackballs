@@ -213,6 +213,7 @@ void EditMode::init() {
 
 EditMode::EditMode() {
   map = NULL;
+  game = NULL;
   memset(levelname, 0, sizeof(levelname));
   mapIsWritable = 0;
 
@@ -351,18 +352,31 @@ void EditMode::saveMap() {
 
 void EditMode::display() {
   double h;
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 1.0, 1e20,
-                    activeView.projection);
-
-  /* Setup matrixes for the camera perspective */
   if (map) {
     h = map->cell(x, y).heights[Cell::CENTER];
   } else
     h = 0.0;
 
+  /* configure lighting */
+  activeView.fog_enabled = 0;
+  activeView.quadratic_attenuation = 0.;
+
+  Coord3d lightPosition = {x - 60., y - 40., h + 100.};
+  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
+  GLfloat ambient[3] = {0.2, 0.2, 0.2};
+  GLfloat black[3] = {0., 0., 0.};
+  assign(black, activeView.global_ambient);
+  assign(ambient, activeView.light_ambient);
+  assign(lightDiffuse, activeView.light_diffuse);
+  assign(lightDiffuse, activeView.light_specular);
+  assign(lightPosition, activeView.light_position);
+
+  Coord3d cpos = {(double)x, (double)y, (double)h};
+  renderShadowMap(cpos, map, game);
+
+  /* Setup matrixes for the camera perspective */
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 1.0, 1e20,
+                    activeView.projection);
   if (!switchViewpoint) {
     lookAtMatrix(x - 7.0, y - 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
                  activeView.modelview);
@@ -375,19 +389,9 @@ void EditMode::display() {
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-
-  activeView.fog_enabled = 0;
-  activeView.quadratic_attenuation = 0.;
-
-  Coord3d lightPosition = {-100., -50., 200.};
-  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
-  GLfloat ambient[3] = {0.2, 0.2, 0.2};
-  GLfloat black[3] = {0., 0., 0.};
-  assign(black, activeView.global_ambient);
-  assign(ambient, activeView.light_ambient);
-  assign(lightDiffuse, activeView.light_diffuse);
-  assign(lightDiffuse, activeView.light_specular);
-  assign(lightPosition, activeView.light_position);
+  glViewport(0, 0, screenWidth, screenHeight);
+  glClearColor(0., 0., 0., 1.);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /* Draw the map and the current mapcursor/selected region */
   if (map) {

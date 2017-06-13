@@ -23,6 +23,7 @@
 #include "glHelp.h"
 
 #include "font.h"
+#include "game.h"
 #include "map.h"
 #include "settings.h"
 #include "sparkle2d.h"
@@ -131,7 +132,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
     newentry.tick = stringTick;
     SDL_Surface *surf = drawStringToSurface(inf, outlined);
     if (!surf) { return 0; }
-    newentry.texture = LoadTexture(surf, newentry.texcoord, 1, NULL);
+    newentry.texture = LoadTexture(surf, newentry.texcoord, 1);
     newentry.w = surf->w;
     newentry.h = surf->h;
     SDL_FreeSurface(surf);
@@ -314,6 +315,7 @@ void setupObjectRenderState() {
   setViewUniforms(shaderObject);
 
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), -1.);
 
   glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
   glActiveTexture(GL_TEXTURE0 + 0);
@@ -463,6 +465,86 @@ void setViewUniforms(GLuint shader) {
               activeView.global_ambient[1], activeView.global_ambient[2]);
   glUniform1f(glGetUniformLocation(shader, "quadratic_attenuation"),
               activeView.quadratic_attenuation);
+
+  /* the shadow map is always the second texture sampling unit */
+  glUniform1i(glGetUniformLocation(shader, "shadow_map"), 1);
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+  glActiveTexture(GL_TEXTURE0);
+}
+
+void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
+  activeView.calculating_shadows = 1;
+
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  Coord3d norv[6] = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+  Coord3d upv[6] = {{0, -1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}, {0, -1, 0}};
+  /* order doesn't matter */
+  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+
+  static GLuint cubeColorTex = -1;
+  if (cubeColorTex == (GLuint)-1) {
+    glGenTextures(1, &cubeColorTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeColorTex);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    for (int i = 0; i < 6; i++) {
+      glTexImage2D(dirs[i], 0, GL_RGB8, activeView.shadowMapTexsize,
+                   activeView.shadowMapTexsize, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    }
+  }
+
+  perspectiveMatrix(90., 1, 0.1, 1000., activeView.projection);
+  glViewport(0, 0, activeView.shadowMapTexsize, activeView.shadowMapTexsize);
+
+  GLuint cubeFBOs[6];
+  glGenFramebuffers(6, cubeFBOs);
+  for (int i = 0; i < 6; i++) {
+    /* issue: only fbo 1 is set? */
+    glBindFramebuffer(GL_FRAMEBUFFER, cubeFBOs[i]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dirs[i], cubeColorTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dirs[i],
+                           activeView.shadowMapTexture, 0);
+    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (GL_FRAMEBUFFER_COMPLETE != result) {
+      warning("Framebuffer is not complete. #%d w/err %x", i, result);
+    }
+  }
+
+  glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+  // set Persp to square + angle
+  for (int loop = 0; loop < 6; ++loop) {
+    glBindFramebuffer(GL_FRAMEBUFFER, cubeFBOs[loop]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    lookAtMatrix(activeView.light_position[0], activeView.light_position[1],
+                 activeView.light_position[2], activeView.light_position[0] + norv[loop][0],
+                 activeView.light_position[1] + norv[loop][1],
+                 activeView.light_position[2] + norv[loop][2], upv[loop][0], upv[loop][1],
+                 upv[loop][2], activeView.modelview);
+    // Render (todo: 50% alpha clip)
+    if (mp) mp->draw(0, focus[0], focus[1]);
+    if (gm) gm->draw();
+  }
+
+  /* back to default (to screen) frame buffer */
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDeleteFramebuffers(6, cubeFBOs);
+
+  activeView.calculating_shadows = 0;
 }
 
 /* generates a snapshot of the screen */
@@ -610,7 +692,7 @@ int loadTexture(const char *name) {
   } else {
     textureNames[numTextures] = strdup(name);
     textures[numTextures] =
-        LoadTexture(surface, texCoord, 1, NULL);  // linear filter was: font != NULL
+        LoadTexture(surface, texCoord, 1);  // linear filter was: font != NULL
     /*printf("loaded texture[%d]=%d\n",numTextures,textures[numTextures]);*/
     numTextures++;
     SDL_FreeSurface(surface);
@@ -619,6 +701,8 @@ int loadTexture(const char *name) {
 }
 
 void glHelpInit() {
+  warnForGLerrors("preGLinit");
+
   for (int i = 0; i < 4711; i++) fake_rand[i] = frand();
 
   TTF_Init();
@@ -677,7 +761,32 @@ void glHelpInit() {
   activeView.global_ambient[2] = 0.f;
   activeView.quadratic_attenuation = 0.f;
 
-  glEnable(GL_TEXTURE_2D);
+  activeView.calculating_shadows = 0;
+
+  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+  glGenTextures(1, &activeView.shadowMapTexture);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+  /* order doesn't matter */
+  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+
+  GLint maxSize;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+  activeView.shadowMapTexsize = std::min(maxSize, 1024);
+  for (uint face = 0; face < 6; face++) {
+    glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
+                 activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  }
+  warnForGLerrors("postGLinit");
 }
 void glHelpCleanup() {
   if (shaderTile) glDeleteProgram(shaderTile);
@@ -789,6 +898,7 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
     free(shaderProgramInfoLog);
     return -1;
   }
+
   return shaderprogram;
 }
 
@@ -816,7 +926,7 @@ int resetTextures() {
       return 0;  // error (a valid texture entry)
     } else {
       glDeleteTextures(1, &textures[i]);
-      textures[i] = LoadTexture(surface, texCoord, linear, NULL);
+      textures[i] = LoadTexture(surface, texCoord, linear);
       SDL_FreeSurface(surface);
     }
   }
@@ -1056,7 +1166,7 @@ void Enter2DMode() {
   glEnableVertexAttribArray(2);
 
   glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
-  glActiveTexture(GL_TEXTURE0 + 0);
+  glActiveTexture(GL_TEXTURE0);
 
   is_2d_mode = 1;
 }
@@ -1074,8 +1184,7 @@ int powerOfTwo(int input) {
   return value;
 }
 
-GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
-                   GLuint *texture) {
+GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter) {
   int w, h;
   SDL_Surface *image;
   SDL_Rect area;
@@ -1146,14 +1255,10 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
   }
 
   /* Create an OpenGL texture for the image */
-  GLuint freshTexture = 0;
-  if (texture == NULL) texture = &freshTexture;
-  if (*texture == 0) {
-    glGenTextures(1, texture);
-    /*printf("texture: %d created\n",*texture); */
-  }
+  GLuint texture = 0;
+  glGenTextures(1, &texture);
 
-  glBindTexture(GL_TEXTURE_2D, *texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
   if (linearFilter) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -1167,7 +1272,7 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter,
                GL_UNSIGNED_BYTE, image->pixels);
 
   SDL_FreeSurface(image); /* No longer needed */
-  return *texture;
+  return texture;
 }
 
 SDL_Surface *loadImage(const char *imagename) {

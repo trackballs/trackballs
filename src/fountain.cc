@@ -40,8 +40,7 @@ Fountain::Fountain(double randomSpeed, double radius, double strength)
 }
 
 void Fountain::draw2() {
-  int i;
-
+  if (activeView.calculating_shadows) return;
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
 
   glEnable(GL_BLEND);
@@ -78,20 +77,20 @@ void Fountain::draw2() {
   ushort *idxs = new ushort[npoints];
   int j = 0;
   if (nextPoint < drawFrom) {
-    for (i = drawFrom; i < 800; i += skip) {
+    for (int i = drawFrom; i < 800; i += skip) {
       data[3 * j + 0] = positions[i][0];
       data[3 * j + 1] = positions[i][1];
       data[3 * j + 2] = positions[i][2];
       j++;
     }
-    for (i = 0; i < nextPoint; i += skip) {
+    for (int i = 0; i < nextPoint; i += skip) {
       data[3 * j + 0] = positions[i][0];
       data[3 * j + 1] = positions[i][1];
       data[3 * j + 2] = positions[i][2];
       j++;
     }
   } else {
-    for (i = drawFrom; i < nextPoint; i += skip) {
+    for (int i = drawFrom; i < nextPoint; i += skip) {
       data[3 * j + 0] = positions[i][0];
       data[3 * j + 1] = positions[i][1];
       data[3 * j + 2] = positions[i][2];
