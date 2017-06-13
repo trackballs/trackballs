@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-11 09:15-0400\n"
+"POT-Creation-Date: 2017-06-13 17:52-0400\n"
 "PO-Revision-Date: 2017-06-11 08:47-0400\n"
 "Last-Translator: Jozef Říha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -409,22 +409,22 @@ msgstr ""
 msgid "Large smooth"
 msgstr ""
 
-#: ../src/editMode.cc:337
+#: ../src/editMode.cc:338
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Stopa: %s\n"
 
-#: ../src/editMode.cc:338
+#: ../src/editMode.cc:339
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Toto je východzí skript pre túto stopu.\n"
 
-#: ../src/editMode.cc:339
+#: ../src/editMode.cc:340
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Preštudujte dokumentáciu k editoru a pozrite sa na príklady\n"
 
-#: ../src/editMode.cc:340
+#: ../src/editMode.cc:341
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -433,15 +433,15 @@ msgstr ""
 ";;; pre kurz, ako ho upraviť\n"
 "\n"
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Cell height"
 msgstr "Výška bunky"
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Cell water height"
 msgstr "Výška bunky vody"
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Textures"
 msgstr "Textúry"
 
@@ -581,15 +581,16 @@ msgstr "Ukončiť bez uloženia?"
 
 #: ../src/editWindows.cc:355 ../src/editWindows.cc:396
 #: ../src/editWindows.cc:444 ../src/settingsMode.cc:128
-#: ../src/settingsMode.cc:154 ../src/settingsMode.cc:159
-#: ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:131 ../src/settingsMode.cc:175
+#: ../src/settingsMode.cc:177 ../src/settingsMode.cc:187
 msgid "Yes"
 msgstr "Áno"
 
 #: ../src/editWindows.cc:356 ../src/editWindows.cc:397
 #: ../src/editWindows.cc:445 ../src/settingsMode.cc:128
-#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:159
-#: ../src/settingsMode.cc:164 ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:131 ../src/settingsMode.cc:136
+#: ../src/settingsMode.cc:175 ../src/settingsMode.cc:177
+#: ../src/settingsMode.cc:187
 #, c-format
 msgid "No"
 msgstr "Nie"
@@ -638,17 +639,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:849
+#: ../src/glHelp.cc:975
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Rýchlosť snímkov: %.1f"
 
-#: ../src/glHelp.cc:851
+#: ../src/glHelp.cc:977
 #, c-format
 msgid "Framerate unknown"
 msgstr "Rýchlosť snímkov neznáma"
 
-#: ../src/glHelp.cc:853
+#: ../src/glHelp.cc:979
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -809,7 +810,7 @@ msgstr "Presunie vás na iné miesto, niekedy pridá rýchlosť."
 msgid "More Help"
 msgstr "Ďalšia pomoc"
 
-#: ../src/helpMode.cc:158 ../src/settingsMode.cc:235
+#: ../src/helpMode.cc:158 ../src/settingsMode.cc:239
 msgid "Back"
 msgstr "Späť"
 
@@ -827,96 +828,96 @@ msgstr ""
 msgid "%d points"
 msgstr "%d bodov"
 
-#: ../src/mainMode.cc:178
+#: ../src/mainMode.cc:169
 msgid "Track:"
 msgstr "Stopa:"
 
-#: ../src/mainMode.cc:180
+#: ../src/mainMode.cc:171
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../src/mainMode.cc:182
+#: ../src/mainMode.cc:173
 msgid "Press spacebar to begin"
 msgstr "Stlačte medzerník pre štart"
 
-#: ../src/mainMode.cc:194 ../src/mainMode.cc:203 ../src/mainMode.cc:229
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:185 ../src/mainMode.cc:194 ../src/mainMode.cc:220
+#: ../src/mainMode.cc:234
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Stlačte medzerník pre pokračovanie"
 
-#: ../src/mainMode.cc:195
+#: ../src/mainMode.cc:186
 msgid "Game over"
 msgstr "Koniec hry"
 
-#: ../src/mainMode.cc:203
+#: ../src/mainMode.cc:194
 msgid "Oops"
 msgstr "Ups"
 
-#: ../src/mainMode.cc:220
+#: ../src/mainMode.cc:211
 msgid "Paused"
 msgstr "Pauza"
 
-#: ../src/mainMode.cc:229
+#: ../src/mainMode.cc:220
 msgid "Bonus level complete"
 msgstr "Bonusový level kompletný"
 
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:234
 msgid "Level complete"
 msgstr "Level kompletný"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:241
 msgid "Congratulations"
 msgstr "Gratulujem"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:241
 msgid "You have completed the game!"
 msgstr "Úspešne ste ukončili hru!"
 
-#: ../src/mainMode.cc:473 ../src/mainMode.cc:489
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "Veľa šťastia!"
 
-#: ../src/mainMode.cc:566
+#: ../src/mainMode.cc:613
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonusové levely"
 
-#: ../src/mainMode.cc:568
+#: ../src/mainMode.cc:615
 #, c-format
 msgid "Lives left:"
 msgstr "Ešte životov:"
 
-#: ../src/mainMode.cc:569
+#: ../src/mainMode.cc:616
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d bodov"
 
-#: ../src/mainMode.cc:570
+#: ../src/mainMode.cc:617
 #, c-format
 msgid "Time left:"
 msgstr "Ešte času:"
 
-#: ../src/mainMode.cc:571
+#: ../src/mainMode.cc:618
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minút = %d bodov"
 
-#: ../src/mainMode.cc:573
+#: ../src/mainMode.cc:620
 #, c-format
 msgid "Difficulty:"
 msgstr "Náročnosť"
 
-#: ../src/mainMode.cc:575
+#: ../src/mainMode.cc:622
 msgid "easy"
 msgstr "ľahká"
 
-#: ../src/mainMode.cc:575 ../src/settingsMode.cc:193
+#: ../src/mainMode.cc:622 ../src/settingsMode.cc:197
 #, c-format
 msgid "normal"
 msgstr "bežná"
 
-#: ../src/mainMode.cc:575
+#: ../src/mainMode.cc:622
 msgid "hard"
 msgstr "ťažká"
 
@@ -1155,8 +1156,8 @@ msgid "Timeout in %d seconds"
 msgstr "Timeout %d sekúnd"
 
 #: ../src/settingsMode.cc:114
-msgid "Graphics"
-msgstr "Grafika"
+msgid "Video"
+msgstr ""
 
 #: ../src/settingsMode.cc:121
 #, c-format
@@ -1175,110 +1176,120 @@ msgstr "  Vyskúšať toto rozlíšenie"
 msgid "  Fullscreen"
 msgstr "  Celá obrazovka"
 
-#: ../src/settingsMode.cc:133
-#, c-format
-msgid "None"
-msgstr "Žiadne"
-
-#: ../src/settingsMode.cc:136
-#, c-format
-msgid "Minimalistic"
-msgstr "Minimalistické"
-
-#: ../src/settingsMode.cc:139
-#, c-format
-msgid "Simple"
-msgstr "Jednoduché"
-
-#: ../src/settingsMode.cc:142
-#, c-format
-msgid "Standard"
-msgstr "Štandardné"
-
-#: ../src/settingsMode.cc:145
-#, c-format
-msgid "Extra"
-msgstr "Extra"
-
-#: ../src/settingsMode.cc:148
-#, c-format
-msgid "Everything"
-msgstr "Všetko"
-
-#: ../src/settingsMode.cc:151
-msgid "  Details"
-msgstr "  Detaily"
-
-#: ../src/settingsMode.cc:153 ../src/settingsMode.cc:156
-msgid "  Reflections (beta)"
-msgstr "  Odrazy (beta)"
-
-#: ../src/settingsMode.cc:158
+#: ../src/settingsMode.cc:130
 msgid "  VSync"
 msgstr ""
 
-#: ../src/settingsMode.cc:167
+#: ../src/settingsMode.cc:139
 #, fuzzy, c-format
 msgid "Frame rate"
 msgstr "Rýchlosť snímkov: %.1f"
 
-#: ../src/settingsMode.cc:170
+#: ../src/settingsMode.cc:142
 #, c-format
 msgid "Frame time"
 msgstr ""
 
-#: ../src/settingsMode.cc:173
+#: ../src/settingsMode.cc:145
 msgid "  Show FPS"
 msgstr "  Zobraziť rýchlosť snímkov"
 
-#: ../src/settingsMode.cc:179
+#: ../src/settingsMode.cc:150
+msgid "Graphics"
+msgstr "Grafika"
+
+#: ../src/settingsMode.cc:155
+#, c-format
+msgid "None"
+msgstr "Žiadne"
+
+#: ../src/settingsMode.cc:158
+#, c-format
+msgid "Minimalistic"
+msgstr "Minimalistické"
+
+#: ../src/settingsMode.cc:161
+#, c-format
+msgid "Simple"
+msgstr "Jednoduché"
+
+#: ../src/settingsMode.cc:164
+#, c-format
+msgid "Standard"
+msgstr "Štandardné"
+
+#: ../src/settingsMode.cc:167
+#, c-format
+msgid "Extra"
+msgstr "Extra"
+
+#: ../src/settingsMode.cc:170
+#, c-format
+msgid "Everything"
+msgstr "Všetko"
+
+#: ../src/settingsMode.cc:173
+msgid "  Details"
+msgstr "  Detaily"
+
+#: ../src/settingsMode.cc:174
+#, fuzzy
+msgid "  Reflections"
+msgstr "  Odrazy (beta)"
+
+#: ../src/settingsMode.cc:176
+#, fuzzy
+msgid "  Shadows"
+msgstr "  Zobraziť rýchlosť snímkov"
+
+#: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr "Ovládanie"
 
-#: ../src/settingsMode.cc:182
+#: ../src/settingsMode.cc:186
 msgid "  Use mouse"
 msgstr "  Používať myš"
 
-#: ../src/settingsMode.cc:188
+#: ../src/settingsMode.cc:192
 msgid "  Sensitivity"
 msgstr "  Citlivosť"
 
-#: ../src/settingsMode.cc:195
+#: ../src/settingsMode.cc:199
 #, c-format
 msgid "+%d degrees"
 msgstr "+%d stupňov"
 
-#: ../src/settingsMode.cc:197
+#: ../src/settingsMode.cc:201
 #, c-format
 msgid "-%d degrees"
 msgstr "-%d stupňov"
 
-#: ../src/settingsMode.cc:198
+#: ../src/settingsMode.cc:202
 msgid "  Steering"
 msgstr "  Manévrovanie"
 
-#: ../src/settingsMode.cc:205
+#: ../src/settingsMode.cc:209
 #, c-format
 msgid "no joystick found"
 msgstr "joystick nebol nájdený"
 
-#: ../src/settingsMode.cc:209
+#: ../src/settingsMode.cc:213
 msgid "  Joystick:"
 msgstr "  Joystick:"
 
-#: ../src/settingsMode.cc:219
+#: ../src/settingsMode.cc:223
 msgid "Other"
 msgstr "Iné"
 
-#: ../src/settingsMode.cc:223
+#: ../src/settingsMode.cc:227
 msgid "  Music volume"
 msgstr "  Hlasitosť hudby"
 
-#: ../src/settingsMode.cc:225
+#: ../src/settingsMode.cc:229
 msgid "  Effects volume"
 msgstr "  Hlasitosť efektov"
 
-#: ../src/settingsMode.cc:227
+#: ../src/settingsMode.cc:231
 msgid "  Language"
 msgstr "  Jazyk"
 

@@ -58,6 +58,7 @@ class Settings {
   int rotateSteering;
   int ignoreMouse;
   int doReflections;
+  int doShadows;
   int vsynced;
 
   void setLocale();

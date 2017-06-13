@@ -36,6 +36,7 @@ void PipeConnector::draw() {
   if (primaryColor[3] >= 1.0) drawMe();
 }
 void PipeConnector::draw2() {
+  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
   if (primaryColor[3] < 1.0) drawMe();
 }
 void PipeConnector::drawMe() {

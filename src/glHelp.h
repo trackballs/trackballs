@@ -102,6 +102,8 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
                   Matrix4d out);
 void setViewUniforms(GLuint shader);
+
+void renderDummyShadowMap();
 void renderShadowMap(Coord3d focus, Map *mp, Game *gm);
 
 // generates a snapshot

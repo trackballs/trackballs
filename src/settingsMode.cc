@@ -45,7 +45,7 @@ SettingsMode::SettingsMode() {
   restoreColorDepth = 0;
   testingResolution = 0.;
   selected = 0;
-  subscreen = SUBSCREEN_GRAPHICS;
+  subscreen = SUBSCREEN_VIDEO;
 }
 void SettingsMode::activated() {
   Settings *settings = Settings::settings;
@@ -55,7 +55,7 @@ void SettingsMode::activated() {
   restoreResolution = settings->resolution;
   restoreColorDepth = settings->colorDepth;
   testingResolution = 0.0;
-  subscreen = SUBSCREEN_GRAPHICS;
+  subscreen = SUBSCREEN_VIDEO;
 }
 void SettingsMode::deactivated() {
   Settings *settings = Settings::settings;
@@ -109,9 +109,9 @@ void SettingsMode::display() {
   }
 
   switch (subscreen) {
-  case SUBSCREEN_GRAPHICS:
+  case SUBSCREEN_VIDEO:
     // Choose subscreen
-    menuItem_Left(MENU_SUBSCREEN, menucount++, _("Graphics"));
+    menuItem_Left(MENU_SUBSCREEN, menucount++, _("Video"));
 
     // Resolution
     if (resolution >= 0) {
@@ -126,6 +126,28 @@ void SettingsMode::display() {
     // Windowed
     menuItem_LeftRight(MENU_WINDOWED, menucount++, _("  Fullscreen"),
                        (char *)(Settings::settings->is_windowed ? _("No") : _("Yes")));
+
+    menuItem_LeftRight(MENU_VSYNC, menucount++, _("  VSync"),
+                       (char *)(Settings::settings->vsynced ? _("Yes") : _("No")));
+
+    // show FPS
+    switch (Settings::settings->showFPS) {
+    case 0:
+      snprintf(str, sizeof(str), _("No"));
+      break;
+    case 1:
+      snprintf(str, sizeof(str), _("Frame rate"));
+      break;
+    case 2:
+      snprintf(str, sizeof(str), _("Frame time"));
+      break;
+    }
+    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, _("  Show FPS"), str);
+
+    break;
+
+  case SUBSCREEN_GRAPHICS:
+    menuItem_Left(MENU_SUBSCREEN, menucount++, _("Graphics"));
 
     // gfx details
     switch (Settings::settings->gfx_details) {
@@ -149,28 +171,10 @@ void SettingsMode::display() {
       break;
     }
     menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, _("  Details"), str);
-    if (Settings::settings->doReflections)
-      menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections (beta)"),
-                         _("Yes"));
-    else
-      menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections (beta)"), _("No"));
-
-    menuItem_LeftRight(MENU_VSYNC, menucount++, _("  VSync"),
-                       (char *)(Settings::settings->vsynced ? _("Yes") : _("No")));
-
-    // show FPS
-    switch (Settings::settings->showFPS) {
-    case 0:
-      snprintf(str, sizeof(str), _("No"));
-      break;
-    case 1:
-      snprintf(str, sizeof(str), _("Frame rate"));
-      break;
-    case 2:
-      snprintf(str, sizeof(str), _("Frame time"));
-      break;
-    }
-    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, _("  Show FPS"), str);
+    menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections"),
+                       (char *)(Settings::settings->doReflections ? _("Yes") : _("No")));
+    menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, _("  Shadows"),
+                       (char *)(Settings::settings->doShadows ? _("Yes") : _("No")));
 
     break;
 
@@ -332,6 +336,9 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     break;
   case MENU_DO_REFLECTIONS:
     Settings::settings->doReflections = Settings::settings->doReflections ? 0 : 1;
+    break;
+  case MENU_DO_SHADOWS:
+    Settings::settings->doShadows = Settings::settings->doShadows ? 0 : 1;
     break;
   case MENU_SHOW_FPS:
     Settings::settings->showFPS = (Settings::settings->showFPS + 1) % 3;

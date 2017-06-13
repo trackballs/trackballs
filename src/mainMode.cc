@@ -88,7 +88,11 @@ void MainMode::display() {
 
   /* lighting must be set before we render the shadow map */
   setupLighting();
-  renderShadowMap(camFocus, map, Game::current);
+  if (Settings::settings->doShadows) {
+    renderShadowMap(camFocus, map, Game::current);
+  } else {
+    renderDummyShadowMap();
+  }
 
   glViewport(0, 0, screenWidth, screenHeight);
 

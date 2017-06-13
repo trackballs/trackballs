@@ -60,7 +60,7 @@ Settings::Settings() {
   rotateSteering = 0;
   joystickIndex = 0;
   joystick = NULL;
-  colorDepth = 16;
+  colorDepth = 32;
   joy_left = -32767;
   joy_right = 32767;
   joy_up = -32767;
@@ -69,6 +69,7 @@ Settings::Settings() {
   lastJoyY = 0;
   ignoreMouse = 0;
   doReflections = 0;
+  doShadows = 0;
   language = 0;
   vsynced = 1;
   doSpecialLevel = 0;
@@ -98,18 +99,18 @@ Settings::Settings() {
         warning("Configuration file should be a series of (key value) tuples.");
         continue;
       }
-      const int intnum = 17, realnum = 3;
+      const int intnum = 18, realnum = 3;
       const char *intkeys[intnum] = {
           "gfx-details",    "show-fps",     "is-windowed",     "resolution", "color-depth",
           "joystick-index", "joy_center-x", "joy_center-y",    "joy-left",   "joy-right",
           "joy-up",         "joy-down",     "rotate-steering", "language",   "ignore-mouse",
-          "do-reflections", "vsync-on"};
+          "do-reflections", "do-shadows",   "vsync-on"};
 
       int *intdests[intnum] = {&gfx_details,    &showFPS,       &is_windowed,   &resolution,
                                &colorDepth,     &joystickIndex, &joy_center[0], &joy_center[1],
                                &joy_left,       &joy_right,     &joy_up,        &joy_down,
                                &rotateSteering, &language,      &ignoreMouse,   &doReflections,
-                               &vsynced};
+                               &doShadows,      &vsynced};
       const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
       double *realdests[realnum] = {&sfxVolume, &musicVolume, &mouseSensitivity};
 
@@ -321,6 +322,7 @@ void Settings::save() {
     fprintf(fp, "(rotate-steering %d)\n", rotateSteering);
     fprintf(fp, "(ignore-mouse %d)\n", ignoreMouse);
     fprintf(fp, "(do-reflections %d)\n", doReflections);
+    fprintf(fp, "(do-shadows %d)\n", doShadows);
     fprintf(fp, "(language %d)\n", language);
     fprintf(fp, "(vsync-on %d)\n", vsynced);
     fclose(fp);

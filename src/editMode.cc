@@ -372,7 +372,11 @@ void EditMode::display() {
   assign(lightPosition, activeView.light_position);
 
   Coord3d cpos = {(double)x, (double)y, (double)h};
-  renderShadowMap(cpos, map, game);
+  if (Settings::settings->doShadows) {
+    renderShadowMap(cpos, map, game);
+  } else {
+    renderDummyShadowMap();
+  }
 
   /* Setup matrixes for the camera perspective */
   perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 1.0, 1e20,

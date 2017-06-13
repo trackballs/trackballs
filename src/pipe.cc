@@ -44,6 +44,7 @@ void Pipe::draw() {
   if (primaryColor[3] >= 1.0) drawTrunk();
 }
 void Pipe::draw2() {
+  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
   if (primaryColor[3] < 1.0) drawTrunk();
 }
 void Pipe::drawTrunk() {

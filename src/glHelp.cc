@@ -481,8 +481,35 @@ void setViewUniforms(GLuint shader) {
   glActiveTexture(GL_TEXTURE0);
 }
 
+void renderDummyShadowMap() {
+  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+  GLfloat buf[1] = {1.0f};
+  activeView.shadowMapTexsize = 1;
+  glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+  for (int face = 0; face < 6; face++) {
+    glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 buf);
+  }
+}
+
 void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   activeView.calculating_shadows = 1;
+  if (activeView.shadowMapTexsize <= 1) {
+    /* order doesn't matter */
+    GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                      GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                      GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+
+    GLint maxSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+    activeView.shadowMapTexsize = std::min(maxSize, 1024);
+    for (uint face = 0; face < 6; face++) {
+      glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
+                   activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
+  }
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
@@ -774,18 +801,7 @@ void glHelpInit() {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-  /* order doesn't matter */
-  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
-
-  GLint maxSize;
-  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-  activeView.shadowMapTexsize = std::min(maxSize, 1024);
-  for (uint face = 0; face < 6; face++) {
-    glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
-                 activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-  }
+  renderDummyShadowMap();
   warnForGLerrors("postGLinit");
 }
 void glHelpCleanup() {

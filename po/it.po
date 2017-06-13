@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-11 09:15-0400\n"
+"POT-Creation-Date: 2017-06-13 17:52-0400\n"
 "PO-Revision-Date: 2017-05-27 13:42-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -410,22 +410,22 @@ msgstr "Arrotonda poco"
 msgid "Large smooth"
 msgstr "Arrotonda molto"
 
-#: ../src/editMode.cc:337
+#: ../src/editMode.cc:338
 #, c-format
 msgid ";;; Track: %s\n"
 msgstr ";;; Percorso: %s\n"
 
-#: ../src/editMode.cc:338
+#: ../src/editMode.cc:339
 #, c-format
 msgid ";;; This is the default script file for this track.\n"
 msgstr ";;; Questo è lo script predefinito per questo percorso.\n"
 
-#: ../src/editMode.cc:339
+#: ../src/editMode.cc:340
 #, c-format
 msgid ";;; Read the documentation for the editor and look at the examples\n"
 msgstr ";;; Leggere la documentazione dell' Editor di livelli\n"
 
-#: ../src/editMode.cc:340
+#: ../src/editMode.cc:341
 #, c-format
 msgid ""
 ";;; to learn how to customize it\n"
@@ -434,15 +434,15 @@ msgstr ""
 ";;; per imparare come personalizzarlo\n"
 "\n"
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Cell height"
 msgstr "Altezza cella"
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Cell water height"
 msgstr "Altezza acqua nella cella."
 
-#: ../src/editMode.cc:458
+#: ../src/editMode.cc:466
 msgid "Textures"
 msgstr "Textures"
 
@@ -584,15 +584,16 @@ msgstr "Si desidera uscire senza salvare?"
 
 #: ../src/editWindows.cc:355 ../src/editWindows.cc:396
 #: ../src/editWindows.cc:444 ../src/settingsMode.cc:128
-#: ../src/settingsMode.cc:154 ../src/settingsMode.cc:159
-#: ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:131 ../src/settingsMode.cc:175
+#: ../src/settingsMode.cc:177 ../src/settingsMode.cc:187
 msgid "Yes"
 msgstr "Sì"
 
 #: ../src/editWindows.cc:356 ../src/editWindows.cc:397
 #: ../src/editWindows.cc:445 ../src/settingsMode.cc:128
-#: ../src/settingsMode.cc:156 ../src/settingsMode.cc:159
-#: ../src/settingsMode.cc:164 ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:131 ../src/settingsMode.cc:136
+#: ../src/settingsMode.cc:175 ../src/settingsMode.cc:177
+#: ../src/settingsMode.cc:187
 #, c-format
 msgid "No"
 msgstr "No"
@@ -641,17 +642,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:849
+#: ../src/glHelp.cc:975
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/glHelp.cc:851
+#: ../src/glHelp.cc:977
 #, c-format
 msgid "Framerate unknown"
 msgstr "Fotogrammi al secondo: sconosciuti"
 
-#: ../src/glHelp.cc:853
+#: ../src/glHelp.cc:979
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -817,7 +818,7 @@ msgstr "Ti porta in un altro luogo, a volte a gran velocità."
 msgid "More Help"
 msgstr "Avanti"
 
-#: ../src/helpMode.cc:158 ../src/settingsMode.cc:235
+#: ../src/helpMode.cc:158 ../src/settingsMode.cc:239
 msgid "Back"
 msgstr "Indietro"
 
@@ -835,96 +836,96 @@ msgstr "Livelloteca:"
 msgid "%d points"
 msgstr "%d punti"
 
-#: ../src/mainMode.cc:178
+#: ../src/mainMode.cc:169
 msgid "Track:"
 msgstr "Traccia:"
 
-#: ../src/mainMode.cc:180
+#: ../src/mainMode.cc:171
 msgid "Author:"
 msgstr "Autore:"
 
-#: ../src/mainMode.cc:182
+#: ../src/mainMode.cc:173
 msgid "Press spacebar to begin"
 msgstr "Premere spazio per iniziare"
 
-#: ../src/mainMode.cc:194 ../src/mainMode.cc:203 ../src/mainMode.cc:229
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:185 ../src/mainMode.cc:194 ../src/mainMode.cc:220
+#: ../src/mainMode.cc:234
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Premere spazio per continuare."
 
-#: ../src/mainMode.cc:195
+#: ../src/mainMode.cc:186
 msgid "Game over"
 msgstr "Game over"
 
-#: ../src/mainMode.cc:203
+#: ../src/mainMode.cc:194
 msgid "Oops"
 msgstr "Oops"
 
-#: ../src/mainMode.cc:220
+#: ../src/mainMode.cc:211
 msgid "Paused"
 msgstr "Pausa"
 
-#: ../src/mainMode.cc:229
+#: ../src/mainMode.cc:220
 msgid "Bonus level complete"
 msgstr "Livello bonus completato"
 
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:234
 msgid "Level complete"
 msgstr "Livello completato"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:241
 msgid "Congratulations"
 msgstr "Complimenti,"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:241
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: ../src/mainMode.cc:473 ../src/mainMode.cc:489
+#: ../src/mainMode.cc:520 ../src/mainMode.cc:536
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: ../src/mainMode.cc:566
+#: ../src/mainMode.cc:613
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: ../src/mainMode.cc:568
+#: ../src/mainMode.cc:615
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:569
+#: ../src/mainMode.cc:616
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: ../src/mainMode.cc:570
+#: ../src/mainMode.cc:617
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:571
+#: ../src/mainMode.cc:618
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: ../src/mainMode.cc:573
+#: ../src/mainMode.cc:620
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: ../src/mainMode.cc:575
+#: ../src/mainMode.cc:622
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:575 ../src/settingsMode.cc:193
+#: ../src/mainMode.cc:622 ../src/settingsMode.cc:197
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:575
+#: ../src/mainMode.cc:622
 msgid "hard"
 msgstr "difficile"
 
@@ -1168,8 +1169,8 @@ msgid "Timeout in %d seconds"
 msgstr ""
 
 #: ../src/settingsMode.cc:114
-msgid "Graphics"
-msgstr "Grafica"
+msgid "Video"
+msgstr ""
 
 #: ../src/settingsMode.cc:121
 #, c-format
@@ -1189,110 +1190,120 @@ msgstr "  Risoluzione"
 msgid "  Fullscreen"
 msgstr "  Schermo intero"
 
-#: ../src/settingsMode.cc:133
-#, c-format
-msgid "None"
-msgstr "Nessuno"
-
-#: ../src/settingsMode.cc:136
-#, c-format
-msgid "Minimalistic"
-msgstr "Minimi"
-
-#: ../src/settingsMode.cc:139
-#, c-format
-msgid "Simple"
-msgstr "Pochi"
-
-#: ../src/settingsMode.cc:142
-#, c-format
-msgid "Standard"
-msgstr "Standard"
-
-#: ../src/settingsMode.cc:145
-#, c-format
-msgid "Extra"
-msgstr "Molti"
-
-#: ../src/settingsMode.cc:148
-#, c-format
-msgid "Everything"
-msgstr "Tutti"
-
-#: ../src/settingsMode.cc:151
-msgid "  Details"
-msgstr "  Dettagli"
-
-#: ../src/settingsMode.cc:153 ../src/settingsMode.cc:156
-msgid "  Reflections (beta)"
-msgstr "  Riflessi (beta)"
-
-#: ../src/settingsMode.cc:158
+#: ../src/settingsMode.cc:130
 msgid "  VSync"
 msgstr ""
 
-#: ../src/settingsMode.cc:167
+#: ../src/settingsMode.cc:139
 #, fuzzy, c-format
 msgid "Frame rate"
 msgstr "Fotogrammi al secondo: %.1f"
 
-#: ../src/settingsMode.cc:170
+#: ../src/settingsMode.cc:142
 #, c-format
 msgid "Frame time"
 msgstr ""
 
-#: ../src/settingsMode.cc:173
+#: ../src/settingsMode.cc:145
 msgid "  Show FPS"
 msgstr "  Visualizza FPS"
 
-#: ../src/settingsMode.cc:179
+#: ../src/settingsMode.cc:150
+msgid "Graphics"
+msgstr "Grafica"
+
+#: ../src/settingsMode.cc:155
+#, c-format
+msgid "None"
+msgstr "Nessuno"
+
+#: ../src/settingsMode.cc:158
+#, c-format
+msgid "Minimalistic"
+msgstr "Minimi"
+
+#: ../src/settingsMode.cc:161
+#, c-format
+msgid "Simple"
+msgstr "Pochi"
+
+#: ../src/settingsMode.cc:164
+#, c-format
+msgid "Standard"
+msgstr "Standard"
+
+#: ../src/settingsMode.cc:167
+#, c-format
+msgid "Extra"
+msgstr "Molti"
+
+#: ../src/settingsMode.cc:170
+#, c-format
+msgid "Everything"
+msgstr "Tutti"
+
+#: ../src/settingsMode.cc:173
+msgid "  Details"
+msgstr "  Dettagli"
+
+#: ../src/settingsMode.cc:174
+#, fuzzy
+msgid "  Reflections"
+msgstr "  Riflessi (beta)"
+
+#: ../src/settingsMode.cc:176
+#, fuzzy
+msgid "  Shadows"
+msgstr "  Visualizza FPS"
+
+#: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr "Controlli"
 
-#: ../src/settingsMode.cc:182
+#: ../src/settingsMode.cc:186
 msgid "  Use mouse"
 msgstr "  Utilizza mouse"
 
-#: ../src/settingsMode.cc:188
+#: ../src/settingsMode.cc:192
 msgid "  Sensitivity"
 msgstr "  Sensibilità"
 
-#: ../src/settingsMode.cc:195
+#: ../src/settingsMode.cc:199
 #, c-format
 msgid "+%d degrees"
 msgstr "+%d gradi"
 
-#: ../src/settingsMode.cc:197
+#: ../src/settingsMode.cc:201
 #, c-format
 msgid "-%d degrees"
 msgstr "-%d gradi"
 
-#: ../src/settingsMode.cc:198
+#: ../src/settingsMode.cc:202
 msgid "  Steering"
 msgstr "  Direzione"
 
-#: ../src/settingsMode.cc:205
+#: ../src/settingsMode.cc:209
 #, fuzzy, c-format
 msgid "no joystick found"
 msgstr "niente joystick"
 
-#: ../src/settingsMode.cc:209
+#: ../src/settingsMode.cc:213
 msgid "  Joystick:"
 msgstr "  Joystick:"
 
-#: ../src/settingsMode.cc:219
+#: ../src/settingsMode.cc:223
 msgid "Other"
 msgstr "Altro"
 
-#: ../src/settingsMode.cc:223
+#: ../src/settingsMode.cc:227
 msgid "  Music volume"
 msgstr "  Volume musica"
 
-#: ../src/settingsMode.cc:225
+#: ../src/settingsMode.cc:229
 msgid "  Effects volume"
 msgstr "  Volume effetti"
 
-#: ../src/settingsMode.cc:227
+#: ../src/settingsMode.cc:231
 msgid "  Language"
 msgstr ""
 
