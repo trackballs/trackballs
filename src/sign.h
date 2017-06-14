@@ -25,11 +25,14 @@
 
 class Sign : public Animated {
  public:
-  Sign(const char *text, Real life, Real scale, Real rotation, Coord3d pos);
+  Sign(const char* text, Real life, Real scale, Real rotation, Coord3d pos);
   virtual ~Sign();
-  void mkTexture(const char *);
-  void draw();
-  void draw2();
+  void mkTexture(const char*);
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real);
 
  protected:

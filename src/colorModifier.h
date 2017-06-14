@@ -27,7 +27,11 @@
 class ColorModifier : public Animated {
  public:
   ColorModifier(int col, int x, int y, Real min, Real max, Real freq, Real phase);
-  void draw();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real t);
 
  protected:

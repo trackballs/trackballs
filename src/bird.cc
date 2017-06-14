@@ -49,18 +49,10 @@ Bird::Bird(int x, int y, int dx, int dy, Real size, Real speed) {
   timeOnDeath = Game::defaultScores[SCORE_BIRD][1];
 }
 
-void Bird::draw2() {
-  if (hide > 0.) return;
+int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (hide > 0.) return 0;
 
-  glDisable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-
-  setupObjectRenderState();
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
-
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+  allocateBuffers(1, idxbufs, databufs);
 
   GLfloat color[4];
   for (int i = 0; i < 3; i++) color[i] = primaryColor[i];
@@ -92,23 +84,34 @@ void Bird::draw2() {
   pos += packObjectVertex(pos, position[0] + loc[3][0], position[1] + loc[3][1],
                           position[2] + dz, 0., 1., color, flat);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 4 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
   ushort idxs[2][3] = {{0, 1, 2}, {0, 3, 1}};
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxs, GL_STATIC_DRAW);
 
+  return 1;
+}
+
+void Bird::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
+void Bird::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (hide > 0.) return;
+
+  glDisable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+
+  setupObjectRenderState();
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
 
 void Bird::tick(Real t) {

@@ -38,27 +38,13 @@ Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double streng
   }
 }
 
-void Splash::draw() {}
-void Splash::draw2() {
-  if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
+int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return 0;
 
-  glEnable(GL_BLEND);
+  allocateBuffers(1, idxbufs, databufs);
 
-  glPointSize(1.5 * screenWidth / 600.);
-
-  glUseProgram(shaderLine);
-
-  glBindVertexArray(theVao);
-
-  // Pos
-  glEnableVertexAttribArray(0);
-
-  setViewUniforms(shaderLine);
-  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
-              primaryColor[2], primaryColor[3]);
-
-  GLfloat *data = new GLfloat[3 * nDroplets];
-  ushort *idxs = new ushort[nDroplets];
+  GLfloat* data = new GLfloat[3 * nDroplets];
+  ushort* idxs = new ushort[nDroplets];
   for (int i = 0; i < nDroplets; i++) {
     data[3 * i + 0] = positions[i][0];
     data[3 * i + 1] = positions[i][1];
@@ -66,23 +52,37 @@ void Splash::draw2() {
     idxs[i] = i;
   }
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 3 * nDroplets * sizeof(GLfloat), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, nDroplets * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+  return 1;
+}
 
-  glDrawElements(GL_POINTS, nDroplets, GL_UNSIGNED_SHORT, (void *)0);
+void Splash::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
+
+  glEnable(GL_BLEND);
+
+  glPointSize(1.5 * screenWidth / 600.);
+  glUseProgram(shaderLine);
+  glBindVertexArray(theVao);
+
+  // Pos
+  glEnableVertexAttribArray(0);
+  setViewUniforms(shaderLine);
+  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
+              primaryColor[2], primaryColor[3]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glDrawElements(GL_POINTS, nDroplets, GL_UNSIGNED_SHORT, (void*)0);
 }
 
 void Splash::tick(Real t) {

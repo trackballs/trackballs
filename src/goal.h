@@ -24,9 +24,13 @@
 
 class Goal : public Flag {
  public:
-  Goal(int x, int y, int rotate, char *nextLevel);
+  Goal(int x, int y, int rotate, char* nextLevel);
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void onGet();
-  void draw();
 
  private:
   char nextLevel[256];

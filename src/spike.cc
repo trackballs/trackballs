@@ -48,20 +48,10 @@ Spike::Spike(Coord3d position, Real speed, Real phase) {
   specularColor[2] = 0.1;
 }
 
-void Spike::draw() {
-  glEnable(GL_CULL_FACE);
-  glDisable(GL_BLEND);
+int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(1, idxbufs, databufs);
 
-  const int nfacets = 6;
-
-  setupObjectRenderState();
-
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], specularColor[3]);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
+  int nfacets = 6;
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
 
@@ -72,23 +62,33 @@ void Spike::draw() {
     for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
   generateSpikeVBO(data, idxs, nfacets, rotmtx, position, primaryColor, secondaryColor, 2.0);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
 
-  configureObjectAttributes();
-
-  glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  return 1;
 }
+
+void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
+  const int nfacets = 6;
+
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
+}
+void Spike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void Spike::tick(Real t) {
   std::set<Ball *>::iterator iter = Ball::balls->begin();

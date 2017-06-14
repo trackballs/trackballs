@@ -287,7 +287,6 @@ void SetupMode::display() {
   delete[] idxs;
 
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 
   glDeleteBuffers(1, &databuf);

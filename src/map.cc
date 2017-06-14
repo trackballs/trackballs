@@ -432,16 +432,9 @@ void Map::draw(int stage, int cx, int cy) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
-  // Cost to pay once and only once
-  static long tickno = 0;
-  static GLfloat lastTime = 0.f;
   // Record render cycles
   GLfloat gameTime =
       (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
-  if (gameTime != lastTime) {
-    tickno++;
-    lastTime = gameTime;
-  }
 
   int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
   int prad = (VISRADIUS / CHUNKSIZE) + 1;
@@ -470,13 +463,13 @@ void Map::draw(int stage, int cx, int cy) {
         cur->is_visible = visible;
       }
       if (cur->is_visible) {
-        cur->last_shown = tickno;
+        cur->last_shown = theFrameNumber;
         drawlist[nchunks] = cur;
         if (update || !cur->is_active) { fillChunkVBO(drawlist[nchunks]); }
         nchunks++;
       } else {
         // Cleanup buffers for zones that have long since dropped out of view
-        if (cur->is_active && cur->last_shown < tickno - 10) {
+        if (cur->is_active && cur->last_shown < theFrameNumber - 10) {
           glDeleteBuffers(2, &cur->tile_vbo[0]);
           glDeleteBuffers(2, &cur->flui_vbo[0]);
           glDeleteBuffers(2, &cur->wall_vbo[0]);
@@ -1012,7 +1005,6 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   delete[] idxs;
 
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 8 * 3 * ncells, GL_UNSIGNED_INT, (void*)0);
 
   glDeleteBuffers(1, &databuf);

@@ -28,13 +28,10 @@
 #include "sign.h"
 #include "sound.h"
 
-#define STATE_DEAD 0
-#define STATE_ALIVE 1
-
 int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
 ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
-    : Ball(), kind(kind), resurrecting(resurrecting), state(STATE_ALIVE), time(time) {
+    : Ball(), kind(kind), resurrecting(resurrecting), time(time) {
   assign(position, this->position);
   no_physics = 1;
   realRadius = 0.2;
@@ -62,24 +59,20 @@ ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
     specularColor[1] = 0.9;
     specularColor[2] = 0.2;
   }
+
+  alive = 1;
 }
 
 ModPill::~ModPill() { this->Animated::~Animated(); }
 
-void ModPill::draw() {
-  if (state == STATE_ALIVE) Ball::draw();
-}
-void ModPill::draw2() {
-  if (state == STATE_ALIVE) Ball::draw2();
-}
 void ModPill::tick(Real t) {
   Coord3d v;
   double dist;
 
   Player *player = Game::current->player1;
-  if (state == STATE_DEAD) {
+  if (!alive) {
     timeLeft -= t;
-    if (resurrecting > 0.0 && timeLeft < 0) state = STATE_ALIVE;
+    if (resurrecting > 0.0 && timeLeft < 0) alive = 1;
   }
 
   clock += t;
@@ -91,7 +84,7 @@ void ModPill::tick(Real t) {
     radius = realRadius;
   }
 
-  if (state == STATE_ALIVE && kind == MOD_NITRO) {
+  if (alive && kind == MOD_NITRO) {
     nitroDebrisCount += t;
     while (nitroDebrisCount > 0.0) {
       nitroDebrisCount -= 0.25;
@@ -111,7 +104,7 @@ void ModPill::tick(Real t) {
     }
   }
 
-  if (state == STATE_ALIVE) {
+  if (alive) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
     sub(player->position, position, v);
     dist = length(v);
@@ -146,7 +139,7 @@ void ModPill::tick(Real t) {
       else
         playEffect(SFX_GOT_BADPILL);
 
-      state = STATE_DEAD;
+      alive = 0;
       if (!resurrecting) remove();
       timeLeft = (Real)resurrecting;
     }
@@ -154,6 +147,6 @@ void ModPill::tick(Real t) {
 }
 void ModPill::playerRestarted() {}
 void ModPill::die(int /*how*/) {
-  state = STATE_DEAD;
+  alive = 0;
   if (!resurrecting) delete this;
 }

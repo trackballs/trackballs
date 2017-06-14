@@ -26,7 +26,11 @@
 class Fountain : public Animated {
  public:
   Fountain(double randomSpeed, double radius, double strength);
-  void draw2();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(double);
 
   double randomSpeed, radius, strength;

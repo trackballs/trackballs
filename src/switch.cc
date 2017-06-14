@@ -47,9 +47,9 @@ CSwitch::~CSwitch() {
   scm_gc_unprotect_object(off);
   this->Animated::~Animated();
 }
-void CSwitch::draw() {
-  glDisable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
+
+int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(1, idxbufs, databufs);
 
   const int nfacets = 6;
   GLfloat lever_length = 0.3f;
@@ -60,10 +60,10 @@ void CSwitch::draw() {
   GLfloat data[4 * nfacets + 7][8];
   ushort idxs[4 * nfacets + 6][3];
 
-  GLfloat* side_color = is_on ? primaryColor : secondaryColor;
+  GLfloat *side_color = is_on ? primaryColor : secondaryColor;
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
-  char* pos = (char*)data;
+  char *pos = (char *)data;
   // Top curve
   for (int i = 0; i < nfacets; i++) {
     GLfloat angle = i * M_PI / (nfacets - 1);
@@ -139,35 +139,38 @@ void CSwitch::draw() {
     idxs[istart + i][1] = local[i][1] + vstart;
     idxs[istart + i][2] = local[i][2] + vstart;
   }
-  // Transfer
 
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  return 1;
+}
+
+void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  glDisable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+
+  const int nfacets = 6;
   setupObjectRenderState();
-
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-  glDrawElements(GL_TRIANGLES, (4 * nfacets + 6) * 3, GL_UNSIGNED_SHORT, (void*)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  glDrawElements(GL_TRIANGLES, (4 * nfacets + 6) * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
+
+void CSwitch::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
 void CSwitch::tick(Real /*t*/) {
   Coord3d v;
-  Player* player = Game::current->player1;
+  Player *player = Game::current->player1;
   sub(position, Game::current->player1->position, v);
 
   double dist = length(v);

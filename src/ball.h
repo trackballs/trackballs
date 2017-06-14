@@ -50,8 +50,11 @@ class Ball : public Animated {
   Ball();
   virtual ~Ball();
   Boolean physics(Real time);
-  void draw();
-  void draw2();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real);
   void doExpensiveComputations();
   void onRemove();
@@ -78,7 +81,7 @@ class Ball : public Animated {
   int ballResolution;
 
   static const Real physicsResolution;
-  static std::set<Ball *> *balls;
+  static std::set<Ball*>* balls;
 
   /** how far the ball has sunk into acid / sand / etc. */
   double sink;
@@ -90,7 +93,7 @@ class Ball : public Animated {
   double nitroDebrisCount;
 
  private:
-  Boolean checkGroundCollisions(class Map *, Real x, Real y);
+  Boolean checkGroundCollisions(class Map*, Real x, Real y);
   double reflectivity;
   int metallic, dontReflectSelf;
 

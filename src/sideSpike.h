@@ -27,7 +27,11 @@
 class SideSpike : public Animated {
  public:
   SideSpike(Coord3d position, Real speed, Real phase, int side);
-  void draw();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real t);
 
   Real speed, phase;

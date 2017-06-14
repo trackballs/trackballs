@@ -49,7 +49,9 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
   is_on = 1;
 }
 
-void ColorModifier::draw() {}
+int ColorModifier::generateBuffers(GLuint*& /*idxbufs*/, GLuint*& /*databufs*/) { return 0; }
+void ColorModifier::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
+void ColorModifier::drawBuffers2(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
 void ColorModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;

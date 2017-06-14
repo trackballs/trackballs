@@ -39,24 +39,9 @@ Fountain::Fountain(double randomSpeed, double radius, double strength)
   memset(creationTime, 0, sizeof(creationTime));
 }
 
-void Fountain::draw2() {
-  if (activeView.calculating_shadows) return;
-  if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
-
-  glEnable(GL_BLEND);
-
-  glPointSize(1.5 * screenWidth / 600.);
-
-  glUseProgram(shaderLine);
-
-  glBindVertexArray(theVao);
-
-  // Pos
-  glEnableVertexAttribArray(0);
-
-  setViewUniforms(shaderLine);
-  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
-              primaryColor[2], primaryColor[3]);
+int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return 0;
+  allocateBuffers(1, idxbufs, databufs);
 
   Real timeNow = Game::current->gameTime;
 
@@ -100,23 +85,44 @@ void Fountain::draw2() {
 
   for (int i = 0; i < npoints; i++) { idxs[i] = i; }
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 3 * npoints * sizeof(GLfloat), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, npoints * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
 
+  return 1;
+}
+
+void Fountain::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
+void Fountain::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
+  if (activeView.calculating_shadows) return;
+
+  int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;
+  if (fps < 5) skip *= 2;
+  int npoints = 0;
+  if (nextPoint < drawFrom) {
+    for (int i = drawFrom; i < 800; i += skip) npoints++;
+    for (int i = 0; i < nextPoint; i += skip) npoints++;
+  } else
+    for (int i = drawFrom; i < nextPoint; i += skip) npoints++;
+
+  glEnable(GL_BLEND);
+  glPointSize(1.5 * screenWidth / 600.);
+  glUseProgram(shaderLine);
+  glBindVertexArray(theVao);
+  glEnableVertexAttribArray(0);
+  setViewUniforms(shaderLine);
+  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
+              primaryColor[2], primaryColor[3]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
   glDrawElements(GL_POINTS, npoints, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
 
 void Fountain::tick(Real t) {

@@ -28,8 +28,11 @@
 class PipeConnector : public Animated {
  public:
   PipeConnector(Coord3d pos, Real radius);
-  void draw();
-  void draw2();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real t);
   void onRemove();
 
@@ -37,10 +40,10 @@ class PipeConnector : public Animated {
 
   static void init();
   static void reset();
-  static class std::set<PipeConnector *> *connectors;
+  static class std::set<PipeConnector*>* connectors;
 
  private:
-  void drawMe();
+  void drawMe(GLuint* idxbufs, GLuint* databufs);
 };
 
 #endif

@@ -58,7 +58,9 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
   secondaryColor[2] = 1.;
 }
 
-void HeightModifier::draw() {}
+int HeightModifier::generateBuffers(GLuint*& /*idxbufs*/, GLuint*& /*databufs*/) { return 0; }
+void HeightModifier::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
+void HeightModifier::drawBuffers2(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
 void HeightModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;

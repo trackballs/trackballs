@@ -53,21 +53,9 @@ void ForceField::onRemove() {
   forcefields->erase(this);
 }
 
-void ForceField::draw() {}
-void ForceField::draw2() {
-  if (!is_on) return;
-  if (activeView.calculating_shadows) return;
-
-  glDisable(GL_CULL_FACE);
-  glEnable(GL_BLEND);
-
-  setupObjectRenderState();
-
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (!is_on) return 0;
+  allocateBuffers(1, idxbufs, databufs);
 
   Coord3d ndir;
   assign(direction, ndir);
@@ -99,24 +87,36 @@ void ForceField::draw2() {
         position[2] + xycoords[i][0] * ndir[2] + xycoords[i][1], 0., 0., colors[i], flat);
   }
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 12 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
   ushort idxs[10][3] = {{0, 2, 1},  {1, 2, 3},   {4, 9, 8},  {4, 5, 9},  {9, 5, 11},
                         {5, 7, 11}, {7, 10, 11}, {7, 6, 10}, {6, 8, 10}, {6, 4, 8}};
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
 
+  return 1;
+}
+
+void ForceField::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
+void ForceField::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (!is_on) return;
+  if (activeView.calculating_shadows) return;
+
+  glDisable(GL_CULL_FACE);
+  glEnable(GL_BLEND);
+
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 10 * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
 
 void ForceField::tick(Real /*t*/) {}

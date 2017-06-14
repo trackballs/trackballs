@@ -45,24 +45,14 @@ Flag::Flag(int x, int y, int points, int visible, Real radius) {
   secondaryColor[2] = 0.8;
 }
 
-void Flag::draw() {
-  if (!visible) return;
+int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (!visible) return 0;
 
-  glDisable(GL_CULL_FACE);
-  glDisable(GL_BLEND);
-
-  setupObjectRenderState();
-
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], specularColor[3]);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  allocateBuffers(1, idxbufs, databufs);
 
   GLfloat data[14 * 8];
   memset(data, 0, sizeof(data));
-  ushort idxs[12][3] = {{0, 1, 2},  {1, 2, 3},
-
+  ushort idxs[12][3] = {{0, 1, 2},  {1, 2, 3},  //
                         {4, 5, 6},  {5, 6, 7},   {6, 7, 8},    {7, 8, 9},
                         {8, 9, 10}, {9, 10, 11}, {10, 11, 12}, {11, 12, 13}};
 
@@ -99,23 +89,34 @@ void Flag::draw() {
                             0., 0., color, fnorm);
   }
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 14 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
 
-  configureObjectAttributes();
-
-  glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  return 1;
 }
+
+void Flag::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (!visible) return;
+
+  glDisable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_SHORT, (void *)0);
+}
+
+void Flag::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void Flag::tick(Real /*t*/) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

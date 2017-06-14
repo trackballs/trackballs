@@ -27,7 +27,11 @@
 class Cactus : public Animated {
  public:
   Cactus(int x, int y, Real radius);
-  void draw();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real t);
 
  protected:

@@ -76,3 +76,4 @@ void warning(const char *formatstr, ...);
 extern int low_memory;  // if true, attempt to conserve memory
 extern int debug_joystick;
 extern int repair_joystick;
+extern int theFrameNumber;

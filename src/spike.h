@@ -28,7 +28,11 @@
 class Spike : public Animated {
  public:
   Spike(Coord3d position, Real speed, Real phase);
-  void draw();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   void tick(Real t);
 
   Real speed, phase;

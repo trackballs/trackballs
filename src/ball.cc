@@ -99,67 +99,43 @@ Ball::~Ball() {
   setReflectivity(0.0, 0);  // This effectivly deallocates all environment maps */
 }
 
-/*********************************************
- draw() - Draws all the opaque parts of ball
-**********************************************/
-void Ball::draw() {
-  GLfloat color[4];
-  GLfloat specular[4];
-  double blend;
-  double phase;
+int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (!alive) return 0;
 
-  // Fix when rendering environment map to not reflect oneself
-  if (dontReflectSelf) return;
+  /* We generate the maximum number of buffers, even if they aren't used */
+  int N = 7;
+  allocateBuffers(N, idxbufs, databufs);
 
-  for (int i = 0; i < 3; i++) {
-    color[i] = primaryColor[i];
-    specular[i] = specularColor[i];
-  }
-  color[3] = 1.0;
-  specular[3] = 1.0;
-  double shininess = 20.0;
-
+  GLfloat color[4] = {
+      primaryColor[0], primaryColor[1], primaryColor[2], 1.,
+  };
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
-
-  // Handle primary ball..
   if (modTimeLeft[MOD_GLASS]) {
-    phase = std::min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
+    double phase = std::min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
     if (modTimeLeft[MOD_GLASS] > 0)
       phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
     else
       phase = 1.0;
-    blend = phase;
-
+    double blend = phase;
     color[0] = 0.8 * blend + color[0] * (1.0 - blend);
     color[1] = 0.8 * blend + color[1] * (1.0 - blend);
     color[2] = 0.8 * blend + color[2] * (1.0 - blend);
     color[3] = 0.5 * blend + 1.0 * (1.0 - blend);
-    specular[0] = 2.5 * blend + specular[0] * (1.0 - blend);
-    specular[1] = 2.5 * blend + specular[1] * (1.0 - blend);
-    specular[2] = 2.5 * blend + specular[2] * (1.0 - blend);
-    shininess = 50.0 * blend + shininess * (1.0 - blend);
-    glEnable(GL_BLEND);
   } else if (modTimeLeft[MOD_FROZEN]) {
-    phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
+    double phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
     if (modTimeLeft[MOD_FROZEN] > 0)
       phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
     else
       phase = 1.0;
-    blend = phase;
-
+    double blend = phase;
     color[0] = 0.4 * blend + color[0] * (1.0 - blend);
     color[1] = 0.4 * blend + color[1] * (1.0 - blend);
     color[2] = 0.9 * blend + color[2] * (1.0 - blend);
     color[3] = 0.6 * blend + 1.0 * (1.0 - blend);
-    specular[0] = 2.0 * blend + specular[0] * (1.0 - blend);
-    specular[1] = 2.0 * blend + specular[1] * (1.0 - blend);
-    specular[2] = 4.0 * blend + specular[2] * (1.0 - blend);
-    shininess = 50.0 * blend + shininess * (1.0 - blend);
-    glEnable(GL_BLEND);
   }
 
-  // Create sphere
   {
+    /* Construct VBO for main ball */
     int ntries = 0;
     int nverts = 0;
     int detail;
@@ -191,72 +167,16 @@ void Ball::draw() {
     }
     placeObjectSphere(data, idxs, 0, loc, rotation, radius, detail, color);
 
-    // Transfer
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
-                specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
-
-    if (modTimeLeft[MOD_EXTRA_LIFE]) {
-      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
-    } else if (texture == 0) {
-      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-    } else {
-      glBindTexture(GL_TEXTURE_2D, textures[texture]);
-    }
-
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
     glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[0]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
     delete[] data;
     delete[] idxs;
-
-    configureObjectAttributes();
-
-    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
-
-    if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      GLfloat c[4];
-      if (metallic) {
-        c[0] = color[0];
-        c[1] = color[1];
-        c[2] = color[2];
-        c[3] = reflectivity;
-      } else {
-        c[0] = 1.0;
-        c[1] = 1.0;
-        c[2] = 1.0;
-        c[3] = reflectivity;
-      }
-
-      glUseProgram(shaderReflection);
-      setViewUniforms(shaderReflection);
-      glUniform4f(glGetUniformLocation(shaderReflection, "refl_color"), c[0], c[1], c[2],
-                  c[3]);
-      glUniform1i(glGetUniformLocation(shaderReflection, "tex"), 0);
-      glActiveTexture(GL_TEXTURE0 + 0);
-      glBindTexture(GL_TEXTURE_2D, environmentTexture);
-
-      glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
-    }
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 
   if (modTimeLeft[MOD_SPIKE]) {
     // TODO: adjust spikes to be at centers of an icosahedron's faces
-    glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
-
     GLfloat phase = std::min(modTimePhaseIn[MOD_SPIKE] / 2.0f, 1.0f);
     if (modTimeLeft[MOD_SPIKE] > 0)
       phase = std::min(modTimeLeft[MOD_SPIKE] / 2.0f, phase);
@@ -308,41 +228,13 @@ void Ball::draw() {
       idxs[3 * i + 2][2] = 4 * i + 3;
     }
 
-    // Transfer
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-    configureObjectAttributes();
-    glDrawElements(GL_TRIANGLES, 18 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 
-  if (modTimeLeft[MOD_SPEED] && !activeView.calculating_shadows) {
-    glEnable(GL_BLEND);
-    glLineWidth(1.0);
-    glEnable(GL_LINE_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    glUseProgram(shaderLine);
-    glBindVertexArray(theVao);
-    glEnableVertexAttribArray(0);
-
-    setViewUniforms(shaderLine);
-    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
-
+  if (modTimeLeft[MOD_SPEED]) {
     const int nlines = 8;
 
     GLfloat data[2 * nlines][3];
@@ -371,29 +263,14 @@ void Ball::draw() {
       idxs[2 * i + 1] = 2 * i + 1;
     }
 
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[2]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[2]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
-
-    glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 
   // Handle modifiers
   if (modTimeLeft[MOD_FLOAT]) {
-    glDisable(GL_BLEND);
-    // In case we look from below
-    glDisable(GL_CULL_FACE);
-
     const GLfloat stripeA[4] = {1.0, 1.0, 1.0, 1.0};
     const GLfloat stripeB[4] = {1.0, 0.2, 0.2, 1.0};
 
@@ -430,43 +307,13 @@ void Ball::draw() {
       ushort pts[4][3] = {{1, 0, 3}, {0, 2, 3}, {2, 5, 3}, {2, 4, 5}};
       for (int k = 0; k < 12; k++) { idxs[4 * i + k / 3][k % 3] = pts[k / 3][k % 3] + 6 * i; }
     }
-
-    // Transfer
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[3]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[3]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-    configureObjectAttributes();
-    glDrawElements(GL_TRIANGLES, 40 * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
-}
-/***************************************************
- draw2() - Draws all the translucent parts of ball
-***************************************************/
-void Ball::draw2() {
-  // Fix when rendering environment map to not reflect oneself
-  // (issue: then balls don't reflect other balls' transparent elements)
-  if (dontReflectSelf) return;
-  if (activeView.calculating_shadows) return;
 
-  GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
-    glEnable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
-
     int ntries = 0;
     int nverts = 0;
     int detail = 5;
@@ -477,36 +324,15 @@ void Ball::draw2() {
     Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
     placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
 
-    // Transfer
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[4]);
     glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
     delete[] data;
     delete[] idxs;
-
-    configureObjectAttributes();
-
-    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
-  if (modTimeLeft[MOD_JUMP]) {
-    glEnable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
 
+  if (modTimeLeft[MOD_JUMP]) {
     GLfloat data[9][8];
     ushort idxs[3][3];
     char *pos = (char *)data;
@@ -530,33 +356,13 @@ void Ball::draw2() {
       idxs[i / 3][i % 3] = i;
     }
 
-    // Transfer
-    setupObjectRenderState();
-
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[5]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[5]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-    configureObjectAttributes();
-    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 
   if (modTimeLeft[MOD_DIZZY]) {
-    glEnable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
-
     GLfloat data[12][8];
     char *pos = (char *)data;
     GLfloat color[4] = {1.f, 1.f, 1.f, 0.5f};
@@ -583,27 +389,231 @@ void Ball::draw2() {
 
     ushort idxs[6][3] = {{0, 1, 2}, {0, 3, 2}, {4, 5, 6}, {4, 7, 6}, {8, 9, 10}, {8, 11, 10}};
 
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[6]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[6]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  }
+
+  return N;
+}
+
+void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (!alive) return;
+  if (dontReflectSelf) return;
+
+  GLfloat specular[4];
+  for (int i = 0; i < 3; i++) { specular[i] = specularColor[i]; }
+  specular[3] = 1.0;
+  double shininess = 20.0;
+
+  // Handle primary ball..
+  if (modTimeLeft[MOD_GLASS]) {
+    double phase = std::min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
+    if (modTimeLeft[MOD_GLASS] > 0)
+      phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
+    else
+      phase = 1.0;
+    double blend = phase;
+    specular[0] = 2.5 * blend + specular[0] * (1.0 - blend);
+    specular[1] = 2.5 * blend + specular[1] * (1.0 - blend);
+    specular[2] = 2.5 * blend + specular[2] * (1.0 - blend);
+    shininess = 50.0 * blend + shininess * (1.0 - blend);
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+  } else if (modTimeLeft[MOD_FROZEN]) {
+    double phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
+    if (modTimeLeft[MOD_FROZEN] > 0)
+      phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
+    else
+      phase = 1.0;
+    double blend = phase;
+    specular[0] = 2.0 * blend + specular[0] * (1.0 - blend);
+    specular[1] = 2.0 * blend + specular[1] * (1.0 - blend);
+    specular[2] = 4.0 * blend + specular[2] * (1.0 - blend);
+    shininess = 50.0 * blend + shininess * (1.0 - blend);
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+  } else {
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+  }
+
+  {
+    int ntries = 0;
+    int nverts = 0;
+    int detail;
+    switch (ballResolution) {
+    case BALL_HIRES:
+      detail = 8;
+      break;
+    default:
+    case BALL_NORMAL:
+      detail = 6;
+      break;
+    case BALL_LORES:
+      detail = 3;
+      break;
+    }
+    countObjectSpherePoints(&ntries, &nverts, detail);
+
+    // Draw the ball...
+    setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
+                specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
+    if (modTimeLeft[MOD_EXTRA_LIFE]) {
+      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
+    } else if (texture == 0) {
+      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    } else {
+      glBindTexture(GL_TEXTURE_2D, textures[texture]);
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+
+    if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
+      GLfloat c[4];
+      if (metallic) {
+        c[0] = primaryColor[0];
+        c[1] = primaryColor[1];
+        c[2] = primaryColor[2];
+        c[3] = reflectivity;
+      } else {
+        c[0] = 1.0;
+        c[1] = 1.0;
+        c[2] = 1.0;
+        c[3] = reflectivity;
+      }
+
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+      glUseProgram(shaderReflection);
+      setViewUniforms(shaderReflection);
+      glUniform4f(glGetUniformLocation(shaderReflection, "refl_color"), c[0], c[1], c[2],
+                  c[3]);
+      glUniform1i(glGetUniformLocation(shaderReflection, "tex"), 0);
+      glActiveTexture(GL_TEXTURE0 + 0);
+      glBindTexture(GL_TEXTURE_2D, environmentTexture);
+
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+      glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+      configureObjectAttributes();
+      glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+    }
+  }
+
+  if (modTimeLeft[MOD_SPIKE]) {
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+
     // Transfer
     setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 18 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
+  }
+
+  if (modTimeLeft[MOD_SPEED] && !activeView.calculating_shadows) {
+    glEnable(GL_BLEND);
+    glLineWidth(1.0);
+    glEnable(GL_LINE_SMOOTH);
+    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+    glUseProgram(shaderLine);
+    glBindVertexArray(theVao);
+    glEnableVertexAttribArray(0);
+
+    setViewUniforms(shaderLine);
+    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
+
+    const int nlines = 8;
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[2]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_SHORT, (void *)0);
+  }
+
+  // Handle modifiers
+  if (modTimeLeft[MOD_FLOAT]) {
+    glDisable(GL_BLEND);
+    // In case we look from below
+    glDisable(GL_CULL_FACE);
+
+    setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[3]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[3]);
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 40 * 3, GL_UNSIGNED_SHORT, (void *)0);
+  }
+}
+
+void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (!alive) return;
+  if (dontReflectSelf) return;
+  if (activeView.calculating_shadows) return;
+
+  if (modTimeLeft[MOD_EXTRA_LIFE]) {
+    glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+
+    int ntries = 0;
+    int nverts = 0;
+    int detail = 5;
+    countObjectSpherePoints(&ntries, &nverts, detail);
+    setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[4]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[4]);
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
+  }
+  if (modTimeLeft[MOD_JUMP]) {
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+
+    setupObjectRenderState();
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[5]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[5]);
+    configureObjectAttributes();
+    glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, (void *)0);
+  }
+
+  if (modTimeLeft[MOD_DIZZY]) {
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+
+    setupObjectRenderState();
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("dizzy.png")]);
 
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[6]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[6]);
     configureObjectAttributes();
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 }
 

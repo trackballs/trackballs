@@ -24,7 +24,7 @@
 #include "map.h"
 #include "player.h"
 
-Goal::Goal(int x, int y, int rotate, char* nextLevel) : Flag(x, y, 1000, 1, 0.2) {
+Goal::Goal(int x, int y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strcpy(this->nextLevel, nextLevel);
   this->rotate = rotate;
   primaryColor[0] = 0.9;
@@ -44,11 +44,10 @@ void Goal::onGet() {
       MainMode::mainMode->levelComplete();
   }
 }
-void Goal::draw() {
-  if (!visible) return;
 
-  glEnable(GL_CULL_FACE);
-  glDisable(GL_BLEND);
+int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (!visible) return 0;
+  allocateBuffers(1, idxbufs, databufs);
 
   const int nfacets = 11;
   GLfloat inner_arc[2 + nfacets][2];
@@ -90,7 +89,7 @@ void Goal::draw() {
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   // Vertex trails
-  char* pos = (char*)data;
+  char *pos = (char *)data;
   // One trail for each point of {+w,-w}x{in,out}x{flat,norm}
   for (int k = 0; k < 8; k++) {
     int curved = k / 4;
@@ -113,7 +112,7 @@ void Goal::draw() {
       if (!inner) cnormal[2] *= -1;
       if (rotate) std::swap(local[0], local[1]);
       if (rotate) std::swap(cnormal[0], cnormal[1]);
-      GLfloat* normal = curved ? cnormal : flat;
+      GLfloat *normal = curved ? cnormal : flat;
       pos += packObjectVertex(pos, loc[0] + local[0], loc[1] + local[1], loc[2] + local[2],
                               0.f, 0.f, color, normal);
     }
@@ -131,29 +130,34 @@ void Goal::draw() {
     }
   }
 
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  return 1;
+}
+
+void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (!visible) return;
+
+  const int nfacets = 11;
+
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
   // Draw it!
   setupObjectRenderState();
-
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
               specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
-  glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void*)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void *)0);
 }
+
+void Goal::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}

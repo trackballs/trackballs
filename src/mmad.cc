@@ -68,6 +68,8 @@ int debug_joystick, repair_joystick;
 int not_yet_windowed = 1;
 double displayStartTime = 0.;
 
+int theFrameNumber = 0;
+
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
                                {800, 600},
@@ -489,6 +491,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   int keyUpReceived = 1;
 
   while (is_running) {
+    theFrameNumber++;
+
     t = ((double)SDL_GetTicks()) / 1000.0;
     td = t - oldTime;
     oldTime = t;

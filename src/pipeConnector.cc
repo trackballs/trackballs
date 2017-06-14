@@ -32,23 +32,10 @@ PipeConnector::PipeConnector(Coord3d pos, Real r) : Animated() {
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
   connectors->insert(this);
 }
-void PipeConnector::draw() {
-  if (primaryColor[3] >= 1.0) drawMe();
-}
-void PipeConnector::draw2() {
-  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
-  if (primaryColor[3] < 1.0) drawMe();
-}
-void PipeConnector::drawMe() {
-  if (primaryColor[3] < 1.0f) {
-    glEnable(GL_BLEND);
-    glDisable(GL_CULL_FACE);
-  } else {
-    glDisable(GL_BLEND);
-    glEnable(GL_CULL_FACE);
-  }
 
-  // Create sphere
+int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(1, idxbufs, databufs);
+
   int ntries = 0;
   int nverts = 0;
   int detail = 4;
@@ -60,32 +47,46 @@ void PipeConnector::drawMe() {
 
   placeObjectSphere(data, idxs, 0, pos, identity, radius, detail, primaryColor);
 
-  // Transfer
-  setupObjectRenderState();
-
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
 
+  return 1;
+}
+void PipeConnector::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (primaryColor[3] >= 1.0) drawMe(idxbufs, databufs);
+}
+void PipeConnector::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
+  if (primaryColor[3] < 1.0) drawMe(idxbufs, databufs);
+}
+void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) {
+  if (primaryColor[3] < 1.0f) {
+    glEnable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+  } else {
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+  }
+
+  int ntries = 0;
+  int nverts = 0;
+  int detail = 4;
+  countObjectSpherePoints(&ntries, &nverts, detail);
+
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
 void PipeConnector::tick(Real t) {
   boundingBox[0][0] = -radius;

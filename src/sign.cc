@@ -76,14 +76,8 @@ void Sign::mkTexture(const char *string) {
   boundingBox[1][2] = SIGN_SCALE * scale * height;
 }
 
-void Sign::draw() {}
-void Sign::draw2() {
-  if (activeView.calculating_shadows) return;
-
-  // Keep the depth function on but trivial so as to record depth values
-  glEnable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
-  glDepthFunc(GL_ALWAYS);
+int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(1, idxbufs, databufs);
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
@@ -114,31 +108,37 @@ void Sign::draw2() {
   pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
                           texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
 
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  ushort idxs[4][3] = {{0, 1, 2}, {1, 3, 2}, {4, 5, 6}, {5, 7, 6}};
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+
+  return 1;
+}
+
+void Sign::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
+void Sign::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (activeView.calculating_shadows) return;
+
+  // Keep the depth function on but trivial so as to record depth values
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+  glDepthFunc(GL_ALWAYS);
+
   // Transfer data
   setupObjectRenderState();
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
   glBindTexture(GL_TEXTURE_2D, textimg);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
-  ushort idxs[4][3] = {{0, 1, 2}, {1, 3, 2}, {4, 5, 6}, {5, 7, 6}};
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 
   glDepthFunc(GL_LEQUAL);
 }

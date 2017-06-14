@@ -46,11 +46,10 @@ Cactus::Cactus(int x, int y, Real radius) {
   timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
 
-void Cactus::draw() {
-  if (killed == 2) return;
+int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (killed == 2) return 0;
 
-  glDisable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
+  allocateBuffers(1, idxbufs, databufs);
 
   int nsides = 6;
   // Body: 4N+1 verts, 7N faces
@@ -140,31 +139,35 @@ void Cactus::draw() {
     vbase += 4;
   }
 
-  // Transfer
-  setupObjectRenderState();
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
 
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  return 1;
+}
+
+void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (killed == 2) return;
+
+  glDisable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+
+  int nsides = 6;
+  setupObjectRenderState();
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
+
+void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

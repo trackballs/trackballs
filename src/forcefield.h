@@ -32,8 +32,11 @@
 class ForceField : public Animated {
  public:
   ForceField(Coord3d position, Coord3d direction, Real height, int allow);
-  virtual void draw();
-  virtual void draw2();
+
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+
   virtual void tick(Real);
   virtual void onRemove();
 
@@ -44,7 +47,7 @@ class ForceField : public Animated {
   Real height, bounceFactor;
   int allow;
 
-  static std::set<ForceField *> *forcefields;
+  static std::set<ForceField*>* forcefields;
 };
 
 #endif

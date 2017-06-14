@@ -40,14 +40,9 @@ Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated() {
   windForward = 0.0;
   computeBoundingBox();
 }
-void Pipe::draw() {
-  if (primaryColor[3] >= 1.0) drawTrunk();
-}
-void Pipe::draw2() {
-  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
-  if (primaryColor[3] < 1.0) drawTrunk();
-}
-void Pipe::drawTrunk() {
+
+int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(1, idxbufs, databufs);
   up[0] = up[1] = 0.0;
   up[2] = 1.0;
   Coord3d dir;
@@ -62,14 +57,6 @@ void Pipe::drawTrunk() {
     up[0] *= -1.;
     up[1] *= -1.;
     up[2] *= -1.;
-  }
-
-  // Keep off unconditionally since pipe ends show both sides
-  glDisable(GL_CULL_FACE);
-  if (primaryColor[3] < 1.f) {
-    glEnable(GL_BLEND);
-  } else {
-    glDisable(GL_BLEND);
   }
 
   // Raising this may require level set fixes as new corners may intersect things
@@ -104,31 +91,43 @@ void Pipe::drawTrunk() {
     idxs[2 * i + 1][1] = 2 * i + 1;
     idxs[2 * i + 1][2] = 2 * j + 1;
   }
-  // Transfer data
-  setupObjectRenderState();
 
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  return 1;
+}
+
+void Pipe::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+  if (primaryColor[3] >= 1.0) drawTrunk(idxbufs, databufs);
+}
+void Pipe::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
+  if (primaryColor[3] < 1.0) drawTrunk(idxbufs, databufs);
+}
+void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) {
+  // Keep off unconditionally since pipe ends show both sides
+  glDisable(GL_CULL_FACE);
+  if (primaryColor[3] < 1.f) {
+    glEnable(GL_BLEND);
+  } else {
+    glDisable(GL_BLEND);
+  }
+  setupObjectRenderState();
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
               specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
+  int nfacets = 10;
 
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-
   glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
 }
 void Pipe::tick(Real /*t*/) {
   /* TODO. Ugly fix, a better fix is to make from/to etc. *private* variables and add this fn.

@@ -25,6 +25,8 @@
 #include "map.h"
 #include "player.h"
 
+#define NFACETS 14
+
 Teleport::Teleport(int x, int y, int dx, int dy, Real radius) {
   this->x = x;
   this->y = y;
@@ -45,178 +47,165 @@ Teleport::Teleport(int x, int y, int dx, int dy, Real radius) {
   is_on = 1;
 }
 
-void Teleport::draw() {
+int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  allocateBuffers(2, idxbufs, databufs);
+
+  GLfloat cent_height = 0.5f;
+  {
+    GLfloat data[(9 * NFACETS + 1) * 8];
+    ushort idxs[9 * NFACETS][3];
+
+    GLfloat irad = 4.f / 3.f * radius;
+    GLfloat orad = 5.f / 3.f * radius;
+    GLfloat width = 0.5f / 3.f * radius;
+
+    // Draw torus
+    char *pos = (char *)data;
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+      GLfloat nnormal[3] = {0.f, 1.f, 0.f};
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
+                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
+                              primaryColor, nnormal);
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
+                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
+                              primaryColor, nnormal);
+    }
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+      GLfloat snormal[3] = {0.f, -1.f, 0.f};
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
+                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
+                              primaryColor, snormal);
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
+                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
+                              primaryColor, snormal);
+    }
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+      GLfloat inormal[3] = {-std::sin(angle), -std::cos(angle), 0.f};
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
+                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
+                              primaryColor, inormal);
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
+                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
+                              primaryColor, inormal);
+    }
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+      GLfloat onormal[3] = {std::sin(angle), std::cos(angle), 0.f};
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
+                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
+                              primaryColor, onormal);
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
+                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
+                              primaryColor, onormal);
+    }
+
+    for (int k = 0; k < 4; k++) {
+      int swap = (k == 2 || k == 0);
+      for (int i = 0; i < NFACETS; i++) {
+        int base = 2 * k * NFACETS;
+        int j = (i + 1) % NFACETS;
+        int l = i;
+        if (swap) std::swap(l, j);
+        idxs[base + 2 * i][0] = base + 2 * l;
+        idxs[base + 2 * i][1] = base + 2 * j + 1;
+        idxs[base + 2 * i][2] = base + 2 * l + 1;
+
+        idxs[base + 2 * i + 1][0] = base + 2 * l;
+        idxs[base + 2 * i + 1][1] = base + 2 * j;
+        idxs[base + 2 * i + 1][2] = base + 2 * j + 1;
+      }
+    }
+
+    // Draw base
+    GLfloat white[4] = {1.f, 1.f, 1.f, 1.f};
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+      GLfloat inormal[3] = {std::cos(angle), std::sin(angle), 0.4f};
+      pos += packObjectVertex(pos, position[0] + radius * std::cos(angle),
+                              position[1] + radius * std::sin(angle), position[2] + 0.1f, 0.,
+                              0., white, inormal);
+    }
+    GLfloat vnormal[3] = {0.f, 0.f, 1.f};
+    pos += packObjectVertex(pos, position[0], position[1], position[2] + 0.3, 0., 0., white,
+                            vnormal);
+
+    for (int i = 0; i < NFACETS; i++) {
+      idxs[8 * NFACETS + i][0] = 9 * NFACETS;
+      idxs[8 * NFACETS + i][1] = 8 * NFACETS + i;
+      idxs[8 * NFACETS + i][2] = 8 * NFACETS + (i + 1) % NFACETS;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  }
+  {
+    GLfloat color[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2],
+                        secondaryColor[3] * (0.4f + 0.2f * (GLfloat)frandom())};
+    GLfloat flat[3] = {0., 0., 0.};
+    GLfloat rad = (4.0 / 3.0) * radius;
+
+    GLfloat data[(NFACETS + 1) * 8];
+    ushort idxs[NFACETS][3];
+    char *pos = (char *)data;
+    pos += packObjectVertex(pos, position[0], position[1], position[2] + cent_height, 0., 0.,
+                            color, flat);
+    for (int i = 0; i < NFACETS; i++) {
+      GLfloat angle = 2 * i * M_PI / NFACETS;
+
+      pos += packObjectVertex(pos, position[0] + std::sin(angle) * rad, position[1],
+                              position[2] + std::cos(angle) * rad + cent_height, 0., 0., color,
+                              flat);
+      idxs[i][0] = 0;
+      idxs[i][1] = i + 1;
+      idxs[i][2] = (i + 1) % NFACETS + 1;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
+    glBufferData(GL_ARRAY_BUFFER, (NFACETS + 1) * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, NFACETS * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  }
+
+  return 2;
+}
+
+void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
-  const int nfacets = 14;
-  GLfloat data[(9 * nfacets + 1) * 8];
-  ushort idxs[9 * nfacets][3];
-
-  GLfloat irad = 4.f / 3.f * radius;
-  GLfloat orad = 5.f / 3.f * radius;
-  GLfloat width = 0.5f / 3.f * radius;
-  GLfloat cent_height = 0.5f;
-
-  // Draw torus
-  char *pos = (char *)data;
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-    GLfloat nnormal[3] = {0.f, 1.f, 0.f};
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
-                            position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                            primaryColor, nnormal);
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
-                            position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                            primaryColor, nnormal);
-  }
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-    GLfloat snormal[3] = {0.f, -1.f, 0.f};
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
-                            position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                            primaryColor, snormal);
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
-                            position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                            primaryColor, snormal);
-  }
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-    GLfloat inormal[3] = {-std::sin(angle), -std::cos(angle), 0.f};
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
-                            position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                            primaryColor, inormal);
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
-                            position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                            primaryColor, inormal);
-  }
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-    GLfloat onormal[3] = {std::sin(angle), std::cos(angle), 0.f};
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
-                            position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                            primaryColor, onormal);
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
-                            position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                            primaryColor, onormal);
-  }
-
-  for (int k = 0; k < 4; k++) {
-    int swap = (k == 2 || k == 0);
-    for (int i = 0; i < nfacets; i++) {
-      int base = 2 * k * nfacets;
-      int j = (i + 1) % nfacets;
-      int l = i;
-      if (swap) std::swap(l, j);
-      idxs[base + 2 * i][0] = base + 2 * l;
-      idxs[base + 2 * i][1] = base + 2 * j + 1;
-      idxs[base + 2 * i][2] = base + 2 * l + 1;
-
-      idxs[base + 2 * i + 1][0] = base + 2 * l;
-      idxs[base + 2 * i + 1][1] = base + 2 * j;
-      idxs[base + 2 * i + 1][2] = base + 2 * j + 1;
-    }
-  }
-
-  // Draw base
-  GLfloat white[4] = {1.f, 1.f, 1.f, 1.f};
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-    GLfloat inormal[3] = {std::cos(angle), std::sin(angle), 0.4f};
-    pos += packObjectVertex(pos, position[0] + radius * std::cos(angle),
-                            position[1] + radius * std::sin(angle), position[2] + 0.1f, 0., 0.,
-                            white, inormal);
-  }
-  GLfloat vnormal[3] = {0.f, 0.f, 1.f};
-  pos += packObjectVertex(pos, position[0], position[1], position[2] + 0.3, 0., 0., white,
-                          vnormal);
-
-  for (int i = 0; i < nfacets; i++) {
-    idxs[8 * nfacets + i][0] = 9 * nfacets;
-    idxs[8 * nfacets + i][1] = 8 * nfacets + i;
-    idxs[8 * nfacets + i][2] = 8 * nfacets + (i + 1) % nfacets;
-  }
-
   // Transfer
   setupObjectRenderState();
-
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   configureObjectAttributes();
-  glDrawElements(GL_TRIANGLES, 3 * 9 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  glDrawElements(GL_TRIANGLES, 3 * 9 * NFACETS, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Teleport::draw2() {
-  if (!is_on) return;
-
+void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
   setupObjectRenderState();
-
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  int nfacets = 12;
-
-  GLfloat color[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2],
-                      secondaryColor[3] * (0.4f + 0.2f * (GLfloat)frandom())};
-  GLfloat flat[3] = {0., 0., 0.};
-  GLfloat rad = (4.0 / 3.0) * radius;
-  GLfloat cent_height = 0.5;
-
-  GLfloat data[(nfacets + 1) * 8];
-  ushort idxs[nfacets][3];
-  char *pos = (char *)data;
-  pos += packObjectVertex(pos, position[0], position[1], position[2] + cent_height, 0., 0.,
-                          color, flat);
-  for (int i = 0; i < nfacets; i++) {
-    GLfloat angle = 2 * i * M_PI / nfacets;
-
-    pos += packObjectVertex(pos, position[0] + std::sin(angle) * rad, position[1],
-                            position[2] + std::cos(angle) * rad + cent_height, 0., 0., color,
-                            flat);
-    idxs[i][0] = 0;
-    idxs[i][1] = i + 1;
-    idxs[i][2] = (i + 1) % nfacets + 1;
-  }
-
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
-
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
-  glBufferData(GL_ARRAY_BUFFER, (nfacets + 1) * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, nfacets * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
   configureObjectAttributes();
-
-  glDrawElements(GL_TRIANGLES, nfacets * 3, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  glDrawElements(GL_TRIANGLES, NFACETS * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
 void Teleport::tick(Real /*t*/) {

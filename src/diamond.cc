@@ -37,22 +37,9 @@ Diamond::Diamond(Coord3d pos) {
   taken = 0;
 }
 
-void Diamond::draw() {}
-void Diamond::draw2() {
-  if (fade <= 0.) { return; }
-  glEnable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
-
-  setupObjectRenderState();
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], specularColor[3]);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
-  GLuint databuf, idxbuf;
-  glGenBuffers(1, &databuf);
-  glGenBuffers(1, &idxbuf);
+int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+  if (fade <= 0.) { return 0; }
+  allocateBuffers(1, idxbufs, databufs);
 
   GLfloat color[4];
   for (int i = 0; i < 4; i++) color[i] = primaryColor[i];
@@ -73,19 +60,35 @@ void Diamond::draw2() {
   ushort idxs[12][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 6}, {0, 6, 1},
                         {7, 2, 1}, {7, 3, 2}, {7, 4, 3}, {7, 5, 4}, {7, 6, 5}, {7, 1, 6}};
 
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
 
-  configureObjectAttributes();
-
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDeleteBuffers(1, &databuf);
-  glDeleteBuffers(1, &idxbuf);
+  return 1;
 }
+
+void Diamond::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+
+void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (fade <= 0.) { return; }
+
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+
+  setupObjectRenderState();
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+              specularColor[1], specularColor[2], specularColor[3]);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void *)0);
+}
+
 void Diamond::tick(Real t) {
   Coord3d v0;
   if (fade <= 0.0) return;

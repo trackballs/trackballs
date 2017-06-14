@@ -43,8 +43,21 @@ Animated::Animated() : GameHook() {
   timeOnDeath = 0;
   flags = 0;
   onScreen = 0;
+
+  idxVBOs = NULL;
+  dataVBOs = NULL;
+  lastFrameNumber = -1;
+  nVBOs = 0;
 }
-Animated::~Animated() {}
+Animated::~Animated() {
+  if (nVBOs > 0) {
+    glDeleteBuffers(nVBOs, idxVBOs);
+    glDeleteBuffers(nVBOs, dataVBOs);
+    delete[] idxVBOs;
+    delete[] dataVBOs;
+    nVBOs = 0;
+  }
+}
 void Animated::has_moved() {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
 }
@@ -52,8 +65,45 @@ void Animated::onRemove() {
   GameHook::onRemove();
   Game::current->remove(this);
 }
-void Animated::draw() {}
-void Animated::draw2() {}
+void Animated::allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs) {
+  idxbufs = new GLuint[N];
+  databufs = new GLuint[N];
+  glGenBuffers(N, idxbufs);
+  glGenBuffers(N, databufs);
+}
+
+void Animated::draw() {
+  if (theFrameNumber != lastFrameNumber) {
+    lastFrameNumber = theFrameNumber;
+    if (nVBOs > 0) {
+      glDeleteBuffers(nVBOs, idxVBOs);
+      glDeleteBuffers(nVBOs, dataVBOs);
+      delete[] idxVBOs;
+      delete[] dataVBOs;
+      nVBOs = 0;
+      idxVBOs = NULL;
+      dataVBOs = NULL;
+    }
+    nVBOs = generateBuffers(idxVBOs, dataVBOs);
+  }
+  drawBuffers1(idxVBOs, dataVBOs);
+}
+void Animated::draw2() {
+  if (theFrameNumber != lastFrameNumber) {
+    lastFrameNumber = theFrameNumber;
+    if (nVBOs > 0) {
+      glDeleteBuffers(nVBOs, idxVBOs);
+      glDeleteBuffers(nVBOs, dataVBOs);
+      delete[] idxVBOs;
+      delete[] dataVBOs;
+      nVBOs = 0;
+      idxVBOs = NULL;
+      dataVBOs = NULL;
+    }
+    nVBOs = generateBuffers(idxVBOs, dataVBOs);
+  }
+  drawBuffers2(idxVBOs, dataVBOs);
+}
 void Animated::computeBoundingBox() {
   /* Use a default size 2x2x2 boundingbox around object */
   boundingBox[0][0] = -1.0;
