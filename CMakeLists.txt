@@ -26,7 +26,7 @@ endif()
 
 
 add_definitions(-DPACKAGE="trackballs")
-add_definitions(-DVERSION="1.2.0")
+add_definitions(-DVERSION="1.2.1")
 add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE_DIR}")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE_DIR}")
