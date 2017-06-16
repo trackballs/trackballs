@@ -176,7 +176,18 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   }
 
   if (modTimeLeft[MOD_SPIKE]) {
-    // TODO: adjust spikes to be at centers of an icosahedron's faces
+    /* spikes correspond to icosahedral faces */
+    const GLfloat w = (1 + std::sqrt(5)) / 2;
+    Coord3d icoverts[12] = {
+        {-1, w, 0},  {1, w, 0},  {-1, -w, 0}, {1, -w, 0}, {0, -1, w},  {0, 1, w},
+        {0, -1, -w}, {0, 1, -w}, {w, 0, -1},  {w, 0, 1},  {-w, 0, -1}, {-w, 0, 1},
+    };
+    ushort icofaces[20][3] = {
+        {0, 11, 5},  {0, 5, 1},  {0, 1, 7},  {0, 7, 10}, {0, 10, 11}, {1, 5, 9}, {5, 11, 4},
+        {11, 10, 2}, {10, 7, 6}, {7, 1, 8},  {3, 9, 4},  {3, 4, 2},   {3, 2, 6}, {3, 6, 8},
+        {3, 8, 9},   {4, 9, 5},  {2, 4, 11}, {6, 2, 10}, {8, 6, 7},   {9, 8, 1},
+    };
+
     GLfloat phase = std::min(modTimePhaseIn[MOD_SPIKE] / 2.0f, 1.0f);
     if (modTimeLeft[MOD_SPIKE] > 0)
       phase = std::min(modTimeLeft[MOD_SPIKE] / 2.0f, phase);
@@ -186,35 +197,37 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
 
     GLfloat sco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.0};
     GLfloat flat[3] = {0.f, 0.f, 0.f};
+    Matrix3d trot;
+    for (int i = 0; i < 3; i++)
+      for (int j = 0; j < 3; j++) { trot[i][j] = rotations[j][i]; }
 
-    GLfloat data[18 * 4][8];
-    ushort idxs[18 * 3][3];
+    GLfloat data[20 * 4][8];
+    ushort idxs[20 * 3][3];
     char *pos = (char *)data;
-    for (int u = 0; u < 6; u++) {
-      for (int v = -1; v <= +1; v++) {
-        Matrix4d rot, res;
-        identityMatrix(rot);
-        rotateZ(v * M_PI / 3, rot);
-        rotateY(u * M_PI / 3, rot);
-        matrixMult(rot, rotations, res);
-        Matrix3d srot;
-        for (int i = 0; i < 3; i++)
-          for (int j = 0; j < 3; j++) { srot[i][j] = res[j][i]; }
+    for (int i = 0; i < 20; i++) {
+      Coord3d centroid = {0., 0., 0.};
+      for (int j = 0; j < 3; j++) { add(centroid, icoverts[icofaces[i][j]], centroid); }
+      for (int k = 0; k < 3; k++) centroid[k] /= 3.0;
 
-        Coord3d points[4] = {{scale * 1.3f, 0.f, 0.f},
-                             {0.f, 0.5f * scale, -0.3 * scale},
-                             {0.f, -0.5f * scale, -0.3 * scale},
-                             {0.f, 0, 0.5 * scale}};
-
-        for (int i = 0; i < 4; i++) {
-          Coord3d sub;
-          useMatrix(srot, points[i], sub);
-          pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0.,
-                                  0., sco, flat);
-        }
+      Coord3d spike;
+      assign(centroid, spike);
+      for (int k = 0; k < 3; k++) spike[k] *= 0.87 * scale;
+      Coord3d sub;
+      useMatrix(trot, spike, sub);
+      pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
+                              sco, flat);
+      for (int j = 2; j >= 0; j--) {
+        Coord3d edge;
+        assign(icoverts[icofaces[i][j]], edge);
+        for (int k = 0; k < 3; k++)
+          edge[k] = 0.3 * scale * (0.1 * centroid[k] + 0.9 * edge[k]);
+        useMatrix(trot, edge, sub);
+        pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
+                                sco, flat);
       }
     }
-    for (int i = 0; i < 18; i++) {
+
+    for (int i = 0; i < 20; i++) {
       idxs[3 * i][0] = 4 * i;
       idxs[3 * i][1] = 4 * i + 2;
       idxs[3 * i][2] = 4 * i + 1;
@@ -519,7 +532,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
     configureObjectAttributes();
-    glDrawElements(GL_TRIANGLES, 18 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
+    glDrawElements(GL_TRIANGLES, 20 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
   }
 
   if (modTimeLeft[MOD_SPEED] && !activeView.calculating_shadows) {
