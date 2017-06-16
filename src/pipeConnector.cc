@@ -38,7 +38,7 @@ int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
 
   int ntries = 0;
   int nverts = 0;
-  int detail = 4;
+  int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
@@ -74,7 +74,7 @@ void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) {
 
   int ntries = 0;
   int nverts = 0;
-  int detail = 4;
+  int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
   setupObjectRenderState();

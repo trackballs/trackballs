@@ -19,34 +19,34 @@
          (start-time 90)
  )
 )
-(set-start-position 238.5 238.5)
+(set-start-position 238 238)
 
-(add-modpill 217.5 213.5 *mod-large* 20 20)
+(add-modpill 217 213 *mod-large* 20 20)
 
-(set-primary-color (set-acceleration (new-mr-black 215.5 202.5) 1.6) 0.5 0.5 0.5)
-(set-primary-color (set-acceleration (new-mr-black 221.5 202.5) 1.6) 0.5 0.5 0.5)
+(set-primary-color (set-acceleration (new-mr-black 215 202) 1.6) 0.5 0.5 0.5)
+(set-primary-color (set-acceleration (new-mr-black 221 202) 1.6) 0.5 0.5 0.5)
 
-(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 221.5 198.5) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
-(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 215.5 198.5) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
+(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 221 198) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
+(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 215 198) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
 
-(set-acceleration (set-modtime (set-primary-color (set-secondary-color (new-mr-black 215.5 194.5) 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
-(set-acceleration (set-modtime (set-primary-color (set-secondary-color (new-mr-black 221.5 194.5) 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
+(set-acceleration (set-modtime (set-primary-color (set-secondary-color (new-mr-black 215 194) 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
+(set-acceleration (set-modtime (set-primary-color (set-secondary-color (new-mr-black 221 194) 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
 
-(pipe 210.0 148.1 -0.6 202.0 148.1 -0.6 0.08)
-(pipe 210.0 146.9 -0.6 202.0 146.9 -0.6 0.08)
+(pipe 209.5 147.6 -0.6 201.5 147.6 -0.6 0.08)
+(pipe 209.5 146.4 -0.6 201.5 146.4 -0.6 0.08)
 
-(pipe 175.5 147.5 0.2 174.5 147.5 0.2 0.4)
-(pipe-connector 174.5 147.5 0.2 0.4)
-(pipe 174.5 147.5 0.2 172.5 147.5 -3.3 0.4)
-(pipe-connector 172.5 147.5 -3.3 0.4)
-(pipe 172.5 147.5 -3.3 169.5 147.5 -3.3 0.4)
+(pipe 175.0 147.0 0.2 174.0 147.0 0.2 0.4)
+(pipe-connector 174.0 147.0 0.2 0.4)
+(pipe 174.0 147.0 0.2 172.0 147.0 -3.3 0.4)
+(pipe-connector 172.0 147.0 -3.3 0.4)
+(pipe 172.0 147.0 -3.3 169.0 147.0 -3.3 0.4)
 
-(smart-trigger 141.5 147.5 1.5 (lambda () (set-modtime (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 144.5 147.5) 1.0 1.0 1.0) 0.5 1.0 0.0) 8.0) *mod-large* -1.)) (lambda () (day)))
+(smart-trigger 141.0 147.0 1.5 (lambda () (set-modtime (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 144.0 147.0) 1.0 1.0 1.0) 0.5 1.0 0.0) 8.0) *mod-large* -1.)) (lambda () #f))
 
 (set-modtime (set-primary-color (set-acceleration (set-modtime
-(new-mr-black 80.5 127.5) *mod-spike* -1.) 2.3) 0.8 0.0 0.0) *mod-float* -1.)
+(new-mr-black 80 127) *mod-spike* -1.) 2.3) 0.8 0.0 0.0) *mod-float* -1.)
 
-(add-modpill 102.5 147.5 *mod-float* 20 20)
+(add-modpill 102 147 *mod-float* 20 20)
 
 (add-goal 78 9 #f "sl5")
 

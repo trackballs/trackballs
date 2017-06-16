@@ -27,14 +27,14 @@
 
 #define NFACETS 14
 
-Teleport::Teleport(int x, int y, int dx, int dy, Real radius) {
+Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius) {
   this->x = x;
   this->y = y;
   this->dx = dx;
   this->dy = dy;
   this->radius = radius;
-  position[0] = x + 0.5;
-  position[1] = y + 0.5;
+  position[0] = x;
+  position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   primaryColor[0] = .5;
   primaryColor[1] = .7;
@@ -193,6 +193,8 @@ void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
 }
 
 void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+  if (activeView.calculating_shadows) return;
+
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 

@@ -17,18 +17,18 @@
 (cond
  ((= (difficulty) *easy*)   
     (start-time 480) 
-    (add-modpill 27.5 26.5 *mod-extra-life* 10 0)
-    (diamond  6.0 30.0)
-    (diamond 30.5 23.5)
-    (diamond 41.0 39.0)
-    (diamond 43.0 32.0)
+    (add-modpill 27 26 *mod-extra-life* 10 0)
+    (diamond  5.5 29.5)
+    (diamond 30.0 23.0)
+    (diamond 40.5 38.5)
+    (diamond 42.5 31.5)
  )
  ((= (difficulty) *normal*) 
     (start-time 360) 
-    (add-modpill 27.5 26.5 *mod-extra-life* 10 0)
-    (diamond 30.5 23.5)
-    (diamond 41.0 39.0)
-    (diamond 43.0 32.0)
+    (add-modpill 27 26 *mod-extra-life* 10 0)
+    (diamond 30.0 23.0)
+    (diamond 40.5 38.5)
+    (diamond 42.5 31.5)
  )
  ((= (difficulty) *hard*)   
     (start-time 300)
@@ -52,20 +52,20 @@
 
 ;; The Gate
 ;; Close the gate
-(trigger 14 16 1.5 (lambda() (set-cell-heights 10 10 10 10 -2.5 -2.5 -2.5 -2.5 -2.5)))
+(trigger 13.5 15.5 1.5 (lambda() (set-cell-heights 10 10 10 10 -2.5 -2.5 -2.5 -2.5 -2.5)))
 ;; Open the gate
-(trigger 9.5 9.5 1.0 (lambda() (set-cell-heights 10 10 10 10 -8.0 -8.0 -8.0 -8.0 -8.0)))
+(trigger 9 9 1.0 (lambda() (set-cell-heights 10 10 10 10 -8.0 -8.0 -8.0 -8.0 -8.0)))
 
 
 ;; Maze of PI
-(trigger  8.5 32.5 3.0  (lambda() (fog 1.0)))
-(trigger 38.5 35.5 1.0 (lambda() (fog 0.0)))
-(trigger  5.5  5.5 1.0 (lambda() (fog 0.0)))
-(sign (_ "Maze of PI") 1.0 50.0 -10.0 9.5 33.5)
-(sign (_ "Secret stairs somewhere") 1.0 50.0 -10.0 10.5 39.5)
+(trigger  8 32 3.0  (lambda() (fog 1.0)))
+(trigger 38 35 1.0 (lambda() (fog 0.0)))
+(trigger  5  5 1.0 (lambda() (fog 0.0)))
+(sign (_ "Maze of PI") 1.0 50.0 -10.0 9 33)
+(sign (_ "Secret stairs somewhere") 1.0 50.0 -10.0 10 39)
 
 ;; Stairs is appear
-(trigger 12 74 1 (lambda() 
+(trigger 11.5 73.5 1 (lambda() 
 (set-cell-heights 11 73 11 74 -7.5 -7.5 -7.5 -7.5 -7.5)
 (set-cell-heights 10 73 10 74 -7.0 -7.0 -7.0 -7.0 -7.0)
 (set-cell-heights  9 73  9 74 -6.5 -6.5 -6.5 -6.5 -6.5)
@@ -86,7 +86,7 @@
 ))
 
 ;; Stairs is disappear
-(trigger 8.5 32.5 3.0 (lambda() 
+(trigger 8 32 3.0 (lambda() 
 (set-cell-heights 11 73 11 74 -2.0 -2.0 -2.0 -2.0 -2.0)
 (set-cell-heights 10 73 10 74 -8.0 -8.0 -8.0 -8.0 -8.0)
 (set-cell-heights  9 73  9 74 -8.0 -8.0 -8.0 -8.0 -8.0)
@@ -106,8 +106,8 @@
 (set-cell-heights  5 68  5 68 -2.0 -2.0 -2.0 -2.0 -2.0)
 ))
 
-(trigger 11.5 51.5 1.5 (lambda() (diamond 11.5 51.5)))
-(trigger 16.5 41.5 1.5 (lambda() (diamond 16.5 41.5)))
+(trigger 11 51 1.5 (lambda() (diamond 11 51)))
+(trigger 16 41 1.5 (lambda() (diamond 16 41)))
 
 
 ;; If you are lost in maze of PI, try this:

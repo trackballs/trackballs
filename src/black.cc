@@ -26,7 +26,7 @@
 #include "player.h"
 #include "sound.h"
 
-Black::Black(double x, double y) : Ball() {
+Black::Black(Real x, Real y) : Ball() {
   realRadius = 0.4;
   radius = realRadius;
   ballResolution = BALL_HIRES;

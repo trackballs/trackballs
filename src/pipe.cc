@@ -59,8 +59,7 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
     up[2] *= -1.;
   }
 
-  // Raising this may require level set fixes as new corners may intersect things
-  int nfacets = 10;
+  int nfacets = 24;
 
   // Draw pipe
   GLfloat data[2 * nfacets][8];
@@ -122,7 +121,7 @@ void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) {
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  int nfacets = 10;
+  int nfacets = 24;
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

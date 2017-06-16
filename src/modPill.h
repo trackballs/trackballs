@@ -28,7 +28,7 @@ class ModPill : public Ball {
   /* resurrecting: 0  - Not resurrected
                       -1  - Resurrected when player is restarted
                                   >0  - Time between resurrections */
-  ModPill(Coord3d position, int kind, int length, int resurrecting);
+  ModPill(Real x, Real y, int kind, int length, int resurrecting);
   ~ModPill();
   void draw();
   void draw2();

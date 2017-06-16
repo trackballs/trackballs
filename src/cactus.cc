@@ -25,12 +25,10 @@
 #include "map.h"
 #include "sound.h"
 
-Cactus::Cactus(int x, int y, Real radius) {
-  this->x = x;
-  this->y = y;
+Cactus::Cactus(Real x, Real y, Real radius) {
   this->radius = radius;
-  position[0] = x + 0.5;
-  position[1] = y + 0.5;
+  position[0] = x;
+  position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   primaryColor[0] = .3;
   primaryColor[1] = 1.;

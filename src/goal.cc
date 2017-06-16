@@ -24,7 +24,7 @@
 #include "map.h"
 #include "player.h"
 
-Goal::Goal(int x, int y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
+Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strcpy(this->nextLevel, nextLevel);
   this->rotate = rotate;
   primaryColor[0] = 0.9;

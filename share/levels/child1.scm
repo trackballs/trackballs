@@ -9,7 +9,7 @@
 (set-author "Attila Boros")
 
 ;; Start
-(set-start-position 249.5 245.5)
+(set-start-position 249 245)
 (cond
  ((= (difficulty) *easy*)   (start-time 240))
  ((= (difficulty) *normal*) (start-time 120))
@@ -22,8 +22,8 @@
 ;; Do not jump
 (jump 0.1)
 
-(add-flag 254 242 100 1 0.1) 
-(add-flag 238 254 100 1 0.1) 
-(add-flag 238 242 100 1 0.1) 
-(add-flag 254 254 100 1 0.1) 
+(add-flag 254 242 100 #t 0.1) 
+(add-flag 238 254 100 #t 0.1) 
+(add-flag 238 242 100 #t 0.1) 
+(add-flag 254 254 100 #t 0.1) 
 

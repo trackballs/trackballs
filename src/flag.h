@@ -25,7 +25,7 @@
 
 class Flag : public Animated {
  public:
-  Flag(int x, int y, int points, int visible, Real radius);
+  Flag(Real x, Real y, int points, int visible, Real radius);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
@@ -35,7 +35,7 @@ class Flag : public Animated {
   virtual void onGet();
 
  protected:
-  int visible, x, y;
+  int visible;
   Real radius;
 };
 

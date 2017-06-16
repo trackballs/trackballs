@@ -1,29 +1,29 @@
 (set-track-name (_ "Ultimate"))
 (set-author "Ulrik Enstad")
-(set-start-position 250.5 250.5)
+(set-start-position 250 250)
 
-(pipe 239.0 236.0 4.95 234.0 236.0 4.95 0.08)
-(pipe 239.0 235.8 4.95 234.0 235.8 4.95 0.08)
-(pipe 239.0 235.6 4.95 234.0 235.6 4.95 0.08)
-(pipe 239.0 235.4 4.95 234.0 235.4 4.95 0.08)
-(pipe 239.0 235.2 4.95 234.0 235.2 4.95 0.08)
-(pipe 239.0 235.0 4.95 234.0 235.0 4.95 0.08)
-(pipe 239.0 234.8 4.95 234.0 234.8 4.95 0.08)
-(pipe 239.0 234.6 4.95 234.0 234.6 4.95 0.08)
-(pipe 239.0 234.4 4.95 234.0 234.4 4.95 0.08)
-(pipe 239.0 234.2 4.95 234.0 234.2 4.95 0.08)
-(pipe 239.0 234.0 4.95 234.0 234.0 4.95 0.08)
-(pipe 239.0 234.0 4.95 234.0 234.0 4.95 0.08)
-(pipe 236.0 238.0 4.95 234.0 238.0 4.95 0.08)
-(pipe 236.0 237.8 4.95 234.0 237.8 4.95 0.08)
-(pipe 236.0 237.6 4.95 234.0 237.6 4.95 0.08)
-(pipe 236.0 237.4 4.95 234.0 237.4 4.95 0.08)
-(pipe 236.0 237.2 4.95 234.0 237.2 4.95 0.08)
-(pipe 236.0 237.0 4.95 234.0 237.0 4.95 0.08)
-(pipe 236.0 236.8 4.95 234.0 236.8 4.95 0.08)
-(pipe 236.0 236.6 4.95 234.0 236.6 4.95 0.08)
-(pipe 236.0 236.4 4.95 234.0 236.4 4.95 0.08)
-(pipe 236.0 236.2 4.95 234.0 236.2 4.95 0.08)
+(pipe 238.5 235.5 4.95 233.5 235.5 4.95 0.08)
+(pipe 238.5 235.3 4.95 233.5 235.3 4.95 0.08)
+(pipe 238.5 235.1 4.95 233.5 235.1 4.95 0.08)
+(pipe 238.5 234.9 4.95 233.5 234.9 4.95 0.08)
+(pipe 238.5 234.7 4.95 233.5 234.7 4.95 0.08)
+(pipe 238.5 234.5 4.95 233.5 234.5 4.95 0.08)
+(pipe 238.5 234.3 4.95 233.5 234.3 4.95 0.08)
+(pipe 238.5 234.1 4.95 233.5 234.1 4.95 0.08)
+(pipe 238.5 233.9 4.95 233.5 233.9 4.95 0.08)
+(pipe 238.5 233.7 4.95 233.5 233.7 4.95 0.08)
+(pipe 238.5 233.5 4.95 233.5 233.5 4.95 0.08)
+
+(pipe 235.5 237.5 4.95 233.5 237.5 4.95 0.08)
+(pipe 235.5 237.3 4.95 233.5 237.3 4.95 0.08)
+(pipe 235.5 237.1 4.95 233.5 237.1 4.95 0.08)
+(pipe 235.5 236.9 4.95 233.5 236.9 4.95 0.08)
+(pipe 235.5 236.7 4.95 233.5 236.7 4.95 0.08)
+(pipe 235.5 236.5 4.95 233.5 236.5 4.95 0.08)
+(pipe 235.5 236.3 4.95 233.5 236.3 4.95 0.08)
+(pipe 235.5 236.1 4.95 233.5 236.1 4.95 0.08)
+(pipe 235.5 235.9 4.95 233.5 235.9 4.95 0.08)
+(pipe 235.5 235.7 4.95 233.5 235.7 4.95 0.08)
 
 
 (add-teleport 244 250 244 244 0.1)
@@ -33,26 +33,26 @@
 
 (cond
  ((= (difficulty) *easy*)
-         (set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 231 233) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
+         (set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 230.5 232.5) 0.0 0.3 1.0) 0.0 0.5 0.0) 6.5) 3.0)
  )
  ((= (difficulty) *normal*)
          (set-acceleration (set-modtime (set-primary-color (set-secondary-color
-(new-mr-black 231 233)
+(new-mr-black 230.5 232.5)
 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
  )
  ((= (difficulty) *hard*)
          (set-acceleration (set-modtime (set-primary-color (set-secondary-color
-(new-mr-black 231 233)
+(new-mr-black 230.5 232.5)
 1.0 1.0 1.0) 0.0 0.3 1.0) *mod-speed* -1.) 8.0)
  )
 )
 
 
-(diamond 208.0 236.0)
+(diamond 207.5 235.5)
 
-(set-modtime (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 225.0 211.0) 1.0 1.0 1.0) 0.5 1.0 0.0) 8.0) *mod-large* -1.)
+(set-modtime (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 224.5 210.5) 1.0 1.0 1.0) 0.5 1.0 0.0) 8.0) *mod-large* -1.)
 
-(set-modtime (set-primary-color (set-acceleration (new-mr-black 218.5 211.5) 2.3) 0.8 0.0 0.0) *mod-spike* -1.)
+(set-modtime (set-primary-color (set-acceleration (new-mr-black 218.0 211.0) 2.3) 0.8 0.0 0.0) *mod-spike* -1.)
 
 (add-goal 225 216 #f "frg10")
 (add-goal 224 216 #f "frg10")
@@ -60,10 +60,10 @@
 (define bonus-goto "frg10")
 (set-primary-color (add-goal 199 227 #t "bonusb") 1.0 1.0 1.0)
 
-(add-flag 210 236 30 0 0.5)
-(add-flag 218 239 30 0 1.5)
-(add-flag 208 219 30 0 1.5)
-(add-flag 209 216 30 0 1.5)
+(add-flag 210 236 30 #f 0.5)
+(add-flag 218 239 30 #f 1.5)
+(add-flag 208 219 30 #f 1.5)
+(add-flag 209 216 30 #f 1.5)
 
 (define speed (cond
  ((= (difficulty) *easy*) .6)
@@ -76,7 +76,7 @@
 (add-cyclic-platform 220 239 220 239 3.0 5.0 4. speed)
 (add-cyclic-platform 221 239 221 239 3.0 5.0 2. speed)
 
-(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 207.5 233.5) 0.0 0.3 1.0) 0.0 0.5 0.0)6.5) 3.0)
+(set-horizon (set-acceleration (set-primary-color (set-secondary-color (new-mr-black 207 233) 0.0 0.3 1.0) 0.0 0.5 0.0)6.5) 3.0)
 
 (jump 0.0)
 

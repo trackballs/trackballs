@@ -10,7 +10,7 @@
 (add-goal 245 247 #t "con4")
 
 (start-time 150)
-(set-start-position 251.5 250.5)
+(set-start-position 251 250)
 
 
 ; To castle gate
@@ -34,22 +34,22 @@
 (add-cyclic-platform 246 217 246 217 -8. -5.5 6. 0.5)
 
 ; spikes for making the shortcut more difficult
-(add-spike 246.5 226.5 .75 1.)
-(add-spike 251.5 226.5 .75 1.)
+(add-spike 246 226 .75 1.)
+(add-spike 251 226 .75 1.)
 
 ; Speed so we can make the jump from the castle
-(add-modpill 227 233 *mod-speed* 10 20)
+(add-modpill 226.5 232.5 *mod-speed* 10 20)
 
 ; Hells gate keeping mr black safe ...
-(define hellgate (forcefield 240.0 233.5 0.0 5.0 0.0 0.0 1.0 *ff-bounce*))
+(define hellgate (forcefield 239.5 233.0 0.0 5.0 0.0 0.0 1.0 *ff-bounce*))
 ; ... until the switch is turned
-(switch 242 234.5 (lambda() (set-onoff hellgate #f)) (lambda() (set-onoff hellgate #f))) 
+(switch 241 234 (lambda() (set-onoff hellgate #f)) (lambda() (set-onoff hellgate #f))) 
 
-(define satan (new-mr-black 242 232))
+(define satan (new-mr-black 241.5 231.5))
 (set-horizon satan 100)
 
-(sign (_ "Hell's entrance") 1 30 -1 242 245)
-(sign (_ "Hell's gate") 1 30 -1 242 233)
-(sign (_ "Hell's castle") 1 30 -1 227 234)
-(sign (_ "Hell's fire") 1 30 -1 237 215)
-(sign (_ "Hell freezing over") 1 30 -1 252 241)
+(sign (_ "Hell's entrance") 1 30 -1 241.5 244.5)
+(sign (_ "Hell's gate") 1 30 -1 241.5 232.5)
+(sign (_ "Hell's castle") 1 30 -1 226.5 233.5)
+(sign (_ "Hell's fire") 1 30 -1 236.5 214.5)
+(sign (_ "Hell freezing over") 1 30 -1 251.5 240.5)

@@ -30,9 +30,8 @@
 
 int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
+ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
     : Ball(), kind(kind), resurrecting(resurrecting), time(time) {
-  assign(position, this->position);
   no_physics = 1;
   realRadius = 0.2;
   radius = realRadius;
@@ -59,6 +58,10 @@ ModPill::ModPill(Coord3d position, int kind, int time, int resurrecting)
     specularColor[1] = 0.9;
     specularColor[2] = 0.2;
   }
+
+  position[0] = x;
+  position[1] = y;
+  position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
 
   alive = 1;
 }

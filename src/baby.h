@@ -25,7 +25,7 @@
 
 class Baby : public Black {
  public:
-  Baby(double x, double y);
+  Baby(Real x, Real y);
   ~Baby();
   void die(int how);
 

@@ -19,26 +19,30 @@
          (start-time 370)
  )
 )
-(set-start-position 156.5 65.5)
+(set-start-position 156 65)
 
 
 ;; turning off the HQ entry Forcefield
-(trigger 149.0 73.0 1.0
+(define iced-once #f)
+(trigger 147.5 72.5 2.0
  (lambda ()
-  (set-cell-flag 144 72 149 77 *cell-ice* #t)
+  (if (not iced-once)
+    (begin
+      (set-cell-flag 144 72 149 77 *cell-ice* #t)
+      (set! iced-once #t))
  )
-)
+))
 
 
 
-(define mr-mini1 (set-modtime (new-mr-black 147 75) *mod-small* -1.))
+(define mr-mini1 (set-modtime (new-mr-black 146.5 74.5) *mod-small* -1.))
 
 
 
 (on-event *death* mr-mini1
  (lambda (subject object)
   (set-cell-flag 144 72 149 77 *cell-ice* #f)
-  (pipe 145.5 77.9 2.4 145.5 84.1 2.8 0.5)
+  (pipe 145 77.4 2.4 145 83.6 2.8 0.5)
  )
 )
 
@@ -50,14 +54,14 @@
 
 (define ff1
  (set-primary-color
-  (forcefield 155 75 0.0 3.0 0.0 0.0 1.5 *ff-bounce*)
+  (forcefield 154.5 74.5 0.0 3.0 0.0 0.0 1.5 *ff-bounce*)
  0.0 1.0 0.0)
 )
 
 
 
 (set-primary-color
- (switch 156.5 78.5 
+ (switch 156 78 
   (lambda ()
    (set-onoff ff1 #t)
   )
@@ -75,14 +79,14 @@
 ;; the part of the camp where you have to trap white marbles
 (define ff2
  (set-primary-color
-  (forcefield 173 78 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
+  (forcefield 172.5 77.5 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
  0.0 1.0 0.0)
 )
 
 
 
 (set-primary-color
- (switch 174 82
+ (switch 173.5 81.5
   (lambda ()
    (set-onoff ff2 #t)
   )
@@ -100,7 +104,7 @@
    (set-horizon
     (set-secondary-color
      (set-primary-color
-      (new-mr-black 171 75)
+      (new-mr-black 170.5 74.5)
      1.0 1.0 1.0)
     0.7 0.7 0.7)
    200.0)
@@ -110,20 +114,20 @@
 
 
 
-(diamond 186.5 75.5)
+(diamond 186 75)
 
 
 
 (define ff3
  (set-primary-color
-  (forcefield 197 65 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
+  (forcefield 196.5 64.5 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
  0.0 1.0 0.0)
 )
 
 
 
 (set-primary-color
- (switch 201 71 
+ (switch 200.5 70.5 
   (lambda ()
    (set-onoff ff3 #t)
    (set-cell-heights 197 74 197 76 4.2 4.2 4.2 4.2)
@@ -142,7 +146,7 @@
   (set-acceleration
    (set-primary-color
     (set-secondary-color
-     (new-mr-black 186 63)
+     (new-mr-black 185.5 62.5)
     0.0 0.3 1.0)
    0.0 0.5 0.0)
   6.5)
@@ -157,7 +161,7 @@
    (set-horizon
     (set-secondary-color
      (set-primary-color
-      (new-mr-black 192 70)
+      (new-mr-black 191.5 69.5)
      1.0 1.0 1.0)
     0.7 0.7 0.7)
    200.0)
@@ -167,16 +171,16 @@
 
 
 
-(set-primary-color (pipe 191.5 68.5 4.7 191.5 65.5 2.7 0.4) 0.3 0.3 0.3)
-(set-primary-color (pipe-connector 191.5 65.5 2.7 0.4) 0.3 0.3 0.3)
-(set-primary-color (pipe 191.5 65.5 2.7 191.5 55.5 2.7 0.4) 0.3 0.3 0.3)
-(set-primary-color (pipe-connector 191.5 55.5 2.7 0.4) 0.3 0.3 0.3)
-(set-primary-color (pipe 191.5 55.5 2.7 191.5 52.5 4.7 0.4) 0.3 0.3 0.3)
+(set-primary-color (pipe 190.5 68.0 4.7 191.0 65.0 2.7 0.4) 0.3 0.3 0.3)
+(set-primary-color (pipe-connector 191.0 65.0 2.7 0.4) 0.3 0.3 0.3)
+(set-primary-color (pipe 191.0 65.0 2.7 191.0 55.0 2.7 0.4) 0.3 0.3 0.3)
+(set-primary-color (pipe-connector 191.0 55.0 2.7 0.4) 0.3 0.3 0.3)
+(set-primary-color (pipe 191.0 55.0 2.7 191.0 52.0 4.7 0.4) 0.3 0.3 0.3)
 
 
 
 ;; the part with sand, nitro and the bonus
-(diamond 189.5 52.5)
+(diamond 189.0 52.0)
 
 
 
@@ -186,7 +190,7 @@
    (set-horizon
     (set-secondary-color
      (set-primary-color
-      (new-mr-black 201 45)
+      (new-mr-black 200.5 44.5)
      1.0 1.0 1.0)
     0.7 0.7 0.7)
    200.0)
@@ -196,13 +200,13 @@
 
 
 
-(sign (_ "The Marble HQ - Do not Enter!") 0.8 20 -1 156.5 75)
+(sign (_ "The Marble HQ - Do not Enter!") 0.8 20 -1 156.0 74.5)
 
 
 
 (define ff4
  (set-primary-color
-  (forcefield 204 51 0.0 1.0 0.0 0.0 1.5 *ff-bounce*)
+  (forcefield 203.5 50.5 0.0 1.0 0.0 0.0 1.5 *ff-bounce*)
  1.0 0.0 0.0)
 )
 
@@ -210,7 +214,7 @@
 
 
 (set-primary-color
- (switch 201.5 53.5
+ (switch 201 53
   (lambda ()
    (set-onoff ff4 #t)
   )
@@ -225,7 +229,7 @@
 
 (define ff5
  (set-primary-color
-  (forcefield 209 55 0.0 3.0 0.0 0.0 1.5 *ff-bounce*)
+  (forcefield 208.5 54.5 0.0 3.0 0.0 0.0 1.5 *ff-bounce*)
  1.0 1.0 0.0)
 )
 
@@ -233,7 +237,7 @@
 
 
 (set-primary-color
- (switch 207.5 50.5
+ (switch 207 50
   (lambda ()
    (set-onoff ff5 #t)
   )
@@ -246,21 +250,21 @@
 
 
 
-(set-primary-color (add-flag 204 47 500 1 0.1) 1.0 1.0 0.0)
+(set-primary-color (add-flag 204 47 500 #t 0.1) 1.0 1.0 0.0)
 (add-cactus 204 47 0.4)
 
 
 
 
 
-(add-modpill 225.5 58.5 *mod-nitro* 15 15)
+(add-modpill 225 58 *mod-nitro* 15 15)
 
 
 
 
 (define ff6
  (set-primary-color
-  (forcefield 218 58 0.0 5.0 0.0 0.0 1.5 *ff-bounce*)
+  (forcefield 217.5 57.5 0.0 5.0 0.0 0.0 1.5 *ff-bounce*)
  0.0 1.0 1.0)
 )
 
@@ -268,7 +272,7 @@
 
 
 (set-primary-color
- (switch 221 60
+ (switch 220.5 59.5
   (lambda ()
    (set-onoff ff6 #t)
   )
@@ -287,7 +291,7 @@
    (set-horizon
     (set-secondary-color
      (set-primary-color
-      (new-mr-black 221 56)
+      (new-mr-black 220.5 55.5)
      1.0 1.0 1.0)
     0.7 0.7 0.7)
    200.0)
@@ -297,7 +301,7 @@
 
 
 
-(diamond 210.5 64.5)
+(diamond 210 64)
 
 
 
@@ -307,7 +311,7 @@
 
 (define ff9
  (set-primary-color
-  (forcefield 233 97 0.0 2.0 0.0 0.0 1.5 *ff-bounce*)
+  (forcefield 232.5 96.5 0.0 2.0 0.0 0.0 1.5 *ff-bounce*)
  0.0 0.1 0.3)
 )
 
@@ -315,7 +319,7 @@
 
 
 (set-primary-color
- (switch 234.5 100.5
+ (switch 234 100
   (lambda ()
    (set-onoff ff9 #t)
   )
@@ -337,13 +341,13 @@
 ;; (bonus)
 
 
-(sign (_ "Bonus") 0.8 20.0 -1 233 109)
+(sign (_ "Bonus") 0.8 20.0 -1 232.5 108.5)
 
 
-(trigger 232.5 100.5 0.5
+(trigger 232 100 0.5
  (lambda ()
   (set-primary-color
-   (pipe 221.5 100.5 4.7 228.5 108.5 4.7 0.4)
+   (pipe 221 100 4.7 228 108 4.7 0.4)
   0.1 0.1 0.1)
  )
 )
@@ -357,7 +361,7 @@
    (set-horizon
     (set-secondary-color
      (set-primary-color
-      (new-mr-black 240.5 128.5)
+      (new-mr-black 240 128)
      1.0 1.0 1.0)
     0.7 0.7 0.7)
    200.0)
@@ -369,7 +373,7 @@
 
 (define ff7
  (set-primary-color
-  (forcefield 240 126 0.0 1.0 0.0 0.0 2.5 *ff-bounce*)
+  (forcefield 239.5 125.5 0.0 1.0 0.0 0.0 2.5 *ff-bounce*)
  1.0 0.0 1.0)
 )
 
@@ -377,7 +381,7 @@
 
 
 (set-primary-color
- (switch 232.5 115.5
+ (switch 232. 115
   (lambda ()
    (set-onoff ff7 #t)
   )
@@ -392,7 +396,7 @@
 
 
 (set-primary-color
- (switch 240.5 128.5
+ (switch 240 128
   (lambda ()
    (set-onoff ff7 #t)
   )
@@ -410,13 +414,13 @@
 
 
 (set-primary-color
- (add-flag 243 138 500 1 0.1)
+ (add-flag 243 138 500 #t 0.1)
 1.0 1.0 0.0)
 
 
 
 
-(trigger 233.5 113.5 1.5
+(trigger 233 113 1.5
  (lambda ()
   (camera-angle 0.0 1.0)
  )
@@ -424,7 +428,7 @@
 
 
 
-(trigger 240.5 134.5 0.5
+(trigger 240 134 0.5
  (lambda ()
   (camera-angle 0.0 0.0)
  )
@@ -433,7 +437,7 @@
 
 
 
-(trigger 210.5 64.5 0.5
+(trigger 210 64 0.5
  (lambda ()
   (camera-angle 0.0 0.0)
  )
@@ -445,46 +449,16 @@
 
 
 
-(diamond 234 89)
+(diamond 233.5 88.5)
 
 
 
 
 (define ff10
  (set-primary-color
-  (forcefield 244 79 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
+  (forcefield 243.5 78.5 0.0 0.0 2.0 0.0 1.5 *ff-bounce*)
  1.0 0.5 0.0)
 )
-
-
-
-
-(set-primary-color
- (switch 253.5 68.5
-  (lambda ()
-   (set-onoff ff10 #t)
-  )
-  (lambda ()
-   (set-onoff ff10 #f)
-  )
- )
-1.0 0.5 0.0)
-
-
-
-
-
-(add-modpill 254 40 *mod-extra-life* 10 0)
-
-
-
-
-
-(set-primary-color 
- (pipe 254.5 68.1 4.7 254.5 48.5 4.7 0.4)
-0.0 0.5 0.0 0.5)
-
-
 
 
 
@@ -496,7 +470,39 @@
  )
 )
 
-(switch 249.5 75.5
+(set-primary-color
+ (switch 253 68
+  (lambda ()
+   (set-onoff ff10 #t)
+  )
+  (lambda ()
+   (set-onoff ff10 #f)
+   ; reset magic platform
+   (set-animator-direction magic-platform -0.08)
+  )
+ )
+1.0 0.5 0.0)
+
+
+
+
+
+(add-modpill 253.5 39.5 *mod-extra-life* 10 0)
+
+
+
+
+
+(set-primary-color 
+ (pipe 254 67.6 4.7 254 48.0 4.7 0.4)
+0.0 0.5 0.0 0.5)
+
+
+
+
+
+
+(switch 249 75
  (lambda ()
   (set-animator-direction magic-platform -0.08)
  )
@@ -510,14 +516,14 @@
 
 
 (set-primary-color
- (pipe 249.5 75.9 9.2 249.5 90.5 9.2 0.4)
+ (pipe 249 75 9.2 249 90 9.2 0.4)
 0.5 0.5 0.0 0.5)
 
 
 
 
 
-(sign (_ "Commander's Hall") 0.8 20 -1 249.5 90.5)
+(sign (_ "Commander's Hall") 0.8 20 -1 249 90)
 
 
 
@@ -527,7 +533,7 @@
 ;; The fight against "Marwin the commander of evil marbles"
 
 
-(trigger 249.5 109.5 1.5
+(trigger 249 109 1.5
  (lambda ()
   (set-cell-heights 248 103 250 107 -8.0 -8.0 -8.0 -8.0)
   (thick-fog)
@@ -536,10 +542,10 @@
 )
 
 
-(diamond 249.5 109.5)
+(diamond 249 109)
 
 
-(trigger 249.5 107.5 0.3 
+(trigger 249 107 0.3 
  (lambda ()
   (play-effect "evillaugh.wav")
  )
@@ -557,7 +563,7 @@
    (set-modtime
     (set-primary-color 
      (set-texture
-      (new-mr-black 249.5 115.5)
+      (new-mr-black 249 115)
      "texture4.png")
     1.0 1.0 1.0)
    *mod-large* -1.)
@@ -570,7 +576,7 @@
 
 
 (define the-trigger
- (trigger 249.5 115.5 1.5
+ (trigger 249 115 1.5
   (lambda ()
    (set-horizon marwin 50.0)
   )
@@ -582,7 +588,7 @@
 (on-event *death* marwin
  (lambda (subject object)
   (play-effect "kill_death.wav")
-  (set-primary-color (pipe 249.5 116.5 10.7 249.5 121.5 10.7 0.4) 0.5 0.5 0.5 0.5)
+  (set-primary-color (pipe 249 116 10.7 249 121 10.7 0.4) 0.5 0.5 0.5 0.5)
   (day)
  )
 )

@@ -24,18 +24,16 @@
 #include "player.h"
 #include "sound.h"
 
-Flag::Flag(int x, int y, int points, int visible, Real radius) {
+Flag::Flag(Real x, Real y, int points, int visible, Real radius) {
   scoreOnDeath = Game::defaultScores[SCORE_FLAG][0];
   timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
 
   scoreOnDeath = points;
 
-  this->x = x;
-  this->y = y;
   this->visible = visible;
   this->radius = radius;
-  position[0] = x + 0.5;
-  position[1] = y + 0.5;
+  position[0] = x;
+  position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   primaryColor[0] = 0.5;
   primaryColor[1] = 0.5;

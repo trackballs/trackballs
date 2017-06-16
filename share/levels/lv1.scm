@@ -12,39 +12,39 @@
 
 (restart-time 60.0)
 
-(set-start-position 252.5 252.5)
+(set-start-position 252 252)
 (start-time 150)
 
 (snow 0.5)
 ;(add-goal 252 250 #f "lv2") for debugging
-;(add-modpill 252.5 253.5 *mod-large* 30 -1)
-;(add-modpill 253.5 253.5 *mod-small* 30 -1)
+;(add-modpill 252 253 *mod-large* 30 -1)
+;(add-modpill 253 253 *mod-small* 30 -1)
 
-(if (= (difficulty) *easy*) (add-modpill 252.5 253.5 *mod-spike* 30 -1))
+(if (= (difficulty) *easy*) (add-modpill 252 253 *mod-spike* 30 -1))
 
 ;; Secret bonus level
 (define bonus-goto "lv2")
 (add-goal 253 203 #f "bonus")
-(add-modpill 253.5 196.5 *mod-frozen* 5 (- 22 (* 3 (difficulty))))
+(add-modpill 253 196 *mod-frozen* 5 (- 22 (* 3 (difficulty))))
 
 ;; This would create a forcefield and a switch turning it on/off
 (if (= (difficulty) *hard*)
   (let ()
-    (define ff (forcefield 251.5 250.5 0.0 
+    (define ff (forcefield 251.0 250 0.0 
                2.0 0.0 0.0 
                0.5 *ff-kill*))
-    (switch 252.5 249.5 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
+    (switch 252 249 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
     ))
 
 ;; This is the goal
 (add-goal 219 204 #f "lv2")
 
-(add-flag 252 232 250 0 1.0) ;; After the jump
-(add-flag 241 245 150 1 0.1) ;; Where the black ball is
-(add-flag 231 229 100 0 1.0)
-(add-flag 224 212 100 1 0.1)
-(add-flag 219 199 150 1 0.1)
-(add-flag 224 198 250 1 0.1)
+(add-flag 252 232 250 #f 1.0) ;; After the jump
+(add-flag 241 245 150 #t 0.1) ;; Where the black ball is
+(add-flag 231 229 100 #f 1.0)
+(add-flag 224 212 100 #t 0.1)
+(add-flag 219 199 150 #t 0.1)
+(add-flag 224 198 250 #t 0.1)
 
 (define speed 0.2)
 (cond
@@ -53,24 +53,24 @@
  ((= (difficulty) *hard*) (set! speed 0.30))
 )
 
-(add-spike 250.5 228.5 speed -0.00)
-(add-spike 249.5 228.5 speed -0.20)
-(add-spike 248.5 228.5 speed -0.40)
-(add-spike 247.5 228.5 speed -0.60)
-(add-spike 246.5 228.5 speed -0.80)
-(add-spike 245.5 228.5 speed -1.00)
+(add-spike 250 228 speed -0.00)
+(add-spike 249 228 speed -0.20)
+(add-spike 248 228 speed -0.40)
+(add-spike 247 228 speed -0.60)
+(add-spike 246 228 speed -0.80)
+(add-spike 245 228 speed -1.00)
 
-(add-flag 240 219 150 1 0.1)
-(add-flag 232 218 250 1 0.1)
+(add-flag 240 219 150 #t 0.1)
+(add-flag 232 218 250 #t 0.1)
 
 
 ; new
-(add-sidespike 245.5 245.5 speed 0.0 4)
-(add-sidespike 247.5 245.5 speed 0.1 4)
-(add-sidespike 249.5 245.5 speed 0.2 4)
+(add-sidespike 245 245 speed 0.0 4)
+(add-sidespike 247 245 speed 0.1 4)
+(add-sidespike 249 245 speed 0.2 4)
 
-(set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 241.5 245.5) 0.8 0.8 0.4)
-(define mr-black (new-mr-black 241.5 245.5))
+(set-primary-color (sign (_ "Mr. Black") 1.0 15.0 0.0 241 245) 0.8 0.8 0.4)
+(define mr-black (new-mr-black 241 245))
 (if (= (difficulty) *hard*) (set-modtime mr-black *mod-spike* -1.))
 (set-acceleration mr-black 2.0)
 
@@ -91,13 +91,13 @@
 ;(set-primary-color mr-black 0.5 1.0 0.5)
 ;(set-specular-color mr-black 0.5 1.0 0.5)
 
-(set-primary-color (sign (_ "and his Minions") 1.0 15.0 0.0 233.5 245.5) 0.8 0.8 0.4)
-(new-baby 233.5 245.5)
-(new-baby 232.2 245.0)
-(new-baby 233.5 246.0)
-(new-baby 232.2 244.7)
-(new-baby 232.8 246.5)
-(new-baby 233.9 246.2)
+(set-primary-color (sign (_ "and his Minions") 1.0 15.0 0.0 233 245) 0.8 0.8 0.4)
+(new-baby 233 245)
+(new-baby 231.7 244.5)
+(new-baby 233.0 245.5)
+(new-baby 231.7 244.2)
+(new-baby 232.3 246.0)
+(new-baby 233.4 245.7)
 
 (cond
  ((= (difficulty) *easy*) (set! speed 0.60))
@@ -130,7 +130,7 @@
  ;;; Low, High, Time Offset, Speed
  2. 3. 0.5 speed)
 
-(diamond 242 229)
+(diamond 241.5 228.5)
 
 ;;; modpill-types:
 ;;; *mod-speed* - "Speedball": Makes the player go faster
@@ -140,8 +140,7 @@
 ;;; *mod-dizzy* - "Dizzy": Makes ball dizzy 
 ;;; *mod-frozen* - "Frozen": Player can't move ball as long as it is frozen
 
-(add-modpill 231.5 212.5 *mod-spike* 25 40)
-;(add-modpill 252.5 250.5 1 10 0)
+(add-modpill 231 212 *mod-spike* 25 40)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;,
 ;;; Note. These are some extra functions you can use

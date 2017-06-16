@@ -26,7 +26,7 @@
 #include "map.h"
 #include "sound.h"
 
-Bird::Bird(int x, int y, int dx, int dy, Real size, Real speed) {
+Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed) {
   this->x = x;
   this->y = y;
   this->dx = dx - x;
@@ -34,8 +34,8 @@ Bird::Bird(int x, int y, int dx, int dy, Real size, Real speed) {
   this->size = size;
   this->speed = speed;
   this->lng = sqrt((double)(this->dx * this->dx + this->dy * this->dy));
-  position[0] = (Real)x + 0.5;
-  position[1] = (Real)y + 0.5;
+  position[0] = x;
+  position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
   primaryColor[0] = 1.;
   primaryColor[1] = 1.;

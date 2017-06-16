@@ -528,7 +528,7 @@ void Map::draw(int stage, int cx, int cy) {
     }
   }
 
-  if (!activeView.calculating_shadows) {
+  if (!activeView.calculating_shadows && !(Game::current && !Game::current->useGrid)) {
     glUseProgram(shaderLine);
     setViewUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);

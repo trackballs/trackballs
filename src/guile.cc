@@ -55,6 +55,12 @@
 
 #include <zlib.h>
 
+/* Object coordinates are shifted by DX/DY relative to map coordinates in the API
+ * Thus, a flag, ball, etc. placed at (222,225) will appear at (222+DX,225+DY)
+ * This makes it much more convienient to place objects */
+#define DX 0.5
+#define DY 0.5
+
 scm_t_bits smobAnimated_tag;
 scm_t_bits smobGameHook_tag;
 
@@ -233,9 +239,10 @@ SCM_DEFINE(new_mr_black, "new-mr-black", 2, 0, 0, (SCM x, SCM y),
            "Creates an opponend ball at specified position. Returns an 'animated' object.")
 #define FUNC_NAME s_new_mr_black
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  if (Game::current) return smobAnimated_make(new Black(scm_to_double(x), scm_to_double(y)));
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  if (Game::current)
+    return smobAnimated_make(new Black(scm_to_double(x) + DX, scm_to_double(y) + DY));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -245,9 +252,10 @@ SCM_DEFINE(new_baby, "new-baby", 2, 0, 0, (SCM x, SCM y),
            "Creates a baby ball at specified position. Returns an 'animated' object.")
 #define FUNC_NAME s_new_baby
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  if (Game::current) return smobAnimated_make(new Baby(scm_to_double(x), scm_to_double(y)));
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  if (Game::current)
+    return smobAnimated_make(new Baby(scm_to_double(x) + DX, scm_to_double(y) + DY));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -258,14 +266,15 @@ SCM_DEFINE(add_teleport, "add-teleport", 5, 0, 0, (SCM x, SCM y, SCM dx, SCM dy,
            "an 'animated' object.")
 #define FUNC_NAME s_add_teleport
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dx), dx, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dy), dy, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dx), dx, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dy), dy, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
   if (Game::current)
-    return smobAnimated_make(new Teleport(scm_to_int(x), scm_to_int(y), scm_to_int(dx),
-                                          scm_to_int(dy), scm_to_double(radius)));
+    return smobAnimated_make(new Teleport(scm_to_double(x) + DX, scm_to_double(y) + DY,
+                                          scm_to_double(dx) + DX, scm_to_double(dy) + DY,
+                                          scm_to_double(radius)));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -276,16 +285,16 @@ SCM_DEFINE(add_bird, "add-bird", 6, 0, 0, (SCM x, SCM y, SCM dx, SCM dy, SCM siz
            "'animated' object")
 #define FUNC_NAME s_add_bird
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dx), dx, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dy), dy, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(size), size, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(speed), speed, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dx), dx, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dy), dy, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(size), size, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG5, FUNC_NAME);
   if (Game::current)
-    return smobAnimated_make(new Bird(scm_to_int(x), scm_to_int(y), scm_to_int(dx),
-                                      scm_to_int(dy), scm_to_double(size),
-                                      scm_to_double(speed)));
+    return smobAnimated_make(new Bird(scm_to_double(x) + DX, scm_to_double(y) + DY,
+                                      scm_to_double(dx) + DX, scm_to_double(dy) + DY,
+                                      scm_to_double(size), scm_to_double(speed)));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -295,13 +304,13 @@ SCM_DEFINE(add_flag, "add-flag", 5, 0, 0, (SCM x, SCM y, SCM points, SCM visible
            "Creates a flag giving points when captured. Returns an 'animated' object.")
 #define FUNC_NAME s_add_flag
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, s_add_flag);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, s_add_flag);
-  SCM_ASSERT(SCM_NUMBERP(points), points, SCM_ARG3, s_add_flag);
-  SCM_ASSERT(SCM_NUMBERP(visible), visible, SCM_ARG4, s_add_flag);
-  SCM_ASSERT(SCM_REALP(radius), radius, SCM_ARG5, s_add_flag);
-  Flag *flag = new Flag(scm_to_int(x), scm_to_int(y), scm_to_int(points), scm_to_int(visible),
-                        scm_to_double(radius));
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(points), points, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(visible), visible, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
+  Flag *flag = new Flag(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_int(points),
+                        scm_to_bool(visible), scm_to_double(radius));
   return smobAnimated_make(flag);
 }
 #undef FUNC_NAME
@@ -312,13 +321,13 @@ SCM_DEFINE(add_colormodifier, "add-colormodifier", 7, 0, 0,
            "Allow to modify the color(s) of a cell. Returns an 'animated' object")
 #define FUNC_NAME s_add_colormodifier
 {
-  SCM_ASSERT(SCM_NUMBERP(col), col, SCM_ARG1, s_add_colormodifier);
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG2, s_add_colormodifier);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG3, s_add_colormodifier);
-  SCM_ASSERT(SCM_REALP(min), min, SCM_ARG4, s_add_colormodifier);
-  SCM_ASSERT(SCM_REALP(max), max, SCM_ARG5, s_add_colormodifier);
-  SCM_ASSERT(SCM_REALP(freq), freq, SCM_ARG6, s_add_colormodifier);
-  SCM_ASSERT(SCM_REALP(phase), phase, SCM_ARG7, s_add_colormodifier);
+  SCM_ASSERT(scm_is_integer(col), col, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(min), min, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(max), max, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(freq), freq, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG7, FUNC_NAME);
   ColorModifier *colormodifier =
       new ColorModifier(scm_to_int(col), scm_to_int(x), scm_to_int(y), scm_to_double(min),
                         scm_to_double(max), scm_to_double(freq), scm_to_double(phase));
@@ -331,20 +340,20 @@ SCM_DEFINE(add_heightmodifier, "add-heightmodifier", 7, 3, 0,
            (SCM corner, SCM x, SCM y, SCM min, SCM max, SCM freq, SCM phase, SCM n1, SCM n2,
             SCM n3),
            "Allow to modify the height of a cell's corner. Returns an 'animated' object")
-#define FUNC_NAME s_add_colormodifier
+#define FUNC_NAME s_add_heightmodifier
 {
   int not1 = -1, not2 = -1, not3 = -1;
 
-  SCM_ASSERT(SCM_NUMBERP(corner), corner, SCM_ARG1, s_add_heightmodifier);
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG2, s_add_heightmodifier);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG3, s_add_heightmodifier);
-  SCM_ASSERT(SCM_REALP(min), min, SCM_ARG4, s_add_heightmodifier);
-  SCM_ASSERT(SCM_REALP(max), max, SCM_ARG5, s_add_heightmodifier);
-  SCM_ASSERT(SCM_REALP(freq), freq, SCM_ARG6, s_add_heightmodifier);
-  SCM_ASSERT(SCM_REALP(phase), phase, SCM_ARG7, s_add_heightmodifier);
-  if (SCM_NUMBERP(n1)) not1 = scm_to_int(n1);
-  if (SCM_NUMBERP(n2)) not1 = scm_to_int(n2);
-  if (SCM_NUMBERP(n3)) not1 = scm_to_int(n3);
+  SCM_ASSERT(scm_is_integer(corner), corner, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(min), min, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(max), max, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(freq), freq, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG7, FUNC_NAME);
+  if (scm_is_real(n1)) not1 = scm_to_int(n1);
+  if (scm_is_real(n2)) not1 = scm_to_int(n2);
+  if (scm_is_real(n3)) not1 = scm_to_int(n3);
   HeightModifier *heightmodifier = new HeightModifier(
       scm_to_int(corner), scm_to_int(x), scm_to_int(y), scm_to_double(min), scm_to_double(max),
       scm_to_double(freq), scm_to_double(phase), not1, not2, not3);
@@ -357,10 +366,11 @@ SCM_DEFINE(add_cactus, "add-cactus", 3, 0, 0, (SCM x, SCM y, SCM radius),
            "Creates a cactus at given position.")
 #define FUNC_NAME s_add_cactus
 {
-  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG1, s_add_flag);
-  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG2, s_add_flag);
-  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, s_add_cactus);
-  Cactus *cactus = new Cactus(scm_to_int(x), scm_to_int(y), scm_to_double(radius));
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
+  Cactus *cactus =
+      new Cactus(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(radius));
   return smobAnimated_make(cactus);
 }
 #undef FUNC_NAME
@@ -370,13 +380,13 @@ SCM_DEFINE(add_spike, "add-spike", 4, 0, 0, (SCM x, SCM y, SCM speed, SCM phase)
            "Creates a lethal spike. Returns an 'animated' object.")
 #define FUNC_NAME s_add_spike
 {
-  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, s_add_spike);
-  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, s_add_spike);
-  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, s_add_spike);
-  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, s_add_spike);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, FUNC_NAME);
   Coord3d pos;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
+  pos[0] = scm_to_double(x) + DX;
+  pos[1] = scm_to_double(y) + DY;
   Spike *spike = new Spike(pos, scm_to_double(speed), scm_to_double(phase));
   return smobAnimated_make(spike);
 }
@@ -388,14 +398,14 @@ SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
            "Creates a lethal spike (comming from side). Returns an 'animated' object.")
 #define FUNC_NAME s_add_sidespike
 {
-  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, s_add_sidespike);
-  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, s_add_sidespike);
-  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, s_add_sidespike);
-  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, s_add_sidespike);
-  SCM_ASSERT(scm_is_integer(side), side, SCM_ARG5, s_add_sidespike);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(side), side, SCM_ARG5, FUNC_NAME);
   Coord3d pos;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
+  pos[0] = scm_to_double(x) + DX;
+  pos[1] = scm_to_double(y) + DY;
   SideSpike *sidespike =
       new SideSpike(pos, scm_to_double(speed), scm_to_double(phase), scm_to_int(side));
   return smobAnimated_make(sidespike);
@@ -407,14 +417,14 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
            "Adds a new goal to the map. Returns an 'animated' object.")
 #define FUNC_NAME s_add_goal
 {
-  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG1, s_add_goal);
-  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG2, s_add_goal);
-  SCM_ASSERT(scm_is_bool(rotate), rotate, SCM_ARG3, s_add_goal);
-  SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, s_add_goal);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(rotate), rotate, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, FUNC_NAME);
   char *sname = scm_to_utf8_string(nextLevel);
   if (sname) {
-    Animated *a =
-        (Animated *)new Goal(scm_to_int(x), scm_to_int(y), SCM_NFALSEP(rotate), sname);
+    Animated *a = (Animated *)new Goal(scm_to_double(x) + DX, scm_to_double(y) + DY,
+                                       scm_is_true(rotate), sname);
     return smobAnimated_make(a);
   }
   return SCM_UNSPECIFIED;
@@ -432,9 +442,9 @@ SCM_DEFINE(sign, "sign", 6, 1, 0,
     char *sname = scm_to_utf8_string(text);
     if (strlen(sname) > 0) {
       Coord3d pos;
-      pos[0] = scm_to_double(x);
-      pos[1] = scm_to_double(y);
-      if (SCM_NUMBERP(z))
+      pos[0] = scm_to_double(x) + DX;
+      pos[1] = scm_to_double(y) + DY;
+      if (scm_is_real(z))
         pos[2] = scm_to_double(z);
       else
         pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
@@ -456,17 +466,14 @@ SCM_DEFINE(add_modpill, "add-modpill", 5, 0, 0,
            "Returns an 'animated' object")
 #define FUNC_NAME s_add_modpill
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(kind), kind, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(resurrecting), resurrecting, SCM_ARG5, FUNC_NAME);
-  Coord3d position;
-  position[0] = scm_to_double(x);
-  position[1] = scm_to_double(y);
-  position[2] = 0.0;
-  return smobAnimated_make(
-      new ModPill(position, scm_to_int(kind), scm_to_int(length), scm_to_int(resurrecting)));
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(kind), kind, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(length), length, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(resurrecting), resurrecting, SCM_ARG5, FUNC_NAME);
+  return smobAnimated_make(new ModPill(scm_to_double(x) + DX, scm_to_double(y) + DY,
+                                       scm_to_int(kind), scm_to_int(length),
+                                       scm_to_int(resurrecting)));
 }
 #undef FUNC_NAME
 
@@ -476,18 +483,18 @@ SCM_DEFINE(forcefield, "forcefield", 8, 0, 0,
            "Creats a forcefield. Returns an 'animated' object")
 #define FUNC_NAME s_forcefield
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dx), dx, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dy), dy, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(dz), dz, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(height), height, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(allow), allow, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z), z, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dx), dx, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dy), dy, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(dz), dz, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(height), height, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(allow), allow, SCM_ARG7, FUNC_NAME);
 
   Coord3d pos, dir;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
+  pos[0] = scm_to_double(x) + DX;
+  pos[1] = scm_to_double(y) + DY;
   pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + scm_to_double(z);
   dir[0] = scm_to_double(dx);
   dir[1] = scm_to_double(dy);
@@ -502,11 +509,11 @@ SCM_DEFINE(fun_switch, "switch", 4, 0, 0, (SCM x, SCM y, SCM on, SCM off),
            "Creates a switch. Returns an 'animated' object")
 #define FUNC_NAME s_fun_switch
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(on)), on, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(off)), off, SCM_ARG3, FUNC_NAME);
-  CSwitch *sw = new CSwitch(scm_to_double(x), scm_to_double(y), on, off);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_true(scm_procedure_p(on)), on, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_true(scm_procedure_p(off)), off, SCM_ARG3, FUNC_NAME);
+  CSwitch *sw = new CSwitch(scm_to_double(x) + DX, scm_to_double(y) + DY, on, off);
   return smobAnimated_make(sw);
 }
 #undef FUNC_NAME
@@ -517,19 +524,19 @@ SCM_DEFINE(new_pipe, "pipe", 7, 0, 0,
            "Creates a new pipe. Returns an 'animated' object")
 #define FUNC_NAME s_new_pipe
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z1), z1, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z0), z0, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x1), x1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y1), y1, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z1), z1, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG6, FUNC_NAME);
   Coord3d from, to;
-  from[0] = scm_to_double(x0);
-  from[1] = scm_to_double(y0);
+  from[0] = scm_to_double(x0) + DX;
+  from[1] = scm_to_double(y0) + DY;
   from[2] = scm_to_double(z0);
-  to[0] = scm_to_double(x1);
-  to[1] = scm_to_double(y1);
+  to[0] = scm_to_double(x1) + DX;
+  to[1] = scm_to_double(y1) + DY;
   to[2] = scm_to_double(z1);
   Pipe *pipe = new Pipe(from, to, scm_to_double(radius));
   return smobAnimated_make(pipe);
@@ -541,13 +548,13 @@ SCM_DEFINE(pipe_connector, "pipe-connector", 4, 0, 0, (SCM x0, SCM y0, SCM z0, S
            "Creates a new pipe connector. Returns an 'animated' object")
 #define FUNC_NAME s_pipe_connector
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z0), z0, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z0), z0, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG4, FUNC_NAME);
   Coord3d pos;
-  pos[0] = scm_to_double(x0);
-  pos[1] = scm_to_double(y0);
+  pos[0] = scm_to_double(x0) + DX;
+  pos[1] = scm_to_double(y0) + DY;
   pos[2] = scm_to_double(z0);
   PipeConnector *pipeConnector = new PipeConnector(pos, scm_to_double(radius));
   return smobAnimated_make(pipeConnector);
@@ -559,13 +566,13 @@ SCM_DEFINE(diamond, "diamond", 2, 1, 0, (SCM x, SCM y, SCM z),
            "Creates a new diamond 'save point'. Returns an 'animated' object")
 #define FUNC_NAME s_diamond
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
   Coord3d pos;
-  pos[0] = scm_to_double(x);
-  pos[1] = scm_to_double(y);
+  pos[0] = scm_to_double(x) + DX;
+  pos[1] = scm_to_double(y) + DY;
   pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 0.4;
-  if (SCM_NUMBERP(z)) pos[2] = scm_to_double(z);
+  if (scm_is_real(z)) pos[2] = scm_to_double(z);
   Diamond *d = new Diamond(pos);
   return smobAnimated_make(d);
 }
@@ -577,16 +584,16 @@ SCM_DEFINE(fountain, "fountain", 6, 0, 0,
            "Creates a new fountain object. Returns an 'animated' object")
 #define FUNC_NAME s_fountain
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(randomSpeed), randomSpeed, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(radius), radius, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z), z, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(randomSpeed), randomSpeed, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(strength), strength, SCM_ARG6, FUNC_NAME);
   Fountain *fountain =
       new Fountain(scm_to_double(randomSpeed), scm_to_double(radius), scm_to_double(strength));
-  fountain->position[0] = scm_to_double(x);
-  fountain->position[1] = scm_to_double(y);
+  fountain->position[0] = scm_to_double(x) + DX;
+  fountain->position[1] = scm_to_double(y) + DY;
   fountain->position[2] = scm_to_double(z);
   return smobAnimated_make(fountain);
 }
@@ -602,12 +609,12 @@ SCM_DEFINE(set_position, "set-position", 3, 1, 0, (SCM obj, SCM x, SCM y, SCM z)
 #define FUNC_NAME s_set_position
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG3, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->position[0] = scm_to_double(x);
-  anim->position[1] = scm_to_double(y);
-  if (SCM_NUMBERP(z))
+  anim->position[0] = scm_to_double(x) + DX;
+  anim->position[1] = scm_to_double(y) + DY;
+  if (scm_is_real(z))
     anim->position[2] = scm_to_double(z);
   else
     anim->has_moved();
@@ -623,7 +630,7 @@ SCM_DEFINE(get_position_x, "get-position-x", 1, 0, 0, (SCM obj),
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  return scm_from_double(anim->position[0]);
+  return scm_from_double(anim->position[0] - DX);
 }
 #undef FUNC_NAME
 
@@ -635,7 +642,7 @@ SCM_DEFINE(get_position_y, "get-position-y", 1, 0, 0, (SCM obj),
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  return scm_from_double(anim->position[1]);
+  return scm_from_double(anim->position[1] - DY);
 }
 #undef FUNC_NAME
 
@@ -657,8 +664,8 @@ SCM_DEFINE(set_modtime, "set-modtime", 3, 0, 0, (SCM s_obj, SCM s_mod, SCM s_tim
 #define FUNC_NAME s_set_modtime
 {
   SCM_ASSERT(IS_ANIMATED(s_obj), s_obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(s_mod), s_mod, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(s_time), s_time, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(s_mod), s_mod, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(s_time), s_time, SCM_ARG3, FUNC_NAME);
   int mod = scm_to_int(s_mod);
   SCM_ASSERT(mod >= 0 && mod < NUM_MODS, s_mod, SCM_ARG2, FUNC_NAME);
   double time = scm_to_double(s_time);
@@ -675,7 +682,7 @@ SCM_DEFINE(set_acceleration, "set-acceleration", 2, 0, 0, (SCM obj, SCM accel),
 #define FUNC_NAME s_set_acceleration
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(accel), accel, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(accel), accel, SCM_ARG2, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
   Black *black = dynamic_cast<Black *>(anim);
   if (black) {
@@ -692,7 +699,7 @@ SCM_DEFINE(set_horizon, "set-horizon", 2, 0, 0, (SCM obj, SCM horizon),
 #define FUNC_NAME s_set_horizon
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(horizon), horizon, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(horizon), horizon, SCM_ARG2, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
   Black *black = dynamic_cast<Black *>(anim);
   if (black) {
@@ -710,14 +717,14 @@ SCM_DEFINE(set_primary_color, "set-primary-color", 4, 1, 0,
 #define FUNC_NAME s_set_primary_color
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->primaryColor[0] = scm_to_double(r);
   anim->primaryColor[1] = scm_to_double(g);
   anim->primaryColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->primaryColor[3] = scm_to_double(a);
+  if (scm_is_real(a)) anim->primaryColor[3] = scm_to_double(a);
   return obj;
 }
 #undef FUNC_NAME
@@ -729,14 +736,14 @@ SCM_DEFINE(set_secondary_color, "set-secondary-color", 4, 1, 0,
 #define FUNC_NAME s_set_secondary_color
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->secondaryColor[0] = scm_to_double(r);
   anim->secondaryColor[1] = scm_to_double(g);
   anim->secondaryColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->secondaryColor[3] = scm_to_double(a);
+  if (scm_is_real(a)) anim->secondaryColor[3] = scm_to_double(a);
   return obj;
 }
 #undef FUNC_NAME
@@ -748,14 +755,14 @@ SCM_DEFINE(set_specular_color, "set-specular-color", 4, 1, 0,
 #define FUNC_NAME s_set_specular_color
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->specularColor[0] = scm_to_double(r);
   anim->specularColor[1] = scm_to_double(g);
   anim->specularColor[2] = scm_to_double(b);
-  if (SCM_NUMBERP(a)) anim->specularColor[3] = scm_to_double(a);
+  if (scm_is_real(a)) anim->specularColor[3] = scm_to_double(a);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -766,8 +773,8 @@ SCM_DEFINE(set_flag, "set-flag", 3, 0, 0, (SCM anim, SCM flag, SCM state),
 #define FUNC_NAME s_set_flag
 {
   SCM_ASSERT(IS_ANIMATED(anim), anim, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(flag), flag, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(flag), flag, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(state), state, SCM_ARG3, FUNC_NAME);
   int iflag = scm_to_int(flag);
   Animated *a = (Animated *)SCM_CDR(anim);
   if (SCM_FALSEP(state))
@@ -784,8 +791,8 @@ SCM_DEFINE(set_wind, "set-wind", 3, 0, 0, (SCM pipe, SCM forward, SCM backward),
 #define FUNC_NAME s_set_wind
 {
   SCM_ASSERT(IS_ANIMATED(pipe), pipe, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(forward), forward, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(backward), backward, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(forward), forward, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(backward), backward, SCM_ARG3, FUNC_NAME);
   Pipe *p = dynamic_cast<Pipe *>((Animated *)SCM_CDR(pipe));
   if (p) {
     p->windForward = scm_to_double(forward);
@@ -801,7 +808,7 @@ SCM_DEFINE(set_speed, "set-speed", 2, 0, 0, (SCM obj, SCM speed),
 #define FUNC_NAME s_set_speed
 {
   SCM_ASSERT(IS_GAMEHOOK(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(speed), speed, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG2, FUNC_NAME);
   Spike *spike = dynamic_cast<Spike *>((Animated *)SCM_CDR(obj));
   if (spike) {
     spike->speed = scm_to_double(speed);
@@ -837,7 +844,7 @@ SCM_DEFINE(set_fountain_strength, "set-fountain-strength", 2, 0, 0, (SCM obj, SC
 #define FUNC_NAME s_set_fountain_strength
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(str), str, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(str), str, SCM_ARG2, FUNC_NAME);
   Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
   SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
   fountain->strength = scm_to_double(str);
@@ -852,9 +859,9 @@ SCM_DEFINE(set_fountain_velocity, "set-fountain-velocity", 4, 0, 0,
 #define FUNC_NAME s_set_fountain_velocity
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vz), vz, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(vx), vx, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(vy), vy, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(vz), vz, SCM_ARG4, FUNC_NAME);
   Fountain *fountain = dynamic_cast<Fountain *>((Animated *)SCM_CDR(obj));
   SCM_ASSERT(fountain, obj, SCM_ARG1, FUNC_NAME);
   fountain->velocity[0] = scm_to_double(vx);
@@ -870,7 +877,7 @@ SCM_DEFINE(score_on_death, "score-on-death", 2, 0, 0, (SCM obj, SCM points),
 #define FUNC_NAME s_score_on_death
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(points), points, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(points), points, SCM_ARG2, FUNC_NAME);
   Animated *animated = (Animated *)SCM_CDR(obj);
   animated->scoreOnDeath = scm_to_double(points);
   return SCM_UNSPECIFIED;
@@ -883,25 +890,9 @@ SCM_DEFINE(time_on_death, "time-on-death", 2, 0, 0, (SCM obj, SCM points),
 #define FUNC_NAME s_time_on_death
 {
   SCM_ASSERT(IS_ANIMATED(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(points), points, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(points), points, SCM_ARG2, FUNC_NAME);
   Animated *animated = (Animated *)SCM_CDR(obj);
   animated->timeOnDeath = scm_to_double(points);
-  return SCM_UNSPECIFIED;
-}
-#undef FUNC_NAME
-
-/************* default-on-death *************/
-SCM_DEFINE(default_on_death, "default-on-death", 3, 0, 0, (SCM unitType, SCM score, SCM time),
-           "Set the default score/time for all units of given type")
-#define FUNC_NAME s_default_on_death
-{
-  SCM_ASSERT(SCM_NUMBERP(unitType), unitType, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(score), score, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(time), time, SCM_ARG3, FUNC_NAME);
-  int type = (int)scm_to_double(unitType);
-  SCM_ASSERT(type >= 0 && type < SCORE_MAX, unitType, SCM_ARG1, FUNC_NAME);
-  Game::defaultScores[type][0] = scm_to_double(score);
-  Game::defaultScores[type][1] = scm_to_double(time);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -918,14 +909,14 @@ SCM_DEFINE(add_cyclic_platform, "add-cyclic-platform", 8, 0, 0,
 #define FUNC_NAME s_add_cyclic_platform
 {
   const char *s_add_cyclic_platform = "add-cyclic-platform";
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG1, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG2, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(x2), x2, SCM_ARG3, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_NUMBERP(y2), y2, SCM_ARG4, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(low), low, SCM_ARG5, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(high), high, SCM_ARG6, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(offset), offset, SCM_ARG7, s_add_cyclic_platform);
-  SCM_ASSERT(SCM_REALP(speed), speed, SCM_ARG7, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG1, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG2, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_integer(x2), x2, SCM_ARG3, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_integer(y2), y2, SCM_ARG4, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_real(low), low, SCM_ARG5, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_real(high), high, SCM_ARG6, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_real(offset), offset, SCM_ARG7, s_add_cyclic_platform);
+  SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG7, s_add_cyclic_platform);
   CyclicPlatform *platform = new CyclicPlatform(
       scm_to_int(x1), scm_to_int(y1), scm_to_int(x2), scm_to_int(y2), scm_to_double(low),
       scm_to_double(high), scm_to_double(offset), scm_to_double(speed));
@@ -940,16 +931,16 @@ SCM_DEFINE(
     "Creates an animator object (this is not of class animated!). Returns a 'hook' object")
 #define FUNC_NAME s_animator
 {
-  SCM_ASSERT(SCM_NUMBERP(length), length, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(v0), v0, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(v1), v1, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(repeat), repeat, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(fun) | SCM_NFALSEP(scm_procedure_p(fun)), fun, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(length), length, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(position), position, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(direction), direction, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(v0), v0, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(v1), v1, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(repeat), repeat, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(fun) | scm_is_true(scm_procedure_p(fun)), fun, SCM_ARG7, FUNC_NAME);
   Animator *a = new Animator(scm_to_double(length), scm_to_double(position),
                              scm_to_double(direction), scm_to_double(v0), scm_to_double(v1),
-                             scm_to_int(repeat), SCM_BOOLP(fun) ? NULL : fun);
+                             scm_to_int(repeat), scm_is_bool(fun) ? NULL : fun);
   return smobGameHook_make(a);
 }
 #undef FUNC_NAME
@@ -964,9 +955,9 @@ SCM_DEFINE(set_onoff, "set-onoff", 2, 0, 0, (SCM obj, SCM state),
 #define FUNC_NAME s_set_onoff
 {
   SCM_ASSERT(IS_GAMEHOOK(obj), obj, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(state), state, SCM_ARG2, FUNC_NAME);
   GameHook *h = (GameHook *)SCM_CDR(obj);
-  h->is_on = SCM_NFALSEP(state);
+  h->is_on = scm_is_true(state);
   return obj;
 }
 #undef FUNC_NAME
@@ -989,7 +980,7 @@ SCM_DEFINE(set_animator_direction, "set-animator-direction", 2, 0, 0,
 #define FUNC_NAME s_set_animator_direction
 {
   SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(direction), direction, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(direction), direction, SCM_ARG2, FUNC_NAME);
   Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
   SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
   a->direction = scm_to_double(direction);
@@ -1003,7 +994,7 @@ SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
 #define FUNC_NAME s_set_animator_position
 {
   SCM_ASSERT(IS_GAMEHOOK(animator), animator, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(position), position, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(position), position, SCM_ARG2, FUNC_NAME);
   Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
   SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
   a->position = fmod(scm_to_double(position), a->length);
@@ -1037,8 +1028,9 @@ SCM_DEFINE(night, "night", 0, 0, 0, (), "Turns off the global light for this lev
 SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.")
 #define FUNC_NAME s_fog
 {
-  if (!(SCM_NUMBERP(v) && scm_to_double(v) == 0.0)) Game::current->isNight = 0;
-  if (SCM_NUMBERP(v))
+  SCM_ASSERT(scm_is_real(v) || SCM_UNBNDP(v), v, SCM_ARG1, FUNC_NAME);
+  if (!(scm_is_real(v) && scm_to_double(v) == 0.0)) Game::current->isNight = 0;
+  if (scm_is_real(v))
     Game::current->wantedFogThickness = scm_to_double(v);
   else
     Game::current->wantedFogThickness = 1.0;
@@ -1059,9 +1051,9 @@ SCM_DEFINE(thick_fog, "thick-fog", 0, 0, 0, (), "Turns on a thick fog.")
 SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies color of fog")
 #define FUNC_NAME s_fog_color
 {
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG3, FUNC_NAME);
   Game::current->fogColor[0] = scm_to_double(r);
   Game::current->fogColor[1] = scm_to_double(g);
   Game::current->fogColor[2] = scm_to_double(b);
@@ -1123,6 +1115,7 @@ SCM_DEFINE(start_time, "start-time", 1, 0, 0, (SCM t),
            "Sets the starting time for this track.")
 #define FUNC_NAME s_start_time
 {
+  SCM_ASSERT(scm_is_integer(t), t, SCM_ARG1, FUNC_NAME);
   int it = scm_to_int(t);
   if (Game::current) Game::current->startTime = it;
   return SCM_UNSPECIFIED;
@@ -1133,6 +1126,7 @@ SCM_DEFINE(start_time, "start-time", 1, 0, 0, (SCM t),
 SCM_DEFINE(set_time, "set-time", 1, 0, 0, (SCM t), "Sets the time left for player.")
 #define FUNC_NAME s_set_time
 {
+  SCM_ASSERT(scm_is_integer(t), t, SCM_ARG1, FUNC_NAME);
   int it = scm_to_int(t);
   if (Game::current && Game::current->player1) Game::current->player1->timeLeft = it;
   return SCM_UNSPECIFIED;
@@ -1154,6 +1148,7 @@ SCM_DEFINE(get_time, "get-time", 0, 0, 0, (), "Returns how much time the player 
 SCM_DEFINE(add_time, "add-time", 1, 0, 0, (SCM t), "Adds time for the user.")
 #define FUNC_NAME s_add_time
 {
+  SCM_ASSERT(scm_is_integer(t), t, SCM_ARG1, FUNC_NAME);
   int it = scm_to_int(t);
   if (Game::current && Game::current->player1) {
     Game::current->player1->timeLeft += it;
@@ -1167,6 +1162,7 @@ SCM_DEFINE(add_time, "add-time", 1, 0, 0, (SCM t), "Adds time for the user.")
 SCM_DEFINE(set_score, "set-score", 1, 0, 0, (SCM t), "Sets the score for player.")
 #define FUNC_NAME s_set_score
 {
+  SCM_ASSERT(scm_is_integer(t), t, SCM_ARG1, FUNC_NAME);
   int it = scm_to_int(t);
   if (Game::current && Game::current->player1) Game::current->player1->score = it;
   return SCM_UNSPECIFIED;
@@ -1201,11 +1197,11 @@ SCM_DEFINE(set_start_position, "set-start-position", 2, 0, 0, (SCM x, SCM y),
            "Sets the players start position on this level.")
 #define FUNC_NAME s_set_start_position
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
   if (Game::current) {
-    Game::current->map->startPosition[0] = scm_to_double(x);
-    Game::current->map->startPosition[1] = scm_to_double(y);
+    Game::current->map->startPosition[0] = scm_to_double(x) + DX;
+    Game::current->map->startPosition[1] = scm_to_double(y) + DY;
     Game::current->map->startPosition[2] = Game::current->map->getHeight(
         Game::current->map->startPosition[0], Game::current->map->startPosition[1]);
   }
@@ -1217,7 +1213,7 @@ SCM_DEFINE(set_start_position, "set-start-position", 2, 0, 0, (SCM x, SCM y),
 SCM_DEFINE(snow, "snow", 1, 0, 0, (SCM strength), "Turns on snow, 0 <= strength <= 1.0 ")
 #define FUNC_NAME s_snow
 {
-  SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(strength), strength, SCM_ARG1, FUNC_NAME);
   if (Game::current && Game::current->weather)
     Game::current->weather->snow(scm_to_double(strength));
   return SCM_UNSPECIFIED;
@@ -1228,7 +1224,7 @@ SCM_DEFINE(snow, "snow", 1, 0, 0, (SCM strength), "Turns on snow, 0 <= strength 
 SCM_DEFINE(rain, "rain", 1, 0, 0, (SCM strength), "Turns on rain, 0 <= strength <= 1.0 ")
 #define FUNC_NAME s_rain
 {
-  SCM_ASSERT(SCM_NUMBERP(strength), strength, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(strength), strength, SCM_ARG1, FUNC_NAME);
   if (Game::current && Game::current->weather)
     Game::current->weather->rain(scm_to_double(strength));
   return SCM_UNSPECIFIED;
@@ -1257,7 +1253,7 @@ SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off")
 SCM_DEFINE(jump, "jump", 1, 0, 0, (SCM v), "Scales maximum jump height of player.")
 #define FUNC_NAME s_jump
 {
-  SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->jumpFactor = scm_to_double(v);
   return SCM_UNSPECIFIED;
 }
@@ -1268,7 +1264,7 @@ SCM_DEFINE(scale_oxygen, "scale-oxygen", 1, 0, 0, (SCM v),
            "Scales how long player can be under water")
 #define FUNC_NAME s_jump
 {
-  SCM_ASSERT(SCM_NUMBERP(v), v, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(v), v, SCM_ARG1, FUNC_NAME);
   if (Game::current) Game::current->oxygenFactor = scm_to_double(v);
   return SCM_UNSPECIFIED;
 }
@@ -1280,12 +1276,12 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
            "Modifies the flags in a cell")
 #define FUNC_NAME s_set_cell_flag
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(flag), flag, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(state), state, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(flag), flag, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(state), state, SCM_ARG6, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1),
@@ -1308,12 +1304,12 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
            (SCM x0, SCM y0, SCM x1, SCM y1, SCM vx, SCM vy), "Modifies the velocity of a cell")
 #define FUNC_NAME s_set_cell_velocity
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vx), vx, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(vy), vy, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(vx), vx, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(vy), vy, SCM_ARG6, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
@@ -1334,14 +1330,14 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
            "Modifies the heights of a cell")
 #define FUNC_NAME s_set_cell_heights
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h0), h0, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h1), h1, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h2), h2, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h0), h0, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h1), h1, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h2), h2, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h3), h3, SCM_ARG7, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
@@ -1352,7 +1348,7 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
       c.heights[1] = scm_to_double(h1);
       c.heights[2] = scm_to_double(h2);
       c.heights[3] = scm_to_double(h3);
-      if (SCM_NUMBERP(h4))
+      if (scm_is_real(h4))
         c.heights[4] = scm_to_double(h4);
       else
         c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
@@ -1373,14 +1369,14 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
            "Modifies the water heights of a cell")
 #define FUNC_NAME s_set_cell_water_heights
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h0), h0, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h1), h1, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h2), h2, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(h3), h3, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h0), h0, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h1), h1, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h2), h2, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(h3), h3, SCM_ARG7, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
@@ -1392,7 +1388,7 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
       c.waterHeights[2] = scm_to_double(h2);
       c.waterHeights[3] = scm_to_double(h3);
       Game::current->map->markCellUpdated(x, y);
-      if (SCM_NUMBERP(h4))
+      if (scm_is_real(h4))
         c.waterHeights[4] = scm_to_double(h4);
       else
         c.waterHeights[4] =
@@ -1409,14 +1405,14 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
            "Modifies the colors of a cell")
 #define FUNC_NAME s_set_cell_colors
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(corner), corner, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(corner), corner, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG7, FUNC_NAME);
   int i = scm_to_int(corner);
   SCM_ASSERT(i >= 0 && i <= 5, corner, SCM_ARG5, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
@@ -1433,7 +1429,7 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
       Game::current->map->markCellUpdated(x - 1, y);
       Game::current->map->markCellUpdated(x, y + 1);
       Game::current->map->markCellUpdated(x, y - 1);
-      if (SCM_NUMBERP(a))
+      if (scm_is_real(a))
         c.colors[i][3] = (GLfloat)scm_to_double(a);
       else
         c.colors[i][3] = 1.0;
@@ -1448,14 +1444,14 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
            "Modifies the wall colors of cells")
 #define FUNC_NAME s_set_cell_wall_colors
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(corner), corner, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(g), g, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(b), b, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(corner), corner, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(g), g, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(b), b, SCM_ARG7, FUNC_NAME);
   int i = scm_to_int(corner);
   SCM_ASSERT(i >= 0 && i <= 4, corner, SCM_ARG5, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
@@ -1468,7 +1464,7 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
       c.wallColors[i][1] = (GLfloat)scm_to_double(g);
       c.wallColors[i][2] = (GLfloat)scm_to_double(b);
       Game::current->map->markCellUpdated(x, y);
-      if (SCM_NUMBERP(a))
+      if (scm_is_real(a))
         c.wallColors[i][3] = (GLfloat)scm_to_double(a);
       else
         c.wallColors[i][3] = 1.0;
@@ -1483,15 +1479,15 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
            "Copies and reflects or rotates a rectangle of cells to new coordinates")
 #define FUNC_NAME s_copy_cells
 {
-  SCM_ASSERT(SCM_NUMBERP(x0), x0, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y0), y0, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x1), x1, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y1), y1, SCM_ARG4, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(x2), x2, SCM_ARG5, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y2), y2, SCM_ARG6, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(flipx), flipx, SCM_ARG7, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(flipy), flipy, 8, FUNC_NAME);
-  SCM_ASSERT(SCM_BOOLP(transp), transp, 9, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x0), x0, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y0), y0, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x1), x1, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y1), y1, SCM_ARG4, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(x2), x2, SCM_ARG5, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y2), y2, SCM_ARG6, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(flipx), flipx, SCM_ARG7, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(flipy), flipy, 8, FUNC_NAME);
+  SCM_ASSERT(scm_is_bool(transp), transp, 9, FUNC_NAME);
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
@@ -1548,8 +1544,8 @@ SCM_DEFINE(camera_angle, "camera-angle", 2, 0, 0, (SCM xy, SCM z),
            "Sets camera xy and z-angle")
 #define FUNC_NAME s_camera_angle
 {
-  SCM_ASSERT(SCM_NUMBERP(xy), xy, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(xy), xy, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z), z, SCM_ARG2, FUNC_NAME);
   ((MainMode *)GameMode::current)->wantedXYAngle = scm_to_double(xy);
   ((MainMode *)GameMode::current)->wantedZAngle = scm_to_double(z);
   return SCM_UNSPECIFIED;
@@ -1561,12 +1557,12 @@ SCM_DEFINE(camera_force_focus, "camera-force-focus", 3, 0, 0, (SCM x, SCM y, SCM
            "Immediately set camera focus to new location. (Camera then drifts to player.)")
 #define FUNC_NAME s_camera_force_focus
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(z), z, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(z), z, SCM_ARG3, FUNC_NAME);
   Coord3d &c = ((MainMode *)GameMode::current)->camFocus;
-  c[0] = scm_to_double(x);
-  c[1] = scm_to_double(y);
+  c[0] = scm_to_double(x) + DX;
+  c[1] = scm_to_double(y) + DY;
   c[2] = scm_to_double(z);
   return SCM_UNSPECIFIED;
 }
@@ -1577,7 +1573,7 @@ SCM_DEFINE(camera_force_focus, "camera-force-focus", 3, 0, 0, (SCM x, SCM y, SCM
 SCM_DEFINE(restart_time, "restart-time", 1, 0, 0, (SCM t), "Sets the timebonus after death.")
 #define FUNC_NAME s_restart_time
 {
-  SCM_ASSERT(SCM_NUMBERP(t), t, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(t), t, SCM_ARG1, FUNC_NAME);
   if (Game::current && Game::current->player1)
     Game::current->player1->timeOnDeath = scm_to_double(t);
   return SCM_UNSPECIFIED;
@@ -1609,7 +1605,7 @@ SCM_DEFINE(set_song_preference, "set-song-preference", 2, 0, 0, (SCM song, SCM w
 #define FUNC_NAME s_set_song_preference
 {
   SCM_ASSERT(scm_is_string(song), song, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(weight), weight, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(weight), weight, SCM_ARG2, FUNC_NAME);
 
   char *songName = scm_to_utf8_string(song);
   if (songName) { setMusicPreference(songName, scm_to_int(weight)); }
@@ -1626,11 +1622,11 @@ SCM_DEFINE(trigger, "trigger", 4, 0, 0, (SCM x, SCM y, SCM r, SCM expr),
            "Call expr when player is within given radius.")
 #define FUNC_NAME s_trigger
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
-  SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(expr)), expr, SCM_ARG4, FUNC_NAME);
-  new Trigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), expr);
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG3, FUNC_NAME);
+  SCM_ASSERT(scm_is_true(scm_procedure_p(expr)), expr, SCM_ARG4, FUNC_NAME);
+  new Trigger(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(r), expr);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1641,18 +1637,19 @@ SCM_DEFINE(smart_trigger, "smart-trigger", 5, 0, 0,
            "Call expr when player is within given radius.")
 #define FUNC_NAME s_smart_trigger
 {
-  SCM_ASSERT(SCM_NUMBERP(x), x, SCM_ARG1, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(y), y, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_NUMBERP(r), r, SCM_ARG3, FUNC_NAME);
-  if (SCM_FALSEP(entering))
+  SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(r), r, SCM_ARG3, FUNC_NAME);
+  if (scm_is_false(entering))
     entering = NULL;
   else
-    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(entering)), entering, SCM_ARG4, FUNC_NAME);
-  if (SCM_FALSEP(leaving))
+    SCM_ASSERT(scm_is_true(scm_procedure_p(entering)), entering, SCM_ARG4, FUNC_NAME);
+  if (scm_is_false(leaving))
     leaving = NULL;
   else
-    SCM_ASSERT(SCM_NFALSEP(scm_procedure_p(leaving)), leaving, SCM_ARG5, FUNC_NAME);
-  new SmartTrigger(scm_to_double(x), scm_to_double(y), scm_to_double(r), entering, leaving);
+    SCM_ASSERT(scm_is_true(scm_procedure_p(leaving)), leaving, SCM_ARG5, FUNC_NAME);
+  new SmartTrigger(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(r), entering,
+                   leaving);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1665,9 +1662,9 @@ SCM_DEFINE(on_event, "on-event", 3, 0, 0, (SCM event, SCM subject, SCM callback)
            "is otherwise false.")
 #define FUNC_NAME s_on_event
 {
-  SCM_ASSERT(SCM_NUMBERP(event), event, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(event), event, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(IS_ANIMATED(subject) || IS_GAMEHOOK(subject), subject, SCM_ARG2, FUNC_NAME);
-  SCM_ASSERT(SCM_FALSEP(callback) || SCM_NFALSEP(scm_procedure_p(callback)), callback,
+  SCM_ASSERT(scm_is_false(callback) || scm_is_true(scm_procedure_p(callback)), callback,
              SCM_ARG3, FUNC_NAME);
   /* It is safe to always cast pointer into a GameHook since Animated
      objects inherit from GameHook */
@@ -1683,7 +1680,7 @@ SCM_DEFINE(get_event_callback, "get-event-callback", 2, 0, 0, (SCM event, SCM su
            "Returns the callback currently registerd to the given object and event.")
 #define FUNC_NAME s_get_event_callback
 {
-  SCM_ASSERT(SCM_NUMBERP(event), event, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_real(event), event, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(IS_ANIMATED(subject) || IS_GAMEHOOK(subject), subject, SCM_ARG2, FUNC_NAME);
   /* It is safe to always cast pointer into a GameHook since Animated
      objects inherit from GameHook */

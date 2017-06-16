@@ -25,7 +25,7 @@
 #include "map.h"
 #include "sound.h"
 
-Baby::Baby(double x, double y) : Black(x, y) {
+Baby::Baby(Real x, Real y) : Black(x, y) {
   acceleration = 1.0;
   ballResolution = BALL_LORES;
   realRadius = 0.1;

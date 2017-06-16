@@ -19,79 +19,79 @@
          (start-time 100)
  )
 )
-(set-start-position 250.5 250.5)
+(set-start-position 250 250)
 (jump 0.0)
 (restart-time 0)
 
 ;; sign
-(sign (_ "No jumping!") 1 20.0 -1 249.5 249.5)
+(sign (_ "No jumping!") 1 20.0 -1 249 249)
 
 ;; the cannon
-(set-wind (pipe 251.7 243.5 4.8 249.0 243.5 4.8 0.3) 16.0 0.0)
+(set-wind (pipe 251.2 243 4.8 248.5 243 4.8 0.3) 16.0 0.0)
 
 ;; when you roll over these spots, the cannon will get ammo! Be careful!
-(smart-trigger 248.5 248.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 248 248 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 248.5 243.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 248 243 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 245.5 244.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 245 244 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 245.5 241.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 245 241 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 245.5 248.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 245 248 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 245.5 245.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 245 245 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 242.5 243.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 242 243 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
-(smart-trigger 243.5 242.5 0.5 (lambda ()
-(set-primary-color (set-modtime (set-modtime (new-mr-black 252.5 243.5) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
+(smart-trigger 243 242 0.5 (lambda ()
+(set-primary-color (set-modtime (set-modtime (new-mr-black 252 243) *mod-small* -1.) *mod-spike* -1.) 1.0 0.0 0.0))
 (lambda () (day)))
 
 ;; some delicious flags
-(add-flag 243 248 50 1 0.1)
-(set-primary-color (add-flag 233 202 500 1 0.1) 1.0 1.0 0.0)
-(set-primary-color (add-flag 246 222 500 1 0.1) 1.0 1.0 0.0)
-(add-flag 245 233 50 1 0.1)
-(define timeflag1 (add-flag 229 215 0 1 0.1))
+(add-flag 243 248 50 #t 0.1)
+(set-primary-color (add-flag 233 202 500 #t 0.1) 1.0 1.0 0.0)
+(set-primary-color (add-flag 246 222 500 #t 0.1) 1.0 1.0 0.0)
+(add-flag 245 233 50 #t 0.1)
+(define timeflag1 (add-flag 229 215 0 #t 0.1))
 (time-on-death timeflag1 30)
 (set-primary-color timeflag1 0.0 1.0 0.0)
-(add-modpill 231.5 202.5 *mod-extra-life* 10 0)
+(add-modpill 231 202 *mod-extra-life* 10 0)
 
 ;; spikes on the four-colored field
-(define spike1 (add-spike 234.5 216.5 .2 0.00))
-(define spike2 (add-spike 234.5 215.5 .2 0.00))
-(define spike3 (add-spike 234.5 218.5 .2 0.20))
-(define spike4 (add-spike 234.5 217.5 .2 0.20))
+(define spike1 (add-spike 234 216 .2 0.00))
+(define spike2 (add-spike 234 215 .2 0.00))
+(define spike3 (add-spike 234 218 .2 0.20))
+(define spike4 (add-spike 234 217 .2 0.20))
 
-(define spike5 (add-spike 233.5 216.5 .2 0.00))
-(define spike6 (add-spike 233.5 215.5 .2 0.00))
-(define spike7 (add-spike 233.5 218.5 .2 0.20))
-(define spike8 (add-spike 233.5 217.5 .2 0.20))
+(define spike5 (add-spike 233 216 .2 0.00))
+(define spike6 (add-spike 233 215 .2 0.00))
+(define spike7 (add-spike 233 218 .2 0.20))
+(define spike8 (add-spike 233 217 .2 0.20))
 
-(define spike9 (add-spike 232.5 218.5 .2 0.40))
-(define spike10 (add-spike 232.5 217.5 .2 0.40))
-(define spike11 (add-spike 232.5 216.5 .2 0.60))
-(define spike12 (add-spike 232.5 215.5 .2 0.60))
+(define spike9  (add-spike 232 218 .2 0.40))
+(define spike10 (add-spike 232 217 .2 0.40))
+(define spike11 (add-spike 232 216 .2 0.60))
+(define spike12 (add-spike 232 215 .2 0.60))
 
-(define spike13 (add-spike 231.5 218.5 .2 0.40))
-(define spike14 (add-spike 231.5 217.5 .2 0.40))
-(define spike15 (add-spike 231.5 216.5 .2 0.60))
-(define spike16 (add-spike 231.5 215.5 .2 0.60))
+(define spike13 (add-spike 231 218 .2 0.40))
+(define spike14 (add-spike 231 217 .2 0.40))
+(define spike15 (add-spike 231 216 .2 0.60))
+(define spike16 (add-spike 231 215 .2 0.60))
 
 (cond
  ((= (difficulty) *normal*)
@@ -161,15 +161,15 @@
 
 ;; roll over this spot to higher the four-colored field
 (define blinker (add-colormodifier 3 226 221 0.5 1.0 0.5 1.0))
-(trigger 226.5 221.5 0.5 (lambda ()
+(trigger 226 221 0.5 (lambda ()
 (set-cell-heights 231 215 234 218 -0.8 -0.8 -0.8 -0.8)
 (set-onoff blinker #f)
 ))
 
-(smart-trigger 226.5 221.5 0.5 (lambda () (play-effect "click.wav")) (lambda () (day)))
+(smart-trigger 226 221 0.5 (lambda () (play-effect "click.wav")) (lambda () (day)))
 
 ;; hmmm
-(diamond 236 218)
+(diamond 235.5 217.5)
 
 ;; goal
 (add-goal 226 225 #t "sl2")

@@ -4,7 +4,7 @@
 (set-track-name (_ "Clowning Around"))
 (set-author "Dietrich Radel")
 
-(set-start-position 234.5 232.5)
+(set-start-position 234 232)
 (add-goal 221 226 #t "ki5")
 
 ;;; how much time each difficulty level gets
@@ -15,22 +15,22 @@
 )
 
 
-(add-flag 243 237 100 1 0.1)
-(add-flag 245 239 100 1 0.1)
-(add-flag 225 232 150 1 0.1)
-(add-flag 226 227 150 1 0.1)
+(add-flag 243 237 100 #t 0.1)
+(add-flag 245 239 100 #t 0.1)
+(add-flag 225 232 150 #t 0.1)
+(add-flag 226 227 150 #t 0.1)
 
-(add-modpill 223.5 231.5 *mod-spike* 25 40)
+(add-modpill 223 231 *mod-spike* 25 40)
 
 ;; This would create a forcefield and a switch turning it on/off
-(define ff (forcefield 227.0 226.0 0.0 1.0 0.0 0.0 1.0 *ff-bounce*))
-(switch 223.0 230.0 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
+(define ff (forcefield 226.5 225.5 0.0 1.0 0.0 0.0 1.0 *ff-bounce*))
+(switch 222.5 229.5 (lambda () (set-onoff ff #t)) (lambda () (set-onoff ff #f)))
 ; Savepoint for everyone
-(diamond 230 239)
+(diamond 229.5 238.5)
 
 ; Savepoints for easy only
 (if (= (difficulty) *easy*) 
-  (begin (diamond 242.5 234.5)
-       (diamond 235.5 232.5)))
+  (begin (diamond 242 234)
+       (diamond 235 232)))
 
 

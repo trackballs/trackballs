@@ -9,7 +9,7 @@
 (set-author "Attila Boros")
 
 ;; Start
-(set-start-position 194.5 194.5)
+(set-start-position 194 194)
 (cond
  ((= (difficulty) *easy*)   (start-time 600))
  ((= (difficulty) *normal*) (start-time 300))
@@ -51,9 +51,9 @@
 (add-cyclic-platform 204 201 204 201 -5.0 -4.0 0.3 0.4)
 (add-cyclic-platform 198 200 198 200 -3.0 -2.0 0.5 0.6)
 
-(trigger 203.5 194.5 0.5 (lambda() (set-cell-heights 203 194 204 194 -7.5 -7.5 -7.5 -7.5 -7.5)))
+(trigger 203 194 0.5 (lambda() (set-cell-heights 203 194 204 194 -7.5 -7.5 -7.5 -7.5 -7.5)))
 
-(trigger 199.5 196.5 0.5 (lambda() (set-cell-heights 199 196 200 196 -6.0 -5.0 -6.0 -5.0 -5.0)))
+(trigger 199 196 0.5 (lambda() (set-cell-heights 199 196 200 196 -6.0 -5.0 -6.0 -5.0 -5.0)))
 
 (set-cell-wall-colors 185 194 190 203 0 .9 .9 .6)
 (set-cell-wall-colors 185 194 190 203 1 .9 .9 .6)

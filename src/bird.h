@@ -29,7 +29,7 @@
 
 class Bird : public Animated {
  public:
-  Bird(int x, int y, int dx, int dy, Real size, Real speed);
+  Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
@@ -38,8 +38,8 @@ class Bird : public Animated {
   void tick(Real t);
 
  protected:
-  int x, y;
-  int dx, dy;
+  Real x, y;
+  Real dx, dy;
   Real size;
   Real speed;
   Real lng;

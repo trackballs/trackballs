@@ -13,10 +13,10 @@
  ((= (difficulty) *normal*) (start-time 300))
  ((= (difficulty) *hard*) (start-time 270))
  )
-(set-start-position 199.5 197.5)
+(set-start-position 199 197)
 ;;(set-start-position 234.5 170.5)
 
-(define enemy1 (new-mr-black 200.5 201.5))
+(define enemy1 (new-mr-black 200 201))
 (cond
  ((= (difficulty) *easy*) (set-acceleration enemy1 3.0))
  ((= (difficulty) *normal*) (set-acceleration enemy1 4.0))
@@ -24,18 +24,18 @@
 
 (add-cactus 199 194 0.3)
 
-(define pipes (multi-pipe '((201.0 199.5 -6.9) (208.0 199.5 -10.5) (230.0 199.5 -10.5)) 0.4 #f))
+(define pipes (multi-pipe '((200.5 199 -6.9) (207.5 199 -10.5) (229.5 199 -10.5)) 0.4 #f))
 ;;(map (lambda (pipe) (set-primary-color pipe 0.5 0.5 0.5 0.5)) pipes)
-(set-primary-color (sign (_ "Remember to breathe") 1.0 15.0 0.0 212.5 199.5 -8.0) 1.0 1.0 0.4)
-(add-flag 212 199 100 0 1.0) 
+(set-primary-color (sign (_ "Remember to breathe") 1.0 15.0 0.0 212 199 -8.0) 1.0 1.0 0.4)
+(add-flag 212 199 100 #f 1.0) 
 
-(diamond 234.5 193.5)
-(add-flag 234 193 100 0 0.5) 
+(diamond 234 193)
+(add-flag 234 193 100 #f 0.5) 
 
 ;; The bonus area
-(add-modpill 241.5 208.5 *mod-extra-life* 30 -1)
-(add-flag 241 207 100 1 0.1) 
-(add-flag 239 208 100 1 0.1) 
+(add-modpill 241 208 *mod-extra-life* 30 -1)
+(add-flag 241 207 100 #t 0.1) 
+(add-flag 239 208 100 #t 0.1) 
 
 (define speed #f)
 (cond
@@ -55,10 +55,10 @@
 (add-cyclic-platform 235 174 235 174 -10.1 -8.1 -4.5 speed)
 (add-cyclic-platform 234 173 234 173 -10.0 -8.0 -5.0 speed)
 
-(add-flag 235 172 100 1 0.1) 
-(add-modpill 234.5 170.5 *mod-float* 60 60)
+(add-flag 235 172 100 #t 0.1) 
+(add-modpill 234 170 *mod-float* 60 60)
 
-(define enemy2 (new-mr-black 225.5 171.5))
+(define enemy2 (new-mr-black 225 171))
 (cond
  ((= (difficulty) *easy*) (set-acceleration enemy2 6.0))
  ((= (difficulty) *normal*) (set-acceleration enemy2 8.0))
@@ -70,5 +70,5 @@
 
 ;; Goal!
 (add-goal 205 169 #t "fourSeasons_4")
-(add-flag 203 168 100 1 0.1) 
+(add-flag 203 168 100 #t 0.1) 
 

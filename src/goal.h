@@ -24,7 +24,7 @@
 
 class Goal : public Flag {
  public:
-  Goal(int x, int y, int rotate, char* nextLevel);
+  Goal(Real x, Real y, int rotate, char* nextLevel);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);

@@ -26,7 +26,7 @@
 
 class Teleport : public Animated {
  public:
-  Teleport(int x, int y, int dx, int dy, Real radius);
+  Teleport(Real x, Real y, Real dx, Real dy, Real radius);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);

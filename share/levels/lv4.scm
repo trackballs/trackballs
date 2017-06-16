@@ -4,29 +4,29 @@
 (set-track-name (_ "Labyrinth"))
 (set-author "Mathias Broxvall")
 (jump 0.8) ;; To avoid cheating
-(set-start-position 251.5 251.5)
+(set-start-position 251 251)
 (start-time (- 180 (* 10 (difficulty))))
 
-(add-modpill 222.5 237.5 *mod-extra-life* 30 -1)
+(add-modpill 222 237 *mod-extra-life* 30 -1)
 
 
-(diamond 232.5 240.5)
+(diamond 232 240)
 
-(define ff1 (forcefield 233.0 247.5 0.0 3.0 0.0 0.0 0.8 *ff-bounce*))
-(define ff3 (forcefield 247.0 243.0 0.0 0.0 1.0 0.0 0.8 *ff-bounce*))
-(switch 248.5 248.5 (lambda()(set-onoff ff1 #t)) (lambda()(set-onoff ff1 #f)))
-(switch 234.5 252.5 (lambda()(set-onoff ff3 #t)) (lambda()(set-onoff ff3 #f)))
-(add-flag 233 252 250 1 0.1)
-(add-modpill 235.5 252.5 *mod-spike* 30 60)
-(add-flag 243 252 150 1 0.1) (add-flag 234 224 150 1 0.1)
-(define mr-black (new-mr-black 235.5 245.8))
+(define ff1 (forcefield 232.5 247 0.0 3.0 0.0 0.0 0.8 *ff-bounce*))
+(define ff3 (forcefield 246.5 242.5 0.0 0.0 1.0 0.0 0.8 *ff-bounce*))
+(switch 248 248 (lambda()(set-onoff ff1 #t)) (lambda()(set-onoff ff1 #f)))
+(switch 234 252 (lambda()(set-onoff ff3 #t)) (lambda()(set-onoff ff3 #f)))
+(add-flag 233 252 250 #t 0.1)
+(add-modpill 235 252 *mod-spike* 30 60)
+(add-flag 243 252 150 #t 0.1) (add-flag 234 224 150 #t 0.1)
+(define mr-black (new-mr-black 235 245.3))
 (cond
  ((= (difficulty) *easy*) (set-acceleration mr-black 2.0))
  ((= (difficulty) *normal*) (set-acceleration mr-black 3.0))
  ((= (difficulty) *hard*) (set-acceleration mr-black 4.0)))
 
-(define ff2 (forcefield 230.0 219.5 0.0 1.0 0.0 0.0 0.8 *ff-bounce*))
-(switch 222.5 241.5 (lambda()(set-onoff ff2 #t))(lambda()(set-onoff ff2 #f)))
+(define ff2 (forcefield 229.5 219 0.0 1.0 0.0 0.0 0.8 *ff-bounce*))
+(switch 222 241 (lambda()(set-onoff ff2 #t))(lambda()(set-onoff ff2 #f)))
 
 (add-goal 212 219 #t "lv5")
 

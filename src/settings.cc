@@ -26,6 +26,7 @@
 
 #include <SDL2/SDL_joystick.h>
 #include <dirent.h>
+#include <libguile.h>
 #include <locale.h>
 #include <string.h>
 #include <sys/stat.h>

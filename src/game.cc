@@ -85,6 +85,7 @@ Game::Game(Map *editmap) {
   hooks = new std::set<class GameHook *>();
   map = editmap;
   edit_mode = 1;
+  setDefaults();
 
   current = this;
 }

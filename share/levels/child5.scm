@@ -11,7 +11,7 @@
 (set-author "Attila Boros")
 
 ;; Start
-(set-start-position 240.5 248.5)
+(set-start-position 240 248)
 (cond
  ((= (difficulty) *easy*)   (start-time 300))
  ((= (difficulty) *normal*) (start-time 180))
@@ -32,25 +32,25 @@
 
 (add-cyclic-platform 252 247 252 247 -2.0 2.0 1.0 0.5)
 
-(define pipe1(pipe 240.8 252.5 2.5 244.2 252.5 2.5 0.5))
+(define pipe1(pipe 240.2 252.0 2.5 243.7 252. 2.5 0.5))
 (set-primary-color pipe1 .3 .7 .9 .4)
 
-(define pipe2(pipe 244.8 248.5 2.5 248.2 248.5 2.5 0.5))
+(define pipe2(pipe 244.2 248.0 2.5 247.7 248. 2.5 0.5))
 (set-primary-color pipe2 .3 .7 .9 .4)
 
-(define pipe3(pipe 248.8 252.5 2.5 252.2 252.5 2.5 0.5))
+(define pipe3(pipe 248.2 252.0 2.5 251.7 252. 2.5 0.5))
 (set-primary-color pipe3 .3 .7 .9 .4)
 
-(trigger 240.5 249.5 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .0)))
-(trigger 240.5 249.5 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .0)))
-(trigger 240.5 249.5 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .0)))
+(trigger 240 249 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .0)))
+(trigger 240 249 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .0)))
+(trigger 240 249 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .0)))
 
-(trigger 240.5 252.5 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .0)))
-(trigger 240.5 251.5 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .5)))
+(trigger 240 252 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .0)))
+(trigger 240 251 0.5 (lambda() (set-primary-color pipe1 .3 .7 .9 .5)))
 
-(trigger 244.5 248.5 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .0)))
-(trigger 244.5 249.5 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .5)))
+(trigger 244 248 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .0)))
+(trigger 244 249 0.5 (lambda() (set-primary-color pipe2 .3 .7 .9 .5)))
 
-(trigger 248.5 252.5 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .0)))
-(trigger 248.5 251.5 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .5)))
+(trigger 248 252 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .0)))
+(trigger 248 251 0.5 (lambda() (set-primary-color pipe3 .3 .7 .9 .5)))
 

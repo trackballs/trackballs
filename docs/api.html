@@ -24,7 +24,9 @@
 
 <h1> API Reference </h1> This page serves to document all the API functions that are available for level designers of trackballs. Since it is currently under construction it is not complete and you can find some more inforamtion about the functions in existing levels or by looking in the <tt>guile.cc</tt> file in the source code.
 
-<h2> Creating animated objects </h2> These objects are any drawable and movable object in the world and a number of API functions can be used to create them. See the section below for functions to modify their properties.
+<h2> Creating animated objects </h2> These objects are any drawable and movable object in the world and a number of API functions can 
+be used to create them. See the section below for functions to modify their properties. <b>Note:</b> all objects can be placed at 
+any real coordinate; an object placed at (15.0,15.0) will be in the center of the map cell (15,15). 
 <p/>
 
 <div class="fn">
@@ -65,7 +67,7 @@ Creates a bird at specified x/y position, with specified destination dx/dy. Size
 <div class="fn">
 <div class="fn-proto">(add-flag x y points visible radius)</div>
 <div class="fn-text">
-Creates a flag giving points when captured. The x/y position in this function is because of backwards compatibility given as an INTEGER. Thus x=100 gives the coordinate 100.5. Returns an 'animated' object.
+Creates a flag giving points when captured. Returns an 'animated' object.
 </div>
 </div>
 
@@ -112,7 +114,7 @@ Adds a new goal to the map. Orientation is given by rotate-p (horizontal or vert
 </div>
 
 <div class="fn">
-<div class="fn-proto">(sign text scale rotation duratin x y [z])</div>
+<div class="fn-proto">(sign text scale rotation duration x y [z])</div>
 <div class="fn-text">
 Creates a new sign with the given text/scale/rotatation. Duration determines how long it lasts, if duration
 <0 then it lasts forever. The last 'z' argument is optional. Returns an 'animated' object </div>

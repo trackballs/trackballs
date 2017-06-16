@@ -26,6 +26,7 @@
 #include "guile.h"
 #include "settings.h"
 
+#include <libguile.h>
 #include <zlib.h>
 
 char highScorePath[256];

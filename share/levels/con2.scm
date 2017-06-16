@@ -5,18 +5,18 @@
 (set-track-name (_ "Stairway to Heaven"))
 (set-author "Keith Winston")
 
-(set-start-position 252.5 252.5)
+(set-start-position 252 252)
 (start-time 240) 
 
 (add-goal 219 219 #f "con3")
 
-(add-flag 246 239 500 1 0.1) 
-(add-flag 252 239 100 1 0.5)
-(add-flag 248 244 100 1 0.1)
+(add-flag 246 239 500 #t 0.1) 
+(add-flag 252 239 100 #t 0.5)
+(add-flag 248 244 100 #t 0.1)
 
-(add-modpill 236.5 250.5 *mod-spike* 25 40)
+(add-modpill 236 250 *mod-spike* 25 40)
 
-(define mr-black (new-mr-black 224 240))
+(define mr-black (new-mr-black 223.5 239.5))
 (if (= (difficulty) *hard*) (set-modtime mr-black *mod-spike* -1.))
 (set-acceleration mr-black 2.0)
 

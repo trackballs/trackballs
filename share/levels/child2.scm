@@ -10,7 +10,7 @@
 (set-author "Attila Boros")
 
 ;; Start
-(set-start-position 253.5 250.5)
+(set-start-position 253 250)
 (cond
  ((= (difficulty) *easy*)   (start-time 180))
  ((= (difficulty) *normal*) (start-time 120))
@@ -26,6 +26,6 @@
 
 (add-cyclic-platform 248 250 248 250 -4.0 -2.5 2.0 0.5)
 
-(add-flag 248 252 50 1 0.1) 
-(add-flag 248 246 50 1 0.1) 
+(add-flag 248 252 50 #t 0.1) 
+(add-flag 248 246 50 #t 0.1) 
 

@@ -7,11 +7,11 @@
 
 (restart-time 60.0)
 
-(set-start-position 252.5 247.5)
+(set-start-position 252 247)
 (start-time 150)
 
 (if (> (difficulty) *easy*) ; MB. Only on medium and hard
-  (add-modpill 222.5 226.5 *mod-spike* 30 -1))
+  (add-modpill 222 226 *mod-spike* 30 -1))
 
 (add-goal 219 215 #t "")
 
@@ -31,16 +31,16 @@
 (add-teleport 219 245 223 228 0.4)
 
 
-(new-mr-black 231.5 249.5)
-(new-mr-black 239.5 249.5)
-(new-mr-black 251.5 244.5)
-(new-mr-black 239.5 243.5)
-(new-mr-black 224.5 252.5)
-(new-mr-black 220.5 220.5)
-(new-mr-black 219.5 219.5)
-(new-mr-black 225.5 225.5)
-(new-mr-black 224.5 224.5)
-(new-mr-black 227.5 227.5)
+(new-mr-black 231 249)
+(new-mr-black 239 249)
+(new-mr-black 251 244)
+(new-mr-black 239 243)
+(new-mr-black 224 252)
+(new-mr-black 220 220)
+(new-mr-black 219 219)
+(new-mr-black 225 225)
+(new-mr-black 224 224)
+(new-mr-black 227 227)
 
 ;(fountain 224.5 221.5 -8.5 0.03 0.0 200.0)
 
