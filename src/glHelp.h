@@ -58,7 +58,6 @@ void drawMouse(int x, int y, int w, int h);
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
                         const GLfloat color[4], const GLfloat normal[3]);
 void configureObjectAttributes();
-void setupObjectRenderState();
 inline uint32_t packNormal(const GLfloat n[3]) {
   uint32_t d = (512 + n[2] * 511.f);
   uint32_t e = (512 + n[1] * 511.f);
@@ -73,6 +72,11 @@ inline uint32_t packNormal(const GLfloat n[3]) {
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
                        Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]);
+
+/* updateUniforms when uniforms (i.e, ViewParameters) change */
+void updateUniforms();
+/* setActiveProgramAndUniforms switches program and uniform state */
+void setActiveProgramAndUniforms(GLuint shader);
 
 typedef struct _viewpa {
   Matrix4d modelview;
@@ -109,7 +113,6 @@ void perspectiveMatrix(GLdouble fovy_deg, GLdouble aspect, GLdouble zNear, GLdou
 void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
                   Matrix4d out);
-void setViewUniforms(GLuint shader);
 
 void renderDummyShadowCascade();
 void renderDummyShadowMap();
@@ -161,7 +164,6 @@ extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
 extern GLuint shaderWater, shaderTile, shaderLine, shaderUI, shaderObject, shaderReflection;
-extern GLuint theVao;
 
 /* Globals */
 extern float fps;

@@ -77,7 +77,7 @@ void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);

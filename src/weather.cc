@@ -123,10 +123,7 @@ void Weather::draw2() {
     }
 
     // Transfer data
-    glUseProgram(shaderLine);
-    glBindVertexArray(theVao);
-    glEnableVertexAttribArray(0);
-    setViewUniforms(shaderLine);
+    setActiveProgramAndUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
 
     GLuint databuf, idxbuf;
@@ -181,7 +178,7 @@ void Weather::draw2() {
     }
 
     // Transfer data
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

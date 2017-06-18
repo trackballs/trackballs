@@ -107,7 +107,7 @@ void ForceField::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

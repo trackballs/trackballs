@@ -180,7 +180,7 @@ void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDisable(GL_BLEND);
 
   // Transfer
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
@@ -198,7 +198,7 @@ void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

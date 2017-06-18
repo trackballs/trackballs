@@ -153,7 +153,7 @@ void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glEnable(GL_CULL_FACE);
 
   int nsides = 6;
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
               specularColor[1], specularColor[2], specularColor[3]);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);

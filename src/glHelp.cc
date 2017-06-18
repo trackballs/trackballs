@@ -303,23 +303,56 @@ void configureObjectAttributes() {
                         (void *)(6 * sizeof(GLfloat)));
 }
 
-void setupObjectRenderState() {
-  glUseProgram(shaderObject);
+static GLuint lastProgram = 0;
 
+void updateUniforms() { lastProgram = 0; }
+
+void setViewUniforms(GLuint shader);
+void setActiveProgramAndUniforms(GLuint shader) {
+  if (shader == lastProgram) { return; }
+  lastProgram = shader;
+  if (shader == 0) { return; }
   glBindVertexArray(theVao);
+  glUseProgram(shader);
+  if (shader == shaderTile) {
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
+  } else if (shader == shaderWater) {
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
+  } else if (shader == shaderLine) {
+    // Pos
+    glEnableVertexAttribArray(0);
 
-  // Pos, Color, Tex, ~Vel~, Norm
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-  glEnableVertexAttribArray(4);
+  } else if (shader == shaderObject) {
+    // Pos, Color, Tex, ~Vel~, Norm
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(4);
 
-  setViewUniforms(shaderObject);
+    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), -1.);
 
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), -1.);
-
-  glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
+    glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
+  } else if (shader == shaderReflection) {
+    // Pos, Color, Tex, ~Vel~, Norm
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(4);
+  } else {
+    /* We don't handle the 2d programs */
+    warning("Unidentified 3d shader program");
+    return;
+  }
+  setViewUniforms(shader);
   glActiveTexture(GL_TEXTURE0 + 0);
 }
 
@@ -624,6 +657,7 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
                  activeView.light_position[1] + norv[loop][1],
                  activeView.light_position[2] + norv[loop][2], upv[loop][0], upv[loop][1],
                  upv[loop][2], activeView.modelview);
+    updateUniforms();
     // Render (todo: 50% alpha clip)
     if (mp) mp->draw(0, focus[0], focus[1]);
     if (gm) gm->draw();
@@ -636,6 +670,7 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   activeView.calculating_shadows = 0;
   assign(origMV, activeView.modelview);
   assign(origProj, activeView.projection);
+  updateUniforms();
 }
 
 void mulMatrix4(const Matrix4d mult, const double src[4], double res[4]) {
@@ -780,6 +815,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     assign(activeView.cascade_model[loop], activeView.modelview);
     assign(activeView.cascade_proj[loop], activeView.projection);
+    updateUniforms();
     if (mp) mp->draw(0, focus[0], focus[1]);
     if (gm) gm->draw();
   }
@@ -791,6 +827,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   assign(origMV, activeView.modelview);
   assign(origProj, activeView.projection);
   activeView.calculating_shadows = 0;
+  updateUniforms();
 }
 
 /* generates a snapshot of the screen */

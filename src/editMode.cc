@@ -383,6 +383,7 @@ void EditMode::display() {
   }
 
   activeView.day_mode = 1;
+  updateUniforms();
   /* Shadow map rendering returns active modelview/projection to orig state */
   if (map) {
     if (Settings::settings->doShadows) {

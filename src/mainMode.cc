@@ -109,6 +109,7 @@ void MainMode::display() {
                  camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2],
                  activeView.modelview);
   }
+  updateUniforms();
 
   /* lighting must be set before we render the shadow map */
   /* Shadow map rendering returns active modelview/projection to orig state */
@@ -726,6 +727,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
   glBindFramebuffer(GL_FRAMEBUFFER, reflFBO);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  updateUniforms();
   Map *map = Game::current ? Game::current->map : NULL;
 
   map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);

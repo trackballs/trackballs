@@ -238,6 +238,7 @@ void SetupMode::display() {
   assign(ambient, activeView.light_ambient);
   activeView.quadratic_attenuation = 0.0;
   activeView.fog_enabled = 0;
+  updateUniforms();
 
   if (settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -267,12 +268,10 @@ void SetupMode::display() {
   placeObjectSphere(data, idxs, 0, pos, rotation, 1.0, detail, color);
 
   // Transfer
-  setupObjectRenderState();
-
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.3f, 0.3f, 0.3f, 0.3f);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 20.f);
   glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), 1.);
-
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
   GLuint databuf, idxbuf;

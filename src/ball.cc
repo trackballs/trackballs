@@ -471,7 +471,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     countObjectSpherePoints(&ntries, &nverts, detail);
 
     // Draw the ball...
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
                 specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
@@ -504,8 +504,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      glUseProgram(shaderReflection);
-      setViewUniforms(shaderReflection);
+      setActiveProgramAndUniforms(shaderReflection);
       glUniform4f(glGetUniformLocation(shaderReflection, "refl_color"), c[0], c[1], c[2],
                   c[3]);
       glUniform1i(glGetUniformLocation(shaderReflection, "tex"), 0);
@@ -524,7 +523,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     glEnable(GL_CULL_FACE);
 
     // Transfer
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -541,11 +540,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    glUseProgram(shaderLine);
-    glBindVertexArray(theVao);
-    glEnableVertexAttribArray(0);
-
-    setViewUniforms(shaderLine);
+    setActiveProgramAndUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
 
     const int nlines = 8;
@@ -562,7 +557,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     // In case we look from below
     glDisable(GL_CULL_FACE);
 
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -587,7 +582,7 @@ void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
     int nverts = 0;
     int detail = 5;
     countObjectSpherePoints(&ntries, &nverts, detail);
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -601,7 +596,7 @@ void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
@@ -617,7 +612,7 @@ void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
-    setupObjectRenderState();
+    setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

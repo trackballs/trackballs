@@ -77,7 +77,7 @@ void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) {
   int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
               specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);

@@ -70,12 +70,7 @@ void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) {
   glEnable(GL_BLEND);
 
   glPointSize(1.5 * screenWidth / 600.);
-  glUseProgram(shaderLine);
-  glBindVertexArray(theVao);
-
-  // Pos
-  glEnableVertexAttribArray(0);
-  setViewUniforms(shaderLine);
+  setActiveProgramAndUniforms(shaderLine);
   glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
               primaryColor[2], primaryColor[3]);
 

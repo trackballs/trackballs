@@ -129,7 +129,7 @@ void Sign::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glDepthFunc(GL_ALWAYS);
 
   // Transfer data
-  setupObjectRenderState();
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);

@@ -480,12 +480,8 @@ void Map::draw(int stage, int cx, int cy) {
     }
   }
 
-  // The obligatory VAO
-  glBindVertexArray(theVao);
-
   // Put into shader
-  glUseProgram(shaderTile);
-  setViewUniforms(shaderTile);
+  setActiveProgramAndUniforms(shaderTile);
   glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
   glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
 
@@ -512,8 +508,7 @@ void Map::draw(int stage, int cx, int cy) {
   }
 
   if (stage == 1) {
-    glUseProgram(shaderWater);
-    setViewUniforms(shaderWater);
+    setActiveProgramAndUniforms(shaderWater);
     glUniform1f(glGetUniformLocation(shaderWater, "gameTime"), gameTime);
     glUniform1i(glGetUniformLocation(shaderWater, "wtex"), 0);
     glActiveTexture(GL_TEXTURE0 + 0);
@@ -529,8 +524,7 @@ void Map::draw(int stage, int cx, int cy) {
   }
 
   if (!activeView.calculating_shadows && !(Game::current && !Game::current->useGrid)) {
-    glUseProgram(shaderLine);
-    setViewUniforms(shaderLine);
+    setActiveProgramAndUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
 
     glEnable(GL_LINE_SMOOTH);
@@ -939,8 +933,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_BLEND);
   glDisable(GL_CULL_FACE);
 
-  setupObjectRenderState();
-
+  setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
