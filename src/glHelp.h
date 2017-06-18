@@ -97,7 +97,6 @@ typedef struct _viewpa {
   int day_mode;
   GLuint cascadeTexsize;
   GLuint cascadeTexture[3];
-  GLfloat cascadeDistances[3];
   Matrix4d cascade_proj[3];
   Matrix4d cascade_model[3];
 

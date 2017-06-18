@@ -693,22 +693,15 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
-  GLuint depth_dummy = 0;
-  glGenTextures(1, &depth_dummy);
-  glBindTexture(GL_TEXTURE_2D, depth_dummy);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, ENVIRONMENT_TEXTURE_SIZE,
-               ENVIRONMENT_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ENVIRONMENT_TEXTURE_SIZE, ENVIRONMENT_TEXTURE_SIZE,
                0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
   GLuint reflFBO;
   glGenFramebuffers(1, &reflFBO);
-  glBindFramebuffer(GL_FRAMEBUFFER, reflFBO);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_dummy, 0);
-  GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, reflFBO);
+  glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+  GLenum result = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
   if (GL_FRAMEBUFFER_COMPLETE != result) {
     warning("Framebuffer is not complete. w/err %x", result);
   }
@@ -724,7 +717,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
                  Game::current->fogColor[2], Game::current->fogColor[3]);
   else
     glClearColor(0.0, 0.0, 0.0, 0.0);
-  glBindFramebuffer(GL_FRAMEBUFFER, reflFBO);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, reflFBO);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   updateUniforms();
@@ -733,9 +726,8 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
   map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glDeleteFramebuffers(1, &reflFBO);
-  glDeleteTextures(1, &depth_dummy);
 
   // Restore graphics details
   Settings::settings->gfx_details = gfx_details;

@@ -613,20 +613,6 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
                     GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
                     GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
 
-  static GLuint cubeColorTex = -1;
-  if (cubeColorTex == (GLuint)-1) {
-    glGenTextures(1, &cubeColorTex);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeColorTex);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    for (int i = 0; i < 6; i++) {
-      glTexImage2D(dirs[i], 0, GL_RGB8, activeView.shadowMapTexsize,
-                   activeView.shadowMapTexsize, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    }
-  }
-
   perspectiveMatrix(90., 1, 0.1, 1000., activeView.projection);
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
@@ -637,11 +623,10 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   glGenFramebuffers(6, cubeFBOs);
   for (int i = 0; i < 6; i++) {
     /* issue: only fbo 1 is set? */
-    glBindFramebuffer(GL_FRAMEBUFFER, cubeFBOs[i]);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, dirs[i], cubeColorTex, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dirs[i],
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cubeFBOs[i]);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, dirs[i],
                            activeView.shadowMapTexture, 0);
-    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    GLenum result = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
     if (GL_FRAMEBUFFER_COMPLETE != result) {
       warning("Framebuffer is not complete. #%d w/err %x", i, result);
     }
@@ -650,7 +635,7 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
   // set Persp to square + angle
   for (int loop = 0; loop < 6; ++loop) {
-    glBindFramebuffer(GL_FRAMEBUFFER, cubeFBOs[loop]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cubeFBOs[loop]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     lookAtMatrix(activeView.light_position[0], activeView.light_position[1],
                  activeView.light_position[2], activeView.light_position[0] + norv[loop][0],
@@ -664,7 +649,7 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   }
 
   /* back to default (to screen) frame buffer */
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glDeleteFramebuffers(6, cubeFBOs);
 
   activeView.calculating_shadows = 0;
@@ -692,8 +677,8 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   GLfloat proj_half_angle = 40 / 2 * M_PI / 180;
   GLfloat aspect = (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1);
 
-  GLfloat dts[N + 1] = {0., activeView.cascadeDistances[0], activeView.cascadeDistances[1],
-                        activeView.cascadeDistances[2]};
+  /* shadow step scale by factor of 4 */
+  GLfloat dts[N + 1] = {0.f, 12.5f, 50.f, 200.f};
   /* Construct ortho projection matrix clipped near at 0, far at 1000. */
   Matrix4d ortho = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -2. / 100., -1}, {0, 0, 0, 1}};
   assign(ortho, activeView.projection);
@@ -778,17 +763,6 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
                  activeView.cascadeTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
   }
 
-  static GLuint colorTex = -1;
-  if (colorTex == (GLuint)-1) {
-    glGenTextures(1, &colorTex);
-    glBindTexture(GL_TEXTURE_2D, colorTex);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, activeView.cascadeTexsize,
-                 activeView.cascadeTexsize, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-  }
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
@@ -798,11 +772,10 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   GLuint cascadeFBOs[N];
   glGenFramebuffers(N, cascadeFBOs);
   for (int i = 0; i < N; i++) {
-    glBindFramebuffer(GL_FRAMEBUFFER, cascadeFBOs[i]);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cascadeFBOs[i]);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
                            activeView.cascadeTexture[i], 0);
-    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    GLenum result = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
     if (GL_FRAMEBUFFER_COMPLETE != result) {
       warning("Framebuffer is not complete. #%d w/err %x", i, result);
     }
@@ -811,7 +784,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
   // set Persp to square + angle
   for (int loop = 0; loop < N; ++loop) {
-    glBindFramebuffer(GL_FRAMEBUFFER, cascadeFBOs[loop]);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, cascadeFBOs[loop]);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     assign(activeView.cascade_model[loop], activeView.modelview);
     assign(activeView.cascade_proj[loop], activeView.projection);
@@ -821,7 +794,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   }
 
   /* back to default (to screen) frame buffer */
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glDeleteFramebuffers(N, cascadeFBOs);
 
   assign(origMV, activeView.modelview);
@@ -1060,9 +1033,6 @@ void glHelpInit() {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-  activeView.cascadeDistances[0] = 8.f;
-  activeView.cascadeDistances[1] = 40.f;
-  activeView.cascadeDistances[2] = 200.f;
   /* We don't use an array for the cascade texture because it reqs.
    * more shaders/etc */
   activeView.cascadeTexture[0] = 0;
