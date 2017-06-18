@@ -371,15 +371,8 @@ void EditMode::display() {
   assign(lightDiffuse, activeView.light_specular);
   assign(lightPosition, activeView.light_position);
 
-  Coord3d cpos = {(double)x, (double)y, (double)h};
-  if (Settings::settings->doShadows) {
-    renderShadowMap(cpos, map, game);
-  } else {
-    renderDummyShadowMap();
-  }
-
   /* Setup matrixes for the camera perspective */
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 1.0, 1e20,
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
                     activeView.projection);
   if (!switchViewpoint) {
     lookAtMatrix(x - 7.0, y - 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
@@ -387,6 +380,19 @@ void EditMode::display() {
   } else {
     lookAtMatrix(x + 7.0, y + 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
                  activeView.modelview);
+  }
+
+  activeView.day_mode = 1;
+  /* Shadow map rendering returns active modelview/projection to orig state */
+  if (map) {
+    if (Settings::settings->doShadows) {
+      Coord3d focus = {(double)x, (double)y, map->getHeight(x, y)};
+      renderShadowCascade(focus, map, game);
+      renderDummyShadowMap();
+    } else {
+      renderDummyShadowCascade();
+      renderDummyShadowMap();
+    }
   }
 
   /* Some standard GL settings needed */

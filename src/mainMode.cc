@@ -50,7 +50,7 @@ const int MainMode::statusRestartPlayer = 3, MainMode::statusNextLevel = 4,
 const int MainMode::statusLevelComplete = 6, MainMode::statusBonusLevelComplete = 7;
 const int MainMode::statusPaused = 8;
 
-static int debug_shadowmap = 0;
+static const int debug_shadowmap = 0;
 
 MainMode *MainMode::mainMode = NULL;
 uchar *MainMode::viewportData, *MainMode::environmentTextureData;
@@ -86,23 +86,6 @@ void MainMode::display() {
   Map *map = Game::current ? Game::current->map : NULL;
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
-  /* lighting must be set before we render the shadow map */
-  setupLighting();
-  if (Settings::settings->doShadows) {
-    renderShadowMap(camFocus, map, Game::current);
-  } else {
-    renderDummyShadowMap();
-  }
-
-  glViewport(0, 0, screenWidth, screenHeight);
-
-  if (Game::current->fogThickness)
-    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
-                 Game::current->fogColor[2], Game::current->fogColor[3]);
-  else
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
     assign(Game::current->fogColor, activeView.fog_color);
@@ -135,9 +118,42 @@ void MainMode::display() {
                  activeView.modelview);
   }
 
+  /* lighting must be set before we render the shadow map */
+  /* Shadow map rendering returns active modelview/projection to orig state */
+  setupLighting();
+  if (Game::current && Game::current->isNight) {
+    activeView.day_mode = 0;
+    if (Settings::settings->doShadows) {
+      renderShadowMap(camFocus, map, Game::current);
+      renderDummyShadowCascade();
+    } else {
+      renderDummyShadowCascade();
+      renderDummyShadowMap();
+    }
+  } else {
+    activeView.day_mode = 1;
+    if (Settings::settings->doShadows) {
+      renderShadowCascade(camFocus, map, Game::current);
+      renderDummyShadowMap();
+    } else {
+      renderDummyShadowCascade();
+      renderDummyShadowMap();
+    }
+  }
+
   /* record modelview/projection matrices for item visibility testing */
   assign(activeView.modelview, this->cameraModelView);
   assign(activeView.projection, this->cameraProjection);
+
+  /* Primary scene rendering */
+  glViewport(0, 0, screenWidth, screenHeight);
+
+  if (Game::current->fogThickness)
+    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
+                 Game::current->fogColor[2], Game::current->fogColor[3]);
+  else
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   /* for shadow map */
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
@@ -247,7 +263,6 @@ void MainMode::display() {
     draw2DRectangle(0, 0, screenWidth, screenHeight, 0., 0., 1., 1., 0.5, 0.5, 1.0,
                     0.5 * std::min(1.0, (double)player1->modTimeLeft[MOD_FROZEN]));
   }
-  displayFrameRate();
   /* Print joystick debugging information */
   if (debug_joystick && Settings::settings->hasJoystick()) {
     char str[256];
@@ -258,40 +273,58 @@ void MainMode::display() {
   }
 
   if (debug_shadowmap) {
-    glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
-    GLfloat *imgd =
-        new GLfloat[activeView.shadowMapTexsize * activeView.shadowMapTexsize * 4 * 6]();
+    int N = activeView.day_mode ? 3 : 6;
+    int size = activeView.day_mode ? activeView.cascadeTexsize : activeView.shadowMapTexsize;
+    GLfloat *imgd = new GLfloat[size * size * N]();
 
-    GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
-                      GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                      GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
-    GLuint locations[6][2] = {{2, 1}, {0, 1}, {1, 1}, {3, 1}, {1, 0}, {1, 2}};
-    for (int i = 0; i < 6; i++) {
-      glGetTexImage(dirs[i], 0, GL_DEPTH_COMPONENT, GL_FLOAT,
-                    &imgd[activeView.shadowMapTexsize * activeView.shadowMapTexsize * i]);
+    if (activeView.day_mode) {
+      for (int i = 0; i < 3; i++) {
+        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]);
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, GL_FLOAT, &imgd[size * size * i]);
+      }
+    } else {
+      glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+      GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_NEGATIVE_X, GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+                        GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                        GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+      for (int i = 0; i < 6; i++) {
+        glGetTexImage(dirs[i], 0, GL_DEPTH_COMPONENT, GL_FLOAT, &imgd[size * size * i]);
+      }
     }
+
+    GLuint nloc[6][2] = {{2, 1}, {0, 1}, {1, 1}, {3, 1}, {1, 0}, {1, 2}};
+    GLuint cloc[3][2] = {{0, 0}, {0, 1}, {0, 2}};
+    GLuint(*locations)[2] = activeView.day_mode ? cloc : nloc;
 
     GLfloat maxf = 0;
     GLfloat minf = FLT_MAX;
 
-    for (int i = 0; i < (int)(activeView.shadowMapTexsize * activeView.shadowMapTexsize) * 6;
-         i++) {
-      maxf = std::max(maxf, imgd[i]);
-      minf = std::min(minf, imgd[i]);
-    }
-    if (maxf <= minf) {
-      maxf = 1;
-      minf = 0;
+    int step = size * size * (activeView.day_mode ? 1 : N);
+    int ns = activeView.day_mode ? 3 : 1;
+
+    GLfloat *showd = new GLfloat[4 * size * size * N];
+    for (int s = 0; s < ns; s++) {
+      for (int i = step * s; i < step * (s + 1); i++) {
+        maxf = std::max(maxf, imgd[i]);
+        minf = std::min(minf, imgd[i]);
+      }
+      if (maxf <= minf) {
+        maxf = 1;
+        minf = 0;
+      }
+
+      double sc = 1 / (maxf - minf);
+      for (int i = step * s; i < step * (s + 1); i++) {
+        showd[4 * i] = sc * (imgd[i] - minf);
+        showd[4 * i + 1] = sc * (imgd[i] - minf);
+        showd[4 * i + 2] = sc * (imgd[i] - minf);
+        showd[4 * i + 3] = 1.;
+      }
     }
 
-    for (int i = (int)(activeView.shadowMapTexsize * activeView.shadowMapTexsize) * 6 * 4 - 1;
-         i >= 0; --i) {
-      imgd[i] = (imgd[i / 4] - minf) / (maxf - minf);
-      if (i % 4 == 3) imgd[i] = 1.;
-    }
-
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < N; i++) {
       glActiveTexture(GL_TEXTURE0);
+
       GLuint cpy;
       glGenTextures(1, &cpy);
       /* must bind cpy or we overwrite random textures */
@@ -299,20 +332,20 @@ void MainMode::display() {
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, activeView.shadowMapTexsize,
-                   activeView.shadowMapTexsize, 0, GL_RGBA, GL_FLOAT,
-                   &imgd[4 * activeView.shadowMapTexsize * activeView.shadowMapTexsize * i]);
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT,
+                   &showd[4 * size * size * i]);
 
-      draw2DRectangle(50 + 110 * locations[i][0], 50 + 110 * locations[i][1], 100, 100,  // ssp
-                      0., 0., 1., 1.,                                                    // tx
-                      0.9, 0.8, 0.8, 1.,  // rgba
-                      cpy);
+      int s = 128;
+      draw2DRectangle(50 + (s + 10) * locations[i][0], 50 + (s + 10) * locations[i][1], s, s,
+                      0., 1., 1., -1., 0.9, 0.8, 0.8, 1., cpy);
 
       glDeleteTextures(1, &cpy);
     }
 
     delete[] imgd;
+    delete[] showd;
   }
+  displayFrameRate();
   Leave2DMode();
 }
 void MainMode::doExpensiveComputations() { Game::current->doExpensiveComputations(); }

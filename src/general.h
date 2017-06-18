@@ -43,7 +43,7 @@ typedef double Matrix3d[3][3];
 typedef int Boolean;
 
 #ifndef M_PI
-#define M_PI 3.14159265
+#define M_PI 3.14159265358979323846264
 #endif
 
 #ifndef M_PI2
@@ -62,9 +62,9 @@ int pathIsDir(
     char *path); /** Checks if the given path points to a true directory (not links) */
 int pathIsLink(char *path); /** Checks if the given path points to a link */
 
-/* A modulus operations which handles negative results safly */
+/* A modulus operations which handles negative results safely */
 int mymod(int v, int m);
-/* Returns the real time right now measured in seconds. Mostly usefull for debugging and
+/* Returns the real time right now measured in seconds. Mostly useful for debugging and
  * optimizations */
 double getSystemTime();
 

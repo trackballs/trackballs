@@ -88,6 +88,14 @@ typedef struct _viewpa {
   GLfloat light_specular[3];
   GLfloat global_ambient[3];
   GLfloat quadratic_attenuation;
+  GLfloat sun_direction[3];
+
+  int day_mode;
+  GLuint cascadeTexsize;
+  GLuint cascadeTexture[3];
+  GLfloat cascadeDistances[3];
+  Matrix4d cascade_proj[3];
+  Matrix4d cascade_model[3];
 
   GLuint shadowMapTexture;
   GLuint shadowMapTexsize;
@@ -103,8 +111,10 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   Matrix4d out);
 void setViewUniforms(GLuint shader);
 
+void renderDummyShadowCascade();
 void renderDummyShadowMap();
 void renderShadowMap(Coord3d focus, Map *mp, Game *gm);
+void renderShadowCascade(Coord3d focus, Map *mp, Game *gm);
 
 // generates a snapshot
 int createSnapshot();
@@ -128,7 +138,6 @@ void useMatrix(Matrix4d, const double[3], double[3]);
 void useMatrix(Matrix3d, const double[3], double[3]);
 void identityMatrix(Matrix4d);
 void assign(const Matrix4d, Matrix4d);
-void transpose(const Matrix4d, Matrix4d);
 void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);
 void rotateY(double, Matrix4d);
@@ -164,9 +173,6 @@ extern const GLfloat menuColorSelected[4], menuColor[4];
 /***********************************/
 /*  Inlined vector operations      */
 
-#define INLINE_VECTOR_OPS
-#ifdef INLINE_VECTOR_OPS
-
 /* C <- A + B */
 inline void add(const double A[3], const double B[3], double C[3]) {
   for (int i = 0; i < 3; i++) C[i] = A[i] + B[i];
@@ -196,6 +202,4 @@ inline void crossProduct(const double A[3], const double B[3], double C[3]) {
 inline double dotProduct(const double A[3], const double B[3]) {
   return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
 }
-#endif
-
 #endif

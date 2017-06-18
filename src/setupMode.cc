@@ -218,7 +218,7 @@ void SetupMode::display() {
                           {0.f, 0.f, 1.f, 0.f},
                           {0.75f, -0.75f, 0.f, 1.f}};
   Matrix4d persp_tmp;
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1), 1.0, 1e20,
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1), 0.1, 200,
                     persp_tmp);
   matrixMult(persp_tmp, persp_trans, activeView.projection);
 

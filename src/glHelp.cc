@@ -32,6 +32,8 @@
 #include <SDL2/SDL_ttf.h>
 #include <map>
 
+#define SHADOW_TEXSIZE 512
+
 float fps = 50.0;
 int screenWidth = 640, screenHeight = 480;
 ViewParameters activeView;
@@ -463,6 +465,9 @@ void setViewUniforms(GLuint shader) {
               activeView.light_specular[1], activeView.light_specular[2]);
   glUniform3f(glGetUniformLocation(shader, "global_ambient"), activeView.global_ambient[0],
               activeView.global_ambient[1], activeView.global_ambient[2]);
+  glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
+              activeView.sun_direction[1], activeView.sun_direction[2]);
+  glUniform1f(glGetUniformLocation(shader, "day_mode"), activeView.day_mode ? 1. : -1.);
   glUniform1f(glGetUniformLocation(shader, "quadratic_attenuation"),
               activeView.quadratic_attenuation);
 
@@ -477,6 +482,49 @@ void setViewUniforms(GLuint shader) {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+  glUniform1i(glGetUniformLocation(shader, "shadow_cascade0"), 2);
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glUniform1i(glGetUniformLocation(shader, "shadow_cascade1"), 3);
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[1]);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glUniform1i(glGetUniformLocation(shader, "shadow_cascade2"), 4);
+  glActiveTexture(GL_TEXTURE4);
+  glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[2]);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  int N = 3;
+  GLfloat cscproj[N * 16], cscmodel[N * 16];
+  for (int i = 0; i < N; i++) {
+    for (int j = 0; j < 4; j++) {
+      for (int k = 0; k < 4; k++) {
+        cscproj[16 * i + 4 * j + k] = activeView.cascade_proj[i][j][k];
+        cscmodel[16 * i + 4 * j + k] = activeView.cascade_model[i][j][k];
+      }
+    }
+  }
+
+  glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_proj"), 3, GL_FALSE,
+                     (GLfloat *)cscproj);
+  glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_model"), 3, GL_FALSE,
+                     (GLfloat *)cscmodel);
 
   glActiveTexture(GL_TEXTURE0);
 }
@@ -494,7 +542,21 @@ void renderDummyShadowMap() {
   }
 }
 
+void renderDummyShadowCascade() {
+  GLfloat buf[3] = {1.0f};
+  activeView.cascadeTexsize = 1;
+  for (int i = 0; i < 3; i++) {
+    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 buf);
+  }
+}
+
 void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
+  Matrix4d origMV, origProj;
+  assign(activeView.modelview, origMV);
+  assign(activeView.projection, origProj);
+
   activeView.calculating_shadows = 1;
   if (activeView.shadowMapTexsize <= 1) {
     /* order doesn't matter */
@@ -504,16 +566,13 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
 
     GLint maxSize;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-    activeView.shadowMapTexsize = std::min(maxSize, 1024);
+    activeView.shadowMapTexsize = std::min(maxSize, SHADOW_TEXSIZE);
     for (uint face = 0; face < 6; face++) {
       glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
                    activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     }
   }
 
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
   Coord3d norv[6] = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
   Coord3d upv[6] = {{0, -1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}, {0, -1, 0}};
   /* order doesn't matter */
@@ -536,6 +595,9 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   }
 
   perspectiveMatrix(90., 1, 0.1, 1000., activeView.projection);
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
   glViewport(0, 0, activeView.shadowMapTexsize, activeView.shadowMapTexsize);
 
   GLuint cubeFBOs[6];
@@ -571,6 +633,164 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDeleteFramebuffers(6, cubeFBOs);
 
+  activeView.calculating_shadows = 0;
+  assign(origMV, activeView.modelview);
+  assign(origProj, activeView.projection);
+}
+
+void mulMatrix4(const Matrix4d mult, const double src[4], double res[4]) {
+  /* TODO: establish a proper Mat4, Mat3, Vec4, Vec3 set of types */
+  double r[4] = {0., 0., 0., 0.};
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) { r[i] += src[j] * mult[i][j]; }
+  }
+  assign(r, res);
+}
+
+void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
+  Matrix4d origMV, origProj;
+  assign(activeView.modelview, origMV);
+  assign(activeView.projection, origProj);
+
+  const int N = 3;
+
+  GLfloat proj_half_angle = 40 / 2 * M_PI / 180;
+  GLfloat aspect = (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1);
+
+  GLfloat dts[N + 1] = {0., activeView.cascadeDistances[0], activeView.cascadeDistances[1],
+                        activeView.cascadeDistances[2]};
+  /* Construct ortho projection matrix clipped near at 0, far at 1000. */
+  Matrix4d ortho = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, -2. / 100., -1}, {0, 0, 0, 1}};
+  assign(ortho, activeView.projection);
+
+  /* Construct light model matrices */
+  Matrix4d mvmt;
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) mvmt[i][j] = origMV[j][i];
+  /* extract rotation operation and camera center */
+  Matrix3d mvm3t;
+  for (int k = 0; k < 3; k++)
+    for (int j = 0; j < 3; j++) mvm3t[j][k] = mvmt[k][j];
+  Coord3d cc = {mvmt[0][3], mvmt[1][3], mvmt[2][3]};
+  Coord3d camera;
+  useMatrix(mvm3t, cc, camera);
+  for (int k = 0; k < 3; k++) camera[k] *= -1;
+
+  Matrix4d light_align;
+  lookAtMatrix(0, 0, 0, activeView.sun_direction[0], activeView.sun_direction[1],
+               activeView.sun_direction[2], 0, 0, 1, light_align);
+  Matrix3d light_align3;
+  for (int k = 0; k < 3; k++)
+    for (int j = 0; j < 3; j++) light_align3[j][k] = light_align[k][j];
+
+  for (int i = 0; i < N; i++) {
+    double bounds[3][2] = {{1e99, -1e99}, {1e99, -1e99}, {1e99, -1e99}};
+
+    /* Estimate orthogonal projection matrix onto frustum */
+    for (int j = 0; j < 2; j++) {
+      double eyepts[3] = {std::tan(proj_half_angle) * dts[i + j],
+                          aspect * std::tan(proj_half_angle) * dts[i + j], dts[i + j]};
+      for (int k = 0; k < 4; k++) {
+        eyepts[k % 2] *= -1;
+        double resultA[3];
+        /* convert to world space */
+        useMatrix(mvm3t, eyepts, resultA);
+        for (int m = 0; m < 3; m++) resultA[m] += camera[m];
+
+        double result[3];
+        /* reorient along light space. NOTE: this breaks total offset, but we don't care about
+         * it...*/
+        useMatrix(light_align3, resultA, result);
+
+        for (int m = 0; m < 3; m++) {
+          bounds[m][0] = std::min(bounds[m][0], result[m]);
+          bounds[m][1] = std::max(bounds[m][1], result[m]);
+        }
+      }
+    }
+    double dx = bounds[0][1] - bounds[0][0], dy = bounds[1][1] - bounds[1][0];  //,
+    double rx = std::max(dx, dy);
+    double ry = std::max(dx, dy);
+    double midpoint[3] = {0, 0, -0.5 * (dts[i] + dts[i + 1])};
+    double mmpt[3];
+    useMatrix(mvm3t, midpoint, mmpt);
+    for (int k = 0; k < 3; k++) mmpt[k] += camera[k];
+
+    double s = 50; /* rel. the 100 of range */
+    Coord3d light_camera = {mmpt[0] - s * activeView.sun_direction[0],
+                            mmpt[1] - s * activeView.sun_direction[1],
+                            mmpt[2] - s * activeView.sun_direction[2]};
+    lookAtMatrix(light_camera[0], light_camera[1], light_camera[2], mmpt[0], mmpt[1], mmpt[2],
+                 0, 0, 1, activeView.cascade_model[i]);
+
+    /* like glOrtho; -L=R=rx, -B=T=ry, N=0,F=1000 */
+    const double F = 200.;
+    Matrix4d orthoMtx = {
+        {1 / rx, 0, 0, 0}, {0, 1 / ry, 0, 0}, {0, 0, -2. / F, 0}, {0, 0, 0, 1}};
+    assign(orthoMtx, activeView.cascade_proj[i]);
+  }
+
+  /* Render cascade map using the given matrices */
+  if (activeView.cascadeTexsize <= 1) {
+    /* order doesn't matter */
+    GLint maxSize;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+    activeView.cascadeTexsize = std::min(maxSize, SHADOW_TEXSIZE);
+  }
+  for (int i = 0; i < N; i++) {
+    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, activeView.cascadeTexsize,
+                 activeView.cascadeTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  }
+
+  static GLuint colorTex = -1;
+  if (colorTex == (GLuint)-1) {
+    glGenTextures(1, &colorTex);
+    glBindTexture(GL_TEXTURE_2D, colorTex);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, activeView.cascadeTexsize,
+                 activeView.cascadeTexsize, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  }
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glViewport(0, 0, activeView.cascadeTexsize, activeView.cascadeTexsize);
+  activeView.calculating_shadows = 1;
+
+  GLuint cascadeFBOs[N];
+  glGenFramebuffers(N, cascadeFBOs);
+  for (int i = 0; i < N; i++) {
+    glBindFramebuffer(GL_FRAMEBUFFER, cascadeFBOs[i]);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D,
+                           activeView.cascadeTexture[i], 0);
+    GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (GL_FRAMEBUFFER_COMPLETE != result) {
+      warning("Framebuffer is not complete. #%d w/err %x", i, result);
+    }
+  }
+
+  glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+  // set Persp to square + angle
+  for (int loop = 0; loop < N; ++loop) {
+    glBindFramebuffer(GL_FRAMEBUFFER, cascadeFBOs[loop]);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    assign(activeView.cascade_model[loop], activeView.modelview);
+    assign(activeView.cascade_proj[loop], activeView.projection);
+    // Render (todo: 50% alpha clip)
+    if (mp) mp->draw(0, focus[0], focus[1]);
+    if (gm) gm->draw();
+  }
+
+  /* back to default (to screen) frame buffer */
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDeleteFramebuffers(N, cascadeFBOs);
+
+  assign(origMV, activeView.modelview);
+  assign(origProj, activeView.projection);
   activeView.calculating_shadows = 0;
 }
 
@@ -787,6 +1007,9 @@ void glHelpInit() {
   activeView.global_ambient[1] = 0.f;
   activeView.global_ambient[2] = 0.f;
   activeView.quadratic_attenuation = 0.f;
+  activeView.sun_direction[0] = 6 / 11.;
+  activeView.sun_direction[1] = 34 / 121.;
+  activeView.sun_direction[2] = -93 / 121.;
 
   activeView.calculating_shadows = 0;
 
@@ -801,6 +1024,21 @@ void glHelpInit() {
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
+  activeView.cascadeDistances[0] = 8.f;
+  activeView.cascadeDistances[1] = 40.f;
+  activeView.cascadeDistances[2] = 200.f;
+  /* We don't use an array for the cascade texture because it reqs.
+   * more shaders/etc */
+  activeView.cascadeTexture[0] = 0;
+  activeView.cascadeTexture[1] = 0;
+  activeView.cascadeTexture[2] = 0;
+
+  glGenTextures(3, activeView.cascadeTexture);
+  for (int i = 0; i < 3; i++) { glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]); }
+
+  activeView.day_mode = 1;
+
+  renderDummyShadowCascade();
   renderDummyShadowMap();
   warnForGLerrors("postGLinit");
 }
@@ -983,42 +1221,6 @@ void displayFrameRate() {
   }
 }
 
-/********************/
-/* Vector operations */
-/********************/
-
-#ifndef INLINE_VECTOR_OPS
-/* C <- A + B */
-void add(const double A[3], const double B[3], double C[3]) {
-  for (int i = 0; i < 3; i++) C[i] = A[i] + B[i];
-}
-
-/* C <- A - B */
-void sub(const double A[3], const double B[3], double C[3]) {
-  for (int i = 0; i < 3; i++) C[i] = A[i] - B[i];
-}
-/* C <- C * 1 / |C| */
-void normalize(double C[3]) {
-  double l = sqrt(C[0] * C[0] + C[1] * C[1] + C[2] * C[2]);
-  C[0] /= l;
-  C[1] /= l;
-  C[2] /= l;
-}
-/* |A| */
-double length(double A[3]) { return sqrt(A[0] * A[0] + A[1] * A[1] + A[2] * A[2]); }
-/* C <- A x B */
-void crossProduct(const double A[3], const double B[3], double C[3]) {
-  C[0] = A[1] * B[2] - A[2] * B[1];
-  C[1] = A[2] * B[0] - A[0] * B[2];
-  C[2] = A[0] * B[1] - A[1] * B[0];
-}
-
-/* <- A . B */
-double dotProduct(const double A[3], const double B[3]) {
-  return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
-}
-#endif
-
 /*********************/
 /* Matrix operations */
 /*********************/
@@ -1062,14 +1264,6 @@ void useMatrix(Matrix3d A, const double B[3], double C[3]) {
 void assign(const Matrix4d A, Matrix4d C) {
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++) C[i][j] = A[i][j];
-}
-
-/* C <- A */
-void transpose(const Matrix4d A, Matrix4d C) {
-  Matrix4d B;
-  for (int i = 0; i < 4; i++)
-    for (int j = 0; j < 4; j++) B[j][i] = A[i][j];
-  assign(C, B);
 }
 
 /* C <- A */
