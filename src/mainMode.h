@@ -49,9 +49,8 @@ class MainMode : public GameMode {
   void levelComplete();
   void bonusLevelComplete();
 
-  void setupLighting();
-  void renderEnvironmentTexture(GLuint texture, Coord3d focus);
-  void convertToFisheye(uchar *convertedData, uchar *originalData, int originalSize);
+  void setupLighting() const;
+  void renderEnvironmentTexture(GLuint texture, Coord3d focus) const;
   Real flash;
 
   static void init();
@@ -74,9 +73,6 @@ class MainMode : public GameMode {
   static const int statusRestartPlayer, statusNextLevel, statusVictory;
   static const int statusLevelComplete, statusBonusLevelComplete;
   static const int statusPaused;
-
-  // static SDL_Surface *panel,*life,*nolife;
-  static uchar *environmentTextureData, *viewportData;
 
   char *mapname;
 };

@@ -780,7 +780,6 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     assign(activeView.cascade_model[loop], activeView.modelview);
     assign(activeView.cascade_proj[loop], activeView.projection);
-    // Render (todo: 50% alpha clip)
     if (mp) mp->draw(0, focus[0], focus[1]);
     if (gm) gm->draw();
   }

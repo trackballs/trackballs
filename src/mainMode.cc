@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ENVIRONMENT_TEXTURE_SIZE 128
+#define ENVIRONMENT_TEXTURE_SIZE 512
 
 Coord3d sunPosition = {-20, -40, 40};
 Coord3d moonPosition = {0, 0, 2};
@@ -53,16 +53,8 @@ const int MainMode::statusPaused = 8;
 static const int debug_shadowmap = 0;
 
 MainMode *MainMode::mainMode = NULL;
-uchar *MainMode::viewportData, *MainMode::environmentTextureData;
 
-void MainMode::init() {
-  mainMode = new MainMode();
-
-  /* Reflection maps */
-  viewportData = NULL;
-  environmentTextureData =
-      (uchar *)malloc(sizeof(uchar) * 4 * ENVIRONMENT_TEXTURE_SIZE * ENVIRONMENT_TEXTURE_SIZE);
-}
+void MainMode::init() { mainMode = new MainMode(); }
 MainMode::MainMode() {
   flash = 0;
   zAngle = 0.;
@@ -345,6 +337,7 @@ void MainMode::display() {
     delete[] imgd;
     delete[] showd;
   }
+
   displayFrameRate();
   Leave2DMode();
 }
@@ -521,12 +514,7 @@ void MainMode::activated() {
   time = 0.0;
   flash = 0.0;
 }
-void MainMode::deactivated() {
-  SDL_SetRelativeMouseMode(SDL_FALSE);
-
-  free(viewportData);
-  viewportData = NULL;
-}
+void MainMode::deactivated() { SDL_SetRelativeMouseMode(SDL_FALSE); }
 void MainMode::playerLose() {
   Game::current->gamer->playerLose();
   gameStatus = statusGameOver;
@@ -662,29 +650,10 @@ void MainMode::bonusLevelComplete() {
   strcpy(Game::current->nextLevel, Game::current->returnLevel);
 }
 
-void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
+void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
   // Save gfx_details and change before drawing environment */
   int gfx_details = Settings::settings->gfx_details;
   Settings::settings->gfx_details = GFX_DETAILS_MINIMALISTIC;
-
-  static int currentViewportSize = 512;
-  static double currentTime = 0.0;
-  if (currentTime > 0.05)
-    currentViewportSize = std::max(128, currentViewportSize / 2);
-  else if (currentTime < 0.05 / 4.0)
-    currentViewportSize = std::min(512, currentViewportSize * 2);
-
-  int viewportSize = currentViewportSize;
-  if (screenHeight < 512) viewportSize = screenHeight;
-  // viewportSize=256;
-
-  glViewport(0, 0, viewportSize, viewportSize);
-  if (Game::current->fogThickness)
-    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
-                 Game::current->fogColor[2], Game::current->fogColor[3]);
-  else
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
@@ -712,11 +681,6 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
                    : focus[2] + 2.0,
                up[0], up[1], up[2], activeView.modelview);
 
-  /* Some standard GL settings needed */
-  glEnable(GL_CULL_FACE);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
-
   setupLighting();
 
   /* Setup how we handle textures based on gfx_details */
@@ -728,38 +692,54 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
+  GLuint depth_dummy = 0;
+  glGenTextures(1, &depth_dummy);
+  glBindTexture(GL_TEXTURE_2D, depth_dummy);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, ENVIRONMENT_TEXTURE_SIZE,
+               ENVIRONMENT_TEXTURE_SIZE, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, ENVIRONMENT_TEXTURE_SIZE, ENVIRONMENT_TEXTURE_SIZE,
+               0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+  GLuint reflFBO;
+  glGenFramebuffers(1, &reflFBO);
+  glBindFramebuffer(GL_FRAMEBUFFER, reflFBO);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_dummy, 0);
+  GLenum result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (GL_FRAMEBUFFER_COMPLETE != result) {
+    warning("Framebuffer is not complete. w/err %x", result);
+  }
+
+  /* actually render the scene */
+  glViewport(0, 0, ENVIRONMENT_TEXTURE_SIZE, ENVIRONMENT_TEXTURE_SIZE);
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+
+  if (Game::current->fogThickness)
+    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
+                 Game::current->fogColor[2], Game::current->fogColor[3]);
+  else
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+  glBindFramebuffer(GL_FRAMEBUFFER, reflFBO);
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   Map *map = Game::current ? Game::current->map : NULL;
 
   map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
-  // map->draw(birdsEye,1, (int) focus[0]+10,(int) focus[1]+10);
 
-  /* Copy rendered image into viewportData */
-  if (!viewportData) {
-    viewportData = (uchar *)malloc(sizeof(uchar) * screenWidth * screenHeight * 3);
-  }
-  // approx 1-2 ms */
-  glReadPixels(0, 0, viewportSize, viewportSize, GL_RGB, GL_UNSIGNED_BYTE,
-               (GLvoid *)viewportData);
-
-  // Converts viewport data to fisheye environment perspective
-  // approx 10 ms */
-  convertToFisheye(environmentTextureData, viewportData, viewportSize);
-
-  /* Takes approx 1-2 ms */
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0,
-               GL_RGBA,  // GL_RGBA
-               ENVIRONMENT_TEXTURE_SIZE, ENVIRONMENT_TEXTURE_SIZE, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, environmentTextureData);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDeleteFramebuffers(1, &reflFBO);
+  glDeleteTextures(1, &depth_dummy);
 
   // Restore graphics details
   Settings::settings->gfx_details = gfx_details;
 }
 
-void MainMode::setupLighting() {
+void MainMode::setupLighting() const {
   GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
   if (Game::current && Game::current->isNight) {
     GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
@@ -784,79 +764,5 @@ void MainMode::setupLighting() {
     assign(black, activeView.global_ambient);
     assign(ambient, activeView.light_ambient);
     activeView.quadratic_attenuation = 0.;
-  }
-}
-
-/* Creates a 128x128 fisheye texture from viewport data */
-void MainMode::convertToFisheye(uchar *data, uchar *viewport, int viewportSize) {
-  /* TODO. Let the environment map sample multiple viewport pixels.
-         Encode an alpha value directly in the translationmap and let the alpha value increase
-         as the angle away from the observer increases.
-  */
-  static short *translationMap = NULL;
-  static short translationViewportSize = 0;
-  if (!translationMap)
-    translationMap = (short *)malloc(sizeof(short) * ENVIRONMENT_TEXTURE_SIZE *
-                                     ENVIRONMENT_TEXTURE_SIZE * 2);
-  if (translationViewportSize != viewportSize) {
-    translationViewportSize = viewportSize;
-    /* Create mapping between fisheye texture and viewport */
-    int x, y, x2, y2;
-    for (x = 0; x < ENVIRONMENT_TEXTURE_SIZE; x++) {
-      double nx = (x - ENVIRONMENT_TEXTURE_SIZE / 2) * 2.0 / ENVIRONMENT_TEXTURE_SIZE;
-      for (y = 0; y < ENVIRONMENT_TEXTURE_SIZE; y++) {
-        double ny = (y - ENVIRONMENT_TEXTURE_SIZE / 2) * 2.0 / ENVIRONMENT_TEXTURE_SIZE;
-        double nz = 1.0 - nx * nx - ny * ny;
-        if (nz > 0.0) {
-          nz = sqrt(nz);
-          double dotprod = 2.0 * nz;
-          double vx = -2.0 * nx;
-          double vy = -2.0 * ny;
-          double vz = 1 - 2.0 * nz;
-          double h = 0.05 / vz;
-          double fx2 = -h * vx;
-          double fy2 = +h * vy;
-          if (dotprod < 1.0) {
-            fy2 = -fy2;
-            fx2 = -fx2;
-          }
-          if (fx2 > 0.5) {
-            fx2 = 0.5;
-            fy2 = (fy2 / fx2) * 0.5;
-          } else if (fx2 < -0.5) {
-            fx2 = -0.5;
-            fy2 = (fy2 / -fx2) * 0.5;
-          }
-          if (fy2 > 0.5) {
-            fy2 = 0.5;
-            fx2 = (fx2 / fy2) * 0.5;
-          } else if (fy2 < -0.5) {
-            fy2 = -0.5;
-            fx2 = (fx2 / -fy2) * 0.5;
-          }
-          x2 = (int)(viewportSize * (fx2 * 0.99 + 0.5));
-          y2 = (int)(viewportSize * (fy2 * 0.99 + 0.5));
-
-          translationMap[(x + y * ENVIRONMENT_TEXTURE_SIZE) * 2] = x2;
-          translationMap[(x + y * ENVIRONMENT_TEXTURE_SIZE) * 2 + 1] = y2;
-        } else {
-          translationMap[(x + y * ENVIRONMENT_TEXTURE_SIZE) * 2 + 0] = -1;
-          translationMap[(x + y * ENVIRONMENT_TEXTURE_SIZE) * 2 + 1] = 0;
-        }
-      }
-    }
-  }
-
-  int size = ENVIRONMENT_TEXTURE_SIZE * ENVIRONMENT_TEXTURE_SIZE;
-  for (int i = 0; i < size; i++) {
-    int x2 = translationMap[i * 2 + 0];
-    int y2 = translationMap[i * 2 + 1];
-    if (x2 == -1)
-      data[i * 4 + 3] = 0;
-    else {
-      uchar *viewportPntr = &viewport[(x2 + y2 * viewportSize) * 3];
-      for (int j = 0; j < 3; j++) data[i * 4 + j] = viewportPntr[j];
-      data[i * 4 + 3] = 255;
-    }
   }
 }

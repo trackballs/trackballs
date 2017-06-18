@@ -29,7 +29,39 @@ void main(void) {
   float dx = dot(normal, perp);
   float dy = dot(normal, up);
 
-  vec4 texcolor = refl_color * texture(tex, vec2((1 + dx) / 2, (1 + dy) / 2));
+  float dz = 1. - dx * dx - dy * dy;
+  if (dz <= 0.) {
+    /* not in view; shouldn't happen anyway */
+    discard;
+  }
+  dz = sqrt(dz);
+  float dotprod = 2.0 * dz;
+  float vx = -2.0 * dx;
+  float vy = -2.0 * dy;
+  float vz = 1 - 2.0 * dz;
+  float h = 0.05 / vz;
+  float fx2 = -h * vx;
+  float fy2 = +h * vy;
+  if (dotprod < 1.0) {
+    fy2 = -fy2;
+    fx2 = -fx2;
+  }
+  if (fx2 > 0.5) {
+    fx2 = 0.5;
+    fy2 = (fy2 / fx2) * 0.5;
+  } else if (fx2 < -0.5) {
+    fx2 = -0.5;
+    fy2 = (fy2 / -fx2) * 0.5;
+  }
+  if (fy2 > 0.5) {
+    fy2 = 0.5;
+    fx2 = (fx2 / fy2) * 0.5;
+  } else if (fy2 < -0.5) {
+    fy2 = -0.5;
+    fx2 = (fx2 / -fy2) * 0.5;
+  }
+
+  vec4 texcolor = refl_color * texture(tex, vec2((1 + fx2) / 2, (1 + fy2) / 2));
   vec3 surfcolor = texcolor.xyz;
 
   float dist;

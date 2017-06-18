@@ -645,15 +645,12 @@ void Ball::doExpensiveComputations() {
                    MainMode::mainMode->cameraModelView, MainMode::mainMode->cameraProjection);
   if (!vis) return;
 
-  int update = 20; /* How often to update environment map (on average) */
-  if (Settings::settings->gfx_details == 4) update = 10;
-  if (Settings::settings->gfx_details == 5) update = 5;
-  if (((rand() >> 7) % update) == 0 || 1) {
-    if (environmentTexture == 0) glGenTextures(1, &environmentTexture);
-    dontReflectSelf = 1;
-    MainMode::mainMode->renderEnvironmentTexture(environmentTexture, position);
-    dontReflectSelf = 0;
-  }
+  if (environmentTexture == 0) glGenTextures(1, &environmentTexture);
+  glBindTexture(GL_TEXTURE_2D, environmentTexture);
+
+  dontReflectSelf = 1;
+  MainMode::mainMode->renderEnvironmentTexture(environmentTexture, position);
+  dontReflectSelf = 0;
 }
 
 void Ball::tick(Real time) {
