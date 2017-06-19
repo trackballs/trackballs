@@ -309,6 +309,12 @@ void updateUniforms() { lastProgram = 0; }
 
 void setViewUniforms(GLuint shader);
 void setActiveProgramAndUniforms(GLuint shader) {
+  if (shader == shaderObject) {
+      /* frequently changed unique variables */
+      glUseProgram(shader);
+      glUniform1f(glGetUniformLocation(shader, "use_lighting"), 1.);
+      glUniform1f(glGetUniformLocation(shader, "ignore_shadow"), -1.);
+  }
   if (shader == lastProgram) { return; }
   lastProgram = shader;
   if (shader == 0) { return; }
@@ -808,7 +814,7 @@ int createSnapshot() {
   static int snap_number = 0;
   unsigned char *buffer = NULL;
   char name[1024];
-  int again = 1, i, j;
+  int again = 9999, i, j;
   FILE *f;
 
   /* allocate buffer */
@@ -823,11 +829,12 @@ int createSnapshot() {
   do {
     snprintf(name, 1023, "./snapshot_%04d.ppm", snap_number++);
     if ((f = fopen(name, "r")) == NULL) {
-      again = 0;
+      break;
     } else {
       fclose(f);
+      again--;
     }
-  } while (again);
+  } while (again > 0);
 
   /* Check against symlinks */
   if (pathIsLink(name)) {
