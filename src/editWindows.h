@@ -28,6 +28,7 @@ class EMenuWindow : public MyWindow {
  public:
   EMenuWindow();
   ~EMenuWindow();
+  void refreshChildPositions();
   void draw();
   void mouseDown(int state, int x, int y);
   void openSubMenu(int);

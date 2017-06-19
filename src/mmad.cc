@@ -205,6 +205,9 @@ void changeScreenResolution() {
   SDL_ShowCursor(SDL_DISABLE);
   SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 
+  /* Adjust for size change in editmode */
+  if (EditMode::editMode) { EditMode::editMode->resizeWindows(); }
+
   resetTextures();
 }
 

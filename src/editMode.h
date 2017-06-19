@@ -25,6 +25,14 @@
 
 class Game;
 class Map;
+class EMenuWindow;
+class EStatusWindow;
+class EQuitWindow;
+class ESaveWindow;
+class ECloseWindow;
+class EOpenWindow;
+class ENewWindow;
+class ESubWindow;
 
 class EditMode : public GameMode {
  public:
@@ -49,6 +57,7 @@ class EditMode : public GameMode {
 
   void activated();
   void deactivated();
+  void resizeWindows();
   void closeAllDialogWindows();
   void askNew();
   void askQuit();
@@ -87,16 +96,16 @@ class EditMode : public GameMode {
   int hill;
   int currentEditMode, currentFeature;
 
-  class EMenuWindow *menuWindow;
-  class EStatusWindow *statusWindow;
-  class EQuitWindow *quitWindow;
-  class ESaveWindow *saveWindow;
-  class ECloseWindow *closeWindow;
-  class EOpenWindow *openWindow;
-  class ENewWindow *newWindow;
-  friend class EMenuWindow;
-  friend class ESubWindow;
-  friend class EStatusWindow;
+  EMenuWindow *menuWindow;
+  EStatusWindow *statusWindow;
+  EQuitWindow *quitWindow;
+  ESaveWindow *saveWindow;
+  ECloseWindow *closeWindow;
+  EOpenWindow *openWindow;
+  ENewWindow *newWindow;
+  friend EMenuWindow;
+  friend ESubWindow;
+  friend EStatusWindow;
 
   class Cell *cellClipboard;
   int cellClipboardWidth, cellClipboardHeight;

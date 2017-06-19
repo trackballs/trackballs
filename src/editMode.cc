@@ -238,6 +238,7 @@ EditMode::EditMode() {
   openWindow = new EOpenWindow();
   newWindow = new ENewWindow();
   currentEditMode = editModeHeight;
+  resizeWindows();
 
   /* Save a reference to self in both in the class variable. */
   EditMode::editMode = this;
@@ -1117,6 +1118,17 @@ void EditMode::makeHill(int radius) {
       map->markCellUpdated(x + mx, y + my);
     }
 }
+void EditMode::resizeWindows() {
+  menuWindow->refreshChildPositions();
+  statusWindow->resize(screenWidth, 110);
+  statusWindow->moveTo(0, screenHeight - 110);
+  quitWindow->moveTo(screenWidth / 2 - 100, screenHeight / 2 - 50);
+  saveWindow->moveTo(screenWidth / 2 - 200, screenHeight / 2 - 50);
+  closeWindow->moveTo(screenWidth / 2 - 100, screenHeight / 2 - 50);
+  openWindow->moveTo(screenWidth / 2 - 200, screenHeight / 2 - 150);
+  newWindow->moveTo(screenWidth / 2 - 100, screenHeight / 2 - 50);
+}
+
 void EditMode::doSmooth(int radius) {
   int mx, my, i;
   int diameter = radius * 2 + 1;

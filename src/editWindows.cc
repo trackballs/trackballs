@@ -40,6 +40,12 @@ EMenuWindow::EMenuWindow() : MyWindow(0, 0, screenWidth, 30) {
 EMenuWindow::~EMenuWindow() {
   for (int i = 0; i < N_SUBMENUS; i++) delete subWindows[i];
 }
+void EMenuWindow::refreshChildPositions() {
+  this->resize(screenWidth, 30);
+  spacing = screenWidth / N_SUBMENUS;
+  for (int i = 0; i < N_SUBMENUS; i++) { subWindows[i]->moveTo(spacing * i, 30); }
+}
+
 void EMenuWindow::draw() {
   int fontSize = 20;  // 16;
   char str[256];
@@ -344,7 +350,7 @@ void EStatusWindow::mouseDown(int button, int /*x*/, int /*y*/) {
             QuitWindow
 ***********************************/
 
-EQuitWindow::EQuitWindow() : MyWindow(screenWidth / 2 - 100, screenHeight / 2 - 50, 300, 80) {}
+EQuitWindow::EQuitWindow() : MyWindow(0, 0, 300, 80) {}
 void EQuitWindow::draw() {
   int fontSize = 24;
   this->MyWindow::draw();
@@ -381,9 +387,7 @@ void EQuitWindow::no() { remove(); }
 /* The private variable saveCnt is used to delay the save action
    until we have drawing the text "saving..." on the screen. The actual
    saving will be done during the drawing cycle when saveCnt reaches 1 */
-ESaveWindow::ESaveWindow() : MyWindow(screenWidth / 2 - 200, screenHeight / 2 - 50, 400, 80) {
-  saveCnt = 0;
-}
+ESaveWindow::ESaveWindow() : MyWindow(0, 0, 400, 80) { saveCnt = 0; }
 void ESaveWindow::draw() {
   int fontSize = 24;
   this->MyWindow::draw();
@@ -432,8 +436,7 @@ void ESaveWindow::no() { remove(); }
             CloseWindow
 ***********************************/
 
-ECloseWindow::ECloseWindow()
-    : MyWindow(screenWidth / 2 - 100, screenHeight / 2 - 50, 300, 80) {}
+ECloseWindow::ECloseWindow() : MyWindow(0, 0, 300, 80) {}
 void ECloseWindow::draw() {
   int fontSize = 24;
   this->MyWindow::draw();
@@ -463,9 +466,7 @@ void ECloseWindow::no() { remove(); }
             NewWindow
 ***********************************/
 
-ENewWindow::ENewWindow() : MyWindow(screenWidth / 2 - 100, screenHeight / 2 - 50, 300, 100) {
-  name[0] = 0;
-}
+ENewWindow::ENewWindow() : MyWindow(0, 0, 300, 100) { name[0] = 0; }
 void ENewWindow::draw() {
   int fontSize = 24;
   this->MyWindow::draw();
@@ -507,8 +508,7 @@ void ENewWindow::key(int key, int /*x*/, int /*y*/) {
 ***********************************/
 #define PAGE_SIZE 8
 
-EOpenWindow::EOpenWindow()
-    : MyWindow(screenWidth / 2 - 200, screenHeight / 2 - 150, 400, 300) {
+EOpenWindow::EOpenWindow() : MyWindow(0, 0, 400, 300) {
   nNames = 0;
   currPage = 0;
   memset(names, 0, sizeof(names));
