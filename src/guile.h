@@ -21,7 +21,7 @@
 #ifndef GUILE_H
 #define GUILE_H
 
-#include <libguile/tags.h>
+#include <libguile/__scm.h>
 
 void initGuileInterface();
 SCM smobAnimated_make(class Animated* a);
