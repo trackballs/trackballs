@@ -1,14 +1,12 @@
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project(trackballs)
-
-# Compile options (ought to set mode dependent)
-#add_compile_options(-Os)
-#add_compile_options(-ggdb3)
-add_compile_options(-Wall)
 
 # Required libraries
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
-find_package(Guile)
+find_package(Guile REQUIRED)
+find_package(SDL2_and_friends REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # Optionally set data dir and locale dir
 set(TRACKBALLS_LOCALE_OPT "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
@@ -31,6 +29,7 @@ add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE_DIR}")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE_DIR}")
 add_definitions(-DDEFAULT_RESOLUTION=-1)
+add_definitions(${GUILE_DEFINITIONS} ${SDL2_DEFINITIONS})
 
 # Guile interface
 get_directory_property( definitions DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
@@ -39,16 +38,23 @@ foreach( d ${definitions} )
     set(defstr "${defstr}" "-D${d}")
 endforeach()
 
+include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS})
+get_directory_property(includes DIRECTORY  ${CMAKE_SOURCE_DIR} INCLUDE_DIRECTORIES)
+set(incstr "")
+foreach( d ${includes} )
+    set(incstr "${incstr}" "-I${d}")
+endforeach()
+
+# cpp is the c++ preprocessor
 add_custom_command(OUTPUT guile.cc.x
-                  COMMAND CPP=cpp; guile-snarf -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr} -I${GUILE_INCLUDE_DIRS} -I./ -I../ -D_GNU_SOURCE=1 -D_REENTRANT
+                  COMMAND CPP=cpp; ${GUILE_SNARF} -o guile.cc.x ${PROJECT_SOURCE_DIR}/src/guile.cc ${defstr} ${incstr} -D_GNU_SOURCE=1 -D_REENTRANT
                   DEPENDS src/guile.cc
                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # Construct executable file
-include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR})
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} GL SDL2 SDL2_mixer SDL2_image SDL2_ttf z m gc)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} m)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files

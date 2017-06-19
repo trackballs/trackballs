@@ -7,7 +7,6 @@ html/
 Makefile
 trackballs
 install_manifest.txt
-*.cmake
 CMakeFiles
 CMakeCache.txt
 execstring
