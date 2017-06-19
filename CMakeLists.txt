@@ -7,6 +7,8 @@ find_package(Guile REQUIRED)
 find_package(SDL2_and_friends REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)
+# libgc is a dependency of Guile that still needs to be provided
+find_package(GC REQUIRED)
 
 # Optionally set data dir and locale dir
 set(TRACKBALLS_LOCALE_OPT "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
@@ -29,7 +31,7 @@ add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE_DIR}")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE_DIR}")
 add_definitions(-DDEFAULT_RESOLUTION=-1)
-add_definitions(${GUILE_DEFINITIONS} ${SDL2_DEFINITIONS})
+add_definitions(${GUILE_DEFINITIONS} ${SDL2_DEFINITIONS} ${GC_DEFINITIONS})
 
 # Guile interface
 get_directory_property( definitions DIRECTORY ${CMAKE_SOURCE_DIR} COMPILE_DEFINITIONS )
@@ -38,7 +40,7 @@ foreach( d ${definitions} )
     set(defstr "${defstr}" "-D${d}")
 endforeach()
 
-include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${GC_INCLUDE_DIRS})
 get_directory_property(includes DIRECTORY  ${CMAKE_SOURCE_DIR} INCLUDE_DIRECTORIES)
 set(incstr "")
 foreach( d ${includes} )
@@ -54,7 +56,7 @@ add_custom_command(OUTPUT guile.cc.x
 # Construct executable file
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} m)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} ${GC_LIBRARIES} m)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files
