@@ -88,12 +88,13 @@ HighScore::HighScore() {
     char* name = scm_to_utf8_string(sname);
     for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
       if (strcmp(name, Settings::settings->levelSets[levelSet].path) == 0) break;
-    free(name);
     if (levelSet == Settings::settings->nLevelSets) {
       scm_close_input_port(ip);
       warning("Highscores contains info about unknown levelset %s", name);
+      free(name);
       return;
     }
+    free(name);
     for (int i = 0; i < 10; i++) {
       SCM cell = scm_list_ref(block, scm_from_int32(i + 1));
       if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
