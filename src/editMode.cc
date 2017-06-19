@@ -30,6 +30,8 @@
 #include "menusystem.h"
 #include "settings.h"
 #include "setupMode.h"
+#include "smartTrigger.h"
+#include "trigger.h"
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
@@ -408,7 +410,27 @@ void EditMode::display() {
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
     map->draw(0, x, y);
-    if (game) game->draw();
+    map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
+    if (game) {
+      /* Indicate start position and trigger object locations */
+      if (game->hooks) {
+        std::set<GameHook*>::iterator start = game->hooks->begin();
+        std::set<GameHook*>::iterator end = game->hooks->end();
+        for (std::set<GameHook*>::iterator i = start; i != end; i++) {
+          GameHook* hook = *i;
+          SmartTrigger* smart_trigger = dynamic_cast<SmartTrigger*>(hook);
+          Trigger* dumb_trigger = dynamic_cast<Trigger*>(hook);
+          if (smart_trigger) {
+            map->drawSpotRing(smart_trigger->x, smart_trigger->y, smart_trigger->radius, 2);
+          }
+          if (dumb_trigger) {
+            map->drawSpotRing(dumb_trigger->x, dumb_trigger->y, dumb_trigger->radius, 1);
+          }
+        }
+      }
+      map->drawSpotRing(map->startPosition[0], map->startPosition[1], 0.5, 0);
+      game->draw();
+    }
     map->draw(1, x, y);
     /* If we have a clipboard selection then display where it will be pasted */
     if (cellClipboard) {

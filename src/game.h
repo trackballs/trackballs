@@ -36,6 +36,7 @@
 class Map;
 class Player;
 class Weather;
+class EditMode;
 
 class Game {
  public:
@@ -77,11 +78,13 @@ class Game {
   static double defaultScores[SCORE_MAX][2];
 
  protected:
+  friend EditMode;
+  std::set<GameHook *> *hooks;
+
  private:
   void setDefaults();
 
   std::set<Animated *> *objects;
-  std::set<GameHook *> *hooks;
 };
 
 #endif

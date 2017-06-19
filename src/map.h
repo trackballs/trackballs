@@ -101,6 +101,8 @@ class Map {
   void draw(int stage, int x, int y);
   void fillChunkVBO(Chunk *c) const;
   void drawFootprint(int x1, int y1, int x2, int y2, int kind);
+  void drawLoop(int x1, int y1, int x2, int y2, int kind);
+  void drawSpotRing(Real x1, Real y1, Real r, int kind);
   inline Real getHeight(Real x, Real y) const {
     int ix = (int)x;
     int iy = (int)y;

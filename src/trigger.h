@@ -29,8 +29,9 @@ class Trigger : public GameHook {
   ~Trigger();
   void tick(Real);
 
- private:
   Real x, y, radius;
+
+ private:
   SCM expr;
 };
 

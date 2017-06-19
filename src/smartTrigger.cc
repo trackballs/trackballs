@@ -25,7 +25,7 @@
 #include "player.h"
 
 SmartTrigger::SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leaving)
-    : GameHook(), wasIn(0), x(x), y(y), radius(radius), entering(entering), leaving(leaving) {
+    : GameHook(), x(x), y(y), radius(radius), wasIn(0), entering(entering), leaving(leaving) {
   if (entering) scm_gc_protect_object(entering);
   if (leaving) scm_gc_protect_object(leaving);
 }

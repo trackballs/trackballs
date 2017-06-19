@@ -28,11 +28,8 @@
 #include <SDL2/SDL_image.h>
 #include <zlib.h>
 
-/* VISRADIUS is half-width of square of drawable cells
-   MARGIN    is px zone on edge of screen where cells can be skipped. */
+/* VISRADIUS is half-width of square of drawable cells */
 #define VISRADIUS 50
-#define CACHE_SIZE (VISRADIUS * 2 + 1)
-#define MARGIN 10
 #define CHUNKSIZE 32
 
 #define WRITE_PORTABLE 1
@@ -929,17 +926,6 @@ void Map::markCellUpdated(int x, int y) {
 }
 
 void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glDisable(GL_CULL_FACE);
-
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
-
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
-
   GLfloat color[4] = {kind ? 0.5f : 0.2f, 0.2f, kind ? 0.2f : 0.5f, 1.0f};
 
   int ncells = (std::abs(x1 - x2) + 1) * (std::abs(y1 - y2) + 1);
@@ -997,6 +983,17 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   delete[] data;
   delete[] idxs;
 
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glDisable(GL_CULL_FACE);
+
+  setActiveProgramAndUniforms(shaderObject);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 8 * 3 * ncells, GL_UNSIGNED_INT, (void*)0);
 
@@ -1004,6 +1001,199 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glDeleteBuffers(1, &idxbuf);
 
   glEnable(GL_DEPTH_TEST);
+}
+
+void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
+  GLfloat color[4] = {0.2f, kind ? 0.2f : 0.8f, 0.2f, 1.0f};
+
+  int npts = 4 * abs(x1 - x2) + 4 * abs(y1 - y2) + 8;
+  Coord3d* ringPoints = new Coord3d[npts + 2];
+  Coord3d* rp = ringPoints;
+  int k = 1;
+  /* Traverse loop in order. SW is x,y; N is y+1, E is x+1. */
+  int xl = std::min(x1, x2), xh = std::max(x1, x2), yl = std::min(y1, y2),
+      yh = std::max(y1, y2);
+  for (int x = xl; x <= xh; x++) {
+    Cell& c = cell(x, yl);
+    Coord3d lx = {(double)x, (double)yl, c.heights[Cell::SOUTH + Cell::WEST]};
+    Coord3d ly = {(double)x + 1, (double)yl, c.heights[Cell::SOUTH + Cell::EAST]};
+    assign(lx, rp[k]);
+    k++;
+    assign(ly, rp[k]);
+    k++;
+  }
+  for (int y = yl; y <= yh; y++) {
+    Cell& c = cell(xh, y);
+    Coord3d lx = {(double)xh + 1, (double)y, c.heights[Cell::SOUTH + Cell::EAST]};
+    Coord3d ly = {(double)xh + 1, (double)y + 1, c.heights[Cell::NORTH + Cell::EAST]};
+    assign(lx, rp[k]);
+    k++;
+    assign(ly, rp[k]);
+    k++;
+  }
+  for (int x = xh; x >= xl; x--) {
+    Cell& c = cell(x, yh);
+    Coord3d lx = {(double)x + 1, (double)yh + 1, c.heights[Cell::NORTH + Cell::EAST]};
+    Coord3d ly = {(double)x, (double)yh + 1, c.heights[Cell::NORTH + Cell::WEST]};
+    assign(lx, rp[k]);
+    k++;
+    assign(ly, rp[k]);
+    k++;
+  }
+  for (int y = yh; y >= yl; y--) {
+    Cell& c = cell(xl, y);
+    Coord3d lx = {(double)xl, (double)y + 1, c.heights[Cell::NORTH + Cell::WEST]};
+    Coord3d ly = {(double)xl, (double)y, c.heights[Cell::NORTH + Cell::EAST]};
+    assign(lx, rp[k]);
+    k++;
+    assign(ly, rp[k]);
+    k++;
+  }
+  /* Close the loop */
+  assign(ringPoints[k - 1], ringPoints[0]);
+  assign(ringPoints[1], ringPoints[k]);
+
+  GLfloat* data = new GLfloat[8 * 2 * npts];
+  GLfloat width = 0.05f;
+  GLfloat flat[3] = {0., 0., 0.};
+  char* pos = (char*)data;
+  int nontrivial = 0;
+  for (int i = 1; i < npts + 1; i++) {
+    Coord3d prev, cur, nxt;
+    assign(ringPoints[i - 1], prev);
+    assign(ringPoints[i], cur);
+    assign(ringPoints[i + 1], nxt);
+    Coord3d dir1, dir2, dir;
+    sub(nxt, cur, dir1);
+    sub(cur, prev, dir2);
+    if (length(dir1) < 1e-2 && length(dir1) < 1e-2) { continue; }
+    if (length(dir1) < 1e-2) { assign(dir2, dir1); }
+    if (length(dir2) < 1e-2) { assign(dir1, dir2); }
+    normalize(dir1);
+    normalize(dir2);
+    add(dir1, dir2, dir);
+    if (length(dir) < 1e-2) { continue; }
+    nontrivial++;
+    normalize(dir);
+    dir[2] = 0;
+    Coord3d up = {0., 0., 1.};
+    Coord3d res;
+    crossProduct(up, dir, res);
+    res[2] = 0.;
+    if (length(res) > 0) normalize(res);
+    Coord3d anti;
+    crossProduct(dir, res, anti);
+    GLfloat off = 1e-2;
+    kind = nontrivial % 2;
+    pos += packObjectVertex(pos, cur[0] + width * res[0] + off * anti[0],
+                            cur[1] + width * res[1] + off * anti[1], cur[2] + off * anti[2],
+                            0., 0., color, flat);
+    pos += packObjectVertex(pos, cur[0] - width * res[0] + off * anti[0],
+                            cur[1] - width * res[1] + off * anti[1], cur[2] + off * anti[2],
+                            0., 0., color, flat);
+  }
+  ushort* idxs = new ushort[2 * nontrivial * 3];
+  for (int i = 0; i < nontrivial; i++) {
+    int j = (i + 1) % nontrivial;
+    idxs[6 * i + 0] = 2 * j;
+    idxs[6 * i + 1] = 2 * i;
+    idxs[6 * i + 2] = 2 * j + 1;
+    idxs[6 * i + 3] = 2 * i;
+    idxs[6 * i + 4] = 2 * i + 1;
+    idxs[6 * i + 5] = 2 * j + 1;
+  }
+  delete[] ringPoints;
+
+  // Transfer data
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 2 * nontrivial * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * nontrivial * sizeof(ushort), idxs,
+               GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+
+  setActiveProgramAndUniforms(shaderObject);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, 2 * 3 * npts, GL_UNSIGNED_SHORT, (void*)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
+}
+
+void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
+  int nfacets = std::max(12, (int)(10. * r));
+  GLfloat width = std::min(0.5 * r, 0.05);
+  GLfloat color[4] = {kind == 0 ? 1.f : 0.5f, kind == 1 ? 1.f : 0.5f, kind == 2 ? 1.f : 0.5f,
+                      1.0};
+  GLfloat flat[3] = {0., 0., 0.};
+  Real height = Map::getHeight(x1, y1);
+
+  GLfloat* data = new GLfloat[8 * 2 * nfacets];
+  ushort* idxs = new ushort[3 * 2 * nfacets];
+  char* pos = (char*)data;
+
+  for (int i = 0; i < nfacets; i++) {
+    GLfloat angle = 2 * i * M_PI / nfacets;
+    pos += packObjectVertex(pos, x1 + (r - width) * std::cos(angle),
+                            y1 + (r - width) * std::sin(angle), height + 1e-2, 0., 0., color,
+                            flat);
+    pos += packObjectVertex(pos, x1 + (r + width) * std::cos(angle),
+                            y1 + (r + width) * std::sin(angle), height + 1e-2, 0., 0., color,
+                            flat);
+  }
+
+  for (int i = 0; i < nfacets; i++) {
+    int j = (i + 1) % nfacets;
+    idxs[6 * i + 0] = 2 * j;
+    idxs[6 * i + 1] = 2 * i;
+    idxs[6 * i + 2] = 2 * j + 1;
+    idxs[6 * i + 3] = 2 * i;
+    idxs[6 * i + 4] = 2 * i + 1;
+    idxs[6 * i + 5] = 2 * j + 1;
+  }
+
+  // Transfer data
+  GLuint databuf, idxbuf;
+  glGenBuffers(1, &databuf);
+  glGenBuffers(1, &idxbuf);
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, 8 * 2 * nfacets * sizeof(GLfloat), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * 3 * nfacets * sizeof(ushort), idxs,
+               GL_STATIC_DRAW);
+  delete[] data;
+  delete[] idxs;
+
+  glEnable(GL_BLEND);
+  glEnable(GL_CULL_FACE);
+
+  setActiveProgramAndUniforms(shaderObject);
+  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
+  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
+  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  configureObjectAttributes();
+  glDrawElements(GL_TRIANGLES, 2 * 3 * nfacets, GL_UNSIGNED_SHORT, (void*)0);
+
+  glDeleteBuffers(1, &databuf);
+  glDeleteBuffers(1, &idxbuf);
 }
 
 Chunk* Map::chunk(int cx, int cy) {

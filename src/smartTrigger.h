@@ -29,9 +29,10 @@ class SmartTrigger : public GameHook {
   ~SmartTrigger();
   void tick(Real);
 
+  Real x, y, radius;
+
  private:
   int wasIn;
-  Real x, y, radius;
   SCM entering, leaving;
 };
 
