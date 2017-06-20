@@ -151,7 +151,7 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
 void Require2DMode();
 void Enter2DMode();
 void Leave2DMode();
-GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter = 0);
+GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord);
 
 // preloads texture from file (if not already loaded); returns texture array position
 int loadTexture(const char *name);

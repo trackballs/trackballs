@@ -371,6 +371,7 @@ Map::Map(char* filename) {
                                              mask[2], mask[3]);
     SDL_Rect orect = {0, 0, orig->w, orig->h};
     SDL_Rect drect = {0, 0, size, size};
+    SDL_SetSurfaceBlendMode(orig, SDL_BLENDMODE_NONE);
     SDL_BlitScaled(orig, &orect, proj, &drect);
     SDL_FreeSurface(orig);
     SDL_LockSurface(proj);

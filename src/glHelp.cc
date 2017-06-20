@@ -134,7 +134,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
     newentry.tick = stringTick;
     SDL_Surface *surf = drawStringToSurface(inf, outlined);
     if (!surf) { return 0; }
-    newentry.texture = LoadTexture(surf, newentry.texcoord, 1);
+    newentry.texture = LoadTexture(surf, newentry.texcoord);
     newentry.w = surf->w;
     newentry.h = surf->h;
     SDL_FreeSurface(surf);
@@ -953,8 +953,7 @@ int loadTexture(const char *name) {
     return -1;
   } else {
     textureNames[numTextures] = strdup(name);
-    textures[numTextures] =
-        LoadTexture(surface, texCoord, 1);  // linear filter was: font != NULL
+    textures[numTextures] = LoadTexture(surface, texCoord);  // linear filter was: font != NULL
     /*printf("loaded texture[%d]=%d\n",numTextures,textures[numTextures]);*/
     numTextures++;
     SDL_FreeSurface(surface);
@@ -1031,13 +1030,6 @@ void glHelpInit() {
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   glGenTextures(1, &activeView.shadowMapTexture);
   glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
   /* We don't use an array for the cascade texture because it reqs.
    * more shaders/etc */
@@ -1192,7 +1184,7 @@ int resetTextures() {
       return 0;  // error (a valid texture entry)
     } else {
       glDeleteTextures(1, &textures[i]);
-      textures[i] = LoadTexture(surface, texCoord, linear);
+      textures[i] = LoadTexture(surface, texCoord);
       SDL_FreeSurface(surface);
     }
   }
@@ -1390,6 +1382,11 @@ void Enter2DMode() {
   glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
   glActiveTexture(GL_TEXTURE0);
 
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
   is_2d_mode = 1;
 }
 
@@ -1406,7 +1403,7 @@ int powerOfTwo(int input) {
   return value;
 }
 
-GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter) {
+GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
   int w, h;
   SDL_Surface *image;
   SDL_Rect area;
@@ -1415,16 +1412,17 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter) {
   w = powerOfTwo(surface->w);
   h = powerOfTwo(surface->h);
 
-  /* Rescale image if needed? */
-  GLint maxSize;
-  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-  double scale = 1.0;
-  if (w > maxSize || h > maxSize) scale = std::min(maxSize / (double)w, maxSize / (double)h);
-
   texcoord[0] = 0.0f;                    /* Min X */
   texcoord[1] = 0.0f;                    /* Min Y */
   texcoord[2] = (GLfloat)surface->w / w; /* Max X */
   texcoord[3] = (GLfloat)surface->h / h; /* Max Y */
+
+  /* Rescale image if needed? */
+  GLint maxSize;
+  glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
+  //  maxSize = 64;
+  double scale = 1.0;
+  if (w > maxSize || h > maxSize) scale = std::min(maxSize / (double)w, maxSize / (double)h);
 
   Uint32 mask[4];
 #if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
@@ -1450,50 +1448,34 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord, int linearFilter) {
   area.w = (int)(surface->w * scale);
   area.h = (int)(surface->h * scale);
 
+  SDL_SetSurfaceBlendMode(surface, SDL_BLENDMODE_NONE);
   if (scale == 1.0)
     // Easy, no scaling needed
     SDL_BlitSurface(surface, NULL, image, &area);
   else {
-    // Scaling needed
-    // This is a realy inefficient and unoptimised way to do it. Sorry!
-    static int hasWarned = 0;
-    if (!hasWarned) {
-      warning("Rescaling images before loading them as textures.");
-      hasWarned = 1;
-    }
-    SDL_Surface *source = SDL_ConvertSurface(surface, image->format, SDL_SWSURFACE);
-    SDL_LockSurface(source);
-    SDL_LockSurface(image);
-    for (int x = 0; x < area.w; x++)
-      for (int y = 0; y < area.h; y++)
-        *((Uint32 *)(((char *)image->pixels) + x * image->format->BytesPerPixel +
-                     y * image->pitch)) =
-            *((Uint32 *)(((char *)source->pixels) +
-                         ((int)(x / scale)) * source->format->BytesPerPixel +
-                         ((int)(y / scale)) * source->pitch));
-    SDL_UnlockSurface(source);
-    SDL_UnlockSurface(image);
-    SDL_FreeSurface(source);
+    SDL_Rect sarea;
+    sarea.x = 0;
+    sarea.y = 0;
+    sarea.h = surface->h;
+    sarea.w = surface->w;
+    SDL_BlitScaled(surface, &sarea, image, &area);
+    SDL_BlitSurface(surface, NULL, image, &area);
   }
 
   /* Create an OpenGL texture for the image */
   GLuint texture = 0;
   glGenTextures(1, &texture);
-
   glBindTexture(GL_TEXTURE_2D, texture);
-  if (linearFilter) {
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-  } else {
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  }
-
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)(w * scale), (int)(h * scale), 0, GL_RGBA,
                GL_UNSIGNED_BYTE, image->pixels);
-
   SDL_FreeSurface(image); /* No longer needed */
+
+  /* Set current sampler with these just in case */
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
   return texture;
 }
 

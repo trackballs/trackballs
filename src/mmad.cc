@@ -397,7 +397,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
   // Draw the splash screen
   GLfloat texcoord[4];
-  GLuint splashTexture = LoadTexture(splashScreen, texcoord, 0);
+  GLuint splashTexture = LoadTexture(splashScreen, texcoord);
   SDL_FreeSurface(splashScreen);
   for (int i = 0; i < 2; i++) {
     glClear(GL_COLOR_BUFFER_BIT);
