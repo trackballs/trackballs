@@ -299,7 +299,7 @@ void configureObjectAttributes() {
                         (void *)(3 * sizeof(GLfloat)));
   glVertexAttribPointer(2, 2, GL_UNSIGNED_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
                         (void *)(5 * sizeof(GLfloat)));
-  glVertexAttribPointer(4, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
+  glVertexAttribPointer(3, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
                         (void *)(6 * sizeof(GLfloat)));
 }
 
@@ -310,10 +310,10 @@ void updateUniforms() { lastProgram = 0; }
 void setViewUniforms(GLuint shader);
 void setActiveProgramAndUniforms(GLuint shader) {
   if (shader == shaderObject) {
-      /* frequently changed unique variables */
-      glUseProgram(shader);
-      glUniform1f(glGetUniformLocation(shader, "use_lighting"), 1.);
-      glUniform1f(glGetUniformLocation(shader, "ignore_shadow"), -1.);
+    /* frequently changed unique variables */
+    glUseProgram(shader);
+    glUniform1f(glGetUniformLocation(shader, "use_lighting"), 1.);
+    glUniform1f(glGetUniformLocation(shader, "ignore_shadow"), -1.);
   }
   if (shader == lastProgram) { return; }
   lastProgram = shader;
@@ -337,22 +337,21 @@ void setActiveProgramAndUniforms(GLuint shader) {
     glEnableVertexAttribArray(0);
 
   } else if (shader == shaderObject) {
-    // Pos, Color, Tex, ~Vel~, Norm
+    // Pos, Color, Tex, Norm, ~Vel~,
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(4);
-
+    glEnableVertexAttribArray(3);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
     glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), -1.);
 
     glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
   } else if (shader == shaderReflection) {
-    // Pos, Color, Tex, ~Vel~, Norm
+    // Pos, Color, Tex, Norm, ~Vel~
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(3);
   } else {
     /* We don't handle the 2d programs */
     warning("Unidentified 3d shader program");
@@ -1147,12 +1146,12 @@ GLuint loadProgram(const char *vertname, const char *fragname) {
   GLuint shaderprogram = glCreateProgram();
   glAttachShader(shaderprogram, vertexshader);
   glAttachShader(shaderprogram, fragmentshader);
+  /* Shaders use attribs 1..k for some k */
   glBindAttribLocation(shaderprogram, 0, "in_Position");
   glBindAttribLocation(shaderprogram, 1, "in_Color");
   glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
-  glBindAttribLocation(shaderprogram, 3, "in_Velocity");
-  glBindAttribLocation(shaderprogram, 4, "in_Normal");
-  glBindAttribLocation(shaderprogram, 5, "in_Specular");
+  glBindAttribLocation(shaderprogram, 3, "in_Normal");
+  glBindAttribLocation(shaderprogram, 4, "in_Velocity");
   glLinkProgram(shaderprogram);
   glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&IsLinked);
   glDeleteShader(vertexshader);

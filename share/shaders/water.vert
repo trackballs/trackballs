@@ -13,8 +13,8 @@ uniform float gameTime;
 attribute vec3 in_Position;
 attribute vec4 in_Color;
 attribute vec2 in_Texcoord;
-attribute vec2 in_Velocity;
 attribute vec4 in_Normal;
+attribute vec2 in_Velocity;
 
 varying vec3 cpos;
 varying vec2 texco;

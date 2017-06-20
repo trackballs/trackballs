@@ -408,11 +408,11 @@ static void configureCellAttributes(int water) {
     glVertexAttribPointer(2, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
                           (void*)(5 * sizeof(GLfloat)));
   }
-  // Velocity
-  glVertexAttribPointer(3, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
-                        (void*)(6 * sizeof(GLfloat)));
   // Normal
-  glVertexAttribPointer(4, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
+  glVertexAttribPointer(3, 4, GL_UNSIGNED_INT_2_10_10_10_REV, GL_TRUE, 8 * sizeof(GLfloat),
+                        (void*)(6 * sizeof(GLfloat)));
+  // Velocity
+  glVertexAttribPointer(4, 2, GL_SHORT, GL_TRUE, 8 * sizeof(GLfloat),
                         (void*)(7 * sizeof(GLfloat)));
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
@@ -553,11 +553,11 @@ static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
   uint32_t txco = ((uint32_t)(1023.f * ty) << 10) | ((uint32_t)(1023.f * tx) << 0) |
                   ((uint32_t)(1023.f * (txno / 16.f)) << 20);
   aout[5] = txco;
+  aout[6] = packNormal(normal);
 
   int vx = std::max(std::min((int)(32677.f * (velx)), 32677), -32677);
   int vy = std::max(std::min((int)(32677.f * (vely)), 32677), -32677);
-  aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  aout[7] = packNormal(normal);
+  aout[7] = ((uint32_t)vy << 16) + (uint32_t)vx;
 }
 static inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
                                  const float vel[2], GLfloat tx, GLfloat ty,
@@ -569,10 +569,10 @@ static inline void packWaterCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat 
   aout[3] = -1;
   aout[4] = -1;
   aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
+  aout[6] = packNormal(normal);
   int vx = std::max(std::min((int)(32677.f * (0.25f * vel[0])), 32677), -32677);
   int vy = std::max(std::min((int)(32677.f * (0.25f * vel[1])), 32677), -32677);
-  aout[6] = ((uint32_t)vy << 16) + (uint32_t)vx;
-  aout[7] = packNormal(normal);
+  aout[7] = ((uint32_t)vy << 16) + (uint32_t)vx;
 }
 
 static inline int cmp(float l, float r) {
