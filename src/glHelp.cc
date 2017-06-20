@@ -749,7 +749,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
                  0, 0, 1, activeView.cascade_model[i]);
 
     /* like glOrtho; -L=R=rx, -B=T=ry, N=0,F=1000 */
-    const double F = 200.;
+    const double F = 1000.;
     Matrix4d orthoMtx = {
         {1 / rx, 0, 0, 0}, {0, 1 / ry, 0, 0}, {0, 0, -2. / F, 0}, {0, 0, 0, 1}};
     assign(orthoMtx, activeView.cascade_proj[i]);
