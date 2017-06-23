@@ -1,0 +1,101 @@
+## Problems compiling trackballs
+
+
+**Q:**  How do you make a distribution independent linux binary?
+
+**A:**  Short answer, you don't. Long answer: Try statically linking all 
+the non-standard libraries (but not X11/GL), the most important thing; 
+hold your thumbs!
+
+
+## Graphic cards
+
+**Q:** The gamegraphics is very slow even though I have a whizbang 3D 
+graphics card
+
+**A:** Do you have 3D acceleration working under X11? Make sure DRI is 
+working properly and that the game is compiled against the X11 openGL 
+drivers if you have compiled it yourself. To see if you have graphics 
+acceleration working in your X-server use the 'glxinfo' program and look 
+for the line "direct rendering: Yes".
+
+## General problems using trackballs
+
+**Q:** Trackballs is leaking huge amounts of memory
+
+**A:** This seem to be caused by faulty openGL drivers. Or it's a bug!
+
+**Q:**  I have too little memory to run trackballs without swapping.
+
+**A:**  There are alot of things affecting the memory usage of trackballs. Try 
+using the commandline option `--low-memory` which uses 15megs less memory 
+but makes switching screens slightly slower.
+
+**Q:** Sound is out of sync.
+
+**A:** Shutdown any sound servers you are running (eg. artsd or esd) when 
+playing. Eg. run `skill artsd ; trackballs ; artswrapper`
+
+**Q:** Trackballs fails to load complaining about a sound error
+
+**A:** Try turning sound off by running "trackballs -m" 
+
+**Q:** Trackballs fails to load an image with a "JPEG error" or "PNG error" 
+even though the image exists and both libraries are present.
+
+**A:** Try linking with a version of SDL2_image that does not dynamically 
+load libjpeg and libpng.
+
+**Q:** I cannot change flags/colors in the editor as documented.
+
+**A:** This might be caused by using keyboard layout which needs shift to get 
+the numbers (eg. French). Try temporarily changing keyboard layout to 
+Swedish or US.
+
+**Q:** I can't get trackballs to recognise my joystick
+
+**A:** Have you setup joystick support properly for your distribution. You can 
+test if you have it working properly by using the command `jstest /dev/js0`. 
+Does it work? If not, some hints below:
+
+Assuming you are using a analog gameport joystick (most people are!). Make 
+sure you have loaded all the proper joystick modules.
+	
+    modprobe ns558       # For the gameport
+    modprobe joydev      # For general joystick support
+    modprobe analog      # The specific driver for this joystick
+    
+Now, does it work with jstest? If not, make sure you have /dev/js* 
+devices setup properly.
+    
+    chmod 0644 /dev/js?
+    
+Still doesn't work? Ok, we need to delete the actual device nodes and 
+recreate  them.
+    
+    cd /dev
+    rm js?
+    mkdir input
+    mknod input/js0 c 13 0
+    mknod input/js1 c 13 1
+    mknod input/js2 c 13 2
+    mknod input/js3 c 13 3
+    ln -s input/js0 js0
+    ln -s input/js1 js1
+    ln -s input/js2 js2
+    ln -s input/js3 js3
+    
+Does it work now? If not you'll have to be satisfied with using the mouse 
+or keyboard... sorry =(
+
+**Q:** Sometimes when I'm playing with a joystick the ball just start 
+rolling of in one direction
+
+**A:** You might have a broken joystick which gives incorrect wrapover's on 
+your axises. Try using the `--repair-joystick` option. Possibly in 
+conjunction with `--debug-joystick`
+
+**Q:** Translations work for some languages but not others, even though 
+translations are installed.
+**A:** Check that the matching locales (i.e., like `de_DE.UTF-8`) for the 
+languages are enabled on your system.
