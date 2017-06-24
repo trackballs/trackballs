@@ -61,6 +61,11 @@ GLuint textures[GLHELP_MAX_TEXTURES] = {0};  // added init. to 0 (no texture)
 char *textureNames[GLHELP_MAX_TEXTURES] = {NULL};
 int numTextures;
 
+#define MAX_BALL_DETAIL 32
+GLfloat *sphere_points[MAX_BALL_DETAIL];
+GLfloat *sphere_texcos[MAX_BALL_DETAIL];
+ushort *sphere_idxs[MAX_BALL_DETAIL];
+
 static std::map<int, TTF_Font *> menuFontLookup;
 
 Sparkle2D *sparkle2D = NULL;
@@ -289,7 +294,7 @@ size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx,
   fout[2] = z;
   aout[3] = (((uint32_t)(65535.f * color[1])) << 16) + (uint32_t)(65535.f * color[0]);
   aout[4] = (((uint32_t)(65535.f * color[3])) << 16) + (uint32_t)(65535.f * color[2]);
-  aout[5] = (((uint32_t)(65535.f * ty)) << 16) + (uint32_t)(65535.f * tx);
+  aout[5] = (((uint32_t)(65535.f * 0.5f * ty)) << 16) + (uint32_t)(65535.f * 0.5f * tx);
   aout[6] = packNormal(normal);
   return 8 * sizeof(GLfloat);
 }
@@ -375,68 +380,98 @@ void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail) {
   *ntriangles = 2 * radial_count * (nrows - 2);
 }
 
+static void constructSphereData(int detail) {
+  int radial_count = 4 * detail;
+  int nrows = 2 * detail + 1;
+  int nvertices = (radial_count + 1) * (nrows - 2) + 2;
+  int ntriangles = 2 * radial_count * (nrows - 2);
+
+  GLfloat *pts = new GLfloat[3 * nvertices];
+  GLfloat *txs = new GLfloat[2 * nvertices];
+  ushort *idxs = new ushort[3 * ntriangles];
+
+  // Construct vertices
+  int m = 0;
+  for (int z = 1; z < nrows - 1; z++) {
+    GLfloat theta = z * M_PI / (nrows - 1);
+    for (int t = 0; t <= radial_count; t++) {
+      GLfloat phi = 2 * t * M_PI / radial_count;
+      // Stagger every second row
+      if (z % 2 == 1) phi += M_PI / radial_count;
+      txs[2 * m + 0] = phi / (2 * M_PI);
+      txs[2 * m + 1] = theta / M_PI;
+      pts[3 * m + 0] = std::sin(theta) * std::cos(phi);
+      pts[3 * m + 1] = std::sin(theta) * std::sin(phi);
+      pts[3 * m + 2] = std::cos(theta);
+      m++;
+    }
+  }
+  pts[3 * m + 0] = 0;
+  pts[3 * m + 1] = 0;
+  pts[3 * m + 2] = 1.;
+  pts[3 * m + 3] = 0;
+  pts[3 * m + 4] = 0;
+  pts[3 * m + 5] = -1.;
+  txs[2 * m + 0] = 0.5;
+  txs[2 * m + 1] = 0.0;
+  txs[2 * m + 2] = 0.5;
+  txs[2 * m + 3] = 1.0;
+
+  // Triangulate end caps
+  for (int i = 0; i < radial_count; i++) {
+    idxs[6 * i + 0] = i;
+    idxs[6 * i + 1] = i + 1;
+    idxs[6 * i + 2] = (radial_count + 1) * (nrows - 2);
+    idxs[6 * i + 3] = (radial_count + 1) * (nrows - 3) + i + 1;
+    idxs[6 * i + 4] = (radial_count + 1) * (nrows - 3) + i;
+    idxs[6 * i + 5] = (radial_count + 1) * (nrows - 2) + 1;
+  }
+  // Triangulate body
+  ushort *base = &idxs[2 * 3 * radial_count];
+  for (int z = 1; z < nrows - 2; z++) {
+    for (int i = 0; i < radial_count; i++) {
+      base[6 * i + 0] = (z - 1) * (radial_count + 1) + i + 1;
+      base[6 * i + 1] = (z - 1) * (radial_count + 1) + i;
+      base[6 * i + 2] = z * (radial_count + 1) + i + 1;
+      base[6 * i + 3] = (z - 1) * (radial_count + 1) + i;
+      base[6 * i + 4] = z * (radial_count + 1) + i;
+      base[6 * i + 5] = z * (radial_count + 1) + i + 1;
+    }
+    base = &base[6 * radial_count];
+  }
+
+  sphere_points[detail] = pts;
+  sphere_texcos[detail] = txs;
+  sphere_idxs[detail] = idxs;
+}
+
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
                        Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]) {
   if (detail < 1) {
     warning("Sphere detail level must be > 1. Drawing nothing.");
     return;
   }
+  if (!sphere_points[detail]) { constructSphereData(detail); }
+
   int radial_count = 4 * detail;
   int nrows = 2 * detail + 1;
+  int nvertices = (radial_count + 1) * (nrows - 2) + 2;
+  int ntriangles = 2 * radial_count * (nrows - 2);
+  for (int i = 0; i < 3 * ntriangles; i++) { idxs[i] = first_index + sphere_idxs[detail][i]; }
 
-  // Construct vertices
+  // Copy and transform vertices
   char *pos = (char *)data;
-  for (int z = 1; z < nrows - 1; z++) {
-    GLfloat theta = z * M_PI / (nrows - 1);
-    for (int t = 0; t <= radial_count; t++) {
-      GLfloat phi = 2 * t * M_PI / radial_count;
-      // Texture handling with staggered rows reqs. passing txcoords > 1
-      // which packObjectVertex doesn't account for as of writing
-      // if (z % 2 == 1) phi += M_PI / radial_count;
+  GLfloat *pts = sphere_points[detail];
+  GLfloat *txs = sphere_texcos[detail];
+  for (int i = 0; i < nvertices; i++) {
+    GLfloat loc[3] = {pts[3 * i], pts[3 * i + 1], pts[3 * i + 2]};
+    GLfloat txc[2] = {txs[2 * i], txs[2 * i + 1]};
 
-      Coord3d local = {std::sin(theta) * std::cos(phi), std::sin(theta) * std::sin(phi),
-                       std::cos(theta)};
-      Coord3d off;
-      useMatrix(rotation, local, off);
-      GLfloat foff[3] = {(GLfloat)off[0], (GLfloat)off[1], (GLfloat)off[2]};
-      pos += packObjectVertex(pos, position[0] + radius * off[0],
-                              position[1] + radius * off[1], position[2] + radius * off[2],
-                              phi / (2 * M_PI), theta / M_PI, color, foff);
-    }
-  }
-  Coord3d pnorm = {0., 0., 1.};
-  Coord3d vnorm = {0., 0., -1};
-  Coord3d poff, voff;
-  useMatrix(rotation, pnorm, poff);
-  useMatrix(rotation, vnorm, voff);
-  GLfloat fpoff[3] = {(GLfloat)poff[0], (GLfloat)poff[1], (GLfloat)poff[2]};
-  GLfloat fvoff[3] = {(GLfloat)voff[0], (GLfloat)voff[1], (GLfloat)voff[2]};
-  pos += packObjectVertex(pos, position[0] + radius * poff[0], position[1] + radius * poff[1],
-                          position[2] + radius * poff[2], 0.5, 0., color, fpoff);
-  pos += packObjectVertex(pos, position[0] + radius * voff[0], position[1] + radius * voff[1],
-                          position[2] + radius * voff[2], 0.5, 1., color, fvoff);
-
-  // Triangulate end caps
-  for (int i = 0; i < radial_count; i++) {
-    idxs[6 * i + 0] = first_index + i;
-    idxs[6 * i + 1] = first_index + i + 1;
-    idxs[6 * i + 2] = first_index + (radial_count + 1) * (nrows - 2);
-    idxs[6 * i + 3] = first_index + (radial_count + 1) * (nrows - 3) + i + 1;
-    idxs[6 * i + 4] = first_index + (radial_count + 1) * (nrows - 3) + i;
-    idxs[6 * i + 5] = first_index + (radial_count + 1) * (nrows - 2) + 1;
-  }
-  // Triangulate body
-  ushort *base = &idxs[2 * 3 * radial_count];
-  for (int z = 1; z < nrows - 2; z++) {
-    for (int i = 0; i < radial_count; i++) {
-      base[6 * i + 0] = first_index + (z - 1) * (radial_count + 1) + i + 1;
-      base[6 * i + 1] = first_index + (z - 1) * (radial_count + 1) + i;
-      base[6 * i + 2] = first_index + z * (radial_count + 1) + i + 1;
-      base[6 * i + 3] = first_index + (z - 1) * (radial_count + 1) + i;
-      base[6 * i + 4] = first_index + z * (radial_count + 1) + i;
-      base[6 * i + 5] = first_index + z * (radial_count + 1) + i + 1;
-    }
-    base = &base[6 * radial_count];
+    GLfloat off[3] = {0.f, 0.f, 0.f};
+    for (int j = 0; j < 3; j++)
+      for (int k = 0; k < 3; k++) off[j] += rotation[j][k] * loc[k];
+    pos += packObjectVertex(pos, position[0] + radius * off[0], position[1] + radius * off[1],
+                            position[2] + radius * off[2], txc[0], txc[1], color, off);
   }
 }
 
@@ -997,6 +1032,13 @@ void glHelpInit() {
   shaderObject = loadProgram("object.vert", "object.frag");
   shaderReflection = loadProgram("reflection.vert", "reflection.frag");
 
+  // Wipe ball cache
+  for (int i = 0; i < MAX_BALL_DETAIL; i++) {
+    sphere_points[i] = NULL;
+    sphere_texcos[i] = NULL;
+    sphere_idxs[i] = NULL;
+  }
+
   // Setup view state
   activeView.fog_enabled = 0;
   activeView.fog_color[0] = 1.f;
@@ -1062,6 +1104,12 @@ void glHelpCleanup() {
   theVao = 0;
 
   if (sparkle2D) delete sparkle2D;
+
+  for (int i = 0; i < MAX_BALL_DETAIL; i++) {
+    if (sphere_points[i]) delete[] sphere_points[i];
+    if (sphere_texcos[i]) delete[] sphere_texcos[i];
+    if (sphere_idxs[i]) delete[] sphere_idxs[i];
+  }
 
   /* Invalidate all strings so they get cleaned up */
   stringTick += 100000;

@@ -29,7 +29,7 @@ void main(void) {
   gl_Position = mvp_matrix * pos;
   cpos = vec4(model_matrix * pos).xyz;
   fcolor = in_Color;
-  texco = in_Texcoord;
+  texco = 2. * in_Texcoord;
 
   if (distance(in_Normal.xyz, vec3(0.5, 0.5, 0.5)) > 0.1) {
     flatkey = 1.0;
