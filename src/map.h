@@ -95,8 +95,8 @@ class Map {
     int ly = std::max(std::min(y, height - 1), 0);
     return cells[lx + width * ly];
   };
-  inline Chunk *chunk(int x, int y);
-  void markCellUpdated(int x, int y);
+  inline Chunk *chunk(int x, int y) const;
+  void markCellsUpdated(int x1, int y1, int x2, int y2, int changed_walls);
   int save(char *name, int x, int y);
   void draw(int stage, int x, int y);
   void fillChunkVBO(Chunk *c) const;
@@ -130,7 +130,7 @@ class Map {
  protected:
  private:
   Cell *cells;
-  std::map<std::pair<int, int>, Chunk> chunks;
+  mutable std::map<std::pair<int, int>, Chunk> chunks;
 };
 
 #endif

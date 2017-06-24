@@ -495,7 +495,10 @@ typedef enum { eInfo_Height = 0, eInfo_WaterHeight, eInfo_Textures, nInfos } eCe
 int cellInfo = 0;
 char* infoNames[nInfos] = {_("Cell height"), _("Cell water height"), _("Textures")};
 
-int roundint(double f) { return (int)(f + 0.5); }
+int roundint(double f) {
+  /* std::round is C++11. */
+  return std::floor(f + 0.5);
+}
 
 void EditMode::mouseDown(int state, int x, int y) { MyWindow::mouseDownAll(state, x, y); }
 void EditMode::doCommand(int command) {
@@ -612,16 +615,14 @@ void EditMode::doCommand(int command) {
       for (y1 = yLow; y1 <= yHigh; y1++) {
         Cell& c2 = map->cell(x1, y1);
         c2.flags = (c2.flags & ~flag) | onoff;
-        map->markCellUpdated(x1, y1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
   } break;
   case FLAG_CH_TEXTURE: {
     int newTexture = mymod(cell.texture + 1 + (shift ? -1 : +1), numTextures + 1) - 1;
     for (x1 = xLow; x1 <= xHigh; x1++)
-      for (y1 = yLow; y1 <= yHigh; y1++) {
-        map->cell(x1, y1).texture = newTexture;
-        map->markCellUpdated(x1, y1);
-      }
+      for (y1 = yLow; y1 <= yHigh; y1++) { map->cell(x1, y1).texture = newTexture; }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
   } break;
 
   case FEATURE_SPIKE:
@@ -637,7 +638,90 @@ void EditMode::doCommand(int command) {
 
   case REPAIR_CELL_CONT:
   case REPAIR_WATER_CONT:
-  case REPAIR_COLOR_CONT:
+  case REPAIR_COLOR_CONT: {
+    /* given four cells at these relative positions, seq. corners match up */
+    int dir[4][2] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
+
+    int wx = (xHigh - xLow + 1), wy = (yHigh - yLow + 1);
+    float* hbuf = new float[wx * wy * 4];
+    for (int p = 0; p < (command == REPAIR_COLOR_CONT ? 4 : 1); p++) {
+      /* Read changes into a buffer */
+      for (x1 = xLow; x1 <= xHigh; x1++)
+        for (y1 = yLow; y1 <= yHigh; y1++) {
+          /* continuity enforces that corners match the neighbor average,
+           * or internal average if there are no neighbors*/
+          for (int k = 0; k < 4; k++) {
+            float external = 0.;
+            float internal = 0.;
+            int extc = 0;
+            for (int m = 0; m < 4; m++) {
+              int altx = x1 - dir[k][0] + dir[m][0], alty = y1 - dir[k][1] + dir[m][1];
+              float val;
+              switch (command) {
+              default:
+              case REPAIR_CELL_CONT:
+                val = map->cell(altx, alty).heights[m];
+                break;
+              case REPAIR_WATER_CONT:
+                val = map->cell(altx, alty).waterHeights[m];
+                break;
+              case REPAIR_COLOR_CONT:
+                val = map->cell(altx, alty).colors[m][p];
+              }
+              if (xLow <= altx && altx <= xHigh && yLow <= alty && alty <= yHigh) {
+                internal += val;
+              } else {
+                external += val;
+                extc++;
+              }
+            }
+            float target;
+            if (extc == 0) {
+              target = internal / 4;
+            } else {
+              target = external / extc;
+            }
+            hbuf[4 * ((x1 - xLow) * wy + (y1 - yLow)) + k] = target;
+          }
+        }
+      /* Apply changes to cells */
+      for (x1 = xLow; x1 <= xHigh; x1++)
+        for (y1 = yLow; y1 <= yHigh; y1++) {
+          Cell& c = map->cell(x1, y1);
+          float dcent = 0;
+          for (int k = 0; k < 4; k++) {
+            float target = hbuf[4 * ((x1 - xLow) * wy + (y1 - yLow)) + k];
+            switch (command) {
+            default:
+            case REPAIR_CELL_CONT:
+              dcent += target - c.heights[k];
+              c.heights[k] = target;
+              break;
+            case REPAIR_WATER_CONT:
+              dcent += target - c.waterHeights[k];
+              c.waterHeights[k] = target;
+              break;
+            case REPAIR_COLOR_CONT:
+              dcent += target - c.colors[k][p];
+              c.colors[k][p] = target;
+            }
+          }
+          switch (command) {
+          default:
+          case REPAIR_CELL_CONT:
+            c.heights[4] += dcent / 4;
+            break;
+          case REPAIR_WATER_CONT:
+            c.waterHeights[4] += dcent / 4;
+            break;
+          case REPAIR_COLOR_CONT:
+            c.colors[4][p] += dcent / 4;
+          }
+        }
+    }
+    delete[] hbuf;
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, command == REPAIR_CELL_CONT);
+  } break;
   case REPAIR_CELL_CENTERS:
   case REPAIR_WATER_CENTERS:
   case REPAIR_COLOR_CENTERS:
@@ -645,57 +729,10 @@ void EditMode::doCommand(int command) {
   case REPAIR_WATER_ROUND:
   case REPAIR_COLOR_ROUND:
   case REPAIR_VEL_ROUND: {
-    /* given four cells at these relative positions, seq. corners match up */
-    int dir[4][2] = {{1, 1}, {1, 0}, {0, 1}, {0, 0}};
-
     for (x1 = xLow; x1 <= xHigh; x1++)
       for (y1 = yLow; y1 <= yHigh; y1++) {
         Cell& c = map->cell(x1, y1);
         switch (command) {
-        /* continuity enforces that corners match the neighbor average */
-        case REPAIR_CELL_CONT:
-          for (int k = 0; k < 4; k++) {
-            c.heights[k] = 0.;
-            for (int m = 0; m < 4; m++) {
-              if (m != k) {
-                c.heights[k] +=
-                    map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
-                        .heights[m] /
-                    3;
-              }
-            }
-          }
-          break;
-        case REPAIR_WATER_CONT:
-          for (int k = 0; k < 4; k++) {
-            c.waterHeights[k] = 0.;
-            for (int m = 0; m < 4; m++) {
-              if (m != k) {
-                c.waterHeights[k] +=
-                    map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
-                        .waterHeights[m] /
-                    3;
-              }
-            }
-          }
-          break;
-        case REPAIR_COLOR_CONT:
-          for (int p = 0; p < 4; p++) {
-            for (int k = 0; k < 4; k++) {
-              c.colors[k][p] = 0.;
-              for (int m = 0; m < 4; m++) {
-                if (m != k) {
-                  c.colors[k][p] +=
-                      map->cell(x1 - dir[k][0] + dir[m][0], y1 - dir[k][1] + dir[m][1])
-                          .colors[m][p] /
-                      3;
-                }
-              }
-            }
-          }
-
-          break;
-
         /* cell center repair sets the center as average of corners */
         case REPAIR_CELL_CENTERS:
           c.heights[Cell::CENTER] =
@@ -717,14 +754,15 @@ void EditMode::doCommand(int command) {
           for (int k = 0; k < 4; k++) {
             c.heights[k] = scale * roundint(c.heights[k] / scale);
           }
-          c.heights[Cell::CENTER] = scale * roundint(4 * c.heights[Cell::CENTER] / scale) / 4;
+          c.heights[Cell::CENTER] =
+              0.25 * scale * roundint(4. * c.heights[Cell::CENTER] / scale);
           break;
         case REPAIR_WATER_ROUND:
           for (int k = 0; k < 4; k++) {
             c.waterHeights[k] = scale * roundint(c.waterHeights[k] / scale);
           }
           c.waterHeights[Cell::CENTER] =
-              scale * roundint(4 * c.waterHeights[Cell::CENTER] / scale) / 4;
+              0.25 * scale * roundint(4. * c.waterHeights[Cell::CENTER] / scale);
           break;
         case REPAIR_COLOR_ROUND:
           for (int m = 0; m < 4; m++) {
@@ -732,7 +770,7 @@ void EditMode::doCommand(int command) {
               c.colors[k][m] = scale * roundint(c.colors[k][m] / scale);
             }
             c.colors[Cell::CENTER][m] =
-                scale * roundint(4 * c.colors[Cell::CENTER][m] / scale) / 4;
+                0.25 * scale * roundint(4. * c.colors[Cell::CENTER][m] / scale);
           }
           break;
         case REPAIR_VEL_ROUND:
@@ -740,15 +778,8 @@ void EditMode::doCommand(int command) {
           c.velocity[1] = scale * roundint(c.velocity[1] / scale);
           break;
         }
-        map->markCellUpdated(x1, y1);
-        if (command == REPAIR_CELL_CONT || command == REPAIR_CELL_ROUND) {
-          /* walls change so neighbors must be rerendered */
-          map->markCellUpdated(x1 - 1, y1);
-          map->markCellUpdated(x1 + 1, y1);
-          map->markCellUpdated(x1, y1 - 1);
-          map->markCellUpdated(x1, y1 + 1);
-        }
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, command == REPAIR_CELL_ROUND);
   } break;
 
   case MOVE_UP:
@@ -874,12 +905,8 @@ void EditMode::doCellAction(int code, int direction) {
           c2.heights[corner] += (direction ? -scale : scale);
           c2.heights[Cell::CENTER] += (direction ? -scale : scale) / 4;
         }
-        map->markCellUpdated(x1, y1);
-        map->markCellUpdated(x1 + 1, y1);
-        map->markCellUpdated(x1, y1 + 1);
-        map->markCellUpdated(x1 - 1, y1);
-        map->markCellUpdated(x1, y1 - 1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 1);
     break;
   case editModeColor:
     for (x1 = xLow; x1 <= xHigh; x1++)
@@ -907,8 +934,8 @@ void EditMode::doCellAction(int code, int direction) {
           else
             for (i = 0; i < 4; i++) c2.colors[corner][i] = color[i];
         }
-        map->markCellUpdated(x1, y1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
     break;
   case editModeWater:
     for (x1 = xLow; x1 <= xHigh; x1++)
@@ -927,8 +954,8 @@ void EditMode::doCellAction(int code, int direction) {
           c2.waterHeights[corner] += direction ? -scale : scale;
           c2.waterHeights[Cell::CENTER] += (direction ? -scale : scale) / 4;
         }
-        map->markCellUpdated(x1, y1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
     break;
 
   case editModeVelocity:
@@ -939,8 +966,8 @@ void EditMode::doCellAction(int code, int direction) {
         if (code == CODE_CELL_S) c2.velocity[1] -= direction ? 0.5 : 0.1;
         if (code == CODE_CELL_W) c2.velocity[0] -= direction ? 0.5 : 0.1;
         if (code == CODE_CELL_E) c2.velocity[0] += direction ? 0.5 : 0.1;
-        map->markCellUpdated(x1, y1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
     break;
 
   case editModeNoLines: {
@@ -954,8 +981,8 @@ void EditMode::doCellAction(int code, int direction) {
       for (y1 = yLow; y1 <= yHigh; y1++) {
         Cell& c2 = map->cell(x1, y1);
         c2.flags = (c2.flags & ~flag) | onoff;
-        map->markCellUpdated(x1, y1);
       }
+    map->markCellsUpdated(xLow, yLow, xHigh, yHigh, 0);
   } break;
 
   case editModeFeatures: {
@@ -965,10 +992,7 @@ void EditMode::doCellAction(int code, int direction) {
       map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += shift ? -raise : raise;
       map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += shift ? -raise : raise;
       map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] += shift ? -raise : raise;
-      map->markCellUpdated(x, y);
-      map->markCellUpdated(x - 1, y);
-      map->markCellUpdated(x, y - 1);
-      map->markCellUpdated(x - 1, y - 1);
+      map->markCellsUpdated(x - 1, y - 1, x, y, 0);
       break;
     case FEATURE_SMALL_HILL:
       map->cell(x, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 1.2;
@@ -997,9 +1021,7 @@ void EditMode::doCellAction(int code, int direction) {
       map->cell(x - 1, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
       map->cell(x, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
       map->cell(x, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.50;
-      for (int k = x - 1; k <= x + 1; k++) {
-        for (int j = y - 1; j <= y + 1; j++) { map->markCellUpdated(k, j); }
-      }
+      map->markCellsUpdated(x - 1, y - 1, x + 1, y + 1, 0);
       break;
     case FEATURE_MEDIUM_HILL:
       makeHill(2);
@@ -1137,8 +1159,8 @@ void EditMode::makeHill(int radius) {
           ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
                  sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
           .1;
-      map->markCellUpdated(x + mx, y + my);
     }
+  map->markCellsUpdated(x - radius, y - radius, x + radius, y + radius, 0);
 }
 void EditMode::resizeWindows() {
   menuWindow->refreshChildPositions();
@@ -1162,8 +1184,8 @@ void EditMode::doSmooth(int radius) {
     for (my = -radius; my <= radius; my++) {
       Cell& c1 = map->cell(x + mx, y + my);
       for (i = 0; i < 5; i++) avgHeight += c1.heights[i];
-      map->markCellUpdated(x + mx, y + my);
     }
+  map->markCellsUpdated(x - radius, y - radius, x + radius, x + radius, 1);
   avgHeight = avgHeight / (5. * diameter * diameter);
   for (mx = -radius; mx <= radius; mx++)
     for (my = -radius; my <= radius; my++) {
@@ -1179,8 +1201,8 @@ void EditMode::doSmooth(int radius) {
           c.heights[Cell::NORTH * north + Cell::EAST * east] = steps(
               c.heights[Cell::NORTH * north + Cell::EAST * east] * (1. - s) + avgHeight * s);
         }
-      map->markCellUpdated(x + mx, y + my);
     }
+  map->markCellsUpdated(x - radius, y - radius, x + radius, x + radius, 1);
 }
 void EditMode::copyRegion() {
   if (markX < 0) return;
@@ -1194,15 +1216,15 @@ void EditMode::copyRegion() {
   cellClipboard = new Cell[width * height];
   cellClipboardWidth = width;
   cellClipboardHeight = height;
-  int x, y;
-  for (x = 0; x < width; x++)
-    for (y = 0; y < height; y++) { cellClipboard[x + y * width] = map->cell(x + x0, y + y0); }
+  for (int x = 0; x < width; x++)
+    for (int y = 0; y < height; y++) {
+      cellClipboard[x + y * width] = map->cell(x + x0, y + y0);
+    }
 }
 void EditMode::pasteRegion() {
   if (!cellClipboard) return;
-  int cx, cy;
-  for (cx = 0; cx < cellClipboardWidth; cx++)
-    for (cy = 0; cy < cellClipboardHeight; cy++) {
+  for (int cx = 0; cx < cellClipboardWidth; cx++)
+    for (int cy = 0; cy < cellClipboardHeight; cy++) {
       Cell& toCell = map->cell(cx + x, cy + y);
       Cell& fromCell = cellClipboard[cx + cy * cellClipboardWidth];
       /* We cannot just do a memcpy here since we need to preserve displaylists and other meta
@@ -1215,12 +1237,8 @@ void EditMode::pasteRegion() {
       toCell.sunken = fromCell.sunken;
       toCell.flags = fromCell.flags;
       toCell.texture = fromCell.texture;
-      map->markCellUpdated(cx + x, cy + y);
-      map->markCellUpdated(cx + x - 1, cy + y);
-      map->markCellUpdated(cx + x, cy + y + 1);
-      map->markCellUpdated(cx + x + 1, cy + y);
-      map->markCellUpdated(cx + x, cy + y - 1);
     }
+  map->markCellsUpdated(x, y, x + cellClipboardWidth - 1, y + cellClipboardHeight - 1, 1);
 }
 
 void EditMode::closeAllDialogWindows() {
@@ -1254,7 +1272,7 @@ void EditMode::askNew() {
 
 void EditMode::testLevel() {
   if (SetupMode::setupMode) {
-    snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel),
+    snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel), "%s",
              levelname);
     Settings::settings->doSpecialLevel = 1;
     saveMap();

@@ -907,21 +907,25 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   chunk->is_updated = 0;
 }
 
-void Map::markCellUpdated(int x, int y) {
-  // TODO: establish means to mark a range updated
-  // (Why? would save a _lot_ of time on bulk operations)
-  Cell& c = cell(x, y);
-  if (0 <= x && x < width && 0 <= y && y <= width) {
-    Chunk& z = *chunk(x - x % CHUNKSIZE, y - y % CHUNKSIZE);
-    z.is_updated = 1;
-    c.displayListDirty = 1;
+void Map::markCellsUpdated(int x1, int y1, int x2, int y2, int changed_walls) {
+  /* If the walls of a cell have changed, update its neighbors */
+  int dd = changed_walls ? 1 : 0;
+  for (int x = std::min(x1, x2) - dd; x <= std::max(x1, x2) + dd; x++) {
+    for (int y = std::min(y1, y2) - dd; y <= std::max(y1, y2) + dd; y++) {
+      Cell& c = cell(x, y);
+      if (0 <= x && x < width && 0 <= y && y <= width) {
+        Chunk& z = *chunk(x - x % CHUNKSIZE, y - y % CHUNKSIZE);
+        z.is_updated = 1;
+        c.displayListDirty = 1;
 
-    // Extend bounding box
-    for (int k = 0; k < 5; k++) {
-      z.minHeight = std::min(z.minHeight, c.heights[k]);
-      z.minHeight = std::min(z.minHeight, c.waterHeights[k]);
-      z.maxHeight = std::max(z.maxHeight, c.heights[k]);
-      z.maxHeight = std::max(z.maxHeight, c.waterHeights[k]);
+        // Extend bounding box
+        for (int k = 0; k < 5; k++) {
+          z.minHeight = std::min(z.minHeight, c.heights[k]);
+          z.minHeight = std::min(z.minHeight, c.waterHeights[k]);
+          z.maxHeight = std::max(z.maxHeight, c.heights[k]);
+          z.maxHeight = std::max(z.maxHeight, c.waterHeights[k]);
+        }
+      }
     }
   }
 }
@@ -1197,7 +1201,7 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   glDeleteBuffers(1, &idxbuf);
 }
 
-Chunk* Map::chunk(int cx, int cy) {
+Chunk* Map::chunk(int cx, int cy) const {
   if (cx % CHUNKSIZE != 0 || cy % CHUNKSIZE != 0) {
     warning("Bad chunk access %d %d", cx, cy);
     return NULL;

@@ -1289,12 +1289,12 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      Game::current->map->markCellUpdated(x, y);
       if (SCM_FALSEP(state))
         c.flags = c.flags & (~iflag);
       else
         c.flags = c.flags | iflag;
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1316,10 +1316,10 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      Game::current->map->markCellUpdated(x, y);
       c.velocity[0] = scm_to_double(vx);
       c.velocity[1] = scm_to_double(vy);
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1352,13 +1352,8 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
         c.heights[4] = scm_to_double(h4);
       else
         c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
-      Game::current->map->markCellUpdated(x, y);
-      // Include neighbors as walls change
-      Game::current->map->markCellUpdated(x + 1, y);
-      Game::current->map->markCellUpdated(x - 1, y);
-      Game::current->map->markCellUpdated(x, y - 1);
-      Game::current->map->markCellUpdated(x, y + 1);
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 1);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1387,7 +1382,6 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
       c.waterHeights[1] = scm_to_double(h1);
       c.waterHeights[2] = scm_to_double(h2);
       c.waterHeights[3] = scm_to_double(h3);
-      Game::current->map->markCellUpdated(x, y);
       if (scm_is_real(h4))
         c.waterHeights[4] = scm_to_double(h4);
       else
@@ -1395,6 +1389,7 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
             (c.waterHeights[0] + c.waterHeights[1] + c.waterHeights[2] + c.waterHeights[3]) /
             4.;
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1424,16 +1419,12 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
       c.colors[i][0] = (GLfloat)scm_to_double(r);
       c.colors[i][1] = (GLfloat)scm_to_double(g);
       c.colors[i][2] = (GLfloat)scm_to_double(b);
-      Game::current->map->markCellUpdated(x, y);
-      Game::current->map->markCellUpdated(x + 1, y);
-      Game::current->map->markCellUpdated(x - 1, y);
-      Game::current->map->markCellUpdated(x, y + 1);
-      Game::current->map->markCellUpdated(x, y - 1);
       if (scm_is_real(a))
         c.colors[i][3] = (GLfloat)scm_to_double(a);
       else
         c.colors[i][3] = 1.0;
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1463,12 +1454,12 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
       c.wallColors[i][0] = (GLfloat)scm_to_double(r);
       c.wallColors[i][1] = (GLfloat)scm_to_double(g);
       c.wallColors[i][2] = (GLfloat)scm_to_double(b);
-      Game::current->map->markCellUpdated(x, y);
       if (scm_is_real(a))
         c.wallColors[i][3] = (GLfloat)scm_to_double(a);
       else
         c.wallColors[i][3] = 1.0;
     }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 1);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1517,12 +1508,12 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
         dy = ty + ys * y;
       }
       map->cell(dx, dy) = buf[y * w + x];
-      map->markCellUpdated(dx, dy);
-      map->markCellUpdated(dx + 1, dy);
-      map->markCellUpdated(dx - 1, dy);
-      map->markCellUpdated(dx, dy + 1);
-      map->markCellUpdated(dx, dy - 1);
     }
+  }
+  if (fxy) {
+    map->markCellsUpdated(tx, ty, tx + ys * h, ty + xs * w, 1);
+  } else {
+    map->markCellsUpdated(tx, ty, tx + xs * w, ty + ys * h, 1);
   }
   delete[] buf;
   return SCM_UNSPECIFIED;

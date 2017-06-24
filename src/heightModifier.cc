@@ -131,10 +131,10 @@ void HeightModifier::tick(Real /*t*/) {
   if ((cor2 != not1) && (cor2 != not2) && (cor2 != not3)) c2.heights[cor2] = v;
   if ((cor3 != not1) && (cor3 != not2) && (cor3 != not3)) c3.heights[cor3] = v;
 
-  Game::current->map->markCellUpdated(x, y);
-  Game::current->map->markCellUpdated(x1, y1);
-  Game::current->map->markCellUpdated(x2, y2);
-  Game::current->map->markCellUpdated(x3, y3);
+  Game::current->map->markCellsUpdated(x, y, x, y, 1);
+  Game::current->map->markCellsUpdated(x1, y1, x1, y1, 1);
+  Game::current->map->markCellsUpdated(x2, y2, x2, y2, 1);
+  Game::current->map->markCellsUpdated(x3, y3, x3, y3, 1);
 
   if (avg_center) {
     c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;

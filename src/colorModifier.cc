@@ -76,5 +76,5 @@ void ColorModifier::tick(Real /*t*/) {
     for (int i = 0; i < 5; i++) c.colors[i][2] = v;
     break;
   }
-  Game::current->map->markCellUpdated(x, y);
+  Game::current->map->markCellsUpdated(x, y, x, y, 0);
 }

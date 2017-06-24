@@ -63,12 +63,8 @@ void CyclicPlatform::tick(Real dt) {
     for (int y = y1; y <= y2; y++) {
       Cell &c = map->cell(x, y);
       for (int j = 0; j < 5; j++) c.heights[j] = h;
-      map->markCellUpdated(x, y);
-      map->markCellUpdated(x + 1, y);
-      map->markCellUpdated(x - 1, y);
-      map->markCellUpdated(x, y + 1);
-      map->markCellUpdated(x, y - 1);
     }
+  map->markCellsUpdated(x1, y1, x2, y2, 1);
 
   if (h < oldHeight) {
     std::set<Ball *>::iterator iter = Ball::balls->begin();
