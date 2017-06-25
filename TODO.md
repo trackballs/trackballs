@@ -54,8 +54,7 @@ sensitivity.
 
 1. **Context sensitive help in the editor**
 
-1. **Snapshots** Saving snapshots etc. as png instead of ppm. Also, using
-automatic snapshots together with the highscores file.
+1. **Snapshots**  Using automatic snapshots together with the highscores file.
 
 1. **Mr. Black** Determine what features etc. he should be afraid of.
 

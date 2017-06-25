@@ -846,22 +846,13 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
 /* generates a snapshot of the screen */
 int createSnapshot() {
   static int snap_number = 0;
-  unsigned char *buffer = NULL;
   char name[1024];
   int again = 9999, i, j;
   FILE *f;
 
-  /* allocate buffer */
-  if ((buffer = (unsigned char *)malloc(sizeof(unsigned char) * screenWidth * screenHeight *
-                                        3)) == NULL) {
-    warning("cannot allocate %lu bytes for snapshot. Aborting.",
-            sizeof(unsigned char) * screenWidth * screenHeight * 3);
-    return (0);
-  }
-
   /* find the name for the image */
   do {
-    snprintf(name, 1023, "./snapshot_%04d.ppm", snap_number++);
+    snprintf(name, 1023, "./snapshot_%04d.png", snap_number++);
     if ((f = fopen(name, "r")) == NULL) {
       break;
     } else {
@@ -876,30 +867,40 @@ int createSnapshot() {
     return 0;
   }
 
+  /* allocate buffer */
+  unsigned char *buffer = new unsigned char[screenWidth * screenHeight * 4];
+  unsigned char *linebuffer = new unsigned char[screenWidth * 4];
+  Uint32 mask[4];
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
+  mask[0] = 0x000000FF;
+  mask[1] = 0x0000FF00;
+  mask[2] = 0x00FF0000;
+  mask[3] = 0xFF000000;
+#else
+  mask[0] = 0xFF000000;
+  mask[1] = 0x00FF0000;
+  mask[2] = 0x0000FF00;
+  mask[3] = 0x000000FF;
+#endif
+
   /* get the screen */
-  glReadPixels(0, 0, screenWidth, screenHeight, GL_RGB, GL_UNSIGNED_BYTE, (GLvoid *)buffer);
-
-  /* save the image */
-  if ((f = fopen(name, "w")) == NULL) {
-    warning("cannot create file '%s'. Abort", name);
-    free(buffer);
-    return (0);
+  glReadPixels(0, 0, screenWidth, screenHeight, GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid *)buffer);
+  /* Flip pixels vertically */
+  for (int i = 0; i < screenHeight / 2; i++) {
+    memcpy(linebuffer, &buffer[i * screenWidth * 4], screenWidth * 4);
+    memcpy(&buffer[i * screenWidth * 4], &buffer[(screenHeight - 1 - i) * screenWidth * 4],
+           screenWidth * 4);
+    memcpy(&buffer[(screenHeight - 1 - i) * screenWidth * 4], linebuffer, screenWidth * 4);
   }
-
-  fprintf(f, "P6\n");
-  fprintf(f, "%d %d\n255\n", screenWidth, screenHeight);
-
-  /* write data */
-  for (j = screenHeight - 1; j >= 0; j--) {
-    for (i = 0; i < screenWidth; i++) {
-      fprintf(f, "%c%c%c", buffer[(i + j * screenWidth) * 3 + 0],
-              buffer[(i + j * screenWidth) * 3 + 1], buffer[(i + j * screenWidth) * 3 + 2]);
-    }
-  }
-
-  /* freed everything */
-  fclose(f);
-  free(buffer);
+  /* Construct surface and save */
+  SDL_Surface *surf =
+      SDL_CreateRGBSurfaceFrom(buffer, screenWidth, screenHeight, 32, screenWidth * 4, mask[0],
+                               mask[1], mask[2], mask[3]);
+  if (IMG_SavePNG(surf, name)) { warning("Failed to save screenshot to %s", name); }
+  SDL_FreeSurface(surf);
+  /* Cleanup */
+  delete[] buffer;
+  delete[] linebuffer;
   return 1;
 }
 
