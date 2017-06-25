@@ -51,6 +51,7 @@ class SetupMode : public GameMode {
 
   GLuint screenshot;
   GLfloat scrshtCoord[4];
+  GLuint scrshtW, scrshtH;
 };
 
 #endif

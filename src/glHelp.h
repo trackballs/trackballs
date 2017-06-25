@@ -144,7 +144,7 @@ void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);
 void rotateY(double, Matrix4d);
 void rotateZ(double, Matrix4d);
-int power_of_two(int input);
+int powerOfTwo(int input);
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                  const Matrix4d model, const Matrix4d proj);
 

@@ -83,13 +83,15 @@ void SetupMode::display() {
     active = texture;
     for (int i = 0; i < 4; i++) coord[i] = texCoord[i];
   }
-  /* avoid distortion */
-  if (screenWidth * coord[3] > screenHeight * coord[2]) {
-    double delta = coord[3] - coord[2] * screenHeight / (double)fmax(screenWidth, 1);
+  /* Avoid distortion. Note 1024x512 textures are possible. */
+  if (screenWidth * scrshtH * coord[3] > screenHeight * scrshtW * coord[2]) {
+    double delta =
+        coord[3] - coord[2] * screenHeight * scrshtW / (double)fmax(screenWidth * scrshtH, 1);
     coord[1] += delta / 2;
     coord[3] -= delta;
   } else {
-    double delta = coord[2] - coord[3] * screenWidth / (double)fmax(screenHeight, 1);
+    double delta =
+        coord[2] - coord[3] * screenWidth * scrshtH / (double)fmax(screenHeight * scrshtW, 1);
     coord[0] += delta / 2;
     coord[2] -= delta;
   }
@@ -439,6 +441,8 @@ void SetupMode::levelSetChanged() {
   if (settings->levelSets[levelSet].imagename[0] != 0 && settings->gfx_details >= 2) {
     SDL_Surface *surf = IMG_Load(settings->levelSets[levelSet].imagename);
     if (surf) {
+      scrshtW = powerOfTwo(surf->w);
+      scrshtH = powerOfTwo(surf->h);
       screenshot = LoadTexture(surf, scrshtCoord);
       SDL_FreeSurface(surf);
     }

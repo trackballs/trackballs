@@ -1453,13 +1453,9 @@ int powerOfTwo(int input) {
 }
 
 GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
-  int w, h;
-  SDL_Surface *image;
-  SDL_Rect area;
-
   /* Use the surface width and height expanded to powers of 2 */
-  w = powerOfTwo(surface->w);
-  h = powerOfTwo(surface->h);
+  int w = powerOfTwo(surface->w);
+  int h = powerOfTwo(surface->h);
 
   texcoord[0] = 0.0f;                    /* Min X */
   texcoord[1] = 0.0f;                    /* Min Y */
@@ -1469,7 +1465,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
   /* Rescale image if needed? */
   GLint maxSize;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-  //  maxSize = 64;
   double scale = 1.0;
   if (w > maxSize || h > maxSize) scale = std::min(maxSize / (double)w, maxSize / (double)h);
 
@@ -1486,12 +1481,13 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
   mask[3] = 0x000000FF;
 #endif
 
-  image = SDL_CreateRGBSurface(SDL_SWSURFACE, (int)(w * scale), (int)(h * scale), 32, mask[0],
-                               mask[1], mask[2], mask[3]);
+  SDL_Surface *image = SDL_CreateRGBSurface(SDL_SWSURFACE, (int)(w * scale), (int)(h * scale),
+                                            32, mask[0], mask[1], mask[2], mask[3]);
 
   if (image == NULL) { return 0; }
 
   /* Copy the surface into the GL texture image */
+  SDL_Rect area;
   area.x = 0;
   area.y = 0;
   area.w = (int)(surface->w * scale);
@@ -1508,7 +1504,6 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
     sarea.h = surface->h;
     sarea.w = surface->w;
     SDL_BlitScaled(surface, &sarea, image, &area);
-    SDL_BlitSurface(surface, NULL, image, &area);
   }
 
   /* Create an OpenGL texture for the image */
