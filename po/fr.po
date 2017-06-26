@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 18:31-0400\n"
-"PO-Revision-Date: 2017-06-13 17:54-0400\n"
+"POT-Creation-Date: 2017-06-25 17:46-0400\n"
+"PO-Revision-Date: 2017-06-25 19:53-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.2\n"
 
 #: ../src/calibrateJoystickMode.cc:94
 msgid "Calibrating Joystick"
@@ -403,39 +403,39 @@ msgstr "Petite surface lisse"
 msgid "Large smooth"
 msgstr "Grande surface lisse"
 
-#: ../src/editMode.cc:341
-#, c-format
-msgid ";;; Track: %s\n"
-msgstr ";;; Piste: %s\n"
+#: ../src/editMode.cc:341 ../src/mainMode.cc:178
+msgid "Track:"
+msgstr "Piste:"
 
 #: ../src/editMode.cc:342
-#, c-format
-msgid ";;; This is the default script file for this track.\n"
-msgstr ";;; Ceci est le fichier de script par défaut pour cette piste.\n"
-
-#: ../src/editMode.cc:343
-#, c-format
-msgid ";;; Read the documentation for the editor and look at the examples\n"
-msgstr ";;; Lisez la documentation de l'éditeur et regardez les exemples\n"
+msgid "This is the default script file for this track."
+msgstr "Ceci est le fichier de script par défaut pour cette piste."
 
 #: ../src/editMode.cc:344
-#, c-format
-msgid ""
-";;; to learn how to customize it\n"
-"\n"
-msgstr ""
-";;; pour apprendre a le personnaliser.\n"
-"\n"
+msgid "Read the documentation for the editor and look at the examples"
+msgstr "Lisez la documentation de l'éditeur et regardez les exemples"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:345
+msgid "to learn how to customize it"
+msgstr "pour apprendre à le personnaliser"
+
+#: ../src/editMode.cc:348
+msgid "Enter your name here"
+msgstr "Entrez votre nom"
+
+#: ../src/editMode.cc:352
+msgid "Add the name of the next level here"
+msgstr "Ajoutez le nom du prochain niveau ici"
+
+#: ../src/editMode.cc:499
 msgid "Cell height"
 msgstr "Hauteur de la cellule"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Cell water height"
 msgstr "Hauteur de la cellule d'eau"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Textures"
 msgstr "Textures"
 
@@ -619,17 +619,17 @@ msgstr "Entrez votre nom: %s"
 msgid "John Doe"
 msgstr "Jean Dupont"
 
-#: ../src/glHelp.cc:1217
+#: ../src/glHelp.cc:1266
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:1219
+#: ../src/glHelp.cc:1268
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:1221
+#: ../src/glHelp.cc:1270
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -800,7 +800,7 @@ msgstr "Retour"
 msgid "Anonymous Coward"
 msgstr "Lâche anonyme"
 
-#: ../src/hofMode.cc:108 ../src/setupMode.cc:157
+#: ../src/hofMode.cc:108 ../src/setupMode.cc:159
 msgid "Level Set"
 msgstr "Groupe de niveaux"
 
@@ -808,10 +808,6 @@ msgstr "Groupe de niveaux"
 #, c-format
 msgid "%d points"
 msgstr "%d points"
-
-#: ../src/mainMode.cc:178
-msgid "Track:"
-msgstr "Piste:"
 
 #: ../src/mainMode.cc:180
 msgid "Author:"
@@ -954,113 +950,115 @@ msgstr "Aide"
 msgid "Map Editor"
 msgstr "Éditeur de cartes"
 
+#: ../src/mmad.cc:215
+msgid "Usage:"
+msgstr "Utilisation:"
+
 #: ../src/mmad.cc:216
-#, c-format
-msgid ""
-"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
-msgstr ""
-"Utilisation: %s [-w, -m] [-e, -l -t <niveau>] [-r <largeur>] [-s "
-"<sensibilite>]\n"
+msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
+msgstr "[-w, -m] [-e, -l -t <niveau>] [-r <largeur>] [-s <sensibilite>]"
 
 #: ../src/mmad.cc:218
-#, c-format
-msgid "   -h  --help            Display this usage information.\n"
-msgstr "   -h  --help            Affiche ce message d'aide.\n"
+msgid "Display this usage information."
+msgstr "Affiche ce message d'aide."
 
 #: ../src/mmad.cc:219
-#, c-format
-msgid "   -l  --level           Start from level.\n"
-msgstr "   -l  --level           Commence a ce niveau.\n"
+msgid "Start from level."
+msgstr ""
 
 #: ../src/mmad.cc:220
-#, c-format
-msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
-msgstr "   -w  --windowed        Mode fenêtre (plein écran par défaut)\n"
+msgid "Run in window (Default is fullscreen)"
+msgstr "Mode fenêtre (plein écran par défaut)"
 
 #: ../src/mmad.cc:221
-#, c-format
-msgid "   -m  --mute            Mute sound.\n"
-msgstr "   -m  --mute            Son muet.\n"
+msgid "Mute sound."
+msgstr "Son muet."
 
 #: ../src/mmad.cc:222
-#, c-format
-msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
-msgstr "   -r  --resolution      Définit la résolution a 640, 800 ou 1024\n"
+msgid "Set resolution to 640, 800 or 1024"
+msgstr "Définit la résolution a 640, 800 ou 1024"
 
 #: ../src/mmad.cc:223
-#, c-format
-msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     Sensibilité de la souris, 1.0 par défaut\n"
+msgid "Mouse sensitivity, default 1.0"
+msgstr "Sensibilité de la souris, 1.0 par défaut"
 
 #: ../src/mmad.cc:224
-#, c-format
-msgid "   -f  --fps             Displays framerate\n"
-msgstr "   -f  --fps             Affiche le nombre d'images par seconde\n"
+msgid "Displays framerate"
+msgstr "Affiche le taux d'image"
 
 #: ../src/mmad.cc:225
-#, c-format
-msgid "   -v  --version         Prints current version number\n"
-msgstr "   -v  --version         Affiche la version courante\n"
+msgid "Prints current version number"
+msgstr "Affiche la version courante"
 
 #: ../src/mmad.cc:226
-#, c-format
-msgid "   -t  --touch           Updates a map to the latest format\n"
-msgstr "   -t  --touch           Met a jour une carte vers le format actuel\n"
+msgid "Updates a map to the latest format"
+msgstr "Met a jour une carte vers le format actuel"
 
 #: ../src/mmad.cc:227
-#, c-format
-msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
-msgstr "   -y  --low-memory      Essaie de limiter l'utilisation de mémoire\n"
+msgid "Attempt to conserve memory usage"
+msgstr "Essaie de limiter l'utilisation de mémoire"
 
 #: ../src/mmad.cc:228
-#, c-format
-msgid "   -j  --repair-joystick Correct for bad joysticks\n"
-msgstr "   -j  --repair-joystick Pour certaines (mauvaises) manettes de jeu\n"
+msgid "Debug joystick status"
+msgstr "Déboguer les manettes"
 
-#: ../src/mmad.cc:230
-#, c-format
-msgid "Important keyboard shortcuts\n"
-msgstr "Raccourcis clavier importants:\n"
-
-#: ../src/mmad.cc:231
-#, c-format
-msgid "   Escape     Soft quit\n"
-msgstr "   Échap.     Quitter doucement\n"
-
-#: ../src/mmad.cc:232
-#, c-format
-msgid "   CapsLock   Unhide mouse pointer\n"
-msgstr "   VerrMaj    Révéler le pointeur de la souris\n"
+#: ../src/mmad.cc:229
+msgid "Correct for bad joysticks"
+msgstr "Pour certaines (mauvaises) manettes de jeu"
 
 #: ../src/mmad.cc:233
-#, c-format
-msgid "   CTRL-q     Quit the game immediatly\n"
-msgstr "   CTRL-q     Quitter le jeu immédiatement\n"
+msgid "Important keyboard shortcuts"
+msgstr "Raccourcis clavier importants:"
 
 #: ../src/mmad.cc:234
-#, c-format
-msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
-msgstr "   CTRL-f     Basculer entre le mode plein écran / fenêtré\n"
+msgid "Escape"
+msgstr "Échap."
+
+#: ../src/mmad.cc:234
+msgid "Soft quit"
+msgstr "Quitter doucement"
 
 #: ../src/mmad.cc:235
-#, c-format
-msgid "   k          Kill the ball\n"
-msgstr "   k          Tuer la balle\n"
+msgid "CapsLock"
+msgstr "VerrMaj"
 
-#: ../src/mmad.cc:338
-#, c-format
-msgid "Unknown screen resolution of width %d\n"
-msgstr "Résolution d'écran inconnue de largeur %d\n"
+#: ../src/mmad.cc:235
+msgid "Unhide mouse pointer"
+msgstr "Révéler le pointeur de la souris"
 
-#: ../src/mmad.cc:369
-#, c-format
-msgid "Welcome to Trackballs. \n"
-msgstr "Bienvenue dans Trackballs. \n"
+#: ../src/mmad.cc:236
+msgid "CTRL-q"
+msgstr "CTRL-q"
 
-#: ../src/mmad.cc:370
+#: ../src/mmad.cc:236
+msgid "Quit the game immediately"
+msgstr "Quitter le jeu immédiatement"
+
+#: ../src/mmad.cc:237
+msgid "CTRL-f"
+msgstr "CTRL-f"
+
+#: ../src/mmad.cc:237
+msgid "Toggle between fullscreen/windowed mode"
+msgstr "Basculer entre le mode plein écran / fenêtré"
+
+#: ../src/mmad.cc:238
+msgid "Kill the ball"
+msgstr "Tuer la balle"
+
+#: ../src/mmad.cc:349
 #, c-format
-msgid "Using %s as gamedata directory.\n"
-msgstr "Utilise %s comme répertoire de données.\n"
+msgid "Unknown screen resolution of width %d"
+msgstr "Résolution d'écran inconnue de largeur %d"
+
+#: ../src/mmad.cc:382
+msgid "Welcome to Trackballs."
+msgstr "Bienvenue dans Trackballs."
+
+#: ../src/mmad.cc:384
+#, c-format
+msgid "Using %s as gamedata directory."
+msgstr "Utilise %s comme répertoire de données."
 
 #: ../src/modPill.cc:122
 msgid "Speed ball"
@@ -1143,20 +1141,20 @@ msgid "Auto-%d"
 msgstr "Auto-%d"
 
 #: ../src/settingsMode.cc:123
-msgid "  Resolution"
-msgstr "  Résolution"
+msgid "Resolution"
+msgstr "Résolution"
 
 #: ../src/settingsMode.cc:124
-msgid "  Test this resolution"
+msgid "Test this resolution"
 msgstr "Testez cette résolution"
 
 #: ../src/settingsMode.cc:127
-msgid "  Fullscreen"
-msgstr "  Plein écran"
+msgid "Fullscreen"
+msgstr "Plein écran"
 
 #: ../src/settingsMode.cc:130
-msgid "  VSync"
-msgstr "  VSYNC"
+msgid "VSync"
+msgstr "VSYNC"
 
 #: ../src/settingsMode.cc:139
 #, c-format
@@ -1169,8 +1167,8 @@ msgid "Frame time"
 msgstr "Temps d'image"
 
 #: ../src/settingsMode.cc:145
-msgid "  Show FPS"
-msgstr "  Montrer les IPS"
+msgid "Show FPS"
+msgstr "Montrer les IPS"
 
 #: ../src/settingsMode.cc:150
 msgid "Graphics"
@@ -1207,28 +1205,28 @@ msgid "Everything"
 msgstr "Tout"
 
 #: ../src/settingsMode.cc:173
-msgid "  Details"
-msgstr "  Détails"
+msgid "Details"
+msgstr "Détails"
 
 #: ../src/settingsMode.cc:174
-msgid "  Reflections"
-msgstr "  Réflexions"
+msgid "Reflections"
+msgstr "Réflexions"
 
 #: ../src/settingsMode.cc:176
-msgid "  Shadows"
-msgstr "  Ombres"
+msgid "Shadows"
+msgstr "Ombres"
 
 #: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr "Contrôles"
 
 #: ../src/settingsMode.cc:186
-msgid "  Use mouse"
-msgstr "  Utiliser la souris"
+msgid "Use mouse"
+msgstr "Utiliser la souris"
 
 #: ../src/settingsMode.cc:192
-msgid "  Sensitivity"
-msgstr "  Sensibilité"
+msgid "Sensitivity"
+msgstr "Sensibilité"
 
 #: ../src/settingsMode.cc:199
 #, c-format
@@ -1241,8 +1239,8 @@ msgid "-%d degrees"
 msgstr "-%d degrés"
 
 #: ../src/settingsMode.cc:202
-msgid "  Steering"
-msgstr "  Direction"
+msgid "Steering"
+msgstr "Direction"
 
 #: ../src/settingsMode.cc:209
 #, c-format
@@ -1250,89 +1248,89 @@ msgid "no joystick found"
 msgstr "Aucun joystick n'a été trouvé"
 
 #: ../src/settingsMode.cc:213
-msgid "  Joystick:"
-msgstr "  Manette de jeu:"
+msgid "Joystick:"
+msgstr "Manette de jeu:"
 
 #: ../src/settingsMode.cc:223
 msgid "Other"
 msgstr "Autre"
 
 #: ../src/settingsMode.cc:227
-msgid "  Music volume"
-msgstr "  Volume de la musique"
+msgid "Music volume"
+msgstr "Volume de la musique"
 
 #: ../src/settingsMode.cc:229
-msgid "  Effects volume"
-msgstr "  Volume des effets"
+msgid "Effects volume"
+msgstr "Volume des effets"
 
 #: ../src/settingsMode.cc:231
-msgid "  Language"
-msgstr "  Langage"
+msgid "Language"
+msgstr "Langage"
 
-#: ../src/setupMode.cc:149
+#: ../src/setupMode.cc:151
 msgid "Setup new game"
 msgstr "Configurer un nouveau jeu"
 
-#: ../src/setupMode.cc:153
+#: ../src/setupMode.cc:155
 msgid "Player Name"
 msgstr "Nom du joueur"
 
-#: ../src/setupMode.cc:159
+#: ../src/setupMode.cc:161
 msgid "N/A"
 msgstr "ND"
 
-#: ../src/setupMode.cc:165
+#: ../src/setupMode.cc:167
 msgid "Level"
 msgstr "Niveau"
 
-#: ../src/setupMode.cc:173
+#: ../src/setupMode.cc:175
 msgid "Difficulty"
 msgstr "Difficulté"
 
-#: ../src/setupMode.cc:178
+#: ../src/setupMode.cc:180
 msgid "Sandbox (Easy)"
 msgstr "Contrôle (Facile)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Normal)"
 msgstr "Contrôle (Normale)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Hard)"
 msgstr "Contrôle (Difficile)"
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:183
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:186
+#: ../src/setupMode.cc:188
 msgid "Start Game"
 msgstr "Commencer une partie"
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:192
 #, c-format
 msgid "Total games played: %d"
 msgstr "Nombre de partie jouées : %d"
 
-#: ../src/setupMode.cc:194
+#: ../src/setupMode.cc:196
 #, c-format
 msgid "Average score: %d"
 msgstr "Score moyen : %d"
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:198
 #, c-format
 msgid "Average score: N/A"
 msgstr "Score moyen : N/A"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:201
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Niveaux terminés : %d"
@@ -2022,6 +2020,21 @@ msgstr "Bonus"
 msgid "Commander's Hall"
 msgstr "Salle du commandant"
 
+#~ msgid ";;; Track: %s\n"
+#~ msgstr ";;; Piste: %s\n"
+
+#~ msgid "   -l  --level           Start from level.\n"
+#~ msgstr "   -l  --level           Commence a ce niveau.\n"
+
+#~ msgid "   -m  --mute            Mute sound.\n"
+#~ msgstr "   -m  --mute            Son muet.\n"
+
+#~ msgid "   -f  --fps             Displays framerate\n"
+#~ msgstr "   -f  --fps             Affiche le nombre d'images par seconde\n"
+
+#~ msgid "   Escape     Soft quit\n"
+#~ msgstr "   Échap.     Quitter doucement\n"
+
 #~ msgid "Raise: %f"
 #~ msgstr "Augmenter: %f"
 
@@ -2043,11 +2056,6 @@ msgstr "Salle du commandant"
 
 #~ msgid "Saving map as '%s'\n"
 #~ msgstr "Enregistre la carte sous '%s'\n"
-
-#, fuzzy
-#~ msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
-#~ msgstr ""
-#~ "Attention : ne peut allouer %d octets pour la capture d'ecran. Abandon.\n"
 
 #~ msgid "Warning: cannot create file '%s'. Abort\n"
 #~ msgstr "Attention : ne peut creer le fichier '%s'. Abandon.\n"
@@ -2072,10 +2080,6 @@ msgstr "Salle du commandant"
 #~ "Attention : Redimensionnez les images avant de les charger comme "
 #~ "textures.\n"
 
-#, fuzzy
-#~ msgid "Error: failed to load %s\n"
-#~ msgstr "Erreur : Ne peut charger %s\n"
-
 #~ msgid "   -e  --edit            Start as level editor.\n"
 #~ msgstr "   -e  --edit            Lance l'editeur de niveaux.\n"
 
@@ -2095,22 +2099,6 @@ msgstr "Salle du commandant"
 #~ msgstr ""
 #~ "Ne peut initialiser libSDL.\n"
 #~ "Message d'erreur: '%s'\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Could not initialize screen resolution.\n"
-#~ "Error message: '%s'\n"
-#~ msgstr ""
-#~ "Ne peut initialiser libSDL.\n"
-#~ "Message d'erreur: '%s'\n"
-
-#, fuzzy
-#~ msgid "Error: Failed to load %s\n"
-#~ msgstr "Erreur : Ne peut charger %s\n"
-
-#, fuzzy
-#~ msgid "Open..."
-#~ msgstr "Ouvrir"
 
 #~ msgid "Error: Failed to load font %s\n"
 #~ msgstr "Erreur : Ne peut charger la fonte %s\n"

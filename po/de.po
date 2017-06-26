@@ -1,5 +1,4 @@
-# Swedish translations for PACKAGE package
-# Svenska översättningar för paket PACKAGE.
+# German translations for PACKAGE package
 # Copyright (C) 2005 Mathias Broxvall
 # This file is distributed under the same license as the PACKAGE package.
 # Mathias <matbr@home.se>, 2005.
@@ -8,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 18:31-0400\n"
-"PO-Revision-Date: 2017-06-20 18:59-0400\n"
+"POT-Creation-Date: 2017-06-25 17:46-0400\n"
+"PO-Revision-Date: 2017-06-25 19:51-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "Language: de\n"
@@ -17,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.2\n"
 
 #: ../src/calibrateJoystickMode.cc:94
 msgid "Calibrating Joystick"
@@ -63,7 +62,7 @@ msgstr ""
 
 #: ../src/diamond.cc:112
 msgid "Save point"
-msgstr ""
+msgstr "Speicherpunkt"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
 #: ../src/editMode.cc:167
@@ -127,7 +126,7 @@ msgstr ""
 
 #: ../src/editMode.cc:176
 msgid "Test level"
-msgstr ""
+msgstr "Niveau ausprobieren"
 
 #: ../src/editMode.cc:177
 msgid "Edit height"
@@ -405,37 +404,39 @@ msgstr ""
 msgid "Large smooth"
 msgstr ""
 
-#: ../src/editMode.cc:341
-#, c-format
-msgid ";;; Track: %s\n"
-msgstr ""
+#: ../src/editMode.cc:341 ../src/mainMode.cc:178
+msgid "Track:"
+msgstr "Strecke:"
 
 #: ../src/editMode.cc:342
-#, c-format
-msgid ";;; This is the default script file for this track.\n"
-msgstr ""
-
-#: ../src/editMode.cc:343
-#, c-format
-msgid ";;; Read the documentation for the editor and look at the examples\n"
+msgid "This is the default script file for this track."
 msgstr ""
 
 #: ../src/editMode.cc:344
-#, c-format
-msgid ""
-";;; to learn how to customize it\n"
-"\n"
+msgid "Read the documentation for the editor and look at the examples"
 msgstr ""
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:345
+msgid "to learn how to customize it"
+msgstr ""
+
+#: ../src/editMode.cc:348
+msgid "Enter your name here"
+msgstr "Namen eingeben"
+
+#: ../src/editMode.cc:352
+msgid "Add the name of the next level here"
+msgstr ""
+
+#: ../src/editMode.cc:499
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Textures"
 msgstr ""
 
@@ -578,7 +579,7 @@ msgstr "Nein"
 
 #: ../src/editWindows.cc:399
 msgid "Save map?"
-msgstr ""
+msgstr "Karte abspeichern?"
 
 #: ../src/editWindows.cc:403
 msgid "Saving"
@@ -598,7 +599,7 @@ msgstr ""
 
 #: ../src/editWindows.cc:527
 msgid "Open map"
-msgstr ""
+msgstr "Karte öffnen"
 
 #: ../src/editWindows.cc:534
 #, c-format
@@ -619,24 +620,24 @@ msgstr "Namen eingeben: %s"
 msgid "John Doe"
 msgstr "Peter Schmidt"
 
-#: ../src/glHelp.cc:1217
+#: ../src/glHelp.cc:1266
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Bildrate: %.1f"
 
-#: ../src/glHelp.cc:1219
+#: ../src/glHelp.cc:1268
 #, c-format
 msgid "Framerate unknown"
 msgstr "Unbekannte Bildrate"
 
-#: ../src/glHelp.cc:1221
+#: ../src/glHelp.cc:1270
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Bild"
 
 #: ../src/helpMode.cc:112
 msgid "Your marble:"
-msgstr ""
+msgstr "Euer Ball:"
 
 #: ../src/helpMode.cc:112
 msgid "Steer this with your mouse, numpad or arrows. "
@@ -799,18 +800,14 @@ msgstr "Zurück"
 msgid "Anonymous Coward"
 msgstr "Anonymer Feigling"
 
-#: ../src/hofMode.cc:108 ../src/setupMode.cc:157
+#: ../src/hofMode.cc:108 ../src/setupMode.cc:159
 msgid "Level Set"
 msgstr "Niveaumenge"
 
 #: ../src/hofMode.cc:118
 #, c-format
 msgid "%d points"
-msgstr ""
-
-#: ../src/mainMode.cc:178
-msgid "Track:"
-msgstr "Strecke:"
+msgstr "%d Punkte"
 
 #: ../src/mainMode.cc:180
 msgid "Author:"
@@ -832,7 +829,7 @@ msgstr "Spiel ist aus"
 
 #: ../src/mainMode.cc:203
 msgid "Oops"
-msgstr ""
+msgstr "Hoppla"
 
 #: ../src/mainMode.cc:220
 msgid "Paused"
@@ -840,7 +837,7 @@ msgstr "Pausiert"
 
 #: ../src/mainMode.cc:229
 msgid "Bonus level complete"
-msgstr ""
+msgstr "Bonuslevel geschafft"
 
 #: ../src/mainMode.cc:243
 msgid "Level complete"
@@ -848,11 +845,11 @@ msgstr "Level geschafft"
 
 #: ../src/mainMode.cc:250
 msgid "Congratulations"
-msgstr ""
+msgstr "Herzlichen Glückwunsch"
 
 #: ../src/mainMode.cc:250
 msgid "You have completed the game!"
-msgstr ""
+msgstr "Sie haben das Spiel beendet!"
 
 #: ../src/mainMode.cc:542 ../src/mainMode.cc:558
 msgid "Good luck!"
@@ -861,27 +858,27 @@ msgstr "Viel Glück!"
 #: ../src/mainMode.cc:635
 #, c-format
 msgid "Level bonuses"
-msgstr ""
+msgstr "Bonus"
 
 #: ../src/mainMode.cc:637
 #, c-format
 msgid "Lives left:"
-msgstr ""
+msgstr "Leben übrig:"
 
 #: ../src/mainMode.cc:638
 #, c-format
 msgid "%d x 100 = %d points"
-msgstr ""
+msgstr "%d x 100 = %d Punkte"
 
 #: ../src/mainMode.cc:639
 #, c-format
 msgid "Time left:"
-msgstr ""
+msgstr "Zeit übrig:"
 
 #: ../src/mainMode.cc:640
 #, c-format
 msgid "%d minutes = %d points"
-msgstr ""
+msgstr "%d Minuten = %d Punkte"
 
 #: ../src/mainMode.cc:642
 #, c-format
@@ -946,159 +943,163 @@ msgstr "Hilfe"
 msgid "Map Editor"
 msgstr "Karteneditor"
 
+#: ../src/mmad.cc:215
+msgid "Usage:"
+msgstr ""
+
 #: ../src/mmad.cc:216
-#, c-format
-msgid ""
-"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
+msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
 msgstr ""
 
 #: ../src/mmad.cc:218
-#, c-format
-msgid "   -h  --help            Display this usage information.\n"
+msgid "Display this usage information."
 msgstr ""
 
 #: ../src/mmad.cc:219
-#, c-format
-msgid "   -l  --level           Start from level.\n"
+msgid "Start from level."
 msgstr ""
 
 #: ../src/mmad.cc:220
-#, c-format
-msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
+msgid "Run in window (Default is fullscreen)"
 msgstr ""
 
 #: ../src/mmad.cc:221
-#, c-format
-msgid "   -m  --mute            Mute sound.\n"
+msgid "Mute sound."
 msgstr ""
 
 #: ../src/mmad.cc:222
-#, c-format
-msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
+msgid "Set resolution to 640, 800 or 1024"
 msgstr ""
 
 #: ../src/mmad.cc:223
-#, c-format
-msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
+msgid "Mouse sensitivity, default 1.0"
 msgstr ""
 
 #: ../src/mmad.cc:224
-#, c-format
-msgid "   -f  --fps             Displays framerate\n"
+msgid "Displays framerate"
 msgstr ""
 
 #: ../src/mmad.cc:225
-#, c-format
-msgid "   -v  --version         Prints current version number\n"
+msgid "Prints current version number"
 msgstr ""
 
 #: ../src/mmad.cc:226
-#, c-format
-msgid "   -t  --touch           Updates a map to the latest format\n"
+msgid "Updates a map to the latest format"
 msgstr ""
 
 #: ../src/mmad.cc:227
-#, c-format
-msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
+msgid "Attempt to conserve memory usage"
 msgstr ""
 
 #: ../src/mmad.cc:228
-#, c-format
-msgid "   -j  --repair-joystick Correct for bad joysticks\n"
+msgid "Debug joystick status"
 msgstr ""
 
-#: ../src/mmad.cc:230
-#, c-format
-msgid "Important keyboard shortcuts\n"
-msgstr ""
-
-#: ../src/mmad.cc:231
-#, c-format
-msgid "   Escape     Soft quit\n"
-msgstr ""
-
-#: ../src/mmad.cc:232
-#, c-format
-msgid "   CapsLock   Unhide mouse pointer\n"
+#: ../src/mmad.cc:229
+msgid "Correct for bad joysticks"
 msgstr ""
 
 #: ../src/mmad.cc:233
-#, c-format
-msgid "   CTRL-q     Quit the game immediatly\n"
+msgid "Important keyboard shortcuts"
+msgstr "Wichtige Tastenkürzel"
+
+#: ../src/mmad.cc:234
+msgid "Escape"
 msgstr ""
 
 #: ../src/mmad.cc:234
-#, c-format
-msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
+msgid "Soft quit"
 msgstr ""
 
 #: ../src/mmad.cc:235
-#, c-format
-msgid "   k          Kill the ball\n"
+msgid "CapsLock"
 msgstr ""
 
-#: ../src/mmad.cc:338
-#, c-format
-msgid "Unknown screen resolution of width %d\n"
+#: ../src/mmad.cc:235
+msgid "Unhide mouse pointer"
 msgstr ""
 
-#: ../src/mmad.cc:369
-#, c-format
-msgid "Welcome to Trackballs. \n"
+#: ../src/mmad.cc:236
+msgid "CTRL-q"
 msgstr ""
 
-#: ../src/mmad.cc:370
-#, c-format
-msgid "Using %s as gamedata directory.\n"
+#: ../src/mmad.cc:236
+msgid "Quit the game immediately"
 msgstr ""
+
+#: ../src/mmad.cc:237
+msgid "CTRL-f"
+msgstr ""
+
+#: ../src/mmad.cc:237
+msgid "Toggle between fullscreen/windowed mode"
+msgstr ""
+
+#: ../src/mmad.cc:238
+msgid "Kill the ball"
+msgstr ""
+
+#: ../src/mmad.cc:349
+#, c-format
+msgid "Unknown screen resolution of width %d"
+msgstr ""
+
+#: ../src/mmad.cc:382
+msgid "Welcome to Trackballs."
+msgstr "Willkommen bei Trackballs."
+
+#: ../src/mmad.cc:384
+#, c-format
+msgid "Using %s as gamedata directory."
+msgstr "Mit %s als Spieldaten-Verzeichnis."
 
 #: ../src/modPill.cc:122
 msgid "Speed ball"
-msgstr ""
+msgstr "Geschwindigkeits ball"
 
 #: ../src/modPill.cc:122
 msgid "Extra jump"
-msgstr ""
+msgstr "Extra-Sprung"
 
 #: ../src/modPill.cc:122
 msgid "Spikes"
-msgstr ""
+msgstr "Stacheln"
 
 #: ../src/modPill.cc:122
 msgid "Glass ball"
-msgstr ""
+msgstr "Glasball"
 
 #: ../src/modPill.cc:123
 msgid "Dizzy!"
-msgstr ""
+msgstr "Schwindlig!"
 
 #: ../src/modPill.cc:123
 msgid "Freeze!"
-msgstr ""
+msgstr "Einfrieren!"
 
 #: ../src/modPill.cc:123
 msgid "Floating"
-msgstr ""
+msgstr "Schwimmend"
 
 #: ../src/modPill.cc:123
 msgid "Extra life"
-msgstr ""
+msgstr "Extra Leben"
 
 #: ../src/modPill.cc:124
 msgid "Small ball"
-msgstr ""
+msgstr "Kleiner Ball"
 
 #: ../src/modPill.cc:124
 msgid "Large ball"
-msgstr ""
+msgstr "Großer Ball"
 
 #: ../src/modPill.cc:124
 msgid "Nitro"
-msgstr ""
+msgstr "Nitro"
 
 #: ../src/settingsMode.cc:82
 msgid "Game Settings"
-msgstr ""
+msgstr "Spielkonfiguration"
 
 #: ../src/settingsMode.cc:92
 #, c-format
@@ -1133,19 +1134,19 @@ msgid "Auto-%d"
 msgstr ""
 
 #: ../src/settingsMode.cc:123
-msgid "  Resolution"
+msgid "Resolution"
 msgstr ""
 
 #: ../src/settingsMode.cc:124
-msgid "  Test this resolution"
+msgid "Test this resolution"
 msgstr ""
 
 #: ../src/settingsMode.cc:127
-msgid "  Fullscreen"
+msgid "Fullscreen"
 msgstr ""
 
 #: ../src/settingsMode.cc:130
-msgid "  VSync"
+msgid "VSync"
 msgstr ""
 
 #: ../src/settingsMode.cc:139
@@ -1159,12 +1160,12 @@ msgid "Frame time"
 msgstr ""
 
 #: ../src/settingsMode.cc:145
-msgid "  Show FPS"
+msgid "Show FPS"
 msgstr ""
 
 #: ../src/settingsMode.cc:150
 msgid "Graphics"
-msgstr ""
+msgstr "Detailstufe"
 
 #: ../src/settingsMode.cc:155
 #, c-format
@@ -1197,27 +1198,27 @@ msgid "Everything"
 msgstr ""
 
 #: ../src/settingsMode.cc:173
-msgid "  Details"
+msgid "Details"
 msgstr ""
 
 #: ../src/settingsMode.cc:174
-msgid "  Reflections"
-msgstr ""
+msgid "Reflections"
+msgstr "Reflexionen"
 
 #: ../src/settingsMode.cc:176
-msgid "  Shadows"
-msgstr ""
+msgid "Shadows"
+msgstr "Schatten"
 
 #: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr ""
 
 #: ../src/settingsMode.cc:186
-msgid "  Use mouse"
+msgid "Use mouse"
 msgstr ""
 
 #: ../src/settingsMode.cc:192
-msgid "  Sensitivity"
+msgid "Sensitivity"
 msgstr ""
 
 #: ../src/settingsMode.cc:199
@@ -1231,8 +1232,8 @@ msgid "-%d degrees"
 msgstr ""
 
 #: ../src/settingsMode.cc:202
-msgid "  Steering"
-msgstr ""
+msgid "Steering"
+msgstr "Steuerung"
 
 #: ../src/settingsMode.cc:209
 #, c-format
@@ -1240,100 +1241,100 @@ msgid "no joystick found"
 msgstr ""
 
 #: ../src/settingsMode.cc:213
-msgid "  Joystick:"
+msgid "Joystick:"
 msgstr ""
 
 #: ../src/settingsMode.cc:223
 msgid "Other"
-msgstr ""
+msgstr "Weiteres"
 
 #: ../src/settingsMode.cc:227
-msgid "  Music volume"
-msgstr ""
+msgid "Music volume"
+msgstr "Musiklautstärke"
 
 #: ../src/settingsMode.cc:229
-msgid "  Effects volume"
-msgstr ""
+msgid "Effects volume"
+msgstr "Effektlautstärke"
 
 #: ../src/settingsMode.cc:231
-msgid "  Language"
+msgid "Language"
 msgstr "Sprache"
 
-#: ../src/setupMode.cc:149
+#: ../src/setupMode.cc:151
 msgid "Setup new game"
 msgstr "Neues Spiel aufstellen"
 
-#: ../src/setupMode.cc:153
+#: ../src/setupMode.cc:155
 msgid "Player Name"
 msgstr "Spielername"
 
-#: ../src/setupMode.cc:159
+#: ../src/setupMode.cc:161
 msgid "N/A"
-msgstr "N.d."
+msgstr "N/A"
 
-#: ../src/setupMode.cc:165
+#: ../src/setupMode.cc:167
 msgid "Level"
 msgstr "Spielniveau"
 
-#: ../src/setupMode.cc:173
+#: ../src/setupMode.cc:175
 msgid "Difficulty"
 msgstr "Schwierigkeit"
 
-#: ../src/setupMode.cc:178
+#: ../src/setupMode.cc:180
 msgid "Sandbox (Easy)"
 msgstr "Sandkasten (Leicht)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Normal)"
 msgstr "Sandkasten (Normal)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Hard)"
 msgstr "Sandkasten (Schwierig)"
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:183
 msgid "Easy"
 msgstr "Leicht"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Normal"
 msgstr "Normal"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Hard"
 msgstr "Schwierig"
 
-#: ../src/setupMode.cc:186
+#: ../src/setupMode.cc:188
 msgid "Start Game"
 msgstr "Spiel beginnen"
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:192
 #, c-format
 msgid "Total games played: %d"
-msgstr ""
+msgstr "Anzahl Spiele gespielt: %d"
 
-#: ../src/setupMode.cc:194
+#: ../src/setupMode.cc:196
 #, c-format
 msgid "Average score: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:198
 #, c-format
 msgid "Average score: N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:201
 #, c-format
 msgid "Levels completed: %d"
 msgstr ""
 
 #: ../share/levels/bx.set:1 ../share/levels/bx1.scm:4
 msgid "Box-O'-Fun"
-msgstr ""
+msgstr "Spaßkasten"
 
 #: ../share/levels/bx.set:3
 msgid "Box of Fun"
-msgstr ""
+msgstr "Spaßkasten"
 
 #: ../share/levels/bx.set:4
 msgid "This is a set of three quite large levels created by Warren D. Ober."
@@ -1349,11 +1350,11 @@ msgstr ""
 
 #: ../share/levels/castles.set:1
 msgid "Castles"
-msgstr ""
+msgstr "Burgen"
 
 #: ../share/levels/castles.set:3 ../share/levels/castle1.scm:9
 msgid "Blue Castle"
-msgstr ""
+msgstr "Blaue Burg"
 
 #: ../share/levels/castles.set:4
 msgid "Do YOU dare to enter and brave these four castles? Only the most"
@@ -1377,11 +1378,11 @@ msgstr ""
 
 #: ../share/levels/child.set:1
 msgid "Child of Tales"
-msgstr ""
+msgstr "Kind von Geschichten"
 
 #: ../share/levels/child.set:3 ../share/levels/child1.scm:8
 msgid "Maze"
-msgstr ""
+msgstr "Labyrinth"
 
 #: ../share/levels/child.set:4
 msgid "This is an easy and short level for young children made by Attila"
@@ -1391,9 +1392,10 @@ msgstr ""
 msgid "Boros. It was created for my little goddaughter."
 msgstr ""
 
+# There's many ways to translate this, and all warp the connotations.
 #: ../share/levels/contrib.set:1
 msgid "The Con Tribe"
-msgstr ""
+msgstr "Schurkenstamm"
 
 #: ../share/levels/contrib.set:3 ../share/levels/con1.scm:3
 msgid "Steep"
@@ -1413,11 +1415,11 @@ msgstr ""
 
 #: ../share/levels/dn.set:1
 msgid "Strange"
-msgstr ""
+msgstr "Seltsam"
 
 #: ../share/levels/dn.set:3
 msgid "1st Stranger"
-msgstr ""
+msgstr "Der erste Fremde"
 
 #: ../share/levels/dn.set:4
 msgid "A strange set of levels with a strange name -"
@@ -1429,11 +1431,11 @@ msgstr ""
 
 #: ../share/levels/elite.set:1
 msgid "Elite"
-msgstr ""
+msgstr "Elite"
 
 #: ../share/levels/elite.set:3
 msgid "Castle"
-msgstr ""
+msgstr "Burg"
 
 #: ../share/levels/elite.set:4
 msgid "This is a single level set consiting of a huge level made"
@@ -1449,7 +1451,7 @@ msgstr ""
 
 #: ../share/levels/fourSeasons.set:1
 msgid "The Four Seasons"
-msgstr ""
+msgstr "Die vier Jahreszeiten"
 
 #: ../share/levels/fourSeasons.set:3 ../share/levels/fourSeasons_1.scm:7
 msgid "Winter"
@@ -1461,12 +1463,12 @@ msgstr ""
 
 #: ../share/levels/frg.set:1
 msgid "Great Escape"
-msgstr ""
+msgstr "Große Flucht"
 
 #: ../share/levels/frg.set:3 ../share/levels/lv.set:3
 #: ../share/levels/frg1.scm:1 ../share/levels/lv1.scm:9
 msgid "Warmup"
-msgstr ""
+msgstr "Aufwärmen"
 
 #: ../share/levels/frg.set:4
 msgid "Prepare for the real Marble Madness-like adventure in this game! "
@@ -1486,11 +1488,11 @@ msgstr ""
 
 #: ../share/levels/jump.set:1 ../share/levels/lv5.scm:4
 msgid "Jump"
-msgstr ""
+msgstr "Sprung"
 
 #: ../share/levels/jump.set:3 ../share/levels/jump1.scm:4
 msgid "Bridge"
-msgstr ""
+msgstr "Brücke"
 
 #: ../share/levels/jump.set:4
 msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
@@ -1506,11 +1508,11 @@ msgstr ""
 
 #: ../share/levels/ki.set:1
 msgid "Kidz"
-msgstr ""
+msgstr "Kinder"
 
 #: ../share/levels/ki.set:3 ../share/levels/ki1.scm:7
 msgid "Right Angles"
-msgstr ""
+msgstr "Rechte Winkel"
 
 #: ../share/levels/ki.set:4
 msgid "This is meant to be a very easy and basic level for ages 4-5."
@@ -1526,7 +1528,7 @@ msgstr ""
 
 #: ../share/levels/lv.set:1
 msgid "A long way home"
-msgstr ""
+msgstr "Der lange Weg nach Hause"
 
 #: ../share/levels/lv.set:4
 msgid "This is the original levelset for Trackballs containing"
@@ -1546,11 +1548,11 @@ msgstr ""
 
 #: ../share/levels/mhm.set:1
 msgid "Marble Mayhem"
-msgstr ""
+msgstr "Chaotische Murmeln"
 
 #: ../share/levels/mhm.set:3 ../share/levels/mhm1.scm:4
 msgid "Spyballs"
-msgstr ""
+msgstr "Spionierende Bälle"
 
 #: ../share/levels/mhm.set:4
 msgid "A set of three skillfully made levels by Warren D Ober."
@@ -1562,11 +1564,11 @@ msgstr ""
 
 #: ../share/levels/motion1.set:1 ../share/levels/motion1.scm:1
 msgid "Pendulum Motion"
-msgstr ""
+msgstr "Pendelbewegung"
 
 #: ../share/levels/motion1.set:3
 msgid "Motion One"
-msgstr ""
+msgstr "Bewegung Einz"
 
 #: ../share/levels/motion1.set:4
 msgid "This is a single level in a level set by Warren D. Ober."
@@ -1578,11 +1580,11 @@ msgstr ""
 
 #: ../share/levels/sl.set:1
 msgid "Six Levels"
-msgstr ""
+msgstr "Sechs Levels"
 
 #: ../share/levels/sl.set:3
 msgid "The Desert"
-msgstr ""
+msgstr "Die Wüste"
 
 #: ../share/levels/sl.set:4
 msgid "\"Six Levels\" is, of course,"
@@ -1606,7 +1608,7 @@ msgstr ""
 
 #: ../share/levels/bonusb.scm:1
 msgid "Bonus Level"
-msgstr ""
+msgstr "Bonuslevel"
 
 #: ../share/levels/bonusb.scm:28
 msgid "You made it to the end!"
@@ -1626,7 +1628,7 @@ msgstr ""
 
 #: ../share/levels/bx2.scm:5
 msgid "Four Doors"
-msgstr ""
+msgstr "Vier Türen"
 
 #: ../share/levels/bx2.scm:293
 msgid "4 hidden switches open exit doors."
@@ -1642,7 +1644,7 @@ msgstr ""
 
 #: ../share/levels/bx3.scm:4
 msgid "Azteca"
-msgstr ""
+msgstr "Azteken"
 
 #: ../share/levels/bx3.scm:107
 msgid "You have access to the complex."
@@ -1678,15 +1680,15 @@ msgstr ""
 
 #: ../share/levels/castle2.scm:8
 msgid "Night Watch"
-msgstr ""
+msgstr "Nachtwache"
 
 #: ../share/levels/castle3.scm:8
 msgid "Stronghold"
-msgstr ""
+msgstr "Festung"
 
 #: ../share/levels/castle4.scm:12
 msgid "Ice and Glass"
-msgstr ""
+msgstr "Eis und Glas"
 
 #: ../share/levels/castle4.scm:64
 msgid "Maze of PI"
@@ -1698,31 +1700,31 @@ msgstr ""
 
 #: ../share/levels/child2.scm:9
 msgid "Christmas"
-msgstr ""
+msgstr "Weihnachten"
 
 #: ../share/levels/child3.scm:9
 msgid "Pinky"
-msgstr ""
+msgstr "Rosa"
 
 #: ../share/levels/child4.scm:9
 msgid "Big Jump"
-msgstr ""
+msgstr "Großer Sprung"
 
 #: ../share/levels/child5.scm:10
 msgid "Wonderland"
-msgstr ""
+msgstr "Wunderland"
 
 #: ../share/levels/child6.scm:8
 msgid "Pyramid"
-msgstr ""
+msgstr "Pyramide"
 
 #: ../share/levels/con2.scm:5
 msgid "Stairway to Heaven"
-msgstr ""
+msgstr "Himmelsleiter"
 
 #: ../share/levels/con3.scm:8
 msgid "Hell"
-msgstr ""
+msgstr "Die Hölle"
 
 #: ../share/levels/con3.scm:51
 msgid "Hell's entrance"
@@ -1746,7 +1748,7 @@ msgstr ""
 
 #: ../share/levels/con4.scm:4
 msgid "Scary"
-msgstr ""
+msgstr "Beängstigend"
 
 #: ../share/levels/con4.scm:34 ../share/levels/con4.scm:62
 #: ../share/levels/con4.scm:66 ../share/levels/lv1.scm:72
@@ -1755,35 +1757,35 @@ msgstr "Herr Schwarz"
 
 #: ../share/levels/con5.scm:4
 msgid "Snowbord"
-msgstr ""
+msgstr "Snowboard"
 
 #: ../share/levels/dn1.scm:4
 msgid "Strange indeed!"
-msgstr ""
+msgstr "Merkwürdig!"
 
 #: ../share/levels/dn2.scm:4
 msgid "Horrible"
-msgstr ""
+msgstr "Schrecklich"
 
 #: ../share/levels/dn3.scm:4
 msgid "Water jumping"
-msgstr ""
+msgstr "Wasser springen"
 
 #: ../share/levels/dn4.scm:4
 msgid "Oh my god!"
-msgstr ""
+msgstr "Mein Gott!"
 
 #: ../share/levels/dn5.scm:4
 msgid "Get wet!"
-msgstr ""
+msgstr "Nass werden!"
 
 #: ../share/levels/dn6.scm:7
 msgid "Final and the last"
-msgstr ""
+msgstr "Das Finale und das letzte"
 
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
-msgstr ""
+msgstr "Schloss von Darius der Mede"
 
 #: ../share/levels/elite1.scm:100
 msgid "Danger!"
@@ -1819,11 +1821,11 @@ msgstr ""
 
 #: ../share/levels/frg2.scm:1
 msgid "Deja Vu"
-msgstr ""
+msgstr "Deja vu"
 
 #: ../share/levels/frg3.scm:1
 msgid "Towers of Heaven"
-msgstr ""
+msgstr "Türme des Himmels"
 
 #: ../share/levels/frg4.scm:1
 msgid "Blue"
@@ -1831,59 +1833,59 @@ msgstr "Blau"
 
 #: ../share/levels/frg5.scm:1
 msgid "Upside Down"
-msgstr ""
+msgstr "Verkehrt herum"
 
 #: ../share/levels/frg6.scm:1
 msgid "High Nausea Rating"
-msgstr ""
+msgstr "Hohe Übelkeit"
 
 #: ../share/levels/frg7.scm:2
 msgid "Jump'n Roll"
-msgstr ""
+msgstr "Springen und rollen"
 
 #: ../share/levels/frg8.scm:1
 msgid "Azure Fortress"
-msgstr ""
+msgstr "Die azurblaue Festung"
 
 #: ../share/levels/frg9.scm:1
 msgid "Ultimate"
-msgstr ""
+msgstr "Ultimative"
 
 #: ../share/levels/frgb.scm:1
 msgid "Chess Champion"
-msgstr ""
+msgstr "Schachmeister"
 
 #: ../share/levels/jump2.scm:5
 msgid "Megajump"
-msgstr ""
+msgstr "Riesen Sprung"
 
 #: ../share/levels/jump3.scm:4
 msgid "Upstairs"
-msgstr ""
+msgstr "Die Treppen hoch"
 
 #: ../share/levels/jump4.scm:4
 msgid "Speedjump"
-msgstr ""
+msgstr "Schneller Sprung"
 
 #: ../share/levels/jump5.scm:4
 msgid "Dangerous Jump"
-msgstr ""
+msgstr "Gefährlicher Sprung"
 
 #: ../share/levels/ki2.scm:5
 msgid "At the Beach"
-msgstr ""
+msgstr "Am Strand"
 
 #: ../share/levels/ki3.scm:5
 msgid "Ice Skating Rink"
-msgstr ""
+msgstr "Eisbahn"
 
 #: ../share/levels/ki4.scm:4
 msgid "Clowning Around"
-msgstr ""
+msgstr "Herum kaspern"
 
 #: ../share/levels/ki5.scm:5
 msgid "Half-pipe"
-msgstr ""
+msgstr "Halfpipe"
 
 #: ../share/levels/lv1.scm:94
 msgid "and his Minions"
@@ -1891,39 +1893,39 @@ msgstr ""
 
 #: ../share/levels/lv2.scm:72
 msgid "Jump!"
-msgstr ""
+msgstr "Springen!"
 
 #: ../share/levels/lv3.scm:3
 msgid "Nightime"
-msgstr ""
+msgstr "Nachtzeit"
 
 #: ../share/levels/lv4.scm:4
 msgid "Labyrinth"
-msgstr ""
+msgstr "Labyrinth"
 
 #: ../share/levels/lv6.scm:3
 msgid "Cannon"
-msgstr ""
+msgstr "Kanone"
 
 #: ../share/levels/lv7.scm:3
 msgid "Slalom"
-msgstr ""
+msgstr "Slalom"
 
 #: ../share/levels/lv8.scm:8
 msgid "Crazy Factory"
-msgstr ""
+msgstr "Verrückte Fabrik"
 
 #: ../share/levels/lv9.scm:4
 msgid "Water world"
-msgstr ""
+msgstr "Wasserwelt"
 
 #: ../share/levels/mhm2.scm:3
 msgid "Mayhem"
-msgstr ""
+msgstr "Chaos"
 
 #: ../share/levels/mhm3.scm:3
 msgid "The Castle"
-msgstr ""
+msgstr "Das Schloss"
 
 #: ../share/levels/mhm3.scm:24
 msgid "Stay on the path or else!"
@@ -1955,19 +1957,19 @@ msgstr ""
 
 #: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
 msgid "No jumping!"
-msgstr ""
+msgstr "Kein Springen!"
 
 #: ../share/levels/sl2.scm:9
 msgid "Scale the Mountain"
-msgstr ""
+msgstr "Den Berg skalieren"
 
 #: ../share/levels/sl2.scm:63
 msgid "Kill me!"
-msgstr ""
+msgstr "Töte mich!"
 
 #: ../share/levels/sl3.scm:9
 msgid "The Longest Pipe in the World"
-msgstr ""
+msgstr "Die längste Röhre der Welt"
 
 #: ../share/levels/sl3.scm:123
 msgid "Smash some badguys and see what happens"
@@ -1975,11 +1977,11 @@ msgstr ""
 
 #: ../share/levels/sl4.scm:9
 msgid "Hurry up!"
-msgstr ""
+msgstr "Beeilen sie sich!"
 
 #: ../share/levels/sl5.scm:5
 msgid "The Marble Mansion"
-msgstr ""
+msgstr "Die Murmelvilla"
 
 #: ../share/levels/sl5.scm:48
 msgid "Pull twice"
@@ -1995,7 +1997,7 @@ msgstr ""
 
 #: ../share/levels/sl6.scm:9
 msgid "The Marble HQ"
-msgstr ""
+msgstr "Das Murmelhauptquartier"
 
 #: ../share/levels/sl6.scm:203
 msgid "The Marble HQ - Do not Enter!"

@@ -146,8 +146,10 @@ void menuItem_Center(int code, int row, const char *str) {
   computeScreenSizes();
   addText_Center(code, fontsize, (row + 1) * menuSpacing + top, str, screenWidth / 2);
 }
-void menuItem_LeftRight(int code, int row, const char *leftStr, const char *rightStr) {
+void menuItem_LeftRight(int code, int row, int indent, const char *leftStr,
+                        const char *rightStr) {
   computeScreenSizes();
-  addText_LeftRight(code, fontsize, (row + 1) * menuSpacing + top, leftStr, screenBorder,
-                    rightStr, screenWidth - screenBorder);
+  addText_LeftRight(code, fontsize, (row + 1) * menuSpacing + top, leftStr,
+                    screenBorder + 3 * fontsize * indent / 2, rightStr,
+                    screenWidth - screenBorder);
 }

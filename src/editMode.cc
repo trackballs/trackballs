@@ -338,15 +338,18 @@ void EditMode::saveMap() {
       }
       printf("Creating default script file at: %s\n", str);
       FILE* fp = fopen(str, "wb");
-      fprintf(fp, _(";;; Track: %s\n"), levelname);
-      fprintf(fp, _(";;; This is the default script file for this track.\n"));
-      fprintf(fp, _(";;; Read the documentation for the editor and look at the examples\n"));
-      fprintf(fp, _(";;; to learn how to customize it\n\n"));
+      fprintf(fp, ";;; %s %s\n", _("Track:"), levelname);
+      fprintf(fp, ";;; %s\n", _("This is the default script file for this track."));
+      fprintf(fp, ";;; %s\n",
+              _("Read the documentation for the editor and look at the examples"));
+      fprintf(fp, ";;; %s\n\n", _("to learn how to customize it"));
       fprintf(fp, "(set-track-name \"%s\")\n", levelname);
-      fprintf(fp, "(set-author \"%s\")\n      ;; Enter your name here ", getenv("USER"));
+      fprintf(fp, "(set-author \"%s\")\n      ;; %s\n", getenv("USER"),
+              _("Enter your name here"));
       fprintf(fp, "(start-time 180)\n");
       fprintf(fp, "(set-start-position 250.5 250.5)\n");
-      fprintf(fp, "(add-goal 249 250 #f \"\") ;; Add the name of the next level here\n");
+      fprintf(fp, "(add-goal 249 250 #f \"\") ;; %s\n",
+              _("Add the name of the next level here"));
       fprintf(fp, "(add-flag 248 250 50 1 0.1)\n");
       fclose(fp);
     }

@@ -9,15 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-20 18:31-0400\n"
-"PO-Revision-Date: 2017-05-27 13:42-0400\n"
+"POT-Creation-Date: 2017-06-25 20:27-0400\n"
+"PO-Revision-Date: 2017-06-25 20:05-0400\n"
 "Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
 "Language-Team: Hungarian\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.2\n"
 
 #: ../src/calibrateJoystickMode.cc:94
 msgid "Calibrating Joystick"
@@ -293,9 +293,8 @@ msgid "Cell center"
 msgstr "Közép"
 
 #: ../src/editMode.cc:187
-#, fuzzy
 msgid "Water center"
-msgstr "Vízszint"
+msgstr ""
 
 #: ../src/editMode.cc:187
 #, fuzzy
@@ -309,7 +308,7 @@ msgstr ""
 #: ../src/editMode.cc:187
 #, fuzzy
 msgid "Water round"
-msgstr "Vízszint"
+msgstr "Hang elnémítása."
 
 #: ../src/editMode.cc:188
 #, fuzzy
@@ -412,40 +411,39 @@ msgstr "Kis simítás"
 msgid "Large smooth"
 msgstr "Nagy simítás"
 
-#: ../src/editMode.cc:341
-#, c-format
-msgid ";;; Track: %s\n"
-msgstr ";;; Pálya: %s\n"
+#: ../src/editMode.cc:341 ../src/mainMode.cc:178
+msgid "Track:"
+msgstr "Pálya:"
 
 #: ../src/editMode.cc:342
-#, c-format
-msgid ";;; This is the default script file for this track.\n"
-msgstr ";;; Ez az alapértelmezett script fájl ehhez a pályához.\n"
-
-#: ../src/editMode.cc:343
-#, c-format
-msgid ";;; Read the documentation for the editor and look at the examples\n"
-msgstr ""
-";;; Olvasd el a pályaszerkesztő dokumentációját és nézd meg a példákat,\n"
+msgid "This is the default script file for this track."
+msgstr "Ez az alapértelmezett script fájl ehhez a pályához."
 
 #: ../src/editMode.cc:344
-#, c-format
-msgid ""
-";;; to learn how to customize it\n"
-"\n"
-msgstr ""
-"hogy megtanuld, hogyan kell testre szabni.\n"
-"\n"
+msgid "Read the documentation for the editor and look at the examples"
+msgstr "Olvasd el a pályaszerkesztő dokumentációját és nézd meg a példákat,"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:345
+msgid "to learn how to customize it"
+msgstr "hogy megtanuld, hogyan kell testre szabni."
+
+#: ../src/editMode.cc:348
+msgid "Enter your name here"
+msgstr ""
+
+#: ../src/editMode.cc:352
+msgid "Add the name of the next level here"
+msgstr "A következő pályára juttat."
+
+#: ../src/editMode.cc:499
 msgid "Cell height"
 msgstr "Cella magassága"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Cell water height"
 msgstr "Cella vízszintje"
 
-#: ../src/editMode.cc:496
+#: ../src/editMode.cc:499
 msgid "Textures"
 msgstr "Textúrák"
 
@@ -454,9 +452,8 @@ msgid "y"
 msgstr ""
 
 #: ../src/editWindows.cc:145
-#, fuzzy
 msgid "n"
-msgstr "nem"
+msgstr ""
 
 #: ../src/editWindows.cc:193
 #, fuzzy
@@ -510,7 +507,7 @@ msgstr ""
 #: ../src/editWindows.cc:230
 #, fuzzy
 msgid "Water heights"
-msgstr "Vízszint"
+msgstr "Cella vízszintje"
 
 #: ../src/editWindows.cc:246
 #, c-format
@@ -645,17 +642,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1217
+#: ../src/glHelp.cc:1266
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Képfrissítés: %.1f"
 
-#: ../src/glHelp.cc:1219
+#: ../src/glHelp.cc:1268
 #, c-format
 msgid "Framerate unknown"
 msgstr "Ismeretlen képfrissítés"
 
-#: ../src/glHelp.cc:1221
+#: ../src/glHelp.cc:1270
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -825,7 +822,7 @@ msgstr "Vissza"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:108 ../src/setupMode.cc:157
+#: ../src/hofMode.cc:108 ../src/setupMode.cc:159
 msgid "Level Set"
 msgstr "Pályacsoport"
 
@@ -833,10 +830,6 @@ msgstr "Pályacsoport"
 #, c-format
 msgid "%d points"
 msgstr "%d pont"
-
-#: ../src/mainMode.cc:178
-msgid "Track:"
-msgstr "Pálya:"
 
 #: ../src/mainMode.cc:180
 msgid "Author:"
@@ -978,117 +971,115 @@ msgstr "Súgó"
 msgid "Map Editor"
 msgstr "Pályaszerkesztő"
 
+#: ../src/mmad.cc:215
+msgid "Usage:"
+msgstr "Használat:"
+
 #: ../src/mmad.cc:216
-#, c-format
-msgid ""
-"Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"
-msgstr ""
-"Használat: %s [-w, -m] [-e, -l -t <pálya>] [-r <szélesség>] [-s "
-"<érzékenység>]\n"
+msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
+msgstr "[-w, -m] [-e, -l -t <pálya>] [-r <szélesség>] [-s <érzékenység>]"
 
 #: ../src/mmad.cc:218
-#, c-format
-msgid "   -h  --help            Display this usage information.\n"
-msgstr "   -h  --help            Megjeleníti ezt a használati útmutatót.\n"
+msgid "Display this usage information."
+msgstr "Megjeleníti ezt a használati útmutatót."
 
 #: ../src/mmad.cc:219
-#, c-format
-msgid "   -l  --level           Start from level.\n"
-msgstr "   -l  --level           Indítás pályától.\n"
+msgid "Start from level."
+msgstr "Indítás pályától."
 
 #: ../src/mmad.cc:220
-#, c-format
-msgid "   -w  --windowed        Run in window (Default is fullscreen)\n"
-msgstr ""
-"   -w  --windowed        Ablakban futtatás (teljes képernyős az "
-"alapértelmezett)\n"
+msgid "Run in window (Default is fullscreen)"
+msgstr "Ablakban futtatás (teljes képernyős az alapértelmezett)"
 
 #: ../src/mmad.cc:221
-#, c-format
-msgid "   -m  --mute            Mute sound.\n"
-msgstr "   -m  --mute            Hang elnémítása.\n"
+msgid "Mute sound."
+msgstr "Hang elnémítása."
 
 #: ../src/mmad.cc:222
-#, c-format
-msgid "   -r  --resolution      Set resolution to 640, 800 or 1024\n"
-msgstr ""
-"   -r  --resolution      Felbontás beállítása 640, 800 vagy 1024 értékre.\n"
+msgid "Set resolution to 640, 800 or 1024"
+msgstr "Felbontás beállítása 640, 800 vagy 1024 értékre."
 
 #: ../src/mmad.cc:223
-#, c-format
-msgid "   -s  --sensitivity     Mouse sensitivity, default 1.0\n"
-msgstr "   -s  --sensitivity     Egér érzékenység, 1.0 az alapértelmezett.\n"
+msgid "Mouse sensitivity, default 1.0"
+msgstr "Egér érzékenység, 1.0 az alapértelmezett."
 
 #: ../src/mmad.cc:224
-#, c-format
-msgid "   -f  --fps             Displays framerate\n"
-msgstr "   -f  --fps             Képfrissítési gyorsaság megjelenítése.\n"
+msgid "Displays framerate"
+msgstr ""
 
 #: ../src/mmad.cc:225
-#, c-format
-msgid "   -v  --version         Prints current version number\n"
-msgstr "   -v  --version         Aktuális verziószám kiírása.\n"
+msgid "Prints current version number"
+msgstr "Aktuális verziószám kiírása."
 
 #: ../src/mmad.cc:226
-#, c-format
-msgid "   -t  --touch           Updates a map to the latest format\n"
-msgstr ""
-"   -t  --touch           Aktualizálja a pályát a legutóbbi formátumra.\n"
+msgid "Updates a map to the latest format"
+msgstr "Aktualizálja a pályát a legutóbbi formátumra."
 
 #: ../src/mmad.cc:227
-#, c-format
-msgid "   -y  --low-memory      Attempt to conserve memory usage\n"
-msgstr "   -y  --low-memory      Kevesebb memóriát használ.\n"
+msgid "Attempt to conserve memory usage"
+msgstr "Kevesebb memóriát használ."
 
 #: ../src/mmad.cc:228
-#, c-format
-msgid "   -j  --repair-joystick Correct for bad joysticks\n"
-msgstr "   -j  --repair-joystick Hibás botkormány javítása.\n"
+msgid "Debug joystick status"
+msgstr ""
 
-#: ../src/mmad.cc:230
-#, c-format
-msgid "Important keyboard shortcuts\n"
-msgstr "Fontos gyorsbillentyűk\n"
-
-#: ../src/mmad.cc:231
-#, c-format
-msgid "   Escape     Soft quit\n"
-msgstr "   Escape     Kilépés\n"
-
-#: ../src/mmad.cc:232
-#, c-format
-msgid "   CapsLock   Unhide mouse pointer\n"
-msgstr "   Caps Lock   Egérmutató megjelenítése\n"
+#: ../src/mmad.cc:229
+msgid "Correct for bad joysticks"
+msgstr "Hibás botkormány javítása."
 
 #: ../src/mmad.cc:233
-#, c-format
-msgid "   CTRL-q     Quit the game immediatly\n"
-msgstr "   CTRL-q     Azonnali kilépés\n"
+msgid "Important keyboard shortcuts"
+msgstr "Fontos gyorsbillentyűk"
 
 #: ../src/mmad.cc:234
-#, c-format
-msgid "   CTRL-f     Toggle between fullscreen/windowed mode\n"
-msgstr "   CTRL-f     Váltás teljes képernyős/ablakos mód között\n"
+msgid "Escape"
+msgstr "Escape"
+
+#: ../src/mmad.cc:234
+msgid "Soft quit"
+msgstr "Kilépés"
 
 #: ../src/mmad.cc:235
-#, c-format
-msgid "   k          Kill the ball\n"
-msgstr "   k          Játék feladása\n"
+msgid "CapsLock"
+msgstr "Caps Lock"
 
-#: ../src/mmad.cc:338
-#, c-format
-msgid "Unknown screen resolution of width %d\n"
-msgstr "Ismeretlen képernyőfelbontás %d szélességgel\n"
+#: ../src/mmad.cc:235
+msgid "Unhide mouse pointer"
+msgstr "Egérmutató megjelenítése"
 
-#: ../src/mmad.cc:369
-#, c-format
-msgid "Welcome to Trackballs. \n"
-msgstr "Üdvözöllek a Trackballs játékban. \n"
+#: ../src/mmad.cc:236
+msgid "CTRL-q"
+msgstr "CTRL-q"
 
-#: ../src/mmad.cc:370
+#: ../src/mmad.cc:236
+msgid "Quit the game immediately"
+msgstr "Azonnali kilépés"
+
+#: ../src/mmad.cc:237
+msgid "CTRL-f"
+msgstr "CTRL-f"
+
+#: ../src/mmad.cc:237
+msgid "Toggle between fullscreen/windowed mode"
+msgstr "Váltás teljes képernyős/ablakos mód között"
+
+#: ../src/mmad.cc:238
+msgid "Kill the ball"
+msgstr "Játék feladása"
+
+#: ../src/mmad.cc:349
 #, c-format
-msgid "Using %s as gamedata directory.\n"
-msgstr "%s használata adatkönyvtárnak.\n"
+msgid "Unknown screen resolution of width %d"
+msgstr "Ismeretlen képernyőfelbontás %d szélességgel"
+
+#: ../src/mmad.cc:382
+msgid "Welcome to Trackballs."
+msgstr "Üdvözöllek a Trackballs játékban. "
+
+#: ../src/mmad.cc:384
+#, c-format
+msgid "Using %s as gamedata directory."
+msgstr "%s használata adatkönyvtárnak."
 
 #: ../src/modPill.cc:122
 msgid "Speed ball"
@@ -1176,25 +1167,25 @@ msgid "Auto-%d"
 msgstr ""
 
 #: ../src/settingsMode.cc:123
-msgid "  Resolution"
-msgstr "  Felbontás"
+msgid "Resolution"
+msgstr "Felbontás"
 
 #: ../src/settingsMode.cc:124
-msgid "  Test this resolution"
-msgstr "  Ennek a felbontásnak a tesztelése"
+msgid "Test this resolution"
+msgstr "Ennek a felbontásnak a tesztelése"
 
 #: ../src/settingsMode.cc:127
-msgid "  Fullscreen"
-msgstr "  Teljes képernyő"
+msgid "Fullscreen"
+msgstr "Teljes képernyő"
 
 #: ../src/settingsMode.cc:130
-msgid "  VSync"
+msgid "VSync"
 msgstr ""
 
 #: ../src/settingsMode.cc:139
-#, fuzzy, c-format
+#, c-format
 msgid "Frame rate"
-msgstr "Képfrissítés: %.1f"
+msgstr "Képfrissítés"
 
 #: ../src/settingsMode.cc:142
 #, c-format
@@ -1202,8 +1193,8 @@ msgid "Frame time"
 msgstr ""
 
 #: ../src/settingsMode.cc:145
-msgid "  Show FPS"
-msgstr "  FPS mutatása"
+msgid "Show FPS"
+msgstr "FPS mutatása"
 
 #: ../src/settingsMode.cc:150
 msgid "Graphics"
@@ -1240,30 +1231,28 @@ msgid "Everything"
 msgstr "Minden"
 
 #: ../src/settingsMode.cc:173
-msgid "  Details"
-msgstr "  Részletek"
+msgid "Details"
+msgstr "Részletek"
 
 #: ../src/settingsMode.cc:174
-#, fuzzy
-msgid "  Reflections"
-msgstr "  Tükröződés (beta)"
+msgid "Reflections"
+msgstr "Tükröződés (beta)"
 
 #: ../src/settingsMode.cc:176
-#, fuzzy
-msgid "  Shadows"
-msgstr "  FPS mutatása"
+msgid "Shadows"
+msgstr ""
 
 #: ../src/settingsMode.cc:183
 msgid "Controls"
 msgstr "Irányítás"
 
 #: ../src/settingsMode.cc:186
-msgid "  Use mouse"
-msgstr "  Egér használata"
+msgid "Use mouse"
+msgstr "Egér használata"
 
 #: ../src/settingsMode.cc:192
-msgid "  Sensitivity"
-msgstr "  Érzékenység"
+msgid "Sensitivity"
+msgstr "Érzékenység"
 
 #: ../src/settingsMode.cc:199
 #, c-format
@@ -1276,8 +1265,8 @@ msgid "-%d degrees"
 msgstr "-%d fok"
 
 #: ../src/settingsMode.cc:202
-msgid "  Steering"
-msgstr "  Kormányzás"
+msgid "Steering"
+msgstr "Kormányzás"
 
 #: ../src/settingsMode.cc:209
 #, c-format
@@ -1285,89 +1274,89 @@ msgid "no joystick found"
 msgstr "Nem található botkormány"
 
 #: ../src/settingsMode.cc:213
-msgid "  Joystick:"
-msgstr "  Botkormány:"
+msgid "Joystick:"
+msgstr "Botkormány:"
 
 #: ../src/settingsMode.cc:223
 msgid "Other"
 msgstr "Egyebek"
 
 #: ../src/settingsMode.cc:227
-msgid "  Music volume"
-msgstr "  Zene hangereje"
+msgid "Music volume"
+msgstr "Zene hangereje"
 
 #: ../src/settingsMode.cc:229
-msgid "  Effects volume"
-msgstr "  Effektek hangereje"
+msgid "Effects volume"
+msgstr "Effektek hangereje"
 
 #: ../src/settingsMode.cc:231
-msgid "  Language"
-msgstr "  Nyelv"
+msgid "Language"
+msgstr "Nyelv"
 
-#: ../src/setupMode.cc:149
+#: ../src/setupMode.cc:151
 msgid "Setup new game"
 msgstr "Új játék beállítása"
 
-#: ../src/setupMode.cc:153
+#: ../src/setupMode.cc:155
 msgid "Player Name"
 msgstr "Játékos neve"
 
-#: ../src/setupMode.cc:159
+#: ../src/setupMode.cc:161
 msgid "N/A"
 msgstr "Nincs"
 
-#: ../src/setupMode.cc:165
+#: ../src/setupMode.cc:167
 msgid "Level"
 msgstr "Pálya"
 
-#: ../src/setupMode.cc:173
+#: ../src/setupMode.cc:175
 msgid "Difficulty"
 msgstr "Nehézség"
 
-#: ../src/setupMode.cc:178
+#: ../src/setupMode.cc:180
 msgid "Sandbox (Easy)"
 msgstr "Homokozó (Könnyű)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Normal)"
 msgstr "Homokozó (Normál)"
 
-#: ../src/setupMode.cc:179
+#: ../src/setupMode.cc:181
 msgid "Sandbox (Hard)"
 msgstr "Homokozó (Nehéz)"
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:183
 msgid "Easy"
 msgstr "Könnyű"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Normal"
 msgstr "Normál"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:184
 msgid "Hard"
 msgstr "Nehéz"
 
-#: ../src/setupMode.cc:186
+#: ../src/setupMode.cc:188
 msgid "Start Game"
 msgstr "Játék indítása"
 
-#: ../src/setupMode.cc:190
+#: ../src/setupMode.cc:192
 #, c-format
 msgid "Total games played: %d"
 msgstr "Összes eddigi játék: %d"
 
-#: ../src/setupMode.cc:194
+#: ../src/setupMode.cc:196
 #, c-format
 msgid "Average score: %d"
 msgstr "Átlagos pontszám: %d"
 
-#: ../src/setupMode.cc:196
+#: ../src/setupMode.cc:198
 #, c-format
 msgid "Average score: N/A"
 msgstr "Átlagos pontszám: nincs"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:201
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Teljesített pályák: %d"
@@ -1655,7 +1644,7 @@ msgstr ""
 #: ../share/levels/bonusb.scm:1
 #, fuzzy
 msgid "Bonus Level"
-msgstr "Pálya tesztelése"
+msgstr "Jutalompálya teljesítve"
 
 #: ../share/levels/bonusb.scm:28
 msgid "You made it to the end!"
@@ -1817,9 +1806,8 @@ msgid "Horrible"
 msgstr ""
 
 #: ../share/levels/dn3.scm:4
-#, fuzzy
 msgid "Water jumping"
-msgstr "Vízszint"
+msgstr ""
 
 #: ../share/levels/dn4.scm:4
 msgid "Oh my god!"
@@ -1848,7 +1836,7 @@ msgstr ""
 #: ../share/levels/fourSeasons_2.scm:7
 #, fuzzy
 msgid "Spring"
-msgstr "  Kormányzás"
+msgstr "Kormányzás"
 
 #: ../share/levels/fourSeasons_3.scm:6
 msgid "Summer"
@@ -2008,9 +1996,8 @@ msgid "Nitro-speed two minutes: 1000 points"
 msgstr ""
 
 #: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
-#, fuzzy
 msgid "No jumping!"
-msgstr "Vízszint"
+msgstr ""
 
 #: ../share/levels/sl2.scm:9
 msgid "Scale the Mountain"
@@ -2065,6 +2052,21 @@ msgstr ""
 msgid "Commander's Hall"
 msgstr ""
 
+#~ msgid ";;; Track: %s\n"
+#~ msgstr ";;; Pálya: %s\n"
+
+#~ msgid "   -l  --level           Start from level.\n"
+#~ msgstr "   -l  --level           Indítás pályától.\n"
+
+#~ msgid "   -m  --mute            Mute sound.\n"
+#~ msgstr "   -m  --mute            Hang elnémítása.\n"
+
+#~ msgid "   -f  --fps             Displays framerate\n"
+#~ msgstr "   -f  --fps             Képfrissítési gyorsaság megjelenítése.\n"
+
+#~ msgid "   Escape     Soft quit\n"
+#~ msgstr "   Escape     Kilépés\n"
+
 #~ msgid "Raise: %f"
 #~ msgstr "Növelés: %f"
 
@@ -2089,12 +2091,6 @@ msgstr ""
 #~ msgid "Error, %s/.trackballs/levels is a symbolic link. Cannot save map\n"
 #~ msgstr "Hiba, %s/.trackballs/levels egy hivatkozás. Nem menthető a pálya.\n"
 
-#, fuzzy
-#~ msgid ""
-#~ "Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map\n"
-#~ msgstr ""
-#~ "Hiba, %s/.trackballs/levels/%s.map egy hivatkozás. Nem menthető a pálya.\n"
-
 #~ msgid "Saving map as '%s'\n"
 #~ msgstr "Pálya mentése, mint '%s'\n"
 
@@ -2110,11 +2106,6 @@ msgstr ""
 #~ "Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings\n"
 #~ msgstr ""
 #~ "Hiba, %s/trackballs/%s.gmr egy hivatkozás. Nem menthetők a beállítások.\n"
-
-#, fuzzy
-#~ msgid "Warning: cannot allocate %lu bytes for snapshot. Aborting.\n"
-#~ msgstr ""
-#~ "Figyelmeztetés: nem sikerült %d byte lefoglalása képernyőmentéshez.\n"
 
 #~ msgid "Warning: cannot create file '%s'. Abort\n"
 #~ msgstr "Figyelmeztetés: %s fájlt nem sikerült létrehozni.\n"
@@ -2137,14 +2128,6 @@ msgstr ""
 #~ msgid "Warning: Rescaling images before loading them as textures.\n"
 #~ msgstr ""
 #~ "Figyelmeztetés: Képátméretezés történt textúraként való betöltés előtt.\n"
-
-#, fuzzy
-#~ msgid "Error: failed to load %s\n"
-#~ msgstr "Hiba: nem sikerült %s-t betölteni\n"
-
-#, fuzzy
-#~ msgid "Error, %s is a symbolic link. Cannot load highscores\n"
-#~ msgstr "Hiba, %s egy hivatkozás. A toplista nem menthető.\n"
 
 #~ msgid "Error, %s is a symbolic link. Cannot save highscores\n"
 #~ msgstr "Hiba, %s egy hivatkozás. A toplista nem menthető.\n"
@@ -2178,14 +2161,6 @@ msgstr ""
 
 #~ msgid "Error, %s is a symbolic link. Cannot save settings\n"
 #~ msgstr "Hiba, %s egy hivatkozás. Nem menthetők a beállítások.\n"
-
-#, fuzzy
-#~ msgid "Error: Failed to load %s\n"
-#~ msgstr "Hiba: nem sikerült %s-t betölteni\n"
-
-#, fuzzy
-#~ msgid "Open..."
-#~ msgstr "Megnyitás"
 
 #~ msgid "Error: file %s is a symlink.\n"
 #~ msgstr "Hiba: %s fájl egy hivatkozás.\n"

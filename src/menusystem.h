@@ -36,6 +36,7 @@ int getSelectedArea();
 /* And for resolution independent centered menus */
 void menuItem_Left(int code, int row, const char *str);
 void menuItem_Center(int code, int row, const char *str);
-void menuItem_LeftRight(int code, int row, const char *leftStr, const char *rightStr);
+void menuItem_LeftRight(int code, int row, int indent, const char *leftStr,
+                        const char *rightStr);
 
 #endif

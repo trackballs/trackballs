@@ -211,30 +211,39 @@ void changeScreenResolution() {
   resetTextures();
 }
 
-void print_usage(FILE *stream, int exit_code) {
-  fprintf(stream,
-          _("Usage: %s [-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]\n"),
-          program_name);
-  fprintf(stream, _("   -h  --help            Display this usage information.\n"));
-  fprintf(stream, _("   -l  --level           Start from level.\n"));
-  fprintf(stream, _("   -w  --windowed        Run in window (Default is fullscreen)\n"));
-  fprintf(stream, _("   -m  --mute            Mute sound.\n"));
-  fprintf(stream, _("   -r  --resolution      Set resolution to 640, 800 or 1024\n"));
-  fprintf(stream, _("   -s  --sensitivity     Mouse sensitivity, default 1.0\n"));
-  fprintf(stream, _("   -f  --fps             Displays framerate\n"));
-  fprintf(stream, _("   -v  --version         Prints current version number\n"));
-  fprintf(stream, _("   -t  --touch           Updates a map to the latest format\n"));
-  fprintf(stream, _("   -y  --low-memory      Attempt to conserve memory usage\n"));
-  fprintf(stream, _("   -j  --repair-joystick Correct for bad joysticks\n"));
-  fprintf(stream, "\n");
-  fprintf(stream, _("Important keyboard shortcuts\n"));
-  fprintf(stream, _("   Escape     Soft quit\n"));
-  fprintf(stream, _("   CapsLock   Unhide mouse pointer\n"));
-  fprintf(stream, _("   CTRL-q     Quit the game immediatly\n"));
-  fprintf(stream, _("   CTRL-f     Toggle between fullscreen/windowed mode\n"));
-  fprintf(stream, _("   k          Kill the ball\n"));
+void print_usage(FILE *stream) {
+  fprintf(stream, "%s %s %s\n", _("Usage:"), program_name,
+          _("[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"));
+  const char *options[12][2] = {
+      {"   -h  --help            ", _("Display this usage information.")},
+      {"   -l  --level           ", _("Start from level.")},
+      {"   -w  --windowed        ", _("Run in window (Default is fullscreen)")},
+      {"   -m  --mute            ", _("Mute sound.")},
+      {"   -r  --resolution      ", _("Set resolution to 640, 800 or 1024")},
+      {"   -s  --sensitivity     ", _("Mouse sensitivity, default 1.0")},
+      {"   -f  --fps             ", _("Displays framerate")},
+      {"   -v  --version         ", _("Prints current version number")},
+      {"   -t  --touch           ", _("Updates a map to the latest format")},
+      {"   -y  --low-memory      ", _("Attempt to conserve memory usage")},
+      {"   -9  --debug-joystick  ", _("Debug joystick status")},
+      {"   -j  --repair-joystick ", _("Correct for bad joysticks")}};
 
-  exit(exit_code);
+  for (int i = 0; i < 12; i++) fprintf(stream, "%s%s\n", options[i][0], options[i][1]);
+  fprintf(stream, "\n");
+  fprintf(stream, "%s\n", _("Important keyboard shortcuts"));
+  const char *shortcuts[5][2] = {{_("Escape"), _("Soft quit")},
+                                 {_("CapsLock"), _("Unhide mouse pointer")},
+                                 {_("CTRL-q"), _("Quit the game immediately")},
+                                 {_("CTRL-f"), _("Toggle between fullscreen/windowed mode")},
+                                 {"k", _("Kill the ball")}};
+  size_t mxlen = 0;
+  for (int i = 0; i < 5; i++) mxlen = std::max(strlen(shortcuts[i][0]), mxlen);
+  char whitespace[64];
+  for (int i = 0; i < 5; i++) {
+    memset(whitespace, ' ', 64);
+    whitespace[mxlen - strlen(shortcuts[i][0])] = 0;
+    fprintf(stream, "   %s%s   %s\n", shortcuts[i][0], whitespace, shortcuts[i][1]);
+  }
 }
 
 int testDir() {
@@ -311,7 +320,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     int i;
     switch (next_option) {
     case 'h':
-      print_usage(stdout, 0);
+      print_usage(stdout);
+      exit(0);
       break;
     case 'l':
       snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
@@ -335,7 +345,9 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       if (i < nScreenResolutions)
         settings->resolution = i;
       else {
-        printf(_("Unknown screen resolution of width %d\n"), i);
+        char estr[256];
+        snprintf(estr, 255, _("Unknown screen resolution of width %d"), i);
+        printf("%s\n", estr);
       }
       break;
     case 's':
@@ -345,7 +357,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       Settings::settings->showFPS = 1;
       break;
     case '?':
-      print_usage(stderr, 1);
+      print_usage(stderr);
+      exit(1);
     case -1:
       break;
     case 'v':
@@ -366,8 +379,10 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     }
   } while (next_option != -1);
 
-  printf(_("Welcome to Trackballs. \n"));
-  printf(_("Using %s as gamedata directory.\n"), effectiveShareDir);
+  printf("%s\n", _("Welcome to Trackballs."));
+  char str[256];
+  snprintf(str, 255, _("Using %s as gamedata directory."), effectiveShareDir);
+  printf("%s\n", str);
 
   /* Initialize SDL */
   if ((SDL_Init(SDL_INIT_VIDEO | audio | SDL_INIT_JOYSTICK) == -1)) {

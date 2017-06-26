@@ -120,14 +120,14 @@ void SettingsMode::display() {
     } else {
       snprintf(str, sizeof(str), _("Auto-%d"), colorDepth);
     }
-    menuItem_LeftRight(MENU_RESOLUTION, menucount++, _("  Resolution"), str);
-    menuItem_Left(MENU_APPLY_RESOLUTION, menucount++, _("  Test this resolution"));
+    menuItem_LeftRight(MENU_RESOLUTION, menucount++, 1, _("Resolution"), str);
+    menuItem_Left(MENU_APPLY_RESOLUTION, menucount++, _("Test this resolution"));
 
     // Windowed
-    menuItem_LeftRight(MENU_WINDOWED, menucount++, _("  Fullscreen"),
+    menuItem_LeftRight(MENU_WINDOWED, menucount++, 1, _("Fullscreen"),
                        (char *)(Settings::settings->is_windowed ? _("No") : _("Yes")));
 
-    menuItem_LeftRight(MENU_VSYNC, menucount++, _("  VSync"),
+    menuItem_LeftRight(MENU_VSYNC, menucount++, 1, _("VSync"),
                        (char *)(Settings::settings->vsynced ? _("Yes") : _("No")));
 
     // show FPS
@@ -142,7 +142,7 @@ void SettingsMode::display() {
       snprintf(str, sizeof(str), _("Frame time"));
       break;
     }
-    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, _("  Show FPS"), str);
+    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, 1, _("Show FPS"), str);
 
     break;
 
@@ -170,10 +170,10 @@ void SettingsMode::display() {
       snprintf(str, sizeof(str), _("Everything"));
       break;
     }
-    menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, _("  Details"), str);
-    menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, _("  Reflections"),
+    menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, 1, _("Details"), str);
+    menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, 1, _("Reflections"),
                        (char *)(Settings::settings->doReflections ? _("Yes") : _("No")));
-    menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, _("  Shadows"),
+    menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, 1, _("Shadows"),
                        (char *)(Settings::settings->doShadows ? _("Yes") : _("No")));
 
     break;
@@ -183,13 +183,13 @@ void SettingsMode::display() {
     menuItem_Left(MENU_SUBSCREEN, menucount++, _("Controls"));
 
     /* Use mouse */
-    menuItem_LeftRight(MENU_USEMOUSE, menucount++, _("  Use mouse"),
+    menuItem_LeftRight(MENU_USEMOUSE, menucount++, 1, _("Use mouse"),
                        (char *)(Settings::settings->ignoreMouse ? _("No") : _("Yes")));
 
     /* Mouse sensitivity */
     if (!Settings::settings->ignoreMouse) {
       snprintf(str, sizeof(str), "%1.2f", Settings::settings->mouseSensitivity);
-      menuItem_LeftRight(MENU_SENSITIVITY, menucount++, _("  Sensitivity"), str);
+      menuItem_LeftRight(MENU_SENSITIVITY, menucount++, 1, _("Sensitivity"), str);
     }
 
     /* Steering */
@@ -199,7 +199,7 @@ void SettingsMode::display() {
       snprintf(str, sizeof(str), _("+%d degrees"), 45 * Settings::settings->rotateSteering);
     else if (Settings::settings->rotateSteering < 0)
       snprintf(str, sizeof(str), _("-%d degrees"), -45 * Settings::settings->rotateSteering);
-    menuItem_LeftRight(MENU_STEERING, menucount++, _("  Steering"), str);
+    menuItem_LeftRight(MENU_STEERING, menucount++, 1, _("Steering"), str);
 
     /* Joystick */
     if (Settings::settings->joystickIndex)
@@ -210,9 +210,9 @@ void SettingsMode::display() {
     else
       snprintf(str, 255, "no joystick selected (%d found)", SDL_NumJoysticks());
 
-    menuItem_Left(0, menucount++, _("  Joystick:"));
+    menuItem_Left(0, menucount++, _("Joystick:"));
     if (strlen(str) < 15)
-      menuItem_LeftRight(MENU_JOYSTICK, menucount - 1, "", str);  // overwrite last
+      menuItem_LeftRight(MENU_JOYSTICK, menucount - 1, 0, "", str);  // overwrite last
     else
       menuItem_Center(MENU_JOYSTICK, menucount++, str);
 
@@ -224,11 +224,11 @@ void SettingsMode::display() {
 
     /* Music and Sfx volumes */
     snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->musicVolume * 100.0));
-    menuItem_LeftRight(MENU_MUSIC_VOLUME, 1, _("  Music volume"), str);
+    menuItem_LeftRight(MENU_MUSIC_VOLUME, 1, 1, _("Music volume"), str);
     snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->sfxVolume * 100.0));
-    menuItem_LeftRight(MENU_SFX_VOLUME, 2, _("  Effects volume"), str);
+    menuItem_LeftRight(MENU_SFX_VOLUME, 2, 1, _("Effects volume"), str);
     /* Language */
-    menuItem_LeftRight(MENU_LANGUAGE, 3, _("  Language"),
+    menuItem_LeftRight(MENU_LANGUAGE, 3, 1, _("Language"),
                        Settings::languageNames[Settings::settings->language]);
 
     break;
