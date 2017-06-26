@@ -78,7 +78,7 @@ class Game {
   static double defaultScores[SCORE_MAX][2];
 
  protected:
-  friend EditMode;
+  friend class EditMode;
   std::set<GameHook *> *hooks;
 
  private:

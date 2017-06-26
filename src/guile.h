@@ -27,7 +27,7 @@ void initGuileInterface();
 SCM smobAnimated_make(class Animated* a);
 SCM smobGameHook_make(class GameHook* h);
 void loadScript(const char* path);
-SCM scm_port_from_gzip(const char* highScorePath);
+SCM scm_port_from_gzip(const char* highScorePath, int maxsize);
 char* ascm_format(const char* str);
 SCM scm_catch_apply_0(SCM func);
 SCM scm_catch_apply_1(SCM func, SCM arg1);

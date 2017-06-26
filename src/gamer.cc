@@ -148,7 +148,7 @@ void Gamer::update() {
   char str[256];
 
   snprintf(str, sizeof(str) - 1, "%s/.trackballs/%s.gmr", getenv("HOME"), name);
-  SCM ip = scm_port_from_gzip(str);
+  SCM ip = scm_port_from_gzip(str, 256 * 256 * 128);
   if (SCM_EOF_OBJECT_P(ip)) {
     setDefaults();
     return;

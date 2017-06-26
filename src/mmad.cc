@@ -196,13 +196,12 @@ void changeScreenResolution() {
   screenWidth = screen->w;
   screenHeight = screen->h;
 
-  /* Use CapsLock key to determine if mouse should be hidden+grabbed */
-  if (SDL_GetModState() & KMOD_CAPS || 1) {
-    SDL_SetWindowGrab(window, SDL_FALSE);
+  /* Use CapsLock key to determine if mouse should be hidden */
+  if (SDL_GetModState() & KMOD_CAPS) {
+    SDL_ShowCursor(SDL_ENABLE);
   } else {
-    SDL_SetWindowGrab(window, SDL_TRUE);
+    SDL_ShowCursor(SDL_DISABLE);
   }
-  SDL_ShowCursor(SDL_DISABLE);
   SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 
   /* Adjust for size change in editmode */
@@ -575,10 +574,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
         /* Use Caps lock key to determine if mouse should be hidden+grabbed */
         if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
-            SDL_SetWindowGrab(window, SDL_FALSE);
             SDL_ShowCursor(SDL_ENABLE);
           } else {
-            SDL_SetWindowGrab(window, SDL_TRUE);
             SDL_ShowCursor(SDL_DISABLE);
           }
         } else
@@ -601,10 +598,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
         /* Use CapsLock key to determine if mouse should be hidden+grabbed */
         else if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
-            SDL_SetWindowGrab(window, SDL_FALSE);
             SDL_ShowCursor(SDL_ENABLE);
           } else {
-            SDL_SetWindowGrab(window, SDL_TRUE);
             SDL_ShowCursor(SDL_DISABLE);
           }
         }

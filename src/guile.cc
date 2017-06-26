@@ -177,17 +177,16 @@ SCM scm_catch_apply_2(SCM func, SCM arg1, SCM arg2) {
   return ret;
 }
 
-SCM scm_port_from_gzip(const char *path) {
+SCM scm_port_from_gzip(const char *path, int maxsize) {
   gzFile gp = gzopen(path, "rb");
   if (!gp) {
     warning("Warning. Could not find file %s", path);
     return SCM_EOF_VAL;
   }
-  int sz = 256 * 10 * 25 * 3;
-  char *ebuf = new char[sz + 1];
-  int len = gzread(gp, ebuf, sz);
+  char *ebuf = new char[maxsize + 1];
+  int len = gzread(gp, ebuf, maxsize);
   gzclose(gp);
-  if (len == sz) {
+  if (len == maxsize) {
     delete[] ebuf;
     warning("Warning. File '%s' unusually large", path);
     return SCM_EOF_VAL;

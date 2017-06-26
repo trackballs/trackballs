@@ -103,9 +103,9 @@ class EditMode : public GameMode {
   ECloseWindow *closeWindow;
   EOpenWindow *openWindow;
   ENewWindow *newWindow;
-  friend EMenuWindow;
-  friend ESubWindow;
-  friend EStatusWindow;
+  friend class EMenuWindow;
+  friend class ESubWindow;
+  friend class EStatusWindow;
 
   class Cell *cellClipboard;
   int cellClipboardWidth, cellClipboardHeight;

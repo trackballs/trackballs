@@ -65,7 +65,7 @@ HighScore::HighScore() {
     warning("%s is a symbolic link. Cannot load highscores\n", highScorePath);
     return;
   }
-  SCM ip = scm_port_from_gzip(highScorePath);
+  SCM ip = scm_port_from_gzip(highScorePath, 256 * 10 * 25 * 3);
   if (SCM_EOF_OBJECT_P(ip)) { return; }
 
   SCM contents = scm_read(ip);
