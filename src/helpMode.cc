@@ -71,6 +71,8 @@ void HelpMode::activated() {
   p1Texture = LoadTexture(page1, p1coord);
   SDL_FreeSurface(page1);
 
+  clearKeyboardFocus();
+
   isExiting = 0;
   timeLeft = 1.0;
   page = 0;
@@ -163,16 +165,11 @@ void HelpMode::display() {
   Leave2DMode();
 }
 void HelpMode::key(int key) {
-  if (key == SDLK_SPACE) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(1, x, y);
-  }
-  if (key == SDLK_RETURN) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(3, x, y);
-  }
+  int shift = (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) != 0;
+  if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
+  if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
+    mouseDown(shift ? 3 : 1, -1, -1);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
 }
 void HelpMode::idle(Real td) {
   tickMouse(td);

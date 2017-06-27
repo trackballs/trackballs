@@ -33,7 +33,8 @@ typedef struct sSelectionArea {
   int returnCode;
 } SelectionArea;
 
-int nSelectionAreas;
+int focusArea = -1;
+int nSelectionAreas = 0;
 SelectionArea selectionAreas[MAX_MENUS];
 
 void clearSelectionAreas() { nSelectionAreas = 0; }
@@ -49,10 +50,12 @@ void addArea(int code, int x, int y, int w, int h) {
 
 void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int thisArea = nSelectionAreas++;
+  const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
+                             ? menuColorSelected
+                             : menuColor;
   int width = Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2],
                                    color[3]);
-  int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
   sarea->x1 = leftX + width;
@@ -62,10 +65,12 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
 }
 void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int thisArea = nSelectionAreas++;
+  const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
+                             ? menuColorSelected
+                             : menuColor;
   int width = Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1],
                                         color[2], color[3]);
-  int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = rightX - width;
   sarea->x1 = rightX;
@@ -75,10 +80,12 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
 }
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int thisArea = nSelectionAreas++;
+  const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
+                             ? menuColorSelected
+                             : menuColor;
   int width = Font::drawCenterSimpleText(str, cx, y0, fontSize, color[0], color[1], color[2],
                                          color[3]);
-  int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = cx - width / 2;
   sarea->x1 = cx + width / 2;
@@ -89,11 +96,13 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,
                        const char *rightStr, int rightX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
-  const GLfloat *color = (code && getSelectedArea() == code) ? menuColorSelected : menuColor;
+  int thisArea = nSelectionAreas++;
+  const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
+                             ? menuColorSelected
+                             : menuColor;
   Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2], color[3]);
   Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1], color[2],
                             color[3]);
-  int thisArea = nSelectionAreas++;
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
   sarea->x1 = rightX;
@@ -105,10 +114,12 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
 int getSelectedArea() {
   int mouseX, mouseY, i;
   SDL_GetMouseState(&mouseX, &mouseY);
-  for (i = 0; i < nSelectionAreas; i++)
+  for (i = 0; i < nSelectionAreas; i++) {
     if (mouseX >= selectionAreas[i].x0 && mouseX <= selectionAreas[i].x1 &&
         mouseY >= selectionAreas[i].y0 && mouseY <= selectionAreas[i].y1)
       return selectionAreas[i].returnCode;
+    if (focusArea == i) return selectionAreas[i].returnCode;
+  }
   return 0;
 }
 
@@ -152,4 +163,16 @@ void menuItem_LeftRight(int code, int row, int indent, const char *leftStr,
   addText_LeftRight(code, fontsize, (row + 1) * menuSpacing + top, leftStr,
                     screenBorder + 3 * fontsize * indent / 2, rightStr,
                     screenWidth - screenBorder);
+}
+
+void clearKeyboardFocus() { focusArea = -1; }
+
+void moveKeyboardFocus(int reverse) {
+  for (int i = 0; i < nSelectionAreas + 1; i++) {
+    focusArea += reverse ? -1 : 1;
+    if (focusArea < -1) focusArea = nSelectionAreas - 1;
+    if (focusArea >= nSelectionAreas) focusArea = -1;
+    /* Skip over regions without a return code */
+    if (focusArea < 0 || selectionAreas[focusArea].returnCode != 0) return;
+  }
 }

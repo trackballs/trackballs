@@ -53,6 +53,8 @@ HallOfFameMode::HallOfFameMode() {
 void HallOfFameMode::activated() {
   if (!background) { background = loadImage("displayHighscoreBackground.jpg"); }
 
+  clearKeyboardFocus();
+
   /* Loads the background images. */
   texture = LoadTexture(background, texCoord);
   isExiting = 0;
@@ -126,16 +128,11 @@ void HallOfFameMode::display() {
   Leave2DMode();
 }
 void HallOfFameMode::key(int key) {
-  if (key == SDLK_SPACE) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(1, x, y);
-  }
-  if (key == SDLK_RETURN) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(3, x, y);
-  }
+  int shift = (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) != 0;
+  if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
+  if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
+    mouseDown(shift ? 3 : 1, -1, -1);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
 }
 void HallOfFameMode::idle(Real td) {
   if (isExiting)

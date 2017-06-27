@@ -121,15 +121,9 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   displayFrameRate();
   Leave2DMode();
 }
-void MenuMode::key(int /*key*/) {
-  /*  if(key == SDLK_RIGHT) {
-        selection++;
-        if(selection >= MENU_LAST) selection = 0;
-  } else if(key == SDLK_LEFT) {
-        selection--;
-        if(selection < 0) selection = MENU_LAST-1;
-  } else if(key == SDLK_RETURN || key == SDLK_KP_ENTER || key == ' ')
-  doSelection();*/
+void MenuMode::key(int key) {
+  if (key == SDLK_TAB) { moveKeyboardFocus(SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)); }
+  if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE) doSelection();
 }
 void MenuMode::doSelection() {
   int selection = getSelectedArea();
@@ -173,6 +167,7 @@ void MenuMode::idle(Real td) {
 void MenuMode::mouseDown(int /*mouseState*/, int /*x*/, int /*y*/) { doSelection(); }
 
 void MenuMode::activated() {
+  clearKeyboardFocus();
   clearSelectionAreas();
   loadSlide();
   loadSlide();

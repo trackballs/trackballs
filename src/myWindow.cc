@@ -168,7 +168,7 @@ void MyWindow::mouseDownAll(int state, int x, int y) {
   MyWindow *pntr = allWindows;
   while (pntr) {
     MyWindow *next = pntr->next;
-    if (pntr->isInside(x, y)) {
+    if (pntr->isInside(x, y) || (x == -1 && y == -1)) {
       pntr->mouseDown(state, x, y);
       break;
     }

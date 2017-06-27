@@ -33,6 +33,9 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
                        const char *rightStr, int rightX);
 int getSelectedArea();
 
+void clearKeyboardFocus();
+void moveKeyboardFocus(int reverse);
+
 /* And for resolution independent centered menus */
 void menuItem_Left(int code, int row, const char *str);
 void menuItem_Center(int code, int row, const char *str);

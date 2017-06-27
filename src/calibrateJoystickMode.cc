@@ -19,8 +19,10 @@
 */
 
 #include "calibrateJoystickMode.h"
+
 #include "font.h"
 #include "glHelp.h"
+#include "menusystem.h"
 #include "settings.h"
 #include "settingsMode.h"
 
@@ -33,7 +35,10 @@ CalibrateJoystickMode::CalibrateJoystickMode() { stage = 0; }
 
 void CalibrateJoystickMode::init() { calibrateJoystickMode = new CalibrateJoystickMode(); }
 
-void CalibrateJoystickMode::activated() { stage = 0; }
+void CalibrateJoystickMode::activated() {
+  stage = 0;
+  clearKeyboardFocus();
+}
 
 void CalibrateJoystickMode::deactivated() {}
 

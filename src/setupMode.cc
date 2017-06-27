@@ -25,6 +25,7 @@
 #include "gamer.h"
 #include "hofMode.h"
 #include "mainMode.h"
+#include "menuMode.h"
 #include "menusystem.h"
 #include "player.h"
 #include "settings.h"
@@ -304,34 +305,32 @@ void SetupMode::key(int key) {
   int len = strlen(gamer->name);
   int selected = getSelectedArea();
 
-  if (key == SDLK_SPACE && selected != CODE_NAME) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(1, x, y);
-  }
-  if (key == SDLK_RETURN) {
-    int x, y;
-    SDL_GetMouseState(&x, &y);
-    mouseDown(3, x, y);
-  }
+  int shift = (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) != 0;
+  if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
+  if (key == SDLK_RETURN || key == SDLK_KP_ENTER ||
+      (key == SDLK_SPACE && selected != CODE_NAME))
+    mouseDown(shift ? 3 : 1, -1, -1);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
 
-  if (key == SDLK_BACKSPACE) {
-    if (len > 0) gamer->name[len - 1] = 0;
-    gamer->update();
-    name = -1;
-    return;
-  }
-  if (len == 19) {
-    playEffect(SFX_PLAYER_DIES);
-    return;
-  }
-  if (key < 127 && isprint(key)) {
-    if (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) key = toupper(key);
-    gamer->name[len] = (char)key;
-    gamer->name[len + 1] = 0;
-    gamer->update();
-    name = -1;
-    level = 0;
+  if (selected == CODE_NAME) {
+    if (key == SDLK_BACKSPACE) {
+      if (len > 0) gamer->name[len - 1] = 0;
+      gamer->update();
+      name = -1;
+      return;
+    }
+    if (len == 19) {
+      playEffect(SFX_PLAYER_DIES);
+      return;
+    }
+    if (key < 127 && isprint(key)) {
+      if (SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT)) key = toupper(key);
+      gamer->name[len] = (char)key;
+      gamer->name[len + 1] = 0;
+      gamer->update();
+      name = -1;
+      level = 0;
+    }
   }
 }
 void SetupMode::idle(Real td) {
@@ -346,6 +345,8 @@ void SetupMode::activated() {
 
   /* Preloads the background texture. */
   texture = LoadTexture(background, texCoord);
+
+  clearKeyboardFocus();
 
   t = 0.0;
   level = 0;

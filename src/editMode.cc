@@ -895,6 +895,7 @@ void EditMode::doCellAction(int code, int direction) {
     xLow = xHigh = x;
     yLow = yHigh = y;
   }
+  if (!map) return;
   Cell& c = map->cell(x, y);
 
   switch (currentEditMode) {
@@ -1113,6 +1114,10 @@ void EditMode::key(int key) {
   case SDLK_DOWN: x-=(switchViewpoint?-1:1)*(shift?5:1); break;
   }*/
 
+  if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
+  if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
+    mouseDown(shift ? 3 : 1, -1, -1);
+
   menuWindow->key(key, shift);
 
   return;
@@ -1127,6 +1132,7 @@ void EditMode::idle(Real td) {
   time += td;
 }
 void EditMode::activated() {
+  clearKeyboardFocus();
   menuWindow->attach();
   statusWindow->attach();
 }
