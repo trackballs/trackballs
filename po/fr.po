@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-25 17:46-0400\n"
-"PO-Revision-Date: 2017-06-25 19:53-0400\n"
+"PO-Revision-Date: 2017-06-28 17:13-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -61,7 +61,7 @@ msgstr "centre: %d %d gauche: %d droite: %d haut: %d bas: %d"
 
 #: ../src/diamond.cc:112
 msgid "Save point"
-msgstr "Point de sauvegarde!"
+msgstr "Point de sauvegarde"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
 #: ../src/editMode.cc:167
@@ -964,7 +964,7 @@ msgstr "Affiche ce message d'aide."
 
 #: ../src/mmad.cc:219
 msgid "Start from level."
-msgstr ""
+msgstr "Commencer à partir du niveau."
 
 #: ../src/mmad.cc:220
 msgid "Run in window (Default is fullscreen)"
@@ -1368,22 +1368,24 @@ msgstr "Château blue"
 #: ../share/levels/castles.set:4
 msgid "Do YOU dare to enter and brave these four castles? Only the most"
 msgstr ""
+"Oserez-vous d'entrer et de braver ces quatre châteaux? Seuls les joueurs"
 
 #: ../share/levels/castles.set:5
 msgid "experienced and skilled Trackballs players will make it as far"
-msgstr ""
+msgstr "de Trackballs les plus expérimentés et les plus qualifiés atteindront"
 
 #: ../share/levels/castles.set:6
 msgid "as to the thoughest Ice and Glass castle - a place where you may"
-msgstr ""
+msgstr "le plus fort château de glace et de verre - un endroit où vous devrez"
 
 #: ../share/levels/castles.set:7
 msgid "need to think twice to find you way through the maze. Use the digits"
 msgstr ""
+"y réfléchir deux fois pour trouver votre chemin à travers le labyrinthe."
 
 #: ../share/levels/castles.set:8
 msgid "of PI as a clue in the last maze."
-msgstr ""
+msgstr "Utilisez les chiffres de PI comme indice dans le dernier labyrinthe."
 
 #: ../share/levels/child.set:1
 msgid "Child of Tales"
@@ -1411,15 +1413,15 @@ msgstr "Escarpé"
 
 #: ../share/levels/contrib.set:4
 msgid "How do you stand up in the international tribe where no level"
-msgstr ""
+msgstr "Comment vous situez-vous dans la tribu internationale où aucun"
 
 #: ../share/levels/contrib.set:5
 msgid "is like the other? This is a collection of levels created by"
-msgstr ""
+msgstr "niveau est comme l'autre? Ceci est une collection de niveaux"
 
 #: ../share/levels/contrib.set:6
 msgid "different people all around the world. Enjoy!"
-msgstr ""
+msgstr "créés par différentes personnes dans le monde entier. Profitez!"
 
 #: ../share/levels/dn.set:1
 msgid "Strange"
@@ -1447,15 +1449,15 @@ msgstr "Château"
 
 #: ../share/levels/elite.set:4
 msgid "This is a single level set consiting of a huge level made"
-msgstr ""
+msgstr "Ceci est un ensemble de niveaux unique composé d'un énorme"
 
 #: ../share/levels/elite.set:5
 msgid "by Dietrich Radel. This classic will go down in history like"
-msgstr ""
+msgstr "niveau réalisé par Dietrich Radel. Ce classique va dans l'histoire"
 
 #: ../share/levels/elite.set:6
 msgid "\"War and Peace\". ;-)"
-msgstr ""
+msgstr "comme \"Guerre et Paix\". ;-)"
 
 #: ../share/levels/fourSeasons.set:1
 msgid "The Four Seasons"
@@ -1480,19 +1482,19 @@ msgstr "Warm-up"
 
 #: ../share/levels/frg.set:4
 msgid "Prepare for the real Marble Madness-like adventure in this game! "
-msgstr ""
+msgstr "Préparez-vous à la vraie aventure comme Marble Madness dans ce jeu!"
 
 #: ../share/levels/frg.set:5
 msgid "Race down one of the many hills, and beat the time limit and avoid"
-msgstr ""
+msgstr "Dévalez l'une des nombreuses collines, battez le délai et évitez les"
 
 #: ../share/levels/frg.set:6
 msgid "badguys and hazards. Can you finish all the nine levels?"
-msgstr ""
+msgstr "méchants et les dangers. Pouvez-vous finir tous les neuf niveaux?"
 
 #: ../share/levels/frg.set:7
 msgid "Made by: Ulrik Enstad."
-msgstr ""
+msgstr "Réalisé par: Ulrik Enstad."
 
 #: ../share/levels/jump.set:1 ../share/levels/lv5.scm:4
 msgid "Jump"
@@ -1504,15 +1506,15 @@ msgstr "Pont"
 
 #: ../share/levels/jump.set:4
 msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
-msgstr ""
+msgstr "Un ensemble de niveaux très difficiles par Gerard Pudenz. Ne vous"
 
 #: ../share/levels/jump.set:5
 msgid "if you can't make it on the first attempt. I promise, it can"
-msgstr ""
+msgstr "inquiétez pas si vous ne pouvez pas le faire à la première tentative."
 
 #: ../share/levels/jump.set:6
 msgid "be done eventually!"
-msgstr ""
+msgstr "Je promets que cela peut être fait éventuellement!"
 
 #: ../share/levels/ki.set:1
 msgid "Kidz"
@@ -1524,15 +1526,15 @@ msgstr "Angles droits"
 
 #: ../share/levels/ki.set:4
 msgid "This is meant to be a very easy and basic level for ages 4-5."
-msgstr ""
+msgstr "Ceci est censé être un niveau très simple et basique pour les 4-5 ans."
 
 #: ../share/levels/ki.set:5
 msgid "Also, since I am a beginner at designing levels, I want to keep it"
-msgstr ""
+msgstr "En outre, puisque je suis un débutant à la conception des niveaux,"
 
 #: ../share/levels/ki.set:6
 msgid "simple at first. Made by Keith Winston."
-msgstr ""
+msgstr "je veux rester simple au début. Réalisé par Keith Winston."
 
 # "A long way home" (in levelset context) can have either the sense of extending a journey (by choice) or of being unconditionally far from home/safety (not by choice) and needing to face trials/etc.
 #: ../share/levels/lv.set:1
@@ -1541,15 +1543,16 @@ msgstr "Le long voyage"
 
 #: ../share/levels/lv.set:4
 msgid "This is the original levelset for Trackballs containing"
-msgstr ""
+msgstr "Ceci est l'ensemble initial des niveaux pour Trackballs contenant"
 
 #: ../share/levels/lv.set:5
 msgid "9 levels of varying difficulty. It does not have any"
-msgstr ""
+msgstr "9 niveaux de difficulté variable. Il n'a pas de thème"
 
 #: ../share/levels/lv.set:6
 msgid "central theme and is meant to show most features of the game."
 msgstr ""
+"central et est destiné à afficher la plupart des fonctionnalités du jeu."
 
 #: ../share/levels/lv.set:8
 msgid "By: Mathias Broxvall"
@@ -1581,11 +1584,11 @@ msgstr "Mouvement 1"
 
 #: ../share/levels/motion1.set:4
 msgid "This is a single level in a level set by Warren D. Ober."
-msgstr ""
+msgstr "C'est un niveau unique par Warren D. Ober."
 
 #: ../share/levels/motion1.set:5
 msgid "Be prepared for some fast paced action here."
-msgstr ""
+msgstr "Préparez-vous à l'action rapide."
 
 #: ../share/levels/sl.set:1
 msgid "Six Levels"
@@ -1597,23 +1600,23 @@ msgstr "Le désert"
 
 #: ../share/levels/sl.set:4
 msgid "\"Six Levels\" is, of course,"
-msgstr ""
+msgstr "\"Six niveaux\" est, bien sûr, un ensemble de niveaux"
 
 #: ../share/levels/sl.set:5
 msgid "a level set containing six levels. Prepare to scale mountains,"
-msgstr ""
+msgstr "contenant six niveaux. Préparez-vous à étaler les montagnes,"
 
 #: ../share/levels/sl.set:6
 msgid "kill bosses, roll through the world's longest pipe and"
-msgstr ""
+msgstr "à tuer les boss, à traverser le tuyau le plus long du monde et"
 
 #: ../share/levels/sl.set:7
 msgid "much more. Can you beat all the six levels?"
-msgstr ""
+msgstr "bien plus encore. Pouvez-vous battre tous les six niveaux?"
 
 #: ../share/levels/sl.set:8
 msgid "Made By Ulrik Enstad, ulrik.enstad@gmail.com"
-msgstr ""
+msgstr "Réalisé par Ulrik Enstad, ulrik.enstad@gmail.com"
 
 #: ../share/levels/bonusb.scm:1
 msgid "Bonus Level"

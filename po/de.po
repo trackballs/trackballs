@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: v1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-06-25 17:46-0400\n"
-"PO-Revision-Date: 2017-06-25 19:51-0400\n"
+"PO-Revision-Date: 2017-06-28 19:38-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "Language: de\n"
@@ -206,15 +206,15 @@ msgstr ""
 
 #: ../src/editMode.cc:182 ../src/editMode.cc:198
 msgid "Ice"
-msgstr ""
+msgstr "Eis"
 
 #: ../src/editMode.cc:182 ../src/editMode.cc:198 ../share/levels/lv2.scm:4
 msgid "Acid"
-msgstr ""
+msgstr "Säure"
 
 #: ../src/editMode.cc:182 ../src/editMode.cc:198
 msgid "Sand"
-msgstr ""
+msgstr "Sand"
 
 #: ../src/editMode.cc:182 ../src/editMode.cc:199
 msgid "Kill"
@@ -1104,64 +1104,64 @@ msgstr "Spielkonfiguration"
 #: ../src/settingsMode.cc:92
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
-msgstr ""
+msgstr "Ist die Auflösung %dx%dx%d in Ordnung?"
 
 #: ../src/settingsMode.cc:95
 #, c-format
 msgid "Is resolution Auto-%d ok?"
-msgstr ""
+msgstr "Ist die Auflösung Auto-%d in Ordnung?"
 
 #: ../src/settingsMode.cc:99
 msgid "Ok, use this resolution"
-msgstr ""
+msgstr "Ja, verwende diese Auflösung"
 
 #: ../src/settingsMode.cc:100
 msgid "No, revert to old resolution"
-msgstr ""
+msgstr "Nein, zur alten Auslosung zurückkehren"
 
 #: ../src/settingsMode.cc:102
 #, c-format
 msgid "Timeout in %d seconds"
-msgstr ""
+msgstr "Timeout in %d Sekunden"
 
 #: ../src/settingsMode.cc:114
 msgid "Video"
-msgstr ""
+msgstr "Video"
 
 #: ../src/settingsMode.cc:121
 #, c-format
 msgid "Auto-%d"
-msgstr ""
+msgstr "Auto-%d"
 
 #: ../src/settingsMode.cc:123
 msgid "Resolution"
-msgstr ""
+msgstr "Auflösung"
 
 #: ../src/settingsMode.cc:124
 msgid "Test this resolution"
-msgstr ""
+msgstr "Auflösung testen"
 
 #: ../src/settingsMode.cc:127
 msgid "Fullscreen"
-msgstr ""
+msgstr "Vollbild"
 
 #: ../src/settingsMode.cc:130
 msgid "VSync"
-msgstr ""
+msgstr "VSync"
 
 #: ../src/settingsMode.cc:139
 #, c-format
 msgid "Frame rate"
-msgstr ""
+msgstr "Bildrate"
 
 #: ../src/settingsMode.cc:142
 #, c-format
 msgid "Frame time"
-msgstr ""
+msgstr "Bildzeit"
 
 #: ../src/settingsMode.cc:145
 msgid "Show FPS"
-msgstr ""
+msgstr "FPS anzeigen"
 
 #: ../src/settingsMode.cc:150
 msgid "Graphics"
@@ -1170,36 +1170,36 @@ msgstr "Detailstufe"
 #: ../src/settingsMode.cc:155
 #, c-format
 msgid "None"
-msgstr ""
+msgstr "Nichts"
 
 #: ../src/settingsMode.cc:158
 #, c-format
 msgid "Minimalistic"
-msgstr ""
+msgstr "Minimalistisch"
 
 #: ../src/settingsMode.cc:161
 #, c-format
 msgid "Simple"
-msgstr ""
+msgstr "Einfach"
 
 #: ../src/settingsMode.cc:164
 #, c-format
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 #: ../src/settingsMode.cc:167
 #, c-format
 msgid "Extra"
-msgstr ""
+msgstr "Extra"
 
 #: ../src/settingsMode.cc:170
 #, c-format
 msgid "Everything"
-msgstr ""
+msgstr "Alles"
 
 #: ../src/settingsMode.cc:173
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
 #: ../src/settingsMode.cc:174
 msgid "Reflections"
@@ -1211,25 +1211,25 @@ msgstr "Schatten"
 
 #: ../src/settingsMode.cc:183
 msgid "Controls"
-msgstr ""
+msgstr "Kontrollen"
 
 #: ../src/settingsMode.cc:186
 msgid "Use mouse"
-msgstr ""
+msgstr "Maus benutzen"
 
 #: ../src/settingsMode.cc:192
 msgid "Sensitivity"
-msgstr ""
+msgstr "Empfindlichkeit"
 
 #: ../src/settingsMode.cc:199
 #, c-format
 msgid "+%d degrees"
-msgstr ""
+msgstr "+%d Grad"
 
 #: ../src/settingsMode.cc:201
 #, c-format
 msgid "-%d degrees"
-msgstr ""
+msgstr "-%d Grad"
 
 #: ../src/settingsMode.cc:202
 msgid "Steering"
@@ -1238,11 +1238,11 @@ msgstr "Steuerung"
 #: ../src/settingsMode.cc:209
 #, c-format
 msgid "no joystick found"
-msgstr ""
+msgstr "kein Joystick gefunden"
 
 #: ../src/settingsMode.cc:213
 msgid "Joystick:"
-msgstr ""
+msgstr "Joystick:"
 
 #: ../src/settingsMode.cc:223
 msgid "Other"
@@ -1316,17 +1316,17 @@ msgstr "Anzahl Spiele gespielt: %d"
 #: ../src/setupMode.cc:196
 #, c-format
 msgid "Average score: %d"
-msgstr ""
+msgstr "Durchschnittliche Punktzahl: %d"
 
 #: ../src/setupMode.cc:198
 #, c-format
 msgid "Average score: N/A"
-msgstr ""
+msgstr "Durchschnittliche Punktzahl: nd"
 
 #: ../src/setupMode.cc:201
 #, c-format
 msgid "Levels completed: %d"
-msgstr ""
+msgstr "Level abgeschlossen: %d"
 
 #: ../share/levels/bx.set:1 ../share/levels/bx1.scm:4
 msgid "Box-O'-Fun"
@@ -1612,19 +1612,19 @@ msgstr "Bonuslevel"
 
 #: ../share/levels/bonusb.scm:28
 msgid "You made it to the end!"
-msgstr ""
+msgstr "Sie haben es bis zum Ende geschafft!"
 
 #: ../share/levels/bonus.scm:39
 msgid "Spikes, 400pt"
-msgstr ""
+msgstr "Stacheln, 400 Pt"
 
 #: ../share/levels/bonus.scm:43
 msgid "Speed, 300pt"
-msgstr ""
+msgstr "Geschwindigkeit, 300 Pt"
 
 #: ../share/levels/bonus.scm:47
 msgid "Jump, 200pt"
-msgstr ""
+msgstr "Sprung, 200 Pt"
 
 #: ../share/levels/bx2.scm:5
 msgid "Four Doors"
@@ -1632,15 +1632,15 @@ msgstr "Vier Türen"
 
 #: ../share/levels/bx2.scm:293
 msgid "4 hidden switches open exit doors."
-msgstr ""
+msgstr "4 versteckte Schalter öffnen Ausgangstüren."
 
 #: ../share/levels/bx2.scm:295
 msgid "A switch is nearby."
-msgstr ""
+msgstr "Ein Schalter ist in der Nähe."
 
 #: ../share/levels/bx2.scm:297
 msgid "Peace."
-msgstr ""
+msgstr "Frieden."
 
 #: ../share/levels/bx3.scm:4
 msgid "Azteca"
@@ -1648,35 +1648,35 @@ msgstr "Azteken"
 
 #: ../share/levels/bx3.scm:107
 msgid "You have access to the complex."
-msgstr ""
+msgstr "Sie haben Zugang zum Komplex."
 
 #: ../share/levels/bx3.scm:125
 msgid "The way is opened across the sand."
-msgstr ""
+msgstr "Der Weg über den Sand ist geöffnet."
 
 #: ../share/levels/bx3.scm:135
 msgid "You must enter the Arena."
-msgstr ""
+msgstr "Sie mussen die Arena betreten."
 
 #: ../share/levels/bx3.scm:195 ../share/levels/bx3.scm:202
 msgid "A wall has been lowered."
-msgstr ""
+msgstr "Eine Mauer wurde abgesenkt."
 
 #: ../share/levels/bx3.scm:209
 msgid "A roof has been raised."
-msgstr ""
+msgstr "Ein Dach wurde erhoben."
 
 #: ../share/levels/bx3.scm:225
 msgid "Stairs are in place."
-msgstr ""
+msgstr "Treppen sind vorhanden."
 
 #: ../share/levels/bx3.scm:235
 msgid "You may enter upper complex."
-msgstr ""
+msgstr "Sie können den oberen Komplex betreten."
 
 #: ../share/levels/bx3.scm:249
 msgid "The exit is now open."
-msgstr ""
+msgstr "Der Ausgang ist jetzt offen."
 
 #: ../share/levels/castle2.scm:8
 msgid "Night Watch"
@@ -1692,11 +1692,11 @@ msgstr "Eis und Glas"
 
 #: ../share/levels/castle4.scm:64
 msgid "Maze of PI"
-msgstr ""
+msgstr "Labyrinth von Pi"
 
 #: ../share/levels/castle4.scm:65
 msgid "Secret stairs somewhere"
-msgstr ""
+msgstr "Geheime Treppe irgendwo"
 
 #: ../share/levels/child2.scm:9
 msgid "Christmas"
@@ -1728,23 +1728,23 @@ msgstr "Die Hölle"
 
 #: ../share/levels/con3.scm:51
 msgid "Hell's entrance"
-msgstr ""
+msgstr "Eingang der Hölle"
 
 #: ../share/levels/con3.scm:52
 msgid "Hell's gate"
-msgstr ""
+msgstr "Tor der Hölle"
 
 #: ../share/levels/con3.scm:53
 msgid "Hell's castle"
-msgstr ""
+msgstr "Schloss der Hölle"
 
 #: ../share/levels/con3.scm:54
 msgid "Hell's fire"
-msgstr ""
+msgstr "Feuer der Hölle"
 
 #: ../share/levels/con3.scm:55
 msgid "Hell freezing over"
-msgstr ""
+msgstr "Hölle friert zu"
 
 #: ../share/levels/con4.scm:4
 msgid "Scary"
@@ -1789,11 +1789,11 @@ msgstr "Schloss von Darius der Mede"
 
 #: ../share/levels/elite1.scm:100
 msgid "Danger!"
-msgstr ""
+msgstr "Achtung!"
 
 #: ../share/levels/elite1.scm:161
 msgid "Eternity"
-msgstr ""
+msgstr "Ewigkeit"
 
 #: ../share/levels/fourSeasons_2.scm:7
 msgid "Spring"
@@ -1805,7 +1805,7 @@ msgstr "Sommer"
 
 #: ../share/levels/fourSeasons_3.scm:29
 msgid "Remember to breathe"
-msgstr ""
+msgstr "Erinnern sie sich zu atmen"
 
 #: ../share/levels/fourSeasons_4.scm:7
 msgid "Autumn"
@@ -1813,11 +1813,11 @@ msgstr "Herbst"
 
 #: ../share/levels/frg10.scm:1
 msgid "Well done!"
-msgstr ""
+msgstr "Gut gemacht!"
 
 #: ../share/levels/frg10.scm:28
 msgid "Amazing! You won the entire game!"
-msgstr ""
+msgstr "Toll! Sie haben das ganze Spiel gewonnen!"
 
 #: ../share/levels/frg2.scm:1
 msgid "Deja Vu"
@@ -1889,7 +1889,7 @@ msgstr "Halfpipe"
 
 #: ../share/levels/lv1.scm:94
 msgid "and his Minions"
-msgstr ""
+msgstr "und seine Schergen"
 
 #: ../share/levels/lv2.scm:72
 msgid "Jump!"
@@ -1929,31 +1929,31 @@ msgstr "Das Schloss"
 
 #: ../share/levels/mhm3.scm:24
 msgid "Stay on the path or else!"
-msgstr ""
+msgstr "Bleib auf dem Weg oder sonst!"
 
 #: ../share/levels/Shop1.scm:6
 msgid "Speed-pill 2 minutes: 300 points"
-msgstr ""
+msgstr "Geschwindigkeitspille 2 Minuten: 300 Punkte"
 
 #: ../share/levels/Shop1.scm:10
 msgid "Extra Life: 800 points"
-msgstr ""
+msgstr "Extra Leben: 800 Punkte"
 
 #: ../share/levels/Shop2.scm:7
 msgid "Extra life: 800 points"
-msgstr ""
+msgstr "Extra Leben: 800 Punkte"
 
 #: ../share/levels/Shop2.scm:11
 msgid "Giant-package half a minute: 200 points"
-msgstr ""
+msgstr "Riesenpaket halbe Minute: 200 Punkte"
 
 #: ../share/levels/Shop2.scm:15
 msgid "Speed-pill one minute: 200 points"
-msgstr ""
+msgstr "Geschwindigkeitspille eine Minute: 200 Punkte"
 
 #: ../share/levels/Shop2.scm:19
 msgid "Nitro-speed two minutes: 1000 points"
-msgstr ""
+msgstr "Nitro-Geschwindigkeit zwei Minuten: 1000 Punkte"
 
 #: ../share/levels/sl1.scm:9 ../share/levels/sl1.scm:27
 msgid "No jumping!"
@@ -1973,7 +1973,7 @@ msgstr "Die längste Röhre der Welt"
 
 #: ../share/levels/sl3.scm:123
 msgid "Smash some badguys and see what happens"
-msgstr ""
+msgstr "Zerschlage ein paar Bösewichte und sehe was passiert"
 
 #: ../share/levels/sl4.scm:9
 msgid "Hurry up!"
@@ -1985,15 +1985,15 @@ msgstr "Die Murmelvilla"
 
 #: ../share/levels/sl5.scm:48
 msgid "Pull twice"
-msgstr ""
+msgstr "Zweimal ziehen"
 
 #: ../share/levels/sl5.scm:56
 msgid "You may check out the roof again"
-msgstr ""
+msgstr "Sie können wieder das Dach überprüfen"
 
 #: ../share/levels/sl5.scm:83
 msgid "Oxygen"
-msgstr ""
+msgstr "Wasserstoff"
 
 #: ../share/levels/sl6.scm:9
 msgid "The Marble HQ"
@@ -2001,15 +2001,15 @@ msgstr "Das Murmelhauptquartier"
 
 #: ../share/levels/sl6.scm:203
 msgid "The Marble HQ - Do not Enter!"
-msgstr ""
+msgstr "Das Murmelhauptquartier -- Kein Zutritt!"
 
 #: ../share/levels/sl6.scm:344
 msgid "Bonus"
-msgstr ""
+msgstr "Bonus"
 
 #: ../share/levels/sl6.scm:526
 msgid "Commander's Hall"
-msgstr ""
+msgstr "Kommandantenhalle"
 
 #~ msgid "Color %1.1f %1.1f %1.1f %1.1f"
 #~ msgstr "Farbe %1.1f %1.1f %1.1f %1.1f"
