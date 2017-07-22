@@ -197,8 +197,8 @@ void Player::tick(Real t) {
    */
   double cap = 140.0 - 10.0 * Settings::settings->difficulty;
   if (modTimeLeft[MOD_SPEED]) {
-    dx = (int)(dx * 1.5);
-    dy = (int)(dy * 1.5);
+    dx *= 1.5;
+    dy *= 1.5;
     cap = 200.0;
   }
   if (modTimeLeft[MOD_DIZZY]) cap = cap / 2.0;

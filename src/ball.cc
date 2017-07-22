@@ -36,7 +36,6 @@
 #include <math.h>
 #include <set>
 
-const Real Ball::physicsResolution = 0.002;
 class std::set<Ball *> *Ball::balls;
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
@@ -740,228 +739,223 @@ Boolean Ball::physics(Real time) {
   rotateX(-rotation[1] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
   rotateY(-rotation[0] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
 
-  Real t = 0;
-  do {
-    Cell &c = map->cell((int)position[0], (int)position[1]);
-    Coord3d normal;
-    c.getNormal(normal, Cell::CENTER);
+  Cell &c = map->cell((int)position[0], (int)position[1]);
+  Coord3d normal;
+  c.getNormal(normal, Cell::CENTER);
 
-    Real mapHeight = map->getHeight(position[0], position[1]);
+  Real mapHeight = map->getHeight(position[0], position[1]);
 
-    /* All effects of gravity */
-    if (inTheAir)
-      velocity[2] = velocity[2] - gravity * physicsResolution;
-    else if (!inPipe) {
-      double scale = gravity * physicsResolution / normal[2];
-      velocity[0] += normal[0] * scale;  // gravity * physicsResolution;
-      velocity[1] += normal[1] * scale;  // gravity * physicsResolution;
+  /* All effects of gravity */
+  if (inTheAir)
+    velocity[2] = velocity[2] - gravity * time;
+  else if (!inPipe) {
+    double scale = gravity * time / normal[2];
+    velocity[0] += normal[0] * scale;  // gravity * time;
+    velocity[1] += normal[1] * scale;  // gravity * time;
+  }
+
+  /* Sand - generate debris */
+  if (!inPipe && c.flags & CELL_SAND && !inTheAir && radius > 0.2) {
+    double speed =
+        velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
+    if (frandom() < (speed - 0.3) * 0.08) {
+      /* lots of friction when we crash into sand */
+      velocity[0] *= 0.9;
+      velocity[1] *= 0.9;
+      velocity[2] *= 0.9;
+      generateSandDebris();
     }
-
-    /* Sand - generate debris */
-    if (!inPipe && c.flags & CELL_SAND && !inTheAir && radius > 0.2) {
-      double speed =
-          velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-      if (frandom() < (speed - 0.3) * 0.08) {
-        /* lots of friction when we crash into sand */
-        velocity[0] *= 0.9;
-        velocity[1] *= 0.9;
-        velocity[2] *= 0.9;
-        generateSandDebris();
-      }
-    } else if (Settings::settings->difficulty > 0 && !inPipe && modTimeLeft[MOD_SPIKE] &&
-               !inTheAir && radius > 0.2) {
-      double speed =
-          velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-      if (frandom() < (speed - 0.3) * 0.0007 * Settings::settings->difficulty) {
-        velocity[0] *= 0.9;
-        velocity[1] *= 0.9;
-        velocity[2] *= 0.9;
-        generateDebris(c.colors[Cell::CENTER]);
-      }
+  } else if (Settings::settings->difficulty > 0 && !inPipe && modTimeLeft[MOD_SPIKE] &&
+             !inTheAir && radius > 0.2) {
+    double speed =
+        velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
+    if (frandom() < (speed - 0.3) * 0.0007 * Settings::settings->difficulty) {
+      velocity[0] *= 0.9;
+      velocity[1] *= 0.9;
+      velocity[2] *= 0.9;
+      generateDebris(c.colors[Cell::CENTER]);
     }
+  }
 
-    /* All effects of water */
-    {
-      double waterHeight = map->getWaterHeight(position[0], position[1]);
+  /* All effects of water */
+  {
+    double waterHeight = map->getWaterHeight(position[0], position[1]);
 
-      /* Floating */
-      if (modTimeLeft[MOD_FLOAT] && !inPipe && waterHeight > position[2] &&
-          waterHeight > mapHeight + radius + 0.025) {
-        velocity[2] += gravity * physicsResolution * 1.5;
-        velocity[2] *= 0.99;
-        // avoid sticking to the ground
-        double delta = position[2] - radius - map->getHeight(position[0], position[1]);
-        if (delta < 0.025) {
-          position[2] += 0.025 - delta;
-          if (velocity[2] < 0.0) velocity[2] = 0.0;
-        }
-      }
-
-      if (position[2] - radius < waterHeight) {
-        double depth = waterHeight - (position[2] - radius);
-        // splashes caused by speed
-        double speed = velocity[0] * velocity[0] + velocity[1] * velocity[1] +
-                       velocity[2] * velocity[2] * 5.;
-        if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
-          GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-          Coord3d center;
-          assign(position, center);
-          center[2] = map->getWaterHeight(center[0], center[1]);
-          new Splash(center, velocity, waterColor, 30 * radius / 0.3,
-                     radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
-        }
-        // splashes caused by rotation. eg "swimming"
-        speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
-        if (frandom() < speed * 0.001) {
-          GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-          Coord3d center;
-          assign(position, center);
-          center[2] = map->getWaterHeight(center[0], center[1]);
-          Coord3d vel;
-          vel[0] = -rotation[0] * radius;  // 0.3;
-          vel[1] = -rotation[1] * radius;  // 0.3;
-          vel[2] = 0.2;
-          rotation[0] *= 0.9;
-          rotation[1] *= 0.9;
-          velocity[0] += 0.01 * rotation[0];
-          velocity[1] += 0.01 * rotation[1];
-          new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
-        }
-        double fric = 0.004 * std::min(1.0, depth / (2. * radius));  // an extra water friction
-        velocity[0] = velocity[0] * (1. - fric) + c.velocity[0] * fric;
-        velocity[1] = velocity[1] * (1. - fric) + c.velocity[1] * fric;
-        fric = 0.008;
-        velocity[2] = velocity[2] * (1. - fric) + c.velocity[1] * fric;
+    /* Floating */
+    if (modTimeLeft[MOD_FLOAT] && !inPipe && waterHeight > position[2] &&
+        waterHeight > mapHeight + radius + 0.025) {
+      velocity[2] += gravity * time * 1.5;
+      velocity[2] *= 0.99;
+      // avoid sticking to the ground
+      double delta = position[2] - radius - map->getHeight(position[0], position[1]);
+      if (delta < 0.025) {
+        position[2] += 0.025 - delta;
+        if (velocity[2] < 0.0) velocity[2] = 0.0;
       }
     }
 
-    if (!inPipe && !inTheAir && c.flags & CELL_KILL) {
-      die(DIE_OTHER);
-      return false;
-    }
-
-    /* Sinking into floor material */
-    if (c.flags & CELL_SAND && !inPipe) {
-      sink += 0.8 * physicsResolution;
-      if (sink > radius * 0.5) sink = radius * 0.5;
-    } else if (c.flags & CELL_ACID && !inPipe && !inTheAir) {
-      sink += 0.8 * physicsResolution;
-      double speed =
-          velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-      if (frandom() < (speed - 0.2) * 0.05) {
-        GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
+    if (position[2] - radius < waterHeight) {
+      double depth = waterHeight - (position[2] - radius);
+      // splashes caused by speed
+      double speed = velocity[0] * velocity[0] + velocity[1] * velocity[1] +
+                     velocity[2] * velocity[2] * 5.;
+      if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
+        GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
         Coord3d center;
         assign(position, center);
-        center[2] = map->getHeight(center[0], center[1]);
-        new Splash(center, velocity, acidColor, speed * radius, radius);
+        center[2] = map->getWaterHeight(center[0], center[1]);
+        new Splash(center, velocity, waterColor, 30 * radius / 0.3,
+                   radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
       }
-      if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
-      if (sink > radius * 2.0) {
-        die(DIE_ACID);
-        return false;
+      // splashes caused by rotation. eg "swimming"
+      speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
+      if (frandom() < speed * 0.001) {
+        GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
+        Coord3d center;
+        assign(position, center);
+        center[2] = map->getWaterHeight(center[0], center[1]);
+        Coord3d vel;
+        vel[0] = -rotation[0] * radius;  // 0.3;
+        vel[1] = -rotation[1] * radius;  // 0.3;
+        vel[2] = 0.2;
+        rotation[0] *= 0.9;
+        rotation[1] *= 0.9;
+        velocity[0] += 0.01 * rotation[0];
+        velocity[1] += 0.01 * rotation[1];
+        new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
       }
-    } else
-      sink = std::max(0.0, sink - 2.0 * physicsResolution);
+      double fric = 0.004 * std::min(1.0, depth / (2. * radius));  // an extra water friction
+      velocity[0] = velocity[0] * (1. - fric) + c.velocity[0] * fric;
+      velocity[1] = velocity[1] * (1. - fric) + c.velocity[1] * fric;
+      fric = 0.008;
+      velocity[2] = velocity[2] * (1. - fric) + c.velocity[1] * fric;
+    }
+  }
 
-    /*                                      */
-    /* Ground "grip" - Also works in pipes! */
-    /*                                      */
-    {
-      double v_fric = 0.08;
-      double r_fric = 0.10;
+  if (!inPipe && !inTheAir && c.flags & CELL_KILL) {
+    die(DIE_OTHER);
+    return false;
+  }
 
-      if (c.flags & CELL_ACID) {
+  /* Sinking into floor material */
+  if (c.flags & CELL_SAND && !inPipe) {
+    sink += 0.8 * time;
+    if (sink > radius * 0.5) sink = radius * 0.5;
+  } else if (c.flags & CELL_ACID && !inPipe && !inTheAir) {
+    sink += 0.8 * time;
+    double speed =
+        velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
+    if (frandom() < (speed - 0.2) * 0.05) {
+      GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
+      Coord3d center;
+      assign(position, center);
+      center[2] = map->getHeight(center[0], center[1]);
+      new Splash(center, velocity, acidColor, speed * radius, radius);
+    }
+    if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
+    if (sink > radius * 2.0) {
+      die(DIE_ACID);
+      return false;
+    }
+  } else
+    sink = std::max(0.0, sink - 2.0 * time);
+
+  /*                                      */
+  /* Ground "grip" - Also works in pipes! */
+  /*                                      */
+  {
+    double v_fric = 0.08;
+    double r_fric = 0.10;
+
+    if (c.flags & CELL_ACID) {
+      v_fric = 0.008;
+      r_fric = 0.010;
+    }
+
+    if (c.flags & CELL_ICE) {
+      if (modTimeLeft[MOD_SPIKE]) {
         v_fric = 0.008;
         r_fric = 0.010;
-      }
-
-      if (c.flags & CELL_ICE) {
-        if (modTimeLeft[MOD_SPIKE]) {
-          v_fric = 0.008;
-          r_fric = 0.010;
-        } else {
-          v_fric = 0.0008;
-          r_fric = 0.0010;
-        }
-      }
-
-      if (inTheAir) {
-        if (map->getWaterHeight(position[0], position[1]) > position[2] - radius) {
-          v_fric = 0.0005;
-          r_fric = 0.0005;
-        } else
-          v_fric = r_fric = 0.0;
-      }
-
-      if (inPipe) {
-        v_fric = 0.08;
-        r_fric = 0.10;
-      }
-
-      if (c.flags & CELL_TRACK) {
-        velocity[0] = velocity[0] * (1.0 - v_fric) + (rotation[0] + c.velocity[0]) * v_fric;
-        velocity[1] = velocity[1] * (1.0 - v_fric) + (rotation[1] + c.velocity[1]) * v_fric;
-        rotation[0] = rotation[0] * (1.0 - r_fric) + (velocity[0] - c.velocity[0]) * r_fric;
-        rotation[1] = rotation[1] * (1.0 - r_fric) + (velocity[1] - c.velocity[1]) * r_fric;
       } else {
-        velocity[0] = velocity[0] * (1.0 - v_fric) + rotation[0] * v_fric;
-        velocity[1] = velocity[1] * (1.0 - v_fric) + rotation[1] * v_fric;
-        rotation[0] = rotation[0] * (1.0 - r_fric) + velocity[0] * r_fric;
-        rotation[1] = rotation[1] * (1.0 - r_fric) + velocity[1] * r_fric;
+        v_fric = 0.0008;
+        r_fric = 0.0010;
       }
     }
 
-    /* rotational friction - limits the speed when on ice or in the air, water etc. */
-    rotation[0] *= 0.9995;
-    rotation[1] *= 0.9995;
-    double effective_friction = 0.001 * friction;
-    if (inTheAir && !(map->getWaterHeight(position[0], position[1]) > position[2] - radius))
-      effective_friction *= 0.1;
-    else if (!inTheAir) {
-      if (inPipe) {
-      } else {
-        if (c.flags & CELL_ACID) effective_friction *= 2.0;
-        if (c.flags & CELL_ICE) effective_friction *= 0.1;
-        if (c.flags & CELL_SAND)
-          effective_friction *= (c.flags & CELL_TRACK ? 20.0 : 10.0);
-        else if (c.flags & CELL_TRACK)
-          effective_friction *= 4.0;  // Note. not both sand and track effect
-      }
-      if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
-      if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
-    }
-    for (int i = 0; i < 2; i++)
-      velocity[i] = velocity[i] - (velocity[i] - c.velocity[i]) * effective_friction;
-    velocity[2] *= 1.0 - effective_friction;
-    if (inTheAir && velocity[2] > 5.0) velocity[2] *= 0.995;
-
-    for (int i = 0; i < 3; i++) position[i] += physicsResolution * velocity[i];
-
-    if (!inPipe) {
-      handleEdges();
-
-      /* Ground collisions */
-      if (!checkGroundCollisions(map, 0, 0)) return false;
-      for (x = -radius + 0.05; x <= radius - 0.05; x += 0.05)
-        if (!checkGroundCollisions(map, x, 0.0)) return false;
-      for (y = -radius + 0.05; y <= radius - 0.05; y += 0.05)
-        if (!checkGroundCollisions(map, 0.0, y)) return false;
+    if (inTheAir) {
+      if (map->getWaterHeight(position[0], position[1]) > position[2] - radius) {
+        v_fric = 0.0005;
+        r_fric = 0.0005;
+      } else
+        v_fric = r_fric = 0.0;
     }
 
-    /* Collisions with other balls */
-    handleBallCollisions();
+    if (inPipe) {
+      v_fric = 0.08;
+      r_fric = 0.10;
+    }
 
-    /* Collisions with forcefields */
-    handleForcefieldCollisions();
+    if (c.flags & CELL_TRACK) {
+      velocity[0] = velocity[0] * (1.0 - v_fric) + (rotation[0] + c.velocity[0]) * v_fric;
+      velocity[1] = velocity[1] * (1.0 - v_fric) + (rotation[1] + c.velocity[1]) * v_fric;
+      rotation[0] = rotation[0] * (1.0 - r_fric) + (velocity[0] - c.velocity[0]) * r_fric;
+      rotation[1] = rotation[1] * (1.0 - r_fric) + (velocity[1] - c.velocity[1]) * r_fric;
+    } else {
+      velocity[0] = velocity[0] * (1.0 - v_fric) + rotation[0] * v_fric;
+      velocity[1] = velocity[1] * (1.0 - v_fric) + rotation[1] * v_fric;
+      rotation[0] = rotation[0] * (1.0 - r_fric) + velocity[0] * r_fric;
+      rotation[1] = rotation[1] * (1.0 - r_fric) + velocity[1] * r_fric;
+    }
+  }
 
-    double dh = position[2] - radius - map->getHeight(position[0], position[1]);
-    if (dh > 0.1) inTheAir = true;
+  /* rotational friction - limits the speed when on ice or in the air, water etc. */
+  rotation[0] *= 0.9995;
+  rotation[1] *= 0.9995;
+  double effective_friction = 0.001 * friction;
+  if (inTheAir && !(map->getWaterHeight(position[0], position[1]) > position[2] - radius))
+    effective_friction *= 0.1;
+  else if (!inTheAir) {
+    if (inPipe) {
+    } else {
+      if (c.flags & CELL_ACID) effective_friction *= 2.0;
+      if (c.flags & CELL_ICE) effective_friction *= 0.1;
+      if (c.flags & CELL_SAND)
+        effective_friction *= (c.flags & CELL_TRACK ? 20.0 : 10.0);
+      else if (c.flags & CELL_TRACK)
+        effective_friction *= 4.0;  // Note. not both sand and track effect
+    }
+    if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
+    if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
+  }
+  for (int i = 0; i < 2; i++)
+    velocity[i] = velocity[i] - (velocity[i] - c.velocity[i]) * effective_friction;
+  velocity[2] *= 1.0 - effective_friction;
+  if (inTheAir && velocity[2] > 5.0) velocity[2] *= 0.995;
 
-    /* Pipes */
-    handlePipes();
+  for (int i = 0; i < 3; i++) position[i] += time * velocity[i];
 
-    t += physicsResolution;
-  } while (t < time);
+  if (!inPipe) {
+    handleEdges();
+
+    /* Ground collisions */
+    if (!checkGroundCollisions(map, 0, 0)) return false;
+    for (x = -radius + 0.05; x <= radius - 0.05; x += 0.05)
+      if (!checkGroundCollisions(map, x, 0.0)) return false;
+    for (y = -radius + 0.05; y <= radius - 0.05; y += 0.05)
+      if (!checkGroundCollisions(map, 0.0, y)) return false;
+  }
+
+  /* Collisions with other balls */
+  handleBallCollisions();
+
+  /* Collisions with forcefields */
+  handleForcefieldCollisions();
+
+  double dh = position[2] - radius - map->getHeight(position[0], position[1]);
+  if (dh > 0.1) inTheAir = true;
+
+  /* Pipes */
+  handlePipes(time);
   return true;
 }
 Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
@@ -1346,7 +1340,7 @@ void Ball::handleEdges() {
     velocity[1] += 0.1;  // position[1] += 0.1;
   }
 }
-void Ball::handlePipes() {
+void Ball::handlePipes(Real time) {
   inPipe = false;
 
   std::set<Pipe *>::iterator iter = Pipe::pipes->begin();
@@ -1420,19 +1414,17 @@ void Ball::handlePipes() {
         Coord3d normal;
         assign(v1, normal);
         normalize(normal);
-        double scale = gravity * physicsResolution / (-normal[2] + 1e-3);
+        double scale = gravity * time / (-normal[2] + 1e-3);
         velocity[0] -= normal[0] * scale;
         velocity[1] -= normal[1] * scale;
-        // velocity[2] += normal[2] * gravity * physicsResolution;
+        // velocity[2] += normal[2] * gravity * time;
       }
 
       /* Wind */
       if (dotProduct(velocity, dirNorm) > 0.0)
-        for (int i = 0; i < 3; i++)
-          velocity[i] += pipe->windForward * physicsResolution * dirNorm[i];
+        for (int i = 0; i < 3; i++) velocity[i] += pipe->windForward * time * dirNorm[i];
       else
-        for (int i = 0; i < 3; i++)
-          velocity[i] += pipe->windBackward * physicsResolution * dirNorm[i];
+        for (int i = 0; i < 3; i++) velocity[i] += pipe->windBackward * time * dirNorm[i];
     }
   }
 
@@ -1473,7 +1465,7 @@ void Ball::handlePipes() {
           /* Ball is touching lower part of connector */
           inTheAir = false;
           normalize(v0);
-          double scale = 0.5 * gravity * physicsResolution / (-v0[2] + 1e-3);
+          double scale = 0.5 * gravity * time / (-v0[2] + 1e-3);
           velocity[0] -= v0[0] * scale;
           velocity[1] -= v0[1] * scale;
         }

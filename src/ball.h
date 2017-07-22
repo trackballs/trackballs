@@ -40,6 +40,8 @@
 #define BALL_NORMAL 1
 #define BALL_HIRES 2
 
+#define PHYSICS_RESOLUTION 0.002
+
 #include <set>
 #include "animated.h"
 
@@ -80,7 +82,6 @@ class Ball : public Animated {
        for high res balls (eg. player) */
   int ballResolution;
 
-  static const Real physicsResolution;
   static std::set<Ball*>* balls;
 
   /** how far the ball has sunk into acid / sand / etc. */
@@ -104,7 +105,7 @@ class Ball : public Animated {
   void handleEdges();
   void handleBallCollisions();
   void handleForcefieldCollisions();
-  void handlePipes();
+  void handlePipes(Real time);
 };
 
 #endif

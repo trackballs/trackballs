@@ -407,17 +407,17 @@ void ESaveWindow::draw() {
     addText_Center(0, fontSize / 3, row2, str, x + width / 2);
     saveCnt = 1;
   } else if (saveCnt == 1) {
-    double t0 = ((double)SDL_GetTicks()) / 1000.0;
+    struct timespec t0 = getMonotonicTime();
     EditMode::editMode->saveMap();
     remove();
     saveCnt = 0;
     /* Make sure it takes atleast three seconds to save, so user can see the message above
      * properly */
-    double t1;
+    struct timespec t1;
     do {
-      t1 = ((double)SDL_GetTicks()) / 1000.0;
+      t1 = getMonotonicTime();
       SDL_Delay(10);
-    } while (t0 + 3.0 > t1);
+    } while (getTimeDifference(t0, t1) < 3.0);
   }
 }
 void ESaveWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {

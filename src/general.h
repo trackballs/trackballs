@@ -64,9 +64,9 @@ int pathIsLink(char *path); /** Checks if the given path points to a link */
 
 /* A modulus operations which handles negative results safely */
 int mymod(int v, int m);
-/* Returns the real time right now measured in seconds. Mostly useful for debugging and
- * optimizations */
-double getSystemTime();
+/* Return the current time, and calculate elapsed time in seconds */
+struct timespec getMonotonicTime();
+double getTimeDifference(const struct timespec &from, const struct timespec &to);
 
 /* Printfs for when things go wrong. Errors are fatal. _Never_ translate input. */
 void error(const char *formatstr, ...) __attribute__((__noreturn__));

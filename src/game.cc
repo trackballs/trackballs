@@ -195,19 +195,29 @@ void Game::clearLevel() {
 }
 
 void Game::tick(Real t) {
-  gameTime += t;
+  int steps = std::max(1, int(t / PHYSICS_RESOLUTION + 0.5));
+  double origtime = gameTime;
+  double tstep = t / steps;
+
+  /* The game ticks run at a faster time scale so that the interaction
+   * of different moving objects is realistic */
+  for (int i = 0; i < steps; i++) {
+    gameTime += tstep;
+
+    std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
+    std::set<GameHook *>::iterator ih = old_hooks->begin();
+    std::set<GameHook *>::iterator endh = old_hooks->end();
+
+    for (; ih != endh; ih++) (*ih)->tick(tstep);
+    delete old_hooks;
+  }
+  gameTime = origtime + t;
+
+  /* Weather updates have no physical effect */
   if (fogThickness < wantedFogThickness)
     fogThickness += std::min(0.3 * t, wantedFogThickness - fogThickness);
   if (fogThickness > wantedFogThickness)
     fogThickness -= std::min(0.3 * t, fogThickness - wantedFogThickness);
-
-  std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
-  std::set<GameHook *>::iterator ih = old_hooks->begin();
-  std::set<GameHook *>::iterator endh = old_hooks->end();
-
-  for (; ih != endh; ih++) (*ih)->tick(t);
-  delete old_hooks;
-
   weather->tick(t);
 }
 void Game::doExpensiveComputations() {

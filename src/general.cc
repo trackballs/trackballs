@@ -24,7 +24,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+#include <time.h>
 
 int low_memory;
 
@@ -71,12 +71,19 @@ int pathIsLink(char *path) {
   return 0;
 }
 
-/* Returns the real time right now measured in seconds. Mostly useful for debugging and
- * optimizations */
-double getSystemTime() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return tv.tv_sec + 1e-6 * tv.tv_usec;
+struct timespec getMonotonicTime() {
+  struct timespec ts;
+  int s = clock_gettime(CLOCK_MONOTONIC, &ts);
+  if (s) {
+    warning("Failed to acquire monotonic time. %d %d", ts.tv_sec, ts.tv_nsec);
+    ts.tv_nsec = 0;
+    ts.tv_sec = 0;
+  }
+  return ts;
+}
+
+double getTimeDifference(const struct timespec &from, const struct timespec &to) {
+  return (to.tv_sec - from.tv_sec) + 1e-9 * (to.tv_nsec - from.tv_nsec);
 }
 
 void error(const char *formatstr, ...) {

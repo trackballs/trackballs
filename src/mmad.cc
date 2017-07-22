@@ -66,7 +66,7 @@ SDL_GLContext mainContext;
 const char *program_name;
 int debug_joystick, repair_joystick;
 int not_yet_windowed = 1;
-double displayStartTime = 0.;
+struct timespec displayStartTime;
 
 int theFrameNumber = 0;
 
@@ -294,6 +294,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
   program_name = argv[0];
 
+  displayStartTime = getMonotonicTime();
   Settings::init();
   Settings *settings = Settings::settings;
   settings->doSpecialLevel = 0;
@@ -405,7 +406,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   glHelpInit();  // MB: 1.5 megs
 
   // set the name of the window
-  double bootStart = ((double)SDL_GetTicks()) / 1000.0;
+  struct timespec bootStart = getMonotonicTime();
   SDL_Surface *splashScreen = loadImage("splashScreen.jpg");
   glViewport(0, 0, screenWidth, screenHeight);
 
@@ -480,16 +481,16 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     // Until here 74 megs
   }
 
-  /* Make sure splahsscreen has been shown for atleast 1.5 seconds */
-  double timeNow = ((double)SDL_GetTicks()) / 1000.0;
-  while (timeNow < bootStart + 1.5) {
+  /* Make sure splashscreen has been shown for atleast 1.5 seconds */
+  struct timespec timeNow = getMonotonicTime();
+  while (getTimeDifference(bootStart, timeNow) < 1.5) {
     glClear(GL_COLOR_BUFFER_BIT);
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
                     texcoord[3], 1., 1., 1., 1., splashTexture);
     Leave2DMode();
     SDL_GL_SwapWindow(window);
-    timeNow = ((double)SDL_GetTicks()) / 1000.0;
+    timeNow = getMonotonicTime();
   }
   glDeleteTextures(1, &splashTexture);
 
@@ -499,20 +500,23 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Main event loop */
   /*                 */
 
-  double oldTime, t, td;
-  oldTime = ((double)SDL_GetTicks()) / 1000.0;
+  struct timespec oldTime, newTime;
+  double td;
+  oldTime = getMonotonicTime();
 
   /* Initialize random number generator */
-  int seed = (int)getSystemTime();
+  int seed = getMonotonicTime().tv_nsec;
   srand(seed);
   int keyUpReceived = 1;
 
   while (is_running) {
     theFrameNumber++;
 
-    t = ((double)SDL_GetTicks()) / 1000.0;
-    td = t - oldTime;
-    oldTime = t;
+    newTime = getMonotonicTime();
+    td = getTimeDifference(oldTime, newTime);
+    if (td <= 0.0) { td = 1. / 60.; }
+    oldTime = newTime;
+
     // reduced to 5 fps
     if (td > 0.2) td = 0.2;
     // we may also add a bottom limit to 'td' to prevent
@@ -541,7 +545,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     warnForGLerrors("uncaught from display routine");
     SDL_GL_SwapWindow(window);
 
-    displayStartTime = getSystemTime();
+    displayStartTime = getMonotonicTime();
     /* Expensive computations has to be done *after* tick+draw to keep world in good
        synchronisation. */
     if (GameMode::current) GameMode::current->doExpensiveComputations();

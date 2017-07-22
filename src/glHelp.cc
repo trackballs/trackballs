@@ -47,7 +47,7 @@ GLuint shaderReflection = 0;
 GLuint theVao = 0;
 
 TTF_Font *ingameFont;
-extern double displayStartTime;
+extern struct timespec displayStartTime;
 
 const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
 const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
@@ -1242,12 +1242,8 @@ int resetTextures() {
 
 /* Calculates and displays current framerate */
 void displayFrameRate() {
-  static double oldTime = -0.1;
-  double t, td;
-  char str[256];
-
-  t = ((double)SDL_GetTicks()) / 1000.0;
-  td = t - oldTime;
+  /* We don't include the time spent on Flip(), but everything else we do*/
+  double td = getTimeDifference(displayStartTime, getMonotonicTime());
   if (td > 1.0)
     fps = 1.0;
   else if (td <= 1e-4) {
@@ -1258,17 +1254,16 @@ void displayFrameRate() {
     }
   } else
     fps = fps * 0.95 + 0.05 / td;
-  oldTime = t;
 
   if (Settings::settings->showFPS > 0) {
+    char str[256];
     if (Settings::settings->showFPS == 1) {
       if (fps > 0)
         snprintf(str, sizeof(str), _("Framerate: %.1f"), fps);
       else
         snprintf(str, sizeof(str), _("Framerate unknown"));
     } else {
-      snprintf(str, sizeof(str), _("%.1f ms/Frame"),
-               1e3 * (getSystemTime() - displayStartTime));
+      snprintf(str, sizeof(str), _("%.1f ms/Frame"), 1e3 * td);
     }
     Font::drawSimpleText(str, 15, screenHeight - 15, 10., 1., 1., 0.25, 0.8);
   }
