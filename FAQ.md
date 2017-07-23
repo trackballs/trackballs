@@ -97,5 +97,10 @@ conjunction with `--debug-joystick`
 
 **Q:** Translations work for some languages but not others, even though 
 translations are installed.
+
 **A:** Check that the matching locales (i.e., like `de_DE.UTF-8`) for the 
 languages are enabled on your system.
+
+**Q:** How do I get the highscores to be recorded locally and per-user?
+
+**A:** When running CMake, set `TRACKBALLS_HIGHSCORES_DIR` to `~`.

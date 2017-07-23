@@ -11,27 +11,28 @@ find_package(ZLIB REQUIRED)
 find_package(GC REQUIRED)
 
 # Optionally set data dir and locale dir
-set(TRACKBALLS_LOCALE_PATH "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
-set(TRACKBALLS_SHARE_PATH "" CACHE FILEPATH "Folder to install data files to. Empty means default.")
-set(TRACKBALLS_HIGHSCORES_PATH "" CACHE FILEPATH "Folder to install highscores file to. Empty means to SHARE_PATH.")
-if ("${TRACKBALLS_LOCALE_PATH}" STREQUAL "")
-  set(TRACKBALLS_LOCALE_DIR ${CMAKE_INSTALL_PREFIX}/share/locale)
+set(TRACKBALLS_LOCALE_DIR "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
+set(TRACKBALLS_SHARE_DIR "" CACHE FILEPATH "Folder to install data files to. Empty means default.")
+set(TRACKBALLS_HIGHSCORES_DIR "" CACHE STRING "Folder to install highscores file to. Empty means to TRACKBALLS_SHARE_DIR. ~ will install per user")
+
+if ("${TRACKBALLS_LOCALE_DIR}" STREQUAL "")
+  set(TRACKBALLS_LOCALE ${CMAKE_INSTALL_PREFIX}/share/locale)
 else()
-  set(TRACKBALLS_LOCALE_DIR ${TRACKBALLS_LOCALE_PATH})
+  set(TRACKBALLS_LOCALE ${TRACKBALLS_LOCALE_DIR})
 endif()
-if ("${TRACKBALLS_SHARE_PATH}" STREQUAL "")
-  set(TRACKBALLS_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/trackballs)
+if ("${TRACKBALLS_SHARE_DIR}" STREQUAL "")
+  set(TRACKBALLS_SHARE ${CMAKE_INSTALL_PREFIX}/share/trackballs)
 else()
-  set(TRACKBALLS_SHARE_DIR ${TRACKBALLS_SHARE_PATH})
+  set(TRACKBALLS_SHARE ${TRACKBALLS_SHARE_DIR})
 endif()
 
 add_definitions(-DPACKAGE="trackballs")
 add_definitions(-DVERSION="1.2.2")
-add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE_DIR}")
+add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE}")
 add_definitions(-DHAVE_CONFIG_H)
-add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE_DIR}")
-if (NOT "${TRACKBALLS_HIGHSCORES_PATH}" STREQUAL "")
-  add_definitions(-DALT_HIGHSCORES="${TRACKBALLS_HIGHSCORES_PATH}")
+add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE}")
+if (NOT "${TRACKBALLS_HIGHSCORES_DIR}" STREQUAL "")
+  add_definitions(-DALT_HIGHSCORES="${TRACKBALLS_HIGHSCORES_DIR}")
 endif()
 add_definitions(-DDEFAULT_RESOLUTION=-1)
 add_definitions(${GUILE_DEFINITIONS} ${SDL2_DEFINITIONS} ${GC_DEFINITIONS})
@@ -63,30 +64,33 @@ target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_L
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/fonts DESTINATION ${TRACKBALLS_SHARE_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/images DESTINATION ${TRACKBALLS_SHARE_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/levels DESTINATION ${TRACKBALLS_SHARE_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/music DESTINATION ${TRACKBALLS_SHARE_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/shaders DESTINATION ${TRACKBALLS_SHARE_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE_DIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/fonts DESTINATION ${TRACKBALLS_SHARE})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/images DESTINATION ${TRACKBALLS_SHARE})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/levels DESTINATION ${TRACKBALLS_SHARE})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/music DESTINATION ${TRACKBALLS_SHARE})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/shaders DESTINATION ${TRACKBALLS_SHARE})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE})
 #todo: set executable setgid to games RX, and highscores to games RW
 add_custom_command(OUTPUT highScores
                    COMMAND echo "0" | gzip -c > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
 add_custom_target(highscores ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/highScores)
-if ("${TRACKBALLS_HIGHSCORES_PATH}" STREQUAL "")
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
+if ("${TRACKBALLS_HIGHSCORES_DIR}" STREQUAL "")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE})
 else()
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_HIGHSCORES_PATH})
+  string(SUBSTRING "${TRACKBALLS_HIGHSCORES_DIR}" 0 1 TRACKBALLS_HS_FCHAR)
+  if (NOT "${TRACKBALLS_HS_FCHAR}" STREQUAL "~")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_HIGHSCORES_DIR})
+  endif()
 endif()
 
 # Documentation
 install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
 file(GLOB htmldocs ${PROJECT_SOURCE_DIR}/docs/*.html ${PROJECT_SOURCE_DIR}/docs/*.css)
-install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_SHARE_DIR}/docs)
+install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_SHARE}/docs)
 
 # Icons need special handling
 file(GLOB icons ${PROJECT_SOURCE_DIR}/share/icons/*.png)
-install(FILES ${icons} DESTINATION ${TRACKBALLS_SHARE_DIR}/icons/)
+install(FILES ${icons} DESTINATION ${TRACKBALLS_SHARE}/icons/)
 
 add_custom_command(OUTPUT execstring
                   COMMAND echo "Exec=${CMAKE_INSTALL_PREFIX}/bin/trackballs" > execstring)
@@ -94,7 +98,7 @@ add_custom_command(OUTPUT trackballs.desktop
                   COMMAND cat ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring > ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop
                   DEPENDS ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring)
 add_custom_target(desktop ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION share/applications)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION ${TRACKBALLS_SHARE}/../applications)
 # todo: spam copy the ${icons} to wherever KDE, GNOME, etc. would pick up on them
 
 # Translations!
@@ -103,5 +107,5 @@ file(GLOB po_files po/*.po)
 foreach(po_file ${po_files})
   get_filename_component(lang ${po_file} NAME_WE)
   GETTEXT_PROCESS_PO_FILES( ${lang} ALL PO_FILES ${po_file} )
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${lang}.gmo DESTINATION ${TRACKBALLS_LOCALE_DIR}/${lang}/LC_MESSAGES/ RENAME trackballs.mo)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${lang}.gmo DESTINATION ${TRACKBALLS_LOCALE}/${lang}/LC_MESSAGES/ RENAME trackballs.mo)
 endforeach()
