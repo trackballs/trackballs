@@ -40,24 +40,7 @@ HighScore::HighScore() {
     }
 
 #ifdef ALT_HIGHSCORES
-
-  /* Copy ALT_HIGHSCORES into highScorePath, substituting the '~' character for the HOME
-   * directory */
-  if (ALT_HIGHSCORES[0] == '~') {
-    if (ALT_HIGHSCORES[1] == 0)
-      snprintf(highScorePath, sizeof(highScorePath), "%s/.trackballs/highscores",
-               getenv("HOME"));
-    else if (ALT_HIGHSCORES[1] == '/')
-      snprintf(highScorePath, sizeof(highScorePath), "%s%s", getenv("HOME"),
-               &ALT_HIGHSCORES[1]);
-    else {
-      printf("Error, bad ALT_HIGHSCORES compiled into game '%s'\n", ALT_HIGHSCORES);
-      exit(0);
-    }
-  } else {
-    snprintf(highScorePath, sizeof(highScorePath), "%s", ALT_HIGHSCORES);
-  }
-
+  snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", ALT_HIGHSCORES);
 #else
   snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", effectiveShareDir);
 #endif

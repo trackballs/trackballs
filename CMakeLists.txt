@@ -11,25 +11,28 @@ find_package(ZLIB REQUIRED)
 find_package(GC REQUIRED)
 
 # Optionally set data dir and locale dir
-set(TRACKBALLS_LOCALE_OPT "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
-set(TRACKBALLS_SHARE_OPT "" CACHE FILEPATH "Folder to install data files to. Empty means default.")
-if ("${TRACKBALLS_LOCALE_OPT}" STREQUAL "")
+set(TRACKBALLS_LOCALE_PATH "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
+set(TRACKBALLS_SHARE_PATH "" CACHE FILEPATH "Folder to install data files to. Empty means default.")
+set(TRACKBALLS_HIGHSCORES_PATH "" CACHE FILEPATH "Folder to install highscores file to. Empty means to SHARE_PATH.")
+if ("${TRACKBALLS_LOCALE_PATH}" STREQUAL "")
   set(TRACKBALLS_LOCALE_DIR ${CMAKE_INSTALL_PREFIX}/share/locale)
 else()
-  set(TRACKBALLS_LOCALE_DIR ${TRACKBALLS_LOCALE_OPT})
+  set(TRACKBALLS_LOCALE_DIR ${TRACKBALLS_LOCALE_PATH})
 endif()
-if ("${TRACKBALLS_SHARE_OPT}" STREQUAL "")
+if ("${TRACKBALLS_SHARE_PATH}" STREQUAL "")
   set(TRACKBALLS_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/trackballs)
 else()
-  set(TRACKBALLS_SHARE_DIR ${TRACKBALLS_SHARE_OPT})
+  set(TRACKBALLS_SHARE_DIR ${TRACKBALLS_SHARE_PATH})
 endif()
-
 
 add_definitions(-DPACKAGE="trackballs")
 add_definitions(-DVERSION="1.2.2")
 add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE_DIR}")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE_DIR}")
+if (NOT "${TRACKBALLS_HIGHSCORES_PATH}" STREQUAL "")
+  add_definitions(-DALT_HIGHSCORES="${TRACKBALLS_HIGHSCORES_PATH}")
+endif()
 add_definitions(-DDEFAULT_RESOLUTION=-1)
 add_definitions(${GUILE_DEFINITIONS} ${SDL2_DEFINITIONS} ${GC_DEFINITIONS})
 
@@ -70,7 +73,11 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE
 add_custom_command(OUTPUT highScores
                    COMMAND echo "0" | gzip -c > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
 add_custom_target(highscores ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/highScores)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
+if ("${TRACKBALLS_HIGHSCORES_PATH}" STREQUAL "")
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE_DIR})
+else()
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_HIGHSCORES_PATH})
+endif()
 
 # Documentation
 install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
