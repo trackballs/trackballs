@@ -54,9 +54,9 @@ user basis.
 
 The simplest way to contribute levels, code, or updated translations is to 
 make a pull request or issue at the current hosting location, namely
-  
+
 [https://github.com/trackballs/trackballs](https://github.com/trackballs/trackballs)
-  
+
 If possible, keep code contribution commits to focus on a single change
 (i.e, "Fixed string typos"), and but try to avoid trivial updates: for 
 instance, when fixing string typos, fix all of them. Code should be
@@ -72,7 +72,8 @@ If you have a question that needs answering, check the [FAQ](FAQ.md) first.
 
 The change log for Trackballs is [NEWS.md](NEWS.md).
 
-Think the game couldn't be better? Read [TODO.md](TODO.md) and think again!
-
 To read about translating Trackballs, see [ABOUT-NLS.md](ABOUT-NLS.md).
 
+Find out who helped realize Trackballs at [AUTHORS.md](AUTHORS.md).
+
+Think the game couldn't be better? Read [TODO.md](TODO.md) and think again!
