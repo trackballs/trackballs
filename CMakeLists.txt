@@ -88,9 +88,17 @@ install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
 file(GLOB htmldocs ${PROJECT_SOURCE_DIR}/docs/*.html ${PROJECT_SOURCE_DIR}/docs/*.css)
 install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_SHARE}/docs)
 
-# Icons need special handling
+# Icons are split up into separate folders
 file(GLOB icons ${PROJECT_SOURCE_DIR}/share/icons/*.png)
-install(FILES ${icons} DESTINATION ${TRACKBALLS_SHARE}/icons/)
+foreach(file ${icons})
+  string(REGEX REPLACE ".*trackballs-" "" filea ${file})
+  string(REPLACE ".png" "" sz ${filea})
+  install(FILES ${file}
+          DESTINATION ${TRACKBALLS_SHARE}/../icons/hicolor/${sz}/apps/
+          RENAME trackballs.png)
+endforeach()
+install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
+        DESTINATION ${TRACKBALLS_SHARE}/../icons/hicolor/scalable/apps/)
 
 add_custom_command(OUTPUT execstring
                   COMMAND echo "Exec=${CMAKE_INSTALL_PREFIX}/bin/trackballs" > execstring)
@@ -99,7 +107,6 @@ add_custom_command(OUTPUT trackballs.desktop
                   DEPENDS ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring)
 add_custom_target(desktop ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION ${TRACKBALLS_SHARE}/../applications)
-# todo: spam copy the ${icons} to wherever KDE, GNOME, etc. would pick up on them
 
 # Translations!
 find_package(Gettext)

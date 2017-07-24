@@ -1,8 +1,10 @@
 [Desktop Entry]
-GenericName=Marble Madness type game
 Name=Trackballs
+GenericName=Marble Madnees type game
+Comment=Guide a marble through a maze and avoid obstacles
+Comment[de]=Führe eine Murmel durch ein Labyrinth und weiche Hindernissen aus
+Exec=trackballs
 Icon=trackballs
 Type=Application
-Terminal=0
-MimeType=application/x-executable
-Categories=Application;Game;ArcadeGame;
+Categories=Game;ArcadeGame;
+Keywords=marble;maze;obstacle;
