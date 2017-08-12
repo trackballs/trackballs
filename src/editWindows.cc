@@ -206,7 +206,7 @@ void EStatusWindow::draw() {
   draw2DRectangle(area3x - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
 
   /* TODO. Make the height/colour etc. text selectable areas
-         with the same effect as corresponding menu choise */
+         with the same effect as corresponding menu choice */
 
   Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
 

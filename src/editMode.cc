@@ -348,9 +348,9 @@ void EditMode::saveMap() {
               _("Enter your name here"));
       fprintf(fp, "(start-time 180)\n");
       fprintf(fp, "(set-start-position 250.5 250.5)\n");
-      fprintf(fp, "(add-goal 249 250 #f \"\") ;; %s\n",
+      fprintf(fp, "(add-goal 249.0 250.0 #f \"\") ;; %s\n",
               _("Add the name of the next level here"));
-      fprintf(fp, "(add-flag 248 250 50 1 0.1)\n");
+      fprintf(fp, "(add-flag 248.0 250.0 50 #t 0.1)\n");
       fclose(fp);
     }
   }
