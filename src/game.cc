@@ -39,7 +39,7 @@ extern GLfloat colors[5][3];
 
 double Game::defaultScores[SCORE_MAX][2];
 
-Game::Game(char *name, Gamer *g) {
+Game::Game(const char *name, Gamer *g) {
   Ball::reset();
   ForceField::reset();
   Pipe::reset();
@@ -101,14 +101,19 @@ Game::~Game() {
   if (current == this) { current = NULL; }
 }
 
-void Game::loadLevel(char *name) {
+void Game::loadLevel(const char *name) {
   char mapname[256];
   char scmname[256];
 
-  if (player1) {
-    // level scripts might have modified our appearance. Reset them
+  if (player1 && gamer) {
+    /* level scripts might have modified our appearance. Reset them */
     for (int i = 0; i < 3; i++) player1->primaryColor[i] = colors[gamer->color][i];
     player1->texture = gamer->textureNum;
+  } else {
+    /* when there is no gamer (e.g, in help) pick random value */
+    for (int i = 0; i < 3; i++) player1->primaryColor[i] = frandom();
+    player1->primaryColor[((size_t)rand()) % 3] = 1.0;
+    player1->texture = loadTexture("blank.png");
   }
 
   setDefaults();

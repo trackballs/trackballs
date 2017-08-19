@@ -21,8 +21,12 @@
 #include "helpMode.h"
 
 #include "font.h"
+#include "game.h"
+#include "gamer.h"
+#include "map.h"
 #include "menuMode.h"
 #include "menusystem.h"
+#include "settings.h"
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
@@ -31,7 +35,6 @@
 
 HelpMode *HelpMode::helpMode;
 SDL_Surface *HelpMode::background;
-SDL_Surface *HelpMode::page0, *HelpMode::page1;
 
 #define CODE_BACK 1
 #define CODE_MOREHELP 2
@@ -56,20 +59,7 @@ void HelpMode::activated() {
   /* Loads the background images. */
   bgTexture = LoadTexture(background, bgCoord);
 
-  if (screenWidth < 1024)
-    page0 = loadImage("help0_640.png");
-  else
-    page0 = loadImage("help0_1024.png");
-  p0Texture = LoadTexture(page0, p0coord);
-  SDL_FreeSurface(page0);
-
-  if (screenWidth < 1024)
-    page1 = loadImage("help1_640.png");
-  else
-    page1 = loadImage("help1_1024.png");
-
-  p1Texture = LoadTexture(page1, p1coord);
-  SDL_FreeSurface(page1);
+  helpGame = new Game("help", NULL);
 
   clearKeyboardFocus();
 
@@ -79,13 +69,12 @@ void HelpMode::activated() {
 }
 void HelpMode::deactivated() {
   glDeleteTextures(1, &bgTexture);
-  glDeleteTextures(1, &p0Texture);
-  glDeleteTextures(1, &p1Texture);
 
   if (low_memory && background) {
     SDL_FreeSurface(background);
     background = NULL;
   }
+  delete helpGame;
 }
 void HelpMode::display() {
   // Draw the background using the preloaded texture
@@ -98,66 +87,191 @@ void HelpMode::display() {
   Enter2DMode();
   draw2DRectangle(0, 0, screenWidth, screenHeight, bgCoord[0], bgCoord[1], bgCoord[2],
                   bgCoord[3], 1., 1., 1., 1., bgTexture);
+  Leave2DMode();
 
-  if (page == 0) {
-    draw2DRectangle(0, 0, screenWidth, screenHeight, p0coord[0], p0coord[1], p0coord[2],
-                    p0coord[3], 1., 1., 1., 1., p0Texture);
+  /* for shadow map */
+  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+  /* Some standard GL settings needed */
+  glEnable(GL_CULL_FACE);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+
+  /* Debugging for problems with some cards */
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  /* Setup how we handle textures based on gfx_details */
+  if (Settings::settings->gfx_details == 5) {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  } else {
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
 
-  if (page == 1) {
-    draw2DRectangle(0, 0, screenWidth, screenHeight, p1coord[0], p1coord[1], p1coord[2],
-                    p1coord[3], 1., 1., 1., 1., p1Texture);
+  if (helpGame->fogThickness)
+    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
+                 Game::current->fogColor[2], Game::current->fogColor[3]);
+  else
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+
+  if (helpGame->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
+    activeView.fog_enabled = 1;
+    assign(helpGame->fogColor, activeView.fog_color);
+    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * helpGame->fogThickness);
+    activeView.fog_end = 26.0 - 4.0 * helpGame->fogThickness;
+  } else
+    activeView.fog_enabled = 0;
+
+  /* Render two views of the level map */
+  perspectiveMatrix(25, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
+                    activeView.projection);
+
+  /* Setup matrixes for the camera perspective */
+  GLdouble step = 16.;
+  Coord3d cameraFrom1 = {0. + step * page, 0., -1.};
+  Coord3d cameraTo1 = {5. + step * page, 5., -8.};
+  Coord3d cameraFrom2 = {0. + step * page, 0. + step, -1.};
+  Coord3d cameraTo2 = {5. + step * page, 5. + step, -8.};
+  lookAtMatrix(cameraFrom1[0], cameraFrom1[1], cameraFrom1[2], cameraTo1[0], cameraTo1[1],
+               cameraTo1[2], 0.0, 0.0, 1.0, activeView.modelview);
+  activeView.day_mode = 1;
+  updateUniforms();
+  if (Settings::settings->doShadows) {
+    renderShadowCascade(cameraTo1, helpGame->map, helpGame);
+  } else {
+    renderDummyShadowCascade();
+  }
+  renderDummyShadowMap();
+
+  glViewport(11 * screenWidth / 20, 11 * screenHeight / 20, 4 * screenWidth / 10,
+             4 * screenHeight / 10);
+  helpGame->map->draw(0, step / 2 + step * page, step / 2);
+  helpGame->draw();
+  helpGame->map->draw(1, step / 2 + step * page, step / 2);
+
+  lookAtMatrix(cameraFrom2[0], cameraFrom2[1], cameraFrom2[2], cameraTo2[0], cameraTo2[1],
+               cameraTo2[2], 0.0, 0.0, 1.0, activeView.modelview);
+
+  updateUniforms();
+  if (Settings::settings->doShadows) {
+    renderShadowCascade(cameraTo1, helpGame->map, helpGame);
+  } else {
+    renderDummyShadowCascade();
+  }
+  renderDummyShadowMap();
+  glViewport(11 * screenWidth / 20, 1 * screenHeight / 10, 4 * screenWidth / 10,
+             4 * screenHeight / 10);
+  helpGame->map->draw(0, step / 2 + step * page, 3 * step / 2);
+  helpGame->draw();
+  helpGame->map->draw(1, step / 2 + step * page, 3 * step / 2);
+
+  glViewport(0, 0, screenWidth, screenHeight);
+  Enter2DMode();
+
+  const char *text[] = {_("Your marble:"),
+                        _("Steer this with your mouse, numpad or arrows. "),
+                        _("Left mouse or spacebar is jump."),
+                        _("Shift gives top speed when using keyboard."),
+                        NULL,
+                        _("Mr Black:"),
+                        _("Your enemy. Defeat with Modpill - Spike."),
+                        NULL,
+                        _("Modpill Speed:"),
+                        _("Makes you go faster for short period of time."),
+                        NULL,
+                        _("Modpill Spikes:"),
+                        _("Weapon against Mr Black and grip for icy terrain."),
+                        NULL,
+
+                        _("Modpill Freeze:"),
+                        _("This will freeze you - avoid it."),
+                        NULL,
+                        _("Modpill Glass:"),
+                        _("Protects you from acid, but makes you more fragile."),
+                        NULL,
+                        _("Modpill Nitro:"),
+                        _("Move really fast. Active nitro with second button."),
+                        NULL,
+                        _("Switch:"),
+                        _("Activates/deactivates some object/element in the level."),
+                        NULL,
+
+                        _("Moving spike:"),
+                        _("Obstacle to avoid."),
+                        NULL,
+                        _("Flag:"),
+                        _("Collect for bonus points."),
+                        NULL,
+
+                        _("Normal terrain:"),
+                        _("Can be of any color and is safe to move on."),
+                        NULL,
+                        _("Acid terrain:"),
+                        _("Will kill your marble unless you have a glass modpill."),
+                        NULL,
+
+                        _("Icy terrain:"),
+                        _("Slippery terrain unless you have a spikes modpill."),
+                        NULL,
+                        _("Sandy terrain:"),
+                        _("Soft to land on but will slow you down."),
+                        NULL,
+
+                        _("Goal:"),
+                        _("Will take you to the next level. "),
+                        _("Get here before time runs out."),
+                        NULL,
+
+                        _("Force Field:"),
+                        _("You cannot pass this unless you switch it off."),
+                        _("Some are lethal and some are one way."),
+                        NULL,
+
+                        _("Cactus:"),
+                        _("Spiky plant, lethal unless you have a spikes modpill."),
+                        NULL,
+
+                        _("Bird:"),
+                        _("Kills balls it flies across unless they have spikes."),
+                        NULL,
+
+                        _("Teleport:"),
+                        _("Will send your marble somewhere else."),
+                        NULL,
+
+                        _("Tunnel:"),
+                        _("Takes you places, sometimes with great speed."),
+                        NULL,
+                        NULL};
+
+  int s1 = -1, s2 = -1;
+  for (int i = 0, j = 0; text[i]; i++, j++) {
+    if (j == 2 * page) { s1 = i; }
+    if (j == 2 * page + 1) { s2 = i; }
+    while (text[i]) i++;
   }
 
-  if (page == 2) {
-    const char *text[21][2] = {
-        {_("Your marble:"), _("Steer this with your mouse, numpad or arrows. ")},
-        {" ", _("Left mouse or spacebar is jump.")},
-        {" ", _("Shift gives top speed when using keyboard.")},
-        {_("Mr Black:"), _("Your enemy. Defeat with Modpill - Spike.")},
-        {_("Modpill Speed:"), _("Makes you go faster for short period of time.")},
-        {_("Modpill Spikes:"), _("Weapon against Mr Black and grip for icy terrain.")},
-        {_("Modpill Freeze:"), _("This will freeze you - avoid it.")},
-        {_("Modpill Glass:"), _("Protects you from acid, but makes you more fragile.")},
-        {_("Modpill Nitro:"), _("Move really fast. Active nitro with second button.")},
-        {_("Switch:"), _("Activates/deactivates some object/element in the level.")},
-        {_("Moving spike:"), _("Obstacle to avoid.")},
-        {_("Flag:"), _("Collect for bonus points.")},
-        {_("Normal terrain:"), _("Can be of any color and is safe to move on.")},
-        {_("Acid terrain:"), _("Will kill your marble unless you have a glass modpill.")},
-        {_("Icy terrain:"), _("Slippery terrain unless you have a spikes modpill.")},
-        {_("Sandy terrain:"), _("Soft to land on but will slow you down.")},
-        {_("Goal:"), _("Will take you to the next level. ")},
-        {" ", _("Get here before time runs out.")},
-        {_("Force Field:"), _("You cannot pass this unless you switch it off.")},
-        {" ", _("Some are lethal and some are one way.")},
-        {_("Tunnel:"), _("Takes you places, sometimes with great speed.")}};
-
-    for (int i = 0; i < 20; i++) {
-      if (screenWidth <= 800) {
-        Font::drawSimpleText(text[i][0], 50, screenHeight / 2 - 200 + i * 20 + 10, 10, 0.9,
-                             0.9, 0.25, 1.);
-        Font::drawSimpleText(text[i][1], 210, screenHeight / 2 - 200 + i * 20 + 10, 10, 0.9,
-                             0.9, 0.25, 1.);
-      } else if (screenWidth <= 1280) {
-        Font::drawSimpleText(text[i][0], 70, screenHeight / 2 - 200 + i * 24 + 10, 12, 0.9,
-                             0.9, 0.25, 1.);
-        Font::drawSimpleText(text[i][1], 270, screenHeight / 2 - 200 + i * 24 + 10, 12, 0.9,
-                             0.9, 0.25, 1.);
-      } else {
-        Font::drawSimpleText(text[i][0], 90, screenHeight / 2 - 200 + i * 28, 14, 0.9, 0.9,
-                             0.25, 1.);
-        Font::drawSimpleText(text[i][1], 370, screenHeight / 2 - 200 + i * 28, 14, 0.9, 0.9,
-                             0.25, 1.);
-      }
+  int fontSize = std::max(12, std::min(screenHeight / 40, screenWidth / 90));
+  if (s1 >= 0) {
+    for (int i = s1; text[i]; i++) {
+      Font::drawSimpleText(text[i], 50,
+                           1 * screenHeight / 10 + (i - s1) * 3 * fontSize + fontSize,
+                           fontSize, 0.9, 0.9, 0.25, 1.);
     }
   }
 
-  int fontSize = 24;
+  if (s2 >= 0) {
+    for (int i = s2; text[i]; i++) {
+      Font::drawSimpleText(text[i], 50,
+                           6 * screenHeight / 10 + (i - s2) * 3 * fontSize + fontSize,
+                           fontSize, 0.9, 0.9, 0.25, 1.);
+    }
+  }
+
   clearSelectionAreas();
-  addText_Right(CODE_MOREHELP, fontSize / 2, screenHeight - 45, _("More Help"),
-                screenWidth - 16);
-  addText_Left(CODE_BACK, fontSize / 2, screenHeight - 45, _("Back"), 16);
+  addText_Right(CODE_MOREHELP, 16, screenHeight - 45, _("More Help"), screenWidth - 16);
+  addText_Left(CODE_BACK, 16, screenHeight - 45, _("Back"), 16);
 
   drawMousePointer();
   displayFrameRate();
@@ -172,6 +286,7 @@ void HelpMode::key(int key) {
   if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
 }
 void HelpMode::idle(Real td) {
+  helpGame->tick(td);
   tickMouse(td);
 
   if (isExiting)
@@ -184,7 +299,8 @@ void HelpMode::mouseDown(int button, int /*x*/, int /*y*/) {
   int selected = getSelectedArea();
 
   if (selected == CODE_MOREHELP) {
-    page = (page + (button == 1 ? 1 : -1)) % 3;
+    int n = 10;
+    page = (page + n + (button == 1 ? 1 : -1)) % n;
   } else if (selected == CODE_BACK) {
     isExiting = 1;
   }

@@ -40,7 +40,7 @@ class EditMode;
 
 class Game {
  public:
-  Game(char *, class Gamer *gamer);
+  Game(const char *, class Gamer *gamer);
   explicit Game(Map *editmap);
   virtual ~Game();
 
@@ -52,7 +52,7 @@ class Game {
   void add(class GameHook *);
   void remove(class Animated *);
   void remove(class GameHook *);
-  void loadLevel(char *level);
+  void loadLevel(const char *level);
   void clearLevel();
 
   GLfloat fogColor[4];

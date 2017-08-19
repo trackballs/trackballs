@@ -42,10 +42,11 @@ class HelpMode : public GameMode {
   double timeLeft;
   int isExiting, page;
   static SDL_Surface *background;
-  static SDL_Surface *page0, *page1;
 
-  GLuint bgTexture, p0Texture, p1Texture;
-  GLfloat bgCoord[4], p0coord[4], p1coord[4];
+  Game *helpGame;
+
+  GLuint bgTexture;
+  GLfloat bgCoord[4];
 };
 
 #endif
