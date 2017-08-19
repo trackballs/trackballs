@@ -122,6 +122,16 @@ void HelpMode::display() {
     activeView.fog_end = 26.0 - 4.0 * helpGame->fogThickness;
   } else
     activeView.fog_enabled = 0;
+  GLfloat sunLight[3] = {0.8, 0.8, 0.8};
+  GLfloat ambient[3] = {0.2, 0.2, 0.2};
+  GLfloat black[3] = {0.2, 0.2, 0.2};
+  Coord3d lightPosition = {-100., -100., 150.};
+  assign(sunLight, activeView.light_diffuse);
+  assign(sunLight, activeView.light_specular);
+  assign(lightPosition, activeView.light_position);
+  assign(black, activeView.global_ambient);
+  assign(ambient, activeView.light_ambient);
+  activeView.quadratic_attenuation = 0.;
 
   /* Render two views of the level map */
   perspectiveMatrix(25, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,

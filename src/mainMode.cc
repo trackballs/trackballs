@@ -565,14 +565,35 @@ void MainMode::showInfo() {
   Player *player = Game::current->player1;
 
   /* Don't draw the panel if we have released the cursor etc. This is
-     usefull for screenshots. */
+     useful for screenshots. */
   if (SDL_GetModState() & KMOD_CAPS) return;
 
   Enter2DMode();
 
-  // the panel
-  draw2DRectangle(0, 0, 256, 128, 0., 0., 1., 1., 1., 1., 1., 1.,
-                  textures[loadTexture("left_panel.png")]);
+  GLfloat notexco[4][2] = {{0., 0.}, {0., 0.}, {0., 0.}, {0., 0.}};
+
+  GLfloat pvertices[4][2] = {{0.f, 0.f}, {160.f, 0.f}, {0.f, 100.f}, {160.f, 100.f}};
+  GLfloat pcols[4][4] = {
+      {1.0, 1.0, 0.0, 1.0}, {1.0, 0.5, 0.1, 1.0}, {1.0, 0.5, 0.1, 1.0}, {1.0, 0.1, 0.1, 1.0}};
+  draw2DRectangle(0., 0., 160. + 1.5, 100. + 1.5, 0., 0., 1., 1., 0., 0., 0., 1.);
+  draw2DQuad(pvertices, notexco, pcols);
+
+  const char *fieldNames[3] = {_("Lives"), _("Score"), _("Time left")};
+  for (int i = 0; i < 3; i++) {
+    GLfloat s = 29.f;
+    GLfloat mvertices[4][2] = {{8.f, 13.f + i * s},
+                               {152.f, 13.f + i * s},
+                               {8.f, 35.f + i * s},
+                               {152.f, 35.f + i * s}};
+    GLfloat mcols[4][4] = {{0.75, 0.5, 0.0, 1.0},
+                           {1.0, 0.25, 0.0, 1.0},
+                           {0.75, 0.25, 0.0, 1.0},
+                           {1.0, 0.0, 0.0, 1.0}};
+    draw2DRectangle(8.f - 1.5f, 13.f + i * s - 1.5f, 144.f, 22.f, 0., 0., 1., 1., 0., 0., 0.,
+                    1.);
+    draw2DQuad(mvertices, notexco, mcols);
+    Font::drawSimpleText(fieldNames[i], 12, 23 + i * s, 9, 1.0, 1.0, 0.0, 1.0);
+  }
 
   // lives
   for (int i = 0; i < 4; i++) {
@@ -584,28 +605,25 @@ void MainMode::showInfo() {
   // Score
   char str[256];
   snprintf(str, sizeof(str), "%d", player->score);
-  Font::drawRightSimpleText(str, 152, 52, 8, 0.0, 0.0, 0.0, 1.0);
+  Font::drawRightSimpleText(str, 150, 52, 9, 0.0, 0.0, 0.0, 1.0);
 
   // Time left
   snprintf(str, sizeof(str), "%2.2d:%2.2d", player->timeLeft / 60, player->timeLeft % 60);
   if (player->timeLeft < 15 && player->timeLeft % 2)
-    Font::drawRightSimpleText(str, 152, 81, 8, 1.0, 1.0, 1.0, 1.0);
+    Font::drawRightSimpleText(str, 150, 81, 9, 1.0, 1.0, 1.0, 1.0);
   else
-    Font::drawRightSimpleText(str, 152, 81, 8, 0.0, 0.0, 0.0, 1.0);
+    Font::drawRightSimpleText(str, 150, 81, 9, 0.0, 0.0, 0.0, 1.0);
 
   // Health
   draw2DRectangle(8, 3, 144, 5, 0., 0., 1., 1., 0.5, 0.1, 0.1, 1.0);
 
-  GLfloat vertices[4][2] = {{8.f, 3.f},
-                            {8.f + (144.f * (GLfloat)player->health), 3.f},
-                            {8.f, 8.f},
-                            {8.f + (144.f * (GLfloat)player->health), 8.f}};
-  GLfloat texco[4][2] = {
-      0., 0., 0., 0., 0., 0., 0., 0.,
-  };
-  GLfloat cols[4][4] = {
+  GLfloat bvertices[4][2] = {{8.f, 3.f},
+                             {8.f + (144.f * (GLfloat)player->health), 3.f},
+                             {8.f, 8.f},
+                             {8.f + (144.f * (GLfloat)player->health), 8.f}};
+  GLfloat bcols[4][4] = {
       {0.8, 0.8, 0.1, 1.0}, {0.8, 0.1, 0.1, 1.0}, {0.8, 0.8, 0.1, 1.0}, {0.8, 0.1, 0.1, 1.0}};
-  draw2DQuad(vertices, texco, cols);
+  draw2DQuad(bvertices, notexco, bcols);
 
   // Oxygen
   draw2DRectangle(8, 3, (int)(144.0 * (1. - player->oxygen)), 5, 0., 0., 1., 1., 0.2, 0.2, 0.7,
