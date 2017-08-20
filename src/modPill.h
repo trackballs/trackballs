@@ -37,7 +37,7 @@ class ModPill : public Ball {
   void die(int);
 
  private:
-  int kind, resurrecting, state, time;
+  int kind, resurrecting, time;
   Real timeLeft;
   Real clock;  // used for animation
 };

@@ -64,6 +64,7 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
 
   alive = 1;
+  timeLeft = 0.;
 }
 
 ModPill::~ModPill() { this->Animated::~Animated(); }

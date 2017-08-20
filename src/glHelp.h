@@ -39,7 +39,7 @@ void glHelpCleanup();
 GLuint loadProgram(const char *fragment, const char *vertex);
 void warnForGLerrors(const char *where_am_i);
 double frand();
-double frand(int);
+double frand(size_t);
 
 /* displays a 2d text on specific screen coordinates, returning width */
 int draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,

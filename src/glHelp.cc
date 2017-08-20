@@ -53,7 +53,10 @@ const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
 const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
 
 double fake_rand[4711];
-double frand(int i) { return fake_rand[i % 4711]; }
+double frand(size_t i) {
+  /* size_t is nonnegative so no inputs will crash */
+  return fake_rand[i % 4711];
+}
 double frand() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
 
 #define GLHELP_MAX_TEXTURES 256

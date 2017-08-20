@@ -52,6 +52,7 @@ HelpMode::HelpMode() {
   timeLeft = 0.;
   isExiting = 0;
   page = 0;
+  helpGame = NULL;
 }
 void HelpMode::activated() {
   if (!background) { background = loadImage("helpBackground.jpg"); }
