@@ -99,14 +99,8 @@ foreach(file ${icons})
 endforeach()
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
         DESTINATION ${TRACKBALLS_SHARE}/../icons/hicolor/scalable/apps/)
-
-add_custom_command(OUTPUT execstring
-                  COMMAND echo "Exec=${CMAKE_INSTALL_PREFIX}/bin/trackballs" > execstring)
-add_custom_command(OUTPUT trackballs.desktop
-                  COMMAND cat ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring > ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop
-                  DEPENDS ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop execstring)
-add_custom_target(desktop ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.desktop DESTINATION ${TRACKBALLS_SHARE}/../applications)
+install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
+        DESTINATION ${TRACKBALLS_SHARE}/../applications)
 
 # Translations!
 find_package(Gettext)
