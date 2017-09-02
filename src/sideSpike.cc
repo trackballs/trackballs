@@ -21,6 +21,7 @@
 
 #include "sideSpike.h"
 
+#include "animatedCollection.h"
 #include "ball.h"
 #include "game.h"
 #include "map.h"
@@ -120,9 +121,6 @@ void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
 void SideSpike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void SideSpike::tick(Real t) {
-  std::set<Ball *>::iterator iter = Ball::balls->begin();
-  std::set<Ball *>::iterator end = Ball::balls->end();
-  Ball *ball;
   double dist, h;
 
   if (is_on) phase += t * this->speed;
@@ -164,8 +162,11 @@ void SideSpike::tick(Real t) {
   double od = 0., aod;  // lateral distance to the spike
   int ol = 0;           // true if possible bounce
 
+  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  std::set<Animated *>::iterator iter = balls.begin();
+  std::set<Animated *>::iterator end = balls.end();
   for (; iter != end; iter++) {
-    ball = *iter;
+    Ball *ball = (Ball *)*iter;
 
     if (!ball->alive) continue;
 

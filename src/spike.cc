@@ -22,6 +22,7 @@
 
 #include "spike.h"
 
+#include "animatedCollection.h"
 #include "game.h"
 #include "map.h"
 #include "player.h"
@@ -91,9 +92,6 @@ void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
 void Spike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void Spike::tick(Real t) {
-  std::set<Ball *>::iterator iter = Ball::balls->begin();
-  std::set<Ball *>::iterator end = Ball::balls->end();
-  Ball *ball;
   double dist, dx, dy, speed, h;
   int is_sinking = 0;
 
@@ -118,8 +116,11 @@ void Spike::tick(Real t) {
   }
   position[2] = z;
 
+  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  std::set<Animated *>::iterator iter = balls.begin();
+  std::set<Animated *>::iterator end = balls.end();
   for (; iter != end; iter++) {
-    ball = *iter;
+    Ball *ball = (Ball *)*iter;
     if (ball->alive && ball->position[0] > x - 1 && ball->position[0] < x + 1 &&
         ball->position[1] > y - 1 && ball->position[1] < y + 1) {
       dx = ball->position[0] - x;

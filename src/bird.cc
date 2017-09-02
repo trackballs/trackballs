@@ -21,6 +21,8 @@
 */
 
 #include "bird.h"
+
+#include "animatedCollection.h"
 #include "ball.h"
 #include "game.h"
 #include "map.h"
@@ -134,11 +136,12 @@ void Bird::tick(Real t) {
   // check for collisions with balls
   Ball *ball;
   Coord3d diff;
-  std::set<Ball *>::iterator iter = Ball::balls->begin();
-  std::set<Ball *>::iterator end = Ball::balls->end();
+  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  std::set<Animated *>::iterator iter = balls.begin();
+  std::set<Animated *>::iterator end = balls.end();
 
   for (; iter != end; iter++) {
-    ball = *iter;
+    ball = (Ball *)*iter;
     if (!ball->alive) continue;
     if (ball->no_physics) continue;
 

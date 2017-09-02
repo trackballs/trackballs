@@ -21,6 +21,7 @@
 
 #include "ball.h"
 
+#include "animatedCollection.h"
 #include "debris.h"
 #include "forcefield.h"
 #include "game.h"
@@ -36,25 +37,20 @@
 #include <math.h>
 #include <set>
 
-class std::set<Ball *> *Ball::balls;
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
 
 void Ball::init() {
-  balls = new std::set<Ball *>();
   loadTexture("dizzy.png");
   dizzyTexCoords[0] = 0.f;
   dizzyTexCoords[1] = 0.f;
   dizzyTexCoords[2] = 1.f;
   dizzyTexCoords[3] = 1.f;
 }
-void Ball::reset() {
-  delete balls;
-  balls = new std::set<Ball *>();
-}
+
 void Ball::onRemove() {
   Animated::onRemove();
-  balls->erase(this);
+  Game::current->balls->remove(this);
 }
 
 Ball::Ball() : Animated() {
@@ -76,7 +72,7 @@ Ball::Ball() : Animated() {
   gravity = 8.0;
   bounceFactor = 0.8;
   crashTolerance = 7;
-  balls->insert(this);
+  Game::current->balls->insert(this);
   no_physics = 0;
   inPipe = 0;
 
@@ -1105,13 +1101,14 @@ void Ball::generateDebris(GLfloat color[4]) {
 }
 
 void Ball::handleBallCollisions() {
-  std::set<Ball *>::iterator iter = balls->begin();
-  std::set<Ball *>::iterator end = balls->end();
+  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
+  std::set<Animated *>::iterator iter = balls.begin();
+  std::set<Animated *>::iterator end = balls.end();
   Coord3d v;
   double dist, err, speed;
   Ball *ball;
   for (; iter != end; iter++) {
-    ball = *iter;
+    ball = (Ball *)*iter;
     if (ball == this) continue;
     if (!ball->alive) continue;
     if (ball->no_physics) continue;

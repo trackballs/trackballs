@@ -66,7 +66,6 @@ class Ball : public Animated {
   virtual void die(int how);
 
   static void init();
-  static void reset();
 
   Coord3d velocity;
   int inTheAir, inPipe;
@@ -81,8 +80,6 @@ class Ball : public Animated {
   /** 0 for low resolution balls (eg. debris), 1 for normal balls, 2
        for high res balls (eg. player) */
   int ballResolution;
-
-  static std::set<Ball*>* balls;
 
   /** how far the ball has sunk into acid / sand / etc. */
   double sink;

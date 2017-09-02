@@ -15,7 +15,7 @@ it. Also we aim at making the game highly configurable by a scripting
 extension (Guile) and provide a simple editor by which new levels easily 
 can be created.
 
-You start /Trackballs/ by giving the command `trackballs` which
+You start *Trackballs* by giving the command `trackballs` which
 instructs the game to load the first level. If you wish to cheat or simply
 are testing out a level you are currently designing you can give the command
 `trackballs -l foo` which jumps to level "foo". For more descriptions on how
@@ -69,6 +69,8 @@ they may be passed in via the issue system.
 ### Other
 
 If you have a question that needs answering, check the [FAQ](FAQ.md) first.
+
+Trackballs source code is under the [GPL v2](COPYING).
 
 The change log for Trackballs is [NEWS.md](NEWS.md).
 

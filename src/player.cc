@@ -20,6 +20,7 @@
 
 #include "player.h"
 
+#include "animatedCollection.h"
 #include "debris.h"
 #include "game.h"
 #include "mainMode.h"
@@ -375,7 +376,7 @@ void Player::restart(Coord3d pos) {
     modTimeLeft[i] = 0.0;*/
 }
 void Player::mouse(int /*state*/, int /*x*/, int /*y*/) {}
-void Player::newLevel() { Ball::balls->insert(this); }
+void Player::newLevel() { Game::current->balls->insert(this); }
 void Player::setHealth(Real d) {
   if (d < health) health = d;
   if (health < 0.0) health = 0.0;

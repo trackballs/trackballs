@@ -22,6 +22,8 @@
 #define MARGIN 10
 
 #include "game.h"
+
+#include "animatedCollection.h"
 #include "ball.h"
 #include "forcefield.h"
 #include "gamer.h"
@@ -40,7 +42,7 @@ extern GLfloat colors[5][3];
 double Game::defaultScores[SCORE_MAX][2];
 
 Game::Game(const char *name, Gamer *g) {
-  Ball::reset();
+  balls = new AnimatedCollection();
   ForceField::reset();
   Pipe::reset();
 
@@ -72,7 +74,7 @@ Game::Game(const char *name, Gamer *g) {
 }
 
 Game::Game(Map *editmap) {
-  Ball::reset();
+  balls = new AnimatedCollection();
   ForceField::reset();
   Pipe::reset();
   map = editmap;
@@ -97,6 +99,7 @@ Game::~Game() {
   delete objects;
   delete hooks;
   delete weather;
+  delete balls;
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }
 }
@@ -177,7 +180,11 @@ void Game::setDefaults() {
 }
 
 void Game::clearLevel() {
-  Ball::reset();
+  if (balls) {
+    delete balls;
+    balls = NULL;
+  };
+  balls = new AnimatedCollection();
   ForceField::reset();
 
   if (weather) weather->clear();
@@ -207,14 +214,16 @@ void Game::tick(Real t) {
   /* The game ticks run at a faster time scale so that the interaction
    * of different moving objects is realistic */
   for (int i = 0; i < steps; i++) {
+    /* Update intersection information */
+    balls->recalculateBboxMap();
+
     gameTime += tstep;
 
-    std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
-    std::set<GameHook *>::iterator ih = old_hooks->begin();
-    std::set<GameHook *>::iterator endh = old_hooks->end();
+    std::set<GameHook *> old_hooks(*hooks);
+    std::set<GameHook *>::iterator ih = old_hooks.begin();
+    std::set<GameHook *>::iterator endh = old_hooks.end();
 
     for (; ih != endh; ih++) (*ih)->tick(tstep);
-    delete old_hooks;
   }
   gameTime = origtime + t;
 

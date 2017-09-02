@@ -33,6 +33,7 @@
 #include "general.h"
 #include "glHelp.h"
 
+class AnimatedCollection;
 class Map;
 class Player;
 class Weather;
@@ -68,6 +69,7 @@ class Game {
   Weather *weather;
 
   static Game *current;
+  AnimatedCollection *balls;
 
   char levelName[256];
   char nextLevel[256];
