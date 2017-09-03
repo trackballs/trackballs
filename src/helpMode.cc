@@ -230,7 +230,7 @@ void HelpMode::display() {
                         NULL,
 
                         _("Goal:"),
-                        _("Will take you to the next level. "),
+                        _("Will take you to the next level."),
                         _("Get here before time runs out."),
                         NULL,
 
