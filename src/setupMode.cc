@@ -102,48 +102,24 @@ void SetupMode::display() {
 
   char str[256];
   Settings *settings = Settings::settings;
-  int fontSize = 48;
-  int titleFontSize = 64;
-  int col0 = screenWidth / 2 - 400;
-  int col1 = screenWidth / 2 + 100;
+  int extraSize =
+      std::min(std::max(screenWidth - 640, 0), std::max(screenHeight * 4 / 3 - 640, 0));
+
+  int fontSize = 28 + extraSize / 25;
+  int titleFontSize = 48 + extraSize / 25;
+  int col0 = screenWidth / 2 - (300 + extraSize / 4);
+  int col1 = screenWidth / 2 + (extraSize / 8);
   int row0 = screenHeight / 2 - 100;
   int rowSep = fontSize + 5;
 
+  int DESC_SIZE = fontSize / 3;
   int INFO_BASE = screenHeight - 70;
-  int INFO_DELTA = 20;
+  int INFO_DELTA = 16 + DESC_SIZE;
   int INFO_RIGHT = 20;
-  double INFO_SIZE = 10.0, INFO_R = 1.0, INFO_G = 1.0, INFO_B = 1.0, INFO_A = 1.0;
+  int INFO_SIZE = fontSize / 5;
+  double INFO_R = 1.0, INFO_G = 1.0, INFO_B = 1.0, INFO_A = 1.0;
 
-  double DESC_SIZE = 14.0, DESC_R = 1.0, DESC_G = 1.0, DESC_B = 1.0, DESC_A = 1.0;
-
-  /* Special fix for lower screen resolutions */
-  if (screenWidth == 640) {
-    fontSize = 32;
-    titleFontSize = 48;
-    col0 = screenWidth / 2 - 300;
-    col1 = screenWidth / 2 + 50;
-    rowSep = fontSize + 5;
-
-    INFO_SIZE = 8;
-    INFO_DELTA = 16;
-
-    DESC_SIZE = 8.0;
-  }
-  if (screenWidth == 800) {
-    fontSize = 32;
-    titleFontSize = 48;
-    col0 = screenWidth / 2 - 350;
-    col1 = screenWidth / 2 + 75;
-    rowSep = fontSize + 5;
-
-    DESC_SIZE = 10.0;
-
-    /*
-    INFO_WIDTH=8;
-    INFO_HEIGHT=8;
-    INFO_DELTA=16;    */
-  }
-
+  double DESC_R = 1.0, DESC_G = 1.0, DESC_B = 1.0, DESC_A = 1.0;
   int DESC_RIGHT = (int)(col0 - DESC_SIZE);
   int DESC_BASE = (int)(row0 + rowSep * 4);
   int DESC_DELTA = (int)(DESC_SIZE * 2);

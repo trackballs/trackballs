@@ -126,27 +126,15 @@ int getSelectedArea() {
 int fontsize, screenBorder, top, menuSpacing;
 
 void computeScreenSizes() {
-  if (screenWidth <= 640) {
-    fontsize = 18;
-    screenBorder = 50;
-    menuSpacing = fontsize + 10;
-    top = 150;
-  } else if (screenWidth == 800) {
-    fontsize = 20;
-    screenBorder = 75;
-    menuSpacing = fontsize + 14;
-    top = 180;
-  } else if (screenWidth == 1024) {
-    fontsize = 24;
-    screenBorder = 100;
-    menuSpacing = fontsize + 18;
-    top = 200;
-  } else if (screenWidth >= 1280) {
-    fontsize = 28;
-    screenBorder = 150;
-    menuSpacing = fontsize + 20;
-    top = 200;
-  }
+  int extraW = screenWidth > 640 ? (screenWidth - 640) : 0;
+  int extraH = screenHeight > 480 ? (screenHeight - 480) * 4 / 3 : 0;
+  int extra = extraW > extraH ? extraH : extraW;
+
+  fontsize = 18 + extra / 64;
+  if (fontsize < 18) fontsize = 18;
+  screenBorder = 50 + extra / 8;
+  menuSpacing = 17 * fontsize / 10;
+  top = 150 + extra / 6;
 }
 
 void menuItem_Left(int code, int row, const char *leftStr) {

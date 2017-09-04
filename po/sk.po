@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-03 13:54-0400\n"
+"POT-Creation-Date: 2017-09-04 09:31-0400\n"
 "PO-Revision-Date: 2017-06-25 20:11-0400\n"
 "Last-Translator: Jozef Říha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -624,12 +624,16 @@ msgstr "Otvoriť mapu"
 msgid "page %d / %d"
 msgstr "stránka %d / %d"
 
-#: ../src/enterHighScoreMode.cc:54
+#: ../src/enterHighScoreMode.cc:55
+msgid "High Score"
+msgstr ""
+
+#: ../src/enterHighScoreMode.cc:60
 #, fuzzy, c-format
 msgid "You got %d points"
 msgstr "%d bodov"
 
-#: ../src/enterHighScoreMode.cc:59
+#: ../src/enterHighScoreMode.cc:64
 #, c-format
 msgid "Enter your name: %s"
 msgstr ""
@@ -844,11 +848,15 @@ msgstr "Späť"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:110 ../src/setupMode.cc:160
+#: ../src/hofMode.cc:90
+msgid "High Scores"
+msgstr ""
+
+#: ../src/hofMode.cc:92 ../src/setupMode.cc:136
 msgid "Level Set"
 msgstr ""
 
-#: ../src/hofMode.cc:120
+#: ../src/hofMode.cc:101
 #, c-format
 msgid "%d points"
 msgstr "%d bodov"
@@ -1329,70 +1337,70 @@ msgstr "Hlasitosť efektov"
 msgid "Language"
 msgstr "Jazyk"
 
-#: ../src/setupMode.cc:152
+#: ../src/setupMode.cc:128
 msgid "Setup new game"
 msgstr "Nastaviť novú hru"
 
-#: ../src/setupMode.cc:156
+#: ../src/setupMode.cc:132
 msgid "Player Name"
 msgstr "Meno hráča"
 
-#: ../src/setupMode.cc:162
+#: ../src/setupMode.cc:138
 msgid "N/A"
 msgstr "N/A"
 
-#: ../src/setupMode.cc:168
+#: ../src/setupMode.cc:144
 msgid "Level"
 msgstr "Level"
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:152
 msgid "Difficulty"
 msgstr "Náročnosť"
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:157
 msgid "Sandbox (Easy)"
 msgstr "Sandbox (Ľahká)"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:158
 msgid "Sandbox (Normal)"
 msgstr "Sandbox (Bežná)"
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:158
 msgid "Sandbox (Hard)"
 msgstr "Sandbox (Ťažká)"
 
-#: ../src/setupMode.cc:184
+#: ../src/setupMode.cc:160
 msgid "Easy"
 msgstr "Ľahká"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:161
 msgid "Normal"
 msgstr "Bežná"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:161
 msgid "Hard"
 msgstr "Ťažká"
 
-#: ../src/setupMode.cc:189
+#: ../src/setupMode.cc:165
 msgid "Start Game"
 msgstr "Spustiť hru"
 
-#: ../src/setupMode.cc:193
+#: ../src/setupMode.cc:169
 #, c-format
 msgid "Total games played: %d"
 msgstr "Všetkých odohraných hier: %d"
 
-#: ../src/setupMode.cc:197
+#: ../src/setupMode.cc:173
 #, c-format
 msgid "Average score: %d"
 msgstr "Priemerné skóre: %d"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:175
 #, c-format
 msgid "Average score: N/A"
 msgstr "Priemerné skóre: nedostupné"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:178
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Hotových levelov: %d"

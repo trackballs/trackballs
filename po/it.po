@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-03 13:54-0400\n"
+"POT-Creation-Date: 2017-09-04 09:31-0400\n"
 "PO-Revision-Date: 2017-06-25 20:22-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -627,12 +627,16 @@ msgstr "Carica mappa"
 msgid "page %d / %d"
 msgstr "Pagina %d / %d"
 
-#: ../src/enterHighScoreMode.cc:54
+#: ../src/enterHighScoreMode.cc:55
+msgid "High Score"
+msgstr ""
+
+#: ../src/enterHighScoreMode.cc:60
 #, fuzzy, c-format
 msgid "You got %d points"
 msgstr "%d punti"
 
-#: ../src/enterHighScoreMode.cc:59
+#: ../src/enterHighScoreMode.cc:64
 #, c-format
 msgid "Enter your name: %s"
 msgstr ""
@@ -850,11 +854,15 @@ msgstr "Indietro"
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:110 ../src/setupMode.cc:160
+#: ../src/hofMode.cc:90
+msgid "High Scores"
+msgstr ""
+
+#: ../src/hofMode.cc:92 ../src/setupMode.cc:136
 msgid "Level Set"
 msgstr "Livelloteca:"
 
-#: ../src/hofMode.cc:120
+#: ../src/hofMode.cc:101
 #, c-format
 msgid "%d points"
 msgstr "%d punti"
@@ -1339,70 +1347,70 @@ msgstr "Volume effetti"
 msgid "Language"
 msgstr ""
 
-#: ../src/setupMode.cc:152
+#: ../src/setupMode.cc:128
 msgid "Setup new game"
 msgstr "Prepara nuovo gioco."
 
-#: ../src/setupMode.cc:156
+#: ../src/setupMode.cc:132
 msgid "Player Name"
 msgstr "Nome del giocatore"
 
-#: ../src/setupMode.cc:162
+#: ../src/setupMode.cc:138
 msgid "N/A"
 msgstr "N/D"
 
-#: ../src/setupMode.cc:168
+#: ../src/setupMode.cc:144
 msgid "Level"
 msgstr "Livello"
 
-#: ../src/setupMode.cc:176
+#: ../src/setupMode.cc:152
 msgid "Difficulty"
 msgstr "Difficoltà:"
 
-#: ../src/setupMode.cc:181
+#: ../src/setupMode.cc:157
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:158
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:182
+#: ../src/setupMode.cc:158
 msgid "Sandbox (Hard)"
 msgstr ""
 
-#: ../src/setupMode.cc:184
+#: ../src/setupMode.cc:160
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:161
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:185
+#: ../src/setupMode.cc:161
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:189
+#: ../src/setupMode.cc:165
 msgid "Start Game"
 msgstr "Gioca!"
 
-#: ../src/setupMode.cc:193
+#: ../src/setupMode.cc:169
 #, c-format
 msgid "Total games played: %d"
 msgstr "Partite giocate: %d"
 
-#: ../src/setupMode.cc:197
+#: ../src/setupMode.cc:173
 #, c-format
 msgid "Average score: %d"
 msgstr "Punteggio medio: %d"
 
-#: ../src/setupMode.cc:199
+#: ../src/setupMode.cc:175
 #, c-format
 msgid "Average score: N/A"
 msgstr "Punteggio medio: N/D"
 
-#: ../src/setupMode.cc:202
+#: ../src/setupMode.cc:178
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"

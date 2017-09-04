@@ -39,7 +39,7 @@ void EnterHighScoreMode::init() {
   if (low_memory)
     background = NULL;
   else {
-    background = loadImage("enterHighscoreBackground.jpg");
+    background = loadImage("setupBackground.jpg");
   }
 }
 EnterHighScoreMode::EnterHighScoreMode() { memset(name, 0, sizeof(name)); }
@@ -50,15 +50,20 @@ void EnterHighScoreMode::display() {
   draw2DRectangle(0, 0, screenWidth, screenHeight, texMinX, texMinY, texMaxX, texMaxY, 1., 1.,
                   1., 1., texture);
 
+  int fontSize = std::max(12, std::min(screenHeight / 30, screenWidth / 50));
+
+  Font::drawCenterSimpleText(_("High Score"), screenWidth / 2,
+                             screenHeight / 2 - 7.3 * fontSize, 7 * fontSize / 4, 0.85, 0.85,
+                             0.25, 1.0);
+
   char str[256];
   snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
-  int size = 20;
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 1.3 * size, size, 0.85,
-                             0.85, 0.25, 1.0);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 1.3 * fontSize, fontSize,
+                             0.85, 0.85, 0.25, 1.0);
 
   snprintf(str, sizeof(str), _("Enter your name: %s"), name);
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 1.3 * size, size, 0.85,
-                             0.85, 0.25, 1.0);
+  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 1.3 * fontSize, fontSize,
+                             0.85, 0.85, 0.25, 1.0);
 
   displayFrameRate();
   Leave2DMode();
