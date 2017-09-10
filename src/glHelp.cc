@@ -127,7 +127,7 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
 }
 
 int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
-                 float blue, float alpha, int outlined, int align) {
+                 float blue, float alpha, int outlined, int align, int maxwidth) {
   struct StringInfo inf;
   inf.color.r = 255 * red;
   inf.color.g = 255 * green;
@@ -152,12 +152,11 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   struct StringCache &cached = strcache[inf];
   cached.tick = stringTick;
 
-  y -= cached.h / 2;
-
-  draw2DRectangle(x - align * cached.w / 2, y, cached.w, cached.h, cached.texcoord[0],
-                  cached.texcoord[1], cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1.,
-                  cached.texture);
-  return cached.w;
+  GLfloat shrink = (maxwidth > 0 && maxwidth < cached.w) ? (maxwidth / (GLfloat)cached.w) : 1.;
+  draw2DRectangle(x - shrink * align * cached.w / 2, y - shrink * cached.h / 2,
+                  shrink * cached.w, shrink * cached.h, cached.texcoord[0], cached.texcoord[1],
+                  cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1., cached.texture);
+  return maxwidth > 0 ? std::min(cached.w, maxwidth) : cached.w;
 }
 
 void update2DStringCache() {
@@ -923,10 +922,10 @@ void message(char *A, char *B) {
   Enter2DMode();
   draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
 
-  Font::drawCenterSimpleText(A, screenWidth / 2 + size, screenHeight / 2 - size, size, 0.5,
-                             1.0, 0.2, 1.0);
-  Font::drawCenterSimpleText(B, screenWidth / 2 + size, screenHeight / 2 + 14, size, 0.5, 1.0,
-                             0.2, 1.0);
+  Font::drawCenterSimpleText(A, screenWidth / 2, screenHeight / 2 - size, size, 0.5, 1.0, 0.2,
+                             1.0);
+  Font::drawCenterSimpleText(B, screenWidth / 2, screenHeight / 2 + 14, size, 0.5, 1.0, 0.2,
+                             1.0);
 
   Leave2DMode();
 }
@@ -950,12 +949,12 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
   for (int i = 0; i < nlines; i++) {
     h_now += 2 * size;
     if (left[i]) {
-      Font::drawSimpleText(left[i], screenWidth / 2 - width / 2 + size,
+      Font::drawSimpleText(left[i], screenWidth / 2 - width / 2,
                            screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
                            1.0);
     }
     if (right[i]) {
-      Font::drawRightSimpleText(right[i], screenWidth / 2 + width / 2 + size,
+      Font::drawRightSimpleText(right[i], screenWidth / 2 + width / 2,
                                 screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0,
                                 0.2, 1.0);
     }

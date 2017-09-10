@@ -43,7 +43,7 @@ double frand(size_t);
 
 /* displays a 2d text on specific screen coordinates, returning width */
 int draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
-                 float alpha, int outlined, int align);
+                 float alpha, int outlined, int align, int maxwidth = 0);
 void update2DStringCache();
 /* Common interface for drawing 2d things on the screen */
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,

@@ -34,13 +34,13 @@ class Font {
   static void tick(Real t);
 
   /* Return value is always the width of the rendered text */
-  static int drawSimpleText(const char *text, int x, int y, float sz, float r, float g,
-                            float b, float a);
-  static int drawRightSimpleText(const char *text, int x, int y, float sz, float r, float g,
-                                 float b, float a);
-  static int drawCenterSimpleText(const char *text, int x, int y, float sz, float r, float g,
-                                  float b, float a);
-  static int getTextWidth(const char *text, float sz);
+  static int drawSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
+                            float a, int maxwidth = 0);
+  static int drawRightSimpleText(const char *text, int x, int y, int sz, float r, float g,
+                                 float b, float a, int maxwidth = 0);
+  static int drawCenterSimpleText(const char *text, int x, int y, int sz, float r, float g,
+                                  float b, float a, int maxwidth = 0);
+  static int getTextWidth(const char *text, int sz, int maxwidth = 0);
 };
 
 #endif
