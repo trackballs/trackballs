@@ -41,6 +41,8 @@ class AnimatedCollection {
   std::set<Animated*> store;
   void* map;
   void* alloc;
+  void** retlist;
+  int ntot;
 };
 
 #endif /* ANIMATED_COLLECTION_H */

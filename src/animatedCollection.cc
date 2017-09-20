@@ -20,11 +20,11 @@
 
 #include "animatedCollection.h"
 
-#include <vector>
-/* For std::sort */
+/* For std::sort, std::nth_element */
 #include <algorithm>
 
 static int AC_DEBUG = 0;
+static int SANITY_CHECK = 0;
 
 template<unsigned int D>
 struct Rectangle {
@@ -46,12 +46,19 @@ bool operator<(const PtDescending& l, const PtDescending& r) { return l.r > r.r;
 
 class SingleCycleAllocator {
  public:
-  SingleCycleAllocator(size_t maxbytes) {
+  SingleCycleAllocator(size_t maxbytes, size_t istacklen) {
+    size_t nints = istacklen / sizeof(int) + 1;
     data = new char[maxbytes];
+    istack = new int[nints];
     index = 0;
+    stackdex = 0;
     maxlen = maxbytes;
+    stacklen = istacklen;
   }
-  ~SingleCycleAllocator() { delete[] data; }
+  ~SingleCycleAllocator() {
+    delete[] data;
+    delete[] istack;
+  }
   void* allocate(size_t bytes) {
     char* ret = &data[index];
     index += bytes;
@@ -64,10 +71,25 @@ class SingleCycleAllocator {
   }
   size_t used() { return index; }
 
+  void* stackPush(size_t bytes) {
+    size_t nints = bytes / sizeof(int) + 1;
+    void* r = (void*)&istack[stackdex];
+    stackdex += nints + 1;
+    if (index >= maxlen) {
+      error("Tried to acquire %d more stack bytes (limit %d)", nints, stackdex);
+    }
+    istack[stackdex - 1] = nints;
+    return r;
+  }
+  void stackPop() { stackdex -= istack[stackdex - 1] + 1; }
+
  private:
   char* data;
+  int* istack;
   size_t index;
   size_t maxlen;
+  size_t stackdex;
+  size_t stacklen;
 };
 
 /* The auxiliary tree for D=1 */
@@ -79,7 +101,7 @@ class OverlapTree1D {
     rendpoints = NULL;
   }
   template<unsigned int K>
-  void init(const std::vector<struct Rectangle<K> >& rectangles, int* input, int iN,
+  void init(const struct Rectangle<K>* rectangles, int* input, int iN,
             SingleCycleAllocator* alloc) {
     N = iN;
     /* Since this is never modified, we use a sorted list rather than a tree */
@@ -104,16 +126,16 @@ class OverlapTree1D {
   }
   operator bool() const { return N > 0; }
 
-  int allTags(std::vector<void*>& acc) const {
-    for (int i = 0; i < N; i++) { acc.push_back(lendpoints[i].tag); }
+  int allTags(void** acc) const {
+    for (int i = 0; i < N; i++) { acc[i] = lendpoints[i].tag; }
     return N;
   }
   int numTags() const { return N; }
-  int leftEndsLeftOf(std::vector<void*>& acc, Real ubound) const {
+  int leftEndsLeftOf(void** acc, Real ubound) const {
     int nfound = 0;
     for (int i = 0; i < N; i++) {
       if (lendpoints[i].r <= ubound) {
-        acc.push_back(lendpoints[i].tag);
+        acc[nfound] = lendpoints[i].tag;
         nfound++;
       } else {
         break;
@@ -121,11 +143,12 @@ class OverlapTree1D {
     }
     return nfound;
   }
-  int rightEndsRightOf(std::vector<void*>& acc, Real lbound) const {
+  int rightEndsRightOf(void** acc, Real lbound) const {
     int nfound = 0;
     for (int i = 0; i < N; i++) {
       if (rendpoints[i].r >= lbound) {
-        acc.push_back(rendpoints[i].tag);
+        acc[nfound] = rendpoints[i].tag;
+        nfound++;
       } else {
         break;
       }
@@ -173,14 +196,14 @@ class OverlapTree {
     atree = NULL;
   }
   template<unsigned int K>
-  void init(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+  void init(const struct Rectangle<K>* rectangles, int* input, int N,
             SingleCycleAllocator* alloc);
   ~OverlapTree();
   operator bool() const { return N > 0; }
 
   DFoldRectangleTree<D - 1>* allTags() const { return atree; }
-  std::vector<DFoldRectangleTree<D - 1>*> leftEndsLeftOf(Real rbound) const;
-  std::vector<DFoldRectangleTree<D - 1>*> rightEndsRightOf(Real lbound) const;
+  int leftEndsLeftOf(Real rbound, void** acc, Real low[D], Real high[D]) const;
+  int rightEndsRightOf(Real lbound, void** acc, Real low[D], Real high[D]) const;
 
   void dumpTree(int depth = 0) const {
     char* lsp = new char[2 * depth + 2];
@@ -243,28 +266,29 @@ typedef enum {
   LeftOfFirstContainment = -1
 } AncTestValues;
 
-static int appendTo(std::vector<void*>& l, const std::vector<void*>& r) {
-  l.insert(l.end(), r.begin(), r.end());
-  return r.size();
-}
 template<unsigned int D, unsigned int K>
-Real computeSplitpoint(const std::vector<struct Rectangle<K> >& rectangles, int* input,
-                       int N) {
-  /* sort the 2d points and pick the center */
-  Real* dco = new Real[2 * N];
+Real computeSplitpoint(const struct Rectangle<K>* rectangles, int* input, int N,
+                       SingleCycleAllocator* alloc) {
+  /* sort the 2d points and pick the center. */
+  Real* dco = (Real*)alloc->stackPush(sizeof(Real) * 2 * N);
   for (int i = 0; i < N; i++) {
     dco[2 * i] = rectangles[input[i]].lower[D - 1];
     dco[2 * i + 1] = rectangles[input[i]].upper[D - 1];
   }
-  std::sort(dco, dco + 2 * N);
-  Real splitpoint = 0.5 * (dco[N - 1] + dco[N]);
-  delete[] dco;
+  /* Typically N<=4, in which case this is slower than sorting, but
+   * this is much faster for the few large N calls */
+  std::nth_element(dco, dco + N, dco + 2 * N);
+  Real upper = dco[N];
+  Real lower = dco[0];
+  for (int i = 1; i < N; i++) { lower = std::max(dco[i], lower); }
+  Real splitpoint = 0.5 * (lower + upper);
+  alloc->stackPop();
   return splitpoint;
 }
 
 template<unsigned int D, unsigned int K>
-Real splitRectangles(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
-                     int& nleft, int& noverlap, int& nright) {
+Real splitRectangles(const struct Rectangle<K>* rectangles, int* input, int N, int& nleft,
+                     int& noverlap, int& nright, SingleCycleAllocator* alloc) {
   if (!N) { error("Must have rectangles to split"); }
   nleft = 0;
   nright = 0;
@@ -274,7 +298,7 @@ Real splitRectangles(const std::vector<struct Rectangle<K> >& rectangles, int* i
     return 0.5 * (rectangles[input[0]].lower[D - 1] + rectangles[input[0]].upper[D - 1]);
   }
 
-  Real splitpoint = computeSplitpoint<D, K>(rectangles, input, N);
+  Real splitpoint = computeSplitpoint<D, K>(rectangles, input, N, alloc);
 
   /* Divide list into three segments */
   for (int i = 0; i < N; i++) {
@@ -304,11 +328,11 @@ template<unsigned int D>
 class DFoldRectangleTree {
  public:
   template<unsigned int K>
-  DFoldRectangleTree(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+  DFoldRectangleTree(const struct Rectangle<K>* rectangles, int* input, int N,
                      SingleCycleAllocator* alloc)
       : auxtree(), lefttree(NULL), righttree(NULL) {
     int nleft, noverlap, nright;
-    splitpoint = splitRectangles<D, K>(rectangles, input, N, nleft, noverlap, nright);
+    splitpoint = splitRectangles<D, K>(rectangles, input, N, nleft, noverlap, nright, alloc);
 
     /* Construct left and right trees */
     if (nleft) {
@@ -330,17 +354,17 @@ class DFoldRectangleTree {
   }
 
   /* This coordinate passes all tests, so drop down to the next coordinate */
-  int allsub(std::vector<void*>& acc, Real low[D], Real high[D]) const {
-    int ncount = 0;
-    if (auxtree) { ncount += auxtree.allTags()->intersect(acc, low, high); }
-    if (lefttree) { ncount += lefttree->allsub(acc, low, high); }
-    if (righttree) { ncount += righttree->allsub(acc, low, high); }
-    return ncount;
+  int allsub(void** acc, Real low[D], Real high[D]) const {
+    int nfound = 0;
+    if (auxtree) { nfound += auxtree.allTags()->intersect(&acc[nfound], low, high); }
+    if (lefttree) { nfound += lefttree->allsub(&acc[nfound], low, high); }
+    if (righttree) { nfound += righttree->allsub(&acc[nfound], low, high); }
+    return nfound;
   }
 
   /* Returns the number of intersections found, and adds indices corresponding
    * to the order of addition to the index accumulator. */
-  int intersect(std::vector<void*>& acc, Real low[D], Real high[D],
+  int intersect(void** acc, Real low[D], Real high[D],
                 AncTestValues _anctest = NoContainedAncestors) const {
     /* Return the 'tag' list for the rectangles */
     int nfound = 0;
@@ -354,51 +378,47 @@ class DFoldRectangleTree {
       /* An ancestor of this node is in [lbound,ubound],
        * and the current splitpoint on the left branch relative to that node */
       if (splitpoint >= lbound) {
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, LeftOfFirstContainment);
-        if (auxtree) nfound += auxtree.allTags()->intersect(acc, low, high);
-        if (righttree) nfound += righttree->allsub(acc, low, high);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
+        if (auxtree) nfound += auxtree.allTags()->intersect(&acc[nfound], low, high);
+        if (righttree) nfound += righttree->allsub(&acc[nfound], low, high);
       } else {
-        if (auxtree) {
-          std::vector<DFoldRectangleTree<D - 1>*> kds = auxtree.rightEndsRightOf(lbound);
-          for (int i = 0; i < kds.size(); i++) { nfound += kds[i]->intersect(acc, low, high); }
-        }
-        if (righttree) nfound += righttree->intersect(acc, low, high, LeftOfFirstContainment);
+        if (auxtree) nfound += auxtree.rightEndsRightOf(lbound, &acc[nfound], low, high);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
       }
     } else if (_anctest == RightOfFirstContainment) {
       /* An ancestor of this node is in [lbound,ubound],
        * and the current splitpoint on the right branch relative to that node */
       if (splitpoint <= rbound) {
-        if (righttree) nfound += righttree->intersect(acc, low, high, RightOfFirstContainment);
-        if (auxtree) nfound += auxtree.allTags()->intersect(acc, low, high);
-        if (lefttree) nfound += lefttree->allsub(acc, low, high);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
+        if (auxtree) nfound += auxtree.allTags()->intersect(&acc[nfound], low, high);
+        if (lefttree) nfound += lefttree->allsub(&acc[nfound], low, high);
       } else {
-        if (auxtree) {
-          std::vector<DFoldRectangleTree<D - 1>*> kds = auxtree.leftEndsLeftOf(rbound);
-          for (int i = 0; i < kds.size(); i++) { nfound += kds[i]->intersect(acc, low, high); }
-        }
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, RightOfFirstContainment);
+        if (auxtree) nfound += auxtree.leftEndsLeftOf(rbound, &acc[nfound], low, high);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
       }
     } else {
       /* No ancestors contained in [lbound,ubound]. */
       if (lbound <= splitpoint && splitpoint <= rbound) {
         /* [lbound, splitpoint, rbound] */
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, LeftOfFirstContainment);
-        if (auxtree) nfound += auxtree.allTags()->intersect(acc, low, high);
-        if (righttree) nfound += righttree->intersect(acc, low, high, RightOfFirstContainment);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
+        if (auxtree) nfound += auxtree.allTags()->intersect(&acc[nfound], low, high);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
       } else if (splitpoint <= lbound) {
         /* splitpoint, [lbound,rbound] */
-        if (auxtree) {
-          std::vector<DFoldRectangleTree<D - 1>*> kds = auxtree.rightEndsRightOf(lbound);
-          for (int i = 0; i < kds.size(); i++) { nfound += kds[i]->intersect(acc, low, high); }
-        }
-        if (righttree) nfound += righttree->intersect(acc, low, high, NoContainedAncestors);
+        if (auxtree) nfound += auxtree.rightEndsRightOf(lbound, &acc[nfound], low, high);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, NoContainedAncestors);
       } else if (splitpoint >= rbound) {
         /* [lbound,rbound], splitpoint*/
-        if (auxtree) {
-          std::vector<DFoldRectangleTree<D - 1>*> kds = auxtree.leftEndsLeftOf(rbound);
-          for (int i = 0; i < kds.size(); i++) { nfound += kds[i]->intersect(acc, low, high); }
-        }
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, NoContainedAncestors);
+        if (auxtree) nfound += auxtree.leftEndsLeftOf(rbound, &acc[nfound], low, high);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, NoContainedAncestors);
       } else {
         error("branch failure");
       }
@@ -406,7 +426,7 @@ class DFoldRectangleTree {
 
     if (AC_DEBUG && nfound) {
       warning("yield %d %f -> %d %x", D, splitpoint, nfound, this);
-      for (int i = acc.size() - nfound; i < acc.size(); i++) { warning("   yres %d", acc[i]); }
+      for (int i = 0; i < nfound; i++) { warning("   yres %d", acc[i]); }
     }
     return nfound;
   }
@@ -458,11 +478,11 @@ template<>
 class DFoldRectangleTree<1> {
  public:
   template<unsigned int K>
-  DFoldRectangleTree<1>(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+  DFoldRectangleTree<1>(const struct Rectangle<K>* rectangles, int* input, int N,
                         SingleCycleAllocator* alloc)
       : auxtree1d(), lefttree(NULL), righttree(NULL) {
     int nleft, noverlap, nright;
-    splitpoint = splitRectangles<1, K>(rectangles, input, N, nleft, noverlap, nright);
+    splitpoint = splitRectangles<1, K>(rectangles, input, N, nleft, noverlap, nright, alloc);
 
     /* Construct left and right trees */
     if (nleft) {
@@ -485,7 +505,7 @@ class DFoldRectangleTree<1> {
 
   /* Returns the number of intersections found, and adds indices corresponding
    * to the order of addition to the index accumulator. */
-  int intersect(std::vector<void*>& acc, Real low[1], Real high[1],
+  int intersect(void** acc, Real low[1], Real high[1],
                 AncTestValues _anctest = NoContainedAncestors) const {
     /* Return the 'tag' list for the rectangles */
     int nfound = 0;
@@ -501,42 +521,50 @@ class DFoldRectangleTree<1> {
        * and the current splitpoint on the left branch relative to that node */
       if (splitpoint >= lbound) {
         /* [lbound, splitpoint, alpha, rbound] */
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, LeftOfFirstContainment);
-        if (auxtree1d) nfound += auxtree1d.allTags(acc);
-        if (righttree) nfound += righttree->allTags(acc);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
+        if (auxtree1d) nfound += auxtree1d.allTags(&acc[nfound]);
+        if (righttree) nfound += righttree->allTags(&acc[nfound]);
       } else {
         /* splitpoint, [lbound, alpha, rbound] */
-        if (auxtree1d) nfound += auxtree1d.rightEndsRightOf(acc, lbound);
-        if (righttree) nfound += righttree->intersect(acc, low, high, LeftOfFirstContainment);
+        if (auxtree1d) nfound += auxtree1d.rightEndsRightOf(&acc[nfound], lbound);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
       }
     } else if (_anctest == RightOfFirstContainment) {
       /* An ancestor of this node is in [lbound,ubound],
        * and the current splitpoint on the right branch relative to that node */
       if (splitpoint <= rbound) {
         /* [lbound, alpha, splitpoint, rbound] */
-        if (righttree) nfound += righttree->intersect(acc, low, high, RightOfFirstContainment);
-        if (auxtree1d) nfound += auxtree1d.allTags(acc);
-        if (lefttree) nfound += lefttree->allTags(acc);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
+        if (auxtree1d) nfound += auxtree1d.allTags(&acc[nfound]);
+        if (lefttree) nfound += lefttree->allTags(&acc[nfound]);
       } else {
         /* [lbound, alpha, rbound], splitpoint */
-        if (auxtree1d) nfound += auxtree1d.leftEndsLeftOf(acc, rbound);
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, RightOfFirstContainment);
+        if (auxtree1d) nfound += auxtree1d.leftEndsLeftOf(&acc[nfound], rbound);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
       }
     } else {
       /* No ancestors contained in [lbound,ubound]. */
       if (lbound <= splitpoint && splitpoint <= rbound) {
         /* [lbound, splitpoint, rbound] */
-        if (auxtree1d) nfound += auxtree1d.allTags(acc);
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, LeftOfFirstContainment);
-        if (righttree) nfound += righttree->intersect(acc, low, high, RightOfFirstContainment);
+        if (auxtree1d) nfound += auxtree1d.allTags(&acc[nfound]);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, LeftOfFirstContainment);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, RightOfFirstContainment);
       } else if (splitpoint <= lbound) {
         /* splitpoint, [lbound,rbound] */
-        if (auxtree1d) nfound += auxtree1d.rightEndsRightOf(acc, lbound);
-        if (righttree) nfound += righttree->intersect(acc, low, high, NoContainedAncestors);
+        if (auxtree1d) nfound += auxtree1d.rightEndsRightOf(&acc[nfound], lbound);
+        if (righttree)
+          nfound += righttree->intersect(&acc[nfound], low, high, NoContainedAncestors);
       } else if (rbound <= splitpoint) {
         /* [lbound,rbound], splitpoint*/
-        if (auxtree1d) nfound += auxtree1d.leftEndsLeftOf(acc, rbound);
-        if (lefttree) nfound += lefttree->intersect(acc, low, high, NoContainedAncestors);
+        if (auxtree1d) nfound += auxtree1d.leftEndsLeftOf(&acc[nfound], rbound);
+        if (lefttree)
+          nfound += lefttree->intersect(&acc[nfound], low, high, NoContainedAncestors);
       } else {
         error("branch failure");
       }
@@ -544,7 +572,7 @@ class DFoldRectangleTree<1> {
 
     if (AC_DEBUG && nfound) {
       warning("yield %d %f -> %d %x", D, splitpoint, nfound, this);
-      for (int i = acc.size() - nfound; i < acc.size(); i++) { warning("   yres %d", acc[i]); }
+      for (int i = 0; i < nfound; i++) { warning("   yres %d", acc[i]); }
     }
     return nfound;
   }
@@ -561,11 +589,11 @@ class DFoldRectangleTree<1> {
     delete[] lsp;
   }
 
-  int allTags(std::vector<void*>& acc) const {
+  int allTags(void** acc) const {
     int nfound = 0;
-    if (lefttree) nfound += lefttree->allTags(acc);
-    if (righttree) nfound += righttree->allTags(acc);
-    if (auxtree1d) nfound += auxtree1d.allTags(acc);
+    if (lefttree) nfound += lefttree->allTags(&acc[nfound]);
+    if (righttree) nfound += righttree->allTags(&acc[nfound]);
+    if (auxtree1d) nfound += auxtree1d.allTags(&acc[nfound]);
     return nfound;
   }
 
@@ -605,8 +633,8 @@ class DFoldRectangleTree<1> {
 
 template<unsigned int D>
 template<unsigned int K>
-void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles, int* input,
-                          int iN, SingleCycleAllocator* alloc) {
+void OverlapTree<D>::init(const struct Rectangle<K>* rectangles, int* input, int iN,
+                          SingleCycleAllocator* alloc) {
   N = iN;
   lendpoints = (PtAscending*)alloc->allocate(sizeof(PtAscending) * N);
   rendpoints = (PtDescending*)alloc->allocate(sizeof(PtDescending) * N);
@@ -637,13 +665,12 @@ void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles, i
       rtrees[i] = NULL;
     }
 
-    int* iscratch = new int[k / 2];
-
     /* Construct all the trees */
     int j = 1;
     while (j < N) {
       int S = k / (2 * j);
 
+      int* iscratch = (int*)alloc->stackPush(sizeof(int) * S);
       for (int p = 0; S * (2 * p + 1) < N; p++) {
         /* Create left subtrees of size S */
         for (int i = 0; i < S; i++) { iscratch[i] = (ptrdiff_t)lendpoints[S * 2 * p + i].tag; }
@@ -655,11 +682,11 @@ void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles, i
         rtrees[j - 1 + p] = alloc->allocateFor<DFoldRectangleTree<D - 1> >();
         new (rtrees[j - 1 + p]) DFoldRectangleTree<D - 1>(rectangles, iscratch, S, alloc);
       }
+      alloc->stackPop();
 
       j *= 2;
     }
 
-    delete[] iscratch;
   } else {
     ltrees = NULL;
     rtrees = NULL;
@@ -669,21 +696,19 @@ void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles, i
 }
 
 template<unsigned int D>
-std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::leftEndsLeftOf(Real rbound) const {
+int OverlapTree<D>::leftEndsLeftOf(Real rbound, void** acc, Real low[D], Real high[D]) const {
   /* lendpoints in ascending order */
-  std::vector<DFoldRectangleTree<D - 1>*> ret;
   /* fast cases, all and nothing */
   if (lendpoints[N - 1].r <= rbound) {
     if (AC_DEBUG) {
       warning("triv lelo %f <= %f | %d %d", lendpoints[N - 1].r, rbound, D,
               atree->rectcount());
     }
-    ret.push_back(atree);
-    return ret;
+    return atree->intersect(&acc[0], low, high);
   }
   if (rbound < lendpoints[0].r) {
     if (AC_DEBUG) { warning("triv lelo %f < %f | %d", rbound, lendpoints[0].r, D); }
-    return ret;
+    return 0;
   }
 
   /* simulateneously binary search and build tree list  */
@@ -692,12 +717,13 @@ std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::leftEndsLeftOf(Real rbou
 
   int j = 0;
   int v = 1;
+  int nfound = 0;
   while (k > 0) {
     if (j + k - 1 >= N) {
       v = v * 2;
     } else if (lendpoints[j + k - 1].r <= rbound) {
       if (!ltrees[v - 1]) error("Null tree");
-      ret.push_back(ltrees[v - 1]);
+      nfound += ltrees[v - 1]->intersect(&acc[nfound], low, high);
       j = j + k;
       v = v * 2 + 1;
     } else {
@@ -705,25 +731,24 @@ std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::leftEndsLeftOf(Real rbou
     }
     k = k / 2;
   }
-  if (AC_DEBUG) { warning("nontriv lelo %f D=%d sz=%d", rbound, D, ret.size()); }
-  return ret;
+  if (AC_DEBUG) { warning("nontriv lelo %f D=%d nfo=%d", rbound, D, nfound); }
+  return nfound;
 }
 template<unsigned int D>
-std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::rightEndsRightOf(Real lbound) const {
+int OverlapTree<D>::rightEndsRightOf(Real lbound, void** acc, Real low[D],
+                                     Real high[D]) const {
   /* rendpoints in descending order */
-  std::vector<DFoldRectangleTree<D - 1>*> ret;
   /* fast cases, all and nothing */
   if (rendpoints[N - 1].r >= lbound) {
     if (AC_DEBUG) {
       warning("triv rero %f >= %f | %d %f %d", rendpoints[N - 1].r, lbound, D,
               atree->getSplitpoint(), atree->rectcount());
     }
-    ret.push_back(atree);
-    return ret;
+    return atree->intersect(&acc[0], low, high);
   }
   if (lbound > rendpoints[0].r) {
     if (AC_DEBUG) { warning("triv rero %f > %f | %d", lbound, rendpoints[0].r, D); }
-    return ret;
+    return 0;
   }
 
   /* simulateneously binary search and build tree list  */
@@ -732,12 +757,13 @@ std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::rightEndsRightOf(Real lb
 
   int j = 0;
   int v = 1;
+  int nfound = 0;
   while (k > 0) {
     if (j + k - 1 >= N) {
       v = v * 2;
     } else if (rendpoints[j + k - 1].r >= lbound) {
       if (!rtrees[v - 1]) error("Null tree");
-      ret.push_back(rtrees[v - 1]);
+      nfound += rtrees[v - 1]->intersect(&acc[nfound], low, high);
       j = j + k;
       v = v * 2 + 1;
     } else {
@@ -745,24 +771,23 @@ std::vector<DFoldRectangleTree<D - 1>*> OverlapTree<D>::rightEndsRightOf(Real lb
     }
     k = k / 2;
   }
-  if (AC_DEBUG) { warning("nontriv rero %f D=%d sz=%d", lbound, D, ret.size()); }
-  return ret;
+  if (AC_DEBUG) { warning("nontriv rero %f D=%d nfo=%d", lbound, D, nfound); }
+  return nfound;
 }
 
-AnimatedCollection::AnimatedCollection() {
-  map = NULL;
-  alloc = NULL;
-}
+AnimatedCollection::AnimatedCollection()
+    : store(), map(NULL), alloc(NULL), retlist(NULL), ntot(0) {}
 
 AnimatedCollection::~AnimatedCollection() {
   if (alloc) delete (SingleCycleAllocator*)alloc;
+  if (retlist) delete[] retlist;
 }
 
 void AnimatedCollection::insert(Animated* a) { store.insert(a); }
 
 void AnimatedCollection::remove(Animated* a) { store.erase(a); }
 
-static std::vector<struct Rectangle<3> > staticinput;
+static struct Rectangle<3>* staticinput = NULL;
 
 static struct Rectangle<3> rectFromAnim(const Animated* a) {
   struct Rectangle<3> r;
@@ -788,25 +813,38 @@ void AnimatedCollection::recalculateBboxMap() {
     map = NULL;
   }
 
-  std::vector<struct Rectangle<3> > input;
-  std::vector<int> rect_indices;
+  ntot = store.size();
+  struct Rectangle<3>* input = new struct Rectangle<3>[ntot];
+  int* rect_indices = new int[ntot];
   std::set<Animated*>::iterator iter = store.begin();
   std::set<Animated*>::iterator end = store.end();
-  for (; iter != end; iter++) {
+  for (int i = 0; iter != end; iter++, i++) {
     struct Rectangle<3> r = rectFromAnim(*iter);
-    input.push_back(r);
-    rect_indices.push_back(rect_indices.size());
+    input[i] = r;
+    rect_indices[i] = i;
   }
-  staticinput = input;
+  if (SANITY_CHECK) {
+    if (staticinput) delete[] staticinput;
+    staticinput = new struct Rectangle<3>[ntot];
+    memcpy(staticinput, input, sizeof(struct Rectangle<3>) * ntot);
+  }
 
   /* For < 200 entities, maxmem < 5MB, and in practice ~200Kb is used */
-  size_t maxmem = DFoldRectangleTree<3>::maxMemoryUse(store.size());
-  alloc = new SingleCycleAllocator(maxmem);
+  size_t maxmem = DFoldRectangleTree<3>::maxMemoryUse(ntot);
+  size_t nstack = (ntot + 1) * (sizeof(int) * 3 + sizeof(Real) * 2);
+  alloc = new SingleCycleAllocator(maxmem, nstack);
   map = ((SingleCycleAllocator*)alloc)->allocate(sizeof(DFoldRectangleTree<3>));
-  new (map) DFoldRectangleTree<3>(input, rect_indices.data(), rect_indices.size(),
-                                  (SingleCycleAllocator*)alloc);
+  new (map) DFoldRectangleTree<3>(input, rect_indices, ntot, (SingleCycleAllocator*)alloc);
   size_t usage = ((SingleCycleAllocator*)alloc)->used();
   (void)usage;
+  delete[] input;
+  delete[] rect_indices;
+
+  if (retlist) {
+    delete[] retlist;
+    retlist = NULL;
+  }
+  retlist = new void*[ntot];
 }
 
 std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
@@ -817,17 +855,17 @@ std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) cons
   DFoldRectangleTree<3>* dmap = (DFoldRectangleTree<3>*)map;
   struct Rectangle<3> r = rectFromAnim(a);
 
-  std::vector<void*> uco;
-  dmap->intersect(uco, r.lower, r.upper);
+  int nfound = dmap->intersect(retlist, r.lower, r.upper);
+
   std::set<Animated*> ret;
-  for (int i = 0; i < uco.size(); i++) { ret.insert((Animated*)uco[i]); }
-  if (0) {
+  for (int i = 0; i < nfound; i++) { ret.insert((Animated*)retlist[i]); }
+  if (SANITY_CHECK) {
     /* Sanity check via O(n^2) algorithm */
 
     /* As the Animateds move during the step, we use their initial positions */
     std::set<Animated*> coll;
     int nco = 0;
-    for (int l = 0; l < staticinput.size(); l++) {
+    for (int l = 0; l < ntot; l++) {
       struct Rectangle<3> s = staticinput[l];
 
       int nover = 0;
@@ -841,9 +879,9 @@ std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) cons
     }
 
     static int psu = 0;
-    if (coll.size() != nco || coll.size() != ret.size() | ret.size() != uco.size()) {
-      warning("Interval tree error %d -> %d (ideal %d (%d present)), %d prior passed",
-              uco.size(), ret.size(), coll.size(), nco, psu);
+    if (coll.size() != nco || coll.size() != ret.size() | ret.size() != nfound) {
+      warning("Interval tree %d error %d -> %d (ideal %d (%d present)), %d prior passed", ntot,
+              nfound, ret.size(), coll.size(), nco, psu);
       psu = 0;
     } else {
       psu++;
