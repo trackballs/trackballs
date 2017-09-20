@@ -55,7 +55,7 @@ class SingleCycleAllocator {
   void* allocate(size_t bytes) {
     char* ret = &data[index];
     index += bytes;
-    if (index >= maxlen) { error("Tried to allocate over cap"); }
+    if (index >= maxlen) { error("Tried to allocate block %d over cap %d", bytes, maxlen); }
     return ret;
   }
   template<class T>
@@ -79,10 +79,10 @@ class OverlapTree1D {
     rendpoints = NULL;
   }
   template<unsigned int K>
-  void init(const std::vector<struct Rectangle<K> >& rectangles, const std::vector<int>& input,
+  void init(const std::vector<struct Rectangle<K> >& rectangles, int* input, int iN,
             SingleCycleAllocator* alloc) {
+    N = iN;
     /* Since this is never modified, we use a sorted list rather than a tree */
-    N = input.size();
     lendpoints = (PtAscending*)alloc->allocate(sizeof(PtAscending) * N);
     rendpoints = (PtDescending*)alloc->allocate(sizeof(PtDescending) * N);
     for (int i = 0; i < N; i++) {
@@ -173,7 +173,7 @@ class OverlapTree {
     atree = NULL;
   }
   template<unsigned int K>
-  void init(const std::vector<struct Rectangle<K> >& rectangles, const std::vector<int>& input,
+  void init(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
             SingleCycleAllocator* alloc);
   ~OverlapTree();
   operator bool() const { return N > 0; }
@@ -247,17 +247,9 @@ static int appendTo(std::vector<void*>& l, const std::vector<void*>& r) {
   l.insert(l.end(), r.begin(), r.end());
   return r.size();
 }
-
 template<unsigned int D, unsigned int K>
-Real splitRectangles(const std::vector<struct Rectangle<K> >& rectangles,
-                     const std::vector<int>& input, std::vector<int>& left,
-                     std::vector<int>& right, std::vector<int>& overlapping) {
-  int N = input.size();
-  if (!N) { error("Must have rectangles to split"); }
-  if (N == 1) {
-    overlapping.push_back(input[0]);
-    return 0.5 * (rectangles[input[0]].lower[D - 1] + rectangles[input[0]].upper[D - 1]);
-  }
+Real computeSplitpoint(const std::vector<struct Rectangle<K> >& rectangles, int* input,
+                       int N) {
   /* sort the 2d points and pick the center */
   Real* dco = new Real[2 * N];
   for (int i = 0; i < N; i++) {
@@ -267,32 +259,44 @@ Real splitRectangles(const std::vector<struct Rectangle<K> >& rectangles,
   std::sort(dco, dco + 2 * N);
   Real splitpoint = 0.5 * (dco[N - 1] + dco[N]);
   delete[] dco;
+  return splitpoint;
+}
 
-  /* Divide rectangles into three lists. Note a point
-   * == splitpoint is left if splitpoint iff (i < N/2) */
+template<unsigned int D, unsigned int K>
+Real splitRectangles(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+                     int& nleft, int& noverlap, int& nright) {
+  if (!N) { error("Must have rectangles to split"); }
+  nleft = 0;
+  nright = 0;
+  noverlap = 0;
+  if (N == 1) {
+    noverlap = 1;
+    return 0.5 * (rectangles[input[0]].lower[D - 1] + rectangles[input[0]].upper[D - 1]);
+  }
+
+  Real splitpoint = computeSplitpoint<D, K>(rectangles, input, N);
+
+  /* Divide list into three segments */
   for (int i = 0; i < N; i++) {
-    Real lbound = rectangles[input[i]].lower[D - 1];
-    Real ubound = rectangles[input[i]].upper[D - 1];
-    if (ubound < splitpoint || (i > N / 2 && ubound == splitpoint)) {
+    int p = nleft + noverlap;
+    Real lbound = rectangles[input[p]].lower[D - 1];
+    Real ubound = rectangles[input[p]].upper[D - 1];
+    if (splitpoint > ubound) {
       /* Rectangle entirely below the split point */
-      left.push_back(input[i]);
-    } else if (splitpoint < lbound || (i <= N / 2 && lbound == splitpoint)) {
+      std::swap(input[p], input[nleft]);
+      nleft++;
+    } else if (splitpoint < lbound) {
       /* Rectangle entirely above the split point */
-      right.push_back(input[i]);
+      std::swap(input[p], input[N - 1 - nright]);
+      nright++;
     } else {
       /* Rectangle overlaps the split point */
-      overlapping.push_back(input[i]);
+      noverlap++;
     }
   }
 
-  if (left.size() == input.size()) {
-    error("Left size fail: %d %d %d (%d)", left.size(), overlapping.size(), right.size(),
-          input.size());
-  }
-  if (right.size() == input.size()) {
-    error("Right size fail: %d %d %d (%d)", left.size(), overlapping.size(), right.size(),
-          input.size());
-  }
+  if (nleft == N) { error("Left size fail: %d %d %d (%d)", nleft, noverlap, nright, N); }
+  if (nright == N) { error("Right size fail: %d %d %d (%d)", nleft, noverlap, nright, N); }
   return splitpoint;
 }
 
@@ -300,26 +304,25 @@ template<unsigned int D>
 class DFoldRectangleTree {
  public:
   template<unsigned int K>
-  DFoldRectangleTree(const std::vector<struct Rectangle<K> >& rectangles,
-                     const std::vector<int>& input, SingleCycleAllocator* alloc)
+  DFoldRectangleTree(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+                     SingleCycleAllocator* alloc)
       : auxtree(), lefttree(NULL), righttree(NULL) {
-    std::vector<int> left;
-    std::vector<int> right;
-    std::vector<int> overlapping;
-    splitpoint = splitRectangles<D, K>(rectangles, input, left, right, overlapping);
+    int nleft, noverlap, nright;
+    splitpoint = splitRectangles<D, K>(rectangles, input, N, nleft, noverlap, nright);
 
     /* Construct left and right trees */
-    if (left.size()) {
+    if (nleft) {
       lefttree = alloc->allocateFor<DFoldRectangleTree<D> >();
-      new (lefttree) DFoldRectangleTree<D>(rectangles, left, alloc);
+      new (lefttree) DFoldRectangleTree<D>(rectangles, &input[0], nleft, alloc);
     }
-    if (right.size()) {
+    if (nright) {
       righttree = alloc->allocateFor<DFoldRectangleTree<D> >();
-      new (righttree) DFoldRectangleTree<D>(rectangles, right, alloc);
+      new (righttree)
+          DFoldRectangleTree<D>(rectangles, &input[nleft + noverlap], nright, alloc);
     }
 
     /* Project middle subtree down a dimension */
-    if (overlapping.size()) { auxtree.init(rectangles, overlapping, alloc); }
+    if (noverlap) { auxtree.init(rectangles, &input[nleft], noverlap, alloc); }
   }
   ~DFoldRectangleTree() {
     if (lefttree) delete lefttree;
@@ -455,26 +458,25 @@ template<>
 class DFoldRectangleTree<1> {
  public:
   template<unsigned int K>
-  DFoldRectangleTree<1>(const std::vector<struct Rectangle<K> >& rectangles,
-                        std::vector<int> input, SingleCycleAllocator* alloc)
+  DFoldRectangleTree<1>(const std::vector<struct Rectangle<K> >& rectangles, int* input, int N,
+                        SingleCycleAllocator* alloc)
       : auxtree1d(), lefttree(NULL), righttree(NULL) {
-    std::vector<int> left;
-    std::vector<int> right;
-    std::vector<int> overlapping;
-    splitpoint = splitRectangles<1, K>(rectangles, input, left, right, overlapping);
+    int nleft, noverlap, nright;
+    splitpoint = splitRectangles<1, K>(rectangles, input, N, nleft, noverlap, nright);
 
     /* Construct left and right trees */
-    if (left.size()) {
+    if (nleft) {
       lefttree = alloc->allocateFor<DFoldRectangleTree<1> >();
-      new (lefttree) DFoldRectangleTree<1>(rectangles, left, alloc);
+      new (lefttree) DFoldRectangleTree<1>(rectangles, &input[0], nleft, alloc);
     }
-    if (right.size()) {
+    if (nright) {
       righttree = alloc->allocateFor<DFoldRectangleTree<1> >();
-      new (righttree) DFoldRectangleTree<1>(rectangles, right, alloc);
+      new (righttree)
+          DFoldRectangleTree<1>(rectangles, &input[nleft + noverlap], nright, alloc);
     }
 
     /* Project middle subtree down a dimension */
-    if (overlapping.size()) { auxtree1d.init(rectangles, overlapping, alloc); }
+    if (noverlap) { auxtree1d.init(rectangles, &input[nleft], noverlap, alloc); }
   }
   ~DFoldRectangleTree<1>() {
     if (lefttree) delete lefttree;
@@ -603,10 +605,9 @@ class DFoldRectangleTree<1> {
 
 template<unsigned int D>
 template<unsigned int K>
-void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles,
-                          const std::vector<int>& input, SingleCycleAllocator* alloc) {
-  N = input.size();
-
+void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles, int* input,
+                          int iN, SingleCycleAllocator* alloc) {
+  N = iN;
   lendpoints = (PtAscending*)alloc->allocate(sizeof(PtAscending) * N);
   rendpoints = (PtDescending*)alloc->allocate(sizeof(PtDescending) * N);
 
@@ -636,32 +637,35 @@ void OverlapTree<D>::init(const std::vector<struct Rectangle<K> >& rectangles,
       rtrees[i] = NULL;
     }
 
+    int* iscratch = new int[k / 2];
+
     /* Construct all the trees */
     int j = 1;
     while (j < N) {
       int S = k / (2 * j);
 
       for (int p = 0; S * (2 * p + 1) < N; p++) {
-        std::vector<int> rslist;
-        std::vector<int> lslist;
-        for (int i = S * 2 * p; i < S * (2 * p + 1); i++) {
-          lslist.push_back((ptrdiff_t)lendpoints[i].tag);
-          rslist.push_back((ptrdiff_t)rendpoints[i].tag);
-        }
+        /* Create left subtrees of size S */
+        for (int i = 0; i < S; i++) { iscratch[i] = (ptrdiff_t)lendpoints[S * 2 * p + i].tag; }
         ltrees[j - 1 + p] = alloc->allocateFor<DFoldRectangleTree<D - 1> >();
+        new (ltrees[j - 1 + p]) DFoldRectangleTree<D - 1>(rectangles, iscratch, S, alloc);
+
+        /* Create right subtrees of size S */
+        for (int i = 0; i < S; i++) { iscratch[i] = (ptrdiff_t)rendpoints[S * 2 * p + i].tag; }
         rtrees[j - 1 + p] = alloc->allocateFor<DFoldRectangleTree<D - 1> >();
-        new (ltrees[j - 1 + p]) DFoldRectangleTree<D - 1>(rectangles, lslist, alloc);
-        new (rtrees[j - 1 + p]) DFoldRectangleTree<D - 1>(rectangles, rslist, alloc);
+        new (rtrees[j - 1 + p]) DFoldRectangleTree<D - 1>(rectangles, iscratch, S, alloc);
       }
 
       j *= 2;
     }
+
+    delete[] iscratch;
   } else {
     ltrees = NULL;
     rtrees = NULL;
   }
   atree = alloc->allocateFor<DFoldRectangleTree<D - 1> >();
-  new (atree) DFoldRectangleTree<D - 1>(rectangles, input, alloc);
+  new (atree) DFoldRectangleTree<D - 1>(rectangles, input, N, alloc);
 }
 
 template<unsigned int D>
@@ -799,8 +803,10 @@ void AnimatedCollection::recalculateBboxMap() {
   size_t maxmem = DFoldRectangleTree<3>::maxMemoryUse(store.size());
   alloc = new SingleCycleAllocator(maxmem);
   map = ((SingleCycleAllocator*)alloc)->allocate(sizeof(DFoldRectangleTree<3>));
-  new (map) DFoldRectangleTree<3>(input, rect_indices, (SingleCycleAllocator*)alloc);
+  new (map) DFoldRectangleTree<3>(input, rect_indices.data(), rect_indices.size(),
+                                  (SingleCycleAllocator*)alloc);
   size_t usage = ((SingleCycleAllocator*)alloc)->used();
+  (void)usage;
 }
 
 std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
@@ -834,9 +840,13 @@ std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) cons
       }
     }
 
+    static int psu = 0;
     if (coll.size() != nco || coll.size() != ret.size() | ret.size() != uco.size()) {
-      warning("Interval tree error %d -> %d (ideal %d (%d present)),", uco.size(), ret.size(),
-              coll.size(), nco);
+      warning("Interval tree error %d -> %d (ideal %d (%d present)), %d prior passed",
+              uco.size(), ret.size(), coll.size(), nco, psu);
+      psu = 0;
+    } else {
+      psu++;
     }
     return coll;
   }
