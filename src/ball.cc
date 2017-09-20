@@ -102,7 +102,10 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   allocateBuffers(N, idxbufs, databufs);
 
   GLfloat color[4] = {
-      primaryColor[0], primaryColor[1], primaryColor[2], 1.,
+      primaryColor[0],
+      primaryColor[1],
+      primaryColor[2],
+      1.,
   };
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
   if (modTimeLeft[MOD_GLASS]) {
@@ -1352,11 +1355,10 @@ void Ball::handlePipes(Real time) {
     normalize(dirNorm);
     Coord3d v0;  // pipe enterance -> ball position
     sub(position, pipe->from, v0);
-    double l =
-        std::max(0.0, std::min(1.0,
-                               dotProduct(v0, dirNorm) /
-                                   length(direction)));  // where along pipe ball is projected
-    Coord3d proj;  // where (as pos) the ball is projected
+    double l = std::max(
+        0.0, std::min(1.0, dotProduct(v0, dirNorm) /
+                               length(direction)));  // where along pipe ball is projected
+    Coord3d proj;                                    // where (as pos) the ball is projected
     for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
     Coord3d v1;  // projection point -> ball position
     sub(position, proj, v1);

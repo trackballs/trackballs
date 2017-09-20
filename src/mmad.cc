@@ -673,7 +673,7 @@ int main(int argc, char **argv) {
 #ifdef WIN32
           || thisDir[i] == '\\'
 #endif
-          )
+      )
         break;
     if (i >= 0) thisDir[i] = 0;
 

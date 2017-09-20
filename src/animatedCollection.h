@@ -40,6 +40,7 @@ class AnimatedCollection {
  private:
   std::set<Animated*> store;
   void* map;
+  void* alloc;
 };
 
 #endif /* ANIMATED_COLLECTION_H */
