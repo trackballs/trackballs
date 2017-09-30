@@ -87,6 +87,8 @@ void Animated::draw() {
     nVBOs = generateBuffers(idxVBOs, dataVBOs);
   }
   drawBuffers1(idxVBOs, dataVBOs);
+  /* For debug */
+  if (0) drawBoundingBox();
 }
 void Animated::draw2() {
   if (theFrameNumber != lastFrameNumber) {
@@ -103,6 +105,49 @@ void Animated::draw2() {
     nVBOs = generateBuffers(idxVBOs, dataVBOs);
   }
   drawBuffers2(idxVBOs, dataVBOs);
+}
+void Animated::drawBoundingBox() {
+  if (activeView.calculating_shadows) return;
+
+  /* Create and fill buffers */
+  GLuint idxbuf, databuf;
+  glGenBuffers(1, &idxbuf);
+  glGenBuffers(1, &databuf);
+
+  GLfloat data[8][3];
+  ushort idxs[12][2];
+  for (int i = 0; i < 8; i++)
+    for (int j = 0; j < 3; j++) data[i][j] = position[j] + boundingBox[(i >> j) & 1][j];
+
+  ushort square[4][2] = {{0, 1}, {0, 2}, {2, 3}, {1, 3}};
+  for (int i = 0; i < 4; i++) {
+    idxs[i][0] = square[i][0];
+    idxs[i][1] = square[i][1];
+    idxs[i + 4][0] = i;
+    idxs[i + 4][1] = i + 4;
+    idxs[i + 8][0] = 4 + square[i][0];
+    idxs[i + 8][1] = 4 + square[i][1];
+  }
+
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+
+  /* Draw buffers */
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
+  setActiveProgramAndUniforms(shaderLine);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
+  glBindBuffer(GL_ARRAY_BUFFER, databuf);
+  glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, (void*)0);
+  /* Cleanup buffers */
+  glDeleteBuffers(1, &idxbuf);
+  glDeleteBuffers(1, &databuf);
 }
 void Animated::computeBoundingBox() {
   /* Use a default size 2x2x2 boundingbox around object */

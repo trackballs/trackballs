@@ -45,6 +45,12 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius) {
   secondaryColor[2] = 0.4;
   secondaryColor[3] = 1.0;
   is_on = 1;
+  boundingBox[0][0] = -2 * radius;
+  boundingBox[1][0] = 2 * radius;
+  boundingBox[0][1] = -2 * radius;
+  boundingBox[1][1] = 2 * radius;
+  boundingBox[0][2] = -2 * radius;
+  boundingBox[1][2] = 2 * radius + 0.5;
 }
 
 int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {

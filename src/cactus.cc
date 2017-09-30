@@ -42,6 +42,13 @@ Cactus::Cactus(Real x, Real y, Real radius) {
   this->killed_time = 1.;
   this->base_radius = radius;
 
+  boundingBox[0][0] = -base_radius;
+  boundingBox[1][0] = base_radius;
+  boundingBox[0][1] = -base_radius;
+  boundingBox[1][1] = base_radius;
+  boundingBox[0][2] = -base_radius;
+  boundingBox[1][2] = std::max(1., base_radius);
+
   scoreOnDeath = Game::defaultScores[SCORE_CACTUS][0];
   timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
@@ -189,7 +196,7 @@ void Cactus::tick(Real t) {
 
   // do I parse all the balls (incl. Mr Black) or just the player ?
   Ball *ball;
-  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
   std::set<Animated *>::iterator iter = balls.begin();
   std::set<Animated *>::iterator end = balls.end();
   for (; iter != end; iter++) {

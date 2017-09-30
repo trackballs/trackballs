@@ -49,6 +49,12 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed) {
   rotation = M_PI - atan2(this->dx / lng, this->dy / lng);
   scoreOnDeath = Game::defaultScores[SCORE_BIRD][0];
   timeOnDeath = Game::defaultScores[SCORE_BIRD][1];
+  boundingBox[0][0] = -size;
+  boundingBox[1][0] = size;
+  boundingBox[0][1] = -size;
+  boundingBox[1][1] = size;
+  boundingBox[0][2] = -size;
+  boundingBox[1][2] = size;
 }
 
 int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
@@ -136,7 +142,7 @@ void Bird::tick(Real t) {
   // check for collisions with balls
   Ball *ball;
   Coord3d diff;
-  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
   std::set<Animated *>::iterator iter = balls.begin();
   std::set<Animated *>::iterator end = balls.end();
 

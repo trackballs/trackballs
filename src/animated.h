@@ -51,6 +51,7 @@ class Animated : public GameHook {
   /* Object drawing passes */
   void draw();
   void draw2();
+  void drawBoundingBox();
   /** Recomputes the bounding box of the object. Needed after changes in size */
   virtual void computeBoundingBox();
   void onRemove();

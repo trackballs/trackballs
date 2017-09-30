@@ -116,7 +116,7 @@ void Spike::tick(Real t) {
   }
   position[2] = z;
 
-  const std::set<Animated *> &balls = Game::current->balls->asSet();
+  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
   std::set<Animated *>::iterator iter = balls.begin();
   std::set<Animated *>::iterator end = balls.end();
   for (; iter != end; iter++) {
