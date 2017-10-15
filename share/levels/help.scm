@@ -15,6 +15,7 @@
 (define yoff 0)
 
 (set-start-position (dx 4) (dy 4))
+(start-time 999999999)
 
 ;; Exhibit B -- the Mr Blacks
 
@@ -37,20 +38,20 @@
 (set-texture metchley "track.png")
 
 
-;; Exhibit C -- Spike modpill
+;; Exhibit C -- Speed modpill
 
 (define xoff 1)
 (define yoff 0)
 
-(add-modpill (dx 4) (dy 4) *mod-spike* 3 2)
+(add-modpill (dx 4) (dy 4) *mod-speed* 3 2)
 
 
-;; Exhibit D -- Speed modpill
+;; Exhibit D -- Spike modpill
 
 (define xoff 1)
 (define yoff 1)
 
-(add-modpill (dx 4) (dy 4) *mod-speed* 3 2)
+(add-modpill (dx 4) (dy 4) *mod-spike* 3 2)
 
 ;; Exhibit E -- Freeze modpill
 
