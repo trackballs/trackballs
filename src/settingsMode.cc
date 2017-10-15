@@ -73,7 +73,6 @@ void SettingsMode::deactivated() {
 }
 void SettingsMode::display() {
   int menucount;
-  int titleFontSize = 64;
 
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);  // | GL_DEPTH_BUFFER_BIT);
@@ -81,7 +80,8 @@ void SettingsMode::display() {
   Enter2DMode();
 
   /* Draw title */
-  addText_Center(0, titleFontSize / 2, 64, _("Game Settings"), screenWidth / 2);
+  int titleFontSize = computeHeaderSize();
+  addText_Center(0, titleFontSize, 64, _("Game Settings"), screenWidth / 2);
 
   char str[256];
 
@@ -238,7 +238,8 @@ void SettingsMode::display() {
     // never should happen
     break;
   }
-  menuItem_Left(MENU_RETURN, 10, _("Back"));
+  addText_Left(MENU_RETURN, computeMenuSize(), screenHeight - 5 * computeMenuSize() / 2,
+               _("Back"), computeScreenBorder());
 
   drawMousePointer();
   displayFrameRate();

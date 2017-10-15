@@ -38,6 +38,7 @@ HallOfFameMode *HallOfFameMode::hallOfFameMode;
 SDL_Surface *HallOfFameMode::background;
 
 #define CODE_LEVELSET 1
+#define CODE_RETURN 2
 
 void HallOfFameMode::init() {
   if (low_memory)
@@ -77,33 +78,33 @@ void HallOfFameMode::display() {
   draw2DRectangle(0, 0, screenWidth, screenHeight, texCoord[0], texCoord[1], texCoord[2],
                   texCoord[3], timeLeft, timeLeft, timeLeft, 1., texture);
 
-  int fontSize = std::max(12, std::min(screenHeight / 30, screenWidth / 50));
+  int fontSize = computeMenuSize();
+  int border = computeScreenBorder();
 
-  int x = fontSize * 20;
   int y = fontSize * 10;
   int dy = fontSize * 2;
 
-  int col0 = screenWidth / 2 - x;
-  int col1 = screenWidth / 2 + x + fontSize;
   Settings *settings = Settings::settings;
   clearSelectionAreas();
-  addText_Center(0, 7 * fontSize / 4, 5 * fontSize / 2, _("High Scores"), screenWidth / 2);
+  addText_Center(0, computeHeaderSize(), computeHeaderSize(), _("High Scores"),
+                 screenWidth / 2);
 
-  addText_Left(0, fontSize, y - dy * 2, _("Level Set"), col0);
-  addText_Right(CODE_LEVELSET, fontSize, y - dy * 2, settings->levelSets[levelSet].name, col1);
+  addText_Left(0, fontSize, y - dy * 2, _("Level Set"), border);
+  addText_Right(CODE_LEVELSET, fontSize, y - dy * 2, settings->levelSets[levelSet].name,
+                screenWidth - border);
 
   HighScore *highscore = HighScore::highScore;
 
   for (int i = 0; i < 10; i++) {
-    Font::drawSimpleText(&highscore->names[levelSet][i][0], screenWidth / 2 - x,
-                         y + dy * i - fontSize, fontSize, menuColor[0], menuColor[1],
-                         menuColor[2], menuColor[3]);
+    Font::drawSimpleText(&highscore->names[levelSet][i][0], border, y + dy * i - fontSize,
+                         fontSize, menuColor[0], menuColor[1], menuColor[2], menuColor[3]);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
-    Font::drawRightSimpleText(str, screenWidth / 2 + x + fontSize / 2, y + dy * i - fontSize,
-                              fontSize, menuColor[0], menuColor[1], menuColor[2],
-                              menuColor[3]);
+    Font::drawRightSimpleText(str, screenWidth - border, y + dy * i - fontSize, fontSize,
+                              menuColor[0], menuColor[1], menuColor[2], menuColor[3]);
   }
 
+  addText_Left(CODE_RETURN, computeMenuSize(), screenHeight - 5 * computeMenuSize() / 2,
+               _("Back"), computeScreenBorder());
   drawMousePointer();
   displayFrameRate();
 
@@ -128,6 +129,9 @@ void HallOfFameMode::mouseDown(int state, int /*mouseX*/, int /*mouseY*/) {
   int selection = getSelectedArea();
   if (selection == CODE_LEVELSET) {
     levelSet = mymod((levelSet + (state == 1 ? 1 : -1)), Settings::settings->nLevelSets);
+  } else if (selection == CODE_RETURN) {
+    isExiting = 1;
+    timeLeft = -1.0;
   } else {
     isExiting = 1;
     timeLeft = 1.0;

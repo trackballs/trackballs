@@ -71,6 +71,7 @@ SetupMode::SetupMode() : GameMode() {
   name = 0;
 }
 void SetupMode::display() {
+  Settings *settings = Settings::settings;
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -99,92 +100,6 @@ void SetupMode::display() {
   Enter2DMode();
   draw2DRectangle(0, 0, screenWidth, screenHeight, coord[0], coord[1], coord[2], coord[3], 1.,
                   1., 1., 1., active);
-
-  char str[256];
-  Settings *settings = Settings::settings;
-  int extraSize =
-      std::min(std::max(screenWidth - 640, 0), std::max(screenHeight * 4 / 3 - 640, 0));
-
-  int fontSize = 28 + extraSize / 25;
-  int titleFontSize = 48 + extraSize / 25;
-  int col0 = screenWidth / 2 - (300 + extraSize / 4);
-  int col1 = screenWidth / 2 + (extraSize / 8);
-  int row0 = screenHeight / 2 - 100;
-  int rowSep = fontSize + 5;
-
-  int DESC_SIZE = fontSize / 3;
-  int INFO_BASE = screenHeight - 70;
-  int INFO_DELTA = 16 + DESC_SIZE;
-  int INFO_RIGHT = 20;
-  int INFO_SIZE = fontSize / 5;
-  double INFO_R = 1.0, INFO_G = 1.0, INFO_B = 1.0, INFO_A = 1.0;
-
-  double DESC_R = 1.0, DESC_G = 1.0, DESC_B = 1.0, DESC_A = 1.0;
-  int DESC_RIGHT = (int)(col0 - DESC_SIZE);
-  int DESC_BASE = (int)(row0 + rowSep * 4);
-  int DESC_DELTA = (int)(DESC_SIZE * 2);
-
-  /* Draw title */
-  addText_Center(0, titleFontSize / 2, 64, _("Setup new game"), screenWidth / 2);
-
-  /* Name */
-  clearSelectionAreas();
-  addText_Left(0, fontSize / 2, row0 + rowSep * 0, _("Player Name"), col0);
-  addText_Left(CODE_NAME, fontSize / 2, row0 + rowSep * 0, gamer->name, col1);
-
-  /* Level set */
-  addText_Left(0, fontSize / 2, row0 + rowSep * 1, _("Level Set"), col0);
-  if (settings->doSpecialLevel)
-    addText_Left(0, fontSize / 2, row0 + rowSep * 1, _("N/A"), col1);
-  else
-    addText_Left(CODE_LEVEL_SET, fontSize / 2, row0 + rowSep * 1,
-                 settings->levelSets[levelSet].name, col1);
-
-  /* Start level */
-  addText_Left(0, fontSize / 2, row0 + rowSep * 2, _("Level"), col0);
-  if (settings->doSpecialLevel)
-    addText_Left(0, fontSize / 2, row0 + rowSep * 2, settings->specialLevel, col1);
-  else
-    addText_Left(CODE_START_LV, fontSize / 2, row0 + rowSep * 2,
-                 gamer->levels[levelSet][level].name, col1);
-
-  /* Difficulty */
-  addText_Left(0, fontSize / 2, row0 + rowSep * 3, _("Difficulty"), col0);
-  addText_Left(
-      CODE_DIFFICULTY, fontSize / 2, row0 + rowSep * 3,
-      (settings->sandbox
-           ? (settings->difficulty == 0
-                  ? _("Sandbox (Easy)")
-                  : (settings->difficulty == 1 ? _("Sandbox (Normal)") : _("Sandbox (Hard)")))
-           : (settings->difficulty == 0
-                  ? _("Easy")
-                  : (settings->difficulty == 1 ? _("Normal") : _("Hard")))),
-      col1);
-
-  /* Start */
-  addText_Center(CODE_START, fontSize / 2, screenHeight - 64, _("Start Game"),
-                 screenWidth / 2);
-
-  /* Info */
-  snprintf(str, sizeof(str), _("Total games played: %d"), gamer->timesPlayed);
-  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 0, INFO_SIZE, INFO_R, INFO_G,
-                       INFO_B, INFO_A);
-  if (gamer->timesPlayed)
-    snprintf(str, sizeof(str), _("Average score: %d"), gamer->totalScore / gamer->timesPlayed);
-  else
-    snprintf(str, sizeof(str), _("Average score: N/A"));
-  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 1, INFO_SIZE, INFO_R, INFO_G,
-                       INFO_B, INFO_A);
-  snprintf(str, sizeof(str), _("Levels completed: %d"), gamer->nLevelsCompleted);
-  Font::drawSimpleText(str, INFO_RIGHT, INFO_BASE + INFO_DELTA * 2, INFO_SIZE, INFO_R, INFO_G,
-                       INFO_B, INFO_A);
-
-  /* Descriptive level text */
-  int lineno;
-  for (lineno = 0; lineno < 5; lineno++)
-    Font::drawSimpleText(settings->levelSets[levelSet].description[lineno], DESC_RIGHT,
-                         DESC_BASE + DESC_DELTA * lineno, DESC_SIZE, DESC_R, DESC_G, DESC_B,
-                         DESC_A);
 
   Leave2DMode();
 
@@ -271,6 +186,81 @@ void SetupMode::display() {
   glDeleteBuffers(1, &idxbuf);
 
   Enter2DMode();
+
+  char str[256];
+
+  int lineSize = computeLineSize();
+  int fontSize = computeMenuSize();
+  int titleFontSize = computeHeaderSize();
+  int col0 = computeScreenBorder();
+  int col1 = screenWidth / 2;
+  int col1MaxExtent = screenWidth;
+  int rowSep = 9 * fontSize / 5;
+  int row0 = screenHeight / 2 - rowSep * 4;
+  int lineSep = 2 * lineSize;
+
+  /* Draw title */
+  addText_Center(0, titleFontSize, 32 + titleFontSize / 2, _("Setup new game"),
+                 screenWidth / 2);
+
+  /* Name */
+  clearSelectionAreas();
+  addText_Left(0, fontSize, row0 + rowSep * 0, _("Player Name"), col0);
+  addText_Left(CODE_NAME, fontSize, row0 + rowSep * 0, gamer->name, col1, col1MaxExtent);
+
+  /* Level set */
+  addText_Left(0, fontSize, row0 + rowSep * 1, _("Level Set"), col0);
+  if (settings->doSpecialLevel)
+    addText_Left(0, fontSize, row0 + rowSep * 1, _("N/A"), col1, col1MaxExtent);
+  else
+    addText_Left(CODE_LEVEL_SET, fontSize, row0 + rowSep * 1,
+                 settings->levelSets[levelSet].name, col1, col1MaxExtent);
+
+  /* Start level */
+  addText_Left(0, fontSize, row0 + rowSep * 2, _("Level"), col0);
+  if (settings->doSpecialLevel)
+    addText_Left(0, fontSize, row0 + rowSep * 2, settings->specialLevel, col1, col1MaxExtent);
+  else
+    addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2,
+                 gamer->levels[levelSet][level].name, col1, col1MaxExtent);
+
+  /* Difficulty */
+  addText_Left(0, fontSize, row0 + rowSep * 3, _("Difficulty"), col0);
+  const char *difficulty_str =
+      (settings->sandbox
+           ? (settings->difficulty == 0
+                  ? _("Sandbox (Easy)")
+                  : (settings->difficulty == 1 ? _("Sandbox (Normal)") : _("Sandbox (Hard)")))
+           : (settings->difficulty == 0
+                  ? _("Easy")
+                  : (settings->difficulty == 1 ? _("Normal") : _("Hard"))));
+  addText_Left(CODE_DIFFICULTY, fontSize, row0 + rowSep * 3, difficulty_str, col1,
+               col1MaxExtent);
+
+  /* Info */
+  snprintf(str, sizeof(str), _("Total games played: %d"), gamer->timesPlayed);
+  Font::drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 4, lineSize, 1.0,
+                       1.0, 1.0, 1.0);
+  if (gamer->timesPlayed)
+    snprintf(str, sizeof(str), _("Average score: %d"), gamer->totalScore / gamer->timesPlayed);
+  else
+    snprintf(str, sizeof(str), _("Average score: N/A"));
+  Font::drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 3, lineSize, 1.0,
+                       1.0, 1.0, 1.0);
+  snprintf(str, sizeof(str), _("Levels completed: %d"), gamer->nLevelsCompleted);
+  Font::drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 2, lineSize, 1.0,
+                       1.0, 1.0, 1.0);
+
+  /* Descriptive level text */
+  int lineno;
+  for (lineno = 0; lineno < 5; lineno++)
+    Font::drawSimpleText(settings->levelSets[levelSet].description[lineno], col0 + lineSize,
+                         row0 + rowSep * 4 + lineSep * lineno, lineSize, 1.0, 1.0, 1.0, 1.0,
+                         screenWidth - col0 - lineSize);
+
+  /* Start */
+  addText_Center(CODE_START, fontSize, screenHeight - 5 * fontSize / 2, _("Start Game"),
+                 screenWidth / 2);
 
   displayFrameRate();
   drawMousePointer();

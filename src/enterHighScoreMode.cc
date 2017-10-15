@@ -19,11 +19,13 @@
 */
 
 #include "enterHighScoreMode.h"
+
 #include "font.h"
 #include "game.h"
 #include "gamer.h"
 #include "highScore.h"
 #include "menuMode.h"
+#include "menusystem.h"
 #include "player.h"
 
 #include <SDL2/SDL_keyboard.h>
@@ -50,20 +52,19 @@ void EnterHighScoreMode::display() {
   draw2DRectangle(0, 0, screenWidth, screenHeight, texMinX, texMinY, texMaxX, texMaxY, 1., 1.,
                   1., 1., texture);
 
-  int fontSize = std::max(12, std::min(screenHeight / 30, screenWidth / 50));
+  int headerSize = computeHeaderSize();
+  int fontSize = computeMenuSize();
 
-  Font::drawCenterSimpleText(_("High Score"), screenWidth / 2,
-                             screenHeight / 2 - 7.3 * fontSize, 7 * fontSize / 4, 0.85, 0.85,
-                             0.25, 1.0);
+  clearSelectionAreas();
+  addText_Center(0, headerSize, screenHeight / 2 - 2 * headerSize, _("High Score"),
+                 screenWidth / 2);
 
   char str[256];
   snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 1.3 * fontSize, fontSize,
-                             0.85, 0.85, 0.25, 1.0);
+  addText_Center(0, fontSize, screenHeight / 2, str, screenWidth / 2);
 
   snprintf(str, sizeof(str), _("Enter your name: %s"), name);
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 1.3 * fontSize, fontSize,
-                             0.85, 0.85, 0.25, 1.0);
+  addText_Center(0, fontSize, screenHeight / 2 + 2 * fontSize, str, screenWidth / 2);
 
   displayFrameRate();
   Leave2DMode();

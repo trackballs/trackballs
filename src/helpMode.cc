@@ -263,7 +263,7 @@ void HelpMode::display() {
     while (text[i]) i++;
   }
 
-  int fontSize = std::max(12, std::min(screenHeight / 40, screenWidth / 90));
+  int fontSize = computeLineSize();
   if (s1 >= 0) {
     for (int i = s1; text[i]; i++) {
       Font::drawSimpleText(text[i], 50,
@@ -281,8 +281,10 @@ void HelpMode::display() {
   }
 
   clearSelectionAreas();
-  addText_Right(CODE_MOREHELP, 16, screenHeight - 45, _("More Help"), screenWidth - 16);
-  addText_Left(CODE_BACK, 16, screenHeight - 45, _("Back"), 16);
+  int menusize = computeMenuSize();
+  addText_Right(CODE_MOREHELP, menusize, screenHeight - 5 * menusize / 2, _("More Help"),
+                screenWidth - 10 - menusize);
+  addText_Left(CODE_BACK, menusize, screenHeight - 5 * menusize / 2, _("Back"), 10 + menusize);
 
   drawMousePointer();
   displayFrameRate();

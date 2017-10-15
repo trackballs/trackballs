@@ -408,11 +408,6 @@ int Settings::joystickButton(int n) {
   if (!joystickIndex) return 0;
   SDL_JoystickUpdate();
   return SDL_JoystickGetButton(joystick, n);
-
-  /*||
-        SDL_JoystickGetButton(joystick,1) ||
-        SDL_JoystickGetButton(joystick,2) ||
-        SDL_JoystickGetButton(joystick,3);  */
 }
 void Settings::setLocale() {
   /* check if the correct language directory exists, otherwise use default */

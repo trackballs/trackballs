@@ -26,7 +26,7 @@ void addArea(int code, int x, int y, int w, int h);
 
 /* Primitives for creating selectable text on screen */
 void clearSelectionAreas();
-void addText_Left(int code, int fontSize, int y0, const char *str, int leftX);
+void addText_Left(int code, int fontSize, int y0, const char *str, int leftX, int maxX = 0);
 void addText_Right(int code, int fontSize, int y0, const char *str, int rightX);
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx);
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,
@@ -35,6 +35,12 @@ int getSelectedArea();
 
 void clearKeyboardFocus();
 void moveKeyboardFocus(int reverse);
+
+/* Determine font sizes for the current resolution */
+int computeLineSize();
+int computeMenuSize();
+int computeHeaderSize();
+int computeScreenBorder();
 
 /* And for resolution independent centered menus */
 void menuItem_Left(int code, int row, const char *str);

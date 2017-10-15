@@ -25,6 +25,7 @@
 #include "glHelp.h"
 
 #include <SDL2/SDL_mouse.h>
+#include <set>
 
 #define MAX_MENUS 256
 
@@ -48,17 +49,17 @@ void addArea(int code, int x, int y, int w, int h) {
   sarea->returnCode = code;
 }
 
-void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX) {
+void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX, int maxX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int thisArea = nSelectionAreas++;
   const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
                              ? menuColorSelected
                              : menuColor;
   int width = Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2],
-                                   color[3]);
+                                   color[3], maxX > 0 ? maxX - leftX : 0);
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
-  sarea->x1 = leftX + width;
+  sarea->x1 = maxX > 0 ? std::min(leftX + width, maxX) : leftX + width;
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
@@ -123,33 +124,38 @@ int getSelectedArea() {
   return 0;
 }
 
-int fontsize, screenBorder, top, menuSpacing;
-
-void computeScreenSizes() {
-  int extraW = screenWidth > 640 ? (screenWidth - 640) : 0;
-  int extraH = screenHeight > 480 ? (screenHeight - 480) * 4 / 3 : 0;
-  int extra = extraW > extraH ? extraH : extraW;
-
-  fontsize = 18 + extra / 64;
-  if (fontsize < 18) fontsize = 18;
-  screenBorder = 50 + extra / 8;
-  menuSpacing = 17 * fontsize / 10;
-  top = 150 + extra / 6;
+int computeLineSize() { return std::max(10, std::min(screenWidth / 64, screenHeight / 48)); }
+int computeMenuSize() { return std::max(16, std::min(screenWidth / 40, screenHeight / 30)); }
+int computeHeaderSize() {
+  return std::max(24, std::min(screenWidth / 30, 2 * screenHeight / 45));
+}
+int computeScreenBorder() {
+  int size = computeMenuSize();
+  return 10 + 2 * size;
 }
 
 void menuItem_Left(int code, int row, const char *leftStr) {
-  computeScreenSizes();
-  addText_Left(code, fontsize, (row + 1) * menuSpacing + top, leftStr, screenBorder);
+  int fontSize = computeMenuSize();
+  int menuSpacing = 17 * fontSize / 10;
+  int screenBorder = computeScreenBorder();
+  int top = 100 + 3 * fontSize;
+  addText_Left(code, fontSize, (row + 1) * menuSpacing + top, leftStr, screenBorder);
 }
 void menuItem_Center(int code, int row, const char *str) {
-  computeScreenSizes();
-  addText_Center(code, fontsize, (row + 1) * menuSpacing + top, str, screenWidth / 2);
+  int fontSize = computeMenuSize();
+  int menuSpacing = 17 * fontSize / 10;
+  int screenBorder = computeScreenBorder();
+  int top = 100 + 3 * fontSize;
+  addText_Center(code, fontSize, (row + 1) * menuSpacing + top, str, screenWidth / 2);
 }
 void menuItem_LeftRight(int code, int row, int indent, const char *leftStr,
                         const char *rightStr) {
-  computeScreenSizes();
-  addText_LeftRight(code, fontsize, (row + 1) * menuSpacing + top, leftStr,
-                    screenBorder + 3 * fontsize * indent / 2, rightStr,
+  int fontSize = computeMenuSize();
+  int menuSpacing = 17 * fontSize / 10;
+  int screenBorder = computeScreenBorder();
+  int top = 100 + 3 * fontSize;
+  addText_LeftRight(code, fontSize, (row + 1) * menuSpacing + top, leftStr,
+                    screenBorder + 3 * fontSize * indent / 2, rightStr,
                     screenWidth - screenBorder);
 }
 

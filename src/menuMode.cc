@@ -94,18 +94,18 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
                   textures[loadTexture("header.png")]);
 
   clearSelectionAreas();
-  int fontsize = 24;
-  int sep = 64;
+  int fontSize = computeMenuSize();
+  int sep = 5 * fontSize / 2;
   int baseline = screenHeight - sep * 3;
-  int left = fontsize + 10;
-  int right = screenWidth - 10;
+  int left = computeScreenBorder();
+  int right = screenWidth - computeScreenBorder();
 
-  addText_Left(MENU_NEWGAME, fontsize, baseline + sep * 0, _("New Game"), left);
-  addText_Right(MENU_QUIT, fontsize, baseline + sep * 0, _("Quit"), right);
-  addText_Left(MENU_SETTINGS, fontsize, baseline + sep * 1, _("Settings"), left);
-  addText_Right(MENU_HOF, fontsize, baseline + sep * 1, _("Hall of Fame"), right);
-  addText_Left(MENU_HELP, fontsize, baseline + sep * 2, _("Help"), left);
-  addText_Right(MENU_EDITOR, fontsize, baseline + sep * 2, _("Map Editor"), right);
+  addText_Left(MENU_NEWGAME, fontSize, baseline + sep * 0, _("New Game"), left);
+  addText_Right(MENU_QUIT, fontSize, baseline + sep * 0, _("Quit"), right);
+  addText_Left(MENU_SETTINGS, fontSize, baseline + sep * 1, _("Settings"), left);
+  addText_Right(MENU_HOF, fontSize, baseline + sep * 1, _("Hall of Fame"), right);
+  addText_Left(MENU_HELP, fontSize, baseline + sep * 2, _("Help"), left);
+  addText_Right(MENU_EDITOR, fontSize, baseline + sep * 2, _("Map Editor"), right);
 
   /* Draw story text */
   /*

@@ -96,61 +96,50 @@ void CalibrateJoystickMode::display() {
     error("called CalibrateJoystickMode without valid joystick!");
   }
 
-  Font::drawCenterSimpleText(_("Calibrating Joystick"), screenWidth / 2,
-                             screenHeight / 2 - 230, 20., 1.0, 1.0, 1.0, 1.0);
+  clearSelectionAreas();
+
+  int headerSize = computeHeaderSize();
+  int menusize = computeMenuSize();
+  int linesize = computeLineSize();
+  addText_Center(0, headerSize, screenHeight / 2 - 100 - headerSize * 1 - menusize * 4,
+                 _("Calibrating Joystick"), screenWidth / 2);
+
   snprintf(str, sizeof(str), "%s",
            SDL_JoystickNameForIndex(Settings::settings->joystickIndex - 1));
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 - 190, 16., 1.0, 1.0, 1.0,
-                             1.0);
+  addText_Center(0, menusize, screenHeight / 2 - 100 - menusize * 3, str, screenWidth / 2);
 
-  switch (stage) {
-  case 0:
-    Font::drawCenterSimpleText(_("Center joystick"), screenWidth / 2, screenHeight / 2 - 120,
-                               20., 1.0, 1.0, 1.0, 1.0);
-    break;
-  case 1:
-    Font::drawCenterSimpleText(_("Move joystick left"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
-    break;
-  case 2:
-    Font::drawCenterSimpleText(_("Move joystick right"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
-    break;
-  case 3:
-    Font::drawCenterSimpleText(_("Move joystick up"), screenWidth / 2, screenHeight / 2 - 120,
-                               20., 1.0, 1.0, 1.0, 1.0);
-    break;
-  case 4:
-    Font::drawCenterSimpleText(_("Move joystick down"), screenWidth / 2,
-                               screenHeight / 2 - 120, 20., 1.0, 1.0, 1.0, 1.0);
-    break;
-  }
-  Font::drawCenterSimpleText(_("Press any button to continue"), screenWidth / 2,
-                             screenHeight / 2 + 190, 16., 1.0, 1.0, 1.0, 1.0);
-  Font::drawCenterSimpleText(_("Press escape to cancel"), screenWidth / 2,
-                             screenHeight / 2 + 220, 16., 1.0, 1.0, 1.0, 1.0);
+  char *stages[5] = {_("Center joystick"), _("Move joystick left"), _("Move joystick right"),
+                     _("Move joystick up"), _("Move joystick down")};
+
+  addText_Center(0, menusize, screenHeight / 2 - 100 - menusize * 1, stages[stage],
+                 screenWidth / 2);
+
+  addText_Center(0, menusize, screenHeight / 2 + 100 + menusize * 1,
+                 _("Press any button to continue"), screenWidth / 2);
+  addText_Center(0, menusize, screenHeight / 2 + 100 + menusize * 3,
+                 _("Press escape to cancel"), screenWidth / 2);
 
   snprintf(str, sizeof(str), _("now: %d %d"), Settings::settings->joystickRawX(),
            Settings::settings->joystickRawY());
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 300, 12., 1.0, 1.0, 1.0,
-                             0.5);
+  addText_Center(0, linesize, screenHeight / 2 + 100 + menusize * 4 + linesize * 1, str,
+                 screenWidth / 2);
 
   snprintf(str, sizeof(str), _("center: %d %d left: %d right: %d up: %d down: %d"),
            Settings::settings->joy_center[0], Settings::settings->joy_center[1],
            Settings::settings->joy_left, Settings::settings->joy_right,
            Settings::settings->joy_up, Settings::settings->joy_down);
-  Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight / 2 + 320, 12., 1.0, 1.0, 1.0,
-                             0.5);
+  addText_Center(0, linesize, screenHeight / 2 + 100 + menusize * 4 + linesize * 3, str,
+                 screenWidth / 2);
 
-  int CX = screenWidth / 2, CY = screenHeight / 2;
-  draw2DRectangle(CX - 100, CY - 100, 200, 200, 0., 0., 1., 1., 0.1, 0.1, 0.4, 0.5);
+  draw2DRectangle(screenWidth / 2 - 85, screenHeight / 2 - 85, 170, 170, 0., 0., 1., 1., 0.3,
+                  0.3, 0.9, 1.0);
 
   double jx = Settings::settings->joystickX();
   double jy = Settings::settings->joystickY();
   int x = (int)(screenWidth / 2 + 50.0 * jx);
   int y = (int)(screenHeight / 2 + 50.0 * jy);
 
-  drawMouse(x - 32, y - 32, 64, 64);
+  drawMouse(x, y, 64, 64);
   Leave2DMode();
 }
 
