@@ -245,20 +245,28 @@ void Settings::loadLevelSet(const char *setname, const char *shortname) {
     char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
     if (!strcmp(skey, "name")) {
       strncpy(levelSets[nLevelSets].name, sval, 256);
+      levelSets[nLevelSets].name[255] = '\0';
     } else if (!strcmp(skey, "first-level-file")) {
       strncpy(levelSets[nLevelSets].startLevel, sval, 256);
+      levelSets[nLevelSets].startLevel[255] = '\0';
     } else if (!strcmp(skey, "first-level-name")) {
       strncpy(levelSets[nLevelSets].startLevelName, sval, 256);
+      levelSets[nLevelSets].startLevelName[255] = '\0';
     } else if (!strcmp(skey, "desc1")) {
-      strncpy(&levelSets[nLevelSets].description[0][0], sval, 80);
+      strncpy(&levelSets[nLevelSets].description[0][0], sval, 120);
+      levelSets[nLevelSets].description[0][119] = '\0';
     } else if (!strcmp(skey, "desc2")) {
-      strncpy(&levelSets[nLevelSets].description[1][0], sval, 80);
+      strncpy(&levelSets[nLevelSets].description[1][0], sval, 120);
+      levelSets[nLevelSets].description[1][119] = '\0';
     } else if (!strcmp(skey, "desc3")) {
-      strncpy(&levelSets[nLevelSets].description[2][0], sval, 80);
+      strncpy(&levelSets[nLevelSets].description[2][0], sval, 120);
+      levelSets[nLevelSets].description[2][119] = '\0';
     } else if (!strcmp(skey, "desc4")) {
-      strncpy(&levelSets[nLevelSets].description[3][0], sval, 80);
+      strncpy(&levelSets[nLevelSets].description[3][0], sval, 120);
+      levelSets[nLevelSets].description[3][119] = '\0';
     } else if (!strcmp(skey, "desc5")) {
-      strncpy(&levelSets[nLevelSets].description[4][0], sval, 80);
+      strncpy(&levelSets[nLevelSets].description[4][0], sval, 120);
+      levelSets[nLevelSets].description[4][119] = '\0';
     } else {
       warning("Unidentified key '%s' in level set file %s", skey, setname);
     }

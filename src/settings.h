@@ -36,7 +36,7 @@ class LevelSet {
   char name[256];
   char startLevel[256];
   char startLevelName[256];
-  char description[5][80];
+  char description[5][120];
   char imagename[256];
 };
 

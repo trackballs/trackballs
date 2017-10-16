@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 09:31-0400\n"
+"POT-Creation-Date: 2017-10-14 23:50-0400\n"
 "PO-Revision-Date: 2017-06-25 20:17-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -19,44 +19,44 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.2\n"
 
-#: ../src/calibrateJoystickMode.cc:99
+#: ../src/calibrateJoystickMode.cc:105
 msgid "Calibrating Joystick"
 msgstr "Kalibrerar Joysticken"
 
-#: ../src/calibrateJoystickMode.cc:108
+#: ../src/calibrateJoystickMode.cc:111
 msgid "Center joystick"
 msgstr "Centrera Joysticken"
 
-#: ../src/calibrateJoystickMode.cc:112
+#: ../src/calibrateJoystickMode.cc:111
 msgid "Move joystick left"
 msgstr "Styr vänster"
 
-#: ../src/calibrateJoystickMode.cc:116
+#: ../src/calibrateJoystickMode.cc:111
 msgid "Move joystick right"
 msgstr "Styr höger"
 
-#: ../src/calibrateJoystickMode.cc:120
+#: ../src/calibrateJoystickMode.cc:112
 msgid "Move joystick up"
 msgstr "Styr upp"
 
-#: ../src/calibrateJoystickMode.cc:124
+#: ../src/calibrateJoystickMode.cc:112
 msgid "Move joystick down"
 msgstr "Styr nedat"
 
-#: ../src/calibrateJoystickMode.cc:128
+#: ../src/calibrateJoystickMode.cc:118
 msgid "Press any button to continue"
 msgstr "Tryck valfri knapp för att fortsatta"
 
-#: ../src/calibrateJoystickMode.cc:130
+#: ../src/calibrateJoystickMode.cc:120
 msgid "Press escape to cancel"
 msgstr "Tryck escape för att avbryta"
 
-#: ../src/calibrateJoystickMode.cc:133
+#: ../src/calibrateJoystickMode.cc:122
 #, c-format
 msgid "now: %d %d"
 msgstr "nu: %d %d"
 
-#: ../src/calibrateJoystickMode.cc:138
+#: ../src/calibrateJoystickMode.cc:127
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "center: %d %d vänster: %d höger: %d up: %d ner: %d"
@@ -627,16 +627,16 @@ msgstr "Öppna"
 msgid "page %d / %d"
 msgstr ""
 
-#: ../src/enterHighScoreMode.cc:55
+#: ../src/enterHighScoreMode.cc:59
 msgid "High Score"
 msgstr ""
 
-#: ../src/enterHighScoreMode.cc:60
+#: ../src/enterHighScoreMode.cc:63
 #, fuzzy, c-format
 msgid "You got %d points"
 msgstr "%d poang"
 
-#: ../src/enterHighScoreMode.cc:64
+#: ../src/enterHighScoreMode.cc:66
 #, c-format
 msgid "Enter your name: %s"
 msgstr ""
@@ -645,17 +645,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1265
+#: ../src/glHelp.cc:1264
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Framerate: %.1f"
 
-#: ../src/glHelp.cc:1267
+#: ../src/glHelp.cc:1266
 #, c-format
 msgid "Framerate unknown"
 msgstr "Okänd framerate"
 
-#: ../src/glHelp.cc:1269
+#: ../src/glHelp.cc:1268
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -839,12 +839,12 @@ msgstr "Tunnel:"
 msgid "Takes you places, sometimes with great speed."
 msgstr "Tar dig till andra platser, ibland snabbt."
 
-#: ../src/helpMode.cc:284
+#: ../src/helpMode.cc:285
 #, fuzzy
 msgid "More Help"
 msgstr "Hjälp"
 
-#: ../src/helpMode.cc:285 ../src/settingsMode.cc:241
+#: ../src/helpMode.cc:287 ../src/hofMode.cc:107 ../src/settingsMode.cc:242
 msgid "Back"
 msgstr ""
 
@@ -853,12 +853,12 @@ msgstr ""
 msgid "Anonymous Coward"
 msgstr ""
 
-#: ../src/hofMode.cc:90
+#: ../src/hofMode.cc:89
 msgid "High Scores"
 msgstr ""
 
 # Level fardig
-#: ../src/hofMode.cc:92 ../src/setupMode.cc:136
+#: ../src/hofMode.cc:92 ../src/setupMode.cc:212
 #, fuzzy
 msgid "Level Set"
 msgstr "Banan avklarad"
@@ -1346,75 +1346,75 @@ msgstr "Ljudeffektsvolym"
 msgid "Language"
 msgstr ""
 
-#: ../src/setupMode.cc:128
+#: ../src/setupMode.cc:203
 msgid "Setup new game"
 msgstr ""
 
-#: ../src/setupMode.cc:132
+#: ../src/setupMode.cc:208
 msgid "Player Name"
 msgstr ""
 
-#: ../src/setupMode.cc:138
+#: ../src/setupMode.cc:214
 msgid "N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:144
+#: ../src/setupMode.cc:220
 msgid "Level"
 msgstr ""
 
-#: ../src/setupMode.cc:152
+#: ../src/setupMode.cc:228
 #, fuzzy
 msgid "Difficulty"
 msgstr "Svarighetsgrad"
 
-#: ../src/setupMode.cc:157
+#: ../src/setupMode.cc:232
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:158
+#: ../src/setupMode.cc:233
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:158
+#: ../src/setupMode.cc:233
 msgid "Sandbox (Hard)"
 msgstr ""
 
-#: ../src/setupMode.cc:160
+#: ../src/setupMode.cc:235
 msgid "Easy"
 msgstr "Lätt"
 
-#: ../src/setupMode.cc:161
+#: ../src/setupMode.cc:236
 msgid "Normal"
 msgstr "Normalt"
 
-#: ../src/setupMode.cc:161
+#: ../src/setupMode.cc:236
 msgid "Hard"
 msgstr "Svårt"
 
-#: ../src/setupMode.cc:165
-msgid "Start Game"
-msgstr ""
-
-#: ../src/setupMode.cc:169
+#: ../src/setupMode.cc:241
 #, c-format
 msgid "Total games played: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:173
+#: ../src/setupMode.cc:245
 #, c-format
 msgid "Average score: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:175
+#: ../src/setupMode.cc:247
 #, c-format
 msgid "Average score: N/A"
 msgstr ""
 
 # Level fardig
-#: ../src/setupMode.cc:178
+#: ../src/setupMode.cc:250
 #, fuzzy, c-format
 msgid "Levels completed: %d"
 msgstr "Banan avklarad"
+
+#: ../src/setupMode.cc:262
+msgid "Start Game"
+msgstr ""
 
 #: ../share/levels/bx.set:1 ../share/levels/bx1.scm:4
 msgid "Box-O'-Fun"
