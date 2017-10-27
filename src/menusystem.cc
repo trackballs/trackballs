@@ -124,10 +124,14 @@ int getSelectedArea() {
   return 0;
 }
 
-int computeLineSize() { return std::max(10, std::min(screenWidth / 64, screenHeight / 48)); }
-int computeMenuSize() { return std::max(16, std::min(screenWidth / 40, screenHeight / 30)); }
+int computeLineSize() {
+  return std::max(10, std::min(3 * screenWidth / 4, screenHeight) / 64);
+}
+int computeMenuSize() {
+  return std::max(16, std::min(3 * screenWidth / 4, screenHeight) / 40);
+}
 int computeHeaderSize() {
-  return std::max(24, std::min(screenWidth / 30, 2 * screenHeight / 45));
+  return std::max(24, std::min(3 * screenWidth / 4, screenHeight) / 30);
 }
 int computeScreenBorder() {
   int size = computeMenuSize();

@@ -47,7 +47,7 @@ int Font::drawSimpleText(const char *text, int x, int y, int sz, float r, float 
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 0, maxwidth);
+  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 0, maxwidth);
 }
 
 int Font::drawRightSimpleText(const char *text, int x, int y, int sz, float r, float g,
@@ -56,7 +56,7 @@ int Font::drawRightSimpleText(const char *text, int x, int y, int sz, float r, f
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 2, maxwidth);
+  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 2, maxwidth);
 }
 
 int Font::drawCenterSimpleText(const char *text, int x, int y, int sz, float r, float g,
@@ -65,5 +65,5 @@ int Font::drawCenterSimpleText(const char *text, int x, int y, int sz, float r, 
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz > 10, 1, maxwidth);
+  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 1, maxwidth);
 }
