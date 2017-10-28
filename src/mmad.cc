@@ -66,7 +66,7 @@ SDL_GLContext mainContext;
 const char *program_name;
 int debug_joystick, repair_joystick;
 int not_yet_windowed = 1;
-struct timespec displayStartTime;
+struct timespec displayStartTime, lastDisplayStartTime;
 
 int theFrameNumber = 0;
 
@@ -295,6 +295,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   program_name = argv[0];
 
   displayStartTime = getMonotonicTime();
+  lastDisplayStartTime = displayStartTime;
+  lastDisplayStartTime.tv_sec -= 1;
   Settings::init();
   Settings *settings = Settings::settings;
   settings->doSpecialLevel = 0;
@@ -500,9 +502,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Main event loop */
   /*                 */
 
-  struct timespec oldTime, newTime;
-  double td;
-  oldTime = getMonotonicTime();
+  double td = 1. / 60.;
 
   /* Initialize random number generator */
   int seed = getMonotonicTime().tv_nsec;
@@ -512,19 +512,11 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   while (is_running) {
     theFrameNumber++;
 
-    newTime = getMonotonicTime();
-    td = getTimeDifference(oldTime, newTime);
+    td = getTimeDifference(lastDisplayStartTime, displayStartTime);
+    // If timing doesn't work assume 60fps
     if (td <= 0.0) { td = 1. / 60.; }
-    oldTime = newTime;
-
-    // reduced to 5 fps
+    // No slower than 5 fps
     if (td > 0.2) td = 0.2;
-    // we may also add a bottom limit to 'td' to prevent
-    //  precision troubles in physic computation
-    /*
-    // limited to 75 fps
-    if (td < 0.013) td = 0.013;
-    */
 
     /* update font system */
     Font::tick(td);
@@ -545,6 +537,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     warnForGLerrors("uncaught from display routine");
     SDL_GL_SwapWindow(window);
 
+    lastDisplayStartTime = displayStartTime;
     displayStartTime = getMonotonicTime();
     /* Expensive computations has to be done *after* tick+draw to keep world in good
        synchronisation. */

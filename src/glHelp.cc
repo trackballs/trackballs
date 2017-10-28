@@ -48,6 +48,7 @@ GLuint theVao = 0;
 
 TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
+extern struct timespec lastDisplayStartTime;
 
 const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
 const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
@@ -1244,8 +1245,8 @@ int resetTextures() {
 
 /* Calculates and displays current framerate */
 void displayFrameRate() {
-  /* We don't include the time spent on Flip(), but everything else we do*/
-  double td = getTimeDifference(displayStartTime, getMonotonicTime());
+  /* Frame rate is given for the previous period. */
+  double td = getTimeDifference(lastDisplayStartTime, displayStartTime);
   if (td > 1.0)
     fps = 1.0;
   else if (td <= 1e-4) {
