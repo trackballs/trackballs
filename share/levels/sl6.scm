@@ -23,15 +23,11 @@
 
 
 ;; turning off the HQ entry Forcefield
-(define iced-once #f)
-(trigger 147.5 72.5 2.0
+(trigger-once 147.5 72.5 2.0
  (lambda ()
-  (if (not iced-once)
-    (begin
-      (set-cell-flag 144 72 149 77 *cell-ice* #t)
-      (set! iced-once #t))
+  (set-cell-flag 144 72 149 77 *cell-ice* #t)
  )
-))
+)
 
 
 
@@ -344,14 +340,13 @@
 (sign (_ "Bonus") 0.8 20.0 -1 232.5 108.5)
 
 
-(trigger 232 100 0.5
+(trigger-once 232 100 0.5
  (lambda ()
   (set-primary-color
    (pipe 221 100 4.7 228 108 4.7 0.4)
   0.1 0.1 0.1)
  )
 )
-
 
 
 
@@ -463,7 +458,7 @@
 
 
 (define magic-platform
- (animator 0.2 0.0 0.0 3.3 8.7 *animator-stop*
+ (animator 0.2 0.0 0.0 2.8 8.7 *animator-stop*
   (lambda (v)
    (set-cell-heights 249 75 249 75 v v v v)
   )
@@ -576,7 +571,7 @@
 
 
 (define the-trigger
- (trigger 249 115 1.5
+ (trigger-once 249 115 1.5
   (lambda ()
    (set-horizon marwin 50.0)
   )

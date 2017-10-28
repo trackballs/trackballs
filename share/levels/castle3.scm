@@ -70,7 +70,7 @@
 (set-cell-wall-colors 0 0 255 255 3 .6 .3 .1)
 
 ;;Secret teleports
-(trigger 253 220 0.5 (lambda() (add-teleport 251 220 250 230 0.25)(add-teleport 251 230 252 220 0.25)))
+(trigger-once 253 220 0.5 (lambda() (add-teleport 251 220 250 230 0.25)(add-teleport 251 230 252 220 0.25)))
 
 ;;Bonus Life
 (add-modpill 246 229 *mod-extra-life* 10 0)

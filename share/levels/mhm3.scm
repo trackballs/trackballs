@@ -243,7 +243,7 @@
 ;blinker & ramp.
 
 (define blinker (add-colormodifier 3 159 148 0.5 1.0 0.5 1.0))
-(trigger 158.5 147.5 0.5 (lambda ()
+(trigger-once 158.5 147.5 0.5 (lambda ()
 (set-cell-heights 164 184 164 186 -0.5 -0.5 0.0 0.0)
 (set-cell-heights 165 184 165 186 0.0 0.0 0.5 0.5)
 (set-cell-heights 166 184 166 186 0.5 0.5 1.0 1.0)

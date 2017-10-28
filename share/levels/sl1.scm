@@ -161,7 +161,7 @@
 
 ;; roll over this spot to higher the four-colored field
 (define blinker (add-colormodifier 3 226 221 0.5 1.0 0.5 1.0))
-(trigger 226 221 0.5 (lambda ()
+(trigger-once 226 221 0.5 (lambda ()
 (set-cell-heights 231 215 234 218 -0.8 -0.8 -0.8 -0.8)
 (set-onoff blinker #f)
 ))

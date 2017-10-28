@@ -106,8 +106,8 @@
 (set-cell-heights  5 68  5 68 -2.0 -2.0 -2.0 -2.0 -2.0)
 ))
 
-(trigger 11 51 1.5 (lambda() (diamond 11 51)))
-(trigger 16 41 1.5 (lambda() (diamond 16 41)))
+(trigger-once 11 51 1.5 (lambda() (diamond 11 51)))
+(trigger-once 16 41 1.5 (lambda() (diamond 16 41)))
 
 
 ;; If you are lost in maze of PI, try this:

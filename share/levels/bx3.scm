@@ -98,7 +98,7 @@
 ;; Trigger to access complex.
 
 (define blinker1 (add-colormodifier 3 128 124 0.5 1.0 0.5 1.0))
-(trigger 128 124 0.5 (lambda ()
+(trigger-once 128 124 0.5 (lambda ()
 (set-cell-heights 122 107 130 107 -3.5 -3.5 -3.5 -3.5)
 (set-cell-heights 122 106 130 106 -3.5 -3.5 -3.5 -3.5)
 (set-cell-heights 122 106 130 103 -3.0 -3.0 -3.0 -3.0)
@@ -113,7 +113,7 @@
 ;; Trigger to access 2nd pyramid.
 
 (define blinker2 (add-colormodifier 3 119 54 0.5 1.0 0.5 1.0))
-(trigger 119 54 0.5 (lambda ()
+(trigger-once 119 54 0.5 (lambda ()
 (set-cell-heights 87 119 101 119 -8.0 -8.0 -8.0 -8.0)
 (set-cell-heights 87 118 101 118 -8.0 -8.0 -8.0 -8.0)
 (set-cell-heights 87 117 101 117 -8.0 -8.0 -8.0 -8.0)
@@ -130,7 +130,7 @@
 ;; Trigger to access Arena.
 
 (define blinker3 (add-colormodifier 3 64 118 0.5 1.0 0.5 1.0))
-(trigger 65 118 0.5 (lambda ()
+(trigger-once 64 118 0.5 (lambda ()
 (set-cell-heights 57 102 77 102 -7.0 -7.0 -7.0 -7.0)
 (set-primary-color (sign (_ "You must enter the Arena.") 0.8 1.0 -0.1 64 118) 0.2 0.5 1.0 1.0)
 (set-onoff blinker3 #f)
@@ -138,7 +138,7 @@
 
 ;; Triggers to raise temple slide.
 
-(trigger 76 117 0.5 (lambda ()
+(trigger-once 76 117 0.5 (lambda ()
 (set-cell-heights 77 116 77 116 -5.0 -5.0 -5.5 -5.5)
 (set-cell-heights 77 117 77 117 -4.5 -5.0 -5.0 -5.5)
 (set-cell-heights 77 118 77 118 -5.0 -4.5 -5.5 -5.0)
@@ -151,7 +151,7 @@
 (set-cell-flag 79 119 86 116  *cell-sand* #t)
 (set-cell-flag 79 119 86 116  *cell-nogrid* #f)
 ))
-(trigger 75 117 0.5 (lambda ()
+(trigger-once 76 118 0.5 (lambda ()
 (set-cell-heights 77 116 77 116 -5.0 -5.0 -5.5 -5.5)
 (set-cell-heights 77 117 77 117 -4.5 -5.0 -5.0 -5.5)
 (set-cell-heights 77 118 77 118 -5.0 -4.5 -5.5 -5.0)
@@ -190,28 +190,28 @@
 ;;Triggers in Arena.
 
 (define blinker4 (add-colormodifier 3 103 73 0.5 1.0 0.5 1.0))
-(trigger 103 73 0.5 (lambda ()
+(trigger-once 103 73 0.5 (lambda ()
 (set-cell-heights 103 61 104 53 -3.5 -3.5 -3.5 -3.5)
 (set-primary-color (sign (_ "A wall has been lowered.") 0.8 1.0 -0.1 103 73) 0.2 0.5 1.0 1.0)
 (set-onoff blinker4 #f)
 ))
 
 (define blinker5 (add-colormodifier 3 103 92 0.5 1.0 0.5 1.0))
-(trigger 103 92 0.5 (lambda ()
+(trigger-once 103 92 0.5 (lambda ()
 (set-cell-heights 115 93 116 91 -1.5 -1.5 -1.5 -1.5)
 (set-primary-color (sign (_ "A wall has been lowered.") 0.8 1.0 -0.1 103 92) 0.2 0.5 1.0 1.0)
 (set-onoff blinker5 #f)
 ))
 
 (define blinker6 (add-colormodifier 3 83 73 0.5 1.0 0.5 1.0))
-(trigger 83 73 0.5 (lambda ()
+(trigger-once 83 73 0.5 (lambda ()
 (set-cell-heights 66 80 72 66 -0.5 -0.5 -0.5 -0.5)
 (set-primary-color (sign (_ "A roof has been raised.") 0.8 1.0 -0.1 83 73) 0.2 0.5 1.0 1.0)
 (set-onoff blinker6 #f)
 ))
 
 (define blinker7 (add-colormodifier 3 83 92 0.5 1.0 0.5 1.0))
-(trigger 83 92 0.5 (lambda ()
+(trigger-once 83 92 0.5 (lambda ()
 (set-cell-heights 76 146 86 146 -9.0 -9.0 -9.0 -9.0)
 (set-cell-heights 76 147 86 147 -8.5 -8.5 -8.5 -8.5)
 (set-cell-heights 76 148 86 148 -8.0 -8.0 -8.0 -8.0)
@@ -227,7 +227,7 @@
 ))
 
 (define blinker8 (add-colormodifier 3 75 162 0.5 1.0 0.5 1.0))
-(trigger 75 162 0.5 (lambda ()
+(trigger-once 75 162 0.5 (lambda ()
 (set-cell-heights 59 53 66 53 -4.0 -4.0 -4.0 -4.0)
 (set-cell-heights 59 52 66 52 -3.5 -3.5 -3.5 -3.5)
 (set-cell-heights 59 51 66 51 -3.0 -3.0 -3.0 -3.0)
@@ -244,7 +244,7 @@
 ;;Trigger to enter final temple.
 
 (define blinker9 (add-colormodifier 3 53 101 0.5 1.0 0.5 1.0))
-(trigger 53 101 0.5 (lambda ()
+(trigger-once 53 101 0.5 (lambda ()
 (set-cell-heights 119 77 125 77 4.0 4.0 4.0 4.0)
 (set-primary-color (sign (_ "The exit is now open.") 0.8 1.0 -0.1 53 101) 0.2 0.5 1.0 1.0)
 (set-onoff blinker9 #f)

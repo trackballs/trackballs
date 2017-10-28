@@ -73,5 +73,5 @@
 (add-spike 244 247 0.4 0.0)
 
 ;;Secret Teleport
-(trigger 236 220 0.5 (lambda() (add-teleport 236 220 240 234 0.3)))
+(trigger-once 236 220 0.5 (lambda() (add-teleport 236 220 240 234 0.3)))
 

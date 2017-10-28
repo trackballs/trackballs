@@ -27,3 +27,16 @@
             (multi-pipe (cdr coords) radius connectors))
           (multi-pipe (cdr coords) radius connectors))))))
           
+;; arguments are like (trigger . . . .)
+;; namely, position x y, radius of effect, and function to call
+;; the thunk is executed only the first time the player enters the
+;; radius and never again.
+;; useful to avoid overcreating a fixed object (pipe, teleporter)
+(define trigger-once
+  (lambda (x y r thunk)
+    (let ((first-time #t))
+      (trigger x y r
+        (lambda ()
+          (if first-time
+            (begin (set! first-time #f)
+              (thunk))))))))

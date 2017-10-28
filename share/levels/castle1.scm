@@ -44,7 +44,7 @@
 (set-cell-wall-colors 0 0 255 255 3 .3 .3 .9)
 
 ;;Secret treasure
-(trigger 240.5 241.5 1.0 (lambda() (set-cell-heights 240 241 241 242 -1 -1 -1 -1)))
+(trigger-once 240.5 241.5 1.0 (lambda() (set-cell-heights 240 241 241 242 -1 -1 -1 -1)))
 (add-flag 240 241 50 #t 0.1) 
 (add-flag 240 242 50 #t 0.1) 
 (add-flag 241 241 50 #t 0.1) 

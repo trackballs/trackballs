@@ -79,7 +79,7 @@
 (add-teleport 48 97 96 78 0.2)
 
 (set-primary-color (add-flag 100 114 0 #t 0.1) 1.0 0.5 0.0)
-(trigger 100 114 0.3 (lambda () (scale-oxygen 3.0)))
+(trigger-once 100 114 0.3 (lambda () (scale-oxygen 3.0)))
 (sign (_ "Oxygen") 0.8 20.0 -1 100 114)
 
 (define mr-grey
