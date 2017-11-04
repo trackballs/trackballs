@@ -34,7 +34,7 @@
 (define b4 (new-mr-black 208.5 176.5))
 (set-horizon b4 2.5)
 
-(sign "Switch twice" 1.0 0.0 0.0 218 156)
+(sign (_ "Switch twice") 1.0 0.0 0.0 218 156)
 
 (if (= (difficulty) *hard*)
     (new-mr-black 199.5 200.5))
@@ -70,7 +70,7 @@
         (lambda () (if invisible (begin (set! invisible #f) (add-goal 201 201 #t ""))))
         (lambda () (new-mr-black 201 200)))
 
-(sign "Switch twice" 1.0 0.0 0.0 194 172)
+(sign (_ "Switch twice") 1.0 0.0 0.0 194 172)
 
 
 (add-flag 208 177 200 #t 0.1)

@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-14 23:50-0400\n"
-"PO-Revision-Date: 2017-09-04 09:46-0400\n"
+"POT-Creation-Date: 2017-11-04 11:17-0400\n"
+"PO-Revision-Date: 2017-11-04 11:19-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.3\n"
+"X-Generator: Poedit 2.0.4\n"
 
 #: ../src/calibrateJoystickMode.cc:105
 msgid "Calibrating Joystick"
@@ -623,17 +623,17 @@ msgstr "Entrez votre nom: %s"
 msgid "John Doe"
 msgstr "Jean Dupont"
 
-#: ../src/glHelp.cc:1264
+#: ../src/glHelp.cc:1265
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Images/sec: %.1f"
 
-#: ../src/glHelp.cc:1266
+#: ../src/glHelp.cc:1267
 #, c-format
 msgid "Framerate unknown"
 msgstr "Taux d'images par seconde inconnu"
 
-#: ../src/glHelp.cc:1268
+#: ../src/glHelp.cc:1269
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr "%.1f ms/Image"
@@ -1090,16 +1090,16 @@ msgstr "Basculer entre le mode plein écran / fenêtré"
 msgid "Kill the ball"
 msgstr "Tuer la balle"
 
-#: ../src/mmad.cc:349
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Résolution d'écran inconnue de largeur %d"
 
-#: ../src/mmad.cc:382
+#: ../src/mmad.cc:384
 msgid "Welcome to Trackballs."
 msgstr "Bienvenue dans Trackballs."
 
-#: ../src/mmad.cc:384
+#: ../src/mmad.cc:386
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "Utilise %s comme répertoire de données."
@@ -1839,6 +1839,10 @@ msgstr "Mouillez!"
 msgid "Final and the last"
 msgstr "Finale et dernière"
 
+#: ../share/levels/dn6.scm:37 ../share/levels/dn6.scm:73
+msgid "Switch twice"
+msgstr "Changer deux fois"
+
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
 msgstr "Château de Darius le Mede"
@@ -2055,15 +2059,15 @@ msgstr "Oxygène"
 msgid "The Marble HQ"
 msgstr "Le QG de marbre"
 
-#: ../share/levels/sl6.scm:203
+#: ../share/levels/sl6.scm:199
 msgid "The Marble HQ - Do not Enter!"
 msgstr "Le QG de marbe -- Ne pas entrer!"
 
-#: ../share/levels/sl6.scm:344
+#: ../share/levels/sl6.scm:340
 msgid "Bonus"
 msgstr "Bonus"
 
-#: ../share/levels/sl6.scm:526
+#: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr "Salle du commandant"
 

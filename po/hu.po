@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-14 23:50-0400\n"
+"POT-Creation-Date: 2017-11-04 11:17-0400\n"
 "PO-Revision-Date: 2017-06-25 20:05-0400\n"
 "Last-Translator: Attila Boros <wraith13 at gmail dot com>\n"
 "Language-Team: Hungarian\n"
@@ -646,17 +646,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1264
+#: ../src/glHelp.cc:1265
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Képfrissítés: %.1f"
 
-#: ../src/glHelp.cc:1266
+#: ../src/glHelp.cc:1267
 #, c-format
 msgid "Framerate unknown"
 msgstr "Ismeretlen képfrissítés"
 
-#: ../src/glHelp.cc:1268
+#: ../src/glHelp.cc:1269
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -1115,16 +1115,16 @@ msgstr "Váltás teljes képernyős/ablakos mód között"
 msgid "Kill the ball"
 msgstr "Játék feladása"
 
-#: ../src/mmad.cc:349
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Ismeretlen képernyőfelbontás %d szélességgel"
 
-#: ../src/mmad.cc:382
+#: ../src/mmad.cc:384
 msgid "Welcome to Trackballs."
 msgstr "Üdvözöllek a Trackballs játékban. "
 
-#: ../src/mmad.cc:384
+#: ../src/mmad.cc:386
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "%s használata adatkönyvtárnak."
@@ -1869,6 +1869,11 @@ msgstr ""
 msgid "Final and the last"
 msgstr ""
 
+#: ../share/levels/dn6.scm:37 ../share/levels/dn6.scm:73
+#, fuzzy
+msgid "Switch twice"
+msgstr "Kapcsoló:"
+
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
 msgstr ""
@@ -2088,15 +2093,15 @@ msgstr ""
 msgid "The Marble HQ"
 msgstr ""
 
-#: ../share/levels/sl6.scm:203
+#: ../share/levels/sl6.scm:199
 msgid "The Marble HQ - Do not Enter!"
 msgstr ""
 
-#: ../share/levels/sl6.scm:344
+#: ../share/levels/sl6.scm:340
 msgid "Bonus"
 msgstr ""
 
-#: ../share/levels/sl6.scm:526
+#: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
 

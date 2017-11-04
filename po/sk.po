@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-14 23:50-0400\n"
+"POT-Creation-Date: 2017-11-04 11:17-0400\n"
 "PO-Revision-Date: 2017-06-25 20:11-0400\n"
 "Last-Translator: Jozef Říha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -642,17 +642,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1264
+#: ../src/glHelp.cc:1265
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Rýchlosť snímkov: %.1f"
 
-#: ../src/glHelp.cc:1266
+#: ../src/glHelp.cc:1267
 #, c-format
 msgid "Framerate unknown"
 msgstr "Rýchlosť snímkov neznáma"
 
-#: ../src/glHelp.cc:1268
+#: ../src/glHelp.cc:1269
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -1111,16 +1111,16 @@ msgstr "Prepína medzi plnoobrazovkovým a okenným režimom"
 msgid "Kill the ball"
 msgstr "Zrušiť guličku"
 
-#: ../src/mmad.cc:349
+#: ../src/mmad.cc:351
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Neznáme rozlíšenie šírky %d"
 
-#: ../src/mmad.cc:382
+#: ../src/mmad.cc:384
 msgid "Welcome to Trackballs."
 msgstr "Vitajte v hre Trackballs. "
 
-#: ../src/mmad.cc:384
+#: ../src/mmad.cc:386
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "Používam %s ako adresár s dátami hry."
@@ -1865,6 +1865,11 @@ msgstr ""
 msgid "Final and the last"
 msgstr ""
 
+#: ../share/levels/dn6.scm:37 ../share/levels/dn6.scm:73
+#, fuzzy
+msgid "Switch twice"
+msgstr "Prepnúť:"
+
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
 msgstr ""
@@ -2084,15 +2089,15 @@ msgstr ""
 msgid "The Marble HQ"
 msgstr ""
 
-#: ../share/levels/sl6.scm:203
+#: ../share/levels/sl6.scm:199
 msgid "The Marble HQ - Do not Enter!"
 msgstr ""
 
-#: ../share/levels/sl6.scm:344
+#: ../share/levels/sl6.scm:340
 msgid "Bonus"
 msgstr ""
 
-#: ../share/levels/sl6.scm:526
+#: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
 
