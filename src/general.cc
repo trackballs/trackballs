@@ -22,9 +22,9 @@
 
 #include <dirent.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <cstdlib>
 
 int low_memory;
 

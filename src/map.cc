@@ -27,6 +27,7 @@
 #include <SDL2/SDL_endian.h>
 #include <SDL2/SDL_image.h>
 #include <zlib.h>
+#include <cstdlib>
 
 /* VISRADIUS is half-width of square of drawable cells */
 #define VISRADIUS 50

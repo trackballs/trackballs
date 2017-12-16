@@ -23,12 +23,11 @@
 #include "gameHook.h"
 #include "general.h"
 #include "guile.h"
-#include "math.h"
 
 Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat,
                    SCM fun)
     : direction(direction),
-      position(fmod(position, 1.0)),
+      position(std::fmod(position, 1.0)),
       length(length),
       value0(v0),
       value1(v1),

@@ -27,10 +27,10 @@
 #include "settings.h"
 
 #include <dirent.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <zlib.h>
+#include <cstdlib>
 
 Gamer::Gamer() {
   memset(name, 0, sizeof(name));

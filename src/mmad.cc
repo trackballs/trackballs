@@ -57,7 +57,6 @@
 #include <shlobj.h>
 #include <windows.h>
 #endif
-using namespace std;
 
 /* Important globals */
 SDL_Window *window = NULL;

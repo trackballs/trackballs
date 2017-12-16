@@ -35,8 +35,8 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_mouse.h>
-#include <stdlib.h>
 #include <string.h>
+#include <cstdlib>
 
 #define ENVIRONMENT_TEXTURE_SIZE 512
 

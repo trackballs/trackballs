@@ -26,7 +26,6 @@
 #include <GL/glext.h>
 
 #include "general.h"
-#include "math.h"
 
 typedef struct _TTF_Font TTF_Font;
 typedef struct SDL_Surface SDL_Surface;

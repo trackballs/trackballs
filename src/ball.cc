@@ -34,7 +34,6 @@
 #include "splash.h"
 #include "trampoline.h"
 
-#include <math.h>
 #include <set>
 
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};

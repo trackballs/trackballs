@@ -23,8 +23,6 @@
 
 #include "glHelp.h"
 
-#include <stdlib.h>
-
 /*  structure for */
 
 typedef struct _glitter {

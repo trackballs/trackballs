@@ -25,7 +25,6 @@
 #include "ball.h"
 #include "game.h"
 #include "map.h"
-#include "math.h"
 
 Real timeLow = 2.0, timeRise = 3.0, timeHigh = 2.0, timeFall = 3.0;
 
@@ -43,7 +42,7 @@ CyclicPlatform::CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real hi
 
 void CyclicPlatform::tick(Real dt) {
   if (is_on) phase += dt / speed;
-  Real t = fmod(phase, 10.0);
+  Real t = std::fmod(phase, 10.0);
   /*
   Real t = Game::current->gameTime + offset;
   t -= ((int)(t/cycleTime)) * cycleTime;*/
