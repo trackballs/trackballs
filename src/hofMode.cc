@@ -96,8 +96,11 @@ void HallOfFameMode::display() {
   HighScore *highscore = HighScore::highScore;
 
   for (int i = 0; i < 10; i++) {
-    Font::drawSimpleText(&highscore->names[levelSet][i][0], border, y + dy * i - fontSize,
-                         fontSize, menuColor[0], menuColor[1], menuColor[2], menuColor[3]);
+    const char *name = highscore->dummy_player[levelSet][i]
+                           ? _("Anonymous Coward")
+                           : &highscore->names[levelSet][i][0];
+    Font::drawSimpleText(name, border, y + dy * i - fontSize, fontSize, menuColor[0],
+                         menuColor[1], menuColor[2], menuColor[3]);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
     Font::drawRightSimpleText(str, screenWidth - border, y + dy * i - fontSize, fontSize,
                               menuColor[0], menuColor[1], menuColor[2], menuColor[3]);

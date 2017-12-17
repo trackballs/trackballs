@@ -25,7 +25,7 @@
 #include "player.h"
 
 Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
-  strcpy(this->nextLevel, nextLevel);
+  strncpy(this->nextLevel, nextLevel, sizeof(this->nextLevel));
   this->rotate = rotate;
   primaryColor[0] = 0.9;
   primaryColor[1] = 0.8;
@@ -37,7 +37,7 @@ Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.
 void Goal::onGet() {
   // TODO. Make sure player is entering the goal from the right direction
   if (!Game::current->player1->hasWon) {
-    strcpy(Game::current->nextLevel, nextLevel);
+    strncpy(Game::current->nextLevel, nextLevel, sizeof(Game::current->nextLevel));
     if (Game::current->map->isBonus)
       MainMode::mainMode->bonusLevelComplete();
     else

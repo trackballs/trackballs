@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-04 11:17-0400\n"
+"POT-Creation-Date: 2017-12-17 17:18-0500\n"
 "PO-Revision-Date: 2017-06-25 20:22-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -845,14 +845,9 @@ msgstr "Ti porta in un altro luogo, a volte a gran velocità."
 msgid "More Help"
 msgstr "Avanti"
 
-#: ../src/helpMode.cc:287 ../src/hofMode.cc:107 ../src/settingsMode.cc:242
+#: ../src/helpMode.cc:287 ../src/hofMode.cc:110 ../src/settingsMode.cc:242
 msgid "Back"
 msgstr "Indietro"
-
-#: ../src/highScore.cc:39
-#, c-format
-msgid "Anonymous Coward"
-msgstr ""
 
 #: ../src/hofMode.cc:89
 msgid "High Scores"
@@ -862,123 +857,125 @@ msgstr ""
 msgid "Level Set"
 msgstr "Livelloteca:"
 
-#: ../src/hofMode.cc:101
+#: ../src/hofMode.cc:100
+msgid "Anonymous Coward"
+msgstr ""
+
+#: ../src/hofMode.cc:104
 #, c-format
 msgid "%d points"
 msgstr "%d punti"
 
-#: ../src/mainMode.cc:180
+#: ../src/mainMode.cc:182
+msgid "Unknown track"
+msgstr ""
+
+#: ../src/mainMode.cc:184
 msgid "Author:"
 msgstr "Autore:"
 
-#: ../src/mainMode.cc:182
+#: ../src/mainMode.cc:188
+msgid "Unknown author"
+msgstr ""
+
+#: ../src/mainMode.cc:190
 msgid "Press spacebar to begin"
 msgstr "Premere spazio per iniziare"
 
-#: ../src/mainMode.cc:194 ../src/mainMode.cc:203 ../src/mainMode.cc:229
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:202 ../src/mainMode.cc:211 ../src/mainMode.cc:237
+#: ../src/mainMode.cc:251
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Premere spazio per continuare."
 
-#: ../src/mainMode.cc:195
+#: ../src/mainMode.cc:203
 msgid "Game over"
 msgstr "Game over"
 
-#: ../src/mainMode.cc:203
+#: ../src/mainMode.cc:211
 msgid "Oops"
 msgstr "Oops"
 
-#: ../src/mainMode.cc:220
+#: ../src/mainMode.cc:228
 msgid "Paused"
 msgstr "Pausa"
 
-#: ../src/mainMode.cc:229
+#: ../src/mainMode.cc:237
 msgid "Bonus level complete"
 msgstr "Livello bonus completato"
 
-#: ../src/mainMode.cc:243
+#: ../src/mainMode.cc:251
 msgid "Level complete"
 msgstr "Livello completato"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:258
 msgid "Congratulations"
 msgstr "Complimenti,"
 
-#: ../src/mainMode.cc:250
+#: ../src/mainMode.cc:258
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: ../src/mainMode.cc:542 ../src/mainMode.cc:558
+#: ../src/mainMode.cc:550 ../src/mainMode.cc:566
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: ../src/mainMode.cc:581
+#: ../src/mainMode.cc:589
 #, fuzzy
 msgid "Lives"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:581
+#: ../src/mainMode.cc:589
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:581
+#: ../src/mainMode.cc:589
 #, fuzzy
 msgid "Time left"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:653
+#: ../src/mainMode.cc:661
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: ../src/mainMode.cc:655
+#: ../src/mainMode.cc:663
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:656
+#: ../src/mainMode.cc:664
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: ../src/mainMode.cc:657
+#: ../src/mainMode.cc:665
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:658
+#: ../src/mainMode.cc:666
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: ../src/mainMode.cc:660
+#: ../src/mainMode.cc:668
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: ../src/mainMode.cc:662
+#: ../src/mainMode.cc:670
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:662 ../src/settingsMode.cc:199
+#: ../src/mainMode.cc:670 ../src/settingsMode.cc:199
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:662
+#: ../src/mainMode.cc:670
 msgid "hard"
 msgstr "difficile"
-
-#: ../src/map.cc:252
-#, c-format
-msgid "Unknown track"
-msgstr ""
-
-#: ../src/map.cc:253
-#, c-format
-msgid "Unknown author"
-msgstr ""
 
 #: ../src/menuMode.cc:70
 msgid ""
@@ -1023,113 +1020,113 @@ msgstr "Guida"
 msgid "Map Editor"
 msgstr "Editor di livelli"
 
-#: ../src/mmad.cc:214
+#: ../src/mmad.cc:213
 msgid "Usage:"
 msgstr "Utilizzo:"
 
-#: ../src/mmad.cc:215
+#: ../src/mmad.cc:214
 msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
 msgstr "[-w, -m] [-e, -l -t <livello>] [-r <larghezza>] [-s <sensibilità>]"
 
-#: ../src/mmad.cc:217
+#: ../src/mmad.cc:216
 msgid "Display this usage information."
 msgstr "Visualizza questa guida."
 
-#: ../src/mmad.cc:218
+#: ../src/mmad.cc:217
 msgid "Start from level."
 msgstr "Parte dal livello."
 
-#: ../src/mmad.cc:219
+#: ../src/mmad.cc:218
 msgid "Run in window (Default is fullscreen)"
 msgstr "Avvia in una finestra (predefinito tuttoschermo)"
 
-#: ../src/mmad.cc:220
+#: ../src/mmad.cc:219
 msgid "Mute sound."
 msgstr "Senza audio."
 
-#: ../src/mmad.cc:221
+#: ../src/mmad.cc:220
 msgid "Set resolution to 640, 800 or 1024"
 msgstr "Imposta la risoluzione a 640, 800 o 1024"
 
-#: ../src/mmad.cc:222
+#: ../src/mmad.cc:221
 msgid "Mouse sensitivity, default 1.0"
 msgstr "Sensibilità del mouse, predefinita 1.0"
 
-#: ../src/mmad.cc:223
+#: ../src/mmad.cc:222
 msgid "Displays framerate"
 msgstr "Visualizza i fotogrammi al secondo"
 
-#: ../src/mmad.cc:224
+#: ../src/mmad.cc:223
 msgid "Prints current version number"
 msgstr "Visualizza la versione corrente"
 
-#: ../src/mmad.cc:225
+#: ../src/mmad.cc:224
 msgid "Updates a map to the latest format"
 msgstr "Aggiorna una mappa all'ultimo FileFormat"
 
-#: ../src/mmad.cc:226
+#: ../src/mmad.cc:225
 msgid "Attempt to conserve memory usage"
 msgstr "Ottimizza l'utilizzo della memoria"
 
-#: ../src/mmad.cc:227
+#: ../src/mmad.cc:226
 #, fuzzy
 msgid "Debug joystick status"
 msgstr "Muovi joystick verso l'alto"
 
-#: ../src/mmad.cc:228
+#: ../src/mmad.cc:227
 msgid "Correct for bad joysticks"
 msgstr "Correzione per joystick difettosi"
 
-#: ../src/mmad.cc:232
+#: ../src/mmad.cc:231
 msgid "Important keyboard shortcuts"
 msgstr ""
 
-#: ../src/mmad.cc:233
+#: ../src/mmad.cc:232
 msgid "Escape"
 msgstr ""
 
-#: ../src/mmad.cc:233
+#: ../src/mmad.cc:232
 msgid "Soft quit"
 msgstr ""
 
-#: ../src/mmad.cc:234
+#: ../src/mmad.cc:233
 msgid "CapsLock"
 msgstr ""
 
-#: ../src/mmad.cc:234
+#: ../src/mmad.cc:233
 msgid "Unhide mouse pointer"
 msgstr ""
 
-#: ../src/mmad.cc:235
+#: ../src/mmad.cc:234
 msgid "CTRL-q"
 msgstr ""
 
-#: ../src/mmad.cc:235
+#: ../src/mmad.cc:234
 msgid "Quit the game immediately"
 msgstr ""
 
-#: ../src/mmad.cc:236
+#: ../src/mmad.cc:235
 msgid "CTRL-f"
 msgstr ""
 
-#: ../src/mmad.cc:236
+#: ../src/mmad.cc:235
 msgid "Toggle between fullscreen/windowed mode"
 msgstr ""
 
-#: ../src/mmad.cc:237
+#: ../src/mmad.cc:236
 msgid "Kill the ball"
 msgstr ""
 
-#: ../src/mmad.cc:351
+#: ../src/mmad.cc:350
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Risoluzione schermo sconosciuta per larghezza %d"
 
-#: ../src/mmad.cc:384
+#: ../src/mmad.cc:383
 msgid "Welcome to Trackballs."
 msgstr "Benvenuti in Trackballs."
 
-#: ../src/mmad.cc:386
+#: ../src/mmad.cc:385
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "Utilizza la catella %s per i dati del gioco."
@@ -1411,7 +1408,7 @@ msgstr "Punteggio medio: N/D"
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"
 
-#: ../src/setupMode.cc:262
+#: ../src/setupMode.cc:265
 msgid "Start Game"
 msgstr "Gioca!"
 

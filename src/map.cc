@@ -250,8 +250,8 @@ Map::Map(char* filename) {
 
   isBonus = 0;
 
-  snprintf(mapname, sizeof(mapname), _("Unknown track"));
-  snprintf(author, sizeof(author), _("Unknown author"));
+  memset(mapname, 0, sizeof(mapname));
+  memset(author, 0, sizeof(author));
   gp = gzopen(filename, "rb");
   if (gp) {
     int version;

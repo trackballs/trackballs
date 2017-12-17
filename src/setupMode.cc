@@ -214,7 +214,7 @@ void SetupMode::display() {
     addText_Left(0, fontSize, row0 + rowSep * 1, _("N/A"), col1, col1MaxExtent);
   else
     addText_Left(CODE_LEVEL_SET, fontSize, row0 + rowSep * 1,
-                 settings->levelSets[levelSet].name, col1, col1MaxExtent);
+                 gettext(settings->levelSets[levelSet].name), col1, col1MaxExtent);
 
   /* Start level */
   addText_Left(0, fontSize, row0 + rowSep * 2, _("Level"), col0);
@@ -222,7 +222,7 @@ void SetupMode::display() {
     addText_Left(0, fontSize, row0 + rowSep * 2, settings->specialLevel, col1, col1MaxExtent);
   else
     addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2,
-                 gamer->levels[levelSet][level].name, col1, col1MaxExtent);
+                 gettext(gamer->levels[levelSet][level].name), col1, col1MaxExtent);
 
   /* Difficulty */
   addText_Left(0, fontSize, row0 + rowSep * 3, _("Difficulty"), col0);
@@ -253,10 +253,13 @@ void SetupMode::display() {
 
   /* Descriptive level text */
   int lineno;
-  for (lineno = 0; lineno < 5; lineno++)
-    Font::drawSimpleText(settings->levelSets[levelSet].description[lineno], col0 + lineSize,
-                         row0 + rowSep * 4 + lineSep * lineno, lineSize, 1.0, 1.0, 1.0, 1.0,
-                         screenWidth - col0 - lineSize);
+  for (lineno = 0; lineno < 5; lineno++) {
+    if (strlen(settings->levelSets[levelSet].description[lineno])) {
+      Font::drawSimpleText(gettext(settings->levelSets[levelSet].description[lineno]),
+                           col0 + lineSize, row0 + rowSep * 4 + lineSep * lineno, lineSize,
+                           1.0, 1.0, 1.0, 1.0, screenWidth - col0 - lineSize);
+    }
+  }
 
   /* Start */
   addText_Center(CODE_START, fontSize, screenHeight - 5 * fontSize / 2, _("Start Game"),

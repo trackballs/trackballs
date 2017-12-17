@@ -176,9 +176,17 @@ void MainMode::display() {
     {
       const char *lp[3], *rp[3];
       lp[0] = _("Track:");
-      rp[0] = Game::current->map->mapname;
+      if (strlen(Game::current->map->mapname)) {
+        rp[0] = gettext(Game::current->map->mapname);
+      } else {
+        rp[0] = _("Unknown track");
+      }
       lp[1] = _("Author:");
-      rp[1] = Game::current->map->author;
+      if (strlen(Game::current->map->author)) {
+        rp[1] = Game::current->map->author;
+      } else {
+        rp[1] = _("Unknown author");
+      }
       lp[2] = _("Press spacebar to begin");
       rp[2] = " ";
       multiMessage(3, lp, rp);
@@ -666,7 +674,8 @@ void MainMode::showBonus() {
 }
 void MainMode::bonusLevelComplete() {
   gameStatus = statusBonusLevelComplete;
-  strcpy(Game::current->nextLevel, Game::current->returnLevel);
+  strncpy(Game::current->nextLevel, Game::current->returnLevel,
+          sizeof(Game::current->nextLevel));
 }
 
 void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {

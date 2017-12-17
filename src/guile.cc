@@ -205,7 +205,17 @@ char *ascm_format(const char *str) {
 }
 
 /******************** _ a.k.a. gettext  ********************/
-SCM_DEFINE(underscore, "_", 1, 0, 0, (SCM str), "Translate string if translation available")
+SCM_DEFINE(underscore, "_", 1, 0, 0, (SCM str),
+           "Mark string visible for translation and return it (see 'translate')")
+#define FUNC_NAME s_underscore
+{
+  SCM_ASSERT(scm_is_string(str), str, SCM_ARG1, FUNC_NAME);
+  return str;
+}
+#undef FUNC_NAME
+
+SCM_DEFINE(translate_string, "translate", 1, 0, 0, (SCM str),
+           "Translate string argument if possible (see '_')")
 #define FUNC_NAME s_underscore
 {
   SCM_ASSERT(scm_is_string(str), str, SCM_ARG1, FUNC_NAME);
@@ -213,6 +223,7 @@ SCM_DEFINE(underscore, "_", 1, 0, 0, (SCM str), "Translate string if translation
   char *trans = gettext(text);
   SCM out = scm_from_utf8_string(trans);
   free(text);
+  return out;
   return out;
 }
 #undef FUNC_NAME
@@ -433,7 +444,8 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
 /************* sign ************/
 SCM_DEFINE(sign, "sign", 6, 1, 0,
            (SCM text, SCM scale, SCM rotation, SCM duration, SCM x, SCM y, SCM z),
-           "Creates a new sign. duration<0 lasts forever. Returns an 'animated' object")
+           "Creates a new sign. Text is translated if possible. duration<0 lasts forever. "
+           "Returns an 'animated' object")
 #define FUNC_NAME s_sign
 {
   SCM_ASSERT(scm_is_string(text), text, SCM_ARG1, FUNC_NAME);
@@ -447,7 +459,7 @@ SCM_DEFINE(sign, "sign", 6, 1, 0,
         pos[2] = scm_to_double(z);
       else
         pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
-      Sign *s = new Sign(sname, scm_to_double(duration), scm_to_double(scale),
+      Sign *s = new Sign(gettext(sname), scm_to_double(duration), scm_to_double(scale),
                          scm_to_double(rotation), pos);
       free(sname);
       return smobAnimated_make(s);
