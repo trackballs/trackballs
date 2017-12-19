@@ -220,9 +220,12 @@ void SetupMode::display() {
   addText_Left(0, fontSize, row0 + rowSep * 2, _("Level"), col0);
   if (settings->doSpecialLevel)
     addText_Left(0, fontSize, row0 + rowSep * 2, settings->specialLevel, col1, col1MaxExtent);
-  else
+  else if (strlen(gamer->levels[levelSet][level].name))
     addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2,
                  gettext(gamer->levels[levelSet][level].name), col1, col1MaxExtent);
+  else
+    addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2, _("Unknown track"), col1,
+                 col1MaxExtent);
 
   /* Difficulty */
   addText_Left(0, fontSize, row0 + rowSep * 3, _("Difficulty"), col0);
