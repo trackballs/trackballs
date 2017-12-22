@@ -11,13 +11,15 @@ find_path(GC_INCLUDE_DIR NAMES gc/gc.h gc/gc_inline.h
           HINTS ${PC_GC_INCLUDEDIR} ${PC_GC_INCLUDE_DIRS})
 
 find_library(GC_LIBRARY NAMES gc
-             HINTS ${PC_GC_LIBDIR} ${PC_GC_LIBRARY_DIRS} )
+             HINTS ${PC_GC_LIBDIR} ${PC_GC_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(libgc REQUIRED_VARS
                                   GC_LIBRARY GC_INCLUDE_DIR
                                   VERSION_VAR PC_GC_VERSION)
 
-set(GC_LIBRARIES ${GC_LIBRARY} )
-set(GC_INCLUDE_DIRS ${GC_INCLUDE_DIR} )
+set(GC_LIBRARIES ${GC_LIBRARY})
+set(GC_INCLUDE_DIRS ${GC_INCLUDE_DIR})
+
+mark_as_advanced(GC_LIBRARY GC_INCLUDE_DIR)
 

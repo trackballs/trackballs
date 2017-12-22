@@ -32,3 +32,4 @@ find_package_handle_standard_args(libguile REQUIRED_VARS
 set(GUILE_LIBRARIES ${GUILE_LIBRARY} )
 set(GUILE_INCLUDE_DIRS ${GUILE_INCLUDE_DIR} )
 
+mark_as_advanced(GUILE_LIBRARY GUILE_INCLUDE_DIR GUILE_SNARF)

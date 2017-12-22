@@ -9,6 +9,7 @@ find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)
 # libgc is a dependency of Guile that still needs to be provided
 find_package(GC REQUIRED)
+find_package(Intl REQUIRED)
 
 # Optionally set data dir and locale dir
 set(TRACKBALLS_LOCALE_DIR "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
@@ -44,7 +45,7 @@ foreach( d ${definitions} )
     set(defstr "${defstr}" "-D${d}")
 endforeach()
 
-include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${GC_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/src ${GUILE_INCLUDE_DIRS} ${CMAKE_CURRENT_BINARY_DIR} ${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR} ${SDL2_MIXER_INCLUDE_DIR} ${SDL2_TTF_INCLUDE_DIR} ${ZLIB_INCLUDE_DIRS} ${GC_INCLUDE_DIRS} ${Intl_INCLUDE_DIRS})
 get_directory_property(includes DIRECTORY  ${CMAKE_SOURCE_DIR} INCLUDE_DIRECTORIES)
 set(incstr "")
 foreach( d ${includes} )
@@ -60,7 +61,7 @@ add_custom_command(OUTPUT guile.cc.x
 # Construct executable file
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
-target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} ${GC_LIBRARIES} m)
+target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} ${GC_LIBRARIES} ${Intl_LIBRARIES} m)
 install(TARGETS trackballs DESTINATION bin)
 
 # Data files
@@ -103,10 +104,14 @@ install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
         DESTINATION ${TRACKBALLS_SHARE}/../applications)
 
 # Translations!
-find_package(Gettext)
-file(GLOB po_files po/*.po)
-foreach(po_file ${po_files})
-  get_filename_component(lang ${po_file} NAME_WE)
-  GETTEXT_PROCESS_PO_FILES( ${lang} ALL PO_FILES ${po_file} )
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${lang}.gmo DESTINATION ${TRACKBALLS_LOCALE}/${lang}/LC_MESSAGES/ RENAME trackballs.mo)
-endforeach()
+option(DISABLE_NLS "Disable native language support (NLS)" OFF)
+if(NOT DISABLE_NLS)
+  find_package(Gettext)
+  mark_as_advanced(GETTEXT_MSGFMT_EXECUTABLE GETTEXT_MSGMERGE_EXECUTABLE)
+  file(GLOB po_files po/*.po)
+  foreach(po_file ${po_files})
+    get_filename_component(lang ${po_file} NAME_WE)
+    GETTEXT_PROCESS_PO_FILES( ${lang} ALL PO_FILES ${po_file} )
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${lang}.gmo DESTINATION ${TRACKBALLS_LOCALE}/${lang}/LC_MESSAGES/ RENAME trackballs.mo)
+  endforeach()
+endif()
