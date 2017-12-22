@@ -28,6 +28,7 @@
 
 #include <libguile.h>
 #include <zlib.h>
+#include <cstdlib>
 
 char highScorePath[256];
 

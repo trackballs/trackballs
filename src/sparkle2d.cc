@@ -53,7 +53,7 @@ void Sparkle2D::clear() {
 
   while (tmp != NULL) {
     tmp2 = tmp->next;
-    free(tmp);
+    delete tmp;
     tmp = tmp2;
   }
   sparkle_first = NULL;
@@ -67,7 +67,7 @@ void Sparkle2D::remove_sparkle(Sparkle *sparkle) {
     sparkle->prev->next = sparkle->next;
   else
     sparkle_first = sparkle->next;
-  free(sparkle);
+  delete sparkle;
 }
 
 /*
@@ -76,7 +76,7 @@ void Sparkle2D::remove_sparkle(Sparkle *sparkle) {
 Sparkle *Sparkle2D::create_and_insert() {
   Sparkle *tmp = NULL;
 
-  tmp = (Sparkle *)malloc(sizeof(Sparkle));
+  tmp = new Sparkle;
   if (tmp == NULL) { return (NULL); }
   tmp->next = sparkle_first;
   tmp->prev = NULL;

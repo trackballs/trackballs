@@ -30,6 +30,7 @@
 #include <locale.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <cstdlib>
 
 /* These are the names/codes codes of languages available from the settings
    menu. The name of languages should appear in the respective native
