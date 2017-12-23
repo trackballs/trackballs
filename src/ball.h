@@ -51,7 +51,7 @@ class Ball : public Animated {
  public:
   Ball();
   virtual ~Ball();
-  Boolean physics(Real time);
+  bool physics(Real time);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
@@ -62,7 +62,7 @@ class Ball : public Animated {
   void onRemove();
   void setReflectivity(double reflectivity, int metallic);
   /* When we crash into something. Returns if we are still alive */
-  virtual Boolean crash(Real speed);
+  virtual bool crash(Real speed);
   virtual void die(int how);
 
   static void init();
@@ -91,7 +91,7 @@ class Ball : public Animated {
   double nitroDebrisCount;
 
  private:
-  Boolean checkGroundCollisions(class Map*, Real x, Real y);
+  bool checkGroundCollisions(class Map*, Real x, Real y);
   double reflectivity;
   int metallic, dontReflectSelf;
 

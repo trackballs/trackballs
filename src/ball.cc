@@ -717,7 +717,7 @@ void Ball::setReflectivity(double reflectivity, int metallic) {
   }
 }
 
-Boolean Ball::physics(Real time) {
+bool Ball::physics(Real time) {
   Real x, y;
 
   if (!Game::current) return true;
@@ -947,7 +947,7 @@ Boolean Ball::physics(Real time) {
   handlePipes(time);
   return true;
 }
-Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
+bool Ball::checkGroundCollisions(Map *map, Real x, Real y) {
   Real dh = position[2] - sqrt(radius * radius - x * x - y * y) -
             map->getHeight(position[0] + x, position[1] + y);
   if (dh < 0.02) {
@@ -1035,7 +1035,7 @@ Boolean Ball::checkGroundCollisions(Map *map, Real x, Real y) {
   return true;
 }
 
-Boolean Ball::crash(Real speed) {
+bool Ball::crash(Real speed) {
   if (modTimeLeft[MOD_GLASS]) speed *= 1.5;
 
   if (speed > crashTolerance) {

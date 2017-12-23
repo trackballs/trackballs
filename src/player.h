@@ -37,13 +37,13 @@ class Player : public Ball {
   void restart(Coord3d);    /**< Restart the ball at given position */
   void mouse(int state, int x, int y);
   void setHealth(Real);
-  virtual Boolean crash(Real speed);
+  virtual bool crash(Real speed);
 
   double health;
   double oxygen;
   double moveBurst;
   int lives, timeLeft, score, hasWon;
-  Boolean playing;
+  bool playing;
 
  private:
   void jump();

@@ -381,7 +381,7 @@ void Player::setHealth(Real d) {
   if (d < health) health = d;
   if (health < 0.0) health = 0.0;
 }
-Boolean Player::crash(Real speed) {
+bool Player::crash(Real speed) {
   double espeed =
       modTimeLeft[MOD_GLASS] ? (1.5 * speed) / crashTolerance : speed / crashTolerance;
   setHealth(1.0 - espeed);

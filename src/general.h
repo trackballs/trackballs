@@ -40,7 +40,6 @@ typedef double Real;
 typedef double Coord3d[3];
 typedef double Matrix4d[4][4];
 typedef double Matrix3d[3][3];
-typedef int Boolean;
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264

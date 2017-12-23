@@ -52,7 +52,7 @@ void Baby::die(int how) {
 
 Baby::~Baby() {}
 
-Boolean Baby::crash(Real speed, Ball *ball) {
+bool Baby::crash(Real speed, Ball *ball) {
   if (ball == (Ball *)Game::current->player1) {
     die(DIE_CRASH);
     return false;
