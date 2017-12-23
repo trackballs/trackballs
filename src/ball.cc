@@ -724,16 +724,12 @@ Boolean Ball::physics(Real time) {
   Map *map = Game::current->map;
 
   if (modTimeLeft[MOD_DIZZY]) {
-    /* Explanation. We cast the address of the ball into an integer in order to get
-       a unique random seed for every ball. Could possibly cause problems on 64 bit platforms,
-       have to
-       look into it. */
+    /* We cast the address of the ball into an integer in order to get a unique random seed for
+     * every ball. */
     rotation[0] += time * 7.0 * (frand((long)Game::current->gameTime + (long)this) - 0.5);
     rotation[1] += time * 7.0 * (frand(47 + (long)Game::current->gameTime + (long)this) - 0.5);
   }
 
-  /*  rotateX(-rotation[1]*time*2.0*M_PI*radius,rotations);
-          rotateY(-rotation[0]*time*2.0*M_PI*radius,rotations);*/
   rotateX(-rotation[1] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
   rotateY(-rotation[0] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
 
@@ -776,9 +772,8 @@ Boolean Ball::physics(Real time) {
   }
 
   /* All effects of water */
+  double waterHeight = map->getWaterHeight(position[0], position[1]);
   {
-    double waterHeight = map->getWaterHeight(position[0], position[1]);
-
     /* Floating */
     if (modTimeLeft[MOD_FLOAT] && !inPipe && waterHeight > position[2] &&
         waterHeight > mapHeight + radius + 0.025) {
@@ -799,9 +794,7 @@ Boolean Ball::physics(Real time) {
                      velocity[2] * velocity[2] * 5.;
       if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
         GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-        Coord3d center;
-        assign(position, center);
-        center[2] = map->getWaterHeight(center[0], center[1]);
+        Coord3d center = {position[0], position[1], waterHeight};
         new Splash(center, velocity, waterColor, 30 * radius / 0.3,
                    radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
       }
@@ -809,9 +802,7 @@ Boolean Ball::physics(Real time) {
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
       if (frandom() < speed * 0.001) {
         GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-        Coord3d center;
-        assign(position, center);
-        center[2] = map->getWaterHeight(center[0], center[1]);
+        Coord3d center = {position[0], position[1], waterHeight};
         Coord3d vel;
         vel[0] = -rotation[0] * radius;  // 0.3;
         vel[1] = -rotation[1] * radius;  // 0.3;
@@ -881,7 +872,7 @@ Boolean Ball::physics(Real time) {
     }
 
     if (inTheAir) {
-      if (map->getWaterHeight(position[0], position[1]) > position[2] - radius) {
+      if (waterHeight > position[2] - radius) {
         v_fric = 0.0005;
         r_fric = 0.0005;
       } else

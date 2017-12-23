@@ -74,10 +74,6 @@ ushort *sphere_idxs[MAX_BALL_DETAIL];
 static std::map<int, TTF_Font *> menuFontLookup;
 
 Sparkle2D *sparkle2D = NULL;
-/*
-SDL_Surface *mousePointer;
-GLuint mousePointerTexture;
-*/
 
 struct StringInfo {
   TTF_Font *font;
