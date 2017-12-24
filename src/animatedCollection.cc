@@ -802,6 +802,9 @@ static struct Rectangle<3> rectFromAnim(const Animated* a) {
 
   for (int i = 0; i < 3; i++) {
     if (r.lower[i] > r.upper[i]) { error("Impossible rectangle"); }
+    if (!std::isfinite(r.lower[i]) || !std::isfinite(r.upper[i])) {
+      error("Invalid bounding box");
+    }
   }
   return r;
 }

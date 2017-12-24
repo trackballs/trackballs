@@ -91,7 +91,6 @@ class Ball : public Animated {
   double nitroDebrisCount;
 
  private:
-  bool checkGroundCollisions(class Map*, Real x, Real y);
   double reflectivity;
   int metallic, dontReflectSelf;
 
@@ -99,10 +98,12 @@ class Ball : public Animated {
 
   void generateSandDebris();
   void generateDebris(GLfloat color[4]);
-  void handleEdges();
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);
+  bool handleMapCollisions(class Map*);
+
+  void handleEdges();
 };
 
 #endif

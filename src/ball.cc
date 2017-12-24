@@ -924,14 +924,9 @@ bool Ball::physics(Real time) {
   for (int i = 0; i < 3; i++) position[i] += time * velocity[i];
 
   if (!inPipe) {
-    handleEdges();
+    if (!handleMapCollisions(map)) return false;
 
-    /* Ground collisions */
-    if (!checkGroundCollisions(map, 0, 0)) return false;
-    for (x = -radius + 0.05; x <= radius - 0.05; x += 0.05)
-      if (!checkGroundCollisions(map, x, 0.0)) return false;
-    for (y = -radius + 0.05; y <= radius - 0.05; y += 0.05)
-      if (!checkGroundCollisions(map, 0.0, y)) return false;
+    handleEdges();
   }
 
   /* Collisions with other balls */
@@ -947,92 +942,349 @@ bool Ball::physics(Real time) {
   handlePipes(time);
   return true;
 }
-bool Ball::checkGroundCollisions(Map *map, Real x, Real y) {
-  Real dh = position[2] - sqrt(radius * radius - x * x - y * y) -
-            map->getHeight(position[0] + x, position[1] + y);
-  if (dh < 0.02) {
-    if (inTheAir) {
-      /* We where in the air and have now hit the ground. Calculate
-             a bounce */
+static int closestPointOnTriangle(Coord3d tricor[3], Coord3d point, Coord3d closest,
+                                  Coord3d normal) {
+  Coord3d dv0, dv1, nor, baseoff;
+  sub(tricor[2], tricor[0], dv0);
+  sub(tricor[2], tricor[1], dv1);
+  sub(point, tricor[2], baseoff);
+  crossProduct(dv0, dv1, nor);
+  normalize(nor);
+  double dist = dotProduct(baseoff, nor);
+  if (dist > 0) {
+    for (int i = 0; i < 3; i++) normal[i] = nor[i];
+  } else {
+    for (int i = 0; i < 3; i++) normal[i] = -nor[i];
+  }
+  Coord3d nearoff;
+  for (int i = 0; i < 3; i++) nearoff[i] = baseoff[i] - dist * nor[i];
+  double s = -dotProduct(nearoff, dv0);
+  double t = -dotProduct(nearoff, dv1);
+  Coord3d nearoffm1, m1;
+  sub(dv0, dv1, m1);
+  add(nearoff, dv1, nearoffm1);
+  double r = -dotProduct(nearoffm1, m1);
+  double mm = dotProduct(m1, m1);
+  double uu = dotProduct(dv0, dv0);
+  double vv = dotProduct(dv1, dv1);
+  double uv = dotProduct(dv0, dv1);
+  double idet = 1. / (uu * vv - uv * uv);
+  double a = idet * (vv * s - uv * t);
+  double b = idet * (-uv * s + uu * t);
+  double c = 1 - a - b;
+  if (0. <= a && a <= 1. && 0. <= b && b <= 1. && 0. <= c && c <= 1.) {
+    for (int j = 0; j < 3; j++) {
+      closest[j] = tricor[0][j] * a + tricor[1][j] * b + tricor[2][j] * c;
+    }
+    return 0;
+  } else if (0. <= s && s <= uu && b <= 0.) {
+    double q = s / uu;
+    for (int j = 0; j < 3; j++) { closest[j] = tricor[2][j] * (1. - q) + tricor[0][j] * q; }
+    return 1;
+  } else if (0. <= t && t <= vv && a <= 0.) {
+    double q = t / vv;
+    for (int j = 0; j < 3; j++) { closest[j] = tricor[2][j] * (1. - q) + tricor[1][j] * q; }
+    return 2;
+  } else if (0. <= r && r <= mm && c <= 0.) {
+    double q = r / mm;
+    for (int j = 0; j < 3; j++) { closest[j] = tricor[0][j] * q + tricor[1][j] * (1. - q); }
+    return 3;
+  } else if (s <= 0. && t <= 0.) {
+    assign(tricor[2], closest);
+    return 4;
+  } else if (t >= 0. && r <= 0.) {
+    assign(tricor[1], closest);
+    return 5;
+  } else if (s >= 0 && r >= mm) {
+    assign(tricor[0], closest);
+    return 6;
+  }
+  warning("cPoT impossible case happened");
+  return -1;
+}
+bool Ball::handleMapCollisions(class Map *map) {
+  /* automatically force ball to map height if it is far enough down */
+  Real cheight = map->getHeight(position[0], position[1]);
+  if (cheight > position[2] + radius) { position[2] = cheight + radius / 3; }
 
-      /* first, change speed etc. if we are rotating */
-      double v_fric = 0.2;
-      double r_fric = 0.4;
-      velocity[0] = velocity[0] * (1.0 - v_fric) + rotation[0] * v_fric;
-      velocity[1] = velocity[1] * (1.0 - v_fric) + rotation[1] * v_fric;
-      rotation[0] = rotation[0] * (1.0 - r_fric) + velocity[0] * r_fric;
-      rotation[1] = rotation[1] * (1.0 - r_fric) + velocity[1] * r_fric;
+  /* Construct a list of triangular facets the ball could interact with,
+   * and locate the closest interaction point. */
+  int xpos = (int)position[0], ypos = (int)position[1];
 
-      Coord3d normal;
-      Cell &c = map->cell((int)(position[0] + x), (int)(position[1] + y));
-      /* TODO: Use correct normal */
-      c.getNormal(normal, Cell::CENTER);
+  Cell *cells[24];
+  Coord3d hitpts[24];
+  Coord3d normals[24];
+  int cellco[24][2];
+  int nhits = 0;
 
-      Real speed = -dotProduct(velocity, normal);  // or simply -velocity[2];
+  const double corners[5][2] = {{0., 0.}, {1., 0.}, {1., 1.}, {0., 1.}, {0.5, 0.5}};
+  const int triangles[4][3] = {{0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
+  for (int x = xpos - 1; x <= xpos + 1; x++) {
+    for (int y = ypos - 1; y <= ypos + 1; y++) {
+      /* Only test cells under ball */
+      if (position[0] + radius < x || position[0] - radius > x + 1) continue;
+      if (position[1] + radius < y || position[1] - radius > y + 1) continue;
+
+      Cell &c = map->cell(x, y);
+      for (int i = 0; i < 4; i++) {
+        Coord3d tricor[3];
+        for (int k = 0; k < 3; k++) {
+          int vno = triangles[i][k];
+          tricor[k][0] = x + corners[vno][0];
+          tricor[k][1] = y + corners[vno][1];
+          tricor[k][2] = c.getHeight(corners[vno][0], corners[vno][1]);
+        }
+        Coord3d closest, normal;
+        int ret = closestPointOnTriangle(tricor, position, closest, normal);
+        if (ret < 0) continue;
+
+        if (closest[2] > position[2]) continue;
+
+        /* Ensure that ball is over the closest point */
+        double dx = (closest[0] - position[0]), dy = (closest[1] - position[1]);
+        double rad2 = dx * dx + dy * dy;
+        if (rad2 > radius * radius) continue;
+
+        /* Ball must be closer that 0.02 to closest point */
+        Real dh = position[2] - std::sqrt(radius * radius - rad2) - closest[2];
+        if (dh >= 0.02) continue;
+
+        // ignore more than 24 intersections; should never happen anyway
+        if (nhits >= 24) continue;
+        cells[nhits] = &c;
+        assign(closest, hitpts[nhits]);
+        assign(normal, normals[nhits]);
+        cellco[nhits][0] = x;
+        cellco[nhits][1] = y;
+        nhits++;
+      }
+    }
+  }
+  /* If there are no points of contact, done */
+  if (nhits == 0) return true;
+
+  /* For each point of contact, compute interaction */
+  double weight = 1. / nhits;
+
+  if (inTheAir) {
+    /* General contact friction */
+    double v_fric = 0.2;
+    double r_fric = 0.4;
+    velocity[0] = velocity[0] * (1.0 - v_fric) + rotation[0] * v_fric;
+    velocity[1] = velocity[1] * (1.0 - v_fric) + rotation[1] * v_fric;
+    rotation[0] = rotation[0] * (1.0 - r_fric) + velocity[0] * r_fric;
+    rotation[1] = rotation[1] * (1.0 - r_fric) + velocity[1] * r_fric;
+
+    /* Crash handling */
+    int trampcell[24][2];
+    double trampspeed[24];
+    int nspeeds[24];
+    int ntramp = 0;
+
+    int nacidsplash = 0;
+    int acidSpeed = 0.;
+
+    int nsandcells = 0;
+    double sandSpeed = 0;
+
+    Coord3d velbounce = {0., 0., 0.};
+    double max_crash_speed = 0.;
+    for (int i = 0; i < nhits; i++) {
+      Real speed = -dotProduct(velocity, normals[i]);
       if (speed > 0) {
-        int tx = (int)(position[0] + x), ty = (int)(position[1] + y);
-        Cell &cell = map->cell(tx, ty);
+        Cell &cell = *cells[i];
 
         double crash_speed = speed;
         if (cell.flags & (CELL_TRAMPOLINE | CELL_SAND)) crash_speed *= 0.4;
         if (modTimeLeft[MOD_JUMP]) crash_speed *= 0.8;
+        max_crash_speed = std::max(speed, max_crash_speed);
 
-        if (!crash(crash_speed)) return false;
         double effective_bounceFactor = bounceFactor;
         if (cell.flags & CELL_ACID) effective_bounceFactor = 0.0;
         if (cell.flags & CELL_SAND) effective_bounceFactor = 0.1;
         if (cell.flags & CELL_TRAMPOLINE) {
-          Real dh = 1.0 * speed * radius * radius * radius;
           effective_bounceFactor += 0.6;
-          for (int i = 0; i < 5; i++) cell.heights[i] -= dh;
-          if (cell.sunken <= 0.0) new Trampoline(tx, ty);
-          cell.sunken += dh;
+
+          /* Boost existing trampoline cell if possible */
+          int ptramp = ntramp;
+          for (int j = 0; j < ntramp; j++) {
+            if (trampcell[j][0] == cellco[i][0] && trampcell[j][1] == cellco[i][1]) {
+              ptramp = j;
+              break;
+            }
+          }
+          if (ptramp == ntramp) {
+            ntramp++;
+            trampspeed[ptramp] = 0.;
+            nspeeds[ptramp] = 0;
+          }
+          trampcell[ptramp][0] = cellco[i][0];
+          trampcell[ptramp][1] = cellco[i][1];
+          trampspeed[ptramp] += speed;
+          nspeeds[ptramp]++;
         }
         speed *= 1.0 + effective_bounceFactor;
-        velocity[0] += normal[0] * speed;
-        velocity[1] += normal[1] * speed;
-        velocity[2] += normal[2] * speed;
+        for (int k = 0; k < 3; k++) velbounce[k] += weight * normals[i][k] * speed;
 
         if (cell.flags & CELL_ACID) {
-          GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
-          Coord3d center;
-          assign(position, center);
-          center[2] = map->getHeight(center[0], center[1]);
-          new Splash(center, velocity, acidColor, speed * radius * 20.0, radius);
+          nacidsplash++;
+          acidSpeed += speed;
         }
-
         if (cell.flags & CELL_SAND) {
-          /* lots of friction when we crash into sand */
-          velocity[0] *= 0.5;
-          velocity[1] *= 0.5;
-          velocity[2] *= 0.5;
-          if (radius > 0.2)
-            for (int i = 0; i < 10; i++)
-              if (frandom() < (speed - 1.0) * 0.2) generateSandDebris();
-          if (speed > 4.0) playEffect(SFX_SAND_CRASH);
-        }
-      }
-
-      if (dh < 0.01) { /* ugly fix to stop being caught on edges */
-        Cell &cell = map->cell((int)(position[0] + x), (int)(position[1] + y));
-        velocity[0] -= 0.005 * x;
-        velocity[1] -= 0.005 * y;
-        if (cell.flags & CELL_SAND) {
-          velocity[0] -= 0.5 * x;
-          velocity[1] -= 0.5 * y;
+          nsandcells++;
+          sandSpeed += speed;
         }
       }
     }
 
+    if (!crash(max_crash_speed)) return false;
+
+    /* Acid splash */
+    if (nacidsplash) {
+      GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
+      Coord3d center;
+      assign(position, center);
+      center[2] = map->getHeight(center[0], center[1]);
+      new Splash(center, velocity, acidColor, (acidSpeed / nacidsplash) * radius * 20.0,
+                 radius);
+    }
+
+    /* Apply bounce */
+    for (int k = 0; k < 3; k++) velocity[k] += velbounce[k];
+
+    /* Sand handling */
+    if (nsandcells > 0) {
+      /* lots of friction when we crash into sand */
+      double slowdown = std::pow(0.5, nsandcells / (double)nhits);
+      velocity[0] *= slowdown;
+      velocity[1] *= slowdown;
+      velocity[2] *= slowdown;
+      sandSpeed /= nsandcells;
+      if (radius > 0.2)
+        for (int i = 0; i < 10; i++)
+          if (frandom() < (sandSpeed - 1.0) * 0.2) generateSandDebris();
+      if (sandSpeed > 4.0) playEffect(SFX_SAND_CRASH);
+    }
+
+    /* Activate trampolines */
+    for (int i = 0; i < ntramp; i++) {
+      Real speed = trampspeed[i] / nspeeds[i];
+      Cell &cell = map->cell(trampcell[i][0], trampcell[i][1]);
+      Real dh = 1.0 * speed * radius * radius * radius;
+      for (int i = 0; i < 5; i++) cell.heights[i] -= dh;
+      if (cell.sunken <= 0.0) new Trampoline(trampcell[i][0], trampcell[i][1]);
+      cell.sunken += dh;
+    }
+  }
+
+  /* Surface attachment */
+  {
+    double meandh = 0.;
+    for (int i = 0; i < nhits; i++) {
+      double dx = (hitpts[i][0] - position[0]), dy = (hitpts[i][1] - position[1]);
+      double rad2 = dx * dx + dy * dy;
+      Real dh = position[2] - std::sqrt(radius * radius - rad2) - hitpts[i][2];
+      meandh += weight * dh;
+    }
     if (velocity[2] > 2.0) {
-      position[2] = position[2] - dh + 0.02;
+      /* Escape */
+      position[2] -= meandh;
+      position[2] += 0.02;
     } else {
-      position[2] -= dh;
-      velocity[2] -= dh;
+      /* Get pulled to the surface */
+      position[2] -= meandh;
+      velocity[2] -= meandh;
       inTheAir = false;
     }
   }
+
   return true;
+}
+void Ball::handleEdges() {
+  Map *map = Game::current->map;
+
+  if (map->getHeight(position[0] + radius, position[1]) >= position[2] - radius * 0.0) {
+    if (velocity[0] > 0) {
+      crash(velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] -= 0.1;  // position[0] -= 0.1;
+  }
+  if (map->getHeight(position[0] - radius, position[1]) >= position[2] - radius * 0.0) {
+    if (velocity[0] < 0) {
+      crash(-velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] += 0.1;  // position[0] += 0.1;
+  }
+  if (map->getHeight(position[0], position[1] + radius) >= position[2] - radius * 0.0) {
+    if (velocity[1] > 0) {
+      crash(velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] -= 0.1;  // position[1] -= 0.1;
+  }
+  if (map->getHeight(position[0], position[1] - radius) >= position[2] - radius * 0.0) {
+    if (velocity[1] < 0) {
+      crash(-velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] += 0.1;  // position[1] += 0.1;
+  }
+
+  const double sqrt2 = 0.7071067;
+  if (map->getHeight(position[0] + radius * sqrt2, position[1] + radius * sqrt2) >=
+      position[2] - radius * 0.0) {
+    if (velocity[0] > 0) {
+      crash(velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] -= 0.1;  // position[0] -= 0.1;
+    if (velocity[1] > 0) {
+      crash(velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] -= 0.1;  // position[1] -= 0.1;
+  }
+  if (map->getHeight(position[0] - radius * sqrt2, position[1] + radius * sqrt2) >=
+      position[2] - radius * 0.0) {
+    if (velocity[0] < 0) {
+      crash(-velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] += 0.1;  // position[0] += 0.1;
+    if (velocity[1] > 0) {
+      crash(velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] -= 0.1;  // position[1] -= 0.1;
+  }
+  if (map->getHeight(position[0] + radius * sqrt2, position[1] - radius * sqrt2) >=
+      position[2] - radius * 0.0) {
+    if (velocity[0] > 0) {
+      crash(velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] -= 0.1;  // position[0] -= 0.1;
+    if (velocity[1] < 0) {
+      crash(-velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] += 0.1;  // position[1] += 0.1;
+  }
+  if (map->getHeight(position[0] - radius * sqrt2, position[1] - radius * sqrt2) >=
+      position[2] - radius * 0.0) {
+    if (velocity[0] < 0) {
+      crash(-velocity[0] * 0.0);
+      velocity[0] *= -bounceFactor;
+    }
+    velocity[0] += 0.1;  // position[0] += 0.1;
+    if (velocity[1] < 0) {
+      crash(-velocity[1] * 0.0);
+      velocity[1] *= -bounceFactor;
+    }
+    velocity[1] += 0.1;  // position[1] += 0.1;
+  }
 }
 
 bool Ball::crash(Real speed) {
@@ -1242,92 +1494,6 @@ void Ball::handleForcefieldCollisions() {
         velocity[1] -= sign * bounce * ff_normal[1];
       }
     }
-  }
-}
-void Ball::handleEdges() {
-  Map *map = Game::current->map;
-
-  if (map->getHeight(position[0] + radius, position[1]) >= position[2] - radius * 0.0) {
-    if (velocity[0] > 0) {
-      crash(velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] -= 0.1;  // position[0] -= 0.1;
-  }
-  if (map->getHeight(position[0] - radius, position[1]) >= position[2] - radius * 0.0) {
-    if (velocity[0] < 0) {
-      crash(-velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] += 0.1;  // position[0] += 0.1;
-  }
-  if (map->getHeight(position[0], position[1] + radius) >= position[2] - radius * 0.0) {
-    if (velocity[1] > 0) {
-      crash(velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] -= 0.1;  // position[1] -= 0.1;
-  }
-  if (map->getHeight(position[0], position[1] - radius) >= position[2] - radius * 0.0) {
-    if (velocity[1] < 0) {
-      crash(-velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] += 0.1;  // position[1] += 0.1;
-  }
-
-  const double sqrt2 = 0.7071067;
-  if (map->getHeight(position[0] + radius * sqrt2, position[1] + radius * sqrt2) >=
-      position[2] - radius * 0.0) {
-    if (velocity[0] > 0) {
-      crash(velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] -= 0.1;  // position[0] -= 0.1;
-    if (velocity[1] > 0) {
-      crash(velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] -= 0.1;  // position[1] -= 0.1;
-  }
-  if (map->getHeight(position[0] - radius * sqrt2, position[1] + radius * sqrt2) >=
-      position[2] - radius * 0.0) {
-    if (velocity[0] < 0) {
-      crash(-velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] += 0.1;  // position[0] += 0.1;
-    if (velocity[1] > 0) {
-      crash(velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] -= 0.1;  // position[1] -= 0.1;
-  }
-  if (map->getHeight(position[0] + radius * sqrt2, position[1] - radius * sqrt2) >=
-      position[2] - radius * 0.0) {
-    if (velocity[0] > 0) {
-      crash(velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] -= 0.1;  // position[0] -= 0.1;
-    if (velocity[1] < 0) {
-      crash(-velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] += 0.1;  // position[1] += 0.1;
-  }
-  if (map->getHeight(position[0] - radius * sqrt2, position[1] - radius * sqrt2) >=
-      position[2] - radius * 0.0) {
-    if (velocity[0] < 0) {
-      crash(-velocity[0] * 0.0);
-      velocity[0] *= -bounceFactor;
-    }
-    velocity[0] += 0.1;  // position[0] += 0.1;
-    if (velocity[1] < 0) {
-      crash(-velocity[1] * 0.0);
-      velocity[1] *= -bounceFactor;
-    }
-    velocity[1] += 0.1;  // position[1] += 0.1;
   }
 }
 void Ball::handlePipes(Real time) {

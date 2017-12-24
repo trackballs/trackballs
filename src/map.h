@@ -104,13 +104,14 @@ class Map {
   void drawLoop(int x1, int y1, int x2, int y2, int kind);
   void drawSpotRing(Real x1, Real y1, Real r, int kind);
   inline Real getHeight(Real x, Real y) const {
-    int ix = (int)x;
-    int iy = (int)y;
+    // the obvious alternative (int)-cast gets misoptimized under -O3
+    int ix = std::floor(x);
+    int iy = std::floor(y);
     return cell(ix, iy).getHeight(x - ix, y - iy);
   }
   inline Real getWaterHeight(Real x, Real y) const {
-    int ix = (int)x;
-    int iy = (int)y;
+    int ix = std::floor(x);
+    int iy = std::floor(y);
     return cell(ix, iy).getWaterHeight(x - ix, y - iy);
   }
 

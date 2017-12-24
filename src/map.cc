@@ -164,6 +164,9 @@ void Cell::getWaterNormal(Coord3d normal, int vertex) const {
 
 /* Gives the height of the cell in a specified (floatingpoint) position */
 Real Cell::getHeight(Real x, Real y) const {
+  if (x < 0. || x > 1. || y < 0. || y > 1.) {
+    warning("Require x,y in [0,1], got %f %f", x, y);
+  }
   Real h1, h2, h3, c;
 
   c = heights[CENTER];
