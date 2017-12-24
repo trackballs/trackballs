@@ -79,7 +79,7 @@ void main(void) {
 
   // Linear combinations of units need not be units
   vec3 normal;
-  if (flatkey >= 1.) {
+  if (flatkey >= 0.) {
     normal = normalize(inormal);
   } else {
     normal = normalize(cross(dFdx(cpos), dFdy(cpos)));
