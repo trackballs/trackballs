@@ -100,18 +100,25 @@ void Black::tick(Real t) {
     /* TODO. Make these checks better */
     if ((d < position[2] - 1.0 && !modTimeLeft[MOD_FLOAT]) ||
         (!(c1.flags & CELL_ACID) && (c2.flags & CELL_ACID))) {
-      /* Stop, we are near an edge  or acid or ... */
+      /* Stop, we are near an edge or acid or ... */
       v[0] = velocity[0];
       v[1] = velocity[1];
       v[2] = 0.0;
-      normalize(v);
-      rotation[0] -= v[0] * acceleration * t;
-      rotation[1] -= v[1] * acceleration * t;
+      double vlen = length(v);
+      if (vlen > 0) {
+        for (int k = 0; k < 3; k++) v[k] /= vlen;
+        rotation[0] -= v[0] * acceleration * t;
+        rotation[1] -= v[1] * acceleration * t;
+      }
     } else if (dist < horizon) {
       /* Go toward the player */
       normalize(v);
-      rotation[0] += v[0] * acceleration * likesPlayer * t;
-      rotation[1] += v[1] * acceleration * likesPlayer * t;
+      double vlen = length(v);
+      if (vlen > 0) {
+        for (int k = 0; k < 3; k++) v[k] /= vlen;
+        rotation[0] += v[0] * acceleration * likesPlayer * t;
+        rotation[1] += v[1] * acceleration * likesPlayer * t;
+      }
     }
   }
 

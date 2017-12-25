@@ -36,6 +36,8 @@
 
 #include <set>
 
+#define MAX_CONTACT_POINTS 24
+
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
 extern GLuint hiresSphere;
 
@@ -106,6 +108,12 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
       primaryColor[2],
       1.,
   };
+  if (0) {
+    /* useful debug code */
+    if (inTheAir) {
+      for (int k = 0; k < 3; k++) { color[k] = 1. - color[k]; }
+    }
+  }
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
   if (modTimeLeft[MOD_GLASS]) {
     double phase = std::min(modTimePhaseIn[MOD_GLASS] / 2.0, 1.0);
@@ -733,11 +741,28 @@ bool Ball::physics(Real time) {
   rotateX(-rotation[1] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
   rotateY(-rotation[0] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
 
-  Cell &c = map->cell((int)position[0], (int)position[1]);
-  Coord3d normal;
-  c.getNormal(normal, Cell::CENTER);
+  Cell *cells[MAX_CONTACT_POINTS];
+  Coord3d hitpts[MAX_CONTACT_POINTS];
+  Coord3d normals[MAX_CONTACT_POINTS];
+  ICoord2d cellco[MAX_CONTACT_POINTS];
+  double dhs[MAX_CONTACT_POINTS];
+  double min_height_above_ground = 1.0;
+  int nhits =
+      locateContactPoints(map, cells, hitpts, normals, cellco, dhs, &min_height_above_ground);
 
-  Real mapHeight = map->getHeight(position[0], position[1]);
+  Coord3d normal = {0., 0., 0.};
+  for (int i = 0; i < nhits; i++) {
+    for (int k = 0; k < 3; k++) normal[k] += normals[i][k];
+  }
+  double nlength = length(normal);
+  if (nlength <= 0.) {
+    normal[0] = 0.;
+    normal[1] = 0.;
+    normal[2] = 1.;
+  } else {
+    for (int k = 0; k < 3; k++) normal[k] /= nlength;
+  }
+  normal[2] = std::max(normal[2], 0.1);
 
   /* All effects of gravity */
   if (inTheAir)
@@ -749,6 +774,7 @@ bool Ball::physics(Real time) {
   }
 
   /* Sand - generate debris */
+  Cell &c = map->cell((int)position[0], (int)position[1]);
   if (!inPipe && c.flags & CELL_SAND && !inTheAir && radius > 0.2) {
     double speed =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
@@ -772,6 +798,7 @@ bool Ball::physics(Real time) {
   }
 
   /* All effects of water */
+  Real mapHeight = map->getHeight(position[0], position[1]);
   double waterHeight = map->getWaterHeight(position[0], position[1]);
   {
     /* Floating */
@@ -780,7 +807,7 @@ bool Ball::physics(Real time) {
       velocity[2] += gravity * time * 1.5;
       velocity[2] *= 0.99;
       // avoid sticking to the ground
-      double delta = position[2] - radius - map->getHeight(position[0], position[1]);
+      double delta = position[2] - radius - mapHeight;
       if (delta < 0.025) {
         position[2] += 0.025 - delta;
         if (velocity[2] < 0.0) velocity[2] = 0.0;
@@ -821,11 +848,6 @@ bool Ball::physics(Real time) {
     }
   }
 
-  if (!inPipe && !inTheAir && c.flags & CELL_KILL) {
-    die(DIE_OTHER);
-    return false;
-  }
-
   /* Sinking into floor material */
   if (c.flags & CELL_SAND && !inPipe) {
     sink += 0.8 * time;
@@ -838,7 +860,7 @@ bool Ball::physics(Real time) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
       Coord3d center;
       assign(position, center);
-      center[2] = map->getHeight(center[0], center[1]);
+      center[2] = mapHeight;
       new Splash(center, velocity, acidColor, speed * radius, radius);
     }
     if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
@@ -925,10 +947,9 @@ bool Ball::physics(Real time) {
 
   if (!inPipe) {
     /* automatically force ball to map height if it is far enough down */
-    Real cheight = map->getHeight(position[0], position[1]);
-    if (cheight > position[2] + radius) { position[2] = cheight + radius / 3; }
+    if (mapHeight > position[2] + radius) { position[2] = mapHeight + 0.75 * radius; }
 
-    if (!handleMapCollisions(map)) return false;
+    if (!handleMapCollisions(map, cells, hitpts, normals, cellco, dhs, nhits)) return false;
 
     if (!handleEdges(map)) return false;
   }
@@ -939,11 +960,12 @@ bool Ball::physics(Real time) {
   /* Collisions with forcefields */
   handleForcefieldCollisions();
 
-  double dh = position[2] - radius - map->getHeight(position[0], position[1]);
-  if (dh > 0.1) inTheAir = true;
+  double dh = inPipe ? (position[2] - radius - mapHeight) : min_height_above_ground;
+  if (dh > 0.03) inTheAir = true;
 
   /* Pipes */
   handlePipes(time);
+
   return true;
 }
 static int closestPointOnTriangle(Coord3d tricor[3], Coord3d point, Coord3d closest,
@@ -1006,17 +1028,12 @@ static int closestPointOnTriangle(Coord3d tricor[3], Coord3d point, Coord3d clos
   warning("cPoT impossible case happened");
   return -1;
 }
-bool Ball::handleMapCollisions(class Map *map) {
-  /* Construct a list of triangular facets the ball could interact with,
-   * and locate the closest interaction point. */
-  int xpos = (int)position[0], ypos = (int)position[1];
-
-  Cell *cells[24];
-  Coord3d hitpts[24];
-  Coord3d normals[24];
-  int cellco[24][2];
+int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpts,
+                              Coord3d *normals, ICoord2d *cellco, double *dhs,
+                              double *min_height_above_ground) {
   int nhits = 0;
-
+  /* Construct a list of triangular facets the ball could interact with,
+   * and locate their closest interaction points. */
   const double corners[5][2] = {{0., 0.}, {1., 0.}, {1., 1.}, {0., 1.}, {0.5, 0.5}};
   const int cids[5] = {Cell::SOUTH + Cell::WEST, Cell::SOUTH + Cell::EAST,
                        Cell::NORTH + Cell::EAST, Cell::NORTH + Cell::WEST, Cell::CENTER};
@@ -1046,20 +1063,25 @@ bool Ball::handleMapCollisions(class Map *map) {
         if (rad2 > radius * radius) continue;
 
         /* Ball must be closer that 0.02 to closest point */
-        Real dh = position[2] - std::sqrt(radius * radius - rad2) - closest[2];
+        Real dh = position[2] - std::sqrt(std::max(radius * radius - rad2, 0.)) - closest[2];
+        *min_height_above_ground = std::min(*min_height_above_ground, dh);
         if (dh >= 0.02) continue;
 
-        // ignore more than 24 intersections; should never happen anyway
-        if (nhits >= 24) continue;
+        if (nhits >= MAX_CONTACT_POINTS) continue;
         cells[nhits] = &c;
         assign(closest, hitpts[nhits]);
         assign(normal, normals[nhits]);
         cellco[nhits][0] = x;
         cellco[nhits][1] = y;
+        dhs[nhits] = dh;
         nhits++;
       }
     }
   }
+  return nhits;
+}
+bool Ball::handleMapCollisions(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
+                               ICoord2d *cellco, double *dhs, int nhits) {
   /* If there are no points of contact, done */
   if (nhits == 0) return true;
 
@@ -1076,9 +1098,9 @@ bool Ball::handleMapCollisions(class Map *map) {
     rotation[1] = rotation[1] * (1.0 - r_fric) + velocity[1] * r_fric;
 
     /* Crash handling */
-    int trampcell[24][2];
-    double trampspeed[24];
-    int nspeeds[24];
+    int trampcell[MAX_CONTACT_POINTS][2];
+    double trampspeed[MAX_CONTACT_POINTS];
+    int nspeeds[MAX_CONTACT_POINTS];
     int ntramp = 0;
 
     int nacidsplash = 0;
@@ -1177,13 +1199,16 @@ bool Ball::handleMapCollisions(class Map *map) {
     }
   }
 
-  /* Surface attachment */
+  /* Surface attachment & kill cell*/
   {
     double meandh = 0.;
     for (int i = 0; i < nhits; i++) {
-      double dx = (hitpts[i][0] - position[0]), dy = (hitpts[i][1] - position[1]);
-      double rad2 = dx * dx + dy * dy;
-      Real dh = position[2] - std::sqrt(radius * radius - rad2) - hitpts[i][2];
+      Real dh = dhs[i];
+      /* contact with kill cells is death */
+      if (dh < 0.001 && cells[i]->flags & CELL_KILL) {
+        die(DIE_OTHER);
+        return false;
+      }
       meandh += weight * dh;
     }
     if (velocity[2] > 2.0) {

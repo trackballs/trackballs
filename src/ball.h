@@ -96,12 +96,15 @@ class Ball : public Animated {
 
   static GLfloat dizzyTexCoords[4];
 
+  int locateContactPoints(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*,
+                          double*);
   void generateSandDebris();
   void generateDebris(GLfloat color[4]);
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);
-  bool handleMapCollisions(class Map*);
+  bool handleMapCollisions(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*,
+                           int);
   bool handleEdges(class Map*);
 };
 
