@@ -22,7 +22,7 @@
 (define mb0 (new-mr-black 198 191))
 (if (= (difficulty) *hard*) (set-modtime mb0 *mod-spike* -1.))
 
-(define waterAnimator (animator 1.0 0.0 0.0 -4.2 -3.1 *animator-stop* (lambda (v) (set-cell-water-heights 191 188 201 194 v v v v))))
+(define waterAnimator (animator 1.0 0.0 0.0 -4.2 -3.1 *animator-stop* (lambda (v) (set-cell-water-heights 191 188 201 194 v v v v) (set-cell-water-heights 190 189 190 193 v v v v))))
 (switch 192 193 (lambda () (set-animator-direction waterAnimator -0.2)) (lambda () (set-animator-direction waterAnimator 0.2)))
 
 (add-modpill 199 189 *mod-float* (- 30 (* 8 (difficulty))) 45)
