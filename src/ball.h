@@ -102,8 +102,7 @@ class Ball : public Animated {
   void handleForcefieldCollisions();
   void handlePipes(Real time);
   bool handleMapCollisions(class Map*);
-
-  void handleEdges();
+  bool handleEdges(class Map*);
 };
 
 #endif

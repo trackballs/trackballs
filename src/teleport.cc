@@ -225,7 +225,7 @@ void Teleport::tick(Real /*t*/) {
   if (length(diff) < p->radius + radius) {
     p->position[0] = dx + .5;
     p->position[1] = dy + .5;
-    p->position[2] = Game::current->map->getHeight(p->position[0], p->position[1]);
+    p->position[2] = Game::current->map->getHeight(p->position[0], p->position[1]) + p->radius;
     // generate a sound for the teleportation
     // playEffect(SFX_TELEPORT);
   }
