@@ -914,20 +914,25 @@ void Map::fillChunkVBO(Chunk* chunk) const {
 void Map::markCellsUpdated(int x1, int y1, int x2, int y2, int changed_walls) {
   /* If the walls of a cell have changed, update its neighbors */
   int dd = changed_walls ? 1 : 0;
-  for (int x = std::min(x1, x2) - dd; x <= std::max(x1, x2) + dd; x++) {
-    for (int y = std::min(y1, y2) - dd; y <= std::max(y1, y2) + dd; y++) {
-      Cell& c = cell(x, y);
-      if (0 <= x && x < width && 0 <= y && y <= width) {
-        Chunk& z = *chunk(x - x % CHUNKSIZE, y - y % CHUNKSIZE);
-        z.is_updated = 1;
-        c.displayListDirty = 1;
 
-        // Extend bounding box
-        for (int k = 0; k < 5; k++) {
-          z.minHeight = std::min(z.minHeight, c.heights[k]);
-          z.minHeight = std::min(z.minHeight, c.waterHeights[k]);
-          z.maxHeight = std::max(z.maxHeight, c.heights[k]);
-          z.maxHeight = std::max(z.maxHeight, c.waterHeights[k]);
+  /* Apply the same clamping to bounds as for cell lookups */
+  int xmin = std::max(std::min(std::min(x1, x2) - dd, width - 1), 0);
+  int xmax = std::max(std::min(std::max(x1, x2) + dd, width - 1), 0);
+  int ymin = std::max(std::min(std::min(y1, y2) - dd, height - 1), 0);
+  int ymax = std::max(std::min(std::max(y1, y2) + dd, height - 1), 0);
+
+  for (int xp = xmin - xmin % CHUNKSIZE; xp <= xmax - xmax % CHUNKSIZE; xp += CHUNKSIZE) {
+    for (int yp = ymin - ymin % CHUNKSIZE; yp <= ymax - ymax % CHUNKSIZE; yp += CHUNKSIZE) {
+      Chunk* z = chunk(xp, yp);
+      z->is_updated = 1;
+      for (int x = std::max(xmin, xp); x <= std::min(xmax, xp + CHUNKSIZE - 1); x++) {
+        for (int y = std::max(ymin, yp); y <= std::min(ymax, yp + CHUNKSIZE - 1); y++) {
+          Cell& c = cells[x + width * y];
+          c.displayListDirty = 1;
+          for (int k = 0; k < 5; k++) {
+            z->minHeight = std::min(z->minHeight, std::min(c.heights[k], c.waterHeights[k]));
+            z->maxHeight = std::max(z->maxHeight, std::max(c.heights[k], c.waterHeights[k]));
+          }
         }
       }
     }
