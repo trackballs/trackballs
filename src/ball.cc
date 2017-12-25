@@ -1018,6 +1018,8 @@ bool Ball::handleMapCollisions(class Map *map) {
   int nhits = 0;
 
   const double corners[5][2] = {{0., 0.}, {1., 0.}, {1., 1.}, {0., 1.}, {0.5, 0.5}};
+  const int cids[5] = {Cell::SOUTH + Cell::WEST, Cell::SOUTH + Cell::EAST,
+                       Cell::NORTH + Cell::EAST, Cell::NORTH + Cell::WEST, Cell::CENTER};
   const int triangles[4][3] = {{0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
   int xmin = std::floor(position[0] - radius), xmax = std::floor(position[0] + radius);
   int ymin = std::floor(position[1] - radius), ymax = std::floor(position[1] + radius);
@@ -1030,7 +1032,7 @@ bool Ball::handleMapCollisions(class Map *map) {
           int vno = triangles[i][k];
           tricor[k][0] = x + corners[vno][0];
           tricor[k][1] = y + corners[vno][1];
-          tricor[k][2] = c.getHeight(corners[vno][0], corners[vno][1]);
+          tricor[k][2] = c.heights[cids[vno]];
         }
         Coord3d closest, normal;
         int ret = closestPointOnTriangle(tricor, position, closest, normal);
@@ -1214,8 +1216,8 @@ bool Ball::handleEdges(class Map *map) {
       /* handle X walls */
       for (int ly = 0; ly < 2; ly++) {
         double yp = (y + ly);
-        double h1 = c.getHeight(0., ly);
-        double h2 = c.getHeight(1., ly);
+        double h1 = c.heights[(ly ? Cell::NORTH : Cell::SOUTH) + Cell::WEST];
+        double h2 = c.heights[(ly ? Cell::NORTH : Cell::SOUTH) + Cell::EAST];
         double s, t;
         bool linethere = true;
         if (h1 > position[2] && h2 > position[2]) {
@@ -1255,8 +1257,8 @@ bool Ball::handleEdges(class Map *map) {
       /* handle Y walls */
       for (int lx = 0; lx < 2; lx++) {
         double xp = (x + lx);
-        double h1 = c.getHeight(lx, 0.);
-        double h2 = c.getHeight(lx, 1.);
+        double h1 = c.heights[(lx ? Cell::EAST : Cell::WEST) + Cell::SOUTH];
+        double h2 = c.heights[(lx ? Cell::EAST : Cell::WEST) + Cell::NORTH];
         double s, t;
         bool linethere = true;
         if (h1 > position[2] && h2 > position[2]) {
