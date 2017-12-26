@@ -35,6 +35,7 @@ SettingsMode *SettingsMode::settingsMode;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
+extern double timeDilationFactor;
 extern void changeScreenResolution();
 
 void SettingsMode::init() { settingsMode = new SettingsMode(); }
@@ -127,10 +128,10 @@ void SettingsMode::display() {
 
     // Windowed
     menuItem_LeftRight(MENU_WINDOWED, menucount++, 1, _("Fullscreen"),
-                       (char *)(Settings::settings->is_windowed ? _("No") : _("Yes")));
+                       (Settings::settings->is_windowed ? _("No") : _("Yes")));
 
     menuItem_LeftRight(MENU_VSYNC, menucount++, 1, _("VSync"),
-                       (char *)(Settings::settings->vsynced ? _("Yes") : _("No")));
+                       (Settings::settings->vsynced ? _("Yes") : _("No")));
 
     // show FPS
     switch (Settings::settings->showFPS) {
@@ -174,9 +175,13 @@ void SettingsMode::display() {
     }
     menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, 1, _("Details"), str);
     menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, 1, _("Reflections"),
-                       (char *)(Settings::settings->doReflections ? _("Yes") : _("No")));
+                       (Settings::settings->doReflections ? _("Yes") : _("No")));
     menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, 1, _("Shadows"),
-                       (char *)(Settings::settings->doShadows ? _("Yes") : _("No")));
+                       (Settings::settings->doShadows ? _("Yes") : _("No")));
+    if (Settings::settings->doShadows) {
+      snprintf(str, sizeof(str), "%d", 1 << Settings::settings->shadowTexsize);
+      menuItem_LeftRight(MENU_SHADOW_TEXSIZE, menucount++, 1, _("Shadow Resolution"), str);
+    }
 
     break;
 
@@ -186,7 +191,7 @@ void SettingsMode::display() {
 
     /* Use mouse */
     menuItem_LeftRight(MENU_USEMOUSE, menucount++, 1, _("Use mouse"),
-                       (char *)(Settings::settings->ignoreMouse ? _("No") : _("Yes")));
+                       (Settings::settings->ignoreMouse ? _("No") : _("Yes")));
 
     /* Mouse sensitivity */
     if (!Settings::settings->ignoreMouse) {
@@ -222,16 +227,23 @@ void SettingsMode::display() {
 
   case SUBSCREEN_OTHER:
     // Choose subscreen
-    menuItem_Left(MENU_SUBSCREEN, 0, _("Other"));
+    menuItem_Left(MENU_SUBSCREEN, menucount++, _("Other"));
 
+    /* Language */
+    menuItem_LeftRight(MENU_LANGUAGE, menucount++, 1, _("Language"),
+                       Settings::languageNames[Settings::settings->language]);
     /* Music and Sfx volumes */
     snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->musicVolume * 100.0));
-    menuItem_LeftRight(MENU_MUSIC_VOLUME, 1, 1, _("Music volume"), str);
+    menuItem_LeftRight(MENU_MUSIC_VOLUME, menucount++, 1, _("Music volume"), str);
     snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->sfxVolume * 100.0));
-    menuItem_LeftRight(MENU_SFX_VOLUME, 2, 1, _("Effects volume"), str);
-    /* Language */
-    menuItem_LeftRight(MENU_LANGUAGE, 3, 1, _("Language"),
-                       Settings::languageNames[Settings::settings->language]);
+    menuItem_LeftRight(MENU_SFX_VOLUME, menucount++, 1, _("Effects volume"), str);
+    menucount++;
+    /* Sandbox mode present */
+    menuItem_LeftRight(MENU_SANDBOX_AVAILABLE, menucount++, 1, _("Sandbox mode available"),
+                       (Settings::settings->sandboxAvailable ? _("Yes") : _("No")));
+    /* Time compression */
+    snprintf(str, sizeof(str), "%.3f", timeDilationFactor);
+    menuItem_LeftRight(MENU_TIME_COMPRESSION, menucount++, 1, _("Time Compression"), str);
 
     break;
   case NUM_SUBSCREENS:
@@ -337,6 +349,11 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
   case MENU_DO_SHADOWS:
     Settings::settings->doShadows = Settings::settings->doShadows ? 0 : 1;
     break;
+  case MENU_SHADOW_TEXSIZE:
+    Settings::settings->shadowTexsize += (up ? 1 : -1);
+    if (Settings::settings->shadowTexsize > 12) Settings::settings->shadowTexsize = 6;
+    if (Settings::settings->shadowTexsize < 6) Settings::settings->shadowTexsize = 12;
+    break;
   case MENU_SHOW_FPS:
     Settings::settings->showFPS = (Settings::settings->showFPS + 1) % 3;
     break;
@@ -380,7 +397,15 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     settings->language =
         mymod(((int)(settings->language + (up ? 1 : -1))), Settings::nLanguages);
     settings->setLocale();
-    /* TODO. Restart all modules to make language change take effect */
+    break;
+  case MENU_SANDBOX_AVAILABLE:
+    Settings::settings->sandboxAvailable = !Settings::settings->sandboxAvailable;
+    break;
+  case MENU_TIME_COMPRESSION:
+    Settings::settings->timeCompression += (up ? 1 : -1);
+    if (Settings::settings->timeCompression > 12) Settings::settings->timeCompression = -12;
+    if (Settings::settings->timeCompression < -12) Settings::settings->timeCompression = 12;
+    timeDilationFactor = std::pow(2.0, Settings::settings->timeCompression / 6.0);
     break;
   }
 }

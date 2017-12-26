@@ -75,7 +75,7 @@ void Player::draw() {
 void Player::tick(Real t) {
   double dx, dy;
   int superAccelerate = 0;
-  static time_t lastTick = 0;
+  static Real timeFraction = 0.;
 
   /* Never let us drop below 0 points, it just looks silly */
   if (score < 0) score = 0;
@@ -89,12 +89,14 @@ void Player::tick(Real t) {
   health += t * 0.4;
   if (health > 1.0) health = 1.0;
 
-  time_t thisTick = time(NULL);
-  if (thisTick != lastTick && !hasWon) {
-    timeLeft--;
-    if (timeLeft < 15) playEffect(SFX_TIME_WARNING);
+  timeFraction += t;
+  if (timeFraction > 1.0) {
+    timeFraction -= 1.0;
+    if (!hasWon) {
+      timeLeft--;
+      if (timeLeft < 15) playEffect(SFX_TIME_WARNING);
+    }
   }
-  lastTick = thisTick;
   if (timeLeft < 1) {
     /* Only die from running out of time if we are not running
        in sandbox mode. */

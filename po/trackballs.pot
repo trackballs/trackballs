@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-17 17:18-0500\n"
+"POT-Creation-Date: 2017-12-26 17:54-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -561,17 +561,18 @@ msgid "Quit without saving?"
 msgstr ""
 
 #: ../src/editWindows.cc:361 ../src/editWindows.cc:400
-#: ../src/editWindows.cc:447 ../src/settingsMode.cc:130
-#: ../src/settingsMode.cc:133 ../src/settingsMode.cc:177
-#: ../src/settingsMode.cc:179 ../src/settingsMode.cc:189
+#: ../src/editWindows.cc:447 ../src/settingsMode.cc:131
+#: ../src/settingsMode.cc:134 ../src/settingsMode.cc:178
+#: ../src/settingsMode.cc:180 ../src/settingsMode.cc:194
+#: ../src/settingsMode.cc:243
 msgid "Yes"
 msgstr ""
 
 #: ../src/editWindows.cc:362 ../src/editWindows.cc:401
-#: ../src/editWindows.cc:448 ../src/settingsMode.cc:130
-#: ../src/settingsMode.cc:133 ../src/settingsMode.cc:138
-#: ../src/settingsMode.cc:177 ../src/settingsMode.cc:179
-#: ../src/settingsMode.cc:189
+#: ../src/editWindows.cc:448 ../src/settingsMode.cc:131
+#: ../src/settingsMode.cc:134 ../src/settingsMode.cc:139
+#: ../src/settingsMode.cc:178 ../src/settingsMode.cc:180
+#: ../src/settingsMode.cc:194 ../src/settingsMode.cc:243
 #, c-format
 msgid "No"
 msgstr ""
@@ -623,17 +624,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1265
+#: ../src/glHelp.cc:1267
 #, c-format
 msgid "Framerate: %.1f"
 msgstr ""
 
-#: ../src/glHelp.cc:1267
+#: ../src/glHelp.cc:1269
 #, c-format
 msgid "Framerate unknown"
 msgstr ""
 
-#: ../src/glHelp.cc:1269
+#: ../src/glHelp.cc:1271
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -818,7 +819,7 @@ msgstr ""
 msgid "More Help"
 msgstr ""
 
-#: ../src/helpMode.cc:287 ../src/hofMode.cc:110 ../src/settingsMode.cc:242
+#: ../src/helpMode.cc:287 ../src/hofMode.cc:110 ../src/settingsMode.cc:254
 msgid "Back"
 msgstr ""
 
@@ -839,7 +840,7 @@ msgstr ""
 msgid "%d points"
 msgstr ""
 
-#: ../src/mainMode.cc:182
+#: ../src/mainMode.cc:182 ../src/setupMode.cc:227
 msgid "Unknown track"
 msgstr ""
 
@@ -939,7 +940,7 @@ msgstr ""
 msgid "easy"
 msgstr ""
 
-#: ../src/mainMode.cc:670 ../src/settingsMode.cc:199
+#: ../src/mainMode.cc:670 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr ""
@@ -1137,167 +1138,179 @@ msgstr ""
 msgid "Nitro"
 msgstr ""
 
-#: ../src/settingsMode.cc:84
+#: ../src/settingsMode.cc:85
 msgid "Game Settings"
 msgstr ""
 
-#: ../src/settingsMode.cc:94
+#: ../src/settingsMode.cc:95
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr ""
 
-#: ../src/settingsMode.cc:97
+#: ../src/settingsMode.cc:98
 #, c-format
 msgid "Is resolution Auto-%d ok?"
 msgstr ""
 
-#: ../src/settingsMode.cc:101
+#: ../src/settingsMode.cc:102
 msgid "Ok, use this resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:102
+#: ../src/settingsMode.cc:103
 msgid "No, revert to old resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:104
+#: ../src/settingsMode.cc:105
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr ""
 
-#: ../src/settingsMode.cc:116
+#: ../src/settingsMode.cc:117
 msgid "Video"
 msgstr ""
 
-#: ../src/settingsMode.cc:123
+#: ../src/settingsMode.cc:124
 #, c-format
 msgid "Auto-%d"
 msgstr ""
 
-#: ../src/settingsMode.cc:125
+#: ../src/settingsMode.cc:126
 msgid "Resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:126
+#: ../src/settingsMode.cc:127
 msgid "Test this resolution"
 msgstr ""
 
-#: ../src/settingsMode.cc:129
+#: ../src/settingsMode.cc:130
 msgid "Fullscreen"
 msgstr ""
 
-#: ../src/settingsMode.cc:132
+#: ../src/settingsMode.cc:133
 msgid "VSync"
 msgstr ""
 
-#: ../src/settingsMode.cc:141
+#: ../src/settingsMode.cc:142
 #, c-format
 msgid "Frame rate"
 msgstr ""
 
-#: ../src/settingsMode.cc:144
+#: ../src/settingsMode.cc:145
 #, c-format
 msgid "Frame time"
 msgstr ""
 
-#: ../src/settingsMode.cc:147
+#: ../src/settingsMode.cc:148
 msgid "Show FPS"
 msgstr ""
 
-#: ../src/settingsMode.cc:152
+#: ../src/settingsMode.cc:153
 msgid "Graphics"
 msgstr ""
 
-#: ../src/settingsMode.cc:157
+#: ../src/settingsMode.cc:158
 #, c-format
 msgid "None"
 msgstr ""
 
-#: ../src/settingsMode.cc:160
+#: ../src/settingsMode.cc:161
 #, c-format
 msgid "Minimalistic"
 msgstr ""
 
-#: ../src/settingsMode.cc:163
+#: ../src/settingsMode.cc:164
 #, c-format
 msgid "Simple"
 msgstr ""
 
-#: ../src/settingsMode.cc:166
+#: ../src/settingsMode.cc:167
 #, c-format
 msgid "Standard"
 msgstr ""
 
-#: ../src/settingsMode.cc:169
+#: ../src/settingsMode.cc:170
 #, c-format
 msgid "Extra"
 msgstr ""
 
-#: ../src/settingsMode.cc:172
+#: ../src/settingsMode.cc:173
 #, c-format
 msgid "Everything"
 msgstr ""
 
-#: ../src/settingsMode.cc:175
+#: ../src/settingsMode.cc:176
 msgid "Details"
 msgstr ""
 
-#: ../src/settingsMode.cc:176
+#: ../src/settingsMode.cc:177
 msgid "Reflections"
 msgstr ""
 
-#: ../src/settingsMode.cc:178
+#: ../src/settingsMode.cc:179
 msgid "Shadows"
 msgstr ""
 
-#: ../src/settingsMode.cc:185
+#: ../src/settingsMode.cc:183
+msgid "Shadow Resolution"
+msgstr ""
+
+#: ../src/settingsMode.cc:190
 msgid "Controls"
 msgstr ""
 
-#: ../src/settingsMode.cc:188
+#: ../src/settingsMode.cc:193
 msgid "Use mouse"
 msgstr ""
 
-#: ../src/settingsMode.cc:194
+#: ../src/settingsMode.cc:199
 msgid "Sensitivity"
 msgstr ""
 
-#: ../src/settingsMode.cc:201
+#: ../src/settingsMode.cc:206
 #, c-format
 msgid "+%d degrees"
 msgstr ""
 
-#: ../src/settingsMode.cc:203
+#: ../src/settingsMode.cc:208
 #, c-format
 msgid "-%d degrees"
 msgstr ""
 
-#: ../src/settingsMode.cc:204
+#: ../src/settingsMode.cc:209
 msgid "Steering"
 msgstr ""
 
-#: ../src/settingsMode.cc:211
+#: ../src/settingsMode.cc:216
 #, c-format
 msgid "no joystick found"
 msgstr ""
 
-#: ../src/settingsMode.cc:215
+#: ../src/settingsMode.cc:220
 msgid "Joystick:"
 msgstr ""
 
-#: ../src/settingsMode.cc:225
+#: ../src/settingsMode.cc:230
 msgid "Other"
-msgstr ""
-
-#: ../src/settingsMode.cc:229
-msgid "Music volume"
-msgstr ""
-
-#: ../src/settingsMode.cc:231
-msgid "Effects volume"
 msgstr ""
 
 #: ../src/settingsMode.cc:233
 msgid "Language"
+msgstr ""
+
+#: ../src/settingsMode.cc:237
+msgid "Music volume"
+msgstr ""
+
+#: ../src/settingsMode.cc:239
+msgid "Effects volume"
+msgstr ""
+
+#: ../src/settingsMode.cc:242
+msgid "Sandbox mode available"
+msgstr ""
+
+#: ../src/settingsMode.cc:246
+msgid "Time Compression"
 msgstr ""
 
 #: ../src/setupMode.cc:203
@@ -1316,55 +1329,55 @@ msgstr ""
 msgid "Level"
 msgstr ""
 
-#: ../src/setupMode.cc:228
+#: ../src/setupMode.cc:231
 msgid "Difficulty"
 msgstr ""
 
-#: ../src/setupMode.cc:232
+#: ../src/setupMode.cc:235
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:233
+#: ../src/setupMode.cc:236
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:233
+#: ../src/setupMode.cc:236
 msgid "Sandbox (Hard)"
 msgstr ""
 
-#: ../src/setupMode.cc:235
+#: ../src/setupMode.cc:238
 msgid "Easy"
 msgstr ""
 
-#: ../src/setupMode.cc:236
+#: ../src/setupMode.cc:239
 msgid "Normal"
 msgstr ""
 
-#: ../src/setupMode.cc:236
+#: ../src/setupMode.cc:239
 msgid "Hard"
 msgstr ""
 
-#: ../src/setupMode.cc:241
+#: ../src/setupMode.cc:244
 #, c-format
 msgid "Total games played: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:245
+#: ../src/setupMode.cc:248
 #, c-format
 msgid "Average score: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:247
+#: ../src/setupMode.cc:250
 #, c-format
 msgid "Average score: N/A"
 msgstr ""
 
-#: ../src/setupMode.cc:250
+#: ../src/setupMode.cc:253
 #, c-format
 msgid "Levels completed: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:265
+#: ../src/setupMode.cc:268
 msgid "Start Game"
 msgstr ""
 

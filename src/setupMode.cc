@@ -378,10 +378,15 @@ void SetupMode::mouseDown(int button, int x, int y) {
       }
       break;
     case CODE_DIFFICULTY:
-      settings->difficulty =
-          mymod((settings->difficulty + 3 * settings->sandbox + (left ? 1 : -1)), 6);
-      settings->sandbox = settings->difficulty / 3;
-      settings->difficulty = settings->difficulty % 3;
+      if (settings->sandboxAvailable) {
+        settings->difficulty =
+            mymod((settings->difficulty + 3 * settings->sandbox + (left ? 1 : -1)), 6);
+        settings->sandbox = settings->difficulty / 3;
+        settings->difficulty = settings->difficulty % 3;
+      } else {
+        settings->sandbox = 0;
+        settings->difficulty = mymod((settings->difficulty + (left ? 1 : -1)), 3);
+      }
       break;
     case CODE_START_LV:
       level = mymod((level + (left ? 1 : -1)), gamer->nKnownLevels[levelSet]);

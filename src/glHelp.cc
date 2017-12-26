@@ -33,8 +33,6 @@
 #include <cstdlib>
 #include <map>
 
-#define SHADOW_TEXSIZE 512
-
 float fps = 50.0;
 int screenWidth = 640, screenHeight = 480;
 ViewParameters activeView;
@@ -50,6 +48,7 @@ GLuint theVao = 0;
 TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
 extern struct timespec lastDisplayStartTime;
+extern double timeDilationFactor;
 
 const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
 const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
@@ -631,7 +630,9 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   assign(activeView.projection, origProj);
 
   activeView.calculating_shadows = 1;
-  if (activeView.shadowMapTexsize <= 1) {
+  static int ltexsize = 0;
+  if (activeView.shadowMapTexsize <= 1 || ltexsize != Settings::settings->shadowTexsize) {
+    ltexsize = Settings::settings->shadowTexsize;
     /* order doesn't matter */
     GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                       GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -639,7 +640,8 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
 
     GLint maxSize;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-    activeView.shadowMapTexsize = std::min(maxSize, SHADOW_TEXSIZE);
+    GLint reqSize = 1 << Settings::settings->shadowTexsize;
+    activeView.shadowMapTexsize = std::min(maxSize, reqSize);
     for (uint face = 0; face < 6; face++) {
       glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
                    activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -791,11 +793,14 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   }
 
   /* Render cascade map using the given matrices */
-  if (activeView.cascadeTexsize <= 1) {
+  static int ltexsize = 0;
+  if (activeView.cascadeTexsize <= 1 || ltexsize != Settings::settings->shadowTexsize) {
+    ltexsize = Settings::settings->shadowTexsize;
     /* order doesn't matter */
     GLint maxSize;
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
-    activeView.cascadeTexsize = std::min(maxSize, SHADOW_TEXSIZE);
+    GLint reqSize = 1 << Settings::settings->shadowTexsize;
+    activeView.cascadeTexsize = std::min(maxSize, reqSize);
   }
   for (int i = 0; i < N; i++) {
     glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]);
@@ -1243,7 +1248,7 @@ int resetTextures() {
 /* Calculates and displays current framerate */
 void displayFrameRate() {
   /* Frame rate is given for the previous period. */
-  double td = getTimeDifference(lastDisplayStartTime, displayStartTime);
+  double td = getTimeDifference(lastDisplayStartTime, displayStartTime) / timeDilationFactor;
   if (td > 1.0)
     fps = 1.0;
   else if (td <= 1e-4) {

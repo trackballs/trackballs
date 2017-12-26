@@ -50,6 +50,7 @@ class Settings {
 
   double sfxVolume, musicVolume;
   double mouseSensitivity;
+  int timeCompression;
   int is_windowed, resolution, colorDepth;
   int gfx_details; /* 0 - 5 */
   int showFPS;
@@ -60,6 +61,8 @@ class Settings {
   int doReflections;
   int doShadows;
   int vsynced;
+  int shadowTexsize;
+  int sandboxAvailable;
 
   void setLocale();
   int hasJoystick();

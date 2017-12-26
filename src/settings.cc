@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 #include <cstdlib>
 
+extern double timeDilationFactor;
+
 /* These are the names/codes codes of languages available from the settings
    menu. The name of languages should appear in the respective native
    language. Eg. the Swedish language is written as 'Svenska'
@@ -78,6 +80,8 @@ Settings::Settings() {
   nLevelSets = 0;
   joy_center[0] = 0;
   joy_center[1] = 0;
+  shadowTexsize = 9;
+  timeCompression = 0;
   memset(specialLevel, 0, sizeof(specialLevel));
   memset(levelSets, 0, sizeof(levelSets));
 
@@ -101,18 +105,21 @@ Settings::Settings() {
         warning("Configuration file should be a series of (key value) tuples.");
         continue;
       }
-      const int intnum = 18, realnum = 3;
+      const int intnum = 21, realnum = 3;
       const char *intkeys[intnum] = {
-          "gfx-details",    "show-fps",     "is-windowed",     "resolution", "color-depth",
-          "joystick-index", "joy_center-x", "joy_center-y",    "joy-left",   "joy-right",
-          "joy-up",         "joy-down",     "rotate-steering", "language",   "ignore-mouse",
-          "do-reflections", "do-shadows",   "vsync-on"};
+          "gfx-details",      "show-fps",       "is-windowed",    "resolution",
+          "color-depth",      "joystick-index", "joy_center-x",   "joy_center-y",
+          "joy-left",         "joy-right",      "joy-up",         "joy-down",
+          "rotate-steering",  "language",       "ignore-mouse",   "do-reflections",
+          "do-shadows",       "vsync-on",       "shadow-texsize", "time-compression",
+          "sandbox-available"};
 
-      int *intdests[intnum] = {&gfx_details,    &showFPS,       &is_windowed,   &resolution,
-                               &colorDepth,     &joystickIndex, &joy_center[0], &joy_center[1],
-                               &joy_left,       &joy_right,     &joy_up,        &joy_down,
-                               &rotateSteering, &language,      &ignoreMouse,   &doReflections,
-                               &doShadows,      &vsynced};
+      int *intdests[intnum] = {
+          &gfx_details,     &showFPS,       &is_windowed,    &resolution,    &colorDepth,
+          &joystickIndex,   &joy_center[0], &joy_center[1],  &joy_left,      &joy_right,
+          &joy_up,          &joy_down,      &rotateSteering, &language,      &ignoreMouse,
+          &doReflections,   &doShadows,     &vsynced,        &shadowTexsize, &timeCompression,
+          &sandboxAvailable};
       const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
       double *realdests[realnum] = {&sfxVolume, &musicVolume, &mouseSensitivity};
 
@@ -145,6 +152,8 @@ Settings::Settings() {
     }
     scm_close(ip);
   }
+  /* apply time compression immediately */
+  timeDilationFactor = std::pow(2.0, timeCompression / 6.0);
 }
 void Settings::loadLevelSets() {
   /* Load all levelsets */
@@ -330,8 +339,11 @@ void Settings::save() {
     fprintf(fp, "(ignore-mouse %d)\n", ignoreMouse);
     fprintf(fp, "(do-reflections %d)\n", doReflections);
     fprintf(fp, "(do-shadows %d)\n", doShadows);
+    fprintf(fp, "(shadow-texsize %d)\n", shadowTexsize);
     fprintf(fp, "(language %d)\n", language);
     fprintf(fp, "(vsync-on %d)\n", vsynced);
+    fprintf(fp, "(time-compression %d)\n", timeCompression);
+    fprintf(fp, "(sandbox-available %d)\n", sandboxAvailable);
     fclose(fp);
   }
 }

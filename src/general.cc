@@ -28,6 +28,8 @@
 
 int low_memory;
 
+double timeDilationFactor = 1.0;
+
 void generalInit() {}
 
 double frandom() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
@@ -83,7 +85,8 @@ struct timespec getMonotonicTime() {
 }
 
 double getTimeDifference(const struct timespec &from, const struct timespec &to) {
-  return (to.tv_sec - from.tv_sec) + 1e-9 * (to.tv_nsec - from.tv_nsec);
+  double elapsed = (to.tv_sec - from.tv_sec) + 1e-9 * (to.tv_nsec - from.tv_nsec);
+  return timeDilationFactor * elapsed;
 }
 
 void error(const char *formatstr, ...) {
