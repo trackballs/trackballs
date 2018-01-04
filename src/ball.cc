@@ -749,28 +749,37 @@ bool Ball::physics(Real time) {
   double min_height_above_ground = 1.0;
   int nhits =
       locateContactPoints(map, cells, hitpts, normals, cellco, dhs, &min_height_above_ground);
+  Coord3d wall_normals[MAX_CONTACT_POINTS];
+  int nwalls = locateWallBounces(map, wall_normals);
 
-  Coord3d normal = {0., 0., 0.};
+  const double wall_thresh = 0.35;
+
+  double max_dx = 0., min_dx = 0., max_dy = 0., min_dy = 0.;
   for (int i = 0; i < nhits; i++) {
-    for (int k = 0; k < 3; k++) normal[k] += normals[i][k];
-  }
-  double nlength = length(normal);
-  if (nlength <= 0.) {
-    normal[0] = 0.;
-    normal[1] = 0.;
-    normal[2] = 1.;
-  } else {
-    for (int k = 0; k < 3; k++) normal[k] /= nlength;
-  }
-  normal[2] = std::max(normal[2], 0.1);
+    if (normals[i][2] < 0.) continue;
 
+    if (normals[i][2] < wall_thresh) {
+      if (dhs[i] < 0.) { /* Steep wall, bounce the normal */
+        if (nwalls < MAX_CONTACT_POINTS) {
+          assign(normals[i], wall_normals[nwalls]);
+          nwalls++;
+        }
+      }
+    }
+    /* Greatest axis-aligned slopes contribute */
+    double dx = normals[i][0] / std::max(normals[i][2], wall_thresh);
+    double dy = normals[i][1] / std::max(normals[i][2], wall_thresh);
+    max_dx = std::max(dx, max_dx);
+    min_dx = std::min(dx, min_dx);
+    max_dy = std::max(dy, max_dy);
+    min_dy = std::min(dy, min_dy);
+  }
   /* All effects of gravity */
   if (inTheAir)
     velocity[2] = velocity[2] - gravity * time;
   else if (!inPipe) {
-    double scale = gravity * time / normal[2];
-    velocity[0] += normal[0] * scale;  // gravity * time;
-    velocity[1] += normal[1] * scale;  // gravity * time;
+    velocity[0] += gravity * time * (max_dx + min_dx);
+    velocity[1] += gravity * time * (max_dy + min_dy);
   }
 
   /* Sand - generate debris */
@@ -949,9 +958,9 @@ bool Ball::physics(Real time) {
     /* automatically force ball to map height if it is far enough down */
     if (mapHeight > position[2] + radius) { position[2] = mapHeight + 0.75 * radius; }
 
-    if (!handleMapCollisions(map, cells, hitpts, normals, cellco, dhs, nhits)) return false;
+    if (!handleGround(map, cells, hitpts, normals, cellco, dhs, nhits)) return false;
 
-    if (!handleEdges(map)) return false;
+    if (!handleWalls(wall_normals, nwalls)) return false;
   }
 
   /* Collisions with other balls */
@@ -1080,8 +1089,8 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
   }
   return nhits;
 }
-bool Ball::handleMapCollisions(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
-                               ICoord2d *cellco, double *dhs, int nhits) {
+bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
+                        ICoord2d *cellco, double *dhs, int nhits) {
   /* If there are no points of contact, done */
   if (nhits == 0) return true;
 
@@ -1230,11 +1239,12 @@ static double sign(double v) {
   if (v < 0.) return -1.;
   return 0.;
 }
-bool Ball::handleEdges(class Map *map) {
+int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
   /* individual bounce back for each wall segment intersecting the rim of
    * the ball */
   int xmin = std::floor(position[0] - radius), xmax = std::floor(position[0] + radius);
   int ymin = std::floor(position[1] - radius), ymax = std::floor(position[1] + radius);
+  int nwalls = 0;
   for (int x = xmin; x <= xmax; x++) {
     for (int y = ymin; y <= ymax; y++) {
       Cell &c = map->cell(x, y);
@@ -1268,14 +1278,10 @@ bool Ball::handleEdges(class Map *map) {
           if (dsx * dsx + dsy * dsy < radius * radius) hit = 3;
           if (dtx * dtx + dty * dty < radius * radius) hit = 4;
           if (hit) {
-            double sgn = sign(position[1] - yp);
-            double crash_speed = -velocity[1] * sgn;
-            if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
-            if (crash_speed > 0) {
-              if (!crash(crash_speed)) return false;
-              velocity[1] *= -bounceFactor;
-            }
-            velocity[1] += 0.1 * sgn;
+            wall_normals[nwalls][0] = 0.;
+            wall_normals[nwalls][1] = sign(position[1] - yp);
+            wall_normals[nwalls][2] = 0.;
+            nwalls++;
           }
         }
       }
@@ -1309,18 +1315,28 @@ bool Ball::handleEdges(class Map *map) {
           if (dsx * dsx + dsy * dsy < radius * radius) hit = 3;
           if (dtx * dtx + dty * dty < radius * radius) hit = 4;
           if (hit) {
-            double sgn = sign(position[0] - xp);
-            double crash_speed = -velocity[0] * sgn;
-            if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
-            if (crash_speed > 0) {
-              if (!crash(crash_speed)) return false;
-              velocity[0] *= -bounceFactor;
-            }
-            velocity[0] += 0.1 * sgn;
+            wall_normals[nwalls][0] = sign(position[0] - xp);
+            wall_normals[nwalls][1] = 0.;
+            wall_normals[nwalls][2] = 0.;
+            nwalls++;
           }
         }
       }
     }
+  }
+  return nwalls;
+}
+bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
+  for (int i = 0; i < nwalls; i++) {
+    double crash_speed = -dotProduct(velocity, wall_normals[i]);
+    if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
+    if (crash_speed > 0) {
+      if (!crash(crash_speed)) return false;
+      for (int k = 0; k < 3; k++) {
+        velocity[k] -= (1 + bounceFactor) * velocity[k] * std::abs(wall_normals[i][k]);
+      }
+    }
+    for (int k = 0; k < 3; k++) { velocity[k] += 0.1 * wall_normals[i][k]; }
   }
   return true;
 }

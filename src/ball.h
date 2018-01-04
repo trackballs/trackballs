@@ -98,14 +98,14 @@ class Ball : public Animated {
 
   int locateContactPoints(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*,
                           double*);
+  int locateWallBounces(class Map*, Coord3d*);
   void generateSandDebris();
   void generateDebris(GLfloat color[4]);
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);
-  bool handleMapCollisions(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*,
-                           int);
-  bool handleEdges(class Map*);
+  bool handleGround(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, int);
+  bool handleWalls(Coord3d*, int);
 };
 
 #endif
