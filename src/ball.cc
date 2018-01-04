@@ -1327,16 +1327,27 @@ int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
   return nwalls;
 }
 bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
+  Coord3d bounce_normal = {0., 0., 0.};
+  Coord3d mean_normal = {0., 0., 0.};
+  int nbounce = 0;
   for (int i = 0; i < nwalls; i++) {
     double crash_speed = -dotProduct(velocity, wall_normals[i]);
     if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
     if (crash_speed > 0) {
       if (!crash(crash_speed)) return false;
-      for (int k = 0; k < 3; k++) {
-        velocity[k] -= (1 + bounceFactor) * velocity[k] * std::abs(wall_normals[i][k]);
-      }
+      nbounce++;
+      for (int k = 0; k < 3; k++) bounce_normal[k] += wall_normals[i][k];
     }
-    for (int k = 0; k < 3; k++) { velocity[k] += 0.1 * wall_normals[i][k]; }
+    for (int k = 0; k < 3; k++) mean_normal[k] += wall_normals[i][k];
+  }
+
+  if (nbounce) {
+    for (int k = 0; k < 3; k++)
+      velocity[k] -= (1 + bounceFactor) * velocity[k] * std::abs(bounce_normal[k]) / nbounce;
+  }
+
+  if (nwalls) {
+    for (int k = 0; k < 3; k++) velocity[k] += 0.1 * mean_normal[k] / nwalls;
   }
   return true;
 }
