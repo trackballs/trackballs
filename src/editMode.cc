@@ -159,6 +159,8 @@ int doAskSave = 0;
 
 int selectedMenu = -1;
 
+const int viewPoints[4][2] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
+
 EditMode* EditMode::editMode;
 
 void EditMode::loadStrings() {
@@ -380,13 +382,10 @@ void EditMode::display() {
   /* Setup matrixes for the camera perspective */
   perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
                     activeView.projection);
-  if (!switchViewpoint) {
-    lookAtMatrix(x - 7.0, y - 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
-                 activeView.modelview);
-  } else {
-    lookAtMatrix(x + 7.0, y + 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x, y, h, 0.0, 0.0, 1.0,
-                 activeView.modelview);
-  }
+
+  lookAtMatrix(x - viewPoints[switchViewpoint][0] * 7.0,
+               y - viewPoints[switchViewpoint][1] * 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x,
+               y, h, 0.0, 0.0, 1.0, activeView.modelview);
 
   activeView.day_mode = 1;
   updateUniforms();
@@ -786,16 +785,20 @@ void EditMode::doCommand(int command) {
   } break;
 
   case MOVE_UP:
-    x += (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
+    ((switchViewpoint % 2) ? y : x) +=
+        viewPoints[switchViewpoint][1] * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_DOWN:
-    x -= (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
+    ((switchViewpoint % 2) ? y : x) -=
+        viewPoints[switchViewpoint][1] * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_LEFT:
-    y += (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
+    ((switchViewpoint % 2) ? x : y) +=
+        viewPoints[switchViewpoint][0] * (ctrl ? 20 : (shift ? 5 : 1));
     break;
   case MOVE_RIGHT:
-    y -= (switchViewpoint ? -1 : 1) * (ctrl ? 20 : (shift ? 5 : 1));
+    ((switchViewpoint % 2) ? x : y) -=
+        viewPoints[switchViewpoint][0] * (ctrl ? 20 : (shift ? 5 : 1));
     break;
 
   case MOVE_SET_MARKER:
@@ -825,7 +828,7 @@ void EditMode::doCommand(int command) {
     birdsEye = birdsEye ? 0 : 1;
     break;
   case VIEW_ROTATE:
-    switchViewpoint = switchViewpoint ? 0 : 1;
+    switchViewpoint = (switchViewpoint + 1) % 4;
     break;
   case VIEW_CLEAR_ENTITIES:
     if (game) delete game;
@@ -1104,15 +1107,6 @@ void EditMode::key(int key) {
     doCellAction(CODE_CELL_ALL, shift ? 1 : 0);
     return;
   }
-
-  /* Move cursor */
-  /*
-  switch(key) {
-  case SDLK_LEFT: y+=(switchViewpoint?-1:1)*(shift?5:1); break;
-  case SDLK_RIGHT: y-=(switchViewpoint?-1:1)*(shift?5:1); break;
-  case SDLK_UP: x+=(switchViewpoint?-1:1)*(shift?5:1); break;
-  case SDLK_DOWN: x-=(switchViewpoint?-1:1)*(shift?5:1); break;
-  }*/
 
   if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
