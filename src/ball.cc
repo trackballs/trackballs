@@ -783,26 +783,34 @@ bool Ball::physics(Real time) {
   }
 
   /* Sand - generate debris */
-  Cell &c = map->cell((int)position[0], (int)position[1]);
-  if (!inPipe && c.flags & CELL_SAND && !inTheAir && radius > 0.2) {
-    double speed =
+  double sand_frac = 0., acid_frac = 0., ice_frac = 0., track_frac = 0.;
+  for (int i = 0; i < nhits; i++) {
+    if (cells[i]->flags & CELL_ACID) acid_frac += 1. / nhits;
+    if (cells[i]->flags & CELL_SAND) sand_frac += 1. / nhits;
+    if (cells[i]->flags & CELL_ICE) ice_frac += 1. / nhits;
+    if (cells[i]->flags & CELL_TRACK) track_frac += 1. / nhits;
+  }
+
+  if (!inTheAir && radius > 0.2 && !inPipe) {
+    double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-    if (frandom() < (speed - 0.3) * 0.08) {
-      /* lots of friction when we crash into sand */
-      velocity[0] *= 0.9;
-      velocity[1] *= 0.9;
-      velocity[2] *= 0.9;
-      generateSandDebris();
-    }
-  } else if (Settings::settings->difficulty > 0 && !inPipe && modTimeLeft[MOD_SPIKE] &&
-             !inTheAir && radius > 0.2) {
-    double speed =
-        velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-    if (frandom() < (speed - 0.3) * 0.0007 * Settings::settings->difficulty) {
-      velocity[0] *= 0.9;
-      velocity[1] *= 0.9;
-      velocity[2] *= 0.9;
-      generateDebris(c.colors[Cell::CENTER]);
+    if (sand_frac > 0.) {
+      if (frandom() < (speed2 - 0.3) * 0.08) {
+        /* lots of friction when we crash into sand */
+        double slowdown = std::pow(0.9, sand_frac);
+        velocity[0] *= slowdown;
+        velocity[1] *= slowdown;
+        velocity[2] *= slowdown;
+        generateSandDebris();
+      }
+    } else if (Settings::settings->difficulty > 0 && modTimeLeft[MOD_SPIKE]) {
+      if (frandom() < (speed2 - 0.3) * 0.0007 * Settings::settings->difficulty) {
+        velocity[0] *= 0.9;
+        velocity[1] *= 0.9;
+        velocity[2] *= 0.9;
+        Cell &c = map->cell((int)position[0], (int)position[1]);
+        generateDebris(c.colors[Cell::CENTER]);
+      }
     }
   }
 
@@ -849,6 +857,8 @@ bool Ball::physics(Real time) {
         velocity[1] += 0.01 * rotation[1];
         new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
       }
+      /* cell velocity field extends to the water within the cell */
+      Cell &c = map->cell((int)position[0], (int)position[1]);
       double fric = 0.004 * std::min(1.0, depth / (2. * radius));  // an extra water friction
       velocity[0] = velocity[0] * (1. - fric) + c.velocity[0] * fric;
       velocity[1] = velocity[1] * (1. - fric) + c.velocity[1] * fric;
@@ -858,25 +868,25 @@ bool Ball::physics(Real time) {
   }
 
   /* Sinking into floor material */
-  if (c.flags & CELL_SAND && !inPipe) {
-    sink += 0.8 * time;
-    if (sink > radius * 0.5) sink = radius * 0.5;
-  } else if (c.flags & CELL_ACID && !inPipe && !inTheAir) {
-    sink += 0.8 * time;
-    double speed =
+  if (acid_frac > 0. && !inPipe && !inTheAir) {
+    sink += 0.8 * time * (acid_frac + sand_frac);
+    double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-    if (frandom() < (speed - 0.2) * 0.05) {
+    if (frandom() < (speed2 - 0.2) * 0.05) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
       Coord3d center;
       assign(position, center);
       center[2] = mapHeight;
-      new Splash(center, velocity, acidColor, speed * radius, radius);
+      new Splash(center, velocity, acidColor, speed2 * radius, radius);
     }
     if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
     if (sink > radius * 2.0) {
       die(DIE_ACID);
       return false;
     }
+  } else if (sand_frac > 0. && !inPipe && !inTheAir) {
+    sink += 0.8 * time * (acid_frac + sand_frac);
+    if (sink > 0.5 * sand_frac * radius) sink = 0.5 * sand_frac * radius;
   } else
     sink = std::max(0.0, sink - 2.0 * time);
 
@@ -884,22 +894,20 @@ bool Ball::physics(Real time) {
   /* Ground "grip" - Also works in pipes! */
   /*                                      */
   {
-    double v_fric = 0.08;
-    double r_fric = 0.10;
+    const double v_base = 0.08, r_base = 0.10;
 
-    if (c.flags & CELL_ACID) {
-      v_fric = 0.008;
-      r_fric = 0.010;
-    }
+    double v_fric = v_base;
+    double r_fric = r_base;
 
-    if (c.flags & CELL_ICE) {
-      if (modTimeLeft[MOD_SPIKE]) {
-        v_fric = 0.008;
-        r_fric = 0.010;
-      } else {
-        v_fric = 0.0008;
-        r_fric = 0.0010;
-      }
+    v_fric += (0.008 - v_base) * acid_frac;
+    r_fric += (0.010 - r_base) * acid_frac;
+
+    if (modTimeLeft[MOD_SPIKE]) {
+      v_fric += (0.008 - v_base) * ice_frac;
+      r_fric += (0.010 - r_base) * ice_frac;
+    } else {
+      v_fric += (0.0008 - v_base) * ice_frac;
+      r_fric += (0.0010 - r_base) * ice_frac;
     }
 
     if (inTheAir) {
@@ -915,11 +923,18 @@ bool Ball::physics(Real time) {
       r_fric = 0.10;
     }
 
-    if (c.flags & CELL_TRACK) {
-      velocity[0] = velocity[0] * (1.0 - v_fric) + (rotation[0] + c.velocity[0]) * v_fric;
-      velocity[1] = velocity[1] * (1.0 - v_fric) + (rotation[1] + c.velocity[1]) * v_fric;
-      rotation[0] = rotation[0] * (1.0 - r_fric) + (velocity[0] - c.velocity[0]) * r_fric;
-      rotation[1] = rotation[1] * (1.0 - r_fric) + (velocity[1] - c.velocity[1]) * r_fric;
+    if (track_frac > 0.) {
+      double trackv[2] = {0., 0.};
+      for (int i = 0; i < nhits; i++) {
+        if (cells[i]->flags & CELL_TRACK) {
+          trackv[0] += cells[i]->velocity[0] / (double)nhits;
+          trackv[1] += cells[i]->velocity[1] / (double)nhits;
+        }
+      }
+      velocity[0] = velocity[0] * (1.0 - v_fric) + (rotation[0] + trackv[0]) * v_fric;
+      velocity[1] = velocity[1] * (1.0 - v_fric) + (rotation[1] + trackv[1]) * v_fric;
+      rotation[0] = rotation[0] * (1.0 - r_fric) + (velocity[0] - trackv[0]) * r_fric;
+      rotation[1] = rotation[1] * (1.0 - r_fric) + (velocity[1] - trackv[1]) * r_fric;
     } else {
       velocity[0] = velocity[0] * (1.0 - v_fric) + rotation[0] * v_fric;
       velocity[1] = velocity[1] * (1.0 - v_fric) + rotation[1] * v_fric;
@@ -937,18 +952,23 @@ bool Ball::physics(Real time) {
   else if (!inTheAir) {
     if (inPipe) {
     } else {
-      if (c.flags & CELL_ACID) effective_friction *= 2.0;
-      if (c.flags & CELL_ICE) effective_friction *= 0.1;
-      if (c.flags & CELL_SAND)
-        effective_friction *= (c.flags & CELL_TRACK ? 20.0 : 10.0);
-      else if (c.flags & CELL_TRACK)
-        effective_friction *= 4.0;  // Note. not both sand and track effect
+      effective_friction *= std::pow(2.0, acid_frac);
+      effective_friction *= std::pow(0.1, ice_frac);
+      // sand+track is 20x boost, not 10x
+      effective_friction *= std::pow(10.0, sand_frac);
+      effective_friction *= std::pow(4.0, track_frac);
+      effective_friction *= std::pow(0.5, sand_frac * track_frac);
     }
     if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
     if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
   }
+  double cvel[2] = {0., 0.};
+  for (int i = 0; i < nhits; i++) {
+    cvel[0] += cells[i]->velocity[0] / (double)nhits;
+    cvel[1] += cells[i]->velocity[1] / (double)nhits;
+  }
   for (int i = 0; i < 2; i++)
-    velocity[i] = velocity[i] - (velocity[i] - c.velocity[i]) * effective_friction;
+    velocity[i] = velocity[i] - (velocity[i] - cvel[i]) * effective_friction;
   velocity[2] *= 1.0 - effective_friction;
   if (inTheAir && velocity[2] > 5.0) velocity[2] *= 0.995;
 
