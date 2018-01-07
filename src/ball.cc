@@ -976,7 +976,7 @@ bool Ball::physics(Real time) {
     /* automatically force ball to map height if it is far enough down */
     if (mapHeight > position[2] + radius) { position[2] = mapHeight + 0.75 * radius; }
 
-    if (!handleGround(map, cells, hitpts, normals, cellco, dhs, nhits)) return false;
+    if (!handleGround(map, cells, hitpts, normals, cellco, dhs, nhits, time)) return false;
 
     if (!handleWalls(wall_normals, nwalls)) return false;
   }
@@ -1109,7 +1109,7 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
   return nhits;
 }
 bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
-                        ICoord2d *cellco, double *dhs, int nhits) {
+                        ICoord2d *cellco, double *dhs, int nhits, Real time) {
   /* If there are no points of contact, done */
   if (nhits == 0) return true;
 
@@ -1239,15 +1239,25 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
       }
       meandh += weight * dh;
     }
+    /* can't be pulled down faster than gravity */
+    double vmin = velocity[2] - time * gravity;
+    double pmin = position[2] - time * velocity[2] - 0.5 * time * time * gravity;
     if (velocity[2] > 2.0) {
       /* Escape */
       position[2] -= meandh;
       position[2] += 0.02;
+      position[2] = std::max(position[2], pmin);
     } else {
       /* Get pulled to the surface */
       position[2] -= meandh;
       velocity[2] -= meandh;
       inTheAir = false;
+      /* Limit height/velocity change while preserving spring law */
+      if (position[2] < pmin) {
+        velocity[2] -= (position[2] - pmin);
+        position[2] = pmin;
+      }
+      velocity[2] = std::max(velocity[2], vmin);
     }
   }
 

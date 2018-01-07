@@ -104,7 +104,8 @@ class Ball : public Animated {
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);
-  bool handleGround(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, int);
+  bool handleGround(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, int,
+                    Real);
   bool handleWalls(Coord3d*, int);
 };
 
