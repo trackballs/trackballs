@@ -97,9 +97,11 @@ void Black::tick(Real t) {
     Cell& c2 = Game::current->map->cell((int)(position[0] + velocity[0] * 1.0),
                                         (int)(position[1] + velocity[1] * 1.0));
 
+    bool expect_fall = d < position[2] - 1.0 && !modTimeLeft[MOD_FLOAT];
+    bool death_cell = c2.flags & CELL_ACID || c2.flags & CELL_KILL;
+
     /* TODO. Make these checks better */
-    if ((d < position[2] - 1.0 && !modTimeLeft[MOD_FLOAT]) ||
-        (!(c1.flags & CELL_ACID) && (c2.flags & CELL_ACID))) {
+    if ((expect_fall || death_cell) && !inPipe) {
       /* Stop, we are near an edge or acid or ... */
       v[0] = velocity[0];
       v[1] = velocity[1];
