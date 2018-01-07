@@ -64,6 +64,7 @@ class Ball : public Animated {
   /* When we crash into something. Returns if we are still alive */
   virtual bool crash(Real speed);
   virtual void die(int how);
+  void jump(Real strength);
 
   static void init();
 

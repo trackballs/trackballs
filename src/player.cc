@@ -276,23 +276,12 @@ void Player::key(int c) {
   }
 }
 void Player::jump() {
-  if (!inTheAir) {
-    if (Game::current->map->cell((int)position[0], (int)position[1]).flags & CELL_ACID)
-      velocity[2] +=
-          1.0 * Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
-    else if (modTimeLeft[MOD_JUMP])
-      velocity[2] +=
-          5.0 * Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
-    else
-      velocity[2] +=
-          2.0 * Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
-    double dh = position[2] - Game::current->map->getHeight(position[0], position[1]);
-    if (dh > 0.20)
-      dh = 0.20;  // we are not supposed to be not "inTheAir" and also have dh > 0.20!
-    position[2] += std::min(0.2, 0.20 - dh);
-    inTheAir = true;
-  }
+  double jumpStrength =
+      Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
+  jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
+  Ball::jump(jumpStrength);
 }
+
 void Player::die(int how) {
   Map *map = Game::current->map;
   /* immortal when not playing (i.e., at level finish) */

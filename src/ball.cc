@@ -960,14 +960,16 @@ bool Ball::physics(Real time) {
     if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
     if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
   }
-  double cvel[2] = {0., 0.};
+  double cvel[3] = {0., 0., 0.};
   for (int i = 0; i < nhits; i++) {
-    cvel[0] += cells[i]->velocity[0] / (double)nhits;
-    cvel[1] += cells[i]->velocity[1] / (double)nhits;
+    cvel[0] += normals[i][2] * cells[i]->velocity[0] / (double)nhits;
+    cvel[1] += normals[i][2] * cells[i]->velocity[1] / (double)nhits;
+    cvel[2] +=
+        -1 * (normals[i][0] * cells[i]->velocity[0] + normals[i][1] * cells[i]->velocity[1]) /
+        (double)nhits;
   }
-  for (int i = 0; i < 2; i++)
+  for (int i = 0; i < 3; i++)
     velocity[i] = velocity[i] - (velocity[i] - cvel[i]) * effective_friction;
-  velocity[2] *= 1.0 - effective_friction;
   if (inTheAir && velocity[2] > 5.0) velocity[2] *= 0.995;
 
   for (int i = 0; i < 3; i++) position[i] += time * velocity[i];
@@ -987,8 +989,7 @@ bool Ball::physics(Real time) {
   /* Collisions with forcefields */
   handleForcefieldCollisions();
 
-  double dh = inPipe ? (position[2] - radius - mapHeight) : min_height_above_ground;
-  if (dh > 0.03) inTheAir = true;
+  if (inPipe || nhits <= 0) inTheAir = true;
 
   /* Pipes */
   handlePipes(time);
@@ -1082,18 +1083,18 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
         int ret = closestPointOnTriangle(tricor, position, closest, normal);
         if (ret < 0) continue;
 
-        /* Only top sides of facets matter; this implies position[2]>closest[2] */
-        if (normal[2] < 0) continue;
+        /* Only top sides of facets matter; and no getting pulled up */
+        if (normal[2] < 0 || position[2] < closest[2]) continue;
 
         /* Ensure that ball is over the closest point */
         double dx = (closest[0] - position[0]), dy = (closest[1] - position[1]);
         double rad2 = dx * dx + dy * dy;
         if (rad2 > radius * radius) continue;
 
-        /* Ball must be closer that 0.02 to closest point */
+        /* Ball must be closer than 0.07*radius to closest point */
         Real dh = position[2] - std::sqrt(std::max(radius * radius - rad2, 0.)) - closest[2];
         *min_height_above_ground = std::min(*min_height_above_ground, dh);
-        if (dh >= 0.02) continue;
+        if (dh >= 0.07 * radius) continue;
 
         if (nhits >= MAX_CONTACT_POINTS) continue;
         cells[nhits] = &c;
@@ -1230,6 +1231,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
   /* Surface attachment & kill cell*/
   {
     double meandh = 0.;
+    Coord3d meanNormal = {0., 0., 0.};
     for (int i = 0; i < nhits; i++) {
       Real dh = dhs[i];
       /* contact with kill cells is death */
@@ -1238,26 +1240,36 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
         return false;
       }
       meandh += weight * dh;
+      for (int k = 0; k < 3; k++) { meanNormal[k] += normals[i][k] * weight; }
     }
-    /* can't be pulled down faster than gravity */
+    /* can't be pulled down faster than gravity + slope */
+    double slopedv = -1 * (meanNormal[0] * velocity[0] + meanNormal[1] * velocity[1]);
+
     double vmin = velocity[2] - time * gravity;
-    double pmin = position[2] - time * velocity[2] - 0.5 * time * time * gravity;
-    if (velocity[2] > 2.0) {
+    double pmin = position[2] + vmin * time;
+
+    if (velocity[2] - slopedv > 2.0) {
       /* Escape */
       position[2] -= meandh;
-      position[2] += 0.02;
+      position[2] += 0.07 * radius;
       position[2] = std::max(position[2], pmin);
     } else {
-      /* Get pulled to the surface */
+      /* Last bounce not strong enough to pull away; stick to the surface */
       position[2] -= meandh;
-      velocity[2] -= meandh;
-      inTheAir = false;
-      /* Limit height/velocity change while preserving spring law */
-      if (position[2] < pmin) {
-        velocity[2] -= (position[2] - pmin);
-        position[2] = pmin;
+
+      if (inTheAir) {
+        position[2] = std::max(position[2], pmin);
+        velocity[2] = slopedv; /* adopt surface vel */
+      } else {
+        /* correct for velocity & preserve spring laws */
+        velocity[2] -= meandh;
+        if (position[2] < pmin) {
+          velocity[2] -= (position[2] - pmin);
+          position[2] = pmin;
+        }
+        velocity[2] = std::max(velocity[2], vmin);
       }
-      velocity[2] = std::max(velocity[2], vmin);
+      inTheAir = false;
     }
   }
 
@@ -1398,6 +1410,20 @@ bool Ball::crash(Real speed) {
       modTimeLeft[MOD_DIZZY] = 3.0 + 1.0 * Settings::settings->difficulty;
 
   return true;
+}
+
+void Ball::jump(Real strength) {
+  if (strength <= 0.) return;
+
+  if (!inTheAir) {
+    bool on_acid =
+        Game::current->map->cell((int)position[0], (int)position[1]).flags & CELL_ACID;
+    if (on_acid) strength *= 0.5;
+
+    velocity[2] += strength;
+    position[2] += 0.10 * radius;
+    inTheAir = true;
+  }
 }
 
 void Ball::generateSandDebris() {
