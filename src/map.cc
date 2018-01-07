@@ -1252,12 +1252,15 @@ int Map::save(char* pathname, int x, int y) {
 
   gzFile gp = gzopen(pathname, "wb9");
   if (!gp) return 0;
+  Coord3d tmp;
+  assign(startPosition, tmp);
   startPosition[0] = x;
   startPosition[1] = y;
   startPosition[2] = cell(x, y).heights[Cell::CENTER];
   int32_t data[6];
   for (int i = 0; i < 3; i++)
     data[i] = saveInt((int32_t)startPosition[i]);  // no decimal part needed
+  assign(tmp, startPosition);
   data[3] = saveInt((int32_t)width);
   data[4] = saveInt((int32_t)height);
   data[5] = saveInt((int32_t)version);
