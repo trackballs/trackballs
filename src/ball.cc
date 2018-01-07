@@ -756,8 +756,6 @@ bool Ball::physics(Real time) {
 
   double max_dx = 0., min_dx = 0., max_dy = 0., min_dy = 0.;
   for (int i = 0; i < nhits; i++) {
-    if (normals[i][2] < 0.) continue;
-
     if (normals[i][2] < wall_thresh) {
       if (dhs[i] < 0.) { /* Steep wall, bounce the normal */
         if (nwalls < MAX_CONTACT_POINTS) {
@@ -1084,7 +1082,8 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
         int ret = closestPointOnTriangle(tricor, position, closest, normal);
         if (ret < 0) continue;
 
-        if (closest[2] > position[2]) continue;
+        /* Only top sides of facets matter; this implies position[2]>closest[2] */
+        if (normal[2] < 0) continue;
 
         /* Ensure that ball is over the closest point */
         double dx = (closest[0] - position[0]), dy = (closest[1] - position[1]);
