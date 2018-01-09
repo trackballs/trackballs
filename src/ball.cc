@@ -1616,38 +1616,59 @@ void Ball::handleForcefieldCollisions() {
     }
   }
 }
+static void computePipeCoordinates(const Pipe *pipe, const Coord3d &position, double *radial,
+                                   double *axial, double *pipeLength,
+                                   Coord3d *direction_to_axis, Coord3d *axis_direction) {
+  Coord3d direction;  // direction of pipe
+  Coord3d dirNorm;    // normalized direction
+  sub(pipe->to, pipe->from, direction);
+  double pipelen = length(direction);
+  sub(pipe->to, pipe->from, dirNorm);
+  normalize(dirNorm);
+  Coord3d v0;  // pipe enterance -> ball position
+  sub(position, pipe->from, v0);
+  double l = std::max(0.0, std::min(1.0, dotProduct(v0, dirNorm) /
+                                             pipelen));  // where along pipe ball is projected
+  Coord3d proj;  // where (as pos) the ball is projected
+  for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
+  Coord3d v1;  // projection point -> ball position
+  sub(position, proj, v1);
+  double distance = length(v1);  // how far away from the pipe the ball is
+  *radial = distance;
+  *axial = l;
+  *pipeLength = pipelen;
+  if (length(v1) > 0) normalize(v1);
+  assign(v1, *direction_to_axis);
+  assign(dirNorm, *axis_direction);
+}
 void Ball::handlePipes(Real time) {
   inPipe = false;
 
+  std::set<Pipe *>::iterator aiter = Pipe::pipes->begin();
+  std::set<Pipe *>::iterator aend = Pipe::pipes->end();
+  /* First, we determine if we are in any pipes */
+  for (; aiter != aend; aiter++) {
+    Pipe *pipe = *aiter;
+    double distance, l, pipeLength;
+    Coord3d dirNorm, offset;
+    computePipeCoordinates(pipe, position, &distance, &l, &pipeLength, &offset, &dirNorm);
+    if (distance < pipe->radius && l > 0.0 && l < 1.0) inPipe = true;
+  }
+
+  /* Then we compute the interaction with all the pipes */
   std::set<Pipe *>::iterator iter = Pipe::pipes->begin();
   std::set<Pipe *>::iterator end = Pipe::pipes->end();
   for (; iter != end; iter++) {
     Pipe *pipe = *iter;
-    Coord3d direction;  // direction of pipe
-    Coord3d dirNorm;    // normalized direction
-    sub(pipe->to, pipe->from, direction);
-    double pipeLength = length(direction);
-    sub(pipe->to, pipe->from, dirNorm);
-    normalize(dirNorm);
-    Coord3d v0;  // pipe enterance -> ball position
-    sub(position, pipe->from, v0);
-    double l = std::max(
-        0.0, std::min(1.0, dotProduct(v0, dirNorm) /
-                               length(direction)));  // where along pipe ball is projected
-    Coord3d proj;                                    // where (as pos) the ball is projected
-    for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
-    Coord3d v1;  // projection point -> ball position
-    sub(position, proj, v1);
-    double distance = length(v1);  // how far away from the pipe the ball is
+    double distance, l, pipeLength;
+    Coord3d dirNorm, normal;
+    computePipeCoordinates(pipe, position, &distance, &l, &pipeLength, &normal, &dirNorm);
     if (distance > pipe->radius || l == 0.0 || l == 1.0) {
       /* Ball is on the outside */
       // note. If <inPipe> then we are already inside another pipe. No collision!
       if (pipe->radius > 0.1 && pipe->radius < radius && distance < radius) {
         /* Added code to bounce of too small pipes, except for *realy* thin pipes which
          are meant to be lifts */
-        Coord3d normal;
-        assign(v1, normal);
-        normalize(normal);
         double speed = -dotProduct(velocity, normal);
         if (speed > 0)
           for (int i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
@@ -1658,9 +1679,6 @@ void Ball::handlePipes(Real time) {
         if ((pipe->flags & PIPE_SOFT_ENTER) && l < 0.2 / pipeLength) continue;
         if ((pipe->flags & PIPE_SOFT_EXIT) && l > 1.0 - 0.2 / pipeLength) continue;
 
-        Coord3d normal;
-        assign(v1, normal);
-        normalize(normal);
         double speed = -dotProduct(velocity, normal);
         if (speed > 0)
           for (int i = 0; i < 3; i++) velocity[i] += speed * normal[i] * 1.5;
@@ -1668,13 +1686,8 @@ void Ball::handlePipes(Real time) {
         for (int i = 0; i < 3; i++) position[i] += correction * normal[i];
       }
     } else {
-      /* Ball is on the inside */
-      inPipe = true;
       if (distance > pipe->radius * 0.97 - radius && l != 0.0 && l != 1.0) {
         /* Collision from inside */
-        Coord3d normal;
-        assign(v1, normal);
-        normalize(normal);
         double speed = dotProduct(velocity, normal);
         if (speed > 0)
           for (int i = 0; i < 3; i++) velocity[i] -= speed * normal[i] * 1.5;
@@ -1686,9 +1699,7 @@ void Ball::handlePipes(Real time) {
       if (distance > pipe->radius * 0.94 - radius && position[2] < zHere) {
         /* Ball is touching lower part of pipe wall */
         inTheAir = false;
-        Coord3d normal;
-        assign(v1, normal);
-        normalize(normal);
+        normal[2] = std::min(0., normal[2]);
         double scale = gravity * time / (-normal[2] + 1e-3);
         velocity[0] -= normal[0] * scale;
         velocity[1] -= normal[1] * scale;
