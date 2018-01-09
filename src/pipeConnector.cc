@@ -27,7 +27,7 @@ void PipeConnector::reset() {
   connectors = new std::set<PipeConnector *>();
 }
 PipeConnector::PipeConnector(Coord3d pos, Real r) : Animated() {
-  assign(pos, position);
+  position = pos;
   radius = r;
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
   connectors->insert(this);

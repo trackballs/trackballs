@@ -28,7 +28,7 @@
 #define SIGN_SCALE 0.007
 
 Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
-  assign(pos, position);
+  position = pos;
   if (l <= 0.0) l = 1e10;
   life = l;
   scale = s;

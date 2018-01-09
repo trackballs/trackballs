@@ -40,8 +40,8 @@
 
 #define ENVIRONMENT_TEXTURE_SIZE 512
 
-Coord3d sunPosition = {-20, -40, 40};
-Coord3d moonPosition = {0, 0, 2};
+Coord3d sunPosition(-20, -40, 40);
+Coord3d moonPosition(0, 0, 2);
 
 const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
           MainMode::statusInGame = 2;
@@ -61,8 +61,8 @@ MainMode::MainMode() {
   wantedZAngle = 0.;
   xyAngle = 0.;
   wantedXYAngle = 0.;
-  memset(camFocus, 0, sizeof(camFocus));
-  memset(camDelta, 0, sizeof(camDelta));
+  camFocus = Coord3d();
+  camDelta = Coord3d();
   gameStatus = 0;
   statusCount = 0.;
   time = 0.;
@@ -98,11 +98,8 @@ void MainMode::display() {
 
   } else {
     double angle = xyAngle * M_PI / 2. + M_PI / 4.;
-    Coord3d up;
-    up[0] = sin(angle) * zAngle;
-    up[1] = cos(angle) * zAngle;
-    up[2] = 1.0 - zAngle;
-    normalize(up);
+    Coord3d up(sin(angle) * zAngle, cos(angle) * zAngle, 1.0 - zAngle);
+    up = up / length(up);
     lookAtMatrix(camFocus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
                  camFocus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
                  10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * sin(zAngle * M_PI / 2.),
@@ -513,8 +510,8 @@ void MainMode::idle(Real td) {
 void MainMode::activated() {
   zAngle = wantedZAngle = 0.0;
   xyAngle = wantedXYAngle = 0.0;
-  zero(camFocus);
-  zero(camDelta);
+  camFocus = Coord3d();
+  camDelta = Coord3d();
   gameStatus = statusBeforeGame;
   SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -542,8 +539,7 @@ void MainMode::startGame() {
   gameStatus = statusInGame;
   Game::current->player1->hasWon = 0;
   playEffect(SFX_START);
-  Coord3d pos;
-  assign(Game::current->map->startPosition, pos);
+  Coord3d pos = Game::current->map->startPosition;
   Game::current->gamer->levelStarted();
 
   pos[2] += 2.0;
@@ -560,8 +556,7 @@ void MainMode::restartPlayer() {
   camFocus[1] = Game::current->map->startPosition[1];
   Game::current->gamer->levelStarted();
 
-  Coord3d pos;
-  assign(Game::current->map->startPosition, pos);
+  Coord3d pos = Game::current->map->startPosition;
   pos[2] += 2.0;
   new Sign(_("Good luck!"), 7, 1.0, 60.0, pos);
   player1->triggerHook(GameHookEvent_Spawn, NULL);
@@ -696,11 +691,8 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
   /* Setup openGL matrixes for the camera perspective */
   double angle = xyAngle * M_PI / 2. + M_PI / 4.;
   // TODO. Fixme. This computation is wrong when zAngle > 0.0 !!
-  Coord3d up;
-  up[0] = sin(angle) * zAngle;
-  up[1] = cos(angle) * zAngle;
-  up[2] = 1.0 - zAngle;
-  normalize(up);
+  Coord3d up(sin(angle) * zAngle, cos(angle) * zAngle, 1.0 - zAngle);
+  up = up / length(up);
   lookAtMatrix(focus[0], focus[1], focus[2] + 0.0,
                focus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
                focus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
@@ -763,10 +755,11 @@ void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
 void MainMode::setupLighting() const {
   GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
   if (Game::current && Game::current->isNight) {
-    GLfloat lightDiffuse2[] = {0.9, 0.9, 0.9, 1.0};
-    Coord3d lightPosition2 = {Game::current->player1->position[0] + moonPosition[0],
-                              Game::current->player1->position[1] + moonPosition[1],
-                              Game::current->player1->position[2] + moonPosition[2]};
+    GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
+    GLfloat lightPosition2[3] = {
+        (GLfloat)(Game::current->player1->position[0] + moonPosition[0]),
+        (GLfloat)(Game::current->player1->position[1] + moonPosition[1]),
+        (GLfloat)(Game::current->player1->position[2] + moonPosition[2])};
     assign(lightDiffuse2, activeView.light_diffuse);
     assign(lightDiffuse2, activeView.light_specular);
     assign(lightPosition2, activeView.light_position);
@@ -776,9 +769,10 @@ void MainMode::setupLighting() const {
   } else {
     GLfloat sunLight[3] = {0.8, 0.8, 0.8};
     GLfloat ambient[3] = {0.2, 0.2, 0.2};
-    Coord3d lightPosition = {Game::current->player1->position[0] + sunPosition[0],
-                             Game::current->player1->position[1] + sunPosition[1],
-                             Game::current->player1->position[2] + sunPosition[2]};
+    GLfloat lightPosition[3] = {
+        (GLfloat)(Game::current->player1->position[0] + sunPosition[0]),
+        (GLfloat)(Game::current->player1->position[1] + sunPosition[1]),
+        (GLfloat)(Game::current->player1->position[2] + sunPosition[2])};
     assign(sunLight, activeView.light_diffuse);
     assign(sunLight, activeView.light_specular);
     assign(lightPosition, activeView.light_position);

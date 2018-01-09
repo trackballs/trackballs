@@ -163,7 +163,7 @@ void Fountain::tick(Real t) {
     Player *p = Game::current->player1;
     Coord3d diff;
 
-    sub(position, p->position, diff);
+    diff = position - p->position;
     if (length(diff) < p->radius + 0.2) {
       for (i = 0; i < 3; i++)
         p->velocity[i] +=

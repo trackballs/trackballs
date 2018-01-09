@@ -29,9 +29,8 @@ void Pipe::reset() {
 }
 Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated() {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
-
-  assign(f, from);
-  assign(t, to);
+  from = f;
+  to = t;
   radius = r;
   pipes->insert(this);
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
@@ -45,19 +44,14 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   allocateBuffers(1, idxbufs, databufs);
   up[0] = up[1] = 0.0;
   up[2] = 1.0;
-  Coord3d dir;
-  sub(to, from, dir);
-  normalize(dir);
+  Coord3d dir = to - from;
+  dir = dir / length(dir);
   right[0] = dir[1];
   right[1] = -dir[0];
   right[2] = 0.0;
-  normalize(right);
-  crossProduct(dir, right, up);
-  if (up[2] < 0.0) {
-    up[0] *= -1.;
-    up[1] *= -1.;
-    up[2] *= -1.;
-  }
+  right = right / length(right);
+  up = crossProduct(dir, right);
+  if (up[2] < 0.0) up = -up;
 
   int nfacets = 24;
 

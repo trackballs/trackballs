@@ -487,16 +487,15 @@ void perspectiveMatrix(GLdouble fovy_deg, GLdouble aspect, GLdouble zNear, GLdou
 void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
                   Matrix4d out) {
-  Coord3d eye = {eyeX, eyeY, eyeZ};
-  Coord3d center = {centerX, centerY, centerZ};
-  Coord3d up = {upX, upY, upZ};
-  Coord3d f, s, u;
-  sub(center, eye, f);
-  normalize(f);
-  normalize(up);
-  crossProduct(f, up, s);
-  normalize(s);
-  crossProduct(s, f, u);
+  Coord3d eye(eyeX, eyeY, eyeZ);
+  Coord3d center(centerX, centerY, centerZ);
+  Coord3d up(upX, upY, upZ);
+  Coord3d f = center - eye;
+  f = f / length(f);
+  up = up / length(up);
+  Coord3d s = crossProduct(f, up);
+  s = s / length(s);
+  Coord3d u = crossProduct(s, f);
 
   Matrix4d mat = {{s[0], u[0], -f[0], 0.},
                   {s[1], u[1], -f[1], 0.},
@@ -526,9 +525,8 @@ void setViewUniforms(GLuint shader) {
   glUniform1f(glGetUniformLocation(shader, "fog_start"), activeView.fog_start);
   glUniform1f(glGetUniformLocation(shader, "fog_end"), activeView.fog_end);
 
-  glUniform3f(glGetUniformLocation(shader, "light_position"),
-              (GLfloat)activeView.light_position[0], (GLfloat)activeView.light_position[1],
-              (GLfloat)activeView.light_position[2]);
+  glUniform3f(glGetUniformLocation(shader, "light_position"), activeView.light_position[0],
+              activeView.light_position[1], activeView.light_position[2]);
   glUniform3f(glGetUniformLocation(shader, "light_ambient"), activeView.light_ambient[0],
               activeView.light_ambient[1], activeView.light_ambient[2]);
   glUniform3f(glGetUniformLocation(shader, "light_diffuse"), activeView.light_diffuse[0],
@@ -648,8 +646,8 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
     }
   }
 
-  Coord3d norv[6] = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
-  Coord3d upv[6] = {{0, -1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}, {0, -1, 0}};
+  GLdouble norv[6][3] = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}};
+  GLdouble upv[6][3] = {{0, -1, 0}, {0, -1, 0}, {0, 0, 1}, {0, 0, -1}, {0, -1, 0}, {0, -1, 0}};
   /* order doesn't matter */
   GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
                     GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
@@ -706,7 +704,7 @@ void mulMatrix4(const Matrix4d mult, const double src[4], double res[4]) {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) { r[i] += src[j] * mult[i][j]; }
   }
-  assign(r, res);
+  for (int i = 0; i < 4; i++) { res[i] = r[i]; }
 }
 
 void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
@@ -733,10 +731,8 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
   Matrix3d mvm3t;
   for (int k = 0; k < 3; k++)
     for (int j = 0; j < 3; j++) mvm3t[j][k] = mvmt[k][j];
-  Coord3d cc = {mvmt[0][3], mvmt[1][3], mvmt[2][3]};
-  Coord3d camera;
-  useMatrix(mvm3t, cc, camera);
-  for (int k = 0; k < 3; k++) camera[k] *= -1;
+  Coord3d cc(mvmt[0][3], mvmt[1][3], mvmt[2][3]);
+  Coord3d camera = -useMatrix(mvm3t, cc);
 
   Matrix4d light_align;
   lookAtMatrix(0, 0, 0, activeView.sun_direction[0], activeView.sun_direction[1],
@@ -754,15 +750,12 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
                           aspect * std::tan(proj_half_angle) * dts[i + j], dts[i + j]};
       for (int k = 0; k < 4; k++) {
         eyepts[k % 2] *= -1;
-        double resultA[3];
         /* convert to world space */
-        useMatrix(mvm3t, eyepts, resultA);
-        for (int m = 0; m < 3; m++) resultA[m] += camera[m];
+        Coord3d resultA = useMatrix(mvm3t, eyepts) + camera;
 
-        double result[3];
         /* reorient along light space. NOTE: this breaks total offset, but we don't care about
          * it...*/
-        useMatrix(light_align3, resultA, result);
+        Coord3d result = useMatrix(light_align3, resultA);
 
         for (int m = 0; m < 3; m++) {
           bounds[m][0] = std::min(bounds[m][0], result[m]);
@@ -773,15 +766,13 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
     double dx = bounds[0][1] - bounds[0][0], dy = bounds[1][1] - bounds[1][0];  //,
     double rx = std::max(dx, dy);
     double ry = std::max(dx, dy);
-    double midpoint[3] = {0, 0, -0.5 * (dts[i] + dts[i + 1])};
-    double mmpt[3];
-    useMatrix(mvm3t, midpoint, mmpt);
-    for (int k = 0; k < 3; k++) mmpt[k] += camera[k];
+    Coord3d midpoint(0, 0, -0.5 * (dts[i] + dts[i + 1]));
+    Coord3d mmpt = useMatrix(mvm3t, midpoint) + camera;
 
     double s = 50; /* rel. the 100 of range */
-    Coord3d light_camera = {mmpt[0] - s * activeView.sun_direction[0],
-                            mmpt[1] - s * activeView.sun_direction[1],
-                            mmpt[2] - s * activeView.sun_direction[2]};
+    Coord3d sundir(activeView.sun_direction[0], activeView.sun_direction[1],
+                   activeView.sun_direction[2]);
+    Coord3d light_camera = mmpt - s * sundir;
     lookAtMatrix(light_camera[0], light_camera[1], light_camera[2], mmpt[0], mmpt[1], mmpt[2],
                  0, 0, 1, activeView.cascade_model[i]);
 
@@ -1295,7 +1286,8 @@ void matrixMult(const Matrix4d A, const Matrix4d B, Matrix4d C) {
 }
 
 /* C <- A(B) */
-void useMatrix(Matrix4d A, const double B[3], double C[3]) {
+Coord3d useMatrix(Matrix4d A, const Coord3d &B) {
+  Coord3d C;
   for (int i = 0; i < 3; i++) {
     C[i] = A[i][3];
     for (int k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
@@ -1303,14 +1295,16 @@ void useMatrix(Matrix4d A, const double B[3], double C[3]) {
   double h = A[3][3];
   for (int k = 0; k < 3; k++) h += A[3][k];
   for (int k = 0; k < 3; k++) C[k] /= h;
+  return C;
 }
 
 /* C <- A(B) */
-void useMatrix(Matrix3d A, const double B[3], double C[3]) {
+Coord3d useMatrix(Matrix3d A, const Coord3d &B) {
+  Coord3d C;
   for (int i = 0; i < 3; i++) {
-    C[i] = 0.;
     for (int k = 0; k < 3; k++) C[i] += A[i][k] * B[k];
   }
+  return C;
 }
 
 /* C <- A */
@@ -1320,19 +1314,6 @@ void assign(const Matrix4d A, Matrix4d C) {
 }
 
 /* C <- A */
-void assign(const double A[3], double C[3]) {
-  C[0] = A[0];
-  C[1] = A[1];
-  C[2] = A[2];
-}
-
-/* C <- A */
-void assign(const float A[3], float C[3]) {
-  C[0] = A[0];
-  C[1] = A[1];
-  C[2] = A[2];
-}
-
 void identityMatrix(Matrix4d m) {
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++) m[i][j] = i == j ? 1.0 : 0.0;
@@ -1365,8 +1346,6 @@ void rotateZ(double v, Matrix4d m) {
   assign(m, morig);
   matrixMult(morig, mr, m);
 }
-void zero(double v[3]) { v[0] = v[1] = v[2] = 0.0; }
-
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                  const Matrix4d model, const Matrix4d proj) {
   // Construct axis-aligned bounding box in window space

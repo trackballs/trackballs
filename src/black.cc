@@ -33,7 +33,6 @@ Black::Black(Real x, Real y) : Ball() {
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
-  zero(velocity);
   crashTolerance = 7;
 
   /* Set color to black */
@@ -88,7 +87,7 @@ void Black::tick(Real t) {
   double dist;
 
   if (Game::current->player1->playing && is_on) {
-    sub(Game::current->player1->position, position, v);
+    Coord3d v = Game::current->player1->position - position;
     dist = length(v);
 
     double d = Game::current->map->getHeight(position[0] + velocity[0] * 1.0,
@@ -106,18 +105,15 @@ void Black::tick(Real t) {
       v[0] = velocity[0];
       v[1] = velocity[1];
       v[2] = 0.0;
-      double vlen = length(v);
-      if (vlen > 0) {
-        for (int k = 0; k < 3; k++) v[k] /= vlen;
+      if (length(v) > 0) {
+        v = v / length(v);
         rotation[0] -= v[0] * acceleration * t;
         rotation[1] -= v[1] * acceleration * t;
       }
     } else if (dist < horizon) {
       /* Go toward the player */
-      normalize(v);
-      double vlen = length(v);
-      if (vlen > 0) {
-        for (int k = 0; k < 3; k++) v[k] /= vlen;
+      if (length(v) > 0) {
+        v = v / length(v);
         rotation[0] += v[0] * acceleration * likesPlayer * t;
         rotation[1] += v[1] * acceleration * likesPlayer * t;
       }

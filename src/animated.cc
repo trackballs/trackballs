@@ -27,7 +27,6 @@
 
 Animated::Animated() : GameHook() {
   Game::current->add(this);
-  zero(position);
   for (int i = 0; i < 3; i++) {
     specularColor[i] = 0.0;
     primaryColor[i] = 0.8;
@@ -164,7 +163,7 @@ void Animated::tick(Real dt) { GameHook::tick(dt); }
 void Animated::die(int how) {
   (void)how;
 
-  double pos[3];
+  Coord3d pos;
 
   /* Trigger any callbacks to guile if registered */
   triggerHook(GameHookEvent_Death, NULL);

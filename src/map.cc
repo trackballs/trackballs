@@ -58,7 +58,7 @@ Cell::Cell() {
 }
 
 /* Returns the normal for a point on the edge of the cell */
-void Cell::getNormal(Coord3d normal, int vertex) const {
+void Cell::getNormal(Coord3d* normal, int vertex) const {
   Coord3d v1;
   Coord3d v2;
 
@@ -97,20 +97,20 @@ void Cell::getNormal(Coord3d normal, int vertex) const {
     break;
   case CENTER:
     getNormal(normal, SOUTH + WEST);
-    getNormal(v1, SOUTH + EAST);
-    add(v1, normal, normal);
-    getNormal(v1, NORTH + WEST);
-    add(v1, normal, normal);
-    getNormal(v1, NORTH + EAST);
-    add(v1, normal, normal);
-    normalize(normal);
+    getNormal(&v1, SOUTH + EAST);
+    *normal = *normal + v1;
+    getNormal(&v1, NORTH + WEST);
+    *normal = *normal + v1;
+    getNormal(&v1, NORTH + EAST);
+    *normal = *normal + v1;
+    *normal = *normal / length(*normal);
     return;
   }
-  crossProduct(v1, v2, normal);
-  normalize(normal);
+  *normal = crossProduct(v1, v2);
+  *normal = *normal / length(*normal);
 }
 /* Works on water heights */
-void Cell::getWaterNormal(Coord3d normal, int vertex) const {
+void Cell::getWaterNormal(Coord3d* normal, int vertex) const {
   Coord3d v1;
   Coord3d v2;
 
@@ -149,17 +149,17 @@ void Cell::getWaterNormal(Coord3d normal, int vertex) const {
     break;
   case CENTER:
     getWaterNormal(normal, SOUTH + WEST);
-    getWaterNormal(v1, SOUTH + EAST);
-    add(v1, normal, normal);
-    getWaterNormal(v1, NORTH + WEST);
-    add(v1, normal, normal);
-    getWaterNormal(v1, NORTH + EAST);
-    add(v1, normal, normal);
-    normalize(normal);
+    getWaterNormal(&v1, SOUTH + EAST);
+    *normal = *normal + v1;
+    getWaterNormal(&v1, NORTH + WEST);
+    *normal = *normal + v1;
+    getWaterNormal(&v1, NORTH + EAST);
+    *normal = *normal + v1;
+    *normal = *normal / length(*normal);
     return;
   }
-  crossProduct(v1, v2, normal);
-  normalize(normal);
+  *normal = crossProduct(v1, v2);
+  *normal = *normal / length(*normal);
 }
 
 /* Gives the height of the cell in a specified (floatingpoint) position */
@@ -663,12 +663,12 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       if (c.flags & CELL_SHADE_FLAT) {
         for (size_t i = 0; i < 15; i++) { fcnormal[i / 3][i % 3] = 0.f; }
       } else {
-        double cnormal[5][3];
-        c.getNormal(&cnormal[0][0], 0);
-        c.getNormal(&cnormal[1][0], 1);
-        c.getNormal(&cnormal[2][0], 2);
-        c.getNormal(&cnormal[3][0], 3);
-        c.getNormal(&cnormal[4][0], 4);
+        Coord3d cnormal[5];
+        c.getNormal(&cnormal[0], 0);
+        c.getNormal(&cnormal[1], 1);
+        c.getNormal(&cnormal[2], 2);
+        c.getNormal(&cnormal[3], 3);
+        c.getNormal(&cnormal[4], 4);
         for (size_t i = 0; i < 15; i++) {
           fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
         }
@@ -774,12 +774,12 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       // Water
       int wvis = c.isWaterVisible();
       if (wvis) {
-        double onormal[5][3];
-        c.getWaterNormal(&onormal[0][0], 0);
-        c.getWaterNormal(&onormal[1][0], 1);
-        c.getWaterNormal(&onormal[2][0], 2);
-        c.getWaterNormal(&onormal[3][0], 3);
-        c.getWaterNormal(&onormal[4][0], 4);
+        Coord3d onormal[5];
+        c.getWaterNormal(&onormal[0], 0);
+        c.getWaterNormal(&onormal[1], 1);
+        c.getWaterNormal(&onormal[2], 2);
+        c.getWaterNormal(&onormal[3], 3);
+        c.getWaterNormal(&onormal[4], 4);
         float fonormal[5][3];
         for (size_t i = 0; i < 15; i++) {
           fonormal[i / 3][i % 3] = (float)onormal[i / 3][i % 3];
@@ -1029,43 +1029,43 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
       yh = std::max(y1, y2);
   for (int x = xl; x <= xh; x++) {
     Cell& c = cell(x, yl);
-    Coord3d lx = {(double)x, (double)yl, c.heights[Cell::SOUTH + Cell::WEST]};
-    Coord3d ly = {(double)x + 1, (double)yl, c.heights[Cell::SOUTH + Cell::EAST]};
-    assign(lx, rp[k]);
+    Coord3d lx((double)x, (double)yl, c.heights[Cell::SOUTH + Cell::WEST]);
+    Coord3d ly((double)x + 1, (double)yl, c.heights[Cell::SOUTH + Cell::EAST]);
+    rp[k] = lx;
     k++;
-    assign(ly, rp[k]);
+    rp[k] = ly;
     k++;
   }
   for (int y = yl; y <= yh; y++) {
     Cell& c = cell(xh, y);
-    Coord3d lx = {(double)xh + 1, (double)y, c.heights[Cell::SOUTH + Cell::EAST]};
-    Coord3d ly = {(double)xh + 1, (double)y + 1, c.heights[Cell::NORTH + Cell::EAST]};
-    assign(lx, rp[k]);
+    Coord3d lx((double)xh + 1, (double)y, c.heights[Cell::SOUTH + Cell::EAST]);
+    Coord3d ly((double)xh + 1, (double)y + 1, c.heights[Cell::NORTH + Cell::EAST]);
+    rp[k] = lx;
     k++;
-    assign(ly, rp[k]);
+    rp[k] = ly;
     k++;
   }
   for (int x = xh; x >= xl; x--) {
     Cell& c = cell(x, yh);
-    Coord3d lx = {(double)x + 1, (double)yh + 1, c.heights[Cell::NORTH + Cell::EAST]};
-    Coord3d ly = {(double)x, (double)yh + 1, c.heights[Cell::NORTH + Cell::WEST]};
-    assign(lx, rp[k]);
+    Coord3d lx((double)x + 1, (double)yh + 1, c.heights[Cell::NORTH + Cell::EAST]);
+    Coord3d ly((double)x, (double)yh + 1, c.heights[Cell::NORTH + Cell::WEST]);
+    rp[k] = lx;
     k++;
-    assign(ly, rp[k]);
+    rp[k] = ly;
     k++;
   }
   for (int y = yh; y >= yl; y--) {
     Cell& c = cell(xl, y);
-    Coord3d lx = {(double)xl, (double)y + 1, c.heights[Cell::NORTH + Cell::WEST]};
-    Coord3d ly = {(double)xl, (double)y, c.heights[Cell::NORTH + Cell::EAST]};
-    assign(lx, rp[k]);
+    Coord3d lx((double)xl, (double)y + 1, c.heights[Cell::NORTH + Cell::WEST]);
+    Coord3d ly((double)xl, (double)y, c.heights[Cell::NORTH + Cell::EAST]);
+    rp[k] = lx;
     k++;
-    assign(ly, rp[k]);
+    rp[k] = ly;
     k++;
   }
   /* Close the loop */
-  assign(ringPoints[k - 1], ringPoints[0]);
-  assign(ringPoints[1], ringPoints[k]);
+  ringPoints[0] = ringPoints[k - 1];
+  ringPoints[k] = ringPoints[1];
 
   GLfloat* data = new GLfloat[8 * 2 * npts];
   GLfloat width = 0.05f;
@@ -1073,30 +1073,23 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   char* pos = (char*)data;
   int nontrivial = 0;
   for (int i = 1; i < npts + 1; i++) {
-    Coord3d prev, cur, nxt;
-    assign(ringPoints[i - 1], prev);
-    assign(ringPoints[i], cur);
-    assign(ringPoints[i + 1], nxt);
-    Coord3d dir1, dir2, dir;
-    sub(nxt, cur, dir1);
-    sub(cur, prev, dir2);
+    Coord3d prev = ringPoints[i - 1], cur = ringPoints[i], nxt = ringPoints[i + 1];
+    Coord3d dir1 = nxt - cur, dir2 = cur - prev;
     if (length(dir1) < 1e-2 && length(dir1) < 1e-2) { continue; }
-    if (length(dir1) < 1e-2) { assign(dir2, dir1); }
-    if (length(dir2) < 1e-2) { assign(dir1, dir2); }
-    normalize(dir1);
-    normalize(dir2);
-    add(dir1, dir2, dir);
+    if (length(dir1) < 1e-2) { dir1 = dir2; }
+    if (length(dir2) < 1e-2) { dir2 = dir1; }
+    dir1 = dir1 / length(dir1);
+    dir2 = dir2 / length(dir2);
+    Coord3d dir = dir1 + dir2;
     if (length(dir) < 1e-2) { continue; }
     nontrivial++;
-    normalize(dir);
+    dir = dir / length(dir);
     dir[2] = 0;
-    Coord3d up = {0., 0., 1.};
-    Coord3d res;
-    crossProduct(up, dir, res);
+    Coord3d up(0., 0., 1.);
+    Coord3d res = crossProduct(up, dir);
     res[2] = 0.;
-    if (length(res) > 0) normalize(res);
-    Coord3d anti;
-    crossProduct(dir, res, anti);
+    if (length(res) > 0) res = res / length(res);
+    Coord3d anti = crossProduct(dir, res);
     GLfloat off = 1e-2;
     kind = nontrivial % 2;
     pos += packObjectVertex(pos, cur[0] + width * res[0] + off * anti[0],
@@ -1252,15 +1245,12 @@ int Map::save(char* pathname, int x, int y) {
 
   gzFile gp = gzopen(pathname, "wb9");
   if (!gp) return 0;
-  Coord3d tmp;
-  assign(startPosition, tmp);
-  startPosition[0] = x;
-  startPosition[1] = y;
-  startPosition[2] = cell(x, y).heights[Cell::CENTER];
+  Coord3d tmp = startPosition;
+  startPosition = Coord3d(x, y, cell(x, y).heights[Cell::CENTER]);
   int32_t data[6];
   for (int i = 0; i < 3; i++)
     data[i] = saveInt((int32_t)startPosition[i]);  // no decimal part needed
-  assign(tmp, startPosition);
+  tmp = startPosition;
   data[3] = saveInt((int32_t)width);
   data[4] = saveInt((int32_t)height);
   data[5] = saveInt((int32_t)version);

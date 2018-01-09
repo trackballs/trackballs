@@ -21,8 +21,8 @@
 #include "debris.h"
 
 Debris::Debris(Ball *ball, Coord3d pos, Coord3d vel, double dur) {
-  assign(pos, position);
-  assign(vel, velocity);
+  position = pos;
+  velocity = vel;
   crashTolerance = 10000;
   if (ball) {
     for (int i = 0; i < 3; i++) primaryColor[i] = ball->primaryColor[i];

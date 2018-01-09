@@ -19,6 +19,9 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef GENERAL_H
+#define GENERAL_H
+
 #include <libintl.h>
 #include <stdio.h>
 #include <cmath>
@@ -37,10 +40,52 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned long ulong;
 typedef double Real;
-typedef double Coord3d[3];
 typedef double Matrix4d[4][4];
 typedef double Matrix3d[3][3];
 typedef int ICoord2d[2];
+
+// Simple vector type to make geometry code readable
+class Coord3d {
+ public:
+  inline Coord3d() {
+    data[0] = 0.;
+    data[1] = 0.;
+    data[2] = 0.;
+  }
+  inline Coord3d(double x[3]) {
+    data[0] = x[0];
+    data[1] = x[1];
+    data[2] = x[2];
+  }
+  inline Coord3d(double x, double y, double z) {
+    data[0] = x;
+    data[1] = y;
+    data[2] = z;
+  };
+  inline double &operator[](size_t idx) { return data[idx]; }
+  inline double operator[](size_t idx) const { return data[idx]; }
+  inline Coord3d operator+(const Coord3d &other) const {
+    return Coord3d(this->data[0] + other.data[0], this->data[1] + other.data[1],
+                   this->data[2] + other.data[2]);
+  }
+  inline Coord3d operator-(const Coord3d &other) const {
+    return Coord3d(this->data[0] - other.data[0], this->data[1] - other.data[1],
+                   this->data[2] - other.data[2]);
+  }
+  inline Coord3d operator-() const {
+    return Coord3d(-this->data[0], -this->data[1], -this->data[2]);
+  }
+  inline Coord3d operator*(double scale) const {
+    return Coord3d(this->data[0] * scale, this->data[1] * scale, this->data[2] * scale);
+  }
+  inline Coord3d operator/(double scale) const {
+    return Coord3d(this->data[0] / scale, this->data[1] / scale, this->data[2] / scale);
+  }
+
+ private:
+  double data[3];
+};
+inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale; }
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264
@@ -77,3 +122,5 @@ extern int low_memory;  // if true, attempt to conserve memory
 extern int debug_joystick;
 extern int repair_joystick;
 extern int theFrameNumber;
+
+#endif /*GENERAL_H*/

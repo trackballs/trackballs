@@ -60,8 +60,8 @@ class Cell {
   void load(class Map *map, gzFile gp, int version);
 
   Cell();
-  void getNormal(Coord3d, int vertex) const;
-  void getWaterNormal(Coord3d, int vertex) const;
+  void getNormal(Coord3d *, int vertex) const;
+  void getWaterNormal(Coord3d *, int vertex) const;
   Real getHeight(Real x, Real y) const;
   Real getWaterHeight(Real x, Real y) const;
   inline int isWaterVisible() const {

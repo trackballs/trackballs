@@ -309,10 +309,8 @@ void Player::die(int how) {
   Coord3d pos, vel;
   if (how == DIE_ACID) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
-    Coord3d vel = {0.0, 0.0, 0.0};
-    Coord3d center;
-    assign(position, center);
-    center[2] = map->getHeight(center[0], center[1]);
+    Coord3d vel;
+    Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
     new Splash(center, vel, acidColor, 32.0, radius);
   } else
     for (int i = 0; i < 4; i++)
@@ -345,7 +343,7 @@ void Player::die(int how) {
 void Player::setStartVariables() {
   sink = 0.0;
   rotation[0] = rotation[1] = 0.;
-  zero(velocity);
+  velocity = Coord3d();
   playing = true;
   alive = 1;
   hasWon = 0;
@@ -358,7 +356,7 @@ void Player::setStartVariables() {
 
 void Player::restart(Coord3d pos) {
   setStartVariables();
-  assign(pos, position);
+  position = pos;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
   modTimeLeft[MOD_DIZZY] = 0.0;
 

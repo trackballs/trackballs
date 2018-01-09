@@ -85,7 +85,7 @@ typedef struct _viewpa {
   GLfloat fog_start;
   GLfloat fog_end;
 
-  Coord3d light_position;
+  GLfloat light_position[3];
   GLfloat light_ambient[3];
   GLfloat light_diffuse[3];
   GLfloat light_specular[3];
@@ -124,25 +124,22 @@ void message(char *row1, char *row2);
 void multiMessage(int nlines, const char *left[], const char *right[]);
 void displayFrameRate();
 
-void assign(const float[3], float[3]);
-void assign(const double[3], double[3]);
-void crossProduct(const double[3], const double[3], double[3]);
-double dotProduct(const double[3], const double[3]);
-void add(const double[3], const double[3], double[3]);
-void sub(const double[3], const double[3], double[3]);
-void normalize(double[3]);
-double length(double[3]);
-void zero(double[3]);
+Coord3d crossProduct(const Coord3d &, const Coord3d &);
+double dotProduct(const Coord3d &, const Coord3d &);
+double length(const Coord3d &);
 
 void debugMatrix(Matrix4d);
-void useMatrix(Matrix4d, const double[3], double[3]);
-void useMatrix(Matrix3d, const double[3], double[3]);
+Coord3d useMatrix(Matrix4d, const Coord3d &);
+Coord3d useMatrix(Matrix3d, const Coord3d &);
 void identityMatrix(Matrix4d);
 void assign(const Matrix4d, Matrix4d);
 void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);
 void rotateY(double, Matrix4d);
 void rotateZ(double, Matrix4d);
+inline void assign(const GLfloat A[3], GLfloat B[3]) {
+  for (int k = 0; k < 3; k++) B[k] = A[k];
+}
 int powerOfTwo(int input);
 int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                  const Matrix4d model, const Matrix4d proj);
@@ -173,33 +170,21 @@ extern const GLfloat menuColorSelected[4], menuColor[4];
 /***********************************/
 /*  Inlined vector operations      */
 
-/* C <- A + B */
-inline void add(const double A[3], const double B[3], double C[3]) {
-  for (int i = 0; i < 3; i++) C[i] = A[i] + B[i];
-}
-
-/* C <- A - B */
-inline void sub(const double A[3], const double B[3], double C[3]) {
-  for (int i = 0; i < 3; i++) C[i] = A[i] - B[i];
-}
-/* C <- C * 1 / |C| */
-inline void normalize(double C[3]) {
-  double l = sqrt(C[0] * C[0] + C[1] * C[1] + C[2] * C[2]);
-  C[0] /= l;
-  C[1] /= l;
-  C[2] /= l;
-}
 /* |A| */
-inline double length(double A[3]) { return sqrt(A[0] * A[0] + A[1] * A[1] + A[2] * A[2]); }
+inline double length(const Coord3d &A) {
+  return std::sqrt(A[0] * A[0] + A[1] * A[1] + A[2] * A[2]);
+}
 /* C <- A x B */
-inline void crossProduct(const double A[3], const double B[3], double C[3]) {
+inline Coord3d crossProduct(const Coord3d &A, const Coord3d &B) {
+  Coord3d C;
   C[0] = A[1] * B[2] - A[2] * B[1];
   C[1] = A[2] * B[0] - A[0] * B[2];
   C[2] = A[0] * B[1] - A[1] * B[0];
+  return C;
 }
 
 /* <- A . B */
-inline double dotProduct(const double A[3], const double B[3]) {
+inline double dotProduct(const Coord3d &A, const Coord3d &B) {
   return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
 }
 #endif

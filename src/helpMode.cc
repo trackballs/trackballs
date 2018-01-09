@@ -126,7 +126,7 @@ void HelpMode::display() {
   GLfloat sunLight[3] = {0.8, 0.8, 0.8};
   GLfloat ambient[3] = {0.2, 0.2, 0.2};
   GLfloat black[3] = {0.2, 0.2, 0.2};
-  Coord3d lightPosition = {-100., -100., 150.};
+  GLfloat lightPosition[3] = {-100., -100., 150.};
   assign(sunLight, activeView.light_diffuse);
   assign(sunLight, activeView.light_specular);
   assign(lightPosition, activeView.light_position);
@@ -140,10 +140,10 @@ void HelpMode::display() {
 
   /* Setup matrixes for the camera perspective */
   GLdouble step = 16.;
-  Coord3d cameraFrom1 = {0. + step * page, 0., -1.};
-  Coord3d cameraTo1 = {5. + step * page, 5., -8.};
-  Coord3d cameraFrom2 = {0. + step * page, 0. + step, -1.};
-  Coord3d cameraTo2 = {5. + step * page, 5. + step, -8.};
+  Coord3d cameraFrom1(0. + step * page, 0., -1.);
+  Coord3d cameraTo1(5. + step * page, 5., -8.);
+  Coord3d cameraFrom2(0. + step * page, 0. + step, -1.);
+  Coord3d cameraTo2(5. + step * page, 5. + step, -8.);
   lookAtMatrix(cameraFrom1[0], cameraFrom1[1], cameraFrom1[2], cameraTo1[0], cameraTo1[1],
                cameraTo1[2], 0.0, 0.0, 1.0, activeView.modelview);
   activeView.day_mode = 1;

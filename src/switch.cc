@@ -169,9 +169,8 @@ void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
 void CSwitch::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void CSwitch::tick(Real /*t*/) {
-  Coord3d v;
+  Coord3d v = position - Game::current->player1->position;
   Player *player = Game::current->player1;
-  sub(position, Game::current->player1->position, v);
 
   double dist = length(v);
   if (dist < player->radius + 0.3) {

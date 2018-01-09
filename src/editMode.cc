@@ -369,7 +369,7 @@ void EditMode::display() {
   activeView.fog_enabled = 0;
   activeView.quadratic_attenuation = 0.;
 
-  Coord3d lightPosition = {x - 60., y - 40., h + 100.};
+  GLfloat lightPosition[3] = {x - 60., y - 40., h + 100.};
   GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
   GLfloat ambient[3] = {0.2, 0.2, 0.2};
   GLfloat black[3] = {0., 0., 0.};
@@ -392,7 +392,7 @@ void EditMode::display() {
   /* Shadow map rendering returns active modelview/projection to orig state */
   if (map) {
     if (Settings::settings->doShadows) {
-      Coord3d focus = {(double)x, (double)y, map->getHeight(x, y)};
+      Coord3d focus((double)x, (double)y, map->getHeight(x, y));
       renderShadowCascade(focus, map, game);
       renderDummyShadowMap();
     } else {

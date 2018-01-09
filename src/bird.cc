@@ -151,7 +151,7 @@ void Bird::tick(Real t) {
     if (!ball->alive) continue;
     if (ball->no_physics) continue;
 
-    sub(position, ball->position, diff);
+    diff = position - ball->position;
     // TODO: improve the collision detection
     if (length(diff) < ball->radius + size * .75) {
       if (ball->modTimeLeft[MOD_SPIKE]) {

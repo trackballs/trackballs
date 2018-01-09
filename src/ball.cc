@@ -58,8 +58,6 @@ Ball::Ball() : Animated() {
   sink = 0.0;
 
   ballResolution = BALL_LORES;
-  zero(position);
-  zero(velocity);
   friction = 1.0;
   rotation[0] = rotation[1] = 0.0;
 
@@ -183,7 +181,7 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   if (modTimeLeft[MOD_SPIKE]) {
     /* spikes correspond to icosahedral faces */
     const GLfloat w = (1 + std::sqrt(5)) / 2;
-    Coord3d icoverts[12] = {
+    double icoverts[12][3] = {
         {-1, w, 0},  {1, w, 0},  {-1, -w, 0}, {1, -w, 0}, {0, -1, w},  {0, 1, w},
         {0, -1, -w}, {0, 1, -w}, {w, 0, -1},  {w, 0, 1},  {-w, 0, -1}, {-w, 0, 1},
     };
@@ -210,23 +208,19 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
     ushort idxs[20 * 3][3];
     char *pos = (char *)data;
     for (int i = 0; i < 20; i++) {
-      Coord3d centroid = {0., 0., 0.};
-      for (int j = 0; j < 3; j++) { add(centroid, icoverts[icofaces[i][j]], centroid); }
-      for (int k = 0; k < 3; k++) centroid[k] /= 3.0;
+      Coord3d centroid;
+      for (int j = 0; j < 3; j++) { centroid = centroid + Coord3d(icoverts[icofaces[i][j]]); }
+      centroid = centroid / 3.0;
 
-      Coord3d spike;
-      assign(centroid, spike);
-      for (int k = 0; k < 3; k++) spike[k] *= 0.87 * scale;
-      Coord3d sub;
-      useMatrix(trot, spike, sub);
+      Coord3d spike = centroid;
+      spike = spike * 0.87 * scale;
+      Coord3d sub = useMatrix(trot, spike);
       pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
                               sco, flat);
       for (int j = 2; j >= 0; j--) {
-        Coord3d edge;
-        assign(icoverts[icofaces[i][j]], edge);
-        for (int k = 0; k < 3; k++)
-          edge[k] = 0.3 * scale * (0.1 * centroid[k] + 0.9 * edge[k]);
-        useMatrix(trot, edge, sub);
+        Coord3d edge(icoverts[icofaces[i][j]]);
+        edge = 0.3 * scale * (0.1 * centroid + 0.9 * edge);
+        sub = useMatrix(trot, edge);
         pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
                                 sco, flat);
       }
@@ -260,11 +254,10 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
     for (int i = 0; i < nlines; i++) {
       double angle = i * M_PI / (nlines - 1) - M_PI / 2;
 
-      Coord3d v;
-      assign(velocity, v);
+      Coord3d v = velocity;
       v[2] = 0.0;
       if (length(v) > 0.8) {
-        normalize(v);
+        v = v / length(v);
         double z = (rand() % 1000) / 1000.0;
 
         data[2 * i][0] = loc[0] + std::sin(angle) * radius * v[1];
@@ -759,7 +752,7 @@ bool Ball::physics(Real time) {
     if (normals[i][2] < wall_thresh) {
       if (dhs[i] < 0.) { /* Steep wall, bounce the normal */
         if (nwalls < MAX_CONTACT_POINTS) {
-          assign(normals[i], wall_normals[nwalls]);
+          wall_normals[nwalls] = normals[i];
           nwalls++;
         }
       }
@@ -836,7 +829,7 @@ bool Ball::physics(Real time) {
                      velocity[2] * velocity[2] * 5.;
       if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
         GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-        Coord3d center = {position[0], position[1], waterHeight};
+        Coord3d center(position[0], position[1], waterHeight);
         new Splash(center, velocity, waterColor, 30 * radius / 0.3,
                    radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
       }
@@ -844,7 +837,7 @@ bool Ball::physics(Real time) {
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
       if (frandom() < speed * 0.001) {
         GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
-        Coord3d center = {position[0], position[1], waterHeight};
+        Coord3d center(position[0], position[1], waterHeight);
         Coord3d vel;
         vel[0] = -rotation[0] * radius;  // 0.3;
         vel[1] = -rotation[1] * radius;  // 0.3;
@@ -872,9 +865,7 @@ bool Ball::physics(Real time) {
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
     if (frandom() < (speed2 - 0.2) * 0.05) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
-      Coord3d center;
-      assign(position, center);
-      center[2] = mapHeight;
+      Coord3d center(position[0], position[1], mapHeight);
       new Splash(center, velocity, acidColor, speed2 * radius, radius);
     }
     if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
@@ -996,27 +987,24 @@ bool Ball::physics(Real time) {
 
   return true;
 }
-static int closestPointOnTriangle(Coord3d tricor[3], Coord3d point, Coord3d closest,
-                                  Coord3d normal) {
-  Coord3d dv0, dv1, nor, baseoff;
-  sub(tricor[2], tricor[0], dv0);
-  sub(tricor[2], tricor[1], dv1);
-  sub(point, tricor[2], baseoff);
-  crossProduct(dv0, dv1, nor);
-  normalize(nor);
+static int closestPointOnTriangle(Coord3d tricor[3], const Coord3d &point, Coord3d *closest,
+                                  Coord3d *normal) {
+  Coord3d dv0 = tricor[2] - tricor[0];
+  Coord3d dv1 = tricor[2] - tricor[1];
+  Coord3d baseoff = point - tricor[2];
+  Coord3d nor = crossProduct(dv0, dv1);
+  nor = nor / length(nor);
   double dist = dotProduct(baseoff, nor);
   if (dist > 0) {
-    for (int i = 0; i < 3; i++) normal[i] = nor[i];
+    *normal = nor;
   } else {
-    for (int i = 0; i < 3; i++) normal[i] = -nor[i];
+    *normal = -nor;
   }
-  Coord3d nearoff;
-  for (int i = 0; i < 3; i++) nearoff[i] = baseoff[i] - dist * nor[i];
+  Coord3d nearoff = baseoff - dist * nor;
   double s = -dotProduct(nearoff, dv0);
   double t = -dotProduct(nearoff, dv1);
-  Coord3d nearoffm1, m1;
-  sub(dv0, dv1, m1);
-  add(nearoff, dv1, nearoffm1);
+  Coord3d m1 = dv0 - dv1;
+  Coord3d nearoffm1 = nearoff + dv1;
   double r = -dotProduct(nearoffm1, m1);
   double mm = dotProduct(m1, m1);
   double uu = dotProduct(dv0, dv0);
@@ -1027,30 +1015,28 @@ static int closestPointOnTriangle(Coord3d tricor[3], Coord3d point, Coord3d clos
   double b = idet * (-uv * s + uu * t);
   double c = 1 - a - b;
   if (0. <= a && a <= 1. && 0. <= b && b <= 1. && 0. <= c && c <= 1.) {
-    for (int j = 0; j < 3; j++) {
-      closest[j] = tricor[0][j] * a + tricor[1][j] * b + tricor[2][j] * c;
-    }
+    *closest = tricor[0] * a + tricor[1] * b + tricor[2] * c;
     return 0;
   } else if (0. <= s && s <= uu && b <= 0.) {
     double q = s / uu;
-    for (int j = 0; j < 3; j++) { closest[j] = tricor[2][j] * (1. - q) + tricor[0][j] * q; }
+    *closest = tricor[2] * (1. - q) + tricor[0] * q;
     return 1;
   } else if (0. <= t && t <= vv && a <= 0.) {
     double q = t / vv;
-    for (int j = 0; j < 3; j++) { closest[j] = tricor[2][j] * (1. - q) + tricor[1][j] * q; }
+    *closest = tricor[2] * (1. - q) + tricor[1] * q;
     return 2;
   } else if (0. <= r && r <= mm && c <= 0.) {
     double q = r / mm;
-    for (int j = 0; j < 3; j++) { closest[j] = tricor[0][j] * q + tricor[1][j] * (1. - q); }
+    *closest = tricor[0] * q + tricor[1] * (1. - q);
     return 3;
   } else if (s <= 0. && t <= 0.) {
-    assign(tricor[2], closest);
+    *closest = tricor[2];
     return 4;
   } else if (t >= 0. && r <= 0.) {
-    assign(tricor[1], closest);
+    *closest = tricor[1];
     return 5;
   } else if (s >= 0 && r >= mm) {
-    assign(tricor[0], closest);
+    *closest = tricor[0];
     return 6;
   }
   warning("cPoT impossible case happened");
@@ -1080,7 +1066,7 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
           tricor[k][2] = c.heights[cids[vno]];
         }
         Coord3d closest, normal;
-        int ret = closestPointOnTriangle(tricor, position, closest, normal);
+        int ret = closestPointOnTriangle(tricor, position, &closest, &normal);
         if (ret < 0) continue;
 
         /* Only top sides of facets matter; and no getting pulled up */
@@ -1098,8 +1084,8 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
 
         if (nhits >= MAX_CONTACT_POINTS) continue;
         cells[nhits] = &c;
-        assign(closest, hitpts[nhits]);
-        assign(normal, normals[nhits]);
+        hitpts[nhits] = closest;
+        normals[nhits] = normal;
         cellco[nhits][0] = x;
         cellco[nhits][1] = y;
         dhs[nhits] = dh;
@@ -1138,7 +1124,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
     int nsandcells = 0;
     double sandSpeed = 0;
 
-    Coord3d velbounce = {0., 0., 0.};
+    Coord3d velbounce;
     double max_crash_speed = 0.;
     for (int i = 0; i < nhits; i++) {
       Real speed = -dotProduct(velocity, normals[i]);
@@ -1175,7 +1161,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
           nspeeds[ptramp]++;
         }
         speed *= 1.0 + effective_bounceFactor;
-        for (int k = 0; k < 3; k++) velbounce[k] += weight * normals[i][k] * speed;
+        velbounce = velbounce + weight * normals[i] * speed;
 
         if (cell.flags & CELL_ACID) {
           nacidsplash++;
@@ -1193,15 +1179,13 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
     /* Acid splash */
     if (nacidsplash) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
-      Coord3d center;
-      assign(position, center);
-      center[2] = map->getHeight(center[0], center[1]);
+      Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
       new Splash(center, velocity, acidColor, (acidSpeed / nacidsplash) * radius * 20.0,
                  radius);
     }
 
     /* Apply bounce */
-    for (int k = 0; k < 3; k++) velocity[k] += velbounce[k];
+    velocity = velocity + velbounce;
 
     /* Sand handling */
     if (nsandcells > 0) {
@@ -1231,7 +1215,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
   /* Surface attachment & kill cell*/
   {
     double meandh = 0.;
-    Coord3d meanNormal = {0., 0., 0.};
+    Coord3d meanNormal;
     for (int i = 0; i < nhits; i++) {
       Real dh = dhs[i];
       /* contact with kill cells is death */
@@ -1240,7 +1224,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
         return false;
       }
       meandh += weight * dh;
-      for (int k = 0; k < 3; k++) { meanNormal[k] += normals[i][k] * weight; }
+      meanNormal = meanNormal + normals[i] * weight;
     }
     /* can't be pulled down faster than gravity + slope */
     double slopedv = -1 * (meanNormal[0] * velocity[0] + meanNormal[1] * velocity[1]);
@@ -1368,8 +1352,8 @@ int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
   return nwalls;
 }
 bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
-  Coord3d bounce_normal = {0., 0., 0.};
-  Coord3d mean_normal = {0., 0., 0.};
+  Coord3d bounce_normal;
+  Coord3d mean_normal;
   int nbounce = 0;
   for (int i = 0; i < nwalls; i++) {
     double crash_speed = -dotProduct(velocity, wall_normals[i]);
@@ -1377,9 +1361,9 @@ bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
     if (crash_speed > 0) {
       if (!crash(crash_speed)) return false;
       nbounce++;
-      for (int k = 0; k < 3; k++) bounce_normal[k] += wall_normals[i][k];
+      bounce_normal = bounce_normal + wall_normals[i];
     }
-    for (int k = 0; k < 3; k++) mean_normal[k] += wall_normals[i][k];
+    mean_normal = mean_normal + wall_normals[i];
   }
 
   if (nbounce) {
@@ -1387,9 +1371,7 @@ bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
       velocity[k] -= (1 + bounceFactor) * velocity[k] * std::abs(bounce_normal[k]) / nbounce;
   }
 
-  if (nwalls) {
-    for (int k = 0; k < 3; k++) velocity[k] += 0.1 * mean_normal[k] / nwalls;
-  }
+  if (nwalls) velocity = velocity + 0.1 * mean_normal / nwalls;
   return true;
 }
 
@@ -1469,7 +1451,6 @@ void Ball::handleBallCollisions() {
   const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
   std::set<Animated *>::iterator iter = balls.begin();
   std::set<Animated *>::iterator end = balls.end();
-  Coord3d v;
   double dist, err, speed;
   Ball *ball;
   for (; iter != end; iter++) {
@@ -1477,14 +1458,14 @@ void Ball::handleBallCollisions() {
     if (ball == this) continue;
     if (!ball->alive) continue;
     if (ball->no_physics) continue;
-    sub(ball->position, position, v);
+    Coord3d v = ball->position - position;
     dist = length(v);
     if (dist < radius + ball->radius - 1e-3) {
       err = radius + ball->radius - dist;
       position[0] -= err * v[0];
       position[1] -= err * v[1];
       position[2] -= err * v[2];
-      normalize(v);
+      v = v / length(v);
       speed = dotProduct(v, velocity) - dotProduct(v, ball->velocity);
       if (speed < 1e-3) continue;
       double myWeight = radius * radius * radius,
@@ -1494,10 +1475,8 @@ void Ball::handleBallCollisions() {
       hisWeight /= totWeight;
       this->crash(speed * hisWeight * 1.5 * (ball->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0));
       ball->crash(speed * myWeight * 1.5 * (this->modTimeLeft[MOD_SPIKE] ? 6.0 : 1.0));
-      for (int i = 0; i < 3; i++) {
-        velocity[i] -= speed * v[i] * 3.0 * hisWeight;
-        ball->velocity[i] += speed * v[i] * 3.0 * myWeight;
-      }
+      velocity = velocity - speed * v * 3.0 * hisWeight;
+      ball->velocity = ball->velocity + speed * v * 3.0 * myWeight;
     }
   }
 }
@@ -1527,17 +1506,17 @@ void Ball::handleForcefieldCollisions() {
     /*                                */
     /* Detailed collision computation */
     /*                                */
-    Coord3d v, ff_normal;
-    sub(this->position, ff->position, v);
+    Coord3d v = this->position - ff->position;
     v[2] = 0.0;
+    Coord3d ff_normal;
     ff_normal[0] = ff->direction[1];
     ff_normal[1] = ff->direction[0];
     ff_normal[2] = 0.0;
-    normalize(ff_normal);
+    ff_normal = ff_normal / length(ff_normal);
     double xy_dist = dotProduct(v, ff_normal);
     // if(xy_dist > this->radius) continue;
-    assign(ff->direction, ff_normal);
-    normalize(ff_normal);
+    ff_normal = ff->direction;
+    ff_normal = ff_normal / length(ff_normal);
     double ff_where = dotProduct(v, ff_normal);  // how long along ff->direction the hit is
     double ff_len = length(ff->direction);       // the xy-length of the forcefield
     if (ff_where < 0) {
@@ -1566,13 +1545,14 @@ void Ball::handleForcefieldCollisions() {
       ff_normal[0] = ff->direction[1];
       ff_normal[1] = ff->direction[0];
       ff_normal[2] = 0.0;
-      normalize(ff_normal);
+      ff_normal = ff_normal / length(ff_normal);
 
       // the direction we are hitting it from
+      Coord3d v;
       v[0] = ff->position[0] + ff_where / ff_len * ff->direction[0] - position[0];
       v[1] = ff->position[1] + ff_where / ff_len * ff->direction[1] - position[1];
       v[2] = ff_where_h - position[2];
-      normalize(v);
+      v = v / length(v);
 
       // sign for direction
       double sign = dotProduct(ff_normal, v);
@@ -1619,27 +1599,21 @@ void Ball::handleForcefieldCollisions() {
 static void computePipeCoordinates(const Pipe *pipe, const Coord3d &position, double *radial,
                                    double *axial, double *pipeLength,
                                    Coord3d *direction_to_axis, Coord3d *axis_direction) {
-  Coord3d direction;  // direction of pipe
-  Coord3d dirNorm;    // normalized direction
-  sub(pipe->to, pipe->from, direction);
+  Coord3d direction = pipe->to - pipe->from;
   double pipelen = length(direction);
-  sub(pipe->to, pipe->from, dirNorm);
-  normalize(dirNorm);
-  Coord3d v0;  // pipe enterance -> ball position
-  sub(position, pipe->from, v0);
+  Coord3d dirNorm = direction / length(direction);  // normalized direction
+  Coord3d v0 = position - pipe->from;               // pipe enterance -> ball position
   double l = std::max(0.0, std::min(1.0, dotProduct(v0, dirNorm) /
                                              pipelen));  // where along pipe ball is projected
-  Coord3d proj;  // where (as pos) the ball is projected
-  for (int i = 0; i < 3; i++) proj[i] = pipe->from[i] + l * direction[i];
-  Coord3d v1;  // projection point -> ball position
-  sub(position, proj, v1);
-  double distance = length(v1);  // how far away from the pipe the ball is
+  Coord3d proj = pipe->from + l * direction;  // where (as pos) the ball is projected
+  Coord3d v1 = position - proj;               // projection point -> ball position
+  double distance = length(v1);               // how far away from the pipe the ball is
   *radial = distance;
   *axial = l;
   *pipeLength = pipelen;
-  if (length(v1) > 0) normalize(v1);
-  assign(v1, *direction_to_axis);
-  assign(dirNorm, *axis_direction);
+  if (length(v1) > 0) v1 = v1 / length(v1);
+  *direction_to_axis = v1;
+  *axis_direction = dirNorm;
 }
 void Ball::handlePipes(Real time) {
   inPipe = false;
@@ -1720,19 +1694,17 @@ void Ball::handlePipes(Real time) {
     std::set<PipeConnector *>::iterator end2 = PipeConnector::connectors->end();
     for (; iter2 != end2; iter2++) {
       PipeConnector *connector = *iter2;
-      Coord3d v0;  // ball -> connector
-      sub(connector->position, position, v0);
-      double dist = length(v0);  // Distance ball center, connector center
+      Coord3d v0 = connector->position - position;  // ball -> connector
+      double dist = length(v0);                     // Distance ball center, connector center
       if (dist > connector->radius) {
         /* Ball is outside connector */
         if (dist < connector->radius + radius) {
           /* Collision from outside */
-          normalize(v0);
+          v0 = v0 / length(v0);
           double speed = dotProduct(velocity, v0);
-          if (speed > 0)
-            for (int i = 0; i < 3; i++) velocity[i] -= speed * v0[i] * 1.5;
+          if (speed > 0) velocity = velocity - speed * v0 * 1.5;
           double correction = connector->radius + radius - dist;
-          for (int i = 0; i < 3; i++) position[i] -= correction * v0[i];
+          position = position - correction * v0;
         }
       } else {
         /* Ball is inside connector */
@@ -1740,17 +1712,16 @@ void Ball::handlePipes(Real time) {
 
         if (dist > connector->radius * 0.97 - radius) {
           /* Collision from inside */
-          normalize(v0);
+          v0 = v0 / length(v0);
           double speed = dotProduct(velocity, v0);
-          if (speed > 0)
-            for (int i = 0; i < 3; i++) velocity[i] += speed * v0[i] * 1.5;
+          if (speed > 0) velocity = velocity + speed * v0 * 1.5;
           double correction = dist - (connector->radius * 0.97 - radius);
-          for (int i = 0; i < 3; i++) position[i] += correction * v0[i];
+          position = position + correction * v0;
         }
         if (dist > connector->radius * 0.94 - radius && position[2] < connector->position[2]) {
           /* Ball is touching lower part of connector */
           inTheAir = false;
-          normalize(v0);
+          v0 = v0 / length(v0);
           double scale = 0.5 * gravity * time / (-v0[2] + 1e-3);
           velocity[0] -= v0[0] * scale;
           velocity[1] -= v0[1] * scale;

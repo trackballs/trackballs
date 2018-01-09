@@ -178,7 +178,6 @@ void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
-  Coord3d diff;
 
   // no more used (can be deleted ?)
   if (killed == 2) return;
@@ -204,7 +203,7 @@ void Cactus::tick(Real t) {
     if (!ball->alive) continue;
     if (ball->no_physics) continue;
 
-    sub(position, ball->position, diff);
+    Coord3d diff = position - ball->position;
     if (length(diff) < ball->radius + radius) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
         Animated::die(DIE_OTHER);

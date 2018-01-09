@@ -124,7 +124,7 @@ void SetupMode::display() {
   GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
   GLfloat ambient[3] = {0.2, 0.2, 0.2};
   GLfloat black[3] = {0., 0., 0.};
-  Coord3d lightPosition = {-100.0, -50.0, 150.0};
+  GLfloat lightPosition[3] = {-100.0, -50.0, 150.0};
   assign(lightPosition, activeView.light_position);
   assign(lightDiffuse, activeView.light_diffuse);
   assign(lightDiffuse, activeView.light_specular);

@@ -29,7 +29,7 @@
 #include "sound.h"
 
 Spike::Spike(Coord3d position, Real speed, Real phase) {
-  assign(position, this->position);
+  this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;
   while (phase < 0.0) phase += 1.0;
@@ -199,9 +199,8 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
       normal[1] = d2 * std::cos(angle + M_PI / nfacets);
       normal[2] = d1;
     }
-    Coord3d tlocal, tnormal;
-    useMatrix(rotmtx, local, tlocal);
-    useMatrix(rotmtx, normal, tnormal);
+    Coord3d tlocal = useMatrix(rotmtx, local);
+    Coord3d tnormal = useMatrix(rotmtx, normal);
     GLfloat flocal[3] = {(GLfloat)tlocal[0], (GLfloat)tlocal[1], (GLfloat)tlocal[2]};
     GLfloat fnormal[3] = {(GLfloat)tnormal[0], (GLfloat)tnormal[1], (GLfloat)tnormal[2]};
     pos += packObjectVertex(pos, position[0] + flocal[0], position[1] + flocal[1],

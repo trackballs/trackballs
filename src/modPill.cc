@@ -70,9 +70,6 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
 ModPill::~ModPill() { this->Animated::~Animated(); }
 
 void ModPill::tick(Real t) {
-  Coord3d v;
-  double dist;
-
   Player *player = Game::current->player1;
   if (!alive) {
     timeLeft -= t;
@@ -110,11 +107,10 @@ void ModPill::tick(Real t) {
 
   if (alive) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
-    sub(player->position, position, v);
-    dist = length(v);
+    Coord3d v = player->position - position;
+    double dist = length(v);
     if (dist < radius + player->radius) {
-      Coord3d signPos;
-      assign(position, signPos);
+      Coord3d signPos = position;
       signPos[2] += 1.0;
 
       /* Explanations of modpills shown after taking them. Note that only bad

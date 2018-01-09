@@ -29,8 +29,8 @@ void ForceField::reset() {
 }
 
 ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {
-  assign(pos, position);
-  assign(dir, direction);
+  position = pos;
+  direction = dir;
   height = h;
   allow = a;
   primaryColor[0] = 0.3;
@@ -57,10 +57,9 @@ int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   if (!is_on) return 0;
   allocateBuffers(1, idxbufs, databufs);
 
-  Coord3d ndir;
-  assign(direction, ndir);
+  Coord3d ndir = direction;
   GLfloat len = length(ndir);
-  normalize(ndir);
+  ndir = ndir / length(ndir);
   // Bound edge width by available space
   GLfloat edge = std::min(std::abs(len), std::abs((GLfloat)height));
   edge = std::min(edge / 5, 0.03f);

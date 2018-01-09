@@ -26,7 +26,7 @@
 #include "sound.h"
 
 Diamond::Diamond(Coord3d pos) {
-  assign(pos, position);
+  position = pos;
 
   specularColor[0] = specularColor[1] = specularColor[2] = 1.0;
   primaryColor[0] = 0.7;
@@ -92,7 +92,7 @@ void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
 void Diamond::tick(Real t) {
   Coord3d v0;
   if (fade <= 0.0) return;
-  sub(Game::current->player1->position, position, v0);
+  v0 = Game::current->player1->position - position;
   if (length(v0) < 0.3 + Game::current->player1->radius) {
     if (!taken) onGet();
     taken = 1;
@@ -102,12 +102,12 @@ void Diamond::tick(Real t) {
   }
 }
 void Diamond::onGet() {
-  assign(position, Game::current->map->startPosition);
+  Game::current->map->startPosition = position;
   playEffect(SFX_GOT_FLAG);
   fade = -14.0;
 
   Coord3d signPos;
-  assign(position, signPos);
+  signPos = position;
   signPos[2] += 1.0;
   new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos);
 }

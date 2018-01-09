@@ -305,8 +305,7 @@ void Game::drawReflection(Coord3d focus) {
     Animated *anim = *i;
     anim->onScreen = 0;
 
-    double tmp[3];
-    sub(focus, anim->position, tmp);
+    Coord3d tmp = focus - anim->position;
     if (length(tmp) > 5.0) continue;
 
     anim->onScreen = testBboxClip(anim->position[0] + anim->boundingBox[0][0],

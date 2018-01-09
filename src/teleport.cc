@@ -219,9 +219,7 @@ void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
 void Teleport::tick(Real /*t*/) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   Player *p = Game::current->player1;
-  Coord3d diff;
-
-  sub(position, p->position, diff);
+  Coord3d diff = position - p->position;
   if (length(diff) < p->radius + radius) {
     p->position[0] = dx + .5;
     p->position[1] = dy + .5;

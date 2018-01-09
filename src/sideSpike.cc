@@ -30,7 +30,7 @@
 #include "spike.h"
 
 SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
-  assign(position, this->position);
+  this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;
   while (phase < 0.0) phase += 1.0;
@@ -67,7 +67,7 @@ int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   Matrix4d frommtx;
   identityMatrix(frommtx);
 
-  Coord3d pos = {position[0], position[1], position[2] + 0.25};
+  Coord3d pos(position[0], position[1], position[2] + 0.25);
   switch (side) {
   case 1:
     rotateY(M_PI / 2, frommtx);

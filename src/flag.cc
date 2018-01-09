@@ -75,11 +75,10 @@ int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   GLfloat dby[5] = {0.1f, 0.2f, 0.2f, 0.2f, 0.1f};
   GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.0};
   for (int i = 0; i < 5; i++) {
-    Coord3d b = {dbx[i], dby[i], 0.0};
-    Coord3d up = {0.0, 0.0, 1.0};
-    Coord3d normal;
-    crossProduct(up, b, normal);
-    normalize(normal);
+    Coord3d b(dbx[i], dby[i], 0.0);
+    Coord3d up(0.0, 0.0, 1.0);
+    Coord3d normal = crossProduct(up, b);
+    normal = normal / length(normal);
     GLfloat fnorm[3] = {(GLfloat)normal[0], (GLfloat)normal[1], (GLfloat)normal[2]};
     pos += packObjectVertex(pos, position[0] + dx[i], position[1] - 0.1 * i, position[2] + 0.7,
                             0., 0., color, fnorm);
@@ -121,7 +120,7 @@ void Flag::tick(Real /*t*/) {
   Player *p = Game::current->player1;
   Coord3d diff;
 
-  sub(position, p->position, diff);
+  diff = position - p->position;
   if (!visible) diff[2] = 0.0;
   if (length(diff) < p->radius + radius) onGet();
 }
