@@ -1240,17 +1240,14 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
     } else {
       /* Last bounce not strong enough to pull away; stick to the surface */
       position[2] -= meandh;
-
       if (inTheAir) {
         position[2] = std::max(position[2], pmin);
         velocity[2] = slopedv; /* adopt surface vel */
       } else {
-        /* correct for velocity & preserve spring laws */
-        velocity[2] -= meandh;
-        if (position[2] < pmin) {
-          velocity[2] -= (position[2] - pmin);
-          position[2] = pmin;
-        }
+        double k = 1.0;
+        velocity[2] -= k * meandh;
+        position[2] = std::max(position[2], pmin);
+        velocity[2] = std::min(velocity[2], slopedv);
         velocity[2] = std::max(velocity[2], vmin);
       }
       inTheAir = false;
