@@ -131,12 +131,18 @@ void HeightModifier::tick(Real /*t*/) {
   if ((cor2 != not1) && (cor2 != not2) && (cor2 != not3)) c2.heights[cor2] = v;
   if ((cor3 != not1) && (cor3 != not2) && (cor3 != not3)) c3.heights[cor3] = v;
 
+  if (avg_center) {
+    c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
+    if ((cor1 != not1) && (cor1 != not2) && (cor1 != not3))
+      c1.heights[4] = (c1.heights[0] + c1.heights[1] + c1.heights[2] + c1.heights[3]) / 4.;
+    if ((cor2 != not1) && (cor2 != not2) && (cor2 != not3))
+      c2.heights[4] = (c2.heights[0] + c2.heights[1] + c2.heights[2] + c2.heights[3]) / 4.;
+    if ((cor3 != not1) && (cor3 != not2) && (cor3 != not3))
+      c3.heights[4] = (c3.heights[0] + c3.heights[1] + c3.heights[2] + c3.heights[3]) / 4.;
+  }
+
   Game::current->map->markCellsUpdated(x, y, x, y, 1);
   Game::current->map->markCellsUpdated(x1, y1, x1, y1, 1);
   Game::current->map->markCellsUpdated(x2, y2, x2, y2, 1);
   Game::current->map->markCellsUpdated(x3, y3, x3, y3, 1);
-
-  if (avg_center) {
-    c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
-  }
 }
