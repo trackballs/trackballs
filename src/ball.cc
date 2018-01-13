@@ -1355,6 +1355,9 @@ bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
   for (int i = 0; i < nwalls; i++) {
     double crash_speed = -dotProduct(velocity, wall_normals[i]);
     if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
+    if (modTimeLeft[MOD_JUMP]) crash_speed *= 0.8;
+    crash_speed *= 0.5;
+
     if (crash_speed > 0) {
       if (!crash(crash_speed)) return false;
       nbounce++;
