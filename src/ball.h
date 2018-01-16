@@ -90,6 +90,7 @@ class Ball : public Animated {
 
  protected:
   double nitroDebrisCount;
+  void generateNitroDebris(Real time);
 
  private:
   double reflectivity;

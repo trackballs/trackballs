@@ -42,8 +42,12 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   primaryColor[2] = 0.2;
 
   /* set bogus velocity for the rendering of speed mods */
-  velocity[0] = 0.0;
-  velocity[1] = -1.2;
+  if (kind == MOD_SPEED) {
+    velocity[0] = 0.0;
+    velocity[1] = -1.2;
+  } else {
+    velocity = Coord3d();
+  }
 
   modTimeLeft[kind] = -1.0;
   clock = 0.0;
@@ -85,25 +89,7 @@ void ModPill::tick(Real t) {
     radius = realRadius;
   }
 
-  if (alive && kind == MOD_NITRO) {
-    nitroDebrisCount += t;
-    while (nitroDebrisCount > 0.0) {
-      nitroDebrisCount -= 0.25;
-      Debris *d = new Debris(this, position, velocity, 2.0 + 2.0 * frandom());
-      d->position[0] += (frandom() - 0.5) * radius;
-      d->position[1] += (frandom() - 0.5) * radius;
-      d->position[2] += radius * 1.0;
-      d->velocity[0] = 0.0;
-      d->velocity[1] = 0.0;
-      d->velocity[2] = 0.2;
-      d->gravity = -0.1;
-      d->modTimeLeft[MOD_GLASS] = -1.0;
-      d->primaryColor[0] = 0.1;
-      d->primaryColor[1] = 0.6;
-      d->primaryColor[2] = 0.1;
-      d->no_physics = 1;
-    }
-  }
+  if (alive && kind == MOD_NITRO) Ball::generateNitroDebris(t);
 
   if (alive) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;

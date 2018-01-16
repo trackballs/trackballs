@@ -664,23 +664,7 @@ void Ball::tick(Real time) {
   }
 
   /* Nitro balls create "debris" clouds constantly */
-  if (modTimeLeft[MOD_NITRO]) {
-    nitroDebrisCount += time;
-    while (nitroDebrisCount > 0.0) {
-      nitroDebrisCount -= 0.25;
-      Debris *d = new Debris(this, position, velocity, 2.0 + 2.0 * frandom());
-      d->position[0] += (frandom() - 0.5) * radius;
-      d->position[1] += (frandom() - 0.5) * radius;
-      d->position[2] += radius * 1.0;
-      d->velocity[2] += 0.2;
-      d->gravity = -0.1;
-      d->modTimeLeft[MOD_GLASS] = -1.0;
-      d->primaryColor[0] = 0.1;
-      d->primaryColor[1] = 0.6;
-      d->primaryColor[2] = 0.1;
-      d->no_physics = 1;
-    }
-  }
+  if (modTimeLeft[MOD_NITRO]) generateNitroDebris(time);
 
   radius = realRadius;
   if (modTimeLeft[MOD_LARGE]) {
@@ -1426,6 +1410,23 @@ void Ball::generateSandDebris() {
   d->primaryColor[2] = 0.1 + 0.3 * frandom();
   d->friction = 0.0;
   d->calcRadius();
+}
+void Ball::generateNitroDebris(Real time) {
+  nitroDebrisCount += time;
+  while (nitroDebrisCount > 0.0) {
+    nitroDebrisCount -= 0.25;
+    Debris *d = new Debris(this, position, velocity, 1.0 + frandom() * 2.0);
+    d->position[0] += (frandom() - 0.5) * radius;
+    d->position[1] += (frandom() - 0.5) * radius;
+    d->position[2] += frandom() * radius;
+    d->velocity[2] += 0.2;
+    d->gravity = -0.1;
+    d->modTimeLeft[MOD_GLASS] = -1.0;
+    d->primaryColor[0] = 0.1;
+    d->primaryColor[1] = 0.6;
+    d->primaryColor[2] = 0.1;
+    d->no_physics = 1;
+  }
 }
 void Ball::generateDebris(GLfloat color[4]) {
   Coord3d pos, vel;

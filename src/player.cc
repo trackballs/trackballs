@@ -234,22 +234,12 @@ void Player::tick(Real t) {
     rotation[1] -= 0.025 * (dx + dy);
 
     if (superAccelerate && modTimeLeft[MOD_NITRO]) {
+      Ball::generateNitroDebris(t);
+
       double dirX = rotation[0];
       double dirY = rotation[1];
       double len = sqrt(dirX * dirX + dirY * dirY);
-      static double nitroDebris = 0.0;
-      nitroDebris += t;
-      while (nitroDebris > 0.1) {
-        nitroDebris -= 0.1;
-        Debris *d = new Debris(this, position, velocity, 1.0 + frandom() * 2.0);
-        d->position[0] += (frandom() - 0.5) * radius - velocity[0] * 0.1;
-        d->position[1] += (frandom() - 0.5) * radius - velocity[1] * 0.1;
-        d->position[2] += (frandom() - 0.5) * radius;
-        d->modTimeLeft[MOD_GLASS] = -1.0;
-        d->primaryColor[0] = 0.1;
-        d->primaryColor[1] = 0.6;
-        d->primaryColor[2] = 0.1;
-      }
+
       if (len > 0.0) {
         dirX /= len;
         dirY /= len;
