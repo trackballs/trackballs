@@ -74,6 +74,7 @@ Ball::Ball() : Animated() {
   Game::current->balls->insert(this);
   no_physics = 0;
   inPipe = 0;
+  nextJumpStrength = 0.0;
 
   for (int i = 0; i < NUM_MODS; i++) {
     modTimeLeft[i] = 0.0;
@@ -757,7 +758,7 @@ bool Ball::physics(Real time) {
     velocity[1] += gravity * time * (max_dy + min_dy);
   }
 
-  /* Sand - generate debris */
+  /* Compute terrain interaction fractions */
   double sand_frac = 0., acid_frac = 0., ice_frac = 0., track_frac = 0.;
   for (int i = 0; i < nhits; i++) {
     if (cells[i]->flags & CELL_ACID) acid_frac += 1. / nhits;
@@ -766,6 +767,19 @@ bool Ball::physics(Real time) {
     if (cells[i]->flags & CELL_TRACK) track_frac += 1. / nhits;
   }
 
+  /* Execute possible planned jump */
+  if (nextJumpStrength > 0.) {
+    if (!inTheAir && acid_frac < 0.99) {
+      velocity[2] += nextJumpStrength * (1.0 - acid_frac);
+      position[2] += 0.10 * radius;
+      /* correct contact height estimates; see handleGround */
+      for (int i = 0; i < nhits; i++) { dhs[i] += 0.10 * radius; }
+      inTheAir = true;
+    }
+  }
+  nextJumpStrength = 0.;
+
+  /* Sand - generate debris */
   if (!inTheAir && radius > 0.2 && !inPipe) {
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
@@ -1199,17 +1213,23 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
   /* Surface attachment & kill cell*/
   {
     double meandh = 0.;
+    int ndh = 0;
     Coord3d meanNormal;
     for (int i = 0; i < nhits; i++) {
       Real dh = dhs[i];
+      if (dh > 0.07 * radius) { continue; }
       /* contact with kill cells is death */
       if (dh < 0.001 && cells[i]->flags & CELL_KILL) {
         die(DIE_OTHER);
         return false;
       }
-      meandh += weight * dh;
-      meanNormal = meanNormal + normals[i] * weight;
+      meandh += dh;
+      meanNormal = meanNormal + normals[i];
+      ndh++;
     }
+    double dhw = ndh > 0 ? 1. / ndh : 0.;
+    meandh *= dhw;
+    meanNormal = meanNormal * dhw;
     /* can't be pulled down faster than gravity + slope */
     double slopedv = -1 * (meanNormal[0] * velocity[0] + meanNormal[1] * velocity[1]);
 
@@ -1378,18 +1398,9 @@ bool Ball::crash(Real speed) {
   return true;
 }
 
-void Ball::jump(Real strength) {
+void Ball::queueJump(Real strength) {
   if (strength <= 0.) return;
-
-  if (!inTheAir) {
-    bool on_acid =
-        Game::current->map->cell((int)position[0], (int)position[1]).flags & CELL_ACID;
-    if (on_acid) strength *= 0.5;
-
-    velocity[2] += strength;
-    position[2] += 0.10 * radius;
-    inTheAir = true;
-  }
+  nextJumpStrength = strength;
 }
 
 void Ball::generateSandDebris() {

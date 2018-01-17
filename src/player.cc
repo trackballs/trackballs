@@ -269,7 +269,7 @@ void Player::jump() {
   double jumpStrength =
       Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
   jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
-  Ball::jump(jumpStrength);
+  Ball::queueJump(jumpStrength);
 }
 
 void Player::die(int how) {
