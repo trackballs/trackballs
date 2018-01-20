@@ -64,6 +64,7 @@ class Ball : public Animated {
   /* When we crash into something. Returns if we are still alive */
   virtual bool crash(Real speed);
   virtual void die(int how);
+  void drive(Real xacc, Real yacc);
   void queueJump(Real strength);
 
   static void init();
@@ -73,6 +74,8 @@ class Ball : public Animated {
   float modTimeLeft[NUM_MODS], modTimePhaseIn[NUM_MODS];
   float rotation[2];
   double nextJumpStrength;
+  double rotoacc[2];
+  double acceleration;
 
   /* radius is the *effective* radius, realRadius the real one */
   Real radius, realRadius;

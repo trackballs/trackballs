@@ -44,7 +44,6 @@ Black::Black(Real x, Real y) : Ball() {
   specularColor[2] = 1.0;
 
   bounceFactor = .8;
-  acceleration = 4.0;
   horizon = 5.0;
   likesPlayer = 1;
 
@@ -105,19 +104,17 @@ void Black::tick(Real t) {
       v[0] = velocity[0];
       v[1] = velocity[1];
       v[2] = 0.0;
-      if (length(v) > 0) {
-        v = v / length(v);
-        rotation[0] -= v[0] * acceleration * t;
-        rotation[1] -= v[1] * acceleration * t;
-      }
+      double vsc = length(v) > 0 ? 1. / length(v) : 0.;
+      v = v * vsc;
+      Ball::drive(-v[0], -v[1]);
     } else if (dist < horizon) {
       /* Go toward the player */
-      if (length(v) > 0) {
-        v = v / length(v);
-        rotation[0] += v[0] * acceleration * likesPlayer * t;
-        rotation[1] += v[1] * acceleration * likesPlayer * t;
-      }
+      double vsc = length(v) > 0 ? 1. / length(v) : 0.;
+      v = v * vsc;
+      Ball::drive(v[0] * likesPlayer, v[1] * likesPlayer);
     }
+  } else {
+    Ball::drive(0., 0.);
   }
 
   Ball::tick(t);

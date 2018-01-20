@@ -60,6 +60,7 @@ Ball::Ball() : Animated() {
   ballResolution = BALL_LORES;
   friction = 1.0;
   rotation[0] = rotation[1] = 0.0;
+  rotoacc[0] = rotoacc[1] = 0.0;
 
   primaryColor[0] = 0.8;
   primaryColor[1] = 0.8;
@@ -75,6 +76,7 @@ Ball::Ball() : Animated() {
   no_physics = 0;
   inPipe = 0;
   nextJumpStrength = 0.0;
+  acceleration = 4.0;
 
   for (int i = 0; i < NUM_MODS; i++) {
     modTimeLeft[i] = 0.0;
@@ -716,9 +718,37 @@ bool Ball::physics(Real time) {
     rotation[1] += time * 7.0 * (frand(47 + (long)Game::current->gameTime + (long)this) - 0.5);
   }
 
+  /* Ball self-drive */
+  double effective_acceleration = acceleration;
+  if (modTimeLeft[MOD_SPEED]) effective_acceleration *= 1.5;
+  if (modTimeLeft[MOD_DIZZY]) effective_acceleration /= 2.0;
+  if (modTimeLeft[MOD_NITRO]) {
+    /* Mod-nitro induces maximal acceleration in a direction of interest */
+    effective_acceleration *= 3.0;
+    double dlen = std::sqrt(rotoacc[0] * rotoacc[0] + rotoacc[1] * rotoacc[1]);
+    if (dlen <= 0.) {
+      double rlen = std::sqrt(rotation[0] * rotation[0] + rotation[1] * rotation[1]);
+      if (rlen <= 0.) {
+        double rnd = M_PI2 * frand();
+        rotoacc[0] = std::sin(rnd);
+        rotoacc[1] = std::cos(rnd);
+      } else {
+        rotoacc[0] = rotation[0] / rlen;
+        rotoacc[1] = rotation[1] / rlen;
+      }
+    } else {
+      rotoacc[0] = rotoacc[0] / dlen;
+      rotoacc[1] = rotoacc[1] / dlen;
+    }
+  }
+  if (modTimeLeft[MOD_FROZEN]) effective_acceleration = 0.;
+  rotation[0] += effective_acceleration * time * rotoacc[0];
+  rotation[1] += effective_acceleration * time * rotoacc[1];
+
   rotateX(-rotation[1] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
   rotateY(-rotation[0] * time * 2.0 * M_PI * 0.3 * 0.3 / radius, rotations);
 
+  /* Interact with terrain */
   Cell *cells[MAX_CONTACT_POINTS];
   Coord3d hitpts[MAX_CONTACT_POINTS];
   Coord3d normals[MAX_CONTACT_POINTS];
@@ -1359,6 +1389,7 @@ bool Ball::handleWalls(Coord3d *wall_normals, int nwalls) {
   for (int i = 0; i < nwalls; i++) {
     double crash_speed = -dotProduct(velocity, wall_normals[i]);
     if (modTimeLeft[MOD_SPEED]) crash_speed *= 0.5;
+    if (modTimeLeft[MOD_NITRO]) crash_speed *= 0.5;
     if (modTimeLeft[MOD_JUMP]) crash_speed *= 0.8;
     crash_speed *= 0.5;
 
@@ -1401,6 +1432,10 @@ bool Ball::crash(Real speed) {
 void Ball::queueJump(Real strength) {
   if (strength <= 0.) return;
   nextJumpStrength = strength;
+}
+void Ball::drive(Real x, Real y) {
+  rotoacc[0] = x;
+  rotoacc[1] = y;
 }
 
 void Ball::generateSandDebris() {
@@ -1460,6 +1495,8 @@ void Ball::generateDebris(GLfloat color[4]) {
 }
 
 void Ball::handleBallCollisions() {
+  if (no_physics) return;
+
   const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
   std::set<Animated *>::iterator iter = balls.begin();
   std::set<Animated *>::iterator end = balls.end();

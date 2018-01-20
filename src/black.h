@@ -32,7 +32,7 @@ class Black : public Ball {
   void tick(Real);
   void draw();
 
-  Real acceleration, horizon;
+  Real horizon;
   int likesPlayer; /* 1: attracted by ply. 0: unaffected. -1: repelled */
 };
 

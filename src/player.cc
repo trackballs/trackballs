@@ -32,6 +32,57 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
+Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
+  /* Finite impulse response filter to smooth mouse input */
+  const int N = 1000;
+  const double T = 0.2;
+  static int fir[N][2];
+  static double ts[N];
+  static int first = true;
+  if (first) {
+    for (int i = 0; i < N; i++) {
+      fir[i][0] = 0;
+      fir[i][1] = 0;
+      ts[i] = -1. - T;
+    }
+    first = false;
+  }
+
+  double now = Game::current->gameTime;
+
+  int mouseX, mouseY;
+  Uint32 mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
+  if (mouseX || mouseY) {
+    /* Add value to filter */
+
+    int cx = mouseX, cy = mouseY;
+    double ct = now;
+    int i = 0;
+    for (; ts[i] > now - T; i++) {
+      std::swap(fir[i][0], cx);
+      std::swap(fir[i][1], cy);
+      std::swap(ts[i], ct);
+    }
+    std::swap(fir[i][0], cx);
+    std::swap(fir[i][1], cy);
+    std::swap(ts[i], ct);
+  }
+
+  int sx = 0, sy = 0;
+  for (int i = 0; ts[i] > now - T; i++) {
+    if (ts[i] < now - T / 2) {
+      sx += fir[i][0];
+      sy += fir[i][1];
+    } else {
+      sx += 2 * fir[i][0];
+      sy += 2 * fir[i][1];
+    }
+  }
+  *xrate = sx / T / 2;
+  *yrate = sy / T / 2;
+  return mouseState;
+}
+
 Player::Player() : Ball() {
   inTheAir = 0;
   inPipe = 0;
@@ -73,8 +124,6 @@ void Player::draw() {
   Ball::draw();
 }
 void Player::tick(Real t) {
-  double dx, dy;
-  int superAccelerate = 0;
   static Real timeFraction = 0.;
 
   /* Never let us drop below 0 points, it just looks silly */
@@ -83,8 +132,6 @@ void Player::tick(Real t) {
   if (!Game::current) return;
   if (!playing) return;
 
-  dx = 0.0;
-  dy = 0.0;
   Map *map = Game::current->map;
   health += t * 0.4;
   if (health > 1.0) health = 1.0;
@@ -125,10 +172,10 @@ void Player::tick(Real t) {
   } else
     oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
 
+  double dx = 0., dy = 0.;
   /* Joysticks */
   if (Settings::settings->hasJoystick()) {
     if (Settings::settings->joystickButton(0)) key(' ');
-    if (Settings::settings->joystickButton(1)) superAccelerate = 1;
 
     double joyX = Settings::settings->joystickX();
     double joyY = Settings::settings->joystickY();
@@ -136,49 +183,50 @@ void Player::tick(Real t) {
     if (joyX < 0.1 && joyX > -0.1) joyX = 0.0;
     if (joyY < 0.1 && joyY > -0.1) joyY = 0.0;
 
-    dx = ((double)joyX) * Settings::settings->mouseSensitivity * t * 200.0;
-    dy = ((double)joyY) * Settings::settings->mouseSensitivity * t * 200.0;
+    dx = ((double)joyX) * Settings::settings->mouseSensitivity;
+    dy = ((double)joyY) * Settings::settings->mouseSensitivity;
   }
 
   /* Give only *relative* mouse movements */
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
-    int mouseX, mouseY;
-
-    Uint32 mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
-
-    if (mouseState & SDL_BUTTON_RMASK) superAccelerate = 1;
-    if ((mouseX || mouseY)) {
-      dx = mouseX * Settings::settings->mouseSensitivity * 0.1;
-      dy = mouseY * Settings::settings->mouseSensitivity * 0.1;
+    double sx, sy;
+    Uint32 mouseState = getFilteredRelativeMouse(&sx, &sy);
+    if (sx || sy) {
+      dx = sx * Settings::settings->mouseSensitivity * 0.0005;
+      dy = sy * Settings::settings->mouseSensitivity * 0.0005;
     }
   }
 
   /* Handle keyboard steering */
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
   int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
-  double kscale = shift ? 200.0 : 100.0;
 
-  if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) { dy = -kscale * t; }
-  if (keystate[SDL_SCANCODE_DOWN] || keystate[SDL_SCANCODE_KP_2]) { dy = kscale * t; }
-  if (keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_KP_4]) { dx = -kscale * t; }
-  if (keystate[SDL_SCANCODE_RIGHT] || keystate[SDL_SCANCODE_KP_6]) { dx = kscale * t; }
+  int ix = 0, iy = 0;
+  if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) iy--;
+  if (keystate[SDL_SCANCODE_DOWN] || keystate[SDL_SCANCODE_KP_2]) iy++;
+  if (keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_KP_4]) ix--;
+  if (keystate[SDL_SCANCODE_RIGHT] || keystate[SDL_SCANCODE_KP_6]) ix++;
   if (keystate[SDL_SCANCODE_KP_7] || keystate[SDL_SCANCODE_Q]) {
-    dx = -kscale * t;
-    dy = -kscale * t;
+    ix--;
+    iy--;
   }
   if (keystate[SDL_SCANCODE_KP_9] || keystate[SDL_SCANCODE_W]) {
-    dx = kscale * t;
-    dy = -kscale * t;
+    ix++;
+    iy--;
   }
   if (keystate[SDL_SCANCODE_KP_1] || keystate[SDL_SCANCODE_A]) {
-    dx = -kscale * t;
-    dy = kscale * t;
+    ix--;
+    iy++;
   }
   if (keystate[SDL_SCANCODE_KP_3] || keystate[SDL_SCANCODE_S]) {
-    dx = kscale * t;
-    dy = kscale * t;
+    ix++;
+    iy++;
   }
-  if (keystate[SDL_SCANCODE_KP_ENTER] || keystate[SDL_SCANCODE_RETURN]) superAccelerate = 1;
+  if (ix || iy) {
+    double len = std::sqrt(ix * ix + iy * iy);
+    dx = ix / len;
+    dy = iy / len;
+  }
 
   /* rotate control as by settings->rotateArrows */
   {
@@ -196,59 +244,32 @@ void Player::tick(Real t) {
     dx = tmp;
   }
 
-  /* Cap is the maximum normal acceleration we are allowed to perform (on average) per second
-   */
-  double cap = 140.0 - 10.0 * Settings::settings->difficulty;
-  if (modTimeLeft[MOD_SPEED]) {
-    dx *= 1.5;
-    dy *= 1.5;
-    cap = 200.0;
-  }
-  if (modTimeLeft[MOD_DIZZY]) cap = cap / 2.0;
-
-  /* Limit size of actual movement according to "cap" */
-  /* Uses a trick to avoid capping away movements from integer only devices (eg. mouse) while
-   * having a high FPS */
-  moveBurst = std::min(cap * 0.2, moveBurst + cap * t);
-  double len = sqrt(dx * dx + dy * dy);
-  if (len > moveBurst) {
-    dx = dx * moveBurst / len;
-    dy = dy * moveBurst / len;
-    len = moveBurst;
-  }
-  moveBurst -= len;
-
-  /*
-  if(modTimeLeft[MOD_DIZZY]) {
-        double tmp = dx * sin(Game::current->gameTime*M_PI*0.1) + dy *
-  cos(Game::current->gameTime*M_PI*0.1);
-        dy = dx * cos(Game::current->gameTime*M_PI*0.1) - dy *
-  sin(Game::current->gameTime*M_PI*0.1);
-        dx = tmp;
-        }*/
-
-  /* Do the movement. Also, if nitro is active then create debris after the ball */
-
-  if (!modTimeLeft[MOD_FROZEN] && !hasWon && is_on) {
-    rotation[0] -= 0.025 * (dy - dx);
-    rotation[1] -= 0.025 * (dx + dy);
-
-    if (superAccelerate && modTimeLeft[MOD_NITRO]) {
-      Ball::generateNitroDebris(t);
-
-      double dirX = rotation[0];
-      double dirY = rotation[1];
-      double len = sqrt(dirX * dirX + dirY * dirY);
-
-      if (len > 0.0) {
-        dirX /= len;
-        dirY /= len;
-        rotation[0] += dirX * t * 10.0;
-        rotation[1] += dirY * t * 10.0;
-      }
-    }
+  /* Cap dx/dy to have total radius 1. */
+  double len = std::sqrt(dx * dx + dy * dy);
+  if (len > 1.) {
+    dx /= len;
+    dy /= len;
   }
 
+  // Rotate by 45 degrees, introduce sqrt2 scale factor
+  double tx = -(dy - dx);
+  double ty = -(dy + dx);
+  dx = tx;
+  dy = ty;
+
+  if (shift) {
+    dx *= 0.5;
+    dy *= 0.5;
+  }
+
+  /* set inherent base acceleration*/
+  acceleration = 3.5 - 0.25 * Settings::settings->difficulty;
+
+  if (!hasWon && is_on) {
+    Ball::drive(dx, dy);
+  } else {
+    Ball::drive(0., 0.);
+  }
   if (!hasWon)
     friction = 1.0;
   else
