@@ -741,9 +741,34 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f, 0, nv[0], nv[1],
                ewover ? enormal : wnormal);
 
-      // Render the quad. The heights autocorrect orientations
-      const ushort quadmap[12] = {0, 1, 2, 1, 3, 2, 4, 6, 5, 6, 7, 5};
-      for (uint i = 0; i < 12; i++) { widx[j * 12 + i] = j * 8 + quadmap[i]; }
+      // Render the quads, overlapping triangles if twisted
+      const ushort quadmap[6] = {0, 1, 2, 1, 3, 2};
+      const ushort utriang[6] = {0, 1, 3, 0, 3, 2};
+      const ushort dtriang[6] = {0, 1, 2, 1, 2, 3};
+      const ushort* sel;
+      if (cmp(c.heights[Cell::SOUTH + Cell::WEST], ns.heights[Cell::NORTH + Cell::WEST]) *
+              cmp(c.heights[Cell::SOUTH + Cell::EAST], ns.heights[Cell::NORTH + Cell::EAST]) >=
+          0) {
+        sel = quadmap;
+      } else if (c.heights[Cell::SOUTH + Cell::WEST] < ns.heights[Cell::NORTH + Cell::WEST]) {
+        sel = utriang;
+      } else {
+        sel = dtriang;
+      }
+      for (uint i = 0; i < 6; i++) widx[j * 12 + i] = j * 8 + sel[i];
+
+      const ushort aquadmap[6] = {0, 2, 1, 2, 3, 1};
+      const ushort autriang[6] = {0, 2, 1, 2, 3, 1};
+      const ushort adtriang[6] = {0, 3, 1, 2, 3, 0};
+      if (cmp(c.heights[Cell::WEST + Cell::SOUTH], ne.heights[Cell::EAST + Cell::SOUTH]) +
+          cmp(c.heights[Cell::WEST + Cell::NORTH], ne.heights[Cell::EAST + Cell::NORTH])) {
+        sel = aquadmap;
+      } else if (c.heights[Cell::WEST + Cell::SOUTH] > ne.heights[Cell::EAST + Cell::SOUTH]) {
+        sel = autriang;
+      } else {
+        sel = adtriang;
+      }
+      for (uint i = 0; i < 6; i++) widx[j * 12 + 6 + i] = j * 8 + 4 + sel[i];
 
       // Line data ! (thankfully they're all black)
       int s = j * 12;
