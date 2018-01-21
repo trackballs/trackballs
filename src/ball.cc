@@ -1301,6 +1301,7 @@ int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
   int xmin = std::floor(position[0] - radius), xmax = std::floor(position[0] + radius);
   int ymin = std::floor(position[1] - radius), ymax = std::floor(position[1] + radius);
   int nwalls = 0;
+  double Z = position[2];
   for (int x = xmin; x <= xmax; x++) {
     for (int y = ymin; y <= ymax; y++) {
       Cell &c = map->cell(x, y);
@@ -1309,20 +1310,36 @@ int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
         double yp = (y + ly);
         double h1 = c.heights[(ly ? Cell::NORTH : Cell::SOUTH) + Cell::WEST];
         double h2 = c.heights[(ly ? Cell::NORTH : Cell::SOUTH) + Cell::EAST];
-        double s, t;
+        double s = 0., t = 1.;
         bool linethere = true;
-        if (h1 > position[2] && h2 > position[2]) {
-          s = 0.;
-          t = 1.;
-        } else if (h1 > position[2]) {
-          s = 0.;
-          t = (position[2] - h1) / (h2 - h1);
-        } else if (h2 > position[2]) {
-          s = (position[2] - h1) / (h2 - h1);
-          t = 1.;
+        if (h1 > Z && h2 > Z) {
+        } else if (h1 > Z) {
+          t = (Z - h1) / (h2 - h1);
+        } else if (h2 > Z) {
+          s = (Z - h1) / (h2 - h1);
         } else {
           linethere = false;
         }
+        double as = 0., at = 1.;
+        Cell &op = map->cell(x, y + (ly * 2 - 1));
+        double ah1 = op.heights[(ly ? Cell::SOUTH : Cell::NORTH) + Cell::WEST];
+        double ah2 = op.heights[(ly ? Cell::SOUTH : Cell::NORTH) + Cell::EAST];
+        if (ah1 < Z && ah2 < Z) {
+        } else if (ah1 < Z) {
+          at = (Z - ah1) / (ah2 - ah1);
+        } else if (ah2 < Z) {
+          as = (Z - ah1) / (ah2 - ah1);
+        } else {
+          linethere = false;
+        }
+        s = std::max(s, as);
+        t = std::min(t, at);
+        if (s > t) linethere = false;
+
+        if (position[1] > yp && ly == 0) linethere = false;
+        if (position[1] < yp && ly == 1) linethere = false;
+        if (position[1] == yp) linethere = false;
+
         if (linethere) {
           int hit = 0;
           if (x + s <= position[0] && position[0] <= x + t) {
@@ -1346,20 +1363,36 @@ int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
         double xp = (x + lx);
         double h1 = c.heights[(lx ? Cell::EAST : Cell::WEST) + Cell::SOUTH];
         double h2 = c.heights[(lx ? Cell::EAST : Cell::WEST) + Cell::NORTH];
-        double s, t;
+        double s = 0., t = 1.;
         bool linethere = true;
-        if (h1 > position[2] && h2 > position[2]) {
-          s = 0.;
-          t = 1.;
-        } else if (h1 > position[2]) {
-          s = 0.;
-          t = (position[2] - h1) / (h2 - h1);
-        } else if (h2 > position[2]) {
-          s = (position[2] - h1) / (h2 - h1);
-          t = 1.;
+        if (h1 > Z && h2 > Z) {
+        } else if (h1 > Z) {
+          t = (Z - h1) / (h2 - h1);
+        } else if (h2 > Z) {
+          s = (Z - h1) / (h2 - h1);
         } else {
           linethere = false;
         }
+        double as = 0., at = 1.;
+        Cell &op = map->cell(x + (lx * 2 - 1), y);
+        double ah1 = op.heights[(lx ? Cell::WEST : Cell::EAST) + Cell::SOUTH];
+        double ah2 = op.heights[(lx ? Cell::WEST : Cell::EAST) + Cell::NORTH];
+        if (ah1 < Z && ah2 < Z) {
+        } else if (ah1 < Z) {
+          at = (Z - ah1) / (ah2 - ah1);
+        } else if (ah2 < Z) {
+          as = (Z - ah1) / (ah2 - ah1);
+        } else {
+          linethere = false;
+        }
+        s = std::max(s, as);
+        t = std::min(t, at);
+        if (s > t) linethere = false;
+
+        if (position[0] > xp && lx == 0) linethere = false;
+        if (position[0] < xp && lx == 1) linethere = false;
+        if (position[0] == xp) linethere = false;
+
         if (linethere) {
           int hit = 0;
           if (y + s <= position[1] && position[1] <= y + t) {
