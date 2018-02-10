@@ -310,14 +310,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     next_option = getopt_long(argc, argv, short_options, long_options, NULL);
 #endif
 
-    /*
-#ifdef solaris
-    next_option = getopt(argc,argv,short_options);
-#else
-    next_option = getopt_long (argc, argv, short_options,
-    long_options, NULL);
-#endif
-    */
     int i;
     switch (next_option) {
     case 'h':
@@ -392,19 +384,17 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   }
   atexit(SDL_Quit);
 
-  // MB: Until here we are using 7 megs of memory
   changeScreenResolution();
   if (!screen) {
     error("Could not initialize screen resolution (message: '%s')", SDL_GetError());
   }
-  // MB: Until here we are using 42 megs of memory
 
   if (SDL_GetModState() & KMOD_CAPS) {
     warning("capslock is on, the mouse will be visible and not grabbed");
   }
 
   /* initialize OpenGL setup before we draw anything */
-  glHelpInit();  // MB: 1.5 megs
+  glHelpInit();
 
   // set the name of the window
   struct timespec bootStart = getMonotonicTime();
@@ -424,19 +414,12 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     SDL_GL_SwapWindow(window);
   }
 
-  // MB: Until here we are using 47 megs of memory.
-  // splashscreen is using 5 megs but it is ok since we are freeing it before the real game
-
   /* Initialize all modules */
-  initGuileInterface();  // MB: 0 megs
-  generalInit();         // MB: 0 megs
-
-  // MB: Until here we are using 49 megs of memory.
+  initGuileInterface();
+  generalInit();
 
   if (audio != 0) soundInit();
   Settings::settings->loadLevelSets();
-
-  // MB: Until here we are using 51 megs of memory.
 
   /* Initialize and activate the correct gameModes */
   if (touchMode) {
@@ -456,30 +439,34 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     Font::init();
     GameMode::activate(EditMode::editMode);
   } else {
-    // MB: Reminder 51 megs it was
-    Font::init();      // MB: Until here we are using 54 megs of memory.
-    MenuMode::init();  // MB: Until here we are using 55 megs of memory.
+    Font::init();
+    MenuMode::init();
 
+    /* Initialize modes */
     MainMode::init();
-    HighScore::init();  // MB: 55
+    HighScore::init();
     EditMode::init();
-
-    EnterHighScoreMode::init();              // MB: 58
-    HallOfFameMode::init();                  // MB: 62
-    SettingsMode::init();                    // MB: 64
-    GameMode::activate(MenuMode::menuMode);  // MB: 65
-    GameHook::init();
+    EnterHighScoreMode::init();
+    HallOfFameMode::init();
+    SettingsMode::init();
+    SetupMode::init();
     CalibrateJoystickMode::init();
+    HelpMode::init();
 
-    SetupMode::init();  // MB: 71
+    /* Initialize game structures */
+    GameHook::init();
     Ball::init();
-    ForceField::init();  // MB: 71
-    HelpMode::init();    // MB: 74
+    ForceField::init();
     Pipe::init();
     PipeConnector::init();
-    volumeChanged();
 
-    // Until here 74 megs
+    /* Activate initial mode */
+    if (Settings::settings->doSpecialLevel) {
+      GameMode::activate(SetupMode::setupMode);
+    } else {
+      GameMode::activate(MenuMode::menuMode);
+    }
+    volumeChanged();
   }
 
   /* Make sure splashscreen has been shown for atleast 1.5 seconds */

@@ -78,7 +78,7 @@ void SetupMode::display() {
   /* Draw background */
   GLfloat coord[4];
   GLuint active;
-  if (screenshot) {
+  if (screenshot && !Settings::settings->doSpecialLevel) {
     active = screenshot;
     for (int i = 0; i < 4; i++) coord[i] = scrshtCoord[i];
   } else {
@@ -87,13 +87,13 @@ void SetupMode::display() {
   }
   /* Avoid distortion. Note 1024x512 textures are possible. */
   if (screenWidth * scrshtH * coord[3] > screenHeight * scrshtW * coord[2]) {
-    double delta =
-        coord[3] - coord[2] * screenHeight * scrshtW / (double)fmax(screenWidth * scrshtH, 1);
+    double delta = coord[3] - coord[2] * screenHeight * scrshtW /
+                                  (double)std::max(screenWidth * scrshtH, 1);
     coord[1] += delta / 2;
     coord[3] -= delta;
   } else {
-    double delta =
-        coord[2] - coord[3] * screenWidth * scrshtH / (double)fmax(screenHeight * scrshtW, 1);
+    double delta = coord[2] - coord[3] * screenWidth * scrshtH /
+                                  (double)std::max(screenHeight * scrshtW, 1);
     coord[0] += delta / 2;
     coord[2] -= delta;
   }
@@ -255,12 +255,13 @@ void SetupMode::display() {
                        1.0, 1.0, 1.0);
 
   /* Descriptive level text */
-  int lineno;
-  for (lineno = 0; lineno < 5; lineno++) {
-    if (strlen(settings->levelSets[levelSet].description[lineno])) {
-      Font::drawSimpleText(gettext(settings->levelSets[levelSet].description[lineno]),
-                           col0 + lineSize, row0 + rowSep * 4 + lineSep * lineno, lineSize,
-                           1.0, 1.0, 1.0, 1.0, screenWidth - col0 - lineSize);
+  if (!Settings::settings->doSpecialLevel) {
+    for (int lineno = 0; lineno < 5; lineno++) {
+      if (strlen(settings->levelSets[levelSet].description[lineno])) {
+        Font::drawSimpleText(gettext(settings->levelSets[levelSet].description[lineno]),
+                             col0 + lineSize, row0 + rowSep * 4 + lineSep * lineno, lineSize,
+                             1.0, 1.0, 1.0, 1.0, screenWidth - col0 - lineSize);
+      }
     }
   }
 
