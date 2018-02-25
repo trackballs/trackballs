@@ -26,7 +26,7 @@
 (add-flag 246 224 100 #t 0.1)
 
 ;;; spikes and save point for last stetch
-(trigger 251.5 242.5 0.5 (lambda () (set-start-position 252.5 243.5)))
+(trigger 251.5 242.5 0.5 (lambda () (set-start-position 251.5 243.5)))
 (add-modpill 251.5 242.5 *mod-spike* 25 40)
 
 

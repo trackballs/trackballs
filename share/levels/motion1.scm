@@ -12,17 +12,6 @@
 
 (day)
 
-
-
-;;Set ball velocity.
-
-(define speed 0.3)
-(cond
- ((= (difficulty) *easy*) (set! speed 0.20))
- ((= (difficulty) *normal*) (set! speed 0.30))
- ((= (difficulty) *hard*) (set! speed 0.40)))
-
-
 ;;Flags.
 
 (add-flag 14 18 350 #t 0.1)
@@ -31,7 +20,15 @@
 (add-flag 16 40 200 #t 0.1)
 
 
-
+;; Pit guardian
+(define pit-boss (new-mr-black 125 105))
+(cond
+ ((= (difficulty) *easy*) (set-acceleration pit-boss 2.0))
+ ((= (difficulty) *normal*) (set-acceleration pit-boss 4.0))
+ ((= (difficulty) *hard*) (set-acceleration pit-boss 7.0)))
+(set-horizon pit-boss 15.0)
+(set-primary-color pit-boss 1.0 1.0 1.0 1.0)
+(set-modtime pit-boss *mod-spike* -1.)
 
 
 ;;Platform
@@ -40,95 +37,61 @@
  ;;; Positions
 101 80 102 81 
  ;;; Low, High, Time Offset, Speed
- -8.0 5. 0.0 0.75)
+ -8.0 5. 0.0 0.95)
 
 
+(define pipe-path 
+  '((101.5 80.8  5.1)
+    (101.5 81.8  8.6)
+    (101.5 100.0 8.2)
+    (114.5 88.0  1.0)
+    (112.5 97.0 -3.5)
+    (116.5 103.0 -3.5)
+    (134.5 100.0 7.5)
+    (133.5 118.0 6.5)
+    (108.5 115.0 -4.0)))
 
+(map (lambda (p) (set-primary-color (set-wind p 10. 10.) 0.5 0.0 0.0 0.3))
+     (multi-pipe pipe-path 1.3 #t))
 
-
-
-;;PIPES 
 
 ;scoop
 
-(define pipe1(pipe 101.5 81.0 4.8 101.5 83.0 8.5 1.4))
-(set-primary-color pipe1 0.5 0.0 0.0 0.3)
-(set-wind pipe1 15.0 0.0)
-
-(set-primary-color (pipe-connector 101.5 83.0 8.5 1.4) 0.5 0.0 0.0 0.3)
-
-(define pipe2(pipe 101.5 83.0 8.7 101.5 99.5 8.7 1.0))
-(set-primary-color pipe2 0.5 0.0 0.0 0.3)
-(set-wind pipe2 3.5 0.0)
-
-
-;1st turn.
- 
-(set-primary-color (pipe-connector 101.5 100.0 8.7 1.1) 0.5 0.0 0.0 0.3)
-
-(define pipe3(pipe 101.6 99.9 8.6 114.4 87.9 1.2 1.0))
-(set-primary-color pipe3 0.5 0.0 0.0 0.3)
-(set-wind pipe3 0.0 1.0)
-
-;2nd turn.
-
-(set-primary-color (pipe-connector 114.6 88.0 1.0 1.1) 0.5 0.0 0.0 0.3)
-
-(define pipe4(pipe 114.7 87.9 1.0 114.7 99.7 -3.5 1.0))
-(set-primary-color pipe4 0.5 0.0 0.0 0.3)
-(set-wind pipe4 2.0 0.0)
-
-;3rd turn. (up)
-
-(set-primary-color (pipe-connector 114.7 100 -3.4 1.2) 0.5 0.0 0.0 0.3)
-
-(define pipe5(pipe 114.4 100 -3.6 134.4 100.1 7.6 1.0))
-(set-primary-color pipe5 0.5 0.0 0.0 0.3)
-(set-wind pipe5 6.5 0.0)
-
-;4th turn.
-
-(set-primary-color (pipe-connector 134.7 100.1 7.4 1.0) 0.5 0.0 0.0 0.3)
-
-(define pipe6(pipe 134.7 100.0 7.4 134.7 119.6 7.4 1.0))
-(set-primary-color pipe6 0.5 0.0 0.0 0.3)
-(set-wind pipe6 3.0 0.0)
-
-;last turn (down to shute).
-
-(set-primary-color (pipe-connector 134.7 120 7.5 1.0) 0.5 0.0 0.0 0.3)
-
-(define pipe7(pipe 134.8 120.0 7.5 106.5 114.0 -4.0 1.0))
-(set-primary-color pipe7 0.5 0.0 0.0 0.3)
-(set-wind pipe7 1.0 0.0)
-
 ;Drop shute
 
-(define pipe8(pipe 104 114 -7.5 103.5 114 -9.5 1.5))
+(define pipe8 (pipe 104 114 -7.5 103.5 114.2 -9.5 1.5))
 (set-primary-color pipe8 0.9 0.9 0.9 0.9)
-(set-wind pipe8 -10.0 0.0)
+(set-wind pipe8 5.0 5.0)
 
 ;connector
 
-
 (set-primary-color (pipe-connector 103.5 114 -9.5 1.5) 0.9 0.9 0.9 0.9)
 
-(define pipe9(pipe 103.5 114.3 -9.8 102.0 121 -9.8 1.0))
-(set-primary-color pipe8 0.9 0.9 0.9 0.9)
-(set-wind pipe8 0.0 15.0)
+(define pipe9 (pipe 103.5 112.3 -9.8 103.5 119 -9.8 1.4))
+(set-primary-color pipe9 0.9 0.9 0.9 0.9)
+(set-wind pipe9 10.0 10.0)
 
-(set-primary-color (pipe-connector 102 121 -9.8 1.0) 0.9 0.9 0.9 0.9)
+(set-primary-color (pipe-connector 103.5 119 -9.8 1.3) 0.9 0.9 0.9 0.9)
 
-;;BEGIN LIFT SHUTE
+(define pipe10 (pipe 103.5 118 -9.8 102 121.5 -8.5 1.2))
+(set-primary-color pipe10 0.9 0.9 0.9 0.9)
+(set-wind pipe10 10.0 10.0)
+(set-primary-color (pipe-connector 102 121.5 -8.5 1.1) 0.9 0.9 0.9 0.9)
 
-(define shute(pipe 102 121 -9.8 102 122 16.4 1.0))
+; begin lift chute
+
+(define shute (pipe 102 121.5 -10.5 102 121.5 15.4 1.0))
 (set-primary-color shute 0.9 0.9 0.9 0.3)
-(set-wind shute 4.0 5.0)
+(set-wind shute 10.0 10.0)
+(define shute2 (pipe 102 121.5 15.4 102.3 121.5 16.4 1.0))
+(set-primary-color shute2 0.9 0.9 0.9 0.3)
+(set-wind shute2 3.0 3.0)
 
 
 
 ;;End of level
 
-(add-goal 34 60 #f "bx3")
+(trigger-once 102 122 1.5 (lambda ()
+  (add-goal 124 105 #f "")))
 
 
