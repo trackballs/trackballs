@@ -109,7 +109,7 @@ Creates a lethal spike (comming from the side). Returns an 'animated' object.
 <div class="fn">
 <div class="fn-proto">(add-goal x y rotate-p next-level)</div>
 <div class="fn-text">
-Adds a new goal to the map. Orientation is given by rotate-p (horizontal or vertical) and the next level to go to is given as a string name (eg. "foo" to go to level "foo.map"). Returns an 'animated' object.
+Adds a new goal to the map. Goals are double sided, and their orientation is given by the boolean rotate-p. The next level to go to is given as a string name (eg. "foo" to go to level "foo.map"). Returns an 'animated' object.
 </div>
 </div>
 
@@ -382,7 +382,7 @@ Turns off the global light, making it night time.
 <div class="fn">
 <div class="fn-proto">(fog [strength])</div>
 <div class="fn-text">
-Turns on fog in the game, with the given strength going from 0 to 2.
+Turns on fog in the game, with the given strength going from 0 to 2. Default strength is 1. Use 'thick-fog' as an alias for strength 2.
 </div>
 </div>
 
@@ -473,14 +473,14 @@ Sets the players starting position.
 <div class="fn">
 <div class="fn-proto">(snow strength)</div>
 <div class="fn-text">
-Turns on snow. Strength must be in the range 0.0 to 1.0
+Turns on snow. Strength must be in the range 0.0 to 1.0.
 </div>
 </div>
 
 <div class="fn">
 <div class="fn-proto">(rain strength)</div>
 <div class="fn-text">
-Turns on rain. Strength must be in the range 0.0 to 1.0
+Turns on rain. Strength must be in the range 0.0 to 1.0.
 </div>
 </div>
 
@@ -560,7 +560,14 @@ Sets the weight for playing the given song.
 <div class="fn">
 <div class="fn-proto">(trigger x y radius function)</div>
 <div class="fn-text">
-Call the given function each tick when the player is within given radius from x/y.
+Call the given function each tick when the player is within given radius from x/y. 'function' takes no arguments.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(trigger-once x y radius function)</div>
+<div class="fn-text">
+Call the given function only the first time that the player is within given radius from x/y. 'function' takes no arguments.
 </div>
 </div>
 
@@ -637,7 +644,24 @@ Copies the region of cells from x0/y0 to x1/y1 inclusive so that x0/y0 gets mapp
 </div>
 </div>
 
-<h2> Constants </h2> These functions modify or read the global state of the game. Such as turning on fog, or making it night etc.
+<h2> Miscellaneous </h2> These functions don't quite fit in any other category.
+
+<div class="fn">
+<div class="fn-proto">(_ str)</div>
+<div class="fn-text">
+Marks a string as translatable, but returns the original string.
+</div>
+</div>
+
+<div class="fn">
+<div class="fn-proto">(translate str)</div>
+<div class="fn-text">
+Translates a string which has been marked as translatable, assuming a translation
+exists for the active locale.
+</div>
+</div>
+
+<h2> Constants </h2> These constants are used as arguments to other functions.
 
 <div class="fn">
 <div class="fn-proto">*mod-speed* *mod-jump* *mod-spike* *mod-glass* *mod-dizzy* *mod-frozen* *mod-float* *mod-extra-life* *mod-large* *mod-small* *mod-nitro* </div>

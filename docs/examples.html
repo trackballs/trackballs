@@ -22,11 +22,8 @@
 
 <h1> Examples </h1>
 
-This section should contain some intersting examples of how things can
+This section should contain some interesting examples of how things can
 be done with the scripting language.
-<p/>
-<b>TODO: </b> Add some (more) interesting example uses of the scripting language here.
-<p/>
 
 This shows how create a flag which gives time as a reward instead of
 point when it is taken. In this case the player gets 10 bonus seconds
@@ -37,14 +34,64 @@ by taking the flag.
 </pre></div>
 
 And as you can see this trick works for many different types of
-animated objects like Mr Black's, Babies, Birds, Cactuses and even the
-player object himself!
+animated objects like Mr Black's, Babies, Birds, Cacti and even the
+player themself!
 <div class="code"><pre>
 (define my-flag (new-mr-black 100.5 100.5))
 (time-on-death my-flag 10.0) 
 </pre></div>
 
+It's possible to start the level with the player permanently under some 
+condition; for instance, to ensure the player begins tiny and with spikes:
+<div class="code"><pre>
+(set-modtime (player) *mod-spike* -1.)
+(set-modtime (player) *mod-small* -1.)
+</pre></div>
 
+As Trackballs uses Scheme for its scripting language, mathematical and logical 
+operations are also available, and permit the construction of complicated
+helper functions. The following code segment demonstrates functions which 
+create two parallel pipes a fixed width apart and create a pair of invisible
+and instant teleporters.
+<div class="code"><pre>
+(define make-pipe-link
+  (lambda (x1 y1 x2 y2 z)
+    (let* ((rx (- y1 y2))
+           (ry (- x2 x1))
+           (nrm (* 4 (sqrt (+ (* rx rx) (* ry ry)))))
+           (dx (/ rx nrm))
+           (dy (/ ry nrm)))
+    (pipe (+ x1 dx) (+ y1 dy) (- z 0.1) (+ x2 dx) (+ y2 dy) (- z 0.1) 0.1)
+    (pipe (- x1 dx) (- y1 dy) (- z 0.1) (- x2 dx) (- y2 dy) (- z 0.1) 0.1))))
+
+(make-pipe-link 125.0 200.2 130.0 193.5 1.95)
+    
+(define make-teleport-pair 
+  (lambda (x0 y0 x1 y1 r)
+    (let ((last-cell 0))
+      (smart-trigger x0 y0 r
+        (lambda ()
+          (if (not (= last-cell 1))
+            (let ((px  (+ (get-position-x (player)) (- x1 x0)))
+                  (py  (+ (get-position-y (player)) (- y1 y0)))
+                  (pz  (get-position-z (player))))
+              (set! last-cell 2)
+              (set-position (player) px py pz)
+              (camera-force-focus px py pz))))
+        (lambda () (set! last-cell 0)))
+      (smart-trigger x1 y1 r
+        (lambda ()
+          (if (not (= last-cell 2))
+            (let ((px  (+ (get-position-x (player)) (- x0 x1)))
+                  (py  (+ (get-position-y (player)) (- y0 y1)))
+                  (pz  (get-position-z (player))))
+              (set! last-cell 1)
+              (set-position (player) px py pz)
+              (camera-force-focus px py pz))))
+        (lambda () (set! last-cell 0))))))
+        
+(make-teleport-pair 230 230 10 10 0.5)
+</pre></div>
 
 </div>
 </body>
