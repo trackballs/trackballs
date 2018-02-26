@@ -11,22 +11,34 @@ find_package(ZLIB REQUIRED)
 find_package(GC REQUIRED)
 find_package(Intl REQUIRED)
 
-# Optionally set data dir and locale dir
-set(TRACKBALLS_LOCALE_DIR "" CACHE FILEPATH "Folder to install locale files to. Empty means default.")
-set(TRACKBALLS_SHARE_DIR "" CACHE FILEPATH "Folder to install data files to. Empty means default.")
-set(TRACKBALLS_HIGHSCORES_DIR "" CACHE STRING "Folder to install highscores file to. Empty means to TRACKBALLS_SHARE_DIR. ~ will install per user")
+# Optionally set paths to install individual components
+function(setordefault varname variable default)
+  if ("${variable} " STREQUAL " ")
+    set(${varname} ${default} PARENT_SCOPE)
+  else()
+    set(${varname} ${variable} PARENT_SCOPE)
+  endif()
+endfunction()
 
-if ("${TRACKBALLS_LOCALE_DIR}" STREQUAL "")
-  set(TRACKBALLS_LOCALE ${CMAKE_INSTALL_PREFIX}/share/locale)
-else()
-  set(TRACKBALLS_LOCALE ${TRACKBALLS_LOCALE_DIR})
-endif()
-if ("${TRACKBALLS_SHARE_DIR}" STREQUAL "")
-  set(TRACKBALLS_SHARE ${CMAKE_INSTALL_PREFIX}/share/trackballs)
-else()
-  set(TRACKBALLS_SHARE ${TRACKBALLS_SHARE_DIR})
-endif()
+set(TRACKBALLS_APPL_DIR "" CACHE PATH "Folder to install .desktop files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/applications")
+set(TRACKBALLS_DOC_DIR "" CACHE PATH "Folder to install documentation to. If empty, the default is CMAKE_INSTALL_PREFIX/share/doc")
+set(TRACKBALLS_BIN_DIR "" CACHE PATH "Folder to install executable files to. If empty, the default is CMAKE_INSTALL_PREFIX/bin")
+set(TRACKBALLS_ICON_DIR "" CACHE PATH "Folder to install icons to. If empty, the default is CMAKE_INSTALL_PREFIX/share/icons/hicolor")
+set(TRACKBALLS_LOCALE_DIR "" CACHE PATH "Folder to install locale files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/locale")
+set(TRACKBALLS_MAN_DIR "" CACHE PATH "Folder to install man files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/man")
+set(TRACKBALLS_SHARE_DIR "" CACHE PATH "Folder to install data files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/trackballs")
 
+set(TRACKBALLS_HIGHSCORES_DIR "" CACHE STRING "Folder to install highscores file to. Empty means to TRACKBALLS_SHARE_DIR/. ~ will install per user")
+
+setordefault(TRACKBALLS_APPL "${TRACKBALLS_APPL_DIR}" ${CMAKE_INSTALL_PREFIX}/share/applications)
+setordefault(TRACKBALLS_BIN "${TRACKBALLS_BIN_DIR}" ${CMAKE_INSTALL_PREFIX}/bin)
+setordefault(TRACKBALLS_DOC "${TRACKBALLS_DOC_DIR}" ${CMAKE_INSTALL_PREFIX}/share/doc)
+setordefault(TRACKBALLS_ICON "${TRACKBALLS_ICON_DIR}" ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor)
+setordefault(TRACKBALLS_LOCALE "${TRACKBALLS_LOCALE_DIR}" ${CMAKE_INSTALL_PREFIX}/share/locale)
+setordefault(TRACKBALLS_MAN "${TRACKBALLS_MAN_DIR}" ${CMAKE_INSTALL_PREFIX}/share/man)
+setordefault(TRACKBALLS_SHARE "${TRACKBALLS_SHARE_DIR}" ${CMAKE_INSTALL_PREFIX}/share/trackballs)
+
+# Set defines
 add_definitions(-DPACKAGE="trackballs")
 add_definitions(-DVERSION="1.2.4")
 add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE}")
@@ -62,7 +74,7 @@ add_custom_command(OUTPUT guile.cc.x
 file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
 add_executable(trackballs ${sources} guile.cc.x)
 target_link_libraries(trackballs ${GUILE_LIBRARIES} ${OPENGL_LIBRARIES} ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARY} ${SDL2_MIXER_LIBRARY} ${SDL2_TTF_LIBRARY} ${ZLIB_LIBRARIES} ${GC_LIBRARIES} ${Intl_LIBRARIES} m)
-install(TARGETS trackballs DESTINATION bin)
+install(TARGETS trackballs DESTINATION ${TRACKBALLS_BIN})
 
 # Data files
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/fonts DESTINATION ${TRACKBALLS_SHARE})
@@ -85,9 +97,9 @@ else()
 endif()
 
 # Documentation
-install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION man/man6)
+install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION ${TRACKBALLS_MAN}/man6)
 file(GLOB htmldocs ${PROJECT_SOURCE_DIR}/docs/*.html ${PROJECT_SOURCE_DIR}/docs/*.css)
-install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_SHARE}/docs)
+install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_DOC})
 
 # Icons are split up into separate folders
 file(GLOB icons ${PROJECT_SOURCE_DIR}/share/icons/*.png)
@@ -95,13 +107,13 @@ foreach(file ${icons})
   string(REGEX REPLACE ".*trackballs-" "" filea ${file})
   string(REPLACE ".png" "" sz ${filea})
   install(FILES ${file}
-          DESTINATION ${TRACKBALLS_SHARE}/../icons/hicolor/${sz}/apps/
+          DESTINATION ${TRACKBALLS_ICON}/${sz}/apps/
           RENAME trackballs.png)
 endforeach()
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
-        DESTINATION ${TRACKBALLS_SHARE}/../icons/hicolor/scalable/apps/)
+        DESTINATION ${TRACKBALLS_ICON}/icons/hicolor/scalable/apps/)
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
-        DESTINATION ${TRACKBALLS_SHARE}/../applications)
+        DESTINATION ${TRACKBALLS_APPL}/applications)
 
 # Translations!
 option(DISABLE_NLS "Disable native language support (NLS)" OFF)
