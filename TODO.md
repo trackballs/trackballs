@@ -7,24 +7,11 @@ code cleanup and documentation
 Bugs marked with a (?) after the title *may* already have been fixed. 
 Verify if these bugs still are present.
 
-1. **Up-arrow stuck**? The up-arrow is sometimes stuck when restarting a new 
-level. 
-
-1. **Broken physics** Fix cheat in ball physics - by moving to close to 
-another cell you can get drawn up on it.
-
-1. **Broken physics**? Sometimes the ball can get stuck on an edge. Clue to 
-find bug: print out the position of the ball continuously, play until such a 
-position is found and restart from that 
-position while debugging.
-
 1. **Ground physics** Make the friction etc. of ice and normal ground 
 configurable.
 
 1. **Pipe physics** Fix the physics when entering pipes, rather than bouncing 
 on entrance.
-
-1. **Heightmodifier broken** Doesn't seem to update the center of the squares.
 
 ## Feature requests
 
@@ -140,25 +127,12 @@ maybe somewhat like a "comet", leaving trails (glowing particles?)
 1. **Sound effects** Use all the new sound effects (warren's sound and the 
 new laughters)
 
-1. **Internationalization**   (UNDER WAY)
-
 1. **Levelset information** Make the .set files more elaboration with 
 descriptive texts, info from the author etc.  Perhaps even screenshots?
-
-## Code cleanup
-
-1. **Desktop and icon install** Determine where to install desktop and icon
-files so that desktop environments and programs can find them
-
-1. **Level fixes** Many levels can be polished some more by fixing background 
-colors etc.
 
 
 ## Documentation
 
-
-1. **Documentation** New script commands set-song-preference, force-next-song 
-and clear-song-preferences to allow choosing specific songs for levels.
 
 1. **Keys in menus** Document how the keys are used instead of the mouse in 
 the menu system.
@@ -174,8 +148,7 @@ added: snow, rain Double check that all functions are documented.
 1. **editor** Document all keys/menu entries in the editor. Esp: the "smooth" 
 feature
 
-1. **help screen** Extra life, birds, teleporters, cactus  => picture added 
-in the help1_*.png. Just have to add description text
+1. **help screen** Extra life, birds, teleporters, cactus, etc.
 
 1. **Default values** Document the default values for all configurable values.
 
