@@ -369,7 +369,7 @@ void EditMode::display() {
   activeView.fog_enabled = 0;
   activeView.quadratic_attenuation = 0.;
 
-  GLfloat lightPosition[3] = {x - 60., y - 40., h + 100.};
+  GLfloat lightPosition[3] = {(GLfloat)x - 60.f, (GLfloat)y - 40.f, (GLfloat)h + 100.f};
   GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
   GLfloat ambient[3] = {0.2, 0.2, 0.2};
   GLfloat black[3] = {0., 0., 0.};
@@ -1051,13 +1051,13 @@ void EditMode::doCellAction(int code, int direction) {
 }
 
 void EditMode::key(int key) {
-  int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
+  int shift = SDL_GetModState() & KMOD_SHIFT;
   int mouseX, mouseY;
   SDL_GetMouseState(&mouseX, &mouseY);
   /* TODO. Send any keys to the EOpenWindow?? */
 
   if (newWindow->isAttached()) {
-    newWindow->key(key, mouseX, mouseY);
+    newWindow->key(key, shift, mouseX, mouseY);
     return;
   }
 
@@ -1112,7 +1112,7 @@ void EditMode::key(int key) {
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
     mouseDown(shift ? 3 : 1, -1, -1);
 
-  menuWindow->key(key, shift);
+  menuWindow->key(key, shift, x, y);
 
   return;
 }

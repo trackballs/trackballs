@@ -148,7 +148,6 @@ void menuItem_Left(int code, int row, const char *leftStr) {
 void menuItem_Center(int code, int row, const char *str) {
   int fontSize = computeMenuSize();
   int menuSpacing = 17 * fontSize / 10;
-  int screenBorder = computeScreenBorder();
   int top = 100 + 3 * fontSize;
   addText_Center(code, fontSize, (row + 1) * menuSpacing + top, str, screenWidth / 2);
 }

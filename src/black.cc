@@ -91,7 +91,6 @@ void Black::tick(Real t) {
 
     double d = Game::current->map->getHeight(position[0] + velocity[0] * 1.0,
                                              position[1] + velocity[1] * 1.0);
-    Cell& c1 = Game::current->map->cell((int)position[0], (int)position[1]);
     Cell& c2 = Game::current->map->cell((int)(position[0] + velocity[0] * 1.0),
                                         (int)(position[1] + velocity[1] * 1.0));
 

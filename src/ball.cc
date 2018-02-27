@@ -1234,7 +1234,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
       Real speed = trampspeed[i] / nspeeds[i];
       Cell &cell = map->cell(trampcell[i][0], trampcell[i][1]);
       Real dh = 1.0 * speed * radius * radius * radius;
-      for (int i = 0; i < 5; i++) cell.heights[i] -= dh;
+      for (int j = 0; j < 5; j++) cell.heights[j] -= dh;
       if (cell.sunken <= 0.0) new Trampoline(trampcell[i][0], trampcell[i][1]);
       cell.sunken += dh;
     }

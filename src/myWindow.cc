@@ -20,6 +20,7 @@
 
 #include "myWindow.h"
 
+#include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
 MyWindow *MyWindow::allWindows = NULL;
@@ -67,7 +68,7 @@ void MyWindow::mouse(int state, int x, int y) {
     }
   }
 }
-void MyWindow::key(int /*key*/, int /*x*/, int /*y*/) {}
+void MyWindow::key(int /*key*/, int /*shift*/, int /*x*/, int /*y*/) {}
 
 void MyWindow::tick() {}
 void MyWindow::draw() {
@@ -178,12 +179,13 @@ void MyWindow::mouseDownAll(int state, int x, int y) {
 void MyWindow::keyAll(int key) {
   int x, y;
   SDL_GetMouseState(&x, &y);
+  int shift = SDL_GetModState() & KMOD_SHIFT;
 
   MyWindow *pntr = allWindows;
   while (pntr) {
     MyWindow *next = pntr->next;
     if (pntr->isInside(x, y)) {
-      pntr->key(key, x, y);
+      pntr->key(key, shift, x, y);
       break;
     }
     pntr = next;

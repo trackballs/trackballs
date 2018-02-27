@@ -53,7 +53,7 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   up = crossProduct(dir, right);
   if (up[2] < 0.0) up = -up;
 
-  int nfacets = 24;
+  const int nfacets = 24;
 
   // Draw pipe
   GLfloat data[2 * nfacets][8];

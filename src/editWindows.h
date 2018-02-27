@@ -32,7 +32,7 @@ class EMenuWindow : public MyWindow {
   void draw();
   void mouseDown(int state, int x, int y);
   void openSubMenu(int);
-  void key(int key, int shift);
+  void key(int key, int shift, int x, int y);
 
   int keyToMenuEntry(int, int);
 
@@ -128,7 +128,7 @@ class ENewWindow : public MyWindow {
 
   void draw();
   void mouseDown(int state, int x, int y);
-  void key(int key, int x, int y);
+  void key(int key, int shift, int x, int y);
 
  private:
   char name[256];

@@ -217,9 +217,9 @@ void tickMouse(Real td) {
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
                      GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
                      GLuint tex) {
-  GLfloat corners[4][2] = {x, y, x, y + h, x + w, y, x + w, y + h};
-  GLfloat texture[4][2] = {tx, ty, tx, ty + th, tx + tw, ty, tx + tw, ty + th};
-  GLfloat colors[4][4] = {r, g, b, a, r, g, b, a, r, g, b, a, r, g, b, a};
+  GLfloat corners[4][2] = {{x, y}, {x, y + h}, {x + w, y}, {x + w, y + h}};
+  GLfloat texture[4][2] = {{tx, ty}, {tx, ty + th}, {tx + tw, ty}, {tx + tw, ty + th}};
+  GLfloat colors[4][4] = {{r, g, b, a}, {r, g, b, a}, {r, g, b, a}, {r, g, b, a}};
   draw2DQuad(corners, texture, colors, tex);
 }
 
@@ -277,7 +277,8 @@ void drawMouse(int x, int y, int w, int h) {
   GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 0.35);
   GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 0.35);
 
-  GLfloat colors[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
+  GLfloat colors[4][4] = {
+      {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}};
   GLfloat texco[4][2] = {{0., 0.}, {0., 1.}, {1., 0.}, {1., 1.}};
 
   GLfloat vco[4][2] = {{x - dx, y - dy}, {x - dy, y + dx}, {x + dy, y - dx}, {x + dx, y + dy}};
@@ -580,7 +581,7 @@ void setViewUniforms(GLuint shader) {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  int N = 3;
+  const int N = 3;
   GLfloat cscproj[N * 16], cscmodel[N * 16];
   for (int i = 0; i < N; i++) {
     for (int j = 0; j < 4; j++) {
@@ -843,7 +844,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
 int createSnapshot() {
   static int snap_number = 0;
   char name[1024];
-  int again = 9999, i, j;
+  int again = 9999;
   FILE *f;
 
   /* find the name for the image */
@@ -1218,7 +1219,6 @@ int resetTextures() {
   GLfloat texCoord[4];
   char str[256];
   SDL_Surface *surface;
-  int linear = 0;
 
   for (int i = 0; i < numTextures; i++) {
     if (textureNames[i] == NULL) continue;

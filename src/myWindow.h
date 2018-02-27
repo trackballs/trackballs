@@ -34,7 +34,7 @@ class MyWindow {
   virtual void tick();
   virtual void mouse(int state, int x, int y);
   virtual void mouseDown(int button, int x, int y);
-  virtual void key(int key, int x, int y);
+  virtual void key(int key, int shift, int x, int y);
   virtual void attached();
   virtual void removed();
 

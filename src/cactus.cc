@@ -58,7 +58,7 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
 
   allocateBuffers(1, idxbufs, databufs);
 
-  int nsides = 6;
+  const int nsides = 6;
   // Body: 4N+1 verts, 7N faces
   // Spikes: 16N verts, 12N faces
   GLfloat data[nsides * 20 + 1][8];

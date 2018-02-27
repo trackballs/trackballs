@@ -52,7 +52,7 @@ Spike::Spike(Coord3d position, Real speed, Real phase) {
 int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   allocateBuffers(1, idxbufs, databufs);
 
-  int nfacets = 6;
+  const int nfacets = 6;
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
 

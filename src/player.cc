@@ -190,7 +190,7 @@ void Player::tick(Real t) {
   /* Give only *relative* mouse movements */
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
     double sx, sy;
-    Uint32 mouseState = getFilteredRelativeMouse(&sx, &sy);
+    getFilteredRelativeMouse(&sx, &sy);
     if (sx || sy) {
       dx = sx * Settings::settings->mouseSensitivity * 0.0005;
       dy = sy * Settings::settings->mouseSensitivity * 0.0005;

@@ -96,7 +96,7 @@ int EMenuWindow::keyToMenuEntry(int key, int shift) {
       if (cKeyShortcuts[i][j] == key) return i * MAX_MENU_ENTRIES + j;
   return -1;
 }
-void EMenuWindow::key(int key, int shift) {
+void EMenuWindow::key(int key, int shift, int /*x*/, int /*y*/) {
   if (key >= SDLK_F1 && key <= SDLK_F12) {
     int menu = key - SDLK_F1;
     if (menu >= 0 && menu < N_SUBMENUS) openSubMenu(menu);
@@ -267,9 +267,11 @@ void EStatusWindow::draw() {
   } else if (EditMode::editMode->currentEditMode == EDITMODE_NOLINES) {
     addText_Left(0, fontSize / 2, row1, _("Lines"), col1);
 
-    GLfloat line_off[4][4] = {1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.};
-    GLfloat line_on[4][4] = {0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1., 0., 0., 0., 1.};
-    GLfloat txco[4][2] = {0., 0., 0., 0., 0., 0., 0., 0.};
+    GLfloat line_off[4][4] = {
+        {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}};
+    GLfloat line_on[4][4] = {
+        {0., 0., 0., 1.}, {0., 0., 0., 1.}, {0., 0., 0., 1.}, {0., 0., 0., 1.}};
+    GLfloat txco[4][2] = {{0., 0.}, {0., 0.}, {0., 0.}, {0., 0.}};
 
     GLfloat r = 1.5;
     GLfloat lineA[4][2] = {{col1 + 0.f, row3 - r},
@@ -488,9 +490,7 @@ void ENewWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
     remove();
   }
 }
-void ENewWindow::key(int key, int /*x*/, int /*y*/) {
-  int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
-
+void ENewWindow::key(int key, int shift, int /*x*/, int /*y*/) {
   if (key == SDLK_BACKSPACE) {
     int len = strlen(name);
     if (len > 0) name[len - 1] = 0;
