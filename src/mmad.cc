@@ -144,7 +144,7 @@ void changeScreenResolution() {
     mainContext = SDL_GL_CreateContext(window);
 
     char str[256];
-    snprintf(str, sizeof(str), "%s/icons/trackballs-32x32.png", effectiveShareDir);
+    snprintf(str, sizeof(str), "%s/icons/trackballs-128x128.png", effectiveShareDir);
     SDL_Surface *wmIcon = IMG_Load(str);
     if (wmIcon) {
       SDL_SetWindowIcon(window, wmIcon);

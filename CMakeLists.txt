@@ -83,6 +83,8 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/levels DESTINATION ${TRACKBALLS_SH
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/music DESTINATION ${TRACKBALLS_SHARE})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/shaders DESTINATION ${TRACKBALLS_SHARE})
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/sfx DESTINATION ${TRACKBALLS_SHARE})
+install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs-128x128.png DESTINATION ${TRACKBALLS_SHARE}/icons/)
+
 #todo: set executable setgid to games RX, and highscores to games RW
 add_custom_command(OUTPUT highScores
                    COMMAND echo "0" | gzip -c > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
