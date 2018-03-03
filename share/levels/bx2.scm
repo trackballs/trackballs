@@ -146,39 +146,50 @@
 
 ;;These are the guides in the city
 
-(forcefield 68.0 51.6 0.2 7.0 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 67.6 52.0 -0.1 7.8 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 68.0 52.4 0.2 7.0 0.0 0.0 0.1 *ff-bounce*)
+;; Each guide consists of one center rail and two side rails;
+;; the center rail is **ff-bounce** so we don't fall through from above
+;; the side rail forcefields only hold the ball in, not out
+(define guide-width 0.4)
+(define guide-lift 0.26)
+(define center-drop -0.05)
+(define center-extend 0.45)
+(define rail-height 0.1)
+(define ff-bridge-x
+  (lambda (x y dx)
+    (let ((s (if (> dx 0) -1 1)))
+      (forcefield x (- y guide-width) (+ center-drop guide-lift)
+                  dx 0.0 0.0
+                  rail-height (if (> dx 0) *ff-bounce2* *ff-bounce1*))
+      (forcefield (+ x (* s center-extend)) y center-drop
+                  (- dx (* s 2 center-extend)) 0.0 0.0
+                  rail-height *ff-bounce*)
+      (forcefield x (+ y guide-width) (+ center-drop guide-lift)
+                  dx 0.0 0.0
+                  rail-height (if (> dx 0) *ff-bounce1* *ff-bounce2*)))))
+(define ff-bridge-y
+  (lambda (x y dy)
+    (let ((s (if (> dy 0) -1 1)))
+      (forcefield (- x guide-width) y (+ center-drop guide-lift)
+                  0.0 dy 0.0
+                  rail-height (if (> dy 0) *ff-bounce2* *ff-bounce1*))
+      (forcefield x (+ y (* s center-extend)) center-drop
+                  0.0 (- dy (* s 2 center-extend)) 0.0
+                  rail-height *ff-bounce*)
+      (forcefield (+ x guide-width) y (+ center-drop guide-lift)
+                  0.0 dy 0.0
+                  rail-height (if (> dy 0) *ff-bounce1* *ff-bounce2*)))))
 
-(forcefield 75.6 50.0 0.2 0.0 -10.0 0.0 0.1 *ff-bounce*)
-(forcefield 76.0 50.4 -0.1 0.0 -10.8 0.0 0.1 *ff-bounce*)
-(forcefield 76.4 50.0 0.2 0.0 -10.0 0.0 0.1 *ff-bounce*)
-
-(forcefield 68.0 37.6 0.2 7.0 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 67.6 38.0 -0.1 7.8 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 68.0 38.4 0.2 7.0 0.0 0.0 0.1 *ff-bounce*)
-
-(forcefield 65.6 37.0 0.2 0.0 -10.0 0.0 0.1 *ff-bounce*)
-(forcefield 66.0 37.4 -0.1 0.0 -10.8 0.0 0.1 *ff-bounce*)
-(forcefield 66.4 37.0 0.2 0.0 -10.0 0.0 0.1 *ff-bounce*)
-
-(forcefield 67.0 22.6 0.2 10.0 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 66.6 23.0 -0.1 10.8 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 67.0 23.4 0.2 10.0 0.0 0.0 0.1 *ff-bounce*)
+(ff-bridge-x 68.0 52.0 7.0)
+(ff-bridge-y 76.0 50.0 -10.0)
+(ff-bridge-x 75.0 38.0 -7.0)
+(ff-bridge-y 66.0 27.0 10.0)
+(ff-bridge-x 67.0 23.0 10.0)
 
 ;;2nd set of guides (It is possible!)
 
-(forcefield 67.0 24.6 0.2 14.0 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 66.6 25.0 -0.1 14.8 0.0 0.0 0.1 *ff-bounce*)
-(forcefield 67.0 25.4 0.2 14.0 0.0 0.0 0.1 *ff-bounce*)
-
-(forcefield 63.6 41.0 0.2 0.0 -17.0 0.0 0.1 *ff-bounce*)
-(forcefield 64.0 41.4 -0.1 0.0 -17.8 0.0 0.1 *ff-bounce*)
-(forcefield 64.4 41.0 0.2 0.0 -17.0 0.0 0.1 *ff-bounce*)
-
-(forcefield 63.6 68.0 0.2 0.0 -26.0 0.0 0.1 *ff-bounce*)
-(forcefield 64.0 68.4 -0.1 0.0 -26.8 0.0 0.1 *ff-bounce*)
-(forcefield 64.4 68.0 0.2 0.0 -26.0 0.0 0.1 *ff-bounce*)
+(ff-bridge-x 67.0 25.0 14.0)
+(ff-bridge-y 64.0 41.0 -16.5)
+(ff-bridge-y 64.0 68.0 -25.5)
 
 
 ;;PIPES GROUP 1 (from first raised area to second)
@@ -365,7 +376,6 @@
 (add-modpill 82 27 *mod-extra-life* 30 -1)
 
 
-
 ;;BEGIN LIFT SHUTE
 
 (define shute(pipe 84 24 7.5 84 23.1 15.4 0.5))
@@ -477,7 +487,7 @@
 (define pipef (pipe 81 33 2.5 81 31.2 2.5 0.5))
 (pipe-connector 81 31 2.5 0.5)
 (define pipeg (pipe 81 31 2.6 81 30 9.2 0.5))
-(set-wind pipeg 2.2 0.0)
+(set-wind pipeg 9.0 9.0)
 
 
 ;;Last set of guides (Cargo Hold).
