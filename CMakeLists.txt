@@ -115,7 +115,7 @@ endforeach()
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
         DESTINATION ${TRACKBALLS_ICON}/icons/hicolor/scalable/apps/)
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
-        DESTINATION ${TRACKBALLS_APPL}/applications)
+        DESTINATION ${TRACKBALLS_APPL})
 
 # Translations!
 option(DISABLE_NLS "Disable native language support (NLS)" OFF)
