@@ -16,12 +16,9 @@
 
 (add-modpill 236 250 *mod-spike* 25 40)
 
-(define mr-black (new-mr-black 223.5 239.5))
+(define mr-black (new-mr-black 224 240))
 (if (= (difficulty) *hard*) (set-modtime mr-black *mod-spike* -1.))
 (set-acceleration mr-black 2.0)
-
-
-(define speed 0.2)
 
 ;;; modpill-types:
 ;;; *mod-speed* - "Speedball": Makes the player go faster

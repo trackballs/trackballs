@@ -23,8 +23,8 @@
 (define ff0 (forcefield 236.5 245.5 0.0 0.0 1.0 0.0 0.8 *ff-bounce*))
 (set-wind (pipe 223 250 -2.5 219 250 0.0 0.5) 3.0 1.0)
 
-(diamond 217.5 250.5)
-(switch 211.5 245.5 
+(diamond 217.0 250.0)
+(switch 211.0 245.0 
     (lambda() (set-onoff ff0 #t)) 
     (lambda()(set-onoff ff0 #f)))
 

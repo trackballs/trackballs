@@ -10,15 +10,6 @@
 (day)
 
 
-;;Set ball velocity.
-
-(define speed 0.3)
-(cond
- ((= (difficulty) *easy*) (set! speed 0.20))
- ((= (difficulty) *normal*) (set! speed 0.30))
- ((= (difficulty) *hard*) (set! speed 0.40)))
-
-
 ;Warning sign.
 
 (set-primary-color (sign (_ "Stay on the path or else!") 2.0 -0.1 4.0 113.0 172.0 -3.5) 0.9 0.6 0.0 1.0)
@@ -27,8 +18,7 @@
 
 ;Pipe over drawbridge
 
-(define pipe1(pipe 144.0 171.5 -0.5 144.0 166.5 -0.5 1.5))
-(set-primary-color pipe1 0.9 0.6 0.0 1.0)
+(set-primary-color (pipe 144.0 171.5 -0.5 144.0 166.5 -0.5 1.5) 0.9 0.6 0.0 1.0)
 
 
 ;palace guards.
@@ -124,6 +114,7 @@
 
 (diamond 155.5 140.5)
 (diamond 158.5 184.5)
+
 
 
 ;fountains in garden.
@@ -244,30 +235,29 @@
 
 (define blinker (add-colormodifier 3 159 148 0.5 1.0 0.5 1.0))
 (trigger-once 158.5 147.5 0.5 (lambda ()
-(set-cell-heights 164 184 164 186 -0.5 -0.5 0.0 0.0)
-(set-cell-heights 165 184 165 186 0.0 0.0 0.5 0.5)
-(set-cell-heights 166 184 166 186 0.5 0.5 1.0 1.0)
-(set-primary-color (sign "You may cross the Garden." 0.8 1.0 -0.1 159 148) 0.9 0.6 0.0 1.0)
-(set-onoff blinker #f)
+  (set-cell-heights 164 184 164 186 -0.5 -0.5 0.0 0.0)
+  (set-cell-heights 165 184 165 186 0.0 0.0 0.5 0.5)
+  (set-cell-heights 166 184 166 186 0.5 0.5 1.0 1.0)
+  (set-primary-color (sign "You may cross the Garden." 0.8 1.0 -0.1 159 148) 0.9 0.6 0.0 1.0)
+  (set-onoff blinker #f)
 ))
 
 
 ;;pipe out of garden.
 
 (define pipe1(pipe 168 182.5 1.5 168 181.5 1.5 0.6))
-(set-primary-color pipe1 0.9 0.6 0.0 1.5)
+(set-primary-color pipe1 0.9 0.6 0.0 1.0)
 
 (set-primary-color (pipe-connector 168 181.5 1.5 0.6) 0.9 0.6 0.0 1.0)
 
-(define pipe2(pipe 168 181.5 1.4 168.0 180.5 -4.9 0.5))
+(define pipe2(pipe 168 181.5 1.2 168.0 180.5 -5.0 0.5))
 (set-primary-color pipe2 0.9 0.6 0.0 1.0)
-(set-wind pipe2 -12.0 -6.0)
+(set-wind pipe2 -30.0 -9.0)
 
 (set-primary-color (pipe-connector 168.0 180.5 -4.9 0.5) 0.9 0.6 0.0 1.0)
 
 (define pipe3(pipe 168.0 180.5 -4.9 168 173.5 -4.9 0.5))
 (set-primary-color pipe3 0.9 0.6 0.0 1.0)
-
 
 
 ;;End of level

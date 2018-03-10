@@ -6,7 +6,7 @@
 (set-author "Ulrik Enstad")
 (set-start-position 95.5 77.5)
 (start-time 1000)
-(scale-oxygen 0.3)
+(scale-oxygen 0.15)
 
 ;; the start
 (add-cactus 76 133 0.3)
@@ -14,9 +14,9 @@
 
 (pipe 76.1 133.0 -1.9 77.0 133.0 -1.9 0.4)
 (pipe-connector 77.0 133.0 -1.9 0.4)
-(pipe 77.0 133.0 -1.9 78.0 133.0 -1.6 0.4)
-(set-wind (pipe-connector 78.0 133.0 -1.6 0.4) 5.0 5.0)
-(set-wind (pipe 78.0 133.0 -1.6 78.1 133.0 2.8 0.4) 5.0 5.0)
+(set-wind (pipe 77.0 133.0 -1.9 78.0 133.0 -1.3 0.4) 2.0 2.0)
+(pipe-connector 78.0 133.0 -1.3 0.4)
+(set-wind (pipe 78.0 133.0 -1.3 78.1 133.0 2.6 0.4) 9.0 9.0)
 
 ;; forcefield blocked mansion gate
 (pipe 89.0 113.0 -1.9 89.0 114.0 -1.9 1.0)
@@ -62,7 +62,7 @@
 
 (add-cyclic-platform 51 89 51 89 -12.3 -8.0 1. .6)
 
-(pipe 75 87 -11.2 53 87 -11.2 0.4)
+(set-primary-color (pipe 75.25 87 -11.2 53.25 87 -11.2 0.45) 0.5 0.5 0.9 1.0)
 
 (define mr-blue
  (set-acceleration

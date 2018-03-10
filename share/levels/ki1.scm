@@ -18,11 +18,3 @@
 (add-flag 247 235 250 #t 0.5)
 (add-flag 228 237 100 #t 0.1)
 
-(define speed 0.2)
-;(cond
-; ((= (difficulty) *easy*) (set! speed 0.10))
-; ((= (difficulty) *normal*) (set! speed 0.20))
-; ((= (difficulty) *hard*) (set! speed 0.30))
-;)
-
-

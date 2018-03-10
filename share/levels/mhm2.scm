@@ -9,18 +9,6 @@
 
 (day)
 
-
-
-
-;;Set ball velocity.
-
-(define speed 0.3)
-(cond
- ((= (difficulty) *easy*) (set! speed 0.20))
- ((= (difficulty) *normal*) (set! speed 0.30))
- ((= (difficulty) *hard*) (set! speed 0.40)))
-
-
 ;;pipe rails...
 
 (pipe-connector 238 249 3.3 0.1)
@@ -72,26 +60,12 @@
 
 ;;Pipes to get back to top of level.
 
-
-;(multi-pipe
-;'((219.5 226.0 -2.2)(219.5 225.0 -2.2)
-;  (219.5 224.0 -7.2)(219.5 222.0 -7.2)) 0.5 #t)
-
-(define pipe1(pipe 219 225.5 -2.2 219. 224.5 -2.2 0.5))
-(set-primary-color pipe1 0.0 0.0 0.0 1.0)
-;(set-wind pipe1 0.0 0.0)
-
-(set-primary-color (pipe-connector 219. 224.5 -2.2 0.5) 0.0 0.0 0.0 1.0)
-
-(define pipe2(pipe 219. 224.5 -2.2 219. 223.5 -7.2 0.5))
-(set-primary-color pipe2 0.0 0.0 0.0 1.0)
-(set-wind pipe2 -12.0 -6.0)
-
-(set-primary-color (pipe-connector 219. 223.5 -7.2 0.5) 0.0 0.0 0.0 1.0)
-
-(define pipe3(pipe 219. 223.5 -7.2 219.0 221.5 -7.2 0.5))
-(set-primary-color pipe3 0.0 0.0 0.0 1.0)
-(set-wind pipe3 -12.0 -6.0)
+(map (lambda (p)
+       (set-primary-color p 0.01 0.01 0.01 1.0)
+       (set-wind p 9.0 30.0))
+  (multi-pipe
+    '((219 222.0 -7.2) (219 223.0 -7.2) (219 224.5 -3.0)
+      (219 225.5 -2.2) (219 226.5 -2.2)) 0.5 #t))
 
 
 ;forcefield & switch.

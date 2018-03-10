@@ -28,5 +28,3 @@
 (add-flag 218 236 500 #t 0.1)
 (add-flag 218 248 500 #t 0.1)
 
-(define speed 0.2)
-

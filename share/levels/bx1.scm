@@ -14,7 +14,7 @@
 (set-primary-color pipe1 0.1 0.1 0.1 1.0)
 (pipe-connector 114 127 1.5 0.6)
 (define pipe2 (pipe 114 127 1.5 113 127 8.6 0.5))
-(set-wind pipe2 2.8 0.0)
+(set-wind pipe2 7.8 0.0)
 (set-primary-color pipe2 0.1 0.1 0.1 1.0)
 
 (add-flag 108 131 350 #t 0.1)
@@ -36,7 +36,7 @@
 (define pipe3 (pipe 123.2 127 6.4 125 127 7.0 0.5))
 (set-wind pipe3 2.0 0.0)
 (set-primary-color pipe3 0.1 0.1 0.1 0.9)
-(pipe-connector 125 127 7.0 0.6)
+(pipe-connector 125 127 7.0 0.5)
 (define pipe4 (pipe 125 127 7.0 125 123.2 8.4 0.5))
 (set-wind pipe4 2.0 0.0)
 (set-primary-color pipe4 0.1 0.1 0.1 0.9)

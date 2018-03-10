@@ -492,9 +492,7 @@
 
 ;;Last set of guides (Cargo Hold).
 
-(forcefield 33.6 51.0 0.2 0.0 8.0 0.0 0.1 *ff-nothing*)
-(forcefield 34.0 50.6 -0.1 0.0 8.8 0.0 0.1 *ff-bounce*)
-(forcefield 34.4 51.0 0.2 0.0 8.0 0.0 0.1 *ff-bounce*)
+(ff-bridge-y 34.0 51.0 8.0)
 
 ;;Final door and switch.
 
