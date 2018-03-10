@@ -706,8 +706,6 @@ void Ball::setReflectivity(double reflectivity, int metallic) {
 }
 
 bool Ball::physics(Real time) {
-  Real x, y;
-
   if (!Game::current) return true;
   Map *map = Game::current->map;
 

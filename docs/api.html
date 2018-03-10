@@ -603,6 +603,14 @@ Turns on/off the given flag in all cells in the region x0/y0 to x1/y1. Flag must
 </div>
 
 <div class="fn">
+<div class="fn-proto">(get-cell-flag x y flag)</div>
+<div class="fn-text">
+Returns #t if the cell at x,y has the flag enabled, otherwise #f. Flag must here be one of the '*cell-' flags.
+<p/>
+</div>
+</div>
+
+<div class="fn">
 <div class="fn-proto">(set-cell-velocity x0 y0 x1 y1 vx vy)</div>
 <div class="fn-text">
 Modifies the velociy of the given cells. This is used primarily by cells which have the "track" property set.

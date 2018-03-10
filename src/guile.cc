@@ -1311,6 +1311,22 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
 }
 #undef FUNC_NAME
 
+/************** get-cell-flag ************/
+SCM_DEFINE(get_cell_flag, "get-cell-flag", 3, 0, 0, (SCM x, SCM y, SCM flag),
+           "Checks if a cell flag is active")
+#define FUNC_NAME s_get_cell_flag
+{
+  SCM_ASSERT(scm_is_integer(x), x, SCM_ARG1, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(y), y, SCM_ARG2, FUNC_NAME);
+  SCM_ASSERT(scm_is_integer(flag), flag, SCM_ARG5, FUNC_NAME);
+  Cell &c = Game::current->map->cell(scm_to_int(x), scm_to_int(y));
+  if (c.flags & scm_to_int(flag))
+    return SCM_BOOL_T;
+  else
+    return SCM_BOOL_F;
+}
+#undef FUNC_NAME
+
 /************** set-cell-velocity ************/
 SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
            (SCM x0, SCM y0, SCM x1, SCM y1, SCM vx, SCM vy), "Modifies the velocity of a cell")
