@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: v1.1.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 17:54-0500\n"
+"POT-Creation-Date: 2018-03-10 17:16-0500\n"
 "PO-Revision-Date: 2017-06-25 20:17-0400\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -67,383 +67,383 @@ msgid "Save point"
 msgstr "%d poang"
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "File"
 msgstr "Filer"
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Edit"
 msgstr "Editera"
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Color"
 msgstr "Färg"
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Flags"
 msgstr "Flaggor"
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Feature"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Repair"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Move"
 msgstr "Flytta"
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Window"
 msgstr "Fönster"
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "View"
 msgstr "Visa"
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "New"
 msgstr "Ny"
 
-#: ../src/editMode.cc:176 ../src/editWindows.cc:480
+#: ../src/editMode.cc:178 ../src/editWindows.cc:482
 msgid "Open"
 msgstr "Öppna"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Close"
 msgstr "Stäng"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Save"
 msgstr "Spara"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Exit"
 msgstr "Avsluta"
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Test level"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit height"
 msgstr "Editera höjd"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit color"
 msgstr "Editera färg"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit water"
 msgstr "Editera vatten"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit velocity"
 msgstr "Editera hastighet"
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit lines"
 msgstr "Editera linjer"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "*<SPACE> Whole cell"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Upper corner"
 msgstr "Övre hörnet"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Bottom corner"
 msgstr "Nedre hörnet"
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Right corner"
 msgstr "Högra hörnet"
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Left corner"
 msgstr "Vänstra hörnet"
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Center"
 msgstr "Center"
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Raise increment"
 msgstr "Höj inkrement"
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Lower increment"
 msgstr "Sänk increment"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:182
 msgid "*<SHIFT> reversed"
 msgstr "<SHIFT> motsatt riktning"
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:182
 msgid "*<CTRL> walls"
 msgstr "<CTRL> väggar"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. red"
 msgstr "Oka röd"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. green"
 msgstr "Oka grön"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. blue"
 msgstr "Oka blå"
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. alpha"
 msgstr "Oka alpha"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198
+#: ../src/editMode.cc:184 ../src/editMode.cc:200
 msgid "Ice"
 msgstr "Is"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198 ../share/levels/lv2.scm:4
+#: ../src/editMode.cc:184 ../src/editMode.cc:200 ../share/levels/lv2.scm:4
 msgid "Acid"
 msgstr "Syra"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198
+#: ../src/editMode.cc:184 ../src/editMode.cc:200
 msgid "Sand"
 msgstr "Sand"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:199
+#: ../src/editMode.cc:184 ../src/editMode.cc:201
 msgid "Kill"
 msgstr "Döda"
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:184
 msgid "Bounce"
 msgstr "Studsa"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:199
+#: ../src/editMode.cc:184 ../src/editMode.cc:201
 msgid "No grid"
 msgstr "Inget rutnät"
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:200
+#: ../src/editMode.cc:184 ../src/editMode.cc:202
 msgid "Track"
 msgstr "Spår"
 
-#: ../src/editMode.cc:183 ../src/editMode.cc:200
+#: ../src/editMode.cc:185 ../src/editMode.cc:202
 msgid "Shade flat"
 msgstr ""
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:185
 msgid "Texture"
 msgstr "Textur"
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:185
 msgid "ch. texture"
 msgstr "Andra textur"
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Spike"
 msgstr "Taggar"
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Small hill"
 msgstr "Liten kulle"
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Medium hill"
 msgstr "Medium kulle"
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:204
+#: ../src/editMode.cc:186 ../src/editMode.cc:206
 msgid "Large hill"
 msgstr "Stor kulle"
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:204
+#: ../src/editMode.cc:186 ../src/editMode.cc:206
 msgid "Huge hill"
 msgstr "Enorm kulle"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:187
 msgid "Smooth small"
 msgstr "Liten rundning"
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:187
 msgid "Smooth large"
 msgstr "Stor rundning"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Cell cont."
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Water cont."
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 #, fuzzy
 msgid "Color cont."
 msgstr "Färg"
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 #, fuzzy
 msgid "Cell center"
 msgstr "Center"
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Water center"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 #, fuzzy
 msgid "Color center"
 msgstr "Center"
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Cell round"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Water round"
 msgstr ""
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:190
 #, fuzzy
 msgid "Color round"
 msgstr "Färg"
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:190
 msgid "Vel. round"
 msgstr ""
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/UP Move up"
 msgstr "/UPP Flytta upp"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/DOWN Move down"
 msgstr "/NER Flytta ner"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/LEFT Move left"
 msgstr "/VÄNSTER Flytta vänster"
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/RIGHT Move right"
 msgstr "/HÖGER Flytta höger"
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map up"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map down"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map left"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map right"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "*<SHIFT> x5"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Set region marker"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Clear marker"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Copy region"
 msgstr ""
 
-#: ../src/editMode.cc:192
+#: ../src/editMode.cc:194
 msgid "Paste region"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Editor"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Toolbar"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Status"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Birds's eye"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Rotate view"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Load entities"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Clear entities"
 msgstr ""
 
-#: ../src/editMode.cc:199
+#: ../src/editMode.cc:201
 msgid "Trampoline"
 msgstr ""
 
-#: ../src/editMode.cc:204
+#: ../src/editMode.cc:206
 msgid "Small smooth"
 msgstr ""
 
-#: ../src/editMode.cc:205
+#: ../src/editMode.cc:207
 msgid "Large smooth"
 msgstr ""
 
-#: ../src/editMode.cc:341 ../src/mainMode.cc:178
+#: ../src/editMode.cc:343 ../src/mainMode.cc:175
 msgid "Track:"
 msgstr "Bana:"
 
-#: ../src/editMode.cc:342
+#: ../src/editMode.cc:344
 msgid "This is the default script file for this track."
 msgstr ""
 
-#: ../src/editMode.cc:344
+#: ../src/editMode.cc:346
 msgid "Read the documentation for the editor and look at the examples"
 msgstr ""
 
-#: ../src/editMode.cc:345
+#: ../src/editMode.cc:347
 msgid "to learn how to customize it"
 msgstr ""
 
-#: ../src/editMode.cc:348
+#: ../src/editMode.cc:350
 msgid "Enter your name here"
 msgstr ""
 
-#: ../src/editMode.cc:352
+#: ../src/editMode.cc:354
 #, fuzzy
 msgid "Add the name of the next level here"
 msgstr "Tar dig till nästa bana."
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Textures"
 msgstr ""
 
@@ -543,53 +543,53 @@ msgstr ""
 msgid "Lines"
 msgstr ""
 
-#: ../src/editWindows.cc:302
+#: ../src/editWindows.cc:304
 #, fuzzy
 msgid "spike"
 msgstr "Taggar"
 
-#: ../src/editWindows.cc:305
+#: ../src/editWindows.cc:307
 #, fuzzy
 msgid "small hill"
 msgstr "Liten kulle"
 
-#: ../src/editWindows.cc:308
+#: ../src/editWindows.cc:310
 #, fuzzy
 msgid "medium hill"
 msgstr "Medium kulle"
 
-#: ../src/editWindows.cc:311
+#: ../src/editWindows.cc:313
 #, fuzzy
 msgid "large hill"
 msgstr "Stor kulle"
 
-#: ../src/editWindows.cc:314
+#: ../src/editWindows.cc:316
 #, fuzzy
 msgid "huge hill"
 msgstr "Enorm kulle"
 
-#: ../src/editWindows.cc:317
+#: ../src/editWindows.cc:319
 msgid "small smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:320
+#: ../src/editWindows.cc:322
 msgid "large smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:360
+#: ../src/editWindows.cc:362
 msgid "Quit without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:361 ../src/editWindows.cc:400
-#: ../src/editWindows.cc:447 ../src/settingsMode.cc:131
+#: ../src/editWindows.cc:363 ../src/editWindows.cc:402
+#: ../src/editWindows.cc:449 ../src/settingsMode.cc:131
 #: ../src/settingsMode.cc:134 ../src/settingsMode.cc:178
 #: ../src/settingsMode.cc:180 ../src/settingsMode.cc:194
 #: ../src/settingsMode.cc:243
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/editWindows.cc:362 ../src/editWindows.cc:401
-#: ../src/editWindows.cc:448 ../src/settingsMode.cc:131
+#: ../src/editWindows.cc:364 ../src/editWindows.cc:403
+#: ../src/editWindows.cc:450 ../src/settingsMode.cc:131
 #: ../src/settingsMode.cc:134 ../src/settingsMode.cc:139
 #: ../src/settingsMode.cc:178 ../src/settingsMode.cc:180
 #: ../src/settingsMode.cc:194 ../src/settingsMode.cc:243
@@ -597,24 +597,24 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nej"
 
-#: ../src/editWindows.cc:399
+#: ../src/editWindows.cc:401
 #, fuzzy
 msgid "Save map?"
 msgstr "Spara"
 
-#: ../src/editWindows.cc:403
+#: ../src/editWindows.cc:405
 msgid "Saving"
 msgstr ""
 
-#: ../src/editWindows.cc:446
+#: ../src/editWindows.cc:448
 msgid "Close without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:477
+#: ../src/editWindows.cc:479
 msgid "Name of map"
 msgstr ""
 
-#: ../src/editWindows.cc:479 ../src/editWindows.cc:536
+#: ../src/editWindows.cc:481 ../src/editWindows.cc:536
 msgid "Cancel"
 msgstr ""
 
@@ -646,17 +646,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1267
+#: ../src/glHelp.cc:1258
 #, c-format
 msgid "Framerate: %.1f"
 msgstr "Framerate: %.1f"
 
-#: ../src/glHelp.cc:1269
+#: ../src/glHelp.cc:1260
 #, c-format
 msgid "Framerate unknown"
 msgstr "Okänd framerate"
 
-#: ../src/glHelp.cc:1271
+#: ../src/glHelp.cc:1262
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -868,115 +868,115 @@ msgstr ""
 msgid "%d points"
 msgstr "%d poang"
 
-#: ../src/mainMode.cc:182 ../src/setupMode.cc:227
+#: ../src/mainMode.cc:179 ../src/setupMode.cc:227
 msgid "Unknown track"
 msgstr ""
 
-#: ../src/mainMode.cc:184
+#: ../src/mainMode.cc:181
 msgid "Author:"
 msgstr "Författare:"
 
-#: ../src/mainMode.cc:188
+#: ../src/mainMode.cc:185
 msgid "Unknown author"
 msgstr ""
 
-#: ../src/mainMode.cc:190
+#: ../src/mainMode.cc:187
 msgid "Press spacebar to begin"
 msgstr "Tryck mellanslag for att borja"
 
-#: ../src/mainMode.cc:202 ../src/mainMode.cc:211 ../src/mainMode.cc:237
-#: ../src/mainMode.cc:251
+#: ../src/mainMode.cc:199 ../src/mainMode.cc:208 ../src/mainMode.cc:234
+#: ../src/mainMode.cc:248
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Tryck mellanslag for att fortsatta"
 
-#: ../src/mainMode.cc:203
+#: ../src/mainMode.cc:200
 msgid "Game over"
 msgstr "Spelet slut"
 
-#: ../src/mainMode.cc:211
+#: ../src/mainMode.cc:208
 msgid "Oops"
 msgstr "Hopsan!"
 
-#: ../src/mainMode.cc:228
+#: ../src/mainMode.cc:225
 msgid "Paused"
 msgstr "Pausat"
 
-#: ../src/mainMode.cc:237
+#: ../src/mainMode.cc:234
 msgid "Bonus level complete"
 msgstr "Bonus level fardig"
 
 # Level fardig
-#: ../src/mainMode.cc:251
+#: ../src/mainMode.cc:248
 msgid "Level complete"
 msgstr "Banan avklarad"
 
-#: ../src/mainMode.cc:258
+#: ../src/mainMode.cc:255
 msgid "Congratulations"
 msgstr ""
 
-#: ../src/mainMode.cc:258
+#: ../src/mainMode.cc:255
 msgid "You have completed the game!"
 msgstr ""
 
-#: ../src/mainMode.cc:550 ../src/mainMode.cc:566
+#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
 msgid "Good luck!"
 msgstr "Lycka till!"
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 #, fuzzy
 msgid "Lives"
 msgstr "Liv kvar"
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 #, fuzzy
 msgid "Time left"
 msgstr "Tid kvar:"
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:656
 #, c-format
 msgid "Level bonuses"
 msgstr "Level bonusar"
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:658
 #, c-format
 msgid "Lives left:"
 msgstr "Liv kvar"
 
-#: ../src/mainMode.cc:664
+#: ../src/mainMode.cc:659
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d poang"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:660
 #, c-format
 msgid "Time left:"
 msgstr "Tid kvar:"
 
-#: ../src/mainMode.cc:666
+#: ../src/mainMode.cc:661
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuter = %d poang"
 
-#: ../src/mainMode.cc:668
+#: ../src/mainMode.cc:663
 #, c-format
 msgid "Difficulty:"
 msgstr "Svarighetsgrad"
 
-#: ../src/mainMode.cc:670
+#: ../src/mainMode.cc:665
 msgid "easy"
 msgstr "lätt"
 
-#: ../src/mainMode.cc:670 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:665 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr "normalt"
 
-#: ../src/mainMode.cc:670
+#: ../src/mainMode.cc:665
 msgid "hard"
 msgstr "svårt"
 
@@ -1117,66 +1117,66 @@ msgstr ""
 msgid "Kill the ball"
 msgstr ""
 
-#: ../src/mmad.cc:350
+#: ../src/mmad.cc:342
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Okand skärmupplösning av bredd %d"
 
-#: ../src/mmad.cc:383
+#: ../src/mmad.cc:375
 msgid "Welcome to Trackballs."
 msgstr "Välkommen till Trackballs."
 
-#: ../src/mmad.cc:385
+#: ../src/mmad.cc:377
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "Anvander direktory %s för speldata."
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Speed ball"
 msgstr ""
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 #, fuzzy
 msgid "Extra jump"
 msgstr "Extra"
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 #, fuzzy
 msgid "Spikes"
 msgstr "Taggar"
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Glass ball"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Dizzy!"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Freeze!"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Floating"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 #, fuzzy
 msgid "Extra life"
 msgstr "Extra"
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 #, fuzzy
 msgid "Small ball"
 msgstr "Liten kulle"
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 #, fuzzy
 msgid "Large ball"
 msgstr "Stor kulle"
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 msgid "Nitro"
 msgstr ""
 
@@ -1423,7 +1423,7 @@ msgstr ""
 msgid "Levels completed: %d"
 msgstr "Banan avklarad"
 
-#: ../src/setupMode.cc:268
+#: ../src/setupMode.cc:269
 msgid "Start Game"
 msgstr ""
 
@@ -1525,6 +1525,18 @@ msgstr ""
 
 #: ../share/levels/dn.set:5
 msgid "All made by Francek."
+msgstr ""
+
+#: ../share/levels/ds.set:1
+msgid "Don't stop"
+msgstr ""
+
+#: ../share/levels/ds.set:3 ../share/levels/ds1.scm:3
+msgid "Principia"
+msgstr ""
+
+#: ../share/levels/ds.set:4
+msgid "Or stay still and see what happens!"
 msgstr ""
 
 #: ../share/levels/elite.set:1
@@ -1731,15 +1743,15 @@ msgstr ""
 msgid "Four Doors"
 msgstr ""
 
-#: ../share/levels/bx2.scm:293
+#: ../share/levels/bx2.scm:304
 msgid "4 hidden switches open exit doors."
 msgstr ""
 
-#: ../share/levels/bx2.scm:295
+#: ../share/levels/bx2.scm:306
 msgid "A switch is nearby."
 msgstr ""
 
-#: ../share/levels/bx2.scm:297
+#: ../share/levels/bx2.scm:308
 msgid "Peace."
 msgstr ""
 
@@ -1747,35 +1759,35 @@ msgstr ""
 msgid "Azteca"
 msgstr ""
 
-#: ../share/levels/bx3.scm:107
+#: ../share/levels/bx3.scm:111
 msgid "You have access to the complex."
 msgstr ""
 
-#: ../share/levels/bx3.scm:125
+#: ../share/levels/bx3.scm:129
 msgid "The way is opened across the sand."
 msgstr ""
 
-#: ../share/levels/bx3.scm:135
+#: ../share/levels/bx3.scm:139
 msgid "You must enter the Arena."
 msgstr ""
 
-#: ../share/levels/bx3.scm:195 ../share/levels/bx3.scm:202
+#: ../share/levels/bx3.scm:199 ../share/levels/bx3.scm:206
 msgid "A wall has been lowered."
 msgstr ""
 
-#: ../share/levels/bx3.scm:209
+#: ../share/levels/bx3.scm:213
 msgid "A roof has been raised."
 msgstr ""
 
-#: ../share/levels/bx3.scm:225
+#: ../share/levels/bx3.scm:229
 msgid "Stairs are in place."
 msgstr ""
 
-#: ../share/levels/bx3.scm:235
+#: ../share/levels/bx3.scm:239
 msgid "You may enter upper complex."
 msgstr ""
 
-#: ../share/levels/bx3.scm:249
+#: ../share/levels/bx3.scm:252
 msgid "The exit is now open."
 msgstr ""
 
@@ -1889,6 +1901,15 @@ msgstr ""
 #, fuzzy
 msgid "Switch twice"
 msgstr "Spak:"
+
+#: ../share/levels/ds2.scm:3
+msgid "Orbit"
+msgstr ""
+
+#: ../share/levels/ds3.scm:3
+#, fuzzy
+msgid "Tunnel"
+msgstr "Tunnel:"
 
 #: ../share/levels/elite1.scm:3
 msgid "Castle of Darius the Mede"
@@ -2034,7 +2055,7 @@ msgstr ""
 msgid "The Castle"
 msgstr ""
 
-#: ../share/levels/mhm3.scm:24
+#: ../share/levels/mhm3.scm:15
 msgid "Stay on the path or else!"
 msgstr ""
 

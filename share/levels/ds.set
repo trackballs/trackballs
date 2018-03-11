@@ -1,0 +1,4 @@
+(name (_ "Don't stop"))
+(first-level-file "ds1")
+(first-level-name (_ "Principia"))
+(desc1 (_ "Or stay still and see what happens!"))

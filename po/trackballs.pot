@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-12-26 17:54-0500\n"
+"POT-Creation-Date: 2018-03-10 18:53-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,378 +64,378 @@ msgid "Save point"
 msgstr ""
 
 #. TRANSLATORS: This is a list of all the menus in the map editor.
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "File"
 msgstr ""
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Edit"
 msgstr ""
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Color"
 msgstr ""
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Flags"
 msgstr ""
 
-#: ../src/editMode.cc:167
+#: ../src/editMode.cc:169
 msgid "Feature"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Repair"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Move"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "Window"
 msgstr ""
 
-#: ../src/editMode.cc:168
+#: ../src/editMode.cc:170
 msgid "View"
 msgstr ""
 
 #. TRANSLATORS: This is a list of all the submenus in the map
 #. editor, if the initial character is * or / then that character
 #. must be perserved as it is.
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "New"
 msgstr ""
 
-#: ../src/editMode.cc:176 ../src/editWindows.cc:480
+#: ../src/editMode.cc:178 ../src/editWindows.cc:482
 msgid "Open"
 msgstr ""
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Close"
 msgstr ""
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Save"
 msgstr ""
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Exit"
 msgstr ""
 
-#: ../src/editMode.cc:176
+#: ../src/editMode.cc:178
 msgid "Test level"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit height"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit color"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit water"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit velocity"
 msgstr ""
 
-#: ../src/editMode.cc:177
+#: ../src/editMode.cc:179
 msgid "Edit lines"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "*<SPACE> Whole cell"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Upper corner"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Bottom corner"
 msgstr ""
 
-#: ../src/editMode.cc:178
+#: ../src/editMode.cc:180
 msgid "Right corner"
 msgstr ""
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Left corner"
 msgstr ""
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Center"
 msgstr ""
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Raise increment"
 msgstr ""
 
-#: ../src/editMode.cc:179
+#: ../src/editMode.cc:181
 msgid "Lower increment"
 msgstr ""
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:182
 msgid "*<SHIFT> reversed"
 msgstr ""
 
-#: ../src/editMode.cc:180
+#: ../src/editMode.cc:182
 msgid "*<CTRL> walls"
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. red"
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. green"
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. blue"
 msgstr ""
 
-#: ../src/editMode.cc:181
+#: ../src/editMode.cc:183
 msgid "Inc. alpha"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198
+#: ../src/editMode.cc:184 ../src/editMode.cc:200
 msgid "Ice"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198 ../share/levels/lv2.scm:4
+#: ../src/editMode.cc:184 ../src/editMode.cc:200 ../share/levels/lv2.scm:4
 msgid "Acid"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:198
+#: ../src/editMode.cc:184 ../src/editMode.cc:200
 msgid "Sand"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:199
+#: ../src/editMode.cc:184 ../src/editMode.cc:201
 msgid "Kill"
 msgstr ""
 
-#: ../src/editMode.cc:182
+#: ../src/editMode.cc:184
 msgid "Bounce"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:199
+#: ../src/editMode.cc:184 ../src/editMode.cc:201
 msgid "No grid"
 msgstr ""
 
-#: ../src/editMode.cc:182 ../src/editMode.cc:200
+#: ../src/editMode.cc:184 ../src/editMode.cc:202
 msgid "Track"
 msgstr ""
 
-#: ../src/editMode.cc:183 ../src/editMode.cc:200
+#: ../src/editMode.cc:185 ../src/editMode.cc:202
 msgid "Shade flat"
 msgstr ""
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:185
 msgid "Texture"
 msgstr ""
 
-#: ../src/editMode.cc:183
+#: ../src/editMode.cc:185
 msgid "ch. texture"
 msgstr ""
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Spike"
 msgstr ""
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Small hill"
 msgstr ""
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:203
+#: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Medium hill"
 msgstr ""
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:204
+#: ../src/editMode.cc:186 ../src/editMode.cc:206
 msgid "Large hill"
 msgstr ""
 
-#: ../src/editMode.cc:184 ../src/editMode.cc:204
+#: ../src/editMode.cc:186 ../src/editMode.cc:206
 msgid "Huge hill"
 msgstr ""
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:187
 msgid "Smooth small"
 msgstr ""
 
-#: ../src/editMode.cc:185
+#: ../src/editMode.cc:187
 msgid "Smooth large"
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Cell cont."
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Water cont."
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Color cont."
 msgstr ""
 
-#: ../src/editMode.cc:186
+#: ../src/editMode.cc:188
 msgid "Cell center"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Water center"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Color center"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Cell round"
 msgstr ""
 
-#: ../src/editMode.cc:187
+#: ../src/editMode.cc:189
 msgid "Water round"
 msgstr ""
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:190
 msgid "Color round"
 msgstr ""
 
-#: ../src/editMode.cc:188
+#: ../src/editMode.cc:190
 msgid "Vel. round"
 msgstr ""
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/UP Move up"
 msgstr ""
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/DOWN Move down"
 msgstr ""
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/LEFT Move left"
 msgstr ""
 
-#: ../src/editMode.cc:189
+#: ../src/editMode.cc:191
 msgid "/RIGHT Move right"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map up"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map down"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map left"
 msgstr ""
 
-#: ../src/editMode.cc:190
+#: ../src/editMode.cc:192
 msgid "Shift map right"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "*<SHIFT> x5"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Set region marker"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Clear marker"
 msgstr ""
 
-#: ../src/editMode.cc:191
+#: ../src/editMode.cc:193
 msgid "Copy region"
 msgstr ""
 
-#: ../src/editMode.cc:192
+#: ../src/editMode.cc:194
 msgid "Paste region"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Editor"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Toolbar"
 msgstr ""
 
-#: ../src/editMode.cc:193
+#: ../src/editMode.cc:195
 msgid "Status"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Birds's eye"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Rotate view"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Load entities"
 msgstr ""
 
-#: ../src/editMode.cc:194
+#: ../src/editMode.cc:196
 msgid "Clear entities"
 msgstr ""
 
-#: ../src/editMode.cc:199
+#: ../src/editMode.cc:201
 msgid "Trampoline"
 msgstr ""
 
-#: ../src/editMode.cc:204
+#: ../src/editMode.cc:206
 msgid "Small smooth"
 msgstr ""
 
-#: ../src/editMode.cc:205
+#: ../src/editMode.cc:207
 msgid "Large smooth"
 msgstr ""
 
-#: ../src/editMode.cc:341 ../src/mainMode.cc:178
+#: ../src/editMode.cc:343 ../src/mainMode.cc:175
 msgid "Track:"
 msgstr ""
 
-#: ../src/editMode.cc:342
+#: ../src/editMode.cc:344
 msgid "This is the default script file for this track."
 msgstr ""
 
-#: ../src/editMode.cc:344
+#: ../src/editMode.cc:346
 msgid "Read the documentation for the editor and look at the examples"
 msgstr ""
 
-#: ../src/editMode.cc:345
+#: ../src/editMode.cc:347
 msgid "to learn how to customize it"
 msgstr ""
 
-#: ../src/editMode.cc:348
+#: ../src/editMode.cc:350
 msgid "Enter your name here"
 msgstr ""
 
-#: ../src/editMode.cc:352
+#: ../src/editMode.cc:354
 msgid "Add the name of the next level here"
 msgstr ""
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:499
+#: ../src/editMode.cc:498
 msgid "Textures"
 msgstr ""
 
@@ -528,48 +528,48 @@ msgstr ""
 msgid "Lines"
 msgstr ""
 
-#: ../src/editWindows.cc:302
+#: ../src/editWindows.cc:304
 msgid "spike"
 msgstr ""
 
-#: ../src/editWindows.cc:305
+#: ../src/editWindows.cc:307
 msgid "small hill"
 msgstr ""
 
-#: ../src/editWindows.cc:308
+#: ../src/editWindows.cc:310
 msgid "medium hill"
 msgstr ""
 
-#: ../src/editWindows.cc:311
+#: ../src/editWindows.cc:313
 msgid "large hill"
 msgstr ""
 
-#: ../src/editWindows.cc:314
+#: ../src/editWindows.cc:316
 msgid "huge hill"
 msgstr ""
 
-#: ../src/editWindows.cc:317
+#: ../src/editWindows.cc:319
 msgid "small smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:320
+#: ../src/editWindows.cc:322
 msgid "large smooth"
 msgstr ""
 
-#: ../src/editWindows.cc:360
+#: ../src/editWindows.cc:362
 msgid "Quit without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:361 ../src/editWindows.cc:400
-#: ../src/editWindows.cc:447 ../src/settingsMode.cc:131
+#: ../src/editWindows.cc:363 ../src/editWindows.cc:402
+#: ../src/editWindows.cc:449 ../src/settingsMode.cc:131
 #: ../src/settingsMode.cc:134 ../src/settingsMode.cc:178
 #: ../src/settingsMode.cc:180 ../src/settingsMode.cc:194
 #: ../src/settingsMode.cc:243
 msgid "Yes"
 msgstr ""
 
-#: ../src/editWindows.cc:362 ../src/editWindows.cc:401
-#: ../src/editWindows.cc:448 ../src/settingsMode.cc:131
+#: ../src/editWindows.cc:364 ../src/editWindows.cc:403
+#: ../src/editWindows.cc:450 ../src/settingsMode.cc:131
 #: ../src/settingsMode.cc:134 ../src/settingsMode.cc:139
 #: ../src/settingsMode.cc:178 ../src/settingsMode.cc:180
 #: ../src/settingsMode.cc:194 ../src/settingsMode.cc:243
@@ -577,23 +577,23 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: ../src/editWindows.cc:399
+#: ../src/editWindows.cc:401
 msgid "Save map?"
 msgstr ""
 
-#: ../src/editWindows.cc:403
+#: ../src/editWindows.cc:405
 msgid "Saving"
 msgstr ""
 
-#: ../src/editWindows.cc:446
+#: ../src/editWindows.cc:448
 msgid "Close without saving?"
 msgstr ""
 
-#: ../src/editWindows.cc:477
+#: ../src/editWindows.cc:479
 msgid "Name of map"
 msgstr ""
 
-#: ../src/editWindows.cc:479 ../src/editWindows.cc:536
+#: ../src/editWindows.cc:481 ../src/editWindows.cc:536
 msgid "Cancel"
 msgstr ""
 
@@ -624,17 +624,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1267
+#: ../src/glHelp.cc:1258
 #, c-format
 msgid "Framerate: %.1f"
 msgstr ""
 
-#: ../src/glHelp.cc:1269
+#: ../src/glHelp.cc:1260
 #, c-format
 msgid "Framerate unknown"
 msgstr ""
 
-#: ../src/glHelp.cc:1271
+#: ../src/glHelp.cc:1262
 #, c-format
 msgid "%.1f ms/Frame"
 msgstr ""
@@ -840,112 +840,112 @@ msgstr ""
 msgid "%d points"
 msgstr ""
 
-#: ../src/mainMode.cc:182 ../src/setupMode.cc:227
+#: ../src/mainMode.cc:179 ../src/setupMode.cc:227
 msgid "Unknown track"
 msgstr ""
 
-#: ../src/mainMode.cc:184
+#: ../src/mainMode.cc:181
 msgid "Author:"
 msgstr ""
 
-#: ../src/mainMode.cc:188
+#: ../src/mainMode.cc:185
 msgid "Unknown author"
 msgstr ""
 
-#: ../src/mainMode.cc:190
+#: ../src/mainMode.cc:187
 msgid "Press spacebar to begin"
 msgstr ""
 
-#: ../src/mainMode.cc:202 ../src/mainMode.cc:211 ../src/mainMode.cc:237
-#: ../src/mainMode.cc:251
+#: ../src/mainMode.cc:199 ../src/mainMode.cc:208 ../src/mainMode.cc:234
+#: ../src/mainMode.cc:248
 #, c-format
 msgid "Press spacebar to continue"
 msgstr ""
 
-#: ../src/mainMode.cc:203
+#: ../src/mainMode.cc:200
 msgid "Game over"
 msgstr ""
 
-#: ../src/mainMode.cc:211
+#: ../src/mainMode.cc:208
 msgid "Oops"
 msgstr ""
 
-#: ../src/mainMode.cc:228
+#: ../src/mainMode.cc:225
 msgid "Paused"
 msgstr ""
 
-#: ../src/mainMode.cc:237
+#: ../src/mainMode.cc:234
 msgid "Bonus level complete"
 msgstr ""
 
-#: ../src/mainMode.cc:251
+#: ../src/mainMode.cc:248
 msgid "Level complete"
 msgstr ""
 
-#: ../src/mainMode.cc:258
+#: ../src/mainMode.cc:255
 msgid "Congratulations"
 msgstr ""
 
-#: ../src/mainMode.cc:258
+#: ../src/mainMode.cc:255
 msgid "You have completed the game!"
 msgstr ""
 
-#: ../src/mainMode.cc:550 ../src/mainMode.cc:566
+#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
 msgid "Good luck!"
 msgstr ""
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 msgid "Lives"
 msgstr ""
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:589
+#: ../src/mainMode.cc:584
 msgid "Time left"
 msgstr ""
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:656
 #, c-format
 msgid "Level bonuses"
 msgstr ""
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:658
 #, c-format
 msgid "Lives left:"
 msgstr ""
 
-#: ../src/mainMode.cc:664
+#: ../src/mainMode.cc:659
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr ""
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:660
 #, c-format
 msgid "Time left:"
 msgstr ""
 
-#: ../src/mainMode.cc:666
+#: ../src/mainMode.cc:661
 #, c-format
 msgid "%d minutes = %d points"
 msgstr ""
 
-#: ../src/mainMode.cc:668
+#: ../src/mainMode.cc:663
 #, c-format
 msgid "Difficulty:"
 msgstr ""
 
-#: ../src/mainMode.cc:670
+#: ../src/mainMode.cc:665
 msgid "easy"
 msgstr ""
 
-#: ../src/mainMode.cc:670 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:665 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr ""
 
-#: ../src/mainMode.cc:670
+#: ../src/mainMode.cc:665
 msgid "hard"
 msgstr ""
 
@@ -1080,61 +1080,61 @@ msgstr ""
 msgid "Kill the ball"
 msgstr ""
 
-#: ../src/mmad.cc:350
+#: ../src/mmad.cc:342
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr ""
 
-#: ../src/mmad.cc:383
+#: ../src/mmad.cc:375
 msgid "Welcome to Trackballs."
 msgstr ""
 
-#: ../src/mmad.cc:385
+#: ../src/mmad.cc:377
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr ""
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Speed ball"
 msgstr ""
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Extra jump"
 msgstr ""
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Spikes"
 msgstr ""
 
-#: ../src/modPill.cc:123
+#: ../src/modPill.cc:105
 msgid "Glass ball"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Dizzy!"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Freeze!"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Floating"
 msgstr ""
 
-#: ../src/modPill.cc:124
+#: ../src/modPill.cc:106
 msgid "Extra life"
 msgstr ""
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 msgid "Small ball"
 msgstr ""
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 msgid "Large ball"
 msgstr ""
 
-#: ../src/modPill.cc:125
+#: ../src/modPill.cc:107
 msgid "Nitro"
 msgstr ""
 
@@ -1377,7 +1377,7 @@ msgstr ""
 msgid "Levels completed: %d"
 msgstr ""
 
-#: ../src/setupMode.cc:268
+#: ../src/setupMode.cc:269
 msgid "Start Game"
 msgstr ""
 
@@ -1479,6 +1479,18 @@ msgstr ""
 
 #: ../share/levels/dn.set:5
 msgid "All made by Francek."
+msgstr ""
+
+#: ../share/levels/ds.set:1
+msgid "Don't stop"
+msgstr ""
+
+#: ../share/levels/ds.set:3 ../share/levels/ds1.scm:3
+msgid "Principia"
+msgstr ""
+
+#: ../share/levels/ds.set:4
+msgid "Or stay still and see what happens!"
 msgstr ""
 
 #: ../share/levels/elite.set:1
@@ -1682,15 +1694,15 @@ msgstr ""
 msgid "Four Doors"
 msgstr ""
 
-#: ../share/levels/bx2.scm:293
+#: ../share/levels/bx2.scm:304
 msgid "4 hidden switches open exit doors."
 msgstr ""
 
-#: ../share/levels/bx2.scm:295
+#: ../share/levels/bx2.scm:306
 msgid "A switch is nearby."
 msgstr ""
 
-#: ../share/levels/bx2.scm:297
+#: ../share/levels/bx2.scm:308
 msgid "Peace."
 msgstr ""
 
@@ -1698,35 +1710,35 @@ msgstr ""
 msgid "Azteca"
 msgstr ""
 
-#: ../share/levels/bx3.scm:107
+#: ../share/levels/bx3.scm:111
 msgid "You have access to the complex."
 msgstr ""
 
-#: ../share/levels/bx3.scm:125
+#: ../share/levels/bx3.scm:129
 msgid "The way is opened across the sand."
 msgstr ""
 
-#: ../share/levels/bx3.scm:135
+#: ../share/levels/bx3.scm:139
 msgid "You must enter the Arena."
 msgstr ""
 
-#: ../share/levels/bx3.scm:195 ../share/levels/bx3.scm:202
+#: ../share/levels/bx3.scm:199 ../share/levels/bx3.scm:206
 msgid "A wall has been lowered."
 msgstr ""
 
-#: ../share/levels/bx3.scm:209
+#: ../share/levels/bx3.scm:213
 msgid "A roof has been raised."
 msgstr ""
 
-#: ../share/levels/bx3.scm:225
+#: ../share/levels/bx3.scm:229
 msgid "Stairs are in place."
 msgstr ""
 
-#: ../share/levels/bx3.scm:235
+#: ../share/levels/bx3.scm:239
 msgid "You may enter upper complex."
 msgstr ""
 
-#: ../share/levels/bx3.scm:249
+#: ../share/levels/bx3.scm:252
 msgid "The exit is now open."
 msgstr ""
 
@@ -1837,6 +1849,14 @@ msgstr ""
 
 #: ../share/levels/dn6.scm:37 ../share/levels/dn6.scm:73
 msgid "Switch twice"
+msgstr ""
+
+#: ../share/levels/ds2.scm:3
+msgid "Orbit"
+msgstr ""
+
+#: ../share/levels/ds3.scm:3
+msgid "Tunnel"
 msgstr ""
 
 #: ../share/levels/elite1.scm:3
@@ -1983,7 +2003,7 @@ msgstr ""
 msgid "The Castle"
 msgstr ""
 
-#: ../share/levels/mhm3.scm:24
+#: ../share/levels/mhm3.scm:15
 msgid "Stay on the path or else!"
 msgstr ""
 
