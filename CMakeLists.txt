@@ -32,7 +32,7 @@ set(TRACKBALLS_HIGHSCORES_DIR "" CACHE STRING "Folder to install highscores file
 
 setordefault(TRACKBALLS_APPL "${TRACKBALLS_APPL_DIR}" ${CMAKE_INSTALL_PREFIX}/share/applications)
 setordefault(TRACKBALLS_BIN "${TRACKBALLS_BIN_DIR}" ${CMAKE_INSTALL_PREFIX}/bin)
-setordefault(TRACKBALLS_DOC "${TRACKBALLS_DOC_DIR}" ${CMAKE_INSTALL_PREFIX}/share/doc)
+setordefault(TRACKBALLS_DOC "${TRACKBALLS_DOC_DIR}" ${CMAKE_INSTALL_PREFIX}/share/doc/trackballs)
 setordefault(TRACKBALLS_ICON "${TRACKBALLS_ICON_DIR}" ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor)
 setordefault(TRACKBALLS_LOCALE "${TRACKBALLS_LOCALE_DIR}" ${CMAKE_INSTALL_PREFIX}/share/locale)
 setordefault(TRACKBALLS_MAN "${TRACKBALLS_MAN_DIR}" ${CMAKE_INSTALL_PREFIX}/share/man)
@@ -99,7 +99,8 @@ else()
 endif()
 
 # Documentation
-install(FILES ${PROJECT_SOURCE_DIR}/share/trackballs.6 DESTINATION ${TRACKBALLS_MAN}/man6)
+configure_file(${PROJECT_SOURCE_DIR}/share/trackballs.6 ${CMAKE_CURRENT_BINARY_DIR}/trackballs.6)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/trackballs.6 DESTINATION ${TRACKBALLS_MAN}/man6)
 file(GLOB htmldocs ${PROJECT_SOURCE_DIR}/docs/*.html ${PROJECT_SOURCE_DIR}/docs/*.css)
 install(FILES ${htmldocs} DESTINATION ${TRACKBALLS_DOC})
 
@@ -113,7 +114,7 @@ foreach(file ${icons})
           RENAME trackballs.png)
 endforeach()
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
-        DESTINATION ${TRACKBALLS_ICON}/icons/hicolor/scalable/apps/)
+        DESTINATION ${TRACKBALLS_ICON}/scalable/apps/)
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
         DESTINATION ${TRACKBALLS_APPL})
 

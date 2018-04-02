@@ -1,22 +1,24 @@
-.\" This man page is a consise summary of Trackballs. Full documentation for the game and the editor can be found in the README.html file included in this package.
-.TH "trackballs" "6" "" "Mathias Broxwall" "Games"
+.\" This man page is a concise summary of Trackballs. Full documentation for the game and the editor can be found in the documentation provided with the source code or at https://trackballs.github.io/docs/index.html.
+.TH "trackballs" "6" "2018-04-02" "Mathias Broxvall" "Games"
 .SH "NAME"
 Trackballs \- marble game similar to the classic arcade game 'Marble Madness'
-.SH "SYNTAX"
+.SH "SYNOPSIS"
 .LP
-trackballs [\-w, \-m] [\-e, \-l <level>] [\-r <width>] ...
+\fBtrackballs\fP[\fB\-w\fP, \fB\-m\fP] [\fB\-e\fP, \fB\-l\fP<level>] [\fB\-r\fP<width>] [\fB-s\fP<sensitivity>] ...
 
-  \-h  \-\-help         Display this usage information.
-  \-e  \-\-edit         Start as level editor.
-  \-l  \-\-level        Start from level.
-  \-w  \-\-windowed     Run in window (Default is fullscreen)
-  \-m  \-\-mute         Mute sound.
-  \-r  \-\-resolution   Set resolution to 640, 800 or 1024
-  \-s  \-\-sensitivity  Mouse sensitivity, default 1.0
-  \-f  \-\-fps          Displays framerate
-  \-v  \-\-version      Indicate the current version number
-
-The last 5 options are all but obsolete as these can now be accessed through the games menu system.
+  \fB\-h  \-\-help\fP             Display this usage information.
+  \fB\-l  \-\-level\fP            Start from level.
+  \fB\-w  \-\-windowed\fP         Run in window (Default is fullscreen)
+  \fB\-m  \-\-mute\fP             Mute sound.
+  \fB\-r  \-\-resolution\fP       Set resolution to 640, 800 or 1024
+  \fB\-s  \-\-sensitivity\fP      Mouse sensitivity, default 1.0
+  \fB\-f  \-\-fps\fP              Displays framerate
+  \fB\-v  \-\-version\fP          Indicate the current version number
+  \fB\-t  \-\-touch\fP            Updates a map to the latest format
+  \fB\-y  \-\-low-memory\fP       Attempt to conserve memory usage
+  \fB\-9  \-\-debug-joystick\fP   Debug joystick status
+  \fB\-j  \-\-repair-joystick\fP  Correct for bad joysticks
+  
 .SH "DESCRIPTION"
 .LP
 Trackballs is a simple game inspired by the classic Atari 1980's arcade game 'Marble Madness' (later released by Electronic Arts for the Amiga and other platforms).
@@ -24,46 +26,56 @@ Trackballs is a simple game inspired by the classic Atari 1980's arcade game 'Ma
 By steering a marble ball through a labyrinth filled with sharp objects, pools of acid and other obstacles the player collects points. When the ball passes through the goal it continues to the next, more difficult track \- unless the time runs out.
 
 It should be noted that this game is _not_ intended to be a replica of Marble Madness but rather merely inspired by it. For instance the game uses 3D graphics even though the original game had no real use for it. Also the game is fully programmable with a scripting extension (Guile), and includes a level editor with which to easily create new levels.
-.SH "FILES"
-.LP
-Binary: trackballs
-.br
-Shared files directory: /usr/local/share/trackballs/ or /usr/share/trackballs or /usr/share/games/trackballs
-.br
-Settings directory: ~/.trackballs/
-.SH "ENVIRONMENT VARIABLES"
+
+.SH "ENVIRONMENT"
 .LP
 .TP
 \fBGUILE_LOAD_PATH\fP
 Specifies the directory where the guile files are
-.SH "EXAMPLES"
+.TP
+\fBTRACKBALLS\fP
+Specifies a preferred share directory; this is ignored if invalid
+
+.SH "FILES"
+.LP
+.TP
+${TRACKBALLS_BIN}/trackballs
+The executable file for trackballs
+.TP
+${TRACKBALLS_SHARE}
+Necessary shared files for trackballs
+.TP
+${TRACKBALLS_LOCALE}
+Location of the locale files, if applicable
+.TP
+${TRACKBALLS_DOC}
+Detailed package documentation
+.TP
+~/.trackballs/
+Per user settings directory
+
+.SH "EXAMPLE"
 .LP
 To run this program the standard way type:
 .LP
     trackballs
 .LP
-Alternativly you edit a level using this command:
+Alternatively you edit a level using this command:
 .LP
     trackballs \-e steep
 .LP
-Alternativly you can test a level with:
+Alternatively you can test a level with:
 .LP
     trackballs \-l steep
-.SH "AUTHOR"
+
+.SH "NOTES"
 .LP
-Mathias Broxvall <matbr@home.se>
+Full documentation for the game and the editor can be found in the detailed package documentation or at
+.UR https://trackballs.github.io/docs/index.html
+.UE
 
-
-.SH "CONTRIBUTORS"
-Music and UI Graphics \- Dietrich Radel <radel@inet.net.nz>
-.br
-Sound Effects \- Benoît Rouits <brouits@free.fr>
-
-Packagers:
-.br
-Mandrake \- Guillaume Bedot <guillaume.bedot@wanadoo.fr>
-.br
-Debian \- Ari Pollak <ari@debian.org>
-.SH "SEE ALSO"
+.SH "AUTHORS"
 .LP
-Full documentation for the game and the editor can be found in the documentation included with the source code.
+See the AUTHORS.md file in the source package for a detailed list of authors.
+
+
