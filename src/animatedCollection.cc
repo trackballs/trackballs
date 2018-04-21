@@ -823,6 +823,11 @@ void AnimatedCollection::recalculateBboxMap() {
   }
 
   ntot = store.size();
+  if (ntot == 0) {
+    map = NULL;
+    return;
+  }
+
   struct Rectangle<3>* input = new struct Rectangle<3>[ntot];
   int* rect_indices = new int[ntot];
   std::set<Animated*>::iterator iter = store.begin();
@@ -858,7 +863,7 @@ void AnimatedCollection::recalculateBboxMap() {
 
 std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
   if (!map) {
-    warning("Map not yet created");
+    /* Either map has not been created or there are no rectangles */
     return std::set<Animated*>();
   }
   DFoldRectangleTree<3>* dmap = (DFoldRectangleTree<3>*)map;
