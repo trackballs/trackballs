@@ -1528,9 +1528,9 @@ void Ball::generateDebris(GLfloat color[4]) {
 void Ball::handleBallCollisions() {
   if (no_physics) return;
 
-  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  std::set<Animated *>::iterator iter = balls.begin();
-  std::set<Animated *>::iterator end = balls.end();
+  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
+  std::vector<Animated *>::const_iterator iter = balls.begin();
+  std::vector<Animated *>::const_iterator end = balls.end();
   double dist, err, speed;
   Ball *ball;
   for (; iter != end; iter++) {

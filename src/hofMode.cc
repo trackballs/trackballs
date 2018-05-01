@@ -27,7 +27,7 @@
 #include "menusystem.h"
 #include "settings.h"
 
-#include <set>
+#include <vector>
 
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_keycode.h>

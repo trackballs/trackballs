@@ -25,7 +25,7 @@
 #include "glHelp.h"
 
 #include <SDL2/SDL_mouse.h>
-#include <set>
+#include <vector>
 
 #define MAX_MENUS 256
 

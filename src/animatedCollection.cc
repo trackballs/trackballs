@@ -792,25 +792,51 @@ static struct Rectangle<3>* staticinput = NULL;
 static struct Rectangle<3> rectFromAnim(const Animated* a) {
   struct Rectangle<3> r;
   r.tag = (void*)a;
-  /* Reverse dimension order to avoid Z-clustering */
-  r.lower[2] = a->position[0] + a->boundingBox[0][0];
-  r.upper[2] = a->position[0] + a->boundingBox[1][0];
-  r.lower[1] = a->position[1] + a->boundingBox[0][1];
-  r.upper[1] = a->position[1] + a->boundingBox[1][1];
-  r.lower[0] = a->position[2] + a->boundingBox[0][2];
-  r.upper[0] = a->position[2] + a->boundingBox[1][2];
-
+  for (int k = 0; k < 3; k++) {
+    r.lower[k] = a->position[k] + a->boundingBox[0][k];
+    r.upper[k] = a->position[k] + a->boundingBox[1][k];
+  }
   for (int i = 0; i < 3; i++) {
     if (r.lower[i] > r.upper[i] || !std::isfinite(r.lower[i]) || !std::isfinite(r.upper[i])) {
       warning("Invalid bounding box");
-      r.lower[0] = 0.;
-      r.lower[1] = 0.;
-      r.lower[2] = 0.;
-      r.upper[0] = 0.;
-      r.upper[1] = 0.;
-      r.upper[2] = 0.;
+      for (int k = 0; k < 3; k++) {
+        r.lower[k] = 0.;
+        r.upper[k] = 0.;
+      }
       return r;
     }
+  }
+  return r;
+}
+
+static struct Rectangle<3>
+rectFromBounds(const double lower[3], const double upper[3]) {
+  struct Rectangle<3> r;
+  r.tag = NULL;
+  for (int i = 0; i < 3; i++) {
+    r.lower[i] = lower[i];
+    r.upper[i] = upper[i];
+  }
+  for (int i = 0; i < 3; i++) {
+    if (r.lower[i] > r.upper[i] || !std::isfinite(r.lower[i]) || !std::isfinite(r.upper[i])) {
+      warning("Invalid bounding box");
+      for (int k = 0; k < 3; k++) {
+        r.lower[k] = 0.;
+        r.upper[k] = 0.;
+      }
+      return r;
+    }
+  }
+  return r;
+}
+
+static struct Rectangle<3>
+reverseAxisOrder(const struct Rectangle<3>& s) {
+  struct Rectangle<3> r;
+  r.tag = s.tag;
+  for (int i = 0; i < 3; i++) {
+    r.lower[i] = s.lower[2 - i];
+    r.upper[i] = s.upper[2 - i];
   }
   return r;
 }
@@ -834,6 +860,7 @@ void AnimatedCollection::recalculateBboxMap() {
   std::set<Animated*>::iterator end = store.end();
   for (int i = 0; iter != end; iter++, i++) {
     struct Rectangle<3> r = rectFromAnim(*iter);
+    r = reverseAxisOrder(r);
     input[i] = r;
     rect_indices[i] = i;
   }
@@ -861,18 +888,24 @@ void AnimatedCollection::recalculateBboxMap() {
   retlist = new void*[ntot];
 }
 
-std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
+std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
+  struct Rectangle<3> r = rectFromAnim(a);
+  return bboxOverlapsWith(r.lower, r.upper);
+}
+std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3],
+                                                            const double upper[3]) const {
   if (!map) {
     /* Either map has not been created or there are no rectangles */
-    return std::set<Animated*>();
+    return std::vector<Animated*>();
   }
   DFoldRectangleTree<3>* dmap = (DFoldRectangleTree<3>*)map;
-  struct Rectangle<3> r = rectFromAnim(a);
+  struct Rectangle<3> r = rectFromBounds(lower, upper);
+  r = reverseAxisOrder(r);
 
   int nfound = dmap->intersect(retlist, r.lower, r.upper);
 
-  std::set<Animated*> ret;
-  for (int i = 0; i < nfound; i++) { ret.insert((Animated*)retlist[i]); }
+  std::vector<Animated*> ret(nfound, NULL);
+  for (int i = 0; i < nfound; i++) { ret[i] = (Animated*)retlist[i]; }
   if (SANITY_CHECK) {
     /* Sanity check via O(n^2) algorithm */
 
@@ -888,7 +921,12 @@ std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) cons
       }
       if (nover == 3) {
         coll.insert((Animated*)s.tag);
-        if (ret.count((Animated*)s.tag)) { nco++; }
+        for (int k = 0; k < nfound; k++) {
+          if (ret[k] == (Animated*)s.tag) {
+            nco++;
+            break;
+          }
+        }
       }
     }
 
@@ -900,10 +938,8 @@ std::set<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) cons
     } else {
       psu++;
     }
-    return coll;
+    return std::vector<Animated*>(coll.begin(), coll.end());
   }
 
   return ret;
 }
-
-const std::set<Animated*>& AnimatedCollection::asSet() const { return store; }

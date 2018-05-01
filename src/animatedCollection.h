@@ -25,6 +25,8 @@
 
 #include <set>
 
+#include <vector>
+
 class AnimatedCollection {
  public:
   AnimatedCollection();
@@ -33,9 +35,8 @@ class AnimatedCollection {
   void remove(Animated*);
 
   void recalculateBboxMap();
-  std::set<Animated*> bboxOverlapsWith(const Animated*) const;
-
-  const std::set<Animated*>& asSet() const;
+  std::vector<Animated*> bboxOverlapsWith(const Animated*) const;
+  std::vector<Animated*> bboxOverlapsWith(const double lower[3], const double upper[3]) const;
 
  private:
   std::set<Animated*> store;

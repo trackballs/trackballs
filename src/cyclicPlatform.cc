@@ -30,10 +30,10 @@ Real timeLow = 2.0, timeRise = 3.0, timeHigh = 2.0, timeFall = 3.0;
 
 CyclicPlatform::CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real high,
                                Real offset, Real speed) {
-  this->x1 = x1;
-  this->x2 = x2;
-  this->y1 = y1;
-  this->y2 = y2;
+  this->x1 = std::min(x1, x2);
+  this->x2 = std::max(x1, x2);
+  this->y1 = std::min(y1, y2);
+  this->y2 = std::max(y1, y2);
   this->low = low;
   this->high = high;
   phase = offset;
@@ -68,9 +68,13 @@ void CyclicPlatform::tick(Real dt) {
   map->markCellsUpdated(x1, y1, x2, y2, 1);
 
   if (h < oldHeight) {
-    const std::set<Animated *> &balls = Game::current->balls->asSet();
-    std::set<Animated *>::iterator iter = balls.begin();
-    std::set<Animated *>::iterator end = balls.end();
+    double lower[3] = {(double)x1, (double)y1, oldHeight - 1.0};
+    double upper[3] = {(double)x2, (double)y2, oldHeight + 0.1};
+
+    const std::vector<Animated *> &balls =
+        Game::current->balls->bboxOverlapsWith(lower, upper);
+    std::vector<Animated *>::const_iterator iter = balls.begin();
+    std::vector<Animated *>::const_iterator end = balls.end();
     for (; iter != end; iter++) {
       Ball *ball = (Ball *)*iter;
       if (ball->position[0] >= x1 && ball->position[0] < x2 + 1.0 && ball->position[1] >= y1 &&

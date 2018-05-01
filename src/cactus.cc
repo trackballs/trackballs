@@ -194,12 +194,11 @@ void Cactus::tick(Real t) {
   }
 
   // do I parse all the balls (incl. Mr Black) or just the player ?
-  Ball *ball;
-  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  std::set<Animated *>::iterator iter = balls.begin();
-  std::set<Animated *>::iterator end = balls.end();
+  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
+  std::vector<Animated *>::const_iterator iter = balls.begin();
+  std::vector<Animated *>::const_iterator end = balls.end();
   for (; iter != end; iter++) {
-    ball = (Ball *)*iter;
+    Ball *ball = (Ball *)*iter;
     if (!ball->alive) continue;
     if (ball->no_physics) continue;
 

@@ -142,9 +142,9 @@ void Bird::tick(Real t) {
   // check for collisions with balls
   Ball *ball;
   Coord3d diff;
-  const std::set<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  std::set<Animated *>::iterator iter = balls.begin();
-  std::set<Animated *>::iterator end = balls.end();
+  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
+  std::vector<Animated *>::const_iterator iter = balls.begin();
+  std::vector<Animated *>::const_iterator end = balls.end();
 
   for (; iter != end; iter++) {
     ball = (Ball *)*iter;
