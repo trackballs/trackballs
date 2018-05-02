@@ -111,11 +111,15 @@ void Bird::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
-  setActiveProgramAndUniforms(shaderObject);
+  if (activeView.calculating_shadows) {
+    setActiveProgramAndUniforms(shaderObjectShadow);
+  } else {
+    setActiveProgramAndUniforms(shaderObject);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+                specularColor[1], specularColor[2], 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
+  }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

@@ -146,7 +146,7 @@ void HelpMode::display() {
   Coord3d cameraTo2(5. + step * page, 5. + step, -8.);
   lookAtMatrix(cameraFrom1[0], cameraFrom1[1], cameraFrom1[2], cameraTo1[0], cameraTo1[1],
                cameraTo1[2], 0.0, 0.0, 1.0, activeView.modelview);
-  activeView.day_mode = 1;
+  activeView.day_mode = true;
   updateUniforms();
   if (Settings::settings->doShadows) {
     renderShadowCascade(cameraTo1, helpGame->map, helpGame);

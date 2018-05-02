@@ -8,8 +8,6 @@ precision mediump float;
 uniform mat4 proj_matrix;
 uniform mat4 model_matrix;
 
-uniform float gameTime;
-
 attribute vec3 in_Position;
 attribute vec4 in_Color;
 attribute vec2 in_Texcoord;

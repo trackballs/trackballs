@@ -153,10 +153,14 @@ void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glEnable(GL_CULL_FACE);
 
   const int nfacets = 6;
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-              specularColor[1], specularColor[2], specularColor[3]);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
+  if (activeView.calculating_shadows) {
+    setActiveProgramAndUniforms(shaderObjectShadow);
+  } else {
+    setActiveProgramAndUniforms(shaderObject);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
+                specularColor[1], specularColor[2], specularColor[3]);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
+  }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);

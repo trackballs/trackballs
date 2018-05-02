@@ -93,7 +93,7 @@ typedef struct _viewpa {
   GLfloat quadratic_attenuation;
   GLfloat sun_direction[3];
 
-  int day_mode;
+  bool day_mode;
   GLuint cascadeTexsize;
   GLuint cascadeTexture[3];
   Matrix4d cascade_proj[3];
@@ -101,7 +101,7 @@ typedef struct _viewpa {
 
   GLuint shadowMapTexture;
   GLuint shadowMapTexsize;
-  int calculating_shadows;
+  bool calculating_shadows;
 } ViewParameters;
 
 extern ViewParameters activeView;
@@ -158,7 +158,8 @@ SDL_Surface *loadImage(const char *imagename);
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
-extern GLuint shaderWater, shaderTile, shaderLine, shaderUI, shaderObject, shaderReflection;
+extern GLuint shaderWater, shaderTile, shaderTileShadow, shaderLine, shaderUI, shaderObject,
+    shaderObjectShadow, shaderReflection;
 
 /* Globals */
 extern float fps;

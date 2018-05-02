@@ -464,10 +464,17 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     countObjectSpherePoints(&ntries, &nverts, detail);
 
     // Draw the ball...
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
-                specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
+    if (activeView.calculating_shadows) {
+      setActiveProgramAndUniforms(shaderObjectShadow);
+    } else {
+      setActiveProgramAndUniforms(shaderObject);
+      glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
+                  specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
+      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
     } else if (texture == 0) {
@@ -475,12 +482,12 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     } else {
       glBindTexture(GL_TEXTURE_2D, textures[texture]);
     }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
     configureObjectAttributes();
+
     glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 
-    if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture) {
+    if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture &&
+        !activeView.calculating_shadows) {
       GLfloat c[4];
       if (metallic) {
         c[0] = primaryColor[0];
@@ -516,9 +523,13 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     glEnable(GL_CULL_FACE);
 
     // Transfer
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    if (activeView.calculating_shadows) {
+      setActiveProgramAndUniforms(shaderObjectShadow);
+    } else {
+      setActiveProgramAndUniforms(shaderObject);
+      glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    }
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
@@ -550,9 +561,13 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
     // In case we look from below
     glDisable(GL_CULL_FACE);
 
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    if (activeView.calculating_shadows) {
+      setActiveProgramAndUniforms(shaderObjectShadow);
+    } else {
+      setActiveProgramAndUniforms(shaderObject);
+      glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
+      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
+    }
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[3]);

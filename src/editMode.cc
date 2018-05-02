@@ -387,7 +387,7 @@ void EditMode::display() {
                y - viewPoints[switchViewpoint][1] * 7.0, (birdsEye ? 30.0 : 10.0) + h * 0.5, x,
                y, h, 0.0, 0.0, 1.0, activeView.modelview);
 
-  activeView.day_mode = 1;
+  activeView.day_mode = true;
   updateUniforms();
   /* Shadow map rendering returns active modelview/projection to orig state */
   if (map) {

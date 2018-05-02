@@ -72,10 +72,14 @@ void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) {
   int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  if (activeView.calculating_shadows) {
+    setActiveProgramAndUniforms(shaderObjectShadow);
+  } else {
+    setActiveProgramAndUniforms(shaderObject);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+                specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);

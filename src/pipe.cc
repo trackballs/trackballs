@@ -104,10 +104,14 @@ void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) {
   } else {
     glDisable(GL_BLEND);
   }
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-              specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  if (activeView.calculating_shadows) {
+    setActiveProgramAndUniforms(shaderObjectShadow);
+  } else {
+    setActiveProgramAndUniforms(shaderObject);
+    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
+                specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
+  }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
   int nfacets = 24;

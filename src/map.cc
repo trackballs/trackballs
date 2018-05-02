@@ -484,15 +484,21 @@ void Map::draw(int stage, int cx, int cy) {
     }
   }
 
-  // Put into shader
-  setActiveProgramAndUniforms(shaderTile);
-  glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
-  glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
+  if (activeView.calculating_shadows) {
+    // Transfer no more than required
+    setActiveProgramAndUniforms(shaderTileShadow);
+    glUniform1f(glGetUniformLocation(shaderTileShadow, "gameTime"), gameTime);
+  } else {
+    // Put into shader
+    setActiveProgramAndUniforms(shaderTile);
+    glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
+    glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
 
-  // Link in texture atlas :-)
-  glUniform1i(glGetUniformLocation(shaderTile, "arrtex"), 0);
-  glActiveTexture(GL_TEXTURE0 + 0);
-  glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
+    // Link in texture atlas :-)
+    glUniform1i(glGetUniformLocation(shaderTile, "arrtex"), 0);
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
+  }
 
   // Run through ye olde draw loop
   // WALLS
@@ -511,7 +517,7 @@ void Map::draw(int stage, int cx, int cy) {
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
-  if (stage == 1) {
+  if (stage == 1 && !activeView.calculating_shadows) {
     setActiveProgramAndUniforms(shaderWater);
     glUniform1f(glGetUniformLocation(shaderWater, "gameTime"), gameTime);
     glUniform1i(glGetUniformLocation(shaderWater, "wtex"), 0);

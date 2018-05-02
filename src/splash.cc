@@ -68,6 +68,7 @@ void Splash::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
 void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
+  if (activeView.calculating_shadows) return;
 
   glEnable(GL_BLEND);
 
