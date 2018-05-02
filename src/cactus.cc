@@ -28,7 +28,6 @@
 #include "sound.h"
 
 Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
-  this->radius = radius;
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
@@ -38,7 +37,7 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
   secondaryColor[0] = 0.0;
   secondaryColor[1] = 0.0;
   secondaryColor[2] = 0.0;
-  this->killed = 0;
+  this->killed = false;
   this->killed_time = 1.;
   this->base_radius = radius;
 
@@ -54,9 +53,9 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
 }
 
 int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
-  if (killed == 2) return 0;
-
   allocateBuffers(1, idxbufs, databufs);
+
+  GLfloat radius = killed_time * base_radius;
 
   const int nsides = 6;
   // Body: 4N+1 verts, 7N faces
@@ -80,8 +79,8 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
       GLfloat angle = 2 * i * M_PI / nsides;
-      GLfloat loc[3] = {radii[h] * (GLfloat)radius * std::cos(angle),
-                        radii[h] * (GLfloat)radius * std::sin(angle), heights[h]};
+      GLfloat loc[3] = {radii[h] * radius * std::cos(angle),
+                        radii[h] * radius * std::sin(angle), heights[h]};
       GLfloat normal[3] = {norm[h][0] * std::cos(angle), norm[h][0] * std::sin(angle),
                            norm[h][1]};
       pos += packObjectVertex(pos, position[0] + loc[0], position[1] + loc[1],
@@ -116,8 +115,8 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
       GLfloat angle = 2 * i * M_PI / nsides + M_PI / nsides;
-      GLfloat end[3] = {spike_rad[h] * (GLfloat)radius * std::cos(angle),
-                        spike_rad[h] * (GLfloat)radius * std::sin(angle), spike_height[h]};
+      GLfloat end[3] = {spike_rad[h] * radius * std::cos(angle),
+                        spike_rad[h] * radius * std::sin(angle), spike_height[h]};
       GLfloat dhs[3][2] = {{0, spikewid}, {-spikewid, -spikewid}, {spikewid, -spikewid}};
       for (int k = 0; k < 3; k++) {
         GLfloat central[3] = {-std::sin(angle) * dhs[k][0], std::cos(angle) * dhs[k][0],
@@ -156,8 +155,6 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
 }
 
 void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
-  if (killed == 2) return;
-
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -179,18 +176,10 @@ void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
 
-  // no more used (can be deleted ?)
-  if (killed == 2) return;
-
   if (killed) {
     killed_time -= t;
-    radius = killed_time * base_radius;
-
-    if (radius <= 0.) {
-      remove();
-      // killed = 2;
-      return;
-    }
+    if (killed_time <= 0.) { remove(); }
+    return;
   }
 
   // do I parse all the balls (incl. Mr Black) or just the player ?
@@ -203,14 +192,10 @@ void Cactus::tick(Real t) {
     if (ball->no_physics) continue;
 
     Coord3d diff = position - ball->position;
-    if (length(diff) < ball->radius + radius) {
+    if (length(diff) < ball->radius + base_radius) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
         Animated::die(DIE_OTHER);
-
-        // the ball kills the cactus !!!
-        if (killed == 1) return;  // still killed
-
-        killed = 1;
+        killed = true;
         playEffect(SFX_CACTUS_DIE);
         return;
       }

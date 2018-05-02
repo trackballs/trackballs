@@ -35,10 +35,9 @@ class Cactus : public Animated {
   void tick(Real t);
 
  protected:
-  Real radius;
-  int killed;
   Real base_radius;
   Real killed_time;
+  bool killed;
 };
 
 #endif
