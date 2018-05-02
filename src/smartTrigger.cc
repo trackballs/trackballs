@@ -29,15 +29,19 @@ SmartTrigger::SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leavin
       x(x),
       y(y),
       radius(radius),
-      wasIn(0),
+      wasIn(false),
       entering(entering),
       leaving(leaving) {
   if (entering) scm_gc_protect_object(entering);
   if (leaving) scm_gc_protect_object(leaving);
 }
-SmartTrigger::~SmartTrigger() {
+
+SmartTrigger::~SmartTrigger() { SmartTrigger::releaseCallbacks(); }
+void SmartTrigger::releaseCallbacks() {
   if (entering) scm_gc_unprotect_object(entering);
   if (leaving) scm_gc_unprotect_object(leaving);
+  entering = NULL;
+  leaving = NULL;
 }
 void SmartTrigger::tick(Real /*t*/) {
   if (!is_on) return;
@@ -45,10 +49,10 @@ void SmartTrigger::tick(Real /*t*/) {
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;
   if (dx * dx + dy * dy < radius * radius) {
-    if (!wasIn && entering) scm_catch_apply_0(entering);
-    wasIn = 1;
+    if (!wasIn && entering) Game::current->queueCall(entering);
+    wasIn = true;
   } else {
-    if (wasIn && leaving) scm_catch_apply_0(leaving);
-    wasIn = 0;
+    if (wasIn && leaving) Game::current->queueCall(leaving);
+    wasIn = false;
   }
 }

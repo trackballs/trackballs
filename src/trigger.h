@@ -26,8 +26,9 @@
 class Trigger : public GameHook {
  public:
   Trigger(Real x, Real y, Real radius, SCM expr);
-  ~Trigger();
-  void tick(Real);
+  virtual ~Trigger();
+  virtual void tick(Real);
+  virtual void releaseCallbacks();
 
   Real x, y, radius;
 

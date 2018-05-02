@@ -27,6 +27,7 @@ class CSwitch : public Animated {
  public:
   CSwitch(Real x, Real y, SCM on, SCM off);
   virtual ~CSwitch();
+  virtual void releaseCallbacks();
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);

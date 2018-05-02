@@ -54,6 +54,9 @@ class Game {
   void doExpensiveComputations();
 
   void addEntity(GameHook *);
+  void queueCall(SCM fun);
+  void queueCall(SCM fun, SCM argA);
+  void queueCall(SCM fun, SCM argA, SCM argB);
   void loadLevel(const char *level);
   void clearLevel();
 
@@ -86,6 +89,13 @@ class Game {
   std::vector<GameHook *> hooks[Role_MaxTypes];
 
  private:
+  typedef struct {
+    SCM fun;
+    SCM argA;
+    SCM argB;
+  } QueuedCall;
+  std::vector<QueuedCall> queuedCalls;
+
   void setDefaults();
 };
 

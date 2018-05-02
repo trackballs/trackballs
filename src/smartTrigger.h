@@ -26,13 +26,14 @@
 class SmartTrigger : public GameHook {
  public:
   SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leaving);
-  ~SmartTrigger();
-  void tick(Real);
+  virtual ~SmartTrigger();
+  virtual void releaseCallbacks();
+  virtual void tick(Real);
 
   Real x, y, radius;
 
  private:
-  int wasIn;
+  bool wasIn;
   SCM entering, leaving;
 };
 

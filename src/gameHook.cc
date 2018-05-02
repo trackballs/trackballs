@@ -33,16 +33,9 @@ GameHook::GameHook(int role) {
   for (int i = 0; i < GameHookEvent_MaxHooks; i++) hooks[i] = NULL;
 }
 
-GameHook::~GameHook() {}
+GameHook::~GameHook() { GameHook::releaseCallbacks(); }
 
-void GameHook::remove() {
-  if (alive) {
-    alive = false;
-    for (int event = 0; event < GameHookEvent_MaxHooks; event++) {
-      if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
-    }
-  }
-}
+void GameHook::remove() { alive = false; }
 
 void GameHook::doExpensiveComputations() {}
 
@@ -65,13 +58,20 @@ void GameHook::triggerHook(GameHookEvent event, SCM object) {
       subject = smobAnimated_make(a);
     else
       subject = smobGameHook_make(this);
-    scm_catch_apply_2(hooks[event], subject, object ? object : SCM_BOOL_F);
+    Game::current->queueCall(hooks[event], subject, object ? object : SCM_BOOL_F);
   }
 }
 
 SCM GameHook::getHook(GameHookEvent event) {
   if (event < 0 || event >= GameHookEvent_MaxHooks) return NULL;
   return hooks[event];
+}
+
+void GameHook::releaseCallbacks() {
+  for (int event = 0; event < GameHookEvent_MaxHooks; event++) {
+    if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
+    hooks[event] = NULL;
+  }
 }
 
 void GameHook::tick(Real /*dt*/) { triggerHook(GameHookEvent_Tick, NULL); }

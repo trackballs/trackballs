@@ -20,6 +20,7 @@
 
 #include "animator.h"
 
+#include "game.h"
 #include "gameHook.h"
 #include "general.h"
 #include "guile.h"
@@ -36,11 +37,13 @@ Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1,
       fun(fun) {
   if (fun) scm_gc_protect_object(fun);
 }
-Animator::~Animator() {
-  if (fun) scm_gc_unprotect_object(fun);
-}
+Animator::~Animator() { Animator::releaseCallbacks(); }
 Real Animator::getValue() const {
   return value0 * (1.0 - position / length) + position / length * value1;
+}
+void Animator::releaseCallbacks() {
+  if (fun) scm_gc_unprotect_object(fun);
+  fun = NULL;
 }
 void Animator::tick(Real td) {
   GameHook::tick(td);
@@ -66,7 +69,7 @@ void Animator::tick(Real td) {
   }
   if (position >= length && repeat & ANIMATOR_1_WRAP) { position = position - length; }
 
-  scm_catch_apply_1(fun, scm_from_double(getValue()));
+  Game::current->queueCall(fun, scm_from_double(getValue()));
 
   if (position <= 0 && repeat & ANIMATOR_0_REMOVE) {
     remove();

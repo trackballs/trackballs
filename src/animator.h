@@ -35,8 +35,9 @@
 class Animator : public GameHook {
  public:
   Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat, SCM fun);
-  ~Animator();
-  void tick(Real);
+  virtual ~Animator();
+  virtual void tick(Real);
+  virtual void releaseCallbacks();
   Real getValue() const;
 
   Real direction;

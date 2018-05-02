@@ -62,12 +62,14 @@ class GameHook {
   /** Returns the hook currently registered to event, or NULL */
   SCM getHook(GameHookEvent event);
 
-  /* Removes objects from the world. Is not deleted until end of level
-     (to avoid stale references) */
+  /** Marks the object for removal from the world. */
   void remove();
 
+  /** Unregisters all hooks */
+  virtual void releaseCallbacks();
+
   int entity_role;
-  bool alive;
+  bool alive; /* true if object not slated for cleanup */
   bool is_on;
 
  private:

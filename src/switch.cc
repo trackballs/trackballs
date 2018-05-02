@@ -39,12 +39,15 @@ CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated)
   is_touched = 0;
   this->on = on;
   this->off = off;
-  scm_gc_protect_object(on);
-  scm_gc_protect_object(off);
+  if (on) scm_gc_protect_object(on);
+  if (off) scm_gc_protect_object(off);
 }
-CSwitch::~CSwitch() {
-  scm_gc_unprotect_object(on);
-  scm_gc_unprotect_object(off);
+CSwitch::~CSwitch() { CSwitch::releaseCallbacks(); }
+void CSwitch::releaseCallbacks() {
+  if (on) scm_gc_unprotect_object(on);
+  if (off) scm_gc_unprotect_object(off);
+  on = NULL;
+  off = NULL;
 }
 
 int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
@@ -180,10 +183,10 @@ void CSwitch::tick(Real /*t*/) {
     if (!is_touched) {
       if (is_on) {
         is_on = 0;
-        scm_catch_apply_0(off);
+        Game::current->queueCall(off);
       } else {
         is_on = 1;
-        scm_catch_apply_0(on);
+        Game::current->queueCall(on);
       }
       playEffect(SFX_SWITCH);
     }

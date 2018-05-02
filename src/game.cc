@@ -183,6 +183,34 @@ void Game::setDefaults() {
 
 void Game::addEntity(class GameHook *hook) { hooks[hook->entity_role].push_back(hook); }
 
+void Game::queueCall(SCM fun) {
+  scm_gc_protect_object(fun);
+  QueuedCall q;
+  q.fun = fun;
+  q.argA = NULL;
+  q.argB = NULL;
+  queuedCalls.push_back(q);
+}
+void Game::queueCall(SCM fun, SCM argA) {
+  scm_gc_protect_object(fun);
+  scm_gc_protect_object(argA);
+  QueuedCall q;
+  q.fun = fun;
+  q.argA = argA;
+  q.argB = NULL;
+  queuedCalls.push_back(q);
+}
+void Game::queueCall(SCM fun, SCM argA, SCM argB) {
+  scm_gc_protect_object(fun);
+  scm_gc_protect_object(argA);
+  scm_gc_protect_object(argB);
+  QueuedCall q;
+  q.fun = fun;
+  q.argA = argA;
+  q.argB = argB;
+  queuedCalls.push_back(q);
+}
+
 void Game::clearLevel() {
   if (balls) {
     delete balls;
@@ -217,6 +245,8 @@ void Game::tick(Real t) {
   /* The game ticks run at a faster time scale so that the interaction
    * of different moving objects is realistic */
   for (int i = 0; i < steps; i++) {
+    gameTime += tstep;
+
     /* Update intersection information */
     balls->clear();
     for (int j = Role_Ball; j <= Role_Player; j++) {
@@ -225,13 +255,30 @@ void Game::tick(Real t) {
     }
     balls->recalculateBboxMap();
 
-    gameTime += tstep;
-
     /* update active entities */
     for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
       int n = hooks[j].size();
       for (int k = 0; k < n; k++) { hooks[j][k]->tick(tstep); }
     }
+
+    /* run queued callbacks */
+    for (int j = 0; j < queuedCalls.size(); j++) {
+      QueuedCall call = queuedCalls[j];
+      if (!call.argA) {
+        scm_catch_apply_0(call.fun);
+        scm_gc_unprotect_object(call.fun);
+      } else if (!call.argB) {
+        scm_catch_apply_1(call.fun, call.argA);
+        scm_gc_unprotect_object(call.fun);
+        scm_gc_unprotect_object(call.argA);
+      } else {
+        scm_catch_apply_2(call.fun, call.argA, call.argB);
+        scm_gc_unprotect_object(call.fun);
+        scm_gc_unprotect_object(call.argA);
+        scm_gc_unprotect_object(call.argB);
+      }
+    }
+    queuedCalls.clear();
 
     /* filter out dead entities, except players */
     for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
@@ -241,7 +288,9 @@ void Game::tick(Real t) {
       int ndead = 0;
       for (int k = 0; k < n; k++) {
         if (!hooks[j][k - ndead]->alive) {
-          hooks[Role_Dead].push_back(hooks[j][k - ndead]);
+          GameHook *hook = hooks[j][k - ndead];
+          hook->releaseCallbacks();
+          hooks[Role_Dead].push_back(hook);
           hooks[j][k - ndead] = hooks[j][n - 1 - ndead];
           hooks[j].pop_back();
           ndead++;
