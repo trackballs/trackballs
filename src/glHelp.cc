@@ -1347,15 +1347,10 @@ void rotateZ(double v, Matrix4d m) {
   matrixMult(morig, mr, m);
 }
 bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                  const Matrix4d model, const Matrix4d proj) {
+                  const Matrix4d mvp) {
   // Construct axis-aligned bounding box in window space
   double vxl = 1e99, vyl = 1e99, vzl = 1e99;
   double vxh = -1e99, vyh = -1e99, vzh = -1e99;
-  Matrix4d mvp;
-  Matrix4d mmod, mproj;
-  memcpy(&mmod[0][0], model, sizeof(Matrix4d));
-  memcpy(&mproj[0][0], proj, sizeof(Matrix4d));
-  matrixMult(mmod, mproj, mvp);
   for (int i = 0; i < 8; i++) {
     double w[3] = {0., 0., 0.};
     double p[3] = {i & 4 ? x1 : x2, i & 2 ? y1 : y2, i & 1 ? z1 : z2};

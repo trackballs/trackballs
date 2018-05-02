@@ -626,11 +626,12 @@ void Ball::doExpensiveComputations() {
   double dy = position[1] - MainMode::mainMode->camFocus[1];
   if (dx * dx + dy * dy > 50 * 50) { return; }
 
+  Matrix4d mvp;
+  matrixMult(MainMode::mainMode->cameraModelView, MainMode::mainMode->cameraProjection, mvp);
   int vis =
       testBboxClip(position[0] + boundingBox[0][0], position[0] + boundingBox[1][0],
                    position[1] + boundingBox[0][1], position[1] + boundingBox[1][1],
-                   position[2] + boundingBox[0][2], position[2] + boundingBox[1][2],
-                   MainMode::mainMode->cameraModelView, MainMode::mainMode->cameraProjection);
+                   position[2] + boundingBox[0][2], position[2] + boundingBox[1][2], mvp);
   if (!vis) return;
 
   if (environmentTexture == 0) glGenTextures(1, &environmentTexture);

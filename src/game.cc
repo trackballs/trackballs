@@ -272,6 +272,8 @@ void Game::draw() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
 
+  Matrix4d mvp;
+  matrixMult(activeView.modelview, activeView.projection, mvp);
   for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
     int n = hooks[i].size();
     for (int j = 0; j < n; j++) {
@@ -282,8 +284,7 @@ void Game::draw() {
                                     anim->position[1] + anim->boundingBox[0][1],
                                     anim->position[1] + anim->boundingBox[1][1],
                                     anim->position[2] + anim->boundingBox[0][2],
-                                    anim->position[2] + anim->boundingBox[1][2],
-                                    activeView.modelview, activeView.projection);
+                                    anim->position[2] + anim->boundingBox[1][2], mvp);
     }
   }
 
@@ -318,6 +319,8 @@ void Game::drawReflection(Coord3d focus) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
 
+  Matrix4d mvp;
+  matrixMult(activeView.modelview, activeView.projection, mvp);
   for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
     int n = hooks[i].size();
     for (int j = 0; j < n; j++) {
@@ -334,8 +337,7 @@ void Game::drawReflection(Coord3d focus) {
                                     anim->position[1] + anim->boundingBox[0][1],
                                     anim->position[1] + anim->boundingBox[1][1],
                                     anim->position[2] + anim->boundingBox[0][2],
-                                    anim->position[2] + anim->boundingBox[1][2],
-                                    activeView.modelview, activeView.projection);
+                                    anim->position[2] + anim->boundingBox[1][2], mvp);
     }
   }
 

@@ -441,6 +441,9 @@ void Map::draw(int stage, int cx, int cy) {
   int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
   int prad = (VISRADIUS / CHUNKSIZE) + 1;
 
+  Matrix4d mvp;
+  matrixMult(activeView.modelview, activeView.projection, mvp);
+
   int nchunks = 0;
   Chunk* drawlist[1024];
   for (int i = -prad; i <= prad; i++) {
@@ -453,8 +456,7 @@ void Map::draw(int stage, int cx, int cy) {
         update = cur->is_updated;
 
         int visible = testBboxClip(cur->xm, cur->xm + CHUNKSIZE, cur->ym, cur->ym + CHUNKSIZE,
-                                   cur->minHeight, cur->maxHeight, activeView.modelview,
-                                   activeView.projection);
+                                   cur->minHeight, cur->maxHeight, mvp);
 
         // Current cell is in viewport
         int ox = hx + CHUNKSIZE / 2;

@@ -142,7 +142,7 @@ inline void assign(const GLfloat A[3], GLfloat B[3]) {
 }
 int powerOfTwo(int input);
 bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                  const Matrix4d model, const Matrix4d proj);
+                  const Matrix4d model_times_proj);
 
 void Require2DMode();
 void Enter2DMode();
