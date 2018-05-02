@@ -23,7 +23,6 @@
 #define SPIKE_H
 
 #include "animated.h"
-#include "glHelp.h"
 
 class Spike : public Animated {
  public:

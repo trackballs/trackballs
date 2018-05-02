@@ -28,7 +28,6 @@ class Debris : public Ball {
   Debris(Ball*, Coord3d pos, Coord3d vel, double duration);
   void calcRadius();  // Use this after modifying the parameters below
   void tick(Real);
-  void draw();
   void die(int);
 
   int floatingUp;

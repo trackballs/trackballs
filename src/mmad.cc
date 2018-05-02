@@ -209,7 +209,7 @@ void changeScreenResolution() {
   resetTextures();
 }
 
-void print_usage(FILE *stream) {
+static void print_usage(FILE *stream) {
   fprintf(stream, "%s %s %s\n", _("Usage:"), program_name,
           _("[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"));
   const char *options[12][2] = {
@@ -454,11 +454,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     HelpMode::init();
 
     /* Initialize game structures */
-    GameHook::init();
     Ball::init();
-    ForceField::init();
-    Pipe::init();
-    PipeConnector::init();
 
     /* Activate initial mode */
     if (Settings::settings->doSpecialLevel) {
@@ -515,9 +511,9 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
     /* Draw world */
     glViewport(0, 0, screenWidth, screenHeight);
-    if (GameMode::current)
+    if (GameMode::current) {
       GameMode::current->display();
-    else {
+    } else {
       glClear(GL_COLOR_BUFFER_BIT);
     }
     warnForGLerrors("uncaught from display routine");
@@ -533,14 +529,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     /*                */
     /* Process events */
     /*                */
-
-    /* Joystick - this was a bug since joystick data are also queried using SDL_JoystickUpdate
-     */
-    /*
-    if(Settings::settings->hasJoystick()) SDL_JoystickEventState(SDL_ENABLE);
-    else SDL_JoystickEventState(SDL_DISABLE);
-    */
-
     SDL_MouseButtonEvent *e = (SDL_MouseButtonEvent *)&event;
     while (SDL_PollEvent(&event)) {
       switch (event.type) {

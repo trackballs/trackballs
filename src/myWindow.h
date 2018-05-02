@@ -30,6 +30,7 @@ class MyWindow {
          one drawing stage even if the windows are rendered with
          translucency
   */
+  virtual ~MyWindow(){};
   virtual void draw();
   virtual void tick();
   virtual void mouse(int state, int x, int y);

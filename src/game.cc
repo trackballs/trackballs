@@ -43,12 +43,9 @@ double Game::defaultScores[SCORE_MAX][2];
 
 Game::Game(const char *name, Gamer *g) {
   balls = new AnimatedCollection();
-  ForceField::reset();
-  Pipe::reset();
 
   current = this;
-  objects = new std::set<class Animated *>();
-  hooks = new std::set<class GameHook *>();
+
   map = NULL;
   player1 = NULL;
   gameTime = 0.0;
@@ -67,7 +64,11 @@ Game::Game(const char *name, Gamer *g) {
   loadScript(scmname);
 
   player1 = new Player();
+  addEntity(player1);
+
   loadLevel(name);
+  player1->restart(Game::current->map->startPosition);
+
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
   player1->lives = 4 - Settings::settings->difficulty;
@@ -75,16 +76,12 @@ Game::Game(const char *name, Gamer *g) {
 
 Game::Game(Map *editmap) {
   balls = new AnimatedCollection();
-  ForceField::reset();
-  Pipe::reset();
   map = editmap;
   localPlayers = 0;
   player1 = NULL;
   gameTime = 0.0;
   nextLevel[0] = 0;
   weather = NULL;
-  objects = new std::set<class Animated *>();
-  hooks = new std::set<class GameHook *>();
   map = editmap;
   edit_mode = 1;
   setDefaults();
@@ -95,13 +92,20 @@ Game::Game(Map *editmap) {
 Game::~Game() {
   clearLevel();
 
-  delete player1;
-  delete objects;
-  delete hooks;
   delete weather;
   delete balls;
+  if (hooks[Role_Player][0] == player1) { hooks[Role_Player].clear(); }
+  delete player1;
+
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }
+
+  for (int i = 0; i < Role_MaxTypes; i++) {
+    if (i == Role_Player) continue;
+    int n = hooks[i].size();
+    for (int k = 0; k < n; k++) { delete hooks[i][k]; }
+    hooks[i].clear();
+  }
 }
 
 void Game::loadLevel(const char *name) {
@@ -143,8 +147,6 @@ void Game::loadLevel(const char *name) {
 }
 
 void Game::setDefaults() {
-  int i;
-
   isNight = 0;
   fogThickness = 0.0;
   wantedFogThickness = 0.0;
@@ -154,7 +156,7 @@ void Game::setDefaults() {
   jumpFactor = 1.0;
   oxygenFactor = 1.0;
 
-  for (i = 0; i < SCORE_MAX; i++) {
+  for (int i = 0; i < SCORE_MAX; i++) {
     defaultScores[i][0] = 0.0;
     defaultScores[i][1] = 0.0;
   }
@@ -179,30 +181,31 @@ void Game::setDefaults() {
   }
 }
 
+void Game::addEntity(class GameHook *hook) { hooks[hook->entity_role].push_back(hook); }
+
 void Game::clearLevel() {
   if (balls) {
     delete balls;
     balls = NULL;
-  };
+  }
   balls = new AnimatedCollection();
-  ForceField::reset();
 
   if (weather) weather->clear();
   clearMusicPreferences();
-  if (hooks) {
-    std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
-    std::set<GameHook *>::iterator ih = old_hooks->begin();
-    std::set<GameHook *>::iterator endh = old_hooks->end();
 
-    for (; ih != endh; ih++)
-      if (*ih != player1) (*ih)->remove();
-    delete old_hooks;
-    GameHook::deleteDeadObjects();
-    hooks->clear();
-    objects->clear();
+  /* Clear up dead entities once scripting no longer can use them*/
+  for (int i = 0; i < hooks[Role_Dead].size(); i++) { delete hooks[Role_Dead][i]; }
+  hooks[Role_Dead].clear();
 
-    hooks->insert(player1);
-    objects->insert(player1);
+  /* remove and delete existing non-player entities */
+  for (int i = Role_GameHook; i < Role_MaxTypes; i++) {
+    if (i == Role_Player) continue;
+    int n = hooks[i].size();
+    for (int k = 0; k < n; k++) {
+      hooks[i][k]->remove();
+      delete hooks[i][k];
+    }
+    hooks[i].clear();
   }
 }
 
@@ -215,15 +218,36 @@ void Game::tick(Real t) {
    * of different moving objects is realistic */
   for (int i = 0; i < steps; i++) {
     /* Update intersection information */
+    balls->clear();
+    for (int j = Role_Ball; j <= Role_Player; j++) {
+      int nb = hooks[j].size();
+      for (int k = 0; k < nb; k++) { balls->add((Animated *)hooks[j][k]); }
+    }
     balls->recalculateBboxMap();
 
     gameTime += tstep;
 
-    std::set<GameHook *> old_hooks(*hooks);
-    std::set<GameHook *>::iterator ih = old_hooks.begin();
-    std::set<GameHook *>::iterator endh = old_hooks.end();
+    /* update active entities */
+    for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
+      int n = hooks[j].size();
+      for (int k = 0; k < n; k++) { hooks[j][k]->tick(tstep); }
+    }
 
-    for (; ih != endh; ih++) (*ih)->tick(tstep);
+    /* filter out dead entities, except players */
+    for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
+      if (j == Role_Player) continue;
+
+      int n = hooks[j].size();
+      int ndead = 0;
+      for (int k = 0; k < n; k++) {
+        if (!hooks[j][k - ndead]->alive) {
+          hooks[Role_Dead].push_back(hooks[j][k - ndead]);
+          hooks[j][k - ndead] = hooks[j][n - 1 - ndead];
+          hooks[j].pop_back();
+          ndead++;
+        }
+      }
+    }
   }
   gameTime = origtime + t;
 
@@ -235,12 +259,10 @@ void Game::tick(Real t) {
   weather->tick(t);
 }
 void Game::doExpensiveComputations() {
-  std::set<GameHook *> *old_hooks = new std::set<GameHook *>(*hooks);
-  std::set<GameHook *>::iterator ih = old_hooks->begin();
-  std::set<GameHook *>::iterator endh = old_hooks->end();
-
-  for (; ih != endh; ih++) (*ih)->doExpensiveComputations();
-  delete old_hooks;
+  for (int i = 0; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int k = 0; k < n; k++) { hooks[i][k]->doExpensiveComputations(); }
+  }
 }
 
 /* Draw all the objects in the world in two stages (nontransparent objects first, transparent
@@ -250,38 +272,37 @@ void Game::draw() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
 
-  std::set<Animated *>::iterator i = objects->begin();
-  std::set<Animated *>::iterator end = objects->end();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
 
-  /* Compute visibility of all objects */
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    anim->onScreen = 0;
-
-    /* Test if bounding box is visible */
-    if (testBboxClip(anim->position[0] + anim->boundingBox[0][0],
-                     anim->position[0] + anim->boundingBox[1][0],
-                     anim->position[1] + anim->boundingBox[0][1],
-                     anim->position[1] + anim->boundingBox[1][1],
-                     anim->position[2] + anim->boundingBox[0][2],
-                     anim->position[2] + anim->boundingBox[1][2], activeView.modelview,
-                     activeView.projection)) {
-      anim->onScreen = 1;
+      anim->onScreen = testBboxClip(anim->position[0] + anim->boundingBox[0][0],
+                                    anim->position[0] + anim->boundingBox[1][0],
+                                    anim->position[1] + anim->boundingBox[0][1],
+                                    anim->position[1] + anim->boundingBox[1][1],
+                                    anim->position[2] + anim->boundingBox[0][2],
+                                    anim->position[2] + anim->boundingBox[1][2],
+                                    activeView.modelview, activeView.projection);
     }
   }
 
   /* Draw first pass of all objects */
-  i = objects->begin();
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    if (anim->onScreen) anim->draw();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
+      if (anim->onScreen) anim->draw();
+    }
   }
 
   /* Draw second pass of all objects */
-  i = objects->begin();
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    if (anim->onScreen) anim->draw2();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
+      if (anim->onScreen) anim->draw2();
+    }
   }
 
   if (weather) weather->draw2();
@@ -297,42 +318,42 @@ void Game::drawReflection(Coord3d focus) {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);
 
-  std::set<Animated *>::iterator i = objects->begin();
-  std::set<Animated *>::iterator end = objects->end();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
 
-  /* Compute visibility of all objects */
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    anim->onScreen = 0;
+      Coord3d tmp = focus - anim->position;
+      if (length(tmp) > 5.0) {
+        anim->onScreen = false;
+        continue;
+      }
 
-    Coord3d tmp = focus - anim->position;
-    if (length(tmp) > 5.0) continue;
-
-    anim->onScreen = testBboxClip(anim->position[0] + anim->boundingBox[0][0],
-                                  anim->position[0] + anim->boundingBox[1][0],
-                                  anim->position[1] + anim->boundingBox[0][1],
-                                  anim->position[1] + anim->boundingBox[1][1],
-                                  anim->position[2] + anim->boundingBox[0][2],
-                                  anim->position[2] + anim->boundingBox[1][2],
-                                  activeView.modelview, activeView.projection);
+      anim->onScreen = testBboxClip(anim->position[0] + anim->boundingBox[0][0],
+                                    anim->position[0] + anim->boundingBox[1][0],
+                                    anim->position[1] + anim->boundingBox[0][1],
+                                    anim->position[1] + anim->boundingBox[1][1],
+                                    anim->position[2] + anim->boundingBox[0][2],
+                                    anim->position[2] + anim->boundingBox[1][2],
+                                    activeView.modelview, activeView.projection);
+    }
   }
 
   /* Draw first pass of all objects */
-  i = objects->begin();
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    if (anim->onScreen) anim->draw();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
+      if (anim->onScreen) anim->draw();
+    }
   }
 
   /* Draw second pass of all objects */
-  i = objects->begin();
-  for (; i != end; i++) {
-    Animated *anim = *i;
-    if (anim->onScreen) anim->draw2();
+  for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    int n = hooks[i].size();
+    for (int j = 0; j < n; j++) {
+      Animated *anim = (Animated *)hooks[i][j];
+      if (anim->onScreen) anim->draw2();
+    }
   }
 }
-
-void Game::add(Animated *a) { objects->insert(a); }
-void Game::add(GameHook *a) { hooks->insert(a); }
-void Game::remove(Animated *a) { objects->erase(a); }
-void Game::remove(GameHook *a) { hooks->erase(a); }

@@ -26,7 +26,6 @@
 #define FF_KILL2 4
 #define FF_BOUNCE2 8
 
-#include <set>
 #include "animated.h"
 
 class ForceField : public Animated {
@@ -38,7 +37,6 @@ class ForceField : public Animated {
   virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
 
   virtual void tick(Real);
-  virtual void onRemove();
 
   static void init();
   static void reset();
@@ -46,8 +44,6 @@ class ForceField : public Animated {
   Coord3d direction;
   Real height, bounceFactor;
   int allow;
-
-  static std::set<ForceField*>* forcefields;
 };
 
 #endif

@@ -1,5 +1,5 @@
-/* template.cc
-   Use to create new .cc project files
+/* sign.cc
+   Show rotating text at a point
 
    Copyright (C) 2000  Mathias Broxvall
 
@@ -27,7 +27,8 @@
 
 #define SIGN_SCALE 0.007
 
-Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos) {
+Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos)
+    : Animated(Role_OtherAnimated) {
   position = pos;
   if (l <= 0.0) l = 1e10;
   life = l;

@@ -25,8 +25,7 @@
 #include "map.h"
 #include "scoreSign.h"
 
-Animated::Animated() : GameHook() {
-  Game::current->add(this);
+Animated::Animated(int role) : GameHook(role) {
   for (int i = 0; i < 3; i++) {
     specularColor[i] = 0.0;
     primaryColor[i] = 0.8;
@@ -60,10 +59,7 @@ Animated::~Animated() {
 void Animated::has_moved() {
   position[2] = Game::current->map->getHeight(position[0], position[1]);
 }
-void Animated::onRemove() {
-  GameHook::onRemove();
-  Game::current->remove(this);
-}
+
 void Animated::allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs) {
   idxbufs = new GLuint[N];
   databufs = new GLuint[N];
@@ -163,21 +159,17 @@ void Animated::tick(Real dt) { GameHook::tick(dt); }
 void Animated::die(int how) {
   (void)how;
 
-  Coord3d pos;
-
   /* Trigger any callbacks to guile if registered */
   triggerHook(GameHookEvent_Death, NULL);
 
-  pos[0] = position[0];
-  pos[1] = position[1];
-  pos[2] = position[2] + 0.7;
+  Coord3d pos(position[0], position[1], position[2] + 0.7);
 
   if (scoreOnDeath != 0.0) {
     pos[2] += 0.5;
-    new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE);
+    Game::current->addEntity(new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE));
   }
   if (timeOnDeath != 0.0) {
     pos[2] += 0.5;
-    new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME);
+    Game::current->addEntity(new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME));
   }
 }

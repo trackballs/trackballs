@@ -28,7 +28,6 @@ class Player : public Ball {
   Player();
   virtual ~Player();
 
-  void draw();
   void tick(Real time);
   void key(int k);
   void die(int);

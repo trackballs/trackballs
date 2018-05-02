@@ -23,7 +23,7 @@
 #include "game.h"
 #include "map.h"
 
-Trampoline::Trampoline(int x, int y) : GameHook(), cx(x), cy(y) {}
+Trampoline::Trampoline(int x, int y) : GameHook(Role_GameHook), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
   Map* map = Game::current->map;
   Cell& c = map->cell(cx, cy);

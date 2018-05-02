@@ -24,7 +24,8 @@
 #include "player.h"
 #include "sound.h"
 
-Flag::Flag(Real x, Real y, int points, int visible, Real radius) {
+Flag::Flag(Real x, Real y, int points, int visible, Real radius)
+    : Animated(Role_OtherAnimated) {
   scoreOnDeath = Game::defaultScores[SCORE_FLAG][0];
   timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
 
@@ -128,9 +129,7 @@ void Flag::tick(Real /*t*/) {
 void Flag::onGet() {
   /* Triggers any events and creates scores/time bonuses */
   die(DIE_OTHER);
-  /* position[2] += 1.0;*/
   /* Play the sound effect */
   playEffect(SFX_GOT_FLAG);
-  /*new ScoreSign(points,position);*/
   remove();
 }

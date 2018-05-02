@@ -32,7 +32,7 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
+static Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
   /* Finite impulse response filter to smooth mouse input */
   const int N = 1000;
   const double T = 0.2;
@@ -83,7 +83,7 @@ Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
   return mouseState;
 }
 
-Player::Player() : Ball() {
+Player::Player() : Ball(Role_Player) {
   inTheAir = 0;
   inPipe = 0;
   lives = 3;
@@ -119,10 +119,6 @@ Player::Player() : Ball() {
 }
 
 Player::~Player() {}
-void Player::draw() {
-  if (!playing) return;
-  Ball::draw();
-}
 void Player::tick(Real t) {
   static Real timeFraction = 0.;
 
@@ -322,7 +318,7 @@ void Player::die(int how) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
     Coord3d vel;
     Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
-    new Splash(center, vel, acidColor, 32.0, radius);
+    Game::current->addEntity(new Splash(center, vel, acidColor, 32.0, radius));
   } else
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++) {
@@ -334,7 +330,7 @@ void Player::die(int how) {
         vel[0] = velocity[0] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[1] = velocity[1] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[2] = velocity[2] + (sink ? 0.01 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        new Debris(this, pos, vel, 2.0 + 8.0 * frandom());
+        Game::current->addEntity(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
       }
 
   if (how == DIE_CRASH)
@@ -348,7 +344,7 @@ void Player::die(int how) {
     ((MainMode *)GameMode::current)->playerLose();
   else
     ((MainMode *)GameMode::current)->playerDie();
-  alive = 0;
+  alive = false;
 }
 
 void Player::setStartVariables() {
@@ -356,13 +352,13 @@ void Player::setStartVariables() {
   rotation[0] = rotation[1] = 0.;
   velocity = Coord3d();
   playing = true;
-  alive = 1;
   hasWon = 0;
   health = 1.0;
   oxygen = 1.0;
   inTheAir = 0;
   inPipe = 0;
   moveBurst = 0.0;
+  alive = true;
 }
 
 void Player::restart(Coord3d pos) {
@@ -376,7 +372,7 @@ void Player::restart(Coord3d pos) {
     modTimeLeft[i] = 0.0;*/
 }
 void Player::mouse(int /*state*/, int /*x*/, int /*y*/) {}
-void Player::newLevel() { Game::current->balls->insert(this); }
+void Player::newLevel() {}
 void Player::setHealth(Real d) {
   if (d < health) health = d;
   if (health < 0.0) health = 0.0;

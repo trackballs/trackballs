@@ -26,7 +26,8 @@
 
 Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat,
                    SCM fun)
-    : direction(direction),
+    : GameHook(Role_GameHook),
+      direction(direction),
       position(std::fmod(position, 1.0)),
       length(length),
       value0(v0),
@@ -37,7 +38,6 @@ Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1,
 }
 Animator::~Animator() {
   if (fun) scm_gc_unprotect_object(fun);
-  this->GameHook::~GameHook();
 }
 Real Animator::getValue() const {
   return value0 * (1.0 - position / length) + position / length * value1;

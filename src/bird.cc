@@ -28,7 +28,8 @@
 #include "map.h"
 #include "sound.h"
 
-Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed) {
+Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
+    : Animated(Role_OtherAnimated) {
   this->x = x;
   this->y = y;
   this->dx = dx - x;
@@ -157,8 +158,6 @@ void Bird::tick(Real t) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
         // the ball kills the bird !!!
         Animated::die(DIE_OTHER);
-        /*position[2] += 1.2;
-          new ScoreSign(25,position);*/
 
         playEffect(SFX_BIRD_DIE);
         // restart the bird

@@ -25,14 +25,12 @@
 #include "player.h"
 
 Trigger::Trigger(Real x, Real y, Real radius, SCM expr)
-    : GameHook(), x(x), y(y), radius(radius), expr(expr) {
+    : GameHook(Role_GameHook), x(x), y(y), radius(radius), expr(expr) {
   scm_gc_protect_object(expr);
 }
-Trigger::~Trigger() {
-  scm_gc_unprotect_object(expr);
-  this->GameHook::~GameHook();
-}
+Trigger::~Trigger() { scm_gc_unprotect_object(expr); }
 void Trigger::tick(Real /*t*/) {
+  if (!is_on) return;
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;

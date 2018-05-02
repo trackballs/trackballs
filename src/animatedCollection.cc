@@ -23,6 +23,8 @@
 /* For std::sort, std::nth_element */
 #include <algorithm>
 
+#include <set>
+
 static int AC_DEBUG = 0;
 static int SANITY_CHECK = 0;
 
@@ -783,9 +785,9 @@ AnimatedCollection::~AnimatedCollection() {
   if (retlist) delete[] retlist;
 }
 
-void AnimatedCollection::insert(Animated* a) { store.insert(a); }
+void AnimatedCollection::add(Animated* a) { store.push_back(a); }
 
-void AnimatedCollection::remove(Animated* a) { store.erase(a); }
+void AnimatedCollection::clear() { store.clear(); }
 
 static struct Rectangle<3>* staticinput = NULL;
 
@@ -856,8 +858,8 @@ void AnimatedCollection::recalculateBboxMap() {
 
   struct Rectangle<3>* input = new struct Rectangle<3>[ntot];
   int* rect_indices = new int[ntot];
-  std::set<Animated*>::iterator iter = store.begin();
-  std::set<Animated*>::iterator end = store.end();
+  std::vector<Animated*>::const_iterator iter = store.begin();
+  std::vector<Animated*>::const_iterator end = store.end();
   for (int i = 0; iter != end; iter++, i++) {
     struct Rectangle<3> r = rectFromAnim(*iter);
     r = reverseAxisOrder(r);

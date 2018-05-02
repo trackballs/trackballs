@@ -24,7 +24,6 @@
 #define PIPE_SOFT_ENTER 1
 #define PIPE_SOFT_EXIT 2
 
-#include <set>
 #include "animated.h"
 
 class Pipe : public Animated {
@@ -35,19 +34,14 @@ class Pipe : public Animated {
   virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
   virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
 
-  void tick(Real t);
+  virtual void tick(Real t);
   /** Recomputes the bounding box of the pipe. Needed after changes in from/to position */
-  void computeBoundingBox();
-  void onRemove();
-
-  static void init();
-  static void reset();
+  virtual void computeBoundingBox();
 
   Coord3d from, to;
   Coord3d up, right;
   Real radius;
 
-  static std::set<Pipe*>* pipes;
   Real windForward, windBackward;
 
  private:

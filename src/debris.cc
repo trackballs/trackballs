@@ -20,19 +20,19 @@
 
 #include "debris.h"
 
-Debris::Debris(Ball *ball, Coord3d pos, Coord3d vel, double dur) {
+Debris::Debris(Ball *parent, Coord3d pos, Coord3d vel, double dur) : Ball(Role_Ball) {
   position = pos;
   velocity = vel;
   crashTolerance = 10000;
-  if (ball) {
-    for (int i = 0; i < 3; i++) primaryColor[i] = ball->primaryColor[i];
-    for (int i = 0; i < NUM_MODS; i++) modTimeLeft[i] = ball->modTimeLeft[i];
+  if (parent) {
+    for (int i = 0; i < 3; i++) primaryColor[i] = parent->primaryColor[i];
+    for (int i = 0; i < NUM_MODS; i++) modTimeLeft[i] = parent->modTimeLeft[i];
     modTimeLeft[MOD_DIZZY] = 0.0;
     modTimeLeft[MOD_NITRO] = 0.0;
-    texture = ball->texture;
+    texture = parent->texture;
   }
-  if (ball)
-    initialSize = ball->realRadius / 4.0;
+  if (parent)
+    initialSize = parent->realRadius / 4.0;
   else
     initialSize = 0.05;
   endingSize = 0.0;
@@ -56,5 +56,4 @@ void Debris::tick(Real t) {
   else
     Ball::tick(t);
 }
-void Debris::draw() { Ball::draw(); }
 void Debris::die(int /*how*/) { remove(); }

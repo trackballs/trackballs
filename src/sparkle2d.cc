@@ -74,9 +74,7 @@ void Sparkle2D::remove_sparkle(Sparkle *sparkle) {
  * create and insert a glitter
  */
 Sparkle *Sparkle2D::create_and_insert() {
-  Sparkle *tmp = NULL;
-
-  tmp = new Sparkle;
+  Sparkle *tmp = new Sparkle;
   if (tmp == NULL) { return (NULL); }
   tmp->next = sparkle_first;
   tmp->prev = NULL;
@@ -86,7 +84,7 @@ Sparkle *Sparkle2D::create_and_insert() {
 }
 
 /*
- * add a new sparkel
+ * add a new sparkle
  */
 int Sparkle2D::add(float px, float py, float vx, float vy, float ttl, float size, float r,
                    float g, float b, float a) {

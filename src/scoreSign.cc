@@ -44,6 +44,8 @@ void ScoreSign::init(int points, int type) {
     primaryColor[1] = 0.8;
     primaryColor[2] = 0.2;
   }
+
+  /* Note ScoreSign is a Sign, hence already registered */
 }
 
 void ScoreSign::tick(Real t) {

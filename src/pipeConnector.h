@@ -23,8 +23,6 @@
 
 #include "animated.h"
 
-#include <set>
-
 class PipeConnector : public Animated {
  public:
   PipeConnector(Coord3d pos, Real radius);
@@ -37,10 +35,6 @@ class PipeConnector : public Animated {
   void onRemove();
 
   Real radius;
-
-  static void init();
-  static void reset();
-  static class std::set<PipeConnector*>* connectors;
 
  private:
   void drawMe(GLuint* idxbufs, GLuint* databufs);

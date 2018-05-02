@@ -30,10 +30,7 @@ class ModPill : public Ball {
                                   >0  - Time between resurrections */
   ModPill(Real x, Real y, int kind, int length, int resurrecting);
   ~ModPill();
-  void draw();
-  void draw2();
   void tick(Real);
-  void playerRestarted();
   void die(int);
 
  private:

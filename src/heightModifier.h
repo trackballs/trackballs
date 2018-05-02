@@ -24,14 +24,10 @@
 
 #include "animated.h"
 
-class HeightModifier : public Animated {
+class HeightModifier : public GameHook {
  public:
   HeightModifier(int corner, int x, int y, Real min, Real max, Real freq, Real phase, int not1,
                  int not2, int not3);
-
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
 
   void tick(Real t);
 

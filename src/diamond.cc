@@ -25,7 +25,7 @@
 #include "sign.h"
 #include "sound.h"
 
-Diamond::Diamond(Coord3d pos) {
+Diamond::Diamond(Coord3d pos) : Animated(Role_OtherAnimated) {
   position = pos;
 
   specularColor[0] = specularColor[1] = specularColor[2] = 1.0;
@@ -109,5 +109,5 @@ void Diamond::onGet() {
   Coord3d signPos;
   signPos = position;
   signPos[2] += 1.0;
-  new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos);
+  Game::current->addEntity(new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos));
 }

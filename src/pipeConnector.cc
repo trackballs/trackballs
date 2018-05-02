@@ -20,17 +20,12 @@
 
 #include "pipeConnector.h"
 
-std::set<PipeConnector *> *PipeConnector::connectors;
-void PipeConnector::init() { connectors = new std::set<PipeConnector *>(); }
-void PipeConnector::reset() {
-  delete connectors;
-  connectors = new std::set<PipeConnector *>();
-}
-PipeConnector::PipeConnector(Coord3d pos, Real r) : Animated() {
+#include "game.h"
+
+PipeConnector::PipeConnector(Coord3d pos, Real r) : Animated(Role_PipeConnector) {
   position = pos;
   radius = r;
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
-  connectors->insert(this);
 }
 
 int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
@@ -95,8 +90,4 @@ void PipeConnector::tick(Real t) {
   boundingBox[1][0] = radius;
   boundingBox[1][1] = radius;
   boundingBox[1][2] = radius;
-}
-void PipeConnector::onRemove() {
-  Animated::onRemove();
-  connectors->erase(this);
 }

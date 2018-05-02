@@ -28,9 +28,8 @@ class Black : public Ball {
  public:
   Black(Real x, Real y);
   ~Black();
-  void die(int);
-  void tick(Real);
-  void draw();
+  virtual void die(int);
+  virtual void tick(Real);
 
   Real horizon;
   int likesPlayer; /* 1: attracted by ply. 0: unaffected. -1: repelled */

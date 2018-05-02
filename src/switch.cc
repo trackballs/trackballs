@@ -26,7 +26,7 @@
 #include "player.h"
 #include "sound.h"
 
-CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) {
+CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated) {
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(x, y);
@@ -45,7 +45,6 @@ CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) {
 CSwitch::~CSwitch() {
   scm_gc_unprotect_object(on);
   scm_gc_unprotect_object(off);
-  this->Animated::~Animated();
 }
 
 int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {

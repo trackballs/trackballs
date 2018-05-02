@@ -29,7 +29,8 @@
 Real timeLow = 2.0, timeRise = 3.0, timeHigh = 2.0, timeFall = 3.0;
 
 CyclicPlatform::CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real high,
-                               Real offset, Real speed) {
+                               Real offset, Real speed)
+    : GameHook(Role_GameHook) {
   this->x1 = std::min(x1, x2);
   this->x2 = std::max(x1, x2);
   this->y1 = std::min(y1, y2);

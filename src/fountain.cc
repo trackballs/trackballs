@@ -23,14 +23,18 @@
 #include "player.h"
 #include "settings.h"
 
-Fountain::Fountain(double randomSpeed, double radius, double strength)
-    : Animated(), randomSpeed(randomSpeed), radius(radius), strength(strength) {
+Fountain::Fountain(Coord3d pos, double randomSpeed, double radius, double strength)
+    : Animated(Role_OtherAnimated),
+      randomSpeed(randomSpeed),
+      radius(radius),
+      strength(strength) {
   primaryColor[0] = 0.4;
   primaryColor[1] = 0.4;
   primaryColor[2] = 0.8;
   primaryColor[3] = 0.5;
   velocity[0] = velocity[1] = 0.0;
   velocity[2] = 0.3;
+  position = pos;
   createPoint = 0.0;
   nextPoint = 0;
   drawFrom = 0;

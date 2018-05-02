@@ -396,15 +396,6 @@ void MainMode::key(int key) {
     }
     break;
   case statusGameOver: {
-    /*	  int buyCost;
-    buyCost=(Game::current->player1->score/200)*100+500;
-    if(Game::current->player1->score >= buyCost && key == 'y') {
-          restartPlayer();
-          player1->lives++;
-          player1->timeLeft += 30;
-          gameStatus=statusInGame;
-          new ScoreSign(-buyCost,player1->position);
-          } else  */
     if (key == ' ' || key == 'n') GameMode::activate(EnterHighScoreMode::enterHighScoreMode);
   } break;
   case statusVictory:
@@ -418,8 +409,6 @@ void MainMode::key(int key) {
 void MainMode::special(int /*key*/, int /*x*/, int /*y*/) {}
 void MainMode::idle(Real td) {
   Player *player1 = Game::current ? Game::current->player1 : NULL;
-  //   Map *map = Game::current ? Game::current->map : NULL;
-  double t;
 
   time += td;
   flash -= td;
@@ -477,7 +466,7 @@ void MainMode::idle(Real td) {
       xyAngle -= std::min(0.4 * td, xyAngle - wantedXYAngle);
 
     Game::current->tick(td);
-    for (t = td; t >= 0.0; t -= 0.01)
+    for (double t = td; t >= 0.0; t -= 0.01)
       for (int i = 0; i < 3; i++) {
         camDelta[i] = camDelta[i] * 0.9 + 0.002 * (player1->position[i] - camFocus[i]);
         camFocus[i] += camDelta[i];
@@ -543,7 +532,7 @@ void MainMode::startGame() {
   Game::current->gamer->levelStarted();
 
   pos[2] += 2.0;
-  new Sign(_("Good luck!"), 6, 1.0, 60.0, pos);
+  Game::current->addEntity(new Sign(_("Good luck!"), 6, 1.0, 60.0, pos));
   Game::current->player1->position[2] += 1.0;
   Game::current->player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
@@ -558,7 +547,7 @@ void MainMode::restartPlayer() {
 
   Coord3d pos = Game::current->map->startPosition;
   pos[2] += 2.0;
-  new Sign(_("Good luck!"), 7, 1.0, 60.0, pos);
+  Game::current->addEntity(new Sign(_("Good luck!"), 7, 1.0, 60.0, pos));
   player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 

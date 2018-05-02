@@ -252,8 +252,11 @@ SCM_DEFINE(new_mr_black, "new-mr-black", 2, 0, 0, (SCM x, SCM y),
 {
   SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
-  if (Game::current)
-    return smobAnimated_make(new Black(scm_to_double(x) + DX, scm_to_double(y) + DY));
+  if (Game::current) {
+    Black *black = new Black(scm_to_double(x) + DX, scm_to_double(y) + DY);
+    Game::current->addEntity(black);
+    return smobAnimated_make(black);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -265,8 +268,11 @@ SCM_DEFINE(new_baby, "new-baby", 2, 0, 0, (SCM x, SCM y),
 {
   SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
-  if (Game::current)
-    return smobAnimated_make(new Baby(scm_to_double(x) + DX, scm_to_double(y) + DY));
+  if (Game::current) {
+    Baby *baby = new Baby(scm_to_double(x) + DX, scm_to_double(y) + DY);
+    Game::current->addEntity(baby);
+    return smobAnimated_make(baby);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -282,10 +288,13 @@ SCM_DEFINE(add_teleport, "add-teleport", 5, 0, 0, (SCM x, SCM y, SCM dx, SCM dy,
   SCM_ASSERT(scm_is_real(dx), dx, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_real(dy), dy, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
-  if (Game::current)
-    return smobAnimated_make(new Teleport(scm_to_double(x) + DX, scm_to_double(y) + DY,
-                                          scm_to_double(dx) + DX, scm_to_double(dy) + DY,
-                                          scm_to_double(radius)));
+  if (Game::current) {
+    Teleport *teleport =
+        new Teleport(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(dx) + DX,
+                     scm_to_double(dy) + DY, scm_to_double(radius));
+    Game::current->addEntity(teleport);
+    return smobAnimated_make(teleport);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -302,10 +311,12 @@ SCM_DEFINE(add_bird, "add-bird", 6, 0, 0, (SCM x, SCM y, SCM dx, SCM dy, SCM siz
   SCM_ASSERT(scm_is_real(dy), dy, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(scm_is_real(size), size, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG5, FUNC_NAME);
-  if (Game::current)
-    return smobAnimated_make(new Bird(scm_to_double(x) + DX, scm_to_double(y) + DY,
-                                      scm_to_double(dx) + DX, scm_to_double(dy) + DY,
-                                      scm_to_double(size), scm_to_double(speed)));
+  if (Game::current) {
+    Bird *bird = new Bird(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(dx) + DX,
+                          scm_to_double(dy) + DY, scm_to_double(size), scm_to_double(speed));
+    Game::current->addEntity(bird);
+    return smobAnimated_make(bird);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -320,9 +331,13 @@ SCM_DEFINE(add_flag, "add-flag", 5, 0, 0, (SCM x, SCM y, SCM points, SCM visible
   SCM_ASSERT(scm_is_integer(points), points, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_bool(visible), visible, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
-  Flag *flag = new Flag(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_int(points),
-                        scm_to_bool(visible), scm_to_double(radius));
-  return smobAnimated_make(flag);
+  if (Game::current) {
+    Flag *flag = new Flag(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_int(points),
+                          scm_to_bool(visible), scm_to_double(radius));
+    Game::current->addEntity(flag);
+    return smobAnimated_make(flag);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -339,10 +354,14 @@ SCM_DEFINE(add_colormodifier, "add-colormodifier", 7, 0, 0,
   SCM_ASSERT(scm_is_real(max), max, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(scm_is_real(freq), freq, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG7, FUNC_NAME);
-  ColorModifier *colormodifier =
-      new ColorModifier(scm_to_int(col), scm_to_int(x), scm_to_int(y), scm_to_double(min),
-                        scm_to_double(max), scm_to_double(freq), scm_to_double(phase));
-  return smobAnimated_make(colormodifier);
+  if (Game::current) {
+    ColorModifier *colormodifier =
+        new ColorModifier(scm_to_int(col), scm_to_int(x), scm_to_int(y), scm_to_double(min),
+                          scm_to_double(max), scm_to_double(freq), scm_to_double(phase));
+    Game::current->addEntity(colormodifier);
+    return smobGameHook_make(colormodifier);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -365,10 +384,14 @@ SCM_DEFINE(add_heightmodifier, "add-heightmodifier", 7, 3, 0,
   if (scm_is_real(n1)) not1 = scm_to_int(n1);
   if (scm_is_real(n2)) not1 = scm_to_int(n2);
   if (scm_is_real(n3)) not1 = scm_to_int(n3);
-  HeightModifier *heightmodifier = new HeightModifier(
-      scm_to_int(corner), scm_to_int(x), scm_to_int(y), scm_to_double(min), scm_to_double(max),
-      scm_to_double(freq), scm_to_double(phase), not1, not2, not3);
-  return smobAnimated_make(heightmodifier);
+  if (Game::current) {
+    HeightModifier *heightmodifier = new HeightModifier(
+        scm_to_int(corner), scm_to_int(x), scm_to_int(y), scm_to_double(min),
+        scm_to_double(max), scm_to_double(freq), scm_to_double(phase), not1, not2, not3);
+    Game::current->addEntity(heightmodifier);
+    return smobGameHook_make(heightmodifier);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -380,9 +403,13 @@ SCM_DEFINE(add_cactus, "add-cactus", 3, 0, 0, (SCM x, SCM y, SCM radius),
   SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
-  Cactus *cactus =
-      new Cactus(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(radius));
-  return smobAnimated_make(cactus);
+  if (Game::current) {
+    Cactus *cactus =
+        new Cactus(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(radius));
+    Game::current->addEntity(cactus);
+    return smobAnimated_make(cactus);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -398,8 +425,12 @@ SCM_DEFINE(add_spike, "add-spike", 4, 0, 0, (SCM x, SCM y, SCM speed, SCM phase)
   Coord3d pos;
   pos[0] = scm_to_double(x) + DX;
   pos[1] = scm_to_double(y) + DY;
-  Spike *spike = new Spike(pos, scm_to_double(speed), scm_to_double(phase));
-  return smobAnimated_make(spike);
+  if (Game::current) {
+    Spike *spike = new Spike(pos, scm_to_double(speed), scm_to_double(phase));
+    Game::current->addEntity(spike);
+    return smobAnimated_make(spike);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -417,9 +448,13 @@ SCM_DEFINE(add_sidespike, "add-sidespike", 5, 0, 0,
   Coord3d pos;
   pos[0] = scm_to_double(x) + DX;
   pos[1] = scm_to_double(y) + DY;
-  SideSpike *sidespike =
-      new SideSpike(pos, scm_to_double(speed), scm_to_double(phase), scm_to_int(side));
-  return smobAnimated_make(sidespike);
+  if (Game::current) {
+    SideSpike *sidespike =
+        new SideSpike(pos, scm_to_double(speed), scm_to_double(phase), scm_to_int(side));
+    Game::current->addEntity(sidespike);
+    return smobAnimated_make(sidespike);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -434,9 +469,14 @@ SCM_DEFINE(add_goal, "add-goal", 4, 0, 0, (SCM x, SCM y, SCM rotate, SCM nextLev
   SCM_ASSERT(scm_is_string(nextLevel), nextLevel, SCM_ARG4, FUNC_NAME);
   char *sname = scm_to_utf8_string(nextLevel);
   if (sname) {
-    Animated *a = (Animated *)new Goal(scm_to_double(x) + DX, scm_to_double(y) + DY,
-                                       scm_is_true(rotate), sname);
-    return smobAnimated_make(a);
+    if (Game::current) {
+      Goal *goal =
+          new Goal(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_is_true(rotate), sname);
+      Game::current->addEntity(goal);
+      free(sname);
+      return smobAnimated_make(goal);
+    }
+    free(sname);
   }
   return SCM_UNSPECIFIED;
 }
@@ -460,10 +500,11 @@ SCM_DEFINE(sign, "sign", 6, 1, 0,
         pos[2] = scm_to_double(z);
       else
         pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 2.0;
-      Sign *s = new Sign(gettext(sname), scm_to_double(duration), scm_to_double(scale),
-                         scm_to_double(rotation), pos);
+      Sign *sign = new Sign(gettext(sname), scm_to_double(duration), scm_to_double(scale),
+                            scm_to_double(rotation), pos);
+      Game::current->addEntity(sign);
       free(sname);
-      return smobAnimated_make(s);
+      return smobAnimated_make(sign);
     }
     free(sname);
   }
@@ -483,9 +524,14 @@ SCM_DEFINE(add_modpill, "add-modpill", 5, 0, 0,
   SCM_ASSERT(scm_is_real(kind), kind, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_real(length), length, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(scm_is_real(resurrecting), resurrecting, SCM_ARG5, FUNC_NAME);
-  return smobAnimated_make(new ModPill(scm_to_double(x) + DX, scm_to_double(y) + DY,
-                                       scm_to_int(kind), scm_to_int(length),
-                                       scm_to_int(resurrecting)));
+  if (Game::current) {
+    ModPill *modpill =
+        new ModPill(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_int(kind),
+                    scm_to_int(length), scm_to_int(resurrecting));
+    Game::current->addEntity(modpill);
+    return smobAnimated_make(modpill);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -504,15 +550,20 @@ SCM_DEFINE(forcefield, "forcefield", 8, 0, 0,
   SCM_ASSERT(scm_is_real(height), height, SCM_ARG7, FUNC_NAME);
   SCM_ASSERT(scm_is_real(allow), allow, SCM_ARG7, FUNC_NAME);
 
-  Coord3d pos, dir;
-  pos[0] = scm_to_double(x) + DX;
-  pos[1] = scm_to_double(y) + DY;
-  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + scm_to_double(z);
-  dir[0] = scm_to_double(dx);
-  dir[1] = scm_to_double(dy);
-  dir[2] = scm_to_double(dz);
-  ForceField *ff = new ForceField(pos, dir, scm_to_double(height), scm_to_int(allow));
-  return smobAnimated_make(ff);
+  if (Game::current) {
+    Coord3d pos, dir;
+    pos[0] = scm_to_double(x) + DX;
+    pos[1] = scm_to_double(y) + DY;
+    pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + scm_to_double(z);
+    dir[0] = scm_to_double(dx);
+    dir[1] = scm_to_double(dy);
+    dir[2] = scm_to_double(dz);
+
+    ForceField *ff = new ForceField(pos, dir, scm_to_double(height), scm_to_int(allow));
+    Game::current->addEntity(ff);
+    return smobAnimated_make(ff);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -525,8 +576,12 @@ SCM_DEFINE(fun_switch, "switch", 4, 0, 0, (SCM x, SCM y, SCM on, SCM off),
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_true(scm_procedure_p(on)), on, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_true(scm_procedure_p(off)), off, SCM_ARG3, FUNC_NAME);
-  CSwitch *sw = new CSwitch(scm_to_double(x) + DX, scm_to_double(y) + DY, on, off);
-  return smobAnimated_make(sw);
+  if (Game::current) {
+    CSwitch *sw = new CSwitch(scm_to_double(x) + DX, scm_to_double(y) + DY, on, off);
+    Game::current->addEntity(sw);
+    return smobAnimated_make(sw);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -550,8 +605,12 @@ SCM_DEFINE(new_pipe, "pipe", 7, 0, 0,
   to[0] = scm_to_double(x1) + DX;
   to[1] = scm_to_double(y1) + DY;
   to[2] = scm_to_double(z1);
-  Pipe *pipe = new Pipe(from, to, scm_to_double(radius));
-  return smobAnimated_make(pipe);
+  if (Game::current) {
+    Pipe *pipe = new Pipe(from, to, scm_to_double(radius));
+    Game::current->addEntity(pipe);
+    return smobAnimated_make(pipe);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -568,8 +627,12 @@ SCM_DEFINE(pipe_connector, "pipe-connector", 4, 0, 0, (SCM x0, SCM y0, SCM z0, S
   pos[0] = scm_to_double(x0) + DX;
   pos[1] = scm_to_double(y0) + DY;
   pos[2] = scm_to_double(z0);
-  PipeConnector *pipeConnector = new PipeConnector(pos, scm_to_double(radius));
-  return smobAnimated_make(pipeConnector);
+  if (Game::current) {
+    PipeConnector *pipeConnector = new PipeConnector(pos, scm_to_double(radius));
+    Game::current->addEntity(pipeConnector);
+    return smobAnimated_make(pipeConnector);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -580,13 +643,18 @@ SCM_DEFINE(diamond, "diamond", 2, 1, 0, (SCM x, SCM y, SCM z),
 {
   SCM_ASSERT(scm_is_real(x), x, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
-  Coord3d pos;
-  pos[0] = scm_to_double(x) + DX;
-  pos[1] = scm_to_double(y) + DY;
-  pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 0.4;
-  if (scm_is_real(z)) pos[2] = scm_to_double(z);
-  Diamond *d = new Diamond(pos);
-  return smobAnimated_make(d);
+  if (Game::current) {
+    Coord3d pos;
+    pos[0] = scm_to_double(x) + DX;
+    pos[1] = scm_to_double(y) + DY;
+    pos[2] = Game::current->map->getHeight(pos[0], pos[1]) + 0.4;
+    if (scm_is_real(z)) pos[2] = scm_to_double(z);
+
+    Diamond *diamond = new Diamond(pos);
+    Game::current->addEntity(diamond);
+    return smobAnimated_make(diamond);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -602,12 +670,14 @@ SCM_DEFINE(fountain, "fountain", 6, 0, 0,
   SCM_ASSERT(scm_is_real(randomSpeed), randomSpeed, SCM_ARG4, FUNC_NAME);
   SCM_ASSERT(scm_is_real(radius), radius, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(scm_is_real(strength), strength, SCM_ARG6, FUNC_NAME);
-  Fountain *fountain =
-      new Fountain(scm_to_double(randomSpeed), scm_to_double(radius), scm_to_double(strength));
-  fountain->position[0] = scm_to_double(x) + DX;
-  fountain->position[1] = scm_to_double(y) + DY;
-  fountain->position[2] = scm_to_double(z);
-  return smobAnimated_make(fountain);
+  if (Game::current) {
+    Coord3d position(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(z));
+    Fountain *fountain = new Fountain(position, scm_to_double(randomSpeed),
+                                      scm_to_double(radius), scm_to_double(strength));
+    Game::current->addEntity(fountain);
+    return smobAnimated_make(fountain);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -929,10 +999,14 @@ SCM_DEFINE(add_cyclic_platform, "add-cyclic-platform", 8, 0, 0,
   SCM_ASSERT(scm_is_real(high), high, SCM_ARG6, s_add_cyclic_platform);
   SCM_ASSERT(scm_is_real(offset), offset, SCM_ARG7, s_add_cyclic_platform);
   SCM_ASSERT(scm_is_real(speed), speed, SCM_ARG7, s_add_cyclic_platform);
-  CyclicPlatform *platform = new CyclicPlatform(
-      scm_to_int(x1), scm_to_int(y1), scm_to_int(x2), scm_to_int(y2), scm_to_double(low),
-      scm_to_double(high), scm_to_double(offset), scm_to_double(speed));
-  return smobGameHook_make(platform);
+  if (Game::current) {
+    CyclicPlatform *platform = new CyclicPlatform(
+        scm_to_int(x1), scm_to_int(y1), scm_to_int(x2), scm_to_int(y2), scm_to_double(low),
+        scm_to_double(high), scm_to_double(offset), scm_to_double(speed));
+    Game::current->addEntity(platform);
+    return smobGameHook_make(platform);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -950,10 +1024,14 @@ SCM_DEFINE(
   SCM_ASSERT(scm_is_real(v1), v1, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(scm_is_integer(repeat), repeat, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(scm_is_bool(fun) | scm_is_true(scm_procedure_p(fun)), fun, SCM_ARG7, FUNC_NAME);
-  Animator *a = new Animator(scm_to_double(length), scm_to_double(position),
-                             scm_to_double(direction), scm_to_double(v0), scm_to_double(v1),
-                             scm_to_int(repeat), scm_is_bool(fun) ? NULL : fun);
-  return smobGameHook_make(a);
+  if (Game::current) {
+    Animator *a = new Animator(scm_to_double(length), scm_to_double(position),
+                               scm_to_double(direction), scm_to_double(v0), scm_to_double(v1),
+                               scm_to_int(repeat), scm_is_bool(fun) ? NULL : fun);
+    Game::current->addEntity(a);
+    return smobGameHook_make(a);
+  }
+  return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
 
@@ -1645,7 +1723,12 @@ SCM_DEFINE(trigger, "trigger", 4, 0, 0, (SCM x, SCM y, SCM r, SCM expr),
   SCM_ASSERT(scm_is_real(y), y, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_real(r), r, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_true(scm_procedure_p(expr)), expr, SCM_ARG4, FUNC_NAME);
-  new Trigger(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(r), expr);
+  if (Game::current) {
+    Trigger *trigger =
+        new Trigger(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(r), expr);
+    Game::current->addEntity(trigger);
+    return smobGameHook_make(trigger);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1667,8 +1750,12 @@ SCM_DEFINE(smart_trigger, "smart-trigger", 5, 0, 0,
     leaving = NULL;
   else
     SCM_ASSERT(scm_is_true(scm_procedure_p(leaving)), leaving, SCM_ARG5, FUNC_NAME);
-  new SmartTrigger(scm_to_double(x) + DX, scm_to_double(y) + DY, scm_to_double(r), entering,
-                   leaving);
+  if (Game::current) {
+    SmartTrigger *st = new SmartTrigger(scm_to_double(x) + DX, scm_to_double(y) + DY,
+                                        scm_to_double(r), entering, leaving);
+    Game::current->addEntity(st);
+    return smobGameHook_make(st);
+  }
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME

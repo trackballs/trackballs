@@ -27,7 +27,7 @@
 #include "map.h"
 #include "sound.h"
 
-Cactus::Cactus(Real x, Real y, Real radius) {
+Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
   this->radius = radius;
   position[0] = x;
   position[1] = y;
@@ -211,9 +211,6 @@ void Cactus::tick(Real t) {
         if (killed == 1) return;  // still killed
 
         killed = 1;
-        /*position[2] += 1.2;
-        new ScoreSign(100,position);
-        position[2] -= 1.2;*/
         playEffect(SFX_CACTUS_DIE);
         return;
       }

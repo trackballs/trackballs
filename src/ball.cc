@@ -34,8 +34,6 @@
 #include "splash.h"
 #include "trampoline.h"
 
-#include <set>
-
 #define MAX_CONTACT_POINTS 24
 
 GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
@@ -49,12 +47,7 @@ void Ball::init() {
   dizzyTexCoords[3] = 1.f;
 }
 
-void Ball::onRemove() {
-  Animated::onRemove();
-  Game::current->balls->remove(this);
-}
-
-Ball::Ball() : Animated() {
+Ball::Ball(int role) : Animated(role) {
   sink = 0.0;
 
   ballResolution = BALL_LORES;
@@ -72,7 +65,6 @@ Ball::Ball() : Animated() {
   gravity = 8.0;
   bounceFactor = 0.8;
   crashTolerance = 7;
-  Game::current->balls->insert(this);
   no_physics = 0;
   inPipe = 0;
   nextJumpStrength = 0.0;
@@ -856,8 +848,9 @@ bool Ball::physics(Real time) {
       if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
         GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
         Coord3d center(position[0], position[1], waterHeight);
-        new Splash(center, velocity, waterColor, 30 * radius / 0.3,
-                   radius);  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
+        Game::current->addEntity(
+            new Splash(center, velocity, waterColor, 30 * radius / 0.3,
+                       radius));  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
       }
       // splashes caused by rotation. eg "swimming"
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
@@ -872,7 +865,8 @@ bool Ball::physics(Real time) {
         rotation[1] *= 0.9;
         velocity[0] += 0.01 * rotation[0];
         velocity[1] += 0.01 * rotation[1];
-        new Splash(center, vel, waterColor, (int)speed * 0.5, radius);
+        Game::current->addEntity(
+            new Splash(center, vel, waterColor, (int)speed * 0.5, radius));
       }
       /* cell velocity field extends to the water within the cell */
       Cell &c = map->cell((int)position[0], (int)position[1]);
@@ -892,7 +886,8 @@ bool Ball::physics(Real time) {
     if (frandom() < (speed2 - 0.2) * 0.05) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
       Coord3d center(position[0], position[1], mapHeight);
-      new Splash(center, velocity, acidColor, speed2 * radius, radius);
+      Game::current->addEntity(
+          new Splash(center, velocity, acidColor, speed2 * radius, radius));
     }
     if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
     if (sink > radius * 2.0) {
@@ -1206,8 +1201,8 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
     if (nacidsplash) {
       GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
       Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
-      new Splash(center, velocity, acidColor, (acidSpeed / nacidsplash) * radius * 20.0,
-                 radius);
+      Game::current->addEntity(new Splash(center, velocity, acidColor,
+                                          (acidSpeed / nacidsplash) * radius * 20.0, radius));
     }
 
     /* Apply bounce */
@@ -1233,7 +1228,8 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
       Cell &cell = map->cell(trampcell[i][0], trampcell[i][1]);
       Real dh = 1.0 * speed * radius * radius * radius;
       for (int j = 0; j < 5; j++) cell.heights[j] -= dh;
-      if (cell.sunken <= 0.0) new Trampoline(trampcell[i][0], trampcell[i][1]);
+      if (cell.sunken <= 0.0)
+        Game::current->addEntity(new Trampoline(trampcell[i][0], trampcell[i][1]));
       cell.sunken += dh;
     }
   }
@@ -1481,6 +1477,7 @@ void Ball::generateSandDebris() {
   vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
+  Game::current->addEntity(d);
   d->initialSize = 0.05;
   d->primaryColor[0] = 0.6 + 0.3 * frandom();
   d->primaryColor[1] = 0.5 + 0.4 * frandom();
@@ -1493,6 +1490,7 @@ void Ball::generateNitroDebris(Real time) {
   while (nitroDebrisCount > 0.0) {
     nitroDebrisCount -= 0.25;
     Debris *d = new Debris(this, position, velocity, 1.0 + frandom() * 2.0);
+    Game::current->addEntity(d);
     d->position[0] += (frandom() - 0.5) * radius;
     d->position[1] += (frandom() - 0.5) * radius;
     d->position[2] += frandom() * radius;
@@ -1517,6 +1515,7 @@ void Ball::generateDebris(GLfloat color[4]) {
   vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
+  Game::current->addEntity(d);
   d->initialSize = 0.05;
   d->primaryColor[0] = color[0];
   d->primaryColor[1] = color[1];
@@ -1561,11 +1560,10 @@ void Ball::handleBallCollisions() {
   }
 }
 void Ball::handleForcefieldCollisions() {
-  std::set<ForceField *>::iterator iter = ForceField::forcefields->begin();
-  std::set<ForceField *>::iterator end = ForceField::forcefields->end();
-  for (; iter != end; iter++) {
-    ForceField *ff = *iter;
-    if (!ff->is_on) continue;
+  int n = Game::current->hooks[Role_Forcefield].size();
+  for (int i = 0; i < n; i++) {
+    ForceField *ff = (ForceField *)Game::current->hooks[Role_Forcefield][i];
+    if (!ff->alive || !ff->is_on) continue;
 
     /* Boundingbox test, continue if we cannot possibly be withing FF */
     if (ff->direction[0] >= 0.0) {
@@ -1698,11 +1696,11 @@ static void computePipeCoordinates(const Pipe *pipe, const Coord3d &position, do
 void Ball::handlePipes(Real time) {
   inPipe = false;
 
-  std::set<Pipe *>::iterator aiter = Pipe::pipes->begin();
-  std::set<Pipe *>::iterator aend = Pipe::pipes->end();
-  /* First, we determine if we are in any pipes */
-  for (; aiter != aend; aiter++) {
-    Pipe *pipe = *aiter;
+  int n = Game::current->hooks[Role_Pipe].size();
+  for (int i = 0; i < n; i++) {
+    Pipe *pipe = (Pipe *)Game::current->hooks[Role_Pipe][i];
+    if (!pipe->alive) continue;
+
     double distance, l, pipeLength;
     Coord3d dirNorm, offset;
     computePipeCoordinates(pipe, position, &distance, &l, &pipeLength, &offset, &dirNorm);
@@ -1710,10 +1708,10 @@ void Ball::handlePipes(Real time) {
   }
 
   /* Then we compute the interaction with all the pipes */
-  std::set<Pipe *>::iterator iter = Pipe::pipes->begin();
-  std::set<Pipe *>::iterator end = Pipe::pipes->end();
-  for (; iter != end; iter++) {
-    Pipe *pipe = *iter;
+  for (int i = 0; i < n; i++) {
+    Pipe *pipe = (Pipe *)Game::current->hooks[Role_Pipe][i];
+    if (!pipe->alive) continue;
+
     double distance, l, pipeLength;
     Coord3d dirNorm, normal;
     computePipeCoordinates(pipe, position, &distance, &l, &pipeLength, &normal, &dirNorm);
@@ -1770,10 +1768,11 @@ void Ball::handlePipes(Real time) {
 
   /* Check for pipeConnectors to support ball, only if we are not inside a pipe already */
   if (!inPipe) {
-    std::set<PipeConnector *>::iterator iter2 = PipeConnector::connectors->begin();
-    std::set<PipeConnector *>::iterator end2 = PipeConnector::connectors->end();
-    for (; iter2 != end2; iter2++) {
-      PipeConnector *connector = *iter2;
+    int n = Game::current->hooks[Role_PipeConnector].size();
+    for (int i = 0; i < n; i++) {
+      PipeConnector *connector = (PipeConnector *)Game::current->hooks[Role_PipeConnector][i];
+      if (!connector->alive) continue;
+
       Coord3d v0 = connector->position - position;  // ball -> connector
       double dist = length(v0);                     // Distance ball center, connector center
       if (dist > connector->radius) {

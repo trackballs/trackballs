@@ -44,7 +44,6 @@ Baby::Baby(Real x, Real y) : Black(x, y) {
 void Baby::die(int how) {
   if (alive) {
     Ball::die(how);
-    /*new ScoreSign(50,position);*/
     playEffect(SFX_BLACK_DIE);
     remove();
   }

@@ -141,8 +141,8 @@ inline void assign(const GLfloat A[3], GLfloat B[3]) {
   for (int k = 0; k < 3; k++) B[k] = A[k];
 }
 int powerOfTwo(int input);
-int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                 const Matrix4d model, const Matrix4d proj);
+bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
+                  const Matrix4d model, const Matrix4d proj);
 
 void Require2DMode();
 void Enter2DMode();

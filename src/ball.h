@@ -42,14 +42,13 @@
 
 #define PHYSICS_RESOLUTION 0.002
 
-#include <set>
 #include "animated.h"
 
 /** This class is an ABSTRACT class from which specific balls
     (player/opponents/babies) are inherited */
 class Ball : public Animated {
  public:
-  Ball();
+  explicit Ball(int role);
   virtual ~Ball();
   bool physics(Real time);
 

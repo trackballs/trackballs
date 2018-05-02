@@ -20,19 +20,14 @@
 
 #include "pipe.h"
 
-std::set<Pipe *> *Pipe::pipes;
+#include "game.h"
 
-void Pipe::init() { pipes = new std::set<Pipe *>(); }
-void Pipe::reset() {
-  delete pipes;
-  pipes = new std::set<Pipe *>();
-}
-Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated() {
+Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated(Role_Pipe) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   from = f;
   to = t;
+  position = 0.5 * (from + to);
   radius = r;
-  pipes->insert(this);
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
 
   windForward = windBackward = 0.0;
@@ -132,8 +127,4 @@ void Pipe::computeBoundingBox() {
     boundingBox[0][i] = fmin(from[i] - radius, to[i] - radius) - position[i];
     boundingBox[1][i] = fmax(from[i] + radius, to[i] + radius) - position[i];
   }
-}
-void Pipe::onRemove() {
-  Animated::onRemove();
-  pipes->erase(this);
 }

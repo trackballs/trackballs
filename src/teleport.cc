@@ -27,7 +27,8 @@
 
 #define NFACETS 14
 
-Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius) {
+Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
+    : Animated(Role_OtherAnimated) {
   this->x = x;
   this->y = y;
   this->dx = dx;

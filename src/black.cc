@@ -26,7 +26,7 @@
 #include "player.h"
 #include "sound.h"
 
-Black::Black(Real x, Real y) : Ball() {
+Black::Black(Real x, Real y) : Ball(Role_Ball) {
   realRadius = 0.4;
   radius = realRadius;
   ballResolution = BALL_HIRES;
@@ -67,11 +67,9 @@ void Black::die(int how) {
         vel[0] = velocity[0] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[1] = velocity[1] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[2] = velocity[2] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        new Debris(this, pos, vel, 2.0 + 8.0 * frandom());
+        Game::current->addEntity(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
       }
 
-    /*    position[2] += 1.0;
-          new ScoreSign(100,position);*/
     remove();
     if (how == DIE_CRASH)
       playEffect(SFX_BLACK_DIE);
@@ -111,6 +109,8 @@ void Black::tick(Real t) {
       double vsc = length(v) > 0 ? 1. / length(v) : 0.;
       v = v * vsc;
       Ball::drive(v[0] * likesPlayer, v[1] * likesPlayer);
+    } else {
+      Ball::drive(0., 0.);
     }
   } else {
     Ball::drive(0., 0.);
@@ -118,5 +118,4 @@ void Black::tick(Real t) {
 
   Ball::tick(t);
 }
-void Black::draw() { Ball::draw(); }
 Black::~Black() {}

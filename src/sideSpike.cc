@@ -29,7 +29,8 @@
 #include "sound.h"
 #include "spike.h"
 
-SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side) {
+SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side)
+    : Animated(Role_OtherAnimated) {
   this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;

@@ -25,7 +25,8 @@
 #include "map.h"
 
 HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Real freq,
-                               Real phase, int not1, int not2, int not3) {
+                               Real phase, int not1, int not2, int not3)
+    : GameHook(Role_GameHook) {
   this->x = x;
   this->y = y;
   this->min = min;
@@ -46,21 +47,7 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
   this->not1 = not1;
   this->not2 = not2;
   this->not3 = not3;
-  // not used
-  position[0] = 0.;
-  position[1] = 0.;
-  position[2] = 0.;
-  primaryColor[0] = 1.;
-  primaryColor[1] = 1.;
-  primaryColor[2] = 1.;
-  secondaryColor[0] = 1.;
-  secondaryColor[1] = 1.;
-  secondaryColor[2] = 1.;
 }
-
-int HeightModifier::generateBuffers(GLuint*& /*idxbufs*/, GLuint*& /*databufs*/) { return 0; }
-void HeightModifier::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
-void HeightModifier::drawBuffers2(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
 void HeightModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;

@@ -33,6 +33,8 @@ Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.
   specularColor[0] = 0.9 * 2.;
   specularColor[1] = 0.8 * 2.;
   specularColor[2] = 0.3 * 2.;
+
+  /* goal is a flag, hence already registered */
 }
 void Goal::onGet() {
   // TODO. Make sure player is entering the goal from the right direction

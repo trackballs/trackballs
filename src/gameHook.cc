@@ -21,59 +21,29 @@
 */
 
 #include "gameHook.h"
-#include <set>
 #include "animated.h"
 #include "game.h"
 #include "guile.h"
 
-int GameHook::nextId = 0;
+GameHook::GameHook(int role) {
+  alive = true;
+  is_on = true;
+  entity_role = role;
 
-static std::set<GameHook *> *deadObjects;
-
-void GameHook::init() { deadObjects = new std::set<GameHook *>(); }
-GameHook::GameHook() {
-  int i;
-
-  alive = 1;
-  id = nextId++;
-  is_on = 1;
-
-  if (Game::current)
-    Game::current->add(this);
-  else
-    error("GameHook::GameHook() - no game loaded");
-
-  for (i = 0; i < GameHookEvent_MaxHooks; i++) hooks[i] = NULL;
+  for (int i = 0; i < GameHookEvent_MaxHooks; i++) hooks[i] = NULL;
 }
 
 GameHook::~GameHook() {}
 
 void GameHook::remove() {
   if (alive) {
-    deadObjects->insert(this);
-    alive = 0;
-    this->onRemove();
+    alive = false;
+    for (int event = 0; event < GameHookEvent_MaxHooks; event++) {
+      if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
+    }
   }
 }
-void GameHook::onRemove() {
-  int event;
 
-  /* Remove all registered guile hooks */
-  for (event = 0; event < GameHookEvent_MaxHooks; event++)
-    if (hooks[event]) scm_gc_unprotect_object(hooks[event]);
-
-  Game::current->remove(this);
-}
-void GameHook::deleteDeadObjects() {
-  std::set<GameHook *>::iterator iter = deadObjects->begin();
-  std::set<GameHook *>::iterator end = deadObjects->end();
-  for (; iter != end; iter++) {
-    GameHook *a = *iter;
-    delete a;
-  }
-  deadObjects->clear();
-}
-void GameHook::playerRestarted() {}
 void GameHook::doExpensiveComputations() {}
 
 void GameHook::registerHook(GameHookEvent event, SCM hook) {

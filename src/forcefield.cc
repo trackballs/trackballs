@@ -20,15 +20,9 @@
 
 #include "forcefield.h"
 
-std::set<ForceField *> *ForceField::forcefields;
+#include "game.h"
 
-void ForceField::init() { forcefields = new std::set<ForceField *>(); }
-void ForceField::reset() {
-  delete forcefields;
-  forcefields = new std::set<ForceField *>();
-}
-
-ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {
+ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated(Role_Forcefield) {
   position = pos;
   direction = dir;
   height = h;
@@ -39,7 +33,6 @@ ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {
   secondaryColor[0] = 1.0;
   secondaryColor[1] = 1.0;
   secondaryColor[2] = 1.0;
-  forcefields->insert(this);
   bounceFactor = 2.5;
   boundingBox[0][0] = -abs(dir[0]);
   boundingBox[0][1] = -abs(dir[1]);
@@ -48,11 +41,6 @@ ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated() {
   boundingBox[1][1] = +abs(dir[1]);
   boundingBox[1][2] = +abs(dir[2]) + h;
 }
-void ForceField::onRemove() {
-  Animated::onRemove();
-  forcefields->erase(this);
-}
-
 int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   if (!is_on) return 0;
   allocateBuffers(1, idxbufs, databufs);

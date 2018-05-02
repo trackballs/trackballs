@@ -23,8 +23,8 @@
 #include "game.h"
 #include "map.h"
 
-ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real freq,
-                             Real phase) {
+ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real freq, Real phase)
+    : GameHook(Role_GameHook) {
   this->x = x;
   this->y = y;
   this->min = min;
@@ -36,28 +36,14 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
     col = 0;
   }
   this->colors = col;
-  // not used
-  position[0] = 0.;
-  position[1] = 0.;
-  position[2] = 0.;
-  primaryColor[0] = 1.;
-  primaryColor[1] = 1.;
-  primaryColor[2] = 1.;
-  secondaryColor[0] = 1.;
-  secondaryColor[1] = 1.;
-  secondaryColor[2] = 1.;
   is_on = 1;
 }
-
-int ColorModifier::generateBuffers(GLuint*& /*idxbufs*/, GLuint*& /*databufs*/) { return 0; }
-void ColorModifier::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
-void ColorModifier::drawBuffers2(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
 
 void ColorModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
   if (!is_on) return;
-  float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * 3.14159)) / 2.;
+  float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * M_PI)) / 2.;
   switch (colors) {
   case 0:
     for (int i = 0; i < 5; i++) {

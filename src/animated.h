@@ -34,7 +34,7 @@
 
 class Animated : public GameHook {
  public:
-  Animated();
+  explicit Animated(int role);
 
   virtual ~Animated();
   /** Setup drawing pass of object.*/
@@ -67,7 +67,7 @@ class Animated : public GameHook {
   virtual void has_moved();
 
   /** Computed by game::draw if the object appears roughly on the screen or not. */
-  int onScreen;
+  bool onScreen;
   /** Center position of object */
   Coord3d position;
   /** Lower/higher coordinate of boundingbox relative to position */

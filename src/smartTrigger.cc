@@ -25,16 +25,22 @@
 #include "player.h"
 
 SmartTrigger::SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leaving)
-    : GameHook(), x(x), y(y), radius(radius), wasIn(0), entering(entering), leaving(leaving) {
+    : GameHook(Role_GameHook),
+      x(x),
+      y(y),
+      radius(radius),
+      wasIn(0),
+      entering(entering),
+      leaving(leaving) {
   if (entering) scm_gc_protect_object(entering);
   if (leaving) scm_gc_protect_object(leaving);
 }
 SmartTrigger::~SmartTrigger() {
   if (entering) scm_gc_unprotect_object(entering);
   if (leaving) scm_gc_unprotect_object(leaving);
-  this->GameHook::~GameHook();
 }
 void SmartTrigger::tick(Real /*t*/) {
+  if (!is_on) return;
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;

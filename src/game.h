@@ -29,7 +29,8 @@
 #define SCORE_FLAG 5
 #define SCORE_MAX 6
 
-#include <set>
+#include <vector>
+#include "gameHook.h"
 #include "general.h"
 #include "glHelp.h"
 
@@ -38,10 +39,12 @@ class Map;
 class Player;
 class Weather;
 class EditMode;
+class GameHook;
+class Gamer;
 
 class Game {
  public:
-  Game(const char *, class Gamer *gamer);
+  Game(const char *, Gamer *gamer);
   explicit Game(Map *editmap);
   virtual ~Game();
 
@@ -49,10 +52,8 @@ class Game {
   void draw();                        /* Used for normal drawing mode */
   void drawReflection(Coord3d focus); /* Used when drawing environmentmaps */
   void doExpensiveComputations();
-  void add(class Animated *);
-  void add(class GameHook *);
-  void remove(class Animated *);
-  void remove(class GameHook *);
+
+  void addEntity(GameHook *);
   void loadLevel(const char *level);
   void clearLevel();
 
@@ -80,13 +81,12 @@ class Game {
   static double defaultScores[SCORE_MAX][2];
 
  protected:
+  friend class Ball;
   friend class EditMode;
-  std::set<GameHook *> *hooks;
+  std::vector<GameHook *> hooks[Role_MaxTypes];
 
  private:
   void setDefaults();
-
-  std::set<Animated *> *objects;
 };
 
 #endif

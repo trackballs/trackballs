@@ -31,7 +31,7 @@
 int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
 ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
-    : Ball(), kind(kind), resurrecting(resurrecting), time(time) {
+    : Ball(Role_OtherAnimated), kind(kind), resurrecting(resurrecting), time(time) {
   no_physics = 1;
   realRadius = 0.2;
   radius = realRadius;
@@ -67,7 +67,6 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
 
-  alive = 1;
   timeLeft = 0.;
 }
 
@@ -105,7 +104,7 @@ void ModPill::tick(Real t) {
           _("Speed ball"), _("Extra jump"), _("Spikes"),   _("Glass ball"),
           _("Dizzy!"),     _("Freeze!"),    _("Floating"), _("Extra life"),
           _("Small ball"), _("Large ball"), _("Nitro")};
-      new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos);
+      Game::current->addEntity(new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos));
 
       if (kind == MOD_EXTRA_LIFE) {
         player->lives = std::min(4, player->lives + 1);
@@ -131,7 +130,7 @@ void ModPill::tick(Real t) {
     }
   }
 }
-void ModPill::playerRestarted() {}
+
 void ModPill::die(int /*how*/) {
   alive = 0;
   if (!resurrecting) delete this;

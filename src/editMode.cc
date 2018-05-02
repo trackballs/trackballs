@@ -415,21 +415,19 @@ void EditMode::display() {
     map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
     if (game) {
       /* Indicate start position and trigger object locations */
-      if (game->hooks) {
-        std::set<GameHook*>::iterator start = game->hooks->begin();
-        std::set<GameHook*>::iterator end = game->hooks->end();
-        for (std::set<GameHook*>::iterator i = start; i != end; i++) {
-          GameHook* hook = *i;
-          SmartTrigger* smart_trigger = dynamic_cast<SmartTrigger*>(hook);
-          Trigger* dumb_trigger = dynamic_cast<Trigger*>(hook);
-          if (smart_trigger) {
-            map->drawSpotRing(smart_trigger->x, smart_trigger->y, smart_trigger->radius, 2);
-          }
-          if (dumb_trigger) {
-            map->drawSpotRing(dumb_trigger->x, dumb_trigger->y, dumb_trigger->radius, 1);
-          }
+      for (int i = 0; i < game->hooks[Role_GameHook].size(); i++) {
+        GameHook* hook = game->hooks[Role_GameHook][i];
+        if (!hook->alive) continue;
+        SmartTrigger* smart_trigger = dynamic_cast<SmartTrigger*>(hook);
+        Trigger* dumb_trigger = dynamic_cast<Trigger*>(hook);
+        if (smart_trigger) {
+          map->drawSpotRing(smart_trigger->x, smart_trigger->y, smart_trigger->radius, 2);
+        }
+        if (dumb_trigger) {
+          map->drawSpotRing(dumb_trigger->x, dumb_trigger->y, dumb_trigger->radius, 1);
         }
       }
+
       map->drawSpotRing(map->startPosition[0], map->startPosition[1], 0.5, 0);
       game->draw();
     }

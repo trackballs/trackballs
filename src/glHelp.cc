@@ -1346,8 +1346,8 @@ void rotateZ(double v, Matrix4d m) {
   assign(m, morig);
   matrixMult(morig, mr, m);
 }
-int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
-                 const Matrix4d model, const Matrix4d proj) {
+bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
+                  const Matrix4d model, const Matrix4d proj) {
   // Construct axis-aligned bounding box in window space
   double vxl = 1e99, vyl = 1e99, vzl = 1e99;
   double vxh = -1e99, vyh = -1e99, vzh = -1e99;
@@ -1374,10 +1374,10 @@ int testBboxClip(double x1, double x2, double y1, double y2, double z1, double z
     vzh = std::max(vzh, w[2]);
   }
   // Window frustum is [-1,1]x[-1,1]x[0,1]
-  if (vxl > 1 || vxh < -1) return 0;
-  if (vyl > 1 || vyh < -1) return 0;
-  if (vzl > 1 || vzh < 0) return 0;
-  return 1;
+  if (vxl > 1 || vxh < -1) return false;
+  if (vyl > 1 || vyh < -1) return false;
+  if (vzl > 1 || vzh < 0) return false;
+  return true;
 }
 
 static int is_2d_mode = 0;
