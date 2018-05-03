@@ -96,7 +96,7 @@ class Map {
     return cells[lx + width * ly];
   };
   inline Chunk *chunk(int x, int y) const;
-  void markCellsUpdated(int x1, int y1, int x2, int y2, int changed_walls);
+  void markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls);
   int save(char *name, int x, int y);
   void draw(int stage, int x, int y);
   void fillChunkVBO(Chunk *c) const;

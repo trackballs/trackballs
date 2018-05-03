@@ -1376,15 +1376,17 @@ SCM_DEFINE(set_cell_flag, "set-cell-flag", 6, 0, 0,
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1),
       iflag = scm_to_int(flag);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  bool istate = SCM_FALSEP(state);
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      if (SCM_FALSEP(state))
+      if (istate)
         c.flags = c.flags & (~iflag);
       else
         c.flags = c.flags | iflag;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, false);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1419,13 +1421,15 @@ SCM_DEFINE(set_cell_velocity, "set-cell-velocity", 6, 0, 0,
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  float ivx = scm_to_double(vx), ivy = scm_to_double(vy);
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.velocity[0] = scm_to_double(vx);
-      c.velocity[1] = scm_to_double(vy);
+      c.velocity[0] = ivx;
+      c.velocity[1] = ivy;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, false);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1447,19 +1451,25 @@ SCM_DEFINE(set_cell_heights, "set-cell-heights", 8, 1, 0,
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  double ih0 = scm_to_double(h0), ih1 = scm_to_double(h1), ih2 = scm_to_double(h2),
+         ih3 = scm_to_double(h3);
+  double ih4;
+  if (scm_is_real(h4)) {
+    ih4 = scm_to_double(h4);
+  } else {
+    ih4 = (ih0 + ih1 + ih2 + ih3) / 4.;
+  }
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.heights[0] = scm_to_double(h0);
-      c.heights[1] = scm_to_double(h1);
-      c.heights[2] = scm_to_double(h2);
-      c.heights[3] = scm_to_double(h3);
-      if (scm_is_real(h4))
-        c.heights[4] = scm_to_double(h4);
-      else
-        c.heights[4] = (c.heights[0] + c.heights[1] + c.heights[2] + c.heights[3]) / 4.;
+      c.heights[0] = ih0;
+      c.heights[1] = ih1;
+      c.heights[2] = ih2;
+      c.heights[3] = ih3;
+      c.heights[4] = ih4;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 1);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, true);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1481,21 +1491,25 @@ SCM_DEFINE(set_cell_water_heights, "set-cell-water-heights", 8, 1, 0,
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  double ih0 = scm_to_double(h0), ih1 = scm_to_double(h1), ih2 = scm_to_double(h2),
+         ih3 = scm_to_double(h3);
+  double ih4;
+  if (scm_is_real(h4)) {
+    ih4 = scm_to_double(h4);
+  } else {
+    ih4 = (ih0 + ih1 + ih2 + ih3) / 4.;
+  }
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.waterHeights[0] = scm_to_double(h0);
-      c.waterHeights[1] = scm_to_double(h1);
-      c.waterHeights[2] = scm_to_double(h2);
-      c.waterHeights[3] = scm_to_double(h3);
-      if (scm_is_real(h4))
-        c.waterHeights[4] = scm_to_double(h4);
-      else
-        c.waterHeights[4] =
-            (c.waterHeights[0] + c.waterHeights[1] + c.waterHeights[2] + c.waterHeights[3]) /
-            4.;
+      c.waterHeights[0] = ih0;
+      c.waterHeights[1] = ih1;
+      c.waterHeights[2] = ih2;
+      c.waterHeights[3] = ih3;
+      c.waterHeights[4] = ih4;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, false);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1519,18 +1533,18 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  GLfloat ir = scm_to_double(r), ig = scm_to_double(g), ib = scm_to_double(r);
+  GLfloat ia = scm_is_real(a) ? scm_to_double(a) : 1.0;
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.colors[i][0] = (GLfloat)scm_to_double(r);
-      c.colors[i][1] = (GLfloat)scm_to_double(g);
-      c.colors[i][2] = (GLfloat)scm_to_double(b);
-      if (scm_is_real(a))
-        c.colors[i][3] = (GLfloat)scm_to_double(a);
-      else
-        c.colors[i][3] = 1.0;
+      c.colors[i][0] = ir;
+      c.colors[i][1] = ig;
+      c.colors[i][2] = ib;
+      c.colors[i][3] = ia;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 0);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, false);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1554,18 +1568,18 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
   if (Game::current && Game::current->edit_mode) return SCM_UNSPECIFIED;
 
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
-  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++)
+  GLfloat ir = scm_to_double(r), ig = scm_to_double(g), ib = scm_to_double(r);
+  GLfloat ia = scm_is_real(a) ? scm_to_double(a) : 1.0;
+  for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
-      c.wallColors[i][0] = (GLfloat)scm_to_double(r);
-      c.wallColors[i][1] = (GLfloat)scm_to_double(g);
-      c.wallColors[i][2] = (GLfloat)scm_to_double(b);
-      if (scm_is_real(a))
-        c.wallColors[i][3] = (GLfloat)scm_to_double(a);
-      else
-        c.wallColors[i][3] = 1.0;
+      c.wallColors[i][0] = ir;
+      c.wallColors[i][1] = ig;
+      c.wallColors[i][2] = ib;
+      c.wallColors[i][3] = ia;
     }
-  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, 1);
+  }
+  Game::current->map->markCellsUpdated(ix0, iy0, ix1, iy1, true);
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1617,9 +1631,9 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
     }
   }
   if (fxy) {
-    map->markCellsUpdated(tx, ty, tx + ys * h, ty + xs * w, 1);
+    map->markCellsUpdated(tx, ty, tx + ys * h, ty + xs * w, true);
   } else {
-    map->markCellsUpdated(tx, ty, tx + xs * w, ty + ys * h, 1);
+    map->markCellsUpdated(tx, ty, tx + xs * w, ty + ys * h, true);
   }
   delete[] buf;
   return SCM_UNSPECIFIED;

@@ -944,7 +944,7 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   chunk->is_updated = 0;
 }
 
-void Map::markCellsUpdated(int x1, int y1, int x2, int y2, int changed_walls) {
+void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
   /* If the walls of a cell have changed, update its neighbors */
   int dd = changed_walls ? 1 : 0;
 

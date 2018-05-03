@@ -36,5 +36,5 @@ void Trampoline::tick(Real t) {
     for (int i = 0; i < 5; i++) c.heights[i] += c.sunken;
     c.sunken = 0.;
   }
-  map->markCellsUpdated(cx, cy, cx, cy, 1);
+  map->markCellsUpdated(cx, cy, cx, cy, true);
 }

@@ -128,8 +128,8 @@ void HeightModifier::tick(Real /*t*/) {
       c3.heights[4] = (c3.heights[0] + c3.heights[1] + c3.heights[2] + c3.heights[3]) / 4.;
   }
 
-  Game::current->map->markCellsUpdated(x, y, x, y, 1);
-  Game::current->map->markCellsUpdated(x1, y1, x1, y1, 1);
-  Game::current->map->markCellsUpdated(x2, y2, x2, y2, 1);
-  Game::current->map->markCellsUpdated(x3, y3, x3, y3, 1);
+  Game::current->map->markCellsUpdated(x, y, x, y, true);
+  Game::current->map->markCellsUpdated(x1, y1, x1, y1, true);
+  Game::current->map->markCellsUpdated(x2, y2, x2, y2, true);
+  Game::current->map->markCellsUpdated(x3, y3, x3, y3, true);
 }

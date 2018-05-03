@@ -66,7 +66,7 @@ void CyclicPlatform::tick(Real dt) {
       Cell &c = map->cell(x, y);
       for (int j = 0; j < 5; j++) c.heights[j] = h;
     }
-  map->markCellsUpdated(x1, y1, x2, y2, 1);
+  map->markCellsUpdated(x1, y1, x2, y2, true);
 
   if (h < oldHeight) {
     double lower[3] = {(double)x1, (double)y1, oldHeight - 1.0};
