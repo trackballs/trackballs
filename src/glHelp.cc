@@ -1285,10 +1285,10 @@ void displayFrameRate() {
 /*********************/
 
 void debugMatrix(Matrix4d m) {
-  printf("%f \t%f \t%f \t%f\n", m[0][0], m[0][1], m[0][2], m[0][3]);
-  printf("%f \t%f \t%f \t%f\n", m[1][0], m[1][1], m[1][2], m[1][3]);
-  printf("%f \t%f \t%f \t%f\n", m[2][0], m[2][1], m[2][2], m[2][3]);
-  printf("%f \t%f \t%f \t%f\n", m[3][0], m[3][1], m[3][2], m[3][3]);
+  warning("%8.5f \t%8.5f \t%8.5f \t%8.5f", m[0][0], m[0][1], m[0][2], m[0][3]);
+  warning("%8.5f \t%8.5f \t%8.5f \t%8.5f", m[1][0], m[1][1], m[1][2], m[1][3]);
+  warning("%8.5f \t%8.5f \t%8.5f \t%8.5f", m[2][0], m[2][1], m[2][2], m[2][3]);
+  warning("%8.5f \t%8.5f \t%8.5f \t%8.5f", m[3][0], m[3][1], m[3][2], m[3][3]);
 }
 
 /* C <- A * B */
@@ -1335,31 +1335,28 @@ void identityMatrix(Matrix4d m) {
 }
 
 void rotateX(double v, Matrix4d m) {
-  Matrix4d mr = {{1.0, 0.0, 0.0, 0.0},
-                 {0.0, cos(v), sin(v), 0.0},
-                 {0.0, -sin(v), cos(v), 0.0},
-                 {0.0, 0.0, 0.0, 1.0}};
-  Matrix4d morig;
-  assign(m, morig);
-  matrixMult(morig, mr, m);
+  double cv = std::cos(v), sv = std::sin(v);
+  for (int i = 0; i < 4; i++) {
+    double r1 = m[i][1], r2 = m[i][2];
+    m[i][1] = cv * r1 - sv * r2;
+    m[i][2] = sv * r1 + cv * r2;
+  }
 }
 void rotateY(double v, Matrix4d m) {
-  Matrix4d mr = {{cos(v), 0.0, sin(v), 0.0},
-                 {0.0, 1.0, 0.0, 0.0},
-                 {-sin(v), 0.0, cos(v), 0.0},
-                 {0.0, 0.0, 0.0, 1.0}};
-  Matrix4d morig;
-  assign(m, morig);
-  matrixMult(morig, mr, m);
+  double cv = std::cos(v), sv = std::sin(v);
+  for (int i = 0; i < 4; i++) {
+    double r0 = m[i][0], r2 = m[i][2];
+    m[i][0] = cv * r0 - sv * r2;
+    m[i][2] = sv * r0 + cv * r2;
+  }
 }
 void rotateZ(double v, Matrix4d m) {
-  Matrix4d mr = {{cos(v), sin(v), 0.0, 0.0},
-                 {-sin(v), cos(v), 0.0, 0.0},
-                 {0.0, 0.0, 1.0, 0.0},
-                 {0.0, 0.0, 0.0, 1.0}};
-  Matrix4d morig;
-  assign(m, morig);
-  matrixMult(morig, mr, m);
+  double cv = std::cos(v), sv = std::sin(v);
+  for (int i = 0; i < 4; i++) {
+    double r0 = m[i][0], r1 = m[i][1];
+    m[i][0] = cv * r0 - sv * r1;
+    m[i][1] = sv * r0 + cv * r1;
+  }
 }
 bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                   const Matrix4d mvp) {
