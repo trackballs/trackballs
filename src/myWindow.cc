@@ -115,7 +115,7 @@ void MyWindow::resize(int w, int h) {
   this->height = h;
 }
 
-int MyWindow::isInside(int x, int y) {
+int MyWindow::isInside(int x, int y) const {
   return x >= this->x && x < this->x + this->width && y >= this->y &&
          y < this->y + this->height;
 }
@@ -191,7 +191,7 @@ void MyWindow::keyAll(int key) {
     pntr = next;
   }
 }
-int MyWindow::isAttached() {
+int MyWindow::isAttached() const {
   MyWindow *pntr = allWindows;
   while (pntr) {
     if (pntr == this) return 1;

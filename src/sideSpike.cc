@@ -29,7 +29,7 @@
 #include "sound.h"
 #include "spike.h"
 
-SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side)
+SideSpike::SideSpike(const Coord3d &position, Real speed, Real phase, int side)
     : Animated(Role_OtherAnimated) {
   this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
@@ -58,7 +58,7 @@ SideSpike::SideSpike(Coord3d position, Real speed, Real phase, int side)
   specularColor[2] = 0.1;
 }
 
-int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
 
   const int nfacets = 6;
@@ -102,7 +102,7 @@ int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -123,7 +123,7 @@ void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
 }
-void SideSpike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void SideSpike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
 void SideSpike::tick(Real t) {
   double dist, h;

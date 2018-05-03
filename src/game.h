@@ -49,8 +49,8 @@ class Game {
   virtual ~Game();
 
   void tick(Real);
-  void draw();                        /* Used for normal drawing mode */
-  void drawReflection(Coord3d focus); /* Used when drawing environmentmaps */
+  void draw();                               /* Used for normal drawing mode */
+  void drawReflection(const Coord3d &focus); /* Used when drawing environmentmaps */
   void doExpensiveComputations();
 
   void add(GameHook *);

@@ -77,7 +77,7 @@ class Settings {
   int doSpecialLevel;
 
   int nLevelSets;
-  class LevelSet levelSets[256];
+  LevelSet levelSets[256];
   SDL_Joystick *joystick;
   int joystickIndex, joy_left, joy_right, joy_up, joy_down, joy_center[2];
   int lastJoyX, lastJoyY;

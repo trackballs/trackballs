@@ -58,7 +58,7 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
   boundingBox[1][2] = size;
 }
 
-int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (hide > 0.) return 0;
 
   allocateBuffers(1, idxbufs, databufs);
@@ -103,9 +103,9 @@ int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Bird::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Bird::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
-void Bird::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Bird::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (hide > 0.) return;
 
   glDisable(GL_CULL_FACE);

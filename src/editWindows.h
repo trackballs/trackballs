@@ -34,7 +34,7 @@ class EMenuWindow : public MyWindow {
   void openSubMenu(int);
   void key(int key, int shift, int x, int y);
 
-  int keyToMenuEntry(int, int);
+  int keyToMenuEntry(int, int) const;
 
  private:
   int spacing;
@@ -54,7 +54,7 @@ class ESubWindow : public MyWindow {
  private:
   int id, rows, fontSize;
 
-  int countRows();
+  int countRows() const;
 };
 
 class EStatusWindow : public MyWindow {

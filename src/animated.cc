@@ -101,7 +101,7 @@ void Animated::draw2() {
   }
   drawBuffers2(idxVBOs, dataVBOs);
 }
-void Animated::drawBoundingBox() {
+void Animated::drawBoundingBox() const {
   if (activeView.calculating_shadows) return;
 
   /* Create and fill buffers */

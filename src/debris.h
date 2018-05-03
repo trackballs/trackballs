@@ -25,7 +25,7 @@
 
 class Debris : public Ball {
  public:
-  Debris(Ball*, Coord3d pos, Coord3d vel, double duration);
+  Debris(Ball*, const Coord3d& pos, const Coord3d& vel, double duration);
   void calcRadius();  // Use this after modifying the parameters below
   void tick(Real);
   void die(int);

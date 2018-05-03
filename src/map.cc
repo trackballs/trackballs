@@ -58,9 +58,10 @@ Cell::Cell() {
 }
 
 /* Returns the normal for a point on the edge of the cell */
-void Cell::getNormal(Coord3d* normal, int vertex) const {
+Coord3d Cell::getNormal(int vertex) const {
   Coord3d v1;
   Coord3d v2;
+  Coord3d normal;
 
   switch (vertex) {
   case SOUTH + WEST:
@@ -96,23 +97,18 @@ void Cell::getNormal(Coord3d* normal, int vertex) const {
     v2[2] = heights[CENTER] - heights[NORTH + WEST];
     break;
   case CENTER:
-    getNormal(normal, SOUTH + WEST);
-    getNormal(&v1, SOUTH + EAST);
-    *normal = *normal + v1;
-    getNormal(&v1, NORTH + WEST);
-    *normal = *normal + v1;
-    getNormal(&v1, NORTH + EAST);
-    *normal = *normal + v1;
-    *normal = *normal / length(*normal);
-    return;
+    normal = getNormal(SOUTH + WEST) + getNormal(SOUTH + EAST) + getNormal(NORTH + WEST) +
+             getNormal(NORTH + EAST);
+    return normal / length(normal);
   }
-  *normal = crossProduct(v1, v2);
-  *normal = *normal / length(*normal);
+  normal = crossProduct(v1, v2);
+  return normal / length(normal);
 }
 /* Works on water heights */
-void Cell::getWaterNormal(Coord3d* normal, int vertex) const {
+Coord3d Cell::getWaterNormal(int vertex) const {
   Coord3d v1;
   Coord3d v2;
+  Coord3d normal;
 
   switch (vertex) {
   case SOUTH + WEST:
@@ -148,18 +144,12 @@ void Cell::getWaterNormal(Coord3d* normal, int vertex) const {
     v2[2] = waterHeights[CENTER] - waterHeights[NORTH + WEST];
     break;
   case CENTER:
-    getWaterNormal(normal, SOUTH + WEST);
-    getWaterNormal(&v1, SOUTH + EAST);
-    *normal = *normal + v1;
-    getWaterNormal(&v1, NORTH + WEST);
-    *normal = *normal + v1;
-    getWaterNormal(&v1, NORTH + EAST);
-    *normal = *normal + v1;
-    *normal = *normal / length(*normal);
-    return;
+    normal = getWaterNormal(SOUTH + WEST) + getWaterNormal(SOUTH + EAST) +
+             getWaterNormal(NORTH + WEST) + getWaterNormal(NORTH + EAST);
+    return normal / length(normal);
   }
-  *normal = crossProduct(v1, v2);
-  *normal = *normal / length(*normal);
+  normal = crossProduct(v1, v2);
+  return normal / length(normal);
 }
 
 /* Gives the height of the cell in a specified (floatingpoint) position */
@@ -672,11 +662,11 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         for (size_t i = 0; i < 15; i++) { fcnormal[i / 3][i % 3] = 0.f; }
       } else {
         Coord3d cnormal[5];
-        c.getNormal(&cnormal[0], 0);
-        c.getNormal(&cnormal[1], 1);
-        c.getNormal(&cnormal[2], 2);
-        c.getNormal(&cnormal[3], 3);
-        c.getNormal(&cnormal[4], 4);
+        cnormal[0] = c.getNormal(0);
+        cnormal[1] = c.getNormal(1);
+        cnormal[2] = c.getNormal(2);
+        cnormal[3] = c.getNormal(3);
+        cnormal[4] = c.getNormal(4);
         for (size_t i = 0; i < 15; i++) {
           fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
         }
@@ -808,11 +798,11 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int wvis = c.isWaterVisible();
       if (wvis) {
         Coord3d onormal[5];
-        c.getWaterNormal(&onormal[0], 0);
-        c.getWaterNormal(&onormal[1], 1);
-        c.getWaterNormal(&onormal[2], 2);
-        c.getWaterNormal(&onormal[3], 3);
-        c.getWaterNormal(&onormal[4], 4);
+        onormal[0] = c.getWaterNormal(0);
+        onormal[1] = c.getWaterNormal(1);
+        onormal[2] = c.getWaterNormal(2);
+        onormal[3] = c.getWaterNormal(3);
+        onormal[4] = c.getWaterNormal(4);
         float fonormal[5][3];
         for (size_t i = 0; i < 15; i++) {
           fonormal[i / 3][i % 3] = (float)onormal[i / 3][i % 3];

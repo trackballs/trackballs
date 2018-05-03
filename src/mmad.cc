@@ -484,8 +484,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Main event loop */
   /*                 */
 
-  double td = 1. / 60.;
-
   /* Initialize random number generator */
   int seed = getMonotonicTime().tv_nsec;
   srand(seed);
@@ -494,7 +492,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   while (is_running) {
     theFrameNumber++;
 
-    td = getTimeDifference(lastDisplayStartTime, displayStartTime);
+    double td = getTimeDifference(lastDisplayStartTime, displayStartTime);
     // If timing doesn't work assume 60fps
     if (td <= 0.0) { td = 1. / 60.; }
     // No slower than 5 fps
@@ -620,7 +618,6 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-  char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
   program_name = argv[0];
 
   /*** Autmatic detection of SHARE_DIR ***/
@@ -676,6 +673,7 @@ int main(int argc, char **argv) {
   }
 
   if (NULL == getenv("GUILE_LOAD_PATH")) {
+    char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
     snprintf(guileLoadPath, sizeof(guileLoadPath), "GUILE_LOAD_PATH=%s", effectiveShareDir);
     putenv(guileLoadPath);
   }

@@ -25,11 +25,11 @@
 
 class Fountain : public Animated {
  public:
-  Fountain(Coord3d position, double randomSpeed, double radius, double strength);
+  Fountain(const Coord3d& position, double randomSpeed, double radius, double strength);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
   void tick(double);
 

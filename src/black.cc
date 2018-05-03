@@ -76,12 +76,9 @@ void Black::die(int how) {
     playEffect(SFX_FF_DEATH);
 }
 void Black::tick(Real t) {
-  Coord3d v;
-  double dist;
-
   if (Game::current->player1->playing && is_on) {
     Coord3d v = Game::current->player1->position - position;
-    dist = length(v);
+    double dist = length(v);
 
     double d = Game::current->map->getHeight(position[0] + velocity[0] * 1.0,
                                              position[1] + velocity[1] * 1.0);

@@ -25,7 +25,7 @@
 #include "sign.h"
 #include "sound.h"
 
-Diamond::Diamond(Coord3d pos) : Animated(Role_OtherAnimated) {
+Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated) {
   position = pos;
 
   specularColor[0] = specularColor[1] = specularColor[2] = 1.0;
@@ -37,7 +37,7 @@ Diamond::Diamond(Coord3d pos) : Animated(Role_OtherAnimated) {
   taken = 0;
 }
 
-int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (fade <= 0.) { return 0; }
   allocateBuffers(1, idxbufs, databufs);
 
@@ -69,9 +69,9 @@ int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Diamond::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Diamond::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
-void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (fade <= 0.) { return; }
 
   glEnable(GL_BLEND);

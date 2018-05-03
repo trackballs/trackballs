@@ -52,7 +52,7 @@ class Coord3d {
     data[1] = 0.;
     data[2] = 0.;
   }
-  inline Coord3d(double x[3]) {
+  explicit inline Coord3d(double x[3]) {
     data[0] = x[0];
     data[1] = x[1];
     data[2] = x[2];

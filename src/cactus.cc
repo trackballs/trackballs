@@ -52,7 +52,7 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
   timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
 
-int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
 
   GLfloat radius = killed_time * base_radius;
@@ -154,7 +154,7 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -175,7 +175,7 @@ void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

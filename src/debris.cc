@@ -20,7 +20,8 @@
 
 #include "debris.h"
 
-Debris::Debris(Ball *parent, Coord3d pos, Coord3d vel, double dur) : Ball(Role_Ball) {
+Debris::Debris(Ball* parent, const Coord3d& pos, const Coord3d& vel, double dur)
+    : Ball(Role_Ball) {
   position = pos;
   velocity = vel;
   crashTolerance = 10000;

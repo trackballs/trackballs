@@ -54,7 +54,7 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
   boundingBox[1][2] = 2 * radius + 0.5;
 }
 
-int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(2, idxbufs, databufs);
 
   GLfloat cent_height = 0.5f;
@@ -182,7 +182,7 @@ int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 2;
 }
 
-void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -203,7 +203,7 @@ void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDrawElements(GL_TRIANGLES, 3 * 9 * NFACETS, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (activeView.calculating_shadows) return;
 
   glDisable(GL_CULL_FACE);

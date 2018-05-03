@@ -35,7 +35,6 @@ class GameMode {
   virtual void display();
   virtual void key(int);
   virtual void keyUp(int);
-  virtual void special(int, int, int);
   virtual void idle(Real dt);
   virtual void doExpensiveComputations();
   virtual void mouse(int state, int x, int y);

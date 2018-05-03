@@ -22,7 +22,8 @@
 
 #include "game.h"
 
-ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated(Role_Forcefield) {
+ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
+    : Animated(Role_Forcefield) {
   position = pos;
   direction = dir;
   height = h;
@@ -41,7 +42,7 @@ ForceField::ForceField(Coord3d pos, Coord3d dir, Real h, int a) : Animated(Role_
   boundingBox[1][1] = +abs(dir[1]);
   boundingBox[1][2] = +abs(dir[2]) + h;
 }
-int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (!is_on) return 0;
   allocateBuffers(1, idxbufs, databufs);
 
@@ -85,9 +86,9 @@ int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void ForceField::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void ForceField::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
-void ForceField::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void ForceField::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (!is_on) return;
   if (activeView.calculating_shadows) return;
 

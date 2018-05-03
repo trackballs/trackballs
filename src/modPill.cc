@@ -32,7 +32,7 @@ int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
 ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
     : Ball(Role_OtherAnimated), kind(kind), resurrecting(resurrecting), time(time) {
-  no_physics = 1;
+  no_physics = true;
   realRadius = 0.2;
   radius = realRadius;
   is_on = true;

@@ -27,9 +27,9 @@ class Flag : public Animated {
  public:
   Flag(Real x, Real y, int points, int visible, Real radius);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
   void tick(Real t);
   virtual void onGet();

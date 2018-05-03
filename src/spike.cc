@@ -28,7 +28,7 @@
 #include "player.h"
 #include "sound.h"
 
-Spike::Spike(Coord3d position, Real speed, Real phase) : Animated(Role_OtherAnimated) {
+Spike::Spike(const Coord3d &position, Real speed, Real phase) : Animated(Role_OtherAnimated) {
   this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;
@@ -49,7 +49,7 @@ Spike::Spike(Coord3d position, Real speed, Real phase) : Animated(Role_OtherAnim
   specularColor[2] = 0.1;
 }
 
-int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
 
   const int nfacets = 6;
@@ -72,7 +72,7 @@ int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -93,7 +93,7 @@ void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
 }
-void Spike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Spike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
 void Spike::tick(Real t) {
   double dist, dx, dy, speed, h;
@@ -162,13 +162,15 @@ void Spike::tick(Real t) {
 }
 
 void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
-                      Coord3d position, GLfloat sidec[4], GLfloat tipc[4], GLfloat length) {
+                      const Coord3d &position, GLfloat const sidec[4], GLfloat const tipc[4],
+                      GLfloat length) {
   char *pos = (char *)data;
 
   double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
   for (int i = 0; i < 4 * nfacets; i++) {
     Coord3d local;
     Coord3d normal;
+    bool is_tip;
     GLfloat *color = NULL;
 
     int step = i / nfacets;
@@ -176,25 +178,25 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
     local[0] = 0.1 * std::sin(angle);
     local[1] = 0.1 * std::cos(angle);
     if (step == 0) {
-      color = tipc;
+      is_tip = true;
       local[2] = 0.;
       normal[0] = d2 * std::sin(angle);
       normal[1] = d2 * std::cos(angle);
       normal[2] = d1;
     } else if (step == 1) {
-      color = sidec;
+      is_tip = false;
       local[2] = 0;
       normal[0] = std::sin(angle);
       normal[1] = std::cos(angle);
       normal[2] = 0.;
     } else if (step == 2) {
-      color = sidec;
+      is_tip = false;
       local[2] = -length;
       normal[0] = std::sin(angle);
       normal[1] = std::cos(angle);
       normal[2] = 0.;
     } else {
-      color = tipc;
+      is_tip = true;
       local[0] = 0.;
       local[1] = 0.;
       local[2] = 0.3;
@@ -207,7 +209,7 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
     GLfloat flocal[3] = {(GLfloat)tlocal[0], (GLfloat)tlocal[1], (GLfloat)tlocal[2]};
     GLfloat fnormal[3] = {(GLfloat)tnormal[0], (GLfloat)tnormal[1], (GLfloat)tnormal[2]};
     pos += packObjectVertex(pos, position[0] + flocal[0], position[1] + flocal[1],
-                            position[2] + flocal[2], 0., 0., color, fnormal);
+                            position[2] + flocal[2], 0., 0., is_tip ? tipc : sidec, fnormal);
   }
 
   for (int i = 0; i < nfacets; i++) {

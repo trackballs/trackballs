@@ -225,7 +225,6 @@ SCM_DEFINE(translate_string, "translate", 1, 0, 0, (SCM str),
   SCM out = scm_from_utf8_string(trans);
   free(text);
   return out;
-  return out;
 }
 #undef FUNC_NAME
 
@@ -372,8 +371,6 @@ SCM_DEFINE(add_heightmodifier, "add-heightmodifier", 7, 3, 0,
            "Allow to modify the height of a cell's corner. Returns an 'animated' object")
 #define FUNC_NAME s_add_heightmodifier
 {
-  int not1 = -1, not2 = -1, not3 = -1;
-
   SCM_ASSERT(scm_is_integer(corner), corner, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_integer(x), x, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_integer(y), y, SCM_ARG3, FUNC_NAME);
@@ -381,9 +378,11 @@ SCM_DEFINE(add_heightmodifier, "add-heightmodifier", 7, 3, 0,
   SCM_ASSERT(scm_is_real(max), max, SCM_ARG5, FUNC_NAME);
   SCM_ASSERT(scm_is_real(freq), freq, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG7, FUNC_NAME);
+
+  int not1 = -1, not2 = -1, not3 = -1;
   if (scm_is_real(n1)) not1 = scm_to_int(n1);
-  if (scm_is_real(n2)) not1 = scm_to_int(n2);
-  if (scm_is_real(n3)) not1 = scm_to_int(n3);
+  if (scm_is_real(n2)) not2 = scm_to_int(n2);
+  if (scm_is_real(n3)) not3 = scm_to_int(n3);
   if (Game::current) {
     HeightModifier *heightmodifier = new HeightModifier(
         scm_to_int(corner), scm_to_int(x), scm_to_int(y), scm_to_double(min),

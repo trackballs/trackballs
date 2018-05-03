@@ -23,7 +23,7 @@
 #include "player.h"
 #include "settings.h"
 
-Fountain::Fountain(Coord3d pos, double randomSpeed, double radius, double strength)
+Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double strength)
     : Animated(Role_OtherAnimated),
       randomSpeed(randomSpeed),
       radius(radius),
@@ -43,16 +43,10 @@ Fountain::Fountain(Coord3d pos, double randomSpeed, double radius, double streng
   memset(creationTime, 0, sizeof(creationTime));
 }
 
-int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return 0;
   allocateBuffers(1, idxbufs, databufs);
 
-  Real timeNow = Game::current->gameTime;
-
-  while (creationTime[drawFrom] < timeNow - 1.5) {
-    if (drawFrom == nextPoint) break;
-    drawFrom = (drawFrom + 1) % 800;
-  }
   int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;
   if (fps < 5) skip *= 2;
   int npoints = 0;
@@ -99,9 +93,9 @@ int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Fountain::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Fountain::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
-void Fountain::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Fountain::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
   if (activeView.calculating_shadows) return;
 
@@ -173,5 +167,10 @@ void Fountain::tick(Real t) {
         p->velocity[i] +=
             velocity[i] / 0.3 * strength * 0.5 * (p->radius + 0.2 - length(diff)) * t;
     }
+  }
+
+  while (creationTime[drawFrom] < Game::current->gameTime - 1.5) {
+    if (drawFrom == nextPoint) break;
+    drawFrom = (drawFrom + 1) % 800;
   }
 }

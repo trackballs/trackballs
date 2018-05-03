@@ -69,8 +69,8 @@ inline uint32_t packNormal(const GLfloat n[3]) {
   return x;
 }
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
-void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]);
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
+                       Matrix3d rotation, GLfloat radius, int detail, GLfloat const color[4]);
 
 /* updateUniforms when uniforms (i.e, ViewParameters) change */
 void updateUniforms();
@@ -114,8 +114,8 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
 
 void renderDummyShadowCascade();
 void renderDummyShadowMap();
-void renderShadowMap(Coord3d focus, Map *mp, Game *gm);
-void renderShadowCascade(Coord3d focus, Map *mp, Game *gm);
+void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm);
+void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm);
 
 // generates a snapshot
 int createSnapshot();

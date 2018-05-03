@@ -71,7 +71,7 @@ class SingleCycleAllocator {
   T* allocateFor() {
     return (T*)allocate(sizeof(T));
   }
-  size_t used() { return index; }
+  size_t used() const { return index; }
 
   void* stackPush(size_t bytes) {
     size_t nints = bytes / sizeof(int) + 1;
@@ -931,7 +931,7 @@ std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3
     }
 
     static int psu = 0;
-    if (coll.size() != nco || coll.size() != ret.size() | ret.size() != nfound) {
+    if (coll.size() != nco || coll.size() != ret.size() || ret.size() != nfound) {
       warning("Interval tree %d error %d -> %d (ideal %d (%d present)), %d prior passed", ntot,
               nfound, ret.size(), coll.size(), nco, psu);
       psu = 0;

@@ -28,9 +28,9 @@ class Splash : public Animated {
   Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength, double radius);
   void tick(Real t);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
  private:
   int nDroplets;

@@ -31,7 +31,6 @@ class MainMode : public GameMode {
 
   void display();
   void key(int);
-  void special(int, int, int);
   void idle(Real td);
   void doExpensiveComputations();
   void mouse(int state, int x, int y);
@@ -50,7 +49,7 @@ class MainMode : public GameMode {
   void bonusLevelComplete();
 
   void setupLighting() const;
-  void renderEnvironmentTexture(GLuint texture, Coord3d focus) const;
+  void renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const;
   Real flash;
 
   static void init();

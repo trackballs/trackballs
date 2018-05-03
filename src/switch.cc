@@ -50,7 +50,7 @@ void CSwitch::releaseCallbacks() {
   off = NULL;
 }
 
-int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
 
   const int nfacets = 6;
@@ -62,7 +62,7 @@ int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   GLfloat data[4 * nfacets + 7][8];
   ushort idxs[4 * nfacets + 6][3];
 
-  GLfloat *side_color = is_on ? primaryColor : secondaryColor;
+  const GLfloat *side_color = is_on ? primaryColor : secondaryColor;
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
   char *pos = (char *)data;
@@ -151,7 +151,7 @@ int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -172,7 +172,7 @@ void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDrawElements(GL_TRIANGLES, (4 * nfacets + 6) * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void CSwitch::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void CSwitch::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
 void CSwitch::tick(Real /*t*/) {
   Coord3d v = position - Game::current->player1->position;

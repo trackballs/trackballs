@@ -406,7 +406,7 @@ void MainMode::key(int key) {
     break;
   }
 }
-void MainMode::special(int /*key*/, int /*x*/, int /*y*/) {}
+
 void MainMode::idle(Real td) {
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
@@ -622,7 +622,6 @@ void MainMode::showInfo() {
                   0.8);
 
   Leave2DMode();
-  return;
 }
 void MainMode::levelComplete() {
   Game::current->player1->hasWon = 1;
@@ -662,7 +661,7 @@ void MainMode::bonusLevelComplete() {
           sizeof(Game::current->nextLevel));
 }
 
-void MainMode::renderEnvironmentTexture(GLuint texture, Coord3d focus) const {
+void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const {
   // Save gfx_details and change before drawing environment */
   int gfx_details = Settings::settings->gfx_details;
   Settings::settings->gfx_details = GFX_DETAILS_MINIMALISTIC;

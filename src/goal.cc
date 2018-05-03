@@ -47,7 +47,7 @@ void Goal::onGet() {
   }
 }
 
-int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (!visible) return 0;
   allocateBuffers(1, idxbufs, databufs);
 
@@ -141,7 +141,7 @@ int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   if (!visible) return;
 
   const int nfacets = 11;
@@ -166,4 +166,4 @@ void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Goal::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Goal::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}

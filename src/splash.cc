@@ -40,7 +40,7 @@ Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double streng
   }
 }
 
-int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) {
+int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return 0;
 
   allocateBuffers(1, idxbufs, databufs);
@@ -64,9 +64,9 @@ int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) {
   return 1;
 }
 
-void Splash::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) {}
+void Splash::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) const {}
 
-void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) {
+void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
   if (activeView.calculating_shadows) return;
 

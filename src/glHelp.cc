@@ -453,8 +453,8 @@ static void constructSphereData(int detail) {
   sphere_idxs[detail] = idxs;
 }
 
-void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, GLfloat color[4]) {
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
+                       Matrix3d rotation, GLfloat radius, int detail, GLfloat const color[4]) {
   if (detail < 1) {
     warning("Sphere detail level must be > 1. Drawing nothing.");
     return;
@@ -632,7 +632,7 @@ void renderDummyShadowCascade() {
   }
 }
 
-void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
+void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
   Matrix4d origMV, origProj;
   assign(activeView.modelview, origMV);
   assign(activeView.projection, origProj);
@@ -708,16 +708,7 @@ void renderShadowMap(Coord3d focus, Map *mp, Game *gm) {
   updateUniforms();
 }
 
-void mulMatrix4(const Matrix4d mult, const double src[4], double res[4]) {
-  /* TODO: establish a proper Mat4, Mat3, Vec4, Vec3 set of types */
-  double r[4] = {0., 0., 0., 0.};
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) { r[i] += src[j] * mult[i][j]; }
-  }
-  for (int i = 0; i < 4; i++) { res[i] = r[i]; }
-}
-
-void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
+void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
   Matrix4d origMV, origProj;
   assign(activeView.modelview, origMV);
   assign(activeView.projection, origProj);
@@ -761,7 +752,7 @@ void renderShadowCascade(Coord3d focus, Map *mp, Game *gm) {
       for (int k = 0; k < 4; k++) {
         eyepts[k % 2] *= -1;
         /* convert to world space */
-        Coord3d resultA = useMatrix(mvm3t, eyepts) + camera;
+        Coord3d resultA = useMatrix(mvm3t, Coord3d(eyepts)) + camera;
 
         /* reorient along light space. NOTE: this breaks total offset, but we don't care about
          * it...*/
@@ -854,11 +845,11 @@ int createSnapshot() {
   static int snap_number = 0;
   char name[1024];
   int again = 9999;
-  FILE *f;
 
   /* find the name for the image */
   do {
     snprintf(name, 1023, "./snapshot_%04d.png", snap_number++);
+    FILE *f;
     if ((f = fopen(name, "r")) == NULL) {
       break;
     } else {

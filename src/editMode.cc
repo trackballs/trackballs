@@ -1115,7 +1115,6 @@ void EditMode::key(int key) {
 
   return;
 }
-void EditMode::special(int key, int /*mx*/, int /*my*/) { printf("editmode: %d\n", key); }
 void EditMode::idle(Real td) {
   int x, y;
   tickMouse(td);

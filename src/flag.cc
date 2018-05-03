@@ -26,10 +26,8 @@
 
 Flag::Flag(Real x, Real y, int points, int visible, Real radius)
     : Animated(Role_OtherAnimated) {
-  scoreOnDeath = Game::defaultScores[SCORE_FLAG][0];
-  timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
-
   scoreOnDeath = points;
+  timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
 
   this->visible = visible;
   this->radius = radius;
@@ -44,7 +42,7 @@ Flag::Flag(Real x, Real y, int points, int visible, Real radius)
   secondaryColor[2] = 0.8;
 }
 
-int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (!visible) return 0;
 
   allocateBuffers(1, idxbufs, databufs);
@@ -96,7 +94,7 @@ int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Flag::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Flag::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   if (!visible) return;
 
   glDisable(GL_CULL_FACE);
@@ -118,7 +116,7 @@ void Flag::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Flag::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Flag::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
 void Flag::tick(Real /*t*/) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

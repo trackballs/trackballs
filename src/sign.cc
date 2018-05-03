@@ -27,7 +27,7 @@
 
 #define SIGN_SCALE 0.007
 
-Sign::Sign(const char *string, Real l, Real s, Real r, Coord3d pos)
+Sign::Sign(const char *string, Real l, Real s, Real r, const Coord3d &pos)
     : Animated(Role_OtherAnimated) {
   position = pos;
   if (l <= 0.0) l = 1e10;
@@ -77,7 +77,7 @@ void Sign::mkTexture(const char *string) {
   boundingBox[1][2] = SIGN_SCALE * scale * height;
 }
 
-int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
@@ -119,9 +119,9 @@ int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Sign::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) {}
+void Sign::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
 
-void Sign::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Sign::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (activeView.calculating_shadows) return;
 
   // Keep the depth function on but trivial so as to record depth values

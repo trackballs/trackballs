@@ -26,11 +26,11 @@
 
 class Spike : public Animated {
  public:
-  Spike(Coord3d position, Real speed, Real phase);
+  Spike(const Coord3d& position, Real speed, Real phase);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
   void tick(Real t);
 
@@ -41,6 +41,7 @@ class Spike : public Animated {
 };
 
 void generateSpikeVBO(GLfloat* data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
-                      Coord3d position, GLfloat sidec[4], GLfloat tipc[4], GLfloat length);
+                      const Coord3d& position, GLfloat const sidec[4], GLfloat const tipc[4],
+                      GLfloat length);
 
 #endif

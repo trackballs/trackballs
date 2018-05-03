@@ -32,8 +32,8 @@ class Player : public Ball {
   void key(int k);
   void die(int);
   void newLevel();
-  void setStartVariables(); /**< Setup all default variables when starting a level */
-  void restart(Coord3d);    /**< Restart the ball at given position */
+  void setStartVariables();     /**< Setup all default variables when starting a level */
+  void restart(const Coord3d&); /**< Restart the ball at given position */
   void mouse(int state, int x, int y);
   void setHealth(Real);
   virtual bool crash(Real speed);

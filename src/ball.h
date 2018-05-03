@@ -52,9 +52,9 @@ class Ball : public Animated {
   virtual ~Ball();
   bool physics(Real time);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
   void tick(Real);
   void doExpensiveComputations();
@@ -68,7 +68,7 @@ class Ball : public Animated {
   static void init();
 
   Coord3d velocity;
-  int inTheAir, inPipe;
+  bool inTheAir, inPipe;
   float modTimeLeft[NUM_MODS], modTimePhaseIn[NUM_MODS];
   float rotation[2];
   double nextJumpStrength;
@@ -79,7 +79,7 @@ class Ball : public Animated {
   Real radius, realRadius;
   Real friction, gravity, bounceFactor;
   Real crashTolerance;
-  int no_physics;
+  bool no_physics;
   /** 0 for low resolution balls (eg. debris), 1 for normal balls, 2
        for high res balls (eg. player) */
   int ballResolution;

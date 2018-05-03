@@ -65,10 +65,13 @@ Ball::Ball(int role) : Animated(role) {
   gravity = 8.0;
   bounceFactor = 0.8;
   crashTolerance = 7;
-  no_physics = 0;
-  inPipe = 0;
+  no_physics = false;
+  inTheAir = false;
+  inPipe = false;
   nextJumpStrength = 0.0;
   acceleration = 4.0;
+  radius = 0.49;
+  realRadius = 0.49;
 
   for (int i = 0; i < NUM_MODS; i++) {
     modTimeLeft[i] = 0.0;
@@ -88,7 +91,7 @@ Ball::~Ball() {
   setReflectivity(0.0, 0);  // This effectivly deallocates all environment maps */
 }
 
-int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (!is_on) return 0;
 
   /* We generate the maximum number of buffers, even if they aren't used */
@@ -404,7 +407,7 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return N;
 }
 
-void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
 
@@ -577,7 +580,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
   }
 }
 
-void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
   if (activeView.calculating_shadows) return;
@@ -1516,7 +1519,7 @@ void Ball::generateNitroDebris(Real time) {
     d->primaryColor[0] = 0.1;
     d->primaryColor[1] = 0.6;
     d->primaryColor[2] = 0.1;
-    d->no_physics = 1;
+    d->no_physics = true;
   }
 }
 void Ball::generateDebris(GLfloat color[4]) {

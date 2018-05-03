@@ -22,28 +22,27 @@
 
 #include "game.h"
 
-Pipe::Pipe(Coord3d f, Coord3d t, Real r) : Animated(Role_Pipe) {
+Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
+    : Animated(Role_Pipe), from(f), to(t), radius(r) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
-  from = f;
-  to = t;
   position = 0.5 * (from + to);
-  radius = r;
   primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
 
-  windForward = windBackward = 0.0;
+  windBackward = 0.0;
   windForward = 0.0;
-  computeBoundingBox();
+
+  for (int i = 0; i < 3; i++) {
+    boundingBox[0][i] = fmin(from[i] - radius, to[i] - radius) - position[i];
+    boundingBox[1][i] = fmax(from[i] + radius, to[i] + radius) - position[i];
+  }
 }
 
-int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
+int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   allocateBuffers(1, idxbufs, databufs);
-  up[0] = up[1] = 0.0;
-  up[2] = 1.0;
+  Coord3d up(0., 0., 0.);
   Coord3d dir = to - from;
   dir = dir / length(dir);
-  right[0] = dir[1];
-  right[1] = -dir[0];
-  right[2] = 0.0;
+  Coord3d right(dir[1], -dir[0], 0.0);
   right = right / length(right);
   up = crossProduct(dir, right);
   if (up[2] < 0.0) up = -up;
@@ -89,14 +88,14 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) {
   return 1;
 }
 
-void Pipe::drawBuffers1(GLuint *idxbufs, GLuint *databufs) {
+void Pipe::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   if (primaryColor[3] >= 1.0) drawTrunk(idxbufs, databufs);
 }
-void Pipe::drawBuffers2(GLuint *idxbufs, GLuint *databufs) {
+void Pipe::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
   if (primaryColor[3] < 1.0) drawTrunk(idxbufs, databufs);
 }
-void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) {
+void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) const {
   // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
   if (primaryColor[3] < 1.f) {
@@ -121,14 +120,4 @@ void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
 }
-void Pipe::tick(Real /*t*/) {
-  /* TODO. Ugly fix, a better fix is to make from/to etc. *private* variables and add this fn.
-         inside the accessor methods */
-  computeBoundingBox();
-}
-void Pipe::computeBoundingBox() {
-  for (int i = 0; i < 3; i++) {
-    boundingBox[0][i] = fmin(from[i] - radius, to[i] - radius) - position[i];
-    boundingBox[1][i] = fmax(from[i] + radius, to[i] + radius) - position[i];
-  }
-}
+void Pipe::tick(Real /*t*/) {}

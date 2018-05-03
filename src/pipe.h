@@ -28,24 +28,21 @@
 
 class Pipe : public Animated {
  public:
-  Pipe(Coord3d from, Coord3d to, Real radius);
+  Pipe(const Coord3d& from, const Coord3d& to, Real radius);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs);
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs);
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
 
   virtual void tick(Real t);
-  /** Recomputes the bounding box of the pipe. Needed after changes in from/to position */
-  virtual void computeBoundingBox();
 
-  Coord3d from, to;
-  Coord3d up, right;
-  Real radius;
+  const Coord3d from, to;
+  const Real radius;
 
   Real windForward, windBackward;
 
  private:
-  void drawTrunk(GLuint* idxbufs, GLuint* databufs);
+  void drawTrunk(GLuint* idxbufs, GLuint* databufs) const;
 };
 
 #endif

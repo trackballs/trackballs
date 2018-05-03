@@ -40,18 +40,18 @@ class Animated : public GameHook {
   /** Setup drawing pass of object.*/
 
   /** new[] and glGenBuffer the index and data buffers */
-  void allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs);
+  static void allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs);
   /** Generate all buffers possibly used in this tick */
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) = 0;
+  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const = 0;
   /** First drawing pass of object. Render opaque buffers. */
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) = 0;
+  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const = 0;
   /** Draws the second pass of object. Render alpha buffers if needed. */
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) = 0;
+  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const = 0;
 
   /* Object drawing passes */
   void draw();
   void draw2();
-  void drawBoundingBox();
+  void drawBoundingBox() const;
   /** Recomputes the bounding box of the object. Needed after changes in size */
   virtual void computeBoundingBox();
 

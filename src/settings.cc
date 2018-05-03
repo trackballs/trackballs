@@ -82,6 +82,7 @@ Settings::Settings() {
   joy_center[1] = 0;
   shadowTexsize = 9;
   timeCompression = 0;
+  sandboxAvailable = 0;
   memset(specialLevel, 0, sizeof(specialLevel));
   memset(levelSets, 0, sizeof(levelSets));
 

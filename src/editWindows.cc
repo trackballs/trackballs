@@ -72,7 +72,7 @@ void EMenuWindow::openSubMenu(int id) {
   activeSubWindow = subWindows[id];
   activeSubWindow->attach();
 }
-int EMenuWindow::keyToMenuEntry(int key, int shift) {
+int EMenuWindow::keyToMenuEntry(int key, int shift) const {
   /* Convert keypad numbers to normal numbers */
   if (key >= SDLK_KP_0 && key <= SDLK_KP_9) key = '0' + key - SDLK_KP_0;
   if (key == SDLK_KP_PLUS) key = '+';
@@ -161,7 +161,7 @@ void ESubWindow::draw() {
 
 /** Count how many menu entries exists for a given menu. Uses the length of the shortcut key
  * string for this */
-int ESubWindow::countRows() {
+int ESubWindow::countRows() const {
   for (int i = 0; i < MAX_MENU_ENTRIES; i++)
     if (!cMenuEntries[id][i]) return i;
   return MAX_MENU_ENTRIES;

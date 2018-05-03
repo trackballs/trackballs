@@ -22,11 +22,12 @@
 #include "game.h"
 #include "player.h"
 
-ScoreSign::ScoreSign(int points, Coord3d position) : Sign("++++", 4.0, 1.0, 100.0, position) {
+ScoreSign::ScoreSign(int points, const Coord3d& position)
+    : Sign("++++", 4.0, 1.0, 100.0, position) {
   init(points, SCORESIGN_SCORE);
 }
 
-ScoreSign::ScoreSign(int points, Coord3d position, int type)
+ScoreSign::ScoreSign(int points, const Coord3d& position, int type)
     : Sign("++++", 4.0, 1.0, 100.0, position) {
   init(points, type);
 }
@@ -49,7 +50,6 @@ void ScoreSign::init(int points, int type) {
 }
 
 void ScoreSign::tick(Real t) {
-  char str[256];
   int oldPoints = (int)points;
   if (life < t) t = life;
   points = pointsPerSecond * (4.0 - life + t);
@@ -59,6 +59,7 @@ void ScoreSign::tick(Real t) {
   if (life < lastLife - 0.1) {
     lastLife = life;
 
+    char str[256];
     if (type == SCORESIGN_SCORE) {
       if (points >= 0)
         snprintf(str, sizeof(str), "+%d", (int)points);

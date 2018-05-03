@@ -50,10 +50,10 @@ class MyWindow {
   void remove();
 
   /* Test if a screen point is inside window */
-  int isInside(int x, int y);
+  int isInside(int x, int y) const;
 
   /* Test is this window is attached */
-  int isAttached();
+  int isAttached() const;
 
   /* Removes all windows from current drawing list of windows */
   static void resetWindows();

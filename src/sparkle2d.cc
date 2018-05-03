@@ -49,10 +49,8 @@ Sparkle2D::~Sparkle2D() {
 // remove all entries
 void Sparkle2D::clear() {
   Sparkle *tmp = sparkle_first;
-  Sparkle *tmp2;
-
   while (tmp != NULL) {
-    tmp2 = tmp->next;
+    Sparkle *tmp2 = tmp->next;
     delete tmp;
     tmp = tmp2;
   }
@@ -154,29 +152,23 @@ int Sparkle2D::add(float pos[2]) {
  * draw existing glitters
  */
 void Sparkle2D::draw() {
-  float age;
-  float ex, ey;
-  float alpha, tmp;
-  float *clr;
-  float *pos;
-  Sparkle *skl;
-
   GLuint tex = textures[loadTexture("glitter.png")];
-  skl = sparkle_first;
+  Sparkle *skl = sparkle_first;
   while (skl != NULL) {
-    age = skl->age;
+    float age = skl->age;
     if (age >= 0.) {
+      float tmp;
       if (age < 0.1) {
         tmp = 1. - age * 10.;
       } else
         tmp = age / skl->ttl;
-      alpha = 1.0 - tmp;
-      clr = skl->color;
+      float alpha = 1.0 - tmp;
+      float *clr = skl->color;
 
       tmp = alpha * alpha;
-      ex = tmp * skl->size * 0.8;
-      ey = tmp * skl->size * 1. + (0.02 * age);
-      pos = skl->pos;
+      float ex = tmp * skl->size * 0.8;
+      float ey = tmp * skl->size * 1. + (0.02 * age);
+      float *pos = skl->pos;
 
       draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
                       clr[2], clr[3] * alpha, tex);
@@ -189,14 +181,12 @@ void Sparkle2D::draw() {
  * update existing glitters
  */
 void Sparkle2D::tick(Real t) {
-  Sparkle *skl, *tmp;
-
-  skl = sparkle_first;
+  Sparkle *skl = sparkle_first;
   while (skl != NULL) {
     skl->age += t;
 
     if (skl->age > skl->ttl) {
-      tmp = skl;
+      Sparkle *tmp = skl;
       skl = skl->next;
       remove_sparkle(tmp);
       continue;

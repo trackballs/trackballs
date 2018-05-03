@@ -76,7 +76,6 @@ Game::Game(const char *name, Gamer *g) {
 
 Game::Game(Map *editmap) {
   balls = new AnimatedCollection();
-  map = editmap;
   localPlayers = 0;
   player1 = NULL;
   gameTime = 0.0;
@@ -369,7 +368,7 @@ void Game::draw() {
 /* Draws the world as normal but with the assumption that we are drawing a reflected version
    of the world. Does not draw weather or objects far away to save some time.
 */
-void Game::drawReflection(Coord3d focus) {
+void Game::drawReflection(const Coord3d &focus) {
   /* Some GL defaults the objects can rely on being setup */
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glDepthFunc(GL_LEQUAL);

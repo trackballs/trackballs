@@ -84,8 +84,8 @@ static Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
 }
 
 Player::Player() : Ball(Role_Player) {
-  inTheAir = 0;
-  inPipe = 0;
+  inTheAir = false;
+  inPipe = false;
   lives = 3;
   realRadius = 0.3;
   radius = realRadius;
@@ -313,17 +313,17 @@ void Player::die(int how) {
   playing = false;
   health = 0.0;
 
-  Coord3d pos, vel;
   if (how == DIE_ACID) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
     Coord3d vel;
     Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
     Game::current->add(new Splash(center, vel, acidColor, 32.0, radius));
-  } else
-    for (int i = 0; i < 4; i++)
+  } else {
+    for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
         Real a = i / 4.0 * M_PI2;
         Real b = (j + 0.5) / 4.0 * M_PI;
+        Coord3d pos, vel;
         pos[0] = position[0] + cos(a) * 0.25 * sin(b) * 2.0;
         pos[1] = position[1] + sin(a) * 0.25 * sin(b) * 2.0;
         pos[2] = position[2] + 0.25 * cos(b) + 0.5;
@@ -332,6 +332,8 @@ void Player::die(int how) {
         vel[2] = velocity[2] + (sink ? 0.01 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
       }
+    }
+  }
 
   if (how == DIE_CRASH)
     playEffect(SFX_PLAYER_DIES);
@@ -355,13 +357,13 @@ void Player::setStartVariables() {
   hasWon = 0;
   health = 1.0;
   oxygen = 1.0;
-  inTheAir = 0;
-  inPipe = 0;
+  inTheAir = false;
+  inPipe = false;
   moveBurst = 0.0;
   is_on = true;
 }
 
-void Player::restart(Coord3d pos) {
+void Player::restart(const Coord3d &pos) {
   setStartVariables();
   position = pos;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
