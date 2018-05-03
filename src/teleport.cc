@@ -45,7 +45,7 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
   secondaryColor[1] = 0.9;
   secondaryColor[2] = 0.4;
   secondaryColor[3] = 1.0;
-  is_on = 1;
+  is_on = true;
   boundingBox[0][0] = -2 * radius;
   boundingBox[1][0] = 2 * radius;
   boundingBox[0][1] = -2 * radius;

@@ -58,7 +58,6 @@ class Ball : public Animated {
 
   void tick(Real);
   void doExpensiveComputations();
-  void onRemove();
   void setReflectivity(double reflectivity, int metallic);
   /* When we crash into something. Returns if we are still alive */
   virtual bool crash(Real speed);

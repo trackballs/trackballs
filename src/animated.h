@@ -54,7 +54,6 @@ class Animated : public GameHook {
   void drawBoundingBox();
   /** Recomputes the bounding box of the object. Needed after changes in size */
   virtual void computeBoundingBox();
-  void onRemove();
 
   virtual void tick(Real dt);
   virtual void die(int how);

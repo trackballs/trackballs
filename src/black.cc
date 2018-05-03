@@ -55,29 +55,25 @@ Black::Black(Real x, Real y) : Ball(Role_Ball) {
 void Black::die(int how) {
   Ball::die(how);
 
-  if (alive) {
-    Coord3d pos, vel;
-    for (int i = 0; i < 4; i++)
-      for (int j = 0; j < 4; j++) {
-        Real a = i / 4.0 * M_PI2;
-        Real b = (j + 0.5) / 4.0 * M_PI;
-        pos[0] = position[0] + cos(a) * 0.25 * sin(b);
-        pos[1] = position[1] + sin(a) * 0.25 * sin(b);
-        pos[2] = position[2] + 0.25 * cos(b) + 0.5;
-        vel[0] = velocity[0] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        vel[1] = velocity[1] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        vel[2] = velocity[2] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        Game::current->addEntity(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
-      }
+  Coord3d pos, vel;
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++) {
+      Real a = i / 4.0 * M_PI2;
+      Real b = (j + 0.5) / 4.0 * M_PI;
+      pos[0] = position[0] + cos(a) * 0.25 * sin(b);
+      pos[1] = position[1] + sin(a) * 0.25 * sin(b);
+      pos[2] = position[2] + 0.25 * cos(b) + 0.5;
+      vel[0] = velocity[0] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
+      vel[1] = velocity[1] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
+      vel[2] = velocity[2] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
+      Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
+    }
 
-    remove();
-    if (how == DIE_CRASH)
-      playEffect(SFX_BLACK_DIE);
-    else if (how == DIE_FF)
-      playEffect(SFX_FF_DEATH);
-  } else {
-    /* This should not happen */
-  }
+  remove();
+  if (how == DIE_CRASH)
+    playEffect(SFX_BLACK_DIE);
+  else if (how == DIE_FF)
+    playEffect(SFX_FF_DEATH);
 }
 void Black::tick(Real t) {
   Coord3d v;

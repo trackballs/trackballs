@@ -166,10 +166,10 @@ void Animated::die(int how) {
 
   if (scoreOnDeath != 0.0) {
     pos[2] += 0.5;
-    Game::current->addEntity(new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE));
+    Game::current->add(new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE));
   }
   if (timeOnDeath != 0.0) {
     pos[2] += 0.5;
-    Game::current->addEntity(new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME));
+    Game::current->add(new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME));
   }
 }

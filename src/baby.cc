@@ -42,11 +42,9 @@ Baby::Baby(Real x, Real y) : Black(x, y) {
 }
 
 void Baby::die(int how) {
-  if (alive) {
-    Ball::die(how);
-    playEffect(SFX_BLACK_DIE);
-    remove();
-  }
+  Ball::die(how);
+  playEffect(SFX_BLACK_DIE);
+  remove();
 }
 
 Baby::~Baby() {}

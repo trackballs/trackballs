@@ -417,7 +417,8 @@ void EditMode::display() {
       /* Indicate start position and trigger object locations */
       for (int i = 0; i < game->hooks[Role_GameHook].size(); i++) {
         GameHook* hook = game->hooks[Role_GameHook][i];
-        if (!hook->alive) continue;
+        if (hook->invalid) continue;
+
         SmartTrigger* smart_trigger = dynamic_cast<SmartTrigger*>(hook);
         Trigger* dumb_trigger = dynamic_cast<Trigger*>(hook);
         if (smart_trigger) {

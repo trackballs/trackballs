@@ -74,10 +74,10 @@ void CyclicPlatform::tick(Real dt) {
 
     const std::vector<Animated *> &balls =
         Game::current->balls->bboxOverlapsWith(lower, upper);
-    std::vector<Animated *>::const_iterator iter = balls.begin();
-    std::vector<Animated *>::const_iterator end = balls.end();
-    for (; iter != end; iter++) {
-      Ball *ball = (Ball *)*iter;
+    for (int i = 0; i < balls.size(); i++) {
+      Ball *ball = (Ball *)balls[i];
+      if (ball->no_physics) continue;
+
       if (ball->position[0] >= x1 && ball->position[0] < x2 + 1.0 && ball->position[1] >= y1 &&
           ball->position[1] < y2 + 1.0 &&
           ball->position[2] - ball->radius <=

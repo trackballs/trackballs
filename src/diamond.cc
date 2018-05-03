@@ -113,5 +113,5 @@ void Diamond::onGet() {
   Coord3d signPos;
   signPos = position;
   signPos[2] += 1.0;
-  Game::current->addEntity(new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos));
+  Game::current->add(new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos));
 }

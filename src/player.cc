@@ -318,7 +318,7 @@ void Player::die(int how) {
     GLfloat acidColor[4] = {0.1, 0.8, 0.1, 0.5};
     Coord3d vel;
     Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
-    Game::current->addEntity(new Splash(center, vel, acidColor, 32.0, radius));
+    Game::current->add(new Splash(center, vel, acidColor, 32.0, radius));
   } else
     for (int i = 0; i < 4; i++)
       for (int j = 0; j < 4; j++) {
@@ -330,7 +330,7 @@ void Player::die(int how) {
         vel[0] = velocity[0] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[1] = velocity[1] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
         vel[2] = velocity[2] + (sink ? 0.01 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        Game::current->addEntity(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
+        Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
       }
 
   if (how == DIE_CRASH)
@@ -344,7 +344,7 @@ void Player::die(int how) {
     ((MainMode *)GameMode::current)->playerLose();
   else
     ((MainMode *)GameMode::current)->playerDie();
-  alive = false;
+  is_on = false;
 }
 
 void Player::setStartVariables() {
@@ -358,7 +358,7 @@ void Player::setStartVariables() {
   inTheAir = 0;
   inPipe = 0;
   moveBurst = 0.0;
-  alive = true;
+  is_on = true;
 }
 
 void Player::restart(Coord3d pos) {

@@ -36,7 +36,7 @@ CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated)
   secondaryColor[0] = 0.0;
   secondaryColor[1] = 0.0;
   secondaryColor[2] = 0.0;
-  is_touched = 0;
+  is_touched = false;
   this->on = on;
   this->off = off;
   if (on) scm_gc_protect_object(on);
@@ -182,15 +182,15 @@ void CSwitch::tick(Real /*t*/) {
   if (dist < player->radius + 0.3) {
     if (!is_touched) {
       if (is_on) {
-        is_on = 0;
+        is_on = false;
         Game::current->queueCall(off);
       } else {
-        is_on = 1;
+        is_on = true;
         Game::current->queueCall(on);
       }
       playEffect(SFX_SWITCH);
     }
-    is_touched = 1;
+    is_touched = true;
   } else
-    is_touched = 0;
+    is_touched = false;
 }

@@ -53,7 +53,7 @@ class Game {
   void drawReflection(Coord3d focus); /* Used when drawing environmentmaps */
   void doExpensiveComputations();
 
-  void addEntity(GameHook *);
+  void add(GameHook *);
   void queueCall(SCM fun);
   void queueCall(SCM fun, SCM argA);
   void queueCall(SCM fun, SCM argA, SCM argB);
@@ -95,6 +95,7 @@ class Game {
     SCM argB;
   } QueuedCall;
   std::vector<QueuedCall> queuedCalls;
+  std::vector<GameHook *> newHooks;
 
   void setDefaults();
 };

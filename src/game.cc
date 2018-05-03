@@ -64,7 +64,7 @@ Game::Game(const char *name, Gamer *g) {
   loadScript(scmname);
 
   player1 = new Player();
-  addEntity(player1);
+  add(player1);
 
   loadLevel(name);
   player1->restart(Game::current->map->startPosition);
@@ -141,6 +141,11 @@ void Game::loadLevel(const char *name) {
   map = new Map(mapname);
   loadScript(scmname);
 
+  for (int j = 0; j < newHooks.size(); j++) {
+    hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
+  }
+  newHooks.clear();
+
   if (player1) player1->timeLeft = startTime;
 
   fogThickness = wantedFogThickness;
@@ -181,10 +186,9 @@ void Game::setDefaults() {
   }
 }
 
-void Game::addEntity(class GameHook *hook) { hooks[hook->entity_role].push_back(hook); }
+void Game::add(GameHook *hook) { newHooks.push_back(hook); }
 
 void Game::queueCall(SCM fun) {
-  scm_gc_protect_object(fun);
   QueuedCall q;
   q.fun = fun;
   q.argA = NULL;
@@ -192,7 +196,6 @@ void Game::queueCall(SCM fun) {
   queuedCalls.push_back(q);
 }
 void Game::queueCall(SCM fun, SCM argA) {
-  scm_gc_protect_object(fun);
   scm_gc_protect_object(argA);
   QueuedCall q;
   q.fun = fun;
@@ -201,7 +204,6 @@ void Game::queueCall(SCM fun, SCM argA) {
   queuedCalls.push_back(q);
 }
 void Game::queueCall(SCM fun, SCM argA, SCM argB) {
-  scm_gc_protect_object(fun);
   scm_gc_protect_object(argA);
   scm_gc_protect_object(argB);
   QueuedCall q;
@@ -261,19 +263,23 @@ void Game::tick(Real t) {
       for (int k = 0; k < n; k++) { hooks[j][k]->tick(tstep); }
     }
 
+    /* add new entities */
+    for (int j = 0; j < newHooks.size(); j++) {
+      hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
+    }
+    newHooks.clear();
+
     /* run queued callbacks */
     for (int j = 0; j < queuedCalls.size(); j++) {
       QueuedCall call = queuedCalls[j];
+      /* the functions are owned by GameHooks; arguments by Game */
       if (!call.argA) {
         scm_catch_apply_0(call.fun);
-        scm_gc_unprotect_object(call.fun);
       } else if (!call.argB) {
         scm_catch_apply_1(call.fun, call.argA);
-        scm_gc_unprotect_object(call.fun);
         scm_gc_unprotect_object(call.argA);
       } else {
         scm_catch_apply_2(call.fun, call.argA, call.argB);
-        scm_gc_unprotect_object(call.fun);
         scm_gc_unprotect_object(call.argA);
         scm_gc_unprotect_object(call.argB);
       }
@@ -287,7 +293,7 @@ void Game::tick(Real t) {
       int n = hooks[j].size();
       int ndead = 0;
       for (int k = 0; k < n; k++) {
-        if (!hooks[j][k - ndead]->alive) {
+        if (hooks[j][k - ndead]->invalid) {
           GameHook *hook = hooks[j][k - ndead];
           hook->releaseCallbacks();
           hooks[Role_Dead].push_back(hook);

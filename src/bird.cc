@@ -145,18 +145,12 @@ void Bird::tick(Real t) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
 
   // check for collisions with balls
-  Ball *ball;
-  Coord3d diff;
   const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  std::vector<Animated *>::const_iterator iter = balls.begin();
-  std::vector<Animated *>::const_iterator end = balls.end();
-
-  for (; iter != end; iter++) {
-    ball = (Ball *)*iter;
-    if (!ball->alive) continue;
+  for (int i = 0; i < balls.size(); i++) {
+    Ball *ball = (Ball *)balls[i];
     if (ball->no_physics) continue;
 
-    diff = position - ball->position;
+    Coord3d diff = position - ball->position;
     // TODO: improve the collision detection
     if (length(diff) < ball->radius + size * .75) {
       if (ball->modTimeLeft[MOD_SPIKE]) {
@@ -179,10 +173,8 @@ void Bird::tick(Real t) {
   }
 
   // check if the bird is outside its path
-  Real cdx, cdy;
-
-  cdx = position[0] - x;
-  cdy = position[1] - y;
+  Real cdx = position[0] - x;
+  Real cdy = position[1] - y;
   if (((dx < 0.) && (cdx <= dx)) || ((dx > 0.) && (cdx >= dx)) || ((dy < 0.) && (cdy <= dy)) ||
       ((dy > 0.) && (cdy >= dy))) {
     // restart

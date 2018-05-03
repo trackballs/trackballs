@@ -26,7 +26,7 @@
 #include "guile.h"
 
 GameHook::GameHook(int role) {
-  alive = true;
+  invalid = false;
   is_on = true;
   entity_role = role;
 
@@ -35,7 +35,7 @@ GameHook::GameHook(int role) {
 
 GameHook::~GameHook() { GameHook::releaseCallbacks(); }
 
-void GameHook::remove() { alive = false; }
+void GameHook::remove() { invalid = true; }
 
 void GameHook::doExpensiveComputations() {}
 

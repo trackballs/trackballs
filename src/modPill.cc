@@ -35,6 +35,7 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   no_physics = 1;
   realRadius = 0.2;
   radius = realRadius;
+  is_on = true;
 
   /* Change our color to red */
   primaryColor[0] = 1.0;
@@ -74,9 +75,9 @@ ModPill::~ModPill() { this->Animated::~Animated(); }
 
 void ModPill::tick(Real t) {
   Player *player = Game::current->player1;
-  if (!alive) {
+  if (!is_on) {
     timeLeft -= t;
-    if (resurrecting > 0.0 && timeLeft < 0) alive = 1;
+    if (resurrecting > 0.0 && timeLeft < 0) is_on = true;
   }
 
   clock += t;
@@ -88,9 +89,9 @@ void ModPill::tick(Real t) {
     radius = realRadius;
   }
 
-  if (alive && kind == MOD_NITRO) Ball::generateNitroDebris(t);
+  if (is_on && kind == MOD_NITRO) Ball::generateNitroDebris(t);
 
-  if (alive) {
+  if (is_on) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
     Coord3d v = player->position - position;
     double dist = length(v);
@@ -104,7 +105,7 @@ void ModPill::tick(Real t) {
           _("Speed ball"), _("Extra jump"), _("Spikes"),   _("Glass ball"),
           _("Dizzy!"),     _("Freeze!"),    _("Floating"), _("Extra life"),
           _("Small ball"), _("Large ball"), _("Nitro")};
-      Game::current->addEntity(new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos));
+      Game::current->add(new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos));
 
       if (kind == MOD_EXTRA_LIFE) {
         player->lives = std::min(4, player->lives + 1);
@@ -124,7 +125,7 @@ void ModPill::tick(Real t) {
       else
         playEffect(SFX_GOT_BADPILL);
 
-      alive = 0;
+      is_on = false;
       if (!resurrecting) remove();
       timeLeft = (Real)resurrecting;
     }
@@ -132,6 +133,6 @@ void ModPill::tick(Real t) {
 }
 
 void ModPill::die(int /*how*/) {
-  alive = 0;
-  if (!resurrecting) delete this;
+  is_on = false;
+  if (!resurrecting) remove();
 }

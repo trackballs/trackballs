@@ -532,7 +532,7 @@ void MainMode::startGame() {
   Game::current->gamer->levelStarted();
 
   pos[2] += 2.0;
-  Game::current->addEntity(new Sign(_("Good luck!"), 6, 1.0, 60.0, pos));
+  Game::current->add(new Sign(_("Good luck!"), 6, 1.0, 60.0, pos));
   Game::current->player1->position[2] += 1.0;
   Game::current->player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
@@ -547,7 +547,7 @@ void MainMode::restartPlayer() {
 
   Coord3d pos = Game::current->map->startPosition;
   pos[2] += 2.0;
-  Game::current->addEntity(new Sign(_("Good luck!"), 7, 1.0, 60.0, pos));
+  Game::current->add(new Sign(_("Good luck!"), 7, 1.0, 60.0, pos));
   player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 

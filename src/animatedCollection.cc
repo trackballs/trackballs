@@ -858,10 +858,8 @@ void AnimatedCollection::recalculateBboxMap() {
 
   struct Rectangle<3>* input = new struct Rectangle<3>[ntot];
   int* rect_indices = new int[ntot];
-  std::vector<Animated*>::const_iterator iter = store.begin();
-  std::vector<Animated*>::const_iterator end = store.end();
-  for (int i = 0; iter != end; iter++, i++) {
-    struct Rectangle<3> r = rectFromAnim(*iter);
+  for (int i = 0; i < store.size(); i++) {
+    struct Rectangle<3> r = rectFromAnim(store[i]);
     r = reverseAxisOrder(r);
     input[i] = r;
     rect_indices[i] = i;

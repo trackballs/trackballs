@@ -36,7 +36,7 @@ class CSwitch : public Animated {
   virtual void tick(Real);
 
  private:
-  int is_touched;
+  bool is_touched;
   SCM on, off;
 };
 

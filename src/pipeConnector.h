@@ -32,7 +32,6 @@ class PipeConnector : public Animated {
   virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs);
 
   void tick(Real t);
-  void onRemove();
 
   Real radius;
 

@@ -36,7 +36,7 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
     col = 0;
   }
   this->colors = col;
-  is_on = 1;
+  is_on = true;
 }
 
 void ColorModifier::tick(Real /*t*/) {

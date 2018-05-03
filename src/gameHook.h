@@ -69,8 +69,8 @@ class GameHook {
   virtual void releaseCallbacks();
 
   int entity_role;
-  bool alive; /* true if object not slated for cleanup */
-  bool is_on;
+  bool is_on;   /* for switches, forcefields, objects with toggle state */
+  bool invalid; /* if true, object is slated for cleanup */
 
  private:
   SCM hooks[GameHookEvent_MaxHooks];
