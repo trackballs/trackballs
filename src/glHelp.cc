@@ -95,8 +95,7 @@ struct StringCache {
 static long stringTick = 0;
 static std::map<StringInfo, StringCache> strcache;
 
-static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
-  SDL_Surface *outline;
+static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
   if (outlined) {
     TTF_SetFontOutline(inf.font, 0);
     SDL_Surface *inner = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
@@ -106,7 +105,7 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
     }
     TTF_SetFontOutline(inf.font, 2);
     SDL_Color blkColor = {0, 0, 0, 0};
-    outline = TTF_RenderUTF8_Blended(inf.font, inf.string, blkColor);
+    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, blkColor);
     if (!outline) {
       warning("Failed to render string inside '%s'", inf.string);
       return NULL;
@@ -115,18 +114,19 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, int outlined) {
     SDL_SetSurfaceBlendMode(inner, SDL_BLENDMODE_BLEND);
     SDL_BlitSurface(inner, NULL, outline, &rect);
     SDL_FreeSurface(inner);
+    return outline;
   } else {
-    outline = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
+    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
     if (!outline) {
       warning("Failed to render string '%s'", inf.string);
       return NULL;
     }
+    return outline;
   }
-  return outline;
 }
 
 int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
-                 float blue, float alpha, int outlined, int align, int maxwidth) {
+                 float blue, float alpha, bool outlined, int align, int maxwidth) {
   struct StringInfo inf;
   inf.color.r = 255 * red;
   inf.color.g = 255 * green;
@@ -165,7 +165,7 @@ void update2DStringCache() {
     erased = false;
     for (std::map<StringInfo, StringCache>::iterator i = strcache.begin(); i != strcache.end();
          ++i) {
-      if (i->second.tick < stringTick - 10) {
+      if (i->second.tick < stringTick - 100) {
         glDeleteTextures(1, &i->second.texture);
         strcache.erase(i);
         erased = true;
@@ -1246,28 +1246,37 @@ int resetTextures() {
 void displayFrameRate() {
   /* Frame rate is given for the previous period. */
   double td = getTimeDifference(lastDisplayStartTime, displayStartTime) / timeDilationFactor;
-  if (td > 1.0)
+  if (td > 1.0) {
     fps = 1.0;
-  else if (td <= 1e-4) {
+  } else if (td <= 1e-4) {
     static int hasWarned = 0;
     if (!hasWarned) {
       warning("Warning: too fast framerate (%f)", td);
       hasWarned = 1;
     }
-  } else
+  } else {
     fps = fps * 0.95 + 0.05 / td;
+  }
 
   if (Settings::settings->showFPS > 0) {
-    char str[256];
+    char slow[256];
+    char fast[256];
     if (Settings::settings->showFPS == 1) {
-      if (fps > 0)
-        snprintf(str, sizeof(str), _("Framerate: %.1f"), fps);
-      else
-        snprintf(str, sizeof(str), _("Framerate unknown"));
+      snprintf(slow, sizeof(slow), "%s ", _("Framerate:"));
+      if (fps > 0) {
+        snprintf(fast, sizeof(fast), "%.1f", fps);
+      } else {
+        snprintf(fast, sizeof(fast), _("unknown"));
+      }
     } else {
-      snprintf(str, sizeof(str), _("%.1f ms/Frame"), 1e3 * td);
+      snprintf(slow, sizeof(slow), "%s ", _("ms/Frame:"));
+      snprintf(fast, sizeof(fast), "%.1f", 1e3 * td);
     }
-    Font::drawSimpleText(str, 15, screenHeight - 15, 10., 1., 1., 0.25, 0.8);
+    TTF_Font *active = menuFontForSize(10);
+    int w1 = draw2DString(active, slow, 15, screenHeight - 15, menuColor[0], menuColor[1],
+                          menuColor[2], menuColor[3], true, 0, 0);
+    draw2DString(active, fast, 15 + w1, screenHeight - 15, menuColor[0], menuColor[1],
+                 menuColor[2], menuColor[3], true, 0, 0);
   }
 }
 

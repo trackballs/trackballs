@@ -58,11 +58,10 @@ Sign::~Sign() {
 }
 
 void Sign::mkTexture(const char *string) {
-  SDL_Surface *text;
   SDL_Color fgColor = {255, 255, 255, 255};
 
   if (textimg) glDeleteTextures(1, &textimg);
-  text = TTF_RenderUTF8_Blended(ingameFont, string, fgColor);
+  SDL_Surface *text = TTF_RenderUTF8_Blended(ingameFont, string, fgColor);
   textimg = LoadTexture(text, texcoord);
   width = text->w;
   height = text->h;

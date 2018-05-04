@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-10 17:16-0500\n"
-"PO-Revision-Date: 2018-03-10 18:53-0500\n"
+"POT-Creation-Date: 2018-05-03 21:38-0400\n"
+"PO-Revision-Date: 2018-05-03 21:40-0400\n"
 "Last-Translator: Guillaume Bedot <littletux@zarb.org>\n"
 "Language-Team: Français >\n"
 "Language: fr\n"
@@ -59,7 +59,7 @@ msgstr "maintenant: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "centre: %d %d gauche: %d droite: %d haut: %d bas: %d"
 
-#: ../src/diamond.cc:112
+#: ../src/diamond.cc:116
 msgid "Save point"
 msgstr "Point de sauvegarde"
 
@@ -427,15 +427,15 @@ msgstr "Entrez votre nom"
 msgid "Add the name of the next level here"
 msgstr "Ajoutez le nom du prochain niveau ici"
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell height"
 msgstr "Hauteur de la cellule"
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell water height"
 msgstr "Hauteur de la cellule d'eau"
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Textures"
 msgstr "Textures"
 
@@ -624,20 +624,18 @@ msgstr "Entrez votre nom: %s"
 msgid "John Doe"
 msgstr "Jean Dupont"
 
-#: ../src/glHelp.cc:1258
-#, c-format
-msgid "Framerate: %.1f"
-msgstr "Images/sec: %.1f"
+#: ../src/glHelp.cc:1265
+msgid "Framerate:"
+msgstr "Taux d'images:"
 
-#: ../src/glHelp.cc:1260
+#: ../src/glHelp.cc:1269
 #, c-format
-msgid "Framerate unknown"
-msgstr "Taux d'images par seconde inconnu"
+msgid "unknown"
+msgstr "inconnu"
 
-#: ../src/glHelp.cc:1262
-#, c-format
-msgid "%.1f ms/Frame"
-msgstr "%.1f ms/Image"
+#: ../src/glHelp.cc:1272
+msgid "ms/Frame:"
+msgstr "ms/Image:"
 
 #: ../src/helpMode.cc:183
 msgid "Your marble:"
@@ -891,62 +889,62 @@ msgstr "Congratulations"
 msgid "You have completed the game!"
 msgstr "Vous avez termine le jeu !"
 
-#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
+#: ../src/mainMode.cc:535 ../src/mainMode.cc:550
 msgid "Good luck!"
 msgstr "Bonne chance !"
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Lives"
 msgstr "Vies"
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Score"
 msgstr "Points"
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Time left"
 msgstr "Temps"
 
-#: ../src/mainMode.cc:656
+#: ../src/mainMode.cc:644
 #, c-format
 msgid "Level bonuses"
 msgstr "Niveaux bonus"
 
-#: ../src/mainMode.cc:658
+#: ../src/mainMode.cc:646
 #, c-format
 msgid "Lives left:"
 msgstr "Vies restantes:"
 
-#: ../src/mainMode.cc:659
+#: ../src/mainMode.cc:647
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d points"
 
-#: ../src/mainMode.cc:660
+#: ../src/mainMode.cc:648
 #, c-format
 msgid "Time left:"
 msgstr "Temps restant:"
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:649
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minutes = %d points"
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:651
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficulté:"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:665 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:653 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "hard"
 msgstr "difficile"
 
@@ -2100,6 +2098,12 @@ msgstr "Bonus"
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr "Salle du commandant"
+
+#~ msgid "Framerate: %.1f"
+#~ msgstr "Images/sec: %.1f"
+
+#~ msgid "Framerate unknown"
+#~ msgstr "Taux d'images par seconde inconnu"
 
 #~ msgid ";;; Track: %s\n"
 #~ msgstr ";;; Piste: %s\n"

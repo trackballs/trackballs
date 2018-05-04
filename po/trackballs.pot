@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-10 18:53-0500\n"
+"POT-Creation-Date: 2018-05-03 21:38-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr ""
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr ""
 
-#: ../src/diamond.cc:112
+#: ../src/diamond.cc:116
 msgid "Save point"
 msgstr ""
 
@@ -427,15 +427,15 @@ msgstr ""
 msgid "Add the name of the next level here"
 msgstr ""
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell height"
 msgstr ""
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell water height"
 msgstr ""
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Textures"
 msgstr ""
 
@@ -624,19 +624,17 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1258
-#, c-format
-msgid "Framerate: %.1f"
+#: ../src/glHelp.cc:1265
+msgid "Framerate:"
 msgstr ""
 
-#: ../src/glHelp.cc:1260
+#: ../src/glHelp.cc:1269
 #, c-format
-msgid "Framerate unknown"
+msgid "unknown"
 msgstr ""
 
-#: ../src/glHelp.cc:1262
-#, c-format
-msgid "%.1f ms/Frame"
+#: ../src/glHelp.cc:1272
+msgid "ms/Frame:"
 msgstr ""
 
 #: ../src/helpMode.cc:183
@@ -890,62 +888,62 @@ msgstr ""
 msgid "You have completed the game!"
 msgstr ""
 
-#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
+#: ../src/mainMode.cc:535 ../src/mainMode.cc:550
 msgid "Good luck!"
 msgstr ""
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Lives"
 msgstr ""
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Time left"
 msgstr ""
 
-#: ../src/mainMode.cc:656
+#: ../src/mainMode.cc:644
 #, c-format
 msgid "Level bonuses"
 msgstr ""
 
-#: ../src/mainMode.cc:658
+#: ../src/mainMode.cc:646
 #, c-format
 msgid "Lives left:"
 msgstr ""
 
-#: ../src/mainMode.cc:659
+#: ../src/mainMode.cc:647
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr ""
 
-#: ../src/mainMode.cc:660
+#: ../src/mainMode.cc:648
 #, c-format
 msgid "Time left:"
 msgstr ""
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:649
 #, c-format
 msgid "%d minutes = %d points"
 msgstr ""
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:651
 #, c-format
 msgid "Difficulty:"
 msgstr ""
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "easy"
 msgstr ""
 
-#: ../src/mainMode.cc:665 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:653 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr ""
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "hard"
 msgstr ""
 

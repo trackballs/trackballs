@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Trackballs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-10 17:16-0500\n"
+"POT-Creation-Date: 2018-05-03 21:38-0400\n"
 "PO-Revision-Date: 2017-06-25 20:11-0400\n"
 "Last-Translator: Jozef Říha <jose1711@gmail.com>\n"
 "Language-Team: Slovak <LL@li.org>\n"
@@ -58,7 +58,7 @@ msgstr "teraz: %d %d"
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "stred: %d %d ľavý: %d pravý: %d horný: %d spodný: %d"
 
-#: ../src/diamond.cc:112
+#: ../src/diamond.cc:116
 #, fuzzy
 msgid "Save point"
 msgstr "%d bodov"
@@ -433,15 +433,15 @@ msgstr ""
 msgid "Add the name of the next level here"
 msgstr "Vezme vás do dalšieho levelu. "
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell height"
 msgstr "Výška bunky"
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Cell water height"
 msgstr "Výška bunky vody"
 
-#: ../src/editMode.cc:498
+#: ../src/editMode.cc:497
 msgid "Textures"
 msgstr "Textúry"
 
@@ -643,19 +643,18 @@ msgstr ""
 msgid "John Doe"
 msgstr ""
 
-#: ../src/glHelp.cc:1258
-#, c-format
-msgid "Framerate: %.1f"
-msgstr "Rýchlosť snímkov: %.1f"
+#: ../src/glHelp.cc:1265
+#, fuzzy
+msgid "Framerate:"
+msgstr "Rýchlosť snímkov"
 
-#: ../src/glHelp.cc:1260
-#, c-format
-msgid "Framerate unknown"
-msgstr "Rýchlosť snímkov neznáma"
+#: ../src/glHelp.cc:1269
+#, fuzzy, c-format
+msgid "unknown"
+msgstr "Neznáma stopa"
 
-#: ../src/glHelp.cc:1262
-#, c-format
-msgid "%.1f ms/Frame"
+#: ../src/glHelp.cc:1272
+msgid "ms/Frame:"
 msgstr ""
 
 #: ../src/helpMode.cc:183
@@ -911,64 +910,64 @@ msgstr "Gratulujem"
 msgid "You have completed the game!"
 msgstr "Úspešne ste ukončili hru!"
 
-#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
+#: ../src/mainMode.cc:535 ../src/mainMode.cc:550
 msgid "Good luck!"
 msgstr "Veľa šťastia!"
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 #, fuzzy
 msgid "Lives"
 msgstr "Ešte životov:"
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:584
+#: ../src/mainMode.cc:573
 #, fuzzy
 msgid "Time left"
 msgstr "Ešte času:"
 
-#: ../src/mainMode.cc:656
+#: ../src/mainMode.cc:644
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonusové levely"
 
-#: ../src/mainMode.cc:658
+#: ../src/mainMode.cc:646
 #, c-format
 msgid "Lives left:"
 msgstr "Ešte životov:"
 
-#: ../src/mainMode.cc:659
+#: ../src/mainMode.cc:647
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d bodov"
 
-#: ../src/mainMode.cc:660
+#: ../src/mainMode.cc:648
 #, c-format
 msgid "Time left:"
 msgstr "Ešte času:"
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:649
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minút = %d bodov"
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:651
 #, c-format
 msgid "Difficulty:"
 msgstr "Náročnosť"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "easy"
 msgstr "ľahká"
 
-#: ../src/mainMode.cc:665 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:653 ../src/settingsMode.cc:204
 #, c-format
 msgid "normal"
 msgstr "bežná"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:653
 msgid "hard"
 msgstr "ťažká"
 
@@ -2132,6 +2131,12 @@ msgstr ""
 #: ../share/levels/sl6.scm:521
 msgid "Commander's Hall"
 msgstr ""
+
+#~ msgid "Framerate: %.1f"
+#~ msgstr "Rýchlosť snímkov: %.1f"
+
+#~ msgid "Framerate unknown"
+#~ msgstr "Rýchlosť snímkov neznáma"
 
 #~ msgid ";;; Track: %s\n"
 #~ msgstr ";;; Stopa: %s\n"
