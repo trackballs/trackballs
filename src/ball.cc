@@ -1027,11 +1027,12 @@ bool Ball::physics(Real time) {
 
   return true;
 }
-static int closestPointOnTriangle(Coord3d tricor[3], const Coord3d &point, Coord3d *closest,
-                                  Coord3d *normal) {
-  Coord3d dv0 = tricor[2] - tricor[0];
-  Coord3d dv1 = tricor[2] - tricor[1];
-  Coord3d baseoff = point - tricor[2];
+static int closestPointOnTriangle(const Coord3d &tricor0, const Coord3d &tricor1,
+                                  const Coord3d &tricor2, const Coord3d &point,
+                                  Coord3d *closest, Coord3d *normal) {
+  Coord3d dv0 = tricor2 - tricor0;
+  Coord3d dv1 = tricor2 - tricor1;
+  Coord3d baseoff = point - tricor2;
   Coord3d nor = crossProduct(dv0, dv1);
   nor = nor / length(nor);
   double dist = dotProduct(baseoff, nor);
@@ -1055,28 +1056,28 @@ static int closestPointOnTriangle(Coord3d tricor[3], const Coord3d &point, Coord
   double b = idet * (-uv * s + uu * t);
   double c = 1 - a - b;
   if (0. <= a && a <= 1. && 0. <= b && b <= 1. && 0. <= c && c <= 1.) {
-    *closest = tricor[0] * a + tricor[1] * b + tricor[2] * c;
+    *closest = tricor0 * a + tricor1 * b + tricor2 * c;
     return 0;
   } else if (0. <= s && s <= uu && b <= 0.) {
     double q = s / uu;
-    *closest = tricor[2] * (1. - q) + tricor[0] * q;
+    *closest = tricor2 * (1. - q) + tricor0 * q;
     return 1;
   } else if (0. <= t && t <= vv && a <= 0.) {
     double q = t / vv;
-    *closest = tricor[2] * (1. - q) + tricor[1] * q;
+    *closest = tricor2 * (1. - q) + tricor1 * q;
     return 2;
   } else if (0. <= r && r <= mm && c <= 0.) {
     double q = r / mm;
-    *closest = tricor[0] * q + tricor[1] * (1. - q);
+    *closest = tricor0 * q + tricor1 * (1. - q);
     return 3;
   } else if (s <= 0. && t <= 0.) {
-    *closest = tricor[2];
+    *closest = tricor2;
     return 4;
   } else if (t >= 0. && r <= 0.) {
-    *closest = tricor[1];
+    *closest = tricor1;
     return 5;
   } else if (s >= 0 && r >= mm) {
-    *closest = tricor[0];
+    *closest = tricor0;
     return 6;
   }
   warning("cPoT impossible case happened");
@@ -1088,25 +1089,30 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
   int nhits = 0;
   /* Construct a list of triangular facets the ball could interact with,
    * and locate their closest interaction points. */
-  const double corners[5][2] = {{0., 0.}, {1., 0.}, {1., 1.}, {0., 1.}, {0.5, 0.5}};
-  const int cids[5] = {Cell::SOUTH + Cell::WEST, Cell::SOUTH + Cell::EAST,
-                       Cell::NORTH + Cell::EAST, Cell::NORTH + Cell::WEST, Cell::CENTER};
-  const int triangles[4][3] = {{0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
   int xmin = std::floor(position[0] - radius), xmax = std::floor(position[0] + radius);
   int ymin = std::floor(position[1] - radius), ymax = std::floor(position[1] + radius);
   for (int x = xmin; x <= xmax; x++) {
     for (int y = ymin; y <= ymax; y++) {
       Cell &c = map->cell(x, y);
-      for (int i = 0; i < 4; i++) {
-        Coord3d tricor[3];
-        for (int k = 0; k < 3; k++) {
-          int vno = triangles[i][k];
-          tricor[k][0] = x + corners[vno][0];
-          tricor[k][1] = y + corners[vno][1];
-          tricor[k][2] = c.heights[cids[vno]];
-        }
+
+      double ch = c.heights[Cell::CENTER];
+      Coord3d centerpoint(x + 0.5, y + 0.5, ch);
+      Coord3d offset = position - centerpoint;
+
+      Coord3d local_corners[4] = {
+          Coord3d(-0.5, -0.5, c.heights[Cell::SOUTH + Cell::WEST] - ch),
+          Coord3d(0.5, -0.5, c.heights[Cell::SOUTH + Cell::EAST] - ch),
+          Coord3d(0.5, 0.5, c.heights[Cell::NORTH + Cell::EAST] - ch),
+          Coord3d(-0.5, 0.5, c.heights[Cell::NORTH + Cell::WEST] - ch),
+      };
+
+      for (int i0 = 0; i0 < 4; i0++) {
+        int i1 = (i0 + 1) % 4;
+
         Coord3d closest, normal;
-        int ret = closestPointOnTriangle(tricor, position, &closest, &normal);
+        int ret = closestPointOnTriangle(local_corners[i1], local_corners[i0], Coord3d(),
+                                         offset, &closest, &normal);
+        closest = closest + centerpoint;
         if (ret < 0) continue;
 
         /* Only top sides of facets matter; and no getting pulled up */
