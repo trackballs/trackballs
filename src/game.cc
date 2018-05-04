@@ -273,12 +273,12 @@ void Game::tick(Real t) {
       QueuedCall call = queuedCalls[j];
       /* the functions are owned by GameHooks; arguments by Game */
       if (!call.argA) {
-        scm_catch_apply_0(call.fun);
+        scm_catch_call_0(call.fun);
       } else if (!call.argB) {
-        scm_catch_apply_1(call.fun, call.argA);
+        scm_catch_call_1(call.fun, call.argA);
         scm_gc_unprotect_object(call.argA);
       } else {
-        scm_catch_apply_2(call.fun, call.argA, call.argB);
+        scm_catch_call_2(call.fun, call.argA, call.argB);
         scm_gc_unprotect_object(call.argA);
         scm_gc_unprotect_object(call.argB);
       }

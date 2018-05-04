@@ -29,8 +29,9 @@ SCM smobGameHook_make(class GameHook* h);
 void loadScript(const char* path);
 SCM scm_port_from_gzip(const char* highScorePath, int maxsize);
 char* ascm_format(const char* str);
-SCM scm_catch_apply_0(SCM func);
-SCM scm_catch_apply_1(SCM func, SCM arg1);
-SCM scm_catch_apply_2(SCM func, SCM arg1, SCM arg2);
+SCM scm_catch_call_n(SCM func, SCM args[], int n);
+SCM scm_catch_call_0(SCM func);
+SCM scm_catch_call_1(SCM func, SCM arg1);
+SCM scm_catch_call_2(SCM func, SCM arg1, SCM arg2);
 
 #endif

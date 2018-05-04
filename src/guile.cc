@@ -128,24 +128,17 @@ void loadScript(const char *path) {
     handleError(stack);
   }
 }
-
-static SCM sub_apply_0(void *body_data) {
-  SCM *args = (SCM *)body_data;
-  return scm_apply_0(args[0], SCM_EOL);
+static SCM sub_call_n(void *body_data) {
+  void **data = (void **)body_data;
+  SCM fun = (SCM)data[0];
+  SCM *args = (SCM *)data[1];
+  int n = *(int *)data[2];
+  return scm_call_n(fun, args, n);
 }
-static SCM sub_apply_1(void *body_data) {
-  SCM *args = (SCM *)body_data;
-  return scm_apply_1(args[0], args[1], SCM_EOL);
-}
-static SCM sub_apply_2(void *body_data) {
-  SCM *args = (SCM *)body_data;
-  return scm_apply_2(args[0], args[1], args[2], SCM_EOL);
-}
-
-SCM scm_catch_apply_0(SCM func) {
-  SCM args[1] = {func};
+SCM scm_catch_call_n(SCM func, SCM args[], int n) {
+  void *input[3] = {(void *)func, (void *)args, (void *)&n};
   SCM stack = SCM_BOOL_F;
-  SCM ret = scm_c_catch(SCM_BOOL_T, sub_apply_0, (void *)args, error_proc, NULL,
+  SCM ret = scm_c_catch(SCM_BOOL_T, sub_call_n, (void *)input, error_proc, NULL,
                         preunwind_proc, &stack);
   if (stack != SCM_BOOL_F) {
     handleError(stack);
@@ -153,29 +146,17 @@ SCM scm_catch_apply_0(SCM func) {
   }
   return ret;
 }
-
-SCM scm_catch_apply_1(SCM func, SCM arg1) {
-  SCM args[2] = {func, arg1};
-  SCM stack = SCM_BOOL_F;
-  SCM ret = scm_c_catch(SCM_BOOL_T, sub_apply_1, (void *)args, error_proc, NULL,
-                        preunwind_proc, &stack);
-  if (stack != SCM_BOOL_F) {
-    handleError(stack);
-    return SCM_UNSPECIFIED;
-  }
-  return ret;
+SCM scm_catch_call_0(SCM func) {
+  SCM args[1] = {NULL};
+  return scm_catch_call_n(func, args, 0);
 }
-
-SCM scm_catch_apply_2(SCM func, SCM arg1, SCM arg2) {
-  SCM args[3] = {func, arg1, arg2};
-  SCM stack = SCM_BOOL_F;
-  SCM ret = scm_c_catch(SCM_BOOL_T, sub_apply_2, (void *)args, error_proc, NULL,
-                        preunwind_proc, &stack);
-  if (stack != SCM_BOOL_F) {
-    handleError(stack);
-    return SCM_UNSPECIFIED;
-  }
-  return ret;
+SCM scm_catch_call_1(SCM func, SCM arg1) {
+  SCM args[1] = {arg1};
+  return scm_catch_call_n(func, args, 1);
+}
+SCM scm_catch_call_2(SCM func, SCM arg1, SCM arg2) {
+  SCM args[2] = {arg1, arg2};
+  return scm_catch_call_n(func, args, 2);
 }
 
 SCM scm_port_from_gzip(const char *path, int maxsize) {
