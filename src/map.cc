@@ -47,14 +47,14 @@ inline int32_t loadInt(int32_t v) { return (int32_t)SDL_SwapBE32((uint32_t)v); }
 Cell::Cell() {
   texture = -1;
   flags = 0;
-  for (int i = 0; i < 20; i++) colors[i / 4][i % 4] = 1.;
-  for (int i = 0; i < 16; i++) wallColors[i / 4][i % 4] = 1.;
+  for (int i = 0; i < 5; i++) colors[i] = Color(1., 1., 1., 1.);
+  for (int i = 0; i < 4; i++) wallColors[i] = Color(1., 1., 1., 1.);
   for (int i = 0; i < 5; i++) heights[i] = -8.0;
   for (int i = 0; i < 5; i++) waterHeights[i] = -20.0;
   velocity[0] = 0.;
   velocity[1] = 1.;
   sunken = 0.;
-  displayListDirty = 0;
+  displayListDirty = false;
 }
 
 /* Returns the normal for a point on the edge of the cell */
@@ -300,15 +300,9 @@ Map::Map(char* filename) {
         for (i = 0; i < 5; i++) {
           c.heights[i] = -8.0;
           c.waterHeights[i] = -8.5;  // this is the groundwater =)
-          c.colors[i][0] = c.colors[i][1] = c.colors[i][2] = 0.9;
-          c.colors[i][3] = 1.0;
+          c.colors[i] = Color(0.9, 0.9, 0.9, 1.0);
         }
-        for (i = 0; i < 4; i++) {
-          c.wallColors[i][0] = 0.7;
-          c.wallColors[i][1] = 0.2;
-          c.wallColors[i][2] = 0.2;
-          c.wallColors[i][3] = 1.0;
-        }
+        for (i = 0; i < 4; i++) { c.wallColors[i] = Color(0.7, 0.2, 0.2, 1.0); }
         c.velocity[0] = 0.0;
         c.velocity[1] = 0.0;
       }
@@ -318,7 +312,7 @@ Map::Map(char* filename) {
   for (y = 0; y < height; y++)
     for (x = 0; x < width; x++) {
       Cell& c = cells[x + y * width];
-      c.displayListDirty = 1;
+      c.displayListDirty = true;
     }
 
   flags = flagNone;
@@ -543,15 +537,15 @@ void Map::draw(int stage, int cx, int cy) {
   warnForGLerrors(stage ? "Map drawing 1" : "Map drawing 0");
 }
 
-static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz,
-                            const GLfloat* colors, GLfloat tx, GLfloat ty, int txno,
-                            float velx, float vely, const GLfloat normal[3]) {
+static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, Color color,
+                            GLfloat tx, GLfloat ty, int txno, float velx, float vely,
+                            const GLfloat normal[3]) {
   uint32_t* aout = (uint32_t*)fout;
   fout[0] = px;
   fout[1] = py;
   fout[2] = pz;
-  aout[3] = (((uint32_t)(65535.f * colors[1])) << 16) + (uint32_t)(65535.f * colors[0]);
-  aout[4] = (((uint32_t)(65535.f * colors[3])) << 16) + (uint32_t)(65535.f * colors[2]);
+  aout[3] = ((uint32_t)(color.v[1]) << 16) + (uint32_t)(color.v[0]);
+  aout[4] = ((uint32_t)(color.v[3]) << 16) + (uint32_t)(color.v[2]);
 
   uint32_t txco = ((uint32_t)(1023.f * ty) << 10) | ((uint32_t)(1023.f * tx) << 0) |
                   ((uint32_t)(1023.f * (txno / 16.f)) << 20);
@@ -681,20 +675,20 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       if (tx >= 1.) tx = 0.;
       if (ty >= 1.) ty = 0.;
       packCell(&tdat[k], x, y, c.heights[Cell::SOUTH + Cell::WEST],
-               &c.colors[Cell::SOUTH + Cell::WEST][0], tx, ty, txno, c.velocity[0] * irs,
+               c.colors[Cell::SOUTH + Cell::WEST], tx, ty, txno, c.velocity[0] * irs,
                c.velocity[1] * irs, fcnormal[Cell::SOUTH + Cell::WEST]);
       packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
-               &c.colors[Cell::SOUTH + Cell::EAST][0], tx + irs, ty, txno, c.velocity[0] * irs,
+               c.colors[Cell::SOUTH + Cell::EAST], tx + irs, ty, txno, c.velocity[0] * irs,
                c.velocity[1] * irs, fcnormal[Cell::SOUTH + Cell::EAST]);
       packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NORTH + Cell::EAST],
-               &c.colors[Cell::NORTH + Cell::EAST][0], tx + irs, ty + irs, txno,
+               c.colors[Cell::NORTH + Cell::EAST], tx + irs, ty + irs, txno,
                c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NORTH + Cell::EAST]);
       packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NORTH + Cell::WEST],
-               &c.colors[Cell::NORTH + Cell::WEST][0], tx, ty + irs, txno, c.velocity[0] * irs,
+               c.colors[Cell::NORTH + Cell::WEST], tx, ty + irs, txno, c.velocity[0] * irs,
                c.velocity[1] * irs, fcnormal[Cell::NORTH + Cell::WEST]);
       packCell(&tdat[k + 32], x + 0.5f, y + 0.5f, c.heights[Cell::CENTER],
-               &c.colors[Cell::CENTER][0], tx + irs / 2, ty + irs / 2, txno,
-               c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::CENTER]);
+               c.colors[Cell::CENTER], tx + irs / 2, ty + irs / 2, txno, c.velocity[0] * irs,
+               c.velocity[1] * irs, fcnormal[Cell::CENTER]);
 
       const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
       for (uint i = 0; i < 12; i++) { tidx[j * 12 + i] = 5 * j + topindices[i]; }
@@ -913,7 +907,7 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   // since cell(x,y) is not guaranteed to be unique!
   for (int x = chunk->xm; x < chunk->xm + CHUNKSIZE; x++) {
     for (int y = chunk->ym; y < chunk->ym + CHUNKSIZE; y++) {
-      cell(x, y).displayListDirty = 0;
+      cell(x, y).displayListDirty = false;
     }
   }
 
@@ -951,7 +945,7 @@ void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
       for (int x = std::max(xmin, xp); x <= std::min(xmax, xp + CHUNKSIZE - 1); x++) {
         for (int y = std::max(ymin, yp); y <= std::min(ymax, yp + CHUNKSIZE - 1); y++) {
           Cell& c = cells[x + width * y];
-          c.displayListDirty = 1;
+          c.displayListDirty = true;
           for (int k = 0; k < 5; k++) {
             z->minHeight = std::min(z->minHeight, std::min(c.heights[k], c.waterHeights[k]));
             z->maxHeight = std::max(z->maxHeight, std::max(c.heights[k], c.waterHeights[k]));
@@ -963,7 +957,7 @@ void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
 }
 
 void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
-  GLfloat color[4] = {kind ? 0.5f : 0.2f, 0.2f, kind ? 0.2f : 0.5f, 1.0f};
+  Color color(kind ? 0.5 : 0.2, 0.2, kind ? 0.2 : 0.5, 1.0);
 
   int ncells = (std::abs(x1 - x2) + 1) * (std::abs(y1 - y2) + 1);
   if (ncells > 2 * 256 * 256) {
@@ -1041,7 +1035,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
 }
 
 void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
-  GLfloat color[4] = {0.2f, kind ? 0.2f : 0.8f, 0.2f, 1.0f};
+  Color color(0.2, kind ? 0.2 : 0.8, 0.2, 1.0);
 
   int npts = 4 * abs(x1 - x2) + 4 * abs(y1 - y2) + 8;
   Coord3d* ringPoints = new Coord3d[npts + 2];
@@ -1168,8 +1162,7 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
 void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   int nfacets = std::max(12, (int)(10. * r));
   GLfloat width = std::min(0.5 * r, 0.05);
-  GLfloat color[4] = {kind == 0 ? 1.f : 0.5f, kind == 1 ? 1.f : 0.5f, kind == 2 ? 1.f : 0.5f,
-                      1.0};
+  Color color(kind == 0 ? 1. : 0.5, kind == 1 ? 1. : 0.5, kind == 2 ? 1. : 0.5, 1.);
   GLfloat flat[3] = {0., 0., 0.};
   Real height = Map::getHeight(x1, y1);
 
@@ -1299,7 +1292,10 @@ void Cell::dump(gzFile gp) const {
   for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)(heights[i] / 0.0025));
   gzwrite(gp, data, sizeof(int32_t) * 5);
   for (int i = 0; i < 5; i++) {
-    for (int j = 0; j < 4; j++) data[j] = saveInt((int32_t)(colors[i][j] / 0.01));
+    data[0] = saveInt((int32_t)(colors[i].f0() / 0.01));
+    data[1] = saveInt((int32_t)(colors[i].f1() / 0.01));
+    data[2] = saveInt((int32_t)(colors[i].f2() / 0.01));
+    data[3] = saveInt((int32_t)(colors[i].f3() / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
   data[0] = saveInt((int32_t)flags);
@@ -1307,7 +1303,10 @@ void Cell::dump(gzFile gp) const {
   gzwrite(gp, data, sizeof(int32_t) * 2);
 
   for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) data[j] = saveInt((int32_t)(wallColors[i][j] / 0.01));
+    data[0] = saveInt((int32_t)(wallColors[i].f0() / 0.01));
+    data[1] = saveInt((int32_t)(wallColors[i].f1() / 0.01));
+    data[2] = saveInt((int32_t)(wallColors[i].f2() / 0.01));
+    data[3] = saveInt((int32_t)(wallColors[i].f3() / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
 
@@ -1335,11 +1334,11 @@ void Cell::load(Map* map, gzFile gp, int version) {
     if (version < 4) {
       // old maps do not have an alpha channel defined
       gzread(gp, data, sizeof(int32_t) * 3);
-      for (int j = 0; j < 3; j++) colors[i][j] = 0.01 * loadInt(data[j]);
-      colors[i][3] = 1.0;
+      for (int j = 0; j < 3; j++) colors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
+      colors[i].v[3] = 65535;
     } else {
       gzread(gp, data, sizeof(int32_t) * 4);
-      for (int j = 0; j < 4; j++) colors[i][j] = 0.01 * loadInt(data[j]);
+      for (int j = 0; j < 4; j++) colors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
     }
   }
 
@@ -1351,22 +1350,17 @@ void Cell::load(Map* map, gzFile gp, int version) {
   // in older maps, this field was not initialized
   if (version < 5) texture = -1;
   if (version < 3) { /* Old maps do not have wallColors defined */
-    for (int i = 0; i < 4; i++) {
-      wallColors[i][0] = 0.7;
-      wallColors[i][1] = 0.2;
-      wallColors[i][2] = 0.2;
-      wallColors[i][3] = 1.0;
-    }
+    for (int i = 0; i < 4; i++) { wallColors[i] = Color(0.7, 0.2, 0.2, 1.0); }
   } else {
     for (int i = 0; i < 4; i++) {
       if (version < 4) {
         // old maps do not have an alpha channel defined
         gzread(gp, data, sizeof(int32_t) * 3);
-        for (int j = 0; j < 3; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
-        wallColors[i][3] = 1.0;
+        for (int j = 0; j < 3; j++) wallColors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
+        wallColors[i].v[3] = 65535;
       } else {
         gzread(gp, data, sizeof(int32_t) * 4);
-        for (int j = 0; j < 4; j++) wallColors[i][j] = 0.01 * loadInt(data[j]);
+        for (int j = 0; j < 4; j++) wallColors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
       }
     }
   }

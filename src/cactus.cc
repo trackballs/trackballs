@@ -31,12 +31,8 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
-  primaryColor[0] = .3;
-  primaryColor[1] = 1.;
-  primaryColor[2] = .4;
-  secondaryColor[0] = 0.0;
-  secondaryColor[1] = 0.0;
-  secondaryColor[2] = 0.0;
+  primaryColor = Color(0.3, 1., 0.4, 1.);
+  secondaryColor = Color(0., 0., 0., 1.);
   this->killed = false;
   this->killed_time = 1.;
   this->base_radius = radius;
@@ -63,8 +59,8 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   GLfloat data[nsides * 20 + 1][8];
   ushort idxs[nsides * 19][3];
 
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.f};
-  GLfloat spkco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.f};
+  Color color = primaryColor.toOpaque();
+  Color spkco = secondaryColor.toOpaque();
 
   GLfloat radii[4] = {0.5f, 1.0f, 0.9f, 0.6f};
   GLfloat heights[5] = {0., 0.35, 0.6, 0.8, 1.0};
@@ -163,8 +159,7 @@ void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

@@ -228,8 +228,7 @@ EditMode::EditMode() {
   scale = 0.5;
   rotation = 0.0;
   raise = 0.5;
-  color[0] = color[1] = color[2] = 0.9;
-  color[3] = 1.0;
+  color = Color(0.9, 0.9, 0.9, 1.0);
   doSave = 0;
   cellClipboard = NULL;
 
@@ -586,20 +585,28 @@ void EditMode::doCommand(int command) {
     break;
 
   case COLOR_RED:
-    color[0] = color[0] + 0.05;
-    if (color[0] > 1.01) color[0] = 0.0;
+    if (color.v[0] >= 65535)
+      color.v[0] = 0;
+    else
+      color.v[0] = std::min(65535, color.v[0] + 3277);
     break;
   case COLOR_GREEN:
-    color[1] = color[1] + 0.05;
-    if (color[1] > 1.01) color[1] = 0.0;
+    if (color.v[1] >= 65535)
+      color.v[1] = 0;
+    else
+      color.v[1] = std::min(65535, color.v[1] + 3277);
     break;
   case COLOR_BLUE:
-    color[2] = color[2] + 0.05;
-    if (color[2] > 1.01) color[2] = 0.0;
+    if (color.v[2] >= 65535)
+      color.v[2] = 0;
+    else
+      color.v[2] = std::min(65535, color.v[2] + 3277);
     break;
   case COLOR_ALPHA:
-    color[3] = color[3] + 0.05;
-    if (color[3] > 1.01) color[3] = 0.0;
+    if (color.v[3] >= 65535)
+      color.v[3] = 0;
+    else
+      color.v[3] = std::min(65535, color.v[3] + 3277);
     break;
 
   case FLAG_0:
@@ -667,7 +674,7 @@ void EditMode::doCommand(int command) {
                 val = map->cell(altx, alty).waterHeights[m];
                 break;
               case REPAIR_COLOR_CONT:
-                val = map->cell(altx, alty).colors[m][p];
+                val = map->cell(altx, alty).colors[m].v[p];
               }
               if (xLow <= altx && altx <= xHigh && yLow <= alty && alty <= yHigh) {
                 internal += val;
@@ -703,8 +710,8 @@ void EditMode::doCommand(int command) {
               c.waterHeights[k] = target;
               break;
             case REPAIR_COLOR_CONT:
-              dcent += target - c.colors[k][p];
-              c.colors[k][p] = target;
+              dcent += target - c.colors[k].v[p];
+              c.colors[k].v[p] = target;
             }
           }
           switch (command) {
@@ -716,7 +723,7 @@ void EditMode::doCommand(int command) {
             c.waterHeights[4] += dcent / 4;
             break;
           case REPAIR_COLOR_CONT:
-            c.colors[4][p] += dcent / 4;
+            c.colors[4].v[p] += dcent / 4;
           }
         }
     }
@@ -745,8 +752,9 @@ void EditMode::doCommand(int command) {
           break;
         case REPAIR_COLOR_CENTERS:
           for (int k = 0; k < 4; k++) {
-            c.colors[Cell::CENTER][k] =
-                0.25 * (c.colors[0][k] + c.colors[1][k] + c.colors[2][k] + c.colors[3][k]);
+            c.colors[Cell::CENTER].v[k] =
+                (c.colors[0].v[k] + c.colors[1].v[k] + c.colors[2].v[k] + c.colors[3].v[k]) /
+                4;
           }
           break;
 
@@ -767,11 +775,12 @@ void EditMode::doCommand(int command) {
           break;
         case REPAIR_COLOR_ROUND:
           for (int m = 0; m < 4; m++) {
+            float mscale = 0.05 * 65535.f;
             for (int k = 0; k < 4; k++) {
-              c.colors[k][m] = scale * roundint(c.colors[k][m] / scale);
+              c.colors[k].v[m] = mscale * roundint(c.colors[k].v[m] / mscale);
             }
-            c.colors[Cell::CENTER][m] =
-                0.25 * scale * roundint(4. * c.colors[Cell::CENTER][m] / scale);
+            c.colors[Cell::CENTER].v[m] =
+                0.25 * mscale * roundint(4. * c.colors[Cell::CENTER].v[m] / mscale);
           }
           break;
         case REPAIR_VEL_ROUND:
@@ -922,23 +931,21 @@ void EditMode::doCellAction(int code, int direction) {
         if (direction) {
           /* Pick up color */
           if (ctrl)
-            for (i = 0; i < 4; i++) color[i] = c.wallColors[corner][i];
+            color = c.wallColors[corner];
           else
-            for (i = 0; i < 4; i++) color[i] = c.colors[corner][i];
+            color = c.colors[corner];
         } else if (code == CODE_CELL_ALL) {
           /* Paint color */
           if (ctrl)
-            for (j = 0; j < 4; j++)
-              for (i = 0; i < 4; i++) c2.wallColors[j][i] = color[i];
+            for (j = 0; j < 4; j++) c2.wallColors[j] = color;
           else
-            for (j = 0; j < 5; j++)
-              for (i = 0; i < 4; i++) c2.colors[j][i] = color[i];
+            for (j = 0; j < 5; j++) c2.colors[j] = color;
         } else {
           /* Paint color */
           if (ctrl)
-            for (i = 0; i < 4; i++) c2.wallColors[corner][i] = color[i];
+            c2.wallColors[corner] = color;
           else
-            for (i = 0; i < 4; i++) c2.colors[corner][i] = color[i];
+            c2.colors[corner] = color;
         }
       }
     map->markCellsUpdated(xLow, yLow, xHigh, yHigh, false);

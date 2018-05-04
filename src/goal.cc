@@ -27,12 +27,8 @@
 Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strncpy(this->nextLevel, nextLevel, sizeof(this->nextLevel));
   this->rotate = rotate;
-  primaryColor[0] = 0.9;
-  primaryColor[1] = 0.8;
-  primaryColor[2] = 0.3;
-  specularColor[0] = 0.9 * 2.;
-  specularColor[1] = 0.8 * 2.;
-  specularColor[2] = 0.3 * 2.;
+  primaryColor = Color(0.9, 0.8, 0.3, 1.0);
+  specularColor = Color(0.95, 0.9, 0.65, 1.0);
 
   /* goal is a flag, hence already registered */
 }
@@ -86,7 +82,7 @@ int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   GLfloat data[8 * (nfacets + 2) * 8];
   ushort idxs[8 * (nfacets + 1)][3];
 
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.f};
+  Color color = primaryColor.toOpaque();
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
@@ -154,8 +150,7 @@ void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-                specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

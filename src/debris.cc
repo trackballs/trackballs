@@ -26,7 +26,7 @@ Debris::Debris(Ball* parent, const Coord3d& pos, const Coord3d& vel, double dur)
   velocity = vel;
   crashTolerance = 10000;
   if (parent) {
-    for (int i = 0; i < 3; i++) primaryColor[i] = parent->primaryColor[i];
+    primaryColor = parent->primaryColor;
     for (int i = 0; i < NUM_MODS; i++) modTimeLeft[i] = parent->modTimeLeft[i];
     modTimeLeft[MOD_DIZZY] = 0.0;
     modTimeLeft[MOD_NITRO] = 0.0;

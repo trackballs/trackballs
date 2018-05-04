@@ -28,10 +28,7 @@ Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double
       randomSpeed(randomSpeed),
       radius(radius),
       strength(strength) {
-  primaryColor[0] = 0.4;
-  primaryColor[1] = 0.4;
-  primaryColor[2] = 0.8;
-  primaryColor[3] = 0.5;
+  primaryColor = Color(0.4, 0.4, 0.8, 0.5);
   velocity[0] = velocity[1] = 0.0;
   velocity[2] = 0.3;
   position = pos;
@@ -111,8 +108,7 @@ void Fountain::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
   glEnable(GL_BLEND);
   glPointSize(1.5 * screenWidth / 600.);
   setActiveProgramAndUniforms(shaderLine);
-  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
-              primaryColor[2], primaryColor[3]);
+  glUniformC(glGetUniformLocation(shaderLine, "line_color"), primaryColor);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

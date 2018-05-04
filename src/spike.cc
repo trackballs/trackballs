@@ -36,17 +36,9 @@ Spike::Spike(const Coord3d &position, Real speed, Real phase) : Animated(Role_Ot
   this->phase = phase;
   this->soundDone = 0;
 
-  primaryColor[0] = 0.9;
-  primaryColor[1] = 0.5;
-  primaryColor[2] = 0.4;
-
-  secondaryColor[0] = 0.9;
-  secondaryColor[1] = 0.8;
-  secondaryColor[2] = 0.5;
-
-  specularColor[0] = 0.1;
-  specularColor[1] = 0.1;
-  specularColor[2] = 0.1;
+  primaryColor = Color(0.9, 0.5, 0.4, 1.0);
+  secondaryColor = Color(0.9, 0.8, 0.5, 1.0);
+  specularColor = Color(0.1, 0.1, 0.1, 1.0);
 }
 
 int Spike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
@@ -82,8 +74,7 @@ void Spike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
@@ -162,8 +153,7 @@ void Spike::tick(Real t) {
 }
 
 void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
-                      const Coord3d &position, GLfloat const sidec[4], GLfloat const tipc[4],
-                      GLfloat length) {
+                      const Coord3d &position, Color sidec, Color tipc, GLfloat length) {
   char *pos = (char *)data;
 
   double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);

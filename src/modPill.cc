@@ -38,9 +38,7 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   is_on = true;
 
   /* Change our color to red */
-  primaryColor[0] = 1.0;
-  primaryColor[1] = 0.2;
-  primaryColor[2] = 0.2;
+  primaryColor = Color(1., 0.2, 0.2, 1.0);
 
   /* set bogus velocity for the rendering of speed mods */
   if (kind == MOD_SPEED) {
@@ -56,12 +54,8 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   if (kind == MOD_EXTRA_LIFE) {
     realRadius = 0.3;
     radius = realRadius;
-    primaryColor[0] = 1.0;
-    primaryColor[1] = 0.9;
-    primaryColor[2] = 0.2;
-    specularColor[0] = 1.0;
-    specularColor[1] = 0.9;
-    specularColor[2] = 0.2;
+    primaryColor = Color(1., 0.9, 0.2, 1.);
+    specularColor = Color(1., 0.9, 0.2, 1.);
   }
 
   position[0] = x;

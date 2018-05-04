@@ -37,14 +37,8 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
-  primaryColor[0] = .5;
-  primaryColor[1] = .7;
-  primaryColor[2] = .6;
-  primaryColor[3] = 1.0;
-  secondaryColor[0] = 1.0;
-  secondaryColor[1] = 0.9;
-  secondaryColor[2] = 0.4;
-  secondaryColor[3] = 1.0;
+  primaryColor = Color(0.5, 0.7, 0.6, 1.0);
+  secondaryColor = Color(1.0, 0.9, 0.4, 1.0);
   is_on = true;
   boundingBox[0][0] = -2 * radius;
   boundingBox[1][0] = 2 * radius;
@@ -127,7 +121,7 @@ int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
     }
 
     // Draw base
-    GLfloat white[4] = {1.f, 1.f, 1.f, 1.f};
+    Color white(1., 1., 1., 1.);
     for (int i = 0; i < NFACETS; i++) {
       GLfloat angle = 2 * i * M_PI / NFACETS;
       GLfloat inormal[3] = {std::cos(angle), std::sin(angle), 0.4f};
@@ -152,8 +146,8 @@ int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
   }
   {
-    GLfloat color[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2],
-                        secondaryColor[3] * (0.4f + 0.2f * (GLfloat)frandom())};
+    Color color = secondaryColor;
+    color.v[3] *= (0.4f + 0.2f * (GLfloat)frandom());
     GLfloat flat[3] = {0., 0., 0.};
     GLfloat rad = (4.0 / 3.0) * radius;
 
@@ -191,8 +185,7 @@ void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

@@ -288,14 +288,14 @@ void drawMouse(int x, int y, int w, int h) {
 }
 
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        const GLfloat color[4], const GLfloat normal[3]) {
+                        const Color &color, const GLfloat normal[3]) {
   uint32_t *aout = (uint32_t *)dest;
   GLfloat *fout = (GLfloat *)dest;
   fout[0] = x;
   fout[1] = y;
   fout[2] = z;
-  aout[3] = (((uint32_t)(65535.f * color[1])) << 16) + (uint32_t)(65535.f * color[0]);
-  aout[4] = (((uint32_t)(65535.f * color[3])) << 16) + (uint32_t)(65535.f * color[2]);
+  aout[3] = (((uint32_t)(color.v[1])) << 16) + (uint32_t)(color.v[0]);
+  aout[4] = (((uint32_t)(color.v[3])) << 16) + (uint32_t)(color.v[2]);
   aout[5] = (((uint32_t)(65535.f * 0.5f * ty)) << 16) + (uint32_t)(65535.f * 0.5f * tx);
   aout[6] = packNormal(normal);
   return 8 * sizeof(GLfloat);
@@ -454,7 +454,7 @@ static void constructSphereData(int detail) {
 }
 
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, GLfloat const color[4]) {
+                       Matrix3d rotation, GLfloat radius, int detail, const Color &color) {
   if (detail < 1) {
     warning("Sphere detail level must be > 1. Drawing nothing.");
     return;

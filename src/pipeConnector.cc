@@ -25,7 +25,7 @@
 PipeConnector::PipeConnector(const Coord3d &pos, Real r)
     : Animated(Role_PipeConnector), radius(r) {
   position = pos;
-  primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
+  primaryColor = Color(0.6, 0.6, 0.6, 1.0);
 
   boundingBox[0][0] = -radius;
   boundingBox[0][1] = -radius;
@@ -59,14 +59,14 @@ int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   return 1;
 }
 void PipeConnector::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
-  if (primaryColor[3] >= 1.0) drawMe(idxbufs, databufs);
+  if (primaryColor.v[3] >= 65535) drawMe(idxbufs, databufs);
 }
 void PipeConnector::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
-  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
-  if (primaryColor[3] < 1.0) drawMe(idxbufs, databufs);
+  if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
+  if (primaryColor.v[3] < 65535) drawMe(idxbufs, databufs);
 }
 void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) const {
-  if (primaryColor[3] < 1.0f) {
+  if (primaryColor.v[3] < 65535) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else {
@@ -83,8 +83,7 @@ void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-                specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

@@ -47,14 +47,14 @@ class Cell {
    * editMode::pasteRegion */
 
   float velocity[2], heights[5];
-  GLfloat colors[5][4];
-  GLfloat wallColors[4][4];
+  Color colors[5];
+  Color wallColors[4];
   float sunken;           // used for trampoline effect
   float waterHeights[5];  // absolute height of water in cell, values <= -100.0 is treated as
                           // no water.
 
   int flags, texture;
-  int displayListDirty;
+  bool displayListDirty;
 
   void dump(gzFile gp) const;
   void load(class Map *map, gzFile gp, int version);

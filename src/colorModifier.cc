@@ -43,23 +43,24 @@ void ColorModifier::tick(Real /*t*/) {
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
   if (!is_on) return;
-  float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * M_PI)) / 2.;
+  float fv = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * M_PI)) / 2.;
+  uint16_t v = std::max(0.f, std::min(1.f, fv)) * 65535.f;
   switch (colors) {
   case 0:
     for (int i = 0; i < 5; i++) {
-      c.colors[i][0] = v;
-      c.colors[i][1] = v;
-      c.colors[i][2] = v;
+      c.colors[i].v[0] = v;
+      c.colors[i].v[1] = v;
+      c.colors[i].v[2] = v;
     }
     break;
   case 1:
-    for (int i = 0; i < 5; i++) c.colors[i][0] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].v[0] = v;
     break;
   case 2:
-    for (int i = 0; i < 5; i++) c.colors[i][1] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].v[1] = v;
     break;
   case 3:
-    for (int i = 0; i < 5; i++) c.colors[i][2] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].v[2] = v;
     break;
   }
   Game::current->map->markCellsUpdated(x, y, x, y, false);

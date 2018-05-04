@@ -37,7 +37,7 @@
 
 Game *Game::current = NULL;
 
-extern GLfloat colors[5][3];
+extern Color colors[5];
 
 double Game::defaultScores[SCORE_MAX][2];
 
@@ -113,12 +113,12 @@ void Game::loadLevel(const char *name) {
 
   if (player1 && gamer) {
     /* level scripts might have modified our appearance. Reset them */
-    for (int i = 0; i < 3; i++) player1->primaryColor[i] = colors[gamer->color][i];
+    player1->primaryColor = colors[gamer->color];
     player1->texture = gamer->textureNum;
   } else {
     /* when there is no gamer (e.g, in help) pick random value */
-    for (int i = 0; i < 3; i++) player1->primaryColor[i] = frandom();
-    player1->primaryColor[((size_t)rand()) % 3] = 1.0;
+    player1->primaryColor = Color(frandom(), frandom(), frandom(), 1.0);
+    player1->primaryColor.v[((size_t)rand()) % 3] = 1.0;
     player1->texture = loadTexture("blank.png");
   }
 

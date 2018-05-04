@@ -23,13 +23,12 @@
 #include "game.h"
 #include "settings.h"
 
-Splash::Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength,
-               double radius)
+Splash::Splash(Coord3d center, Coord3d velocity, Color color, double strength, double radius)
     : Animated(Role_OtherAnimated) {
   timeLeft = 3.0;
   nDroplets = (int)strength;
   if (nDroplets > 32) nDroplets = 32;
-  for (int i = 0; i < 4; i++) primaryColor[i] = color[i];
+  primaryColor = color;
   for (int i = 0; i < nDroplets; i++) {
     positions[i][0] = center[0] + (frandom() - 0.5) * 2.0 * radius;
     positions[i][1] = center[1] + (frandom() - 0.5) * 2.0 * radius;
@@ -74,8 +73,7 @@ void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) const {
 
   glPointSize(1.5 * screenWidth / 600.);
   setActiveProgramAndUniforms(shaderLine);
-  glUniform4f(glGetUniformLocation(shaderLine, "line_color"), primaryColor[0], primaryColor[1],
-              primaryColor[2], primaryColor[3]);
+  glUniformC(glGetUniformLocation(shaderLine, "line_color"), primaryColor);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

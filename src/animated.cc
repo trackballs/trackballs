@@ -26,12 +26,10 @@
 #include "scoreSign.h"
 
 Animated::Animated(int role) : GameHook(role) {
-  for (int i = 0; i < 3; i++) {
-    specularColor[i] = 0.0;
-    primaryColor[i] = 0.8;
-    secondaryColor[i] = 0.3;
-  }
-  specularColor[3] = primaryColor[3] = secondaryColor[3] = 1.0;
+  primaryColor = Color(0.8, 0.8, 0.8, 1.);
+  secondaryColor = Color(0.3, 0.3, 0.3, 1.);
+  specularColor = Color(0., 0., 0., 1.);
+
   texture = 0;
   // Don't call any inherited version of the computeBoundBox yet to avoid problems
   // with uninitialized variables.

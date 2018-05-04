@@ -26,7 +26,7 @@ Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
     : Animated(Role_Pipe), from(f), to(t), radius(r) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   position = 0.5 * (from + to);
-  primaryColor[0] = primaryColor[1] = primaryColor[2] = 0.6;
+  primaryColor = Color(0.6, 0.6, 0.6, 1.0);
 
   windBackward = 0.0;
   windForward = 0.0;
@@ -89,16 +89,16 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 }
 
 void Pipe::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
-  if (primaryColor[3] >= 1.0) drawTrunk(idxbufs, databufs);
+  if (primaryColor.v[3] >= 65535) drawTrunk(idxbufs, databufs);
 }
 void Pipe::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
-  if (activeView.calculating_shadows && primaryColor[3] < 0.7) return;
-  if (primaryColor[3] < 1.0) drawTrunk(idxbufs, databufs);
+  if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
+  if (primaryColor.v[3] < 65535) drawTrunk(idxbufs, databufs);
 }
 void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) const {
   // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
-  if (primaryColor[3] < 1.f) {
+  if (primaryColor.v[3] < 65535) {
     glEnable(GL_BLEND);
   } else {
     glDisable(GL_BLEND);
@@ -107,8 +107,7 @@ void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0] * 0.1,
-                specularColor[1] * 0.1, specularColor[2] * 0.1, 1.);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

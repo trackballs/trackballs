@@ -51,8 +51,9 @@
 SetupMode *SetupMode::setupMode = NULL;
 SDL_Surface *SetupMode::background;
 
-GLfloat colors[5][3] = {
-    {1.0, 0.2, 0.2}, {0.2, 1.0, 0.2}, {0.5, 0.5, 1.0}, {1.0, 1.0, 0.2}, {1.0, 1.0, 1.0}};
+Color colors[5] = {Color(1.0, 0.2, 0.2, 1.0), Color(0.2, 1.0, 0.2, 1.0),
+                   Color(0.5, 0.5, 1.0, 1.0), Color(1.0, 1.0, 0.2, 1.0),
+                   Color(1.0, 1.0, 1.0, 1.0)};
 
 void SetupMode::init() {
   if (low_memory)
@@ -150,8 +151,7 @@ void SetupMode::display() {
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
   GLfloat pos[3] = {0.f, 0.f, 0.f};
-  GLfloat color[4] = {colors[gamer->color][0], colors[gamer->color][1],
-                      colors[gamer->color][2], 1.f};
+  Color color = colors[gamer->color];
   Matrix4d frommtx;
   identityMatrix(frommtx);
   rotateY(t * -0.3, frommtx);

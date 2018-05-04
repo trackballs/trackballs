@@ -36,17 +36,11 @@ Sign::Sign(const char *string, Real l, Real s, Real r, const Coord3d &pos)
   rotation = r;
   tot_rot = 0.0;
   if (Game::current->isNight) {
-    primaryColor[0] = 1.0;
-    primaryColor[1] = 1.0;
-    primaryColor[2] = 1.0;
+    primaryColor = Color(1., 1., 1., 1.);
   } else if (Game::current->fogThickness) {
-    primaryColor[0] = 0.0;
-    primaryColor[1] = 0.0;
-    primaryColor[2] = 0.0;
+    primaryColor = Color(0., 0., 0., 1.);
   } else {
-    primaryColor[0] = 1.0;
-    primaryColor[1] = 1.0;
-    primaryColor[2] = 1.0;
+    primaryColor = Color(1., 1., 1., 1.);
   }
 
   textimg = 0;
@@ -87,8 +81,8 @@ int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   GLfloat dy = std::sin(M_PI * (tot_rot - 45.) / 180.) * SIGN_SCALE * scale * width;
   GLfloat dz = SIGN_SCALE * scale * height;
 
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2],
-                      std::min((GLfloat)life, 1.0f)};
+  Color color = primaryColor.toOpaque();
+  color.v[3] = std::min(1.0, life) * 65535;
 
   pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
                           texcoord[0], texcoord[1], color, flat);

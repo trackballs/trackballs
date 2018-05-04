@@ -40,12 +40,8 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
-  primaryColor[0] = 1.;
-  primaryColor[1] = 1.;
-  primaryColor[2] = 1.;
-  secondaryColor[0] = .6;
-  secondaryColor[1] = 0.8;
-  secondaryColor[2] = 0.9;
+  primaryColor = Color(1., 1., 1., 1.);
+  secondaryColor = Color(0.6, 0.8, 0.9, 1.);
   animation = 0.0;
   rotation = M_PI - atan2(this->dx / lng, this->dy / lng);
   scoreOnDeath = Game::defaultScores[SCORE_BIRD][0];
@@ -63,9 +59,7 @@ int Bird::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   allocateBuffers(1, idxbufs, databufs);
 
-  GLfloat color[4];
-  for (int i = 0; i < 3; i++) color[i] = primaryColor[i];
-  color[3] = 1.0;
+  Color color = primaryColor.toOpaque();
 
   GLfloat data[4 * 8];
   char *pos = (char *)data;
@@ -115,8 +109,7 @@ void Bird::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], 1.);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);

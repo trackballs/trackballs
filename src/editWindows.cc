@@ -243,21 +243,21 @@ void EStatusWindow::draw() {
     addText_Left(CODE_FROM_MENUENTRY(EDIT_BOTTOM), fontSize / 2, row4, str,
                  col1 + fontSize * 2);
   } else if (EditMode::editMode->currentEditMode == EDITMODE_COLOR) {
-    snprintf(str, 255, _("red: %2.2f"), EditMode::editMode->color[0]);
+    snprintf(str, 255, _("red: %2.2f"), EditMode::editMode->color.f0());
     addText_Left(CODE_FROM_MENUENTRY(COLOR_RED), fontSize / 2, row2, str, col1 + fontSize * 3);
-    snprintf(str, 255, _("green: %2.2f"), EditMode::editMode->color[1]);
+    snprintf(str, 255, _("green: %2.2f"), EditMode::editMode->color.f1());
     addText_Left(CODE_FROM_MENUENTRY(COLOR_GREEN), fontSize / 2, row3, str,
                  col1 + fontSize * 3);
-    snprintf(str, 255, _("blue: %2.2f"), EditMode::editMode->color[2]);
+    snprintf(str, 255, _("blue: %2.2f"), EditMode::editMode->color.f2());
     addText_Left(CODE_FROM_MENUENTRY(COLOR_BLUE), fontSize / 2, row4, str,
                  col1 + fontSize * 3);
-    snprintf(str, 255, _("alpha: %2.2f"), EditMode::editMode->color[3]);
+    snprintf(str, 255, _("alpha: %2.2f"), EditMode::editMode->color.f3());
     addText_Left(CODE_FROM_MENUENTRY(COLOR_ALPHA), fontSize / 2, row1, str,
                  col1 + fontSize * 3);
 
     draw2DRectangle(col1, row2, 2 * fontSize, row4 - row2, 0., 0., 1., 1.,
-                    EditMode::editMode->color[0], EditMode::editMode->color[1],
-                    EditMode::editMode->color[2], EditMode::editMode->color[3]);
+                    EditMode::editMode->color.f0(), EditMode::editMode->color.f1(),
+                    EditMode::editMode->color.f2(), EditMode::editMode->color.f3());
   } else if (EditMode::editMode->currentEditMode == EDITMODE_VELOCITY) {
     Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
     snprintf(str, 255, _("dx: %2.2f"), cell.velocity[0]);

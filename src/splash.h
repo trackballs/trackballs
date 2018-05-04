@@ -25,7 +25,7 @@
 
 class Splash : public Animated {
  public:
-  Splash(Coord3d center, Coord3d velocity, GLfloat color[4], double strength, double radius);
+  Splash(Coord3d center, Coord3d velocity, Color color, double strength, double radius);
   void tick(Real t);
 
   virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;

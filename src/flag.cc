@@ -34,12 +34,8 @@ Flag::Flag(Real x, Real y, int points, int visible, Real radius)
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
-  primaryColor[0] = 0.5;
-  primaryColor[1] = 0.5;
-  primaryColor[2] = 1.0;
-  secondaryColor[0] = 0.8;
-  secondaryColor[1] = 0.8;
-  secondaryColor[2] = 0.8;
+  primaryColor = Color(0.5, 0.5, 1.0, 1.0);
+  secondaryColor = Color(0.8, 0.8, 0.8, 1.0);
 }
 
 int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
@@ -72,7 +68,7 @@ int Flag::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
                    0.4f * d3 * std::sin(d1 + d2 * 0.4f)};
   GLfloat dbx[5] = {dx[1] - dx[0], dx[2] - dx[0], dx[3] - dx[1], dx[4] - dx[2], dx[4] - dx[3]};
   GLfloat dby[5] = {0.1f, 0.2f, 0.2f, 0.2f, 0.1f};
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 1.0};
+  Color color = primaryColor.toOpaque();
   for (int i = 0; i < 5; i++) {
     Coord3d b(dbx[i], dby[i], 0.0);
     Coord3d up(0.0, 0.0, 1.0);
@@ -104,8 +100,7 @@ void Flag::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

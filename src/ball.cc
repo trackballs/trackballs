@@ -55,12 +55,8 @@ Ball::Ball(int role) : Animated(role) {
   rotation[0] = rotation[1] = 0.0;
   rotoacc[0] = rotoacc[1] = 0.0;
 
-  primaryColor[0] = 0.8;
-  primaryColor[1] = 0.8;
-  primaryColor[2] = 0.8;
-  secondaryColor[0] = 0.1;
-  secondaryColor[1] = 0.1;
-  secondaryColor[2] = 0.1;
+  primaryColor = Color(0.8, 0.8, 0.8, 1.);
+  secondaryColor = Color(0.1, 0.1, 0.1, 1.);
 
   gravity = 8.0;
   bounceFactor = 0.8;
@@ -98,16 +94,11 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   int N = 7;
   allocateBuffers(N, idxbufs, databufs);
 
-  GLfloat color[4] = {
-      primaryColor[0],
-      primaryColor[1],
-      primaryColor[2],
-      1.,
-  };
+  Color color = primaryColor.toOpaque();
   if (0) {
     /* useful debug code */
     if (inTheAir) {
-      for (int k = 0; k < 3; k++) { color[k] = 1. - color[k]; }
+      for (int i = 0; i < 3; i++) { color.v[i] = 65535 - color.v[i]; }
     }
   }
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
@@ -117,22 +108,14 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
       phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
     else
       phase = 1.0;
-    double blend = phase;
-    color[0] = 0.8 * blend + color[0] * (1.0 - blend);
-    color[1] = 0.8 * blend + color[1] * (1.0 - blend);
-    color[2] = 0.8 * blend + color[2] * (1.0 - blend);
-    color[3] = 0.5 * blend + 1.0 * (1.0 - blend);
+    color = Color::mix(phase, color, Color(0.8, 0.8, 0.8, 0.5));
   } else if (modTimeLeft[MOD_FROZEN]) {
     double phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
     if (modTimeLeft[MOD_FROZEN] > 0)
       phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
     else
       phase = 1.0;
-    double blend = phase;
-    color[0] = 0.4 * blend + color[0] * (1.0 - blend);
-    color[1] = 0.4 * blend + color[1] * (1.0 - blend);
-    color[2] = 0.9 * blend + color[2] * (1.0 - blend);
-    color[3] = 0.6 * blend + 1.0 * (1.0 - blend);
+    color = Color::mix(phase, color, Color(0.4, 0.4, 0.9, 0.6));
   }
 
   {
@@ -196,7 +179,7 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
       phase = 1.0;
     GLfloat scale = radius * (0.5 + 0.5 * phase);
 
-    GLfloat sco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 1.0};
+    Color sco = secondaryColor.toOpaque();
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     Matrix3d trot;
     for (int i = 0; i < 3; i++)
@@ -280,15 +263,15 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   // Handle modifiers
   if (modTimeLeft[MOD_FLOAT]) {
-    const GLfloat stripeA[4] = {1.0, 1.0, 1.0, 1.0};
-    const GLfloat stripeB[4] = {1.0, 0.2, 0.2, 1.0};
+    Color stripeA(1., 1., 1., 1.);
+    Color stripeB(1., 0.2, 0.2, 1.);
 
     GLfloat data[60][8];
     ushort idxs[40][3];
     char *pos = (char *)data;
     for (int i = 0; i < 10; i++) {
       GLfloat a0 = (i / 10.0) * 2. * M_PI, a1 = ((i + 1) / 10.0) * 2. * M_PI;
-      const GLfloat *ringcolor = i % 2 ? stripeA : stripeB;
+      const Color &ringcolor = i % 2 ? stripeA : stripeB;
 
       GLfloat ir = radius * 1.0f, mr = radius * 1.2f, lr = radius * 1.4f, h = radius * 0.2f;
 
@@ -329,7 +312,8 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
     countObjectSpherePoints(&ntries, &nverts, detail);
     GLfloat *data = new GLfloat[nverts * 8];
     ushort *idxs = new ushort[ntries * 3];
-    GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2], 0.5f};
+    Color color = primaryColor;
+    color.v[3] = 32768;
     Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
     placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
 
@@ -355,7 +339,7 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
         {frad * .6f, frad * (z + .9f)},
     };
 
-    GLfloat color[4] = {1.f, 1.f, 1.f, 0.5f};
+    Color color(1., 1., 1., 0.5);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     GLfloat spin = Game::current->gameTime * 0.15;
     for (int i = 0; i < 9; i++) {
@@ -374,7 +358,7 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (modTimeLeft[MOD_DIZZY]) {
     GLfloat data[12][8];
     char *pos = (char *)data;
-    GLfloat color[4] = {1.f, 1.f, 1.f, 0.5f};
+    Color color(1., 1., 1., 0.5);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     for (int i = 0; i < 3; i++) {
       GLfloat angle = 0.5 * M_PI * Game::current->gameTime + 2 * i * M_PI / 3;
@@ -411,9 +395,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
 
-  GLfloat specular[4];
-  for (int i = 0; i < 3; i++) { specular[i] = specularColor[i]; }
-  specular[3] = 1.0;
+  Color specular = specularColor.toOpaque();
   double shininess = 20.0;
 
   // Handle primary ball..
@@ -423,11 +405,8 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
       phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
     else
       phase = 1.0;
-    double blend = phase;
-    specular[0] = 2.5 * blend + specular[0] * (1.0 - blend);
-    specular[1] = 2.5 * blend + specular[1] * (1.0 - blend);
-    specular[2] = 2.5 * blend + specular[2] * (1.0 - blend);
-    shininess = 50.0 * blend + shininess * (1.0 - blend);
+    specular = Color::mix(phase, specular, Color(1., 1., 1., 1.));
+    shininess = 50.0 * phase + shininess * (1.0 - phase);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else if (modTimeLeft[MOD_FROZEN]) {
@@ -437,10 +416,8 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     else
       phase = 1.0;
     double blend = phase;
-    specular[0] = 2.0 * blend + specular[0] * (1.0 - blend);
-    specular[1] = 2.0 * blend + specular[1] * (1.0 - blend);
-    specular[2] = 4.0 * blend + specular[2] * (1.0 - blend);
-    shininess = 50.0 * blend + shininess * (1.0 - blend);
+    specular = Color::mix(phase, specular, Color(0.8, 0.8, 1., 1.));
+    shininess = 50.0 * phase + shininess * (1.0 - phase);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else {
@@ -471,8 +448,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
       setActiveProgramAndUniforms(shaderObjectShadow);
     } else {
       setActiveProgramAndUniforms(shaderObject);
-      glUniform4f(glGetUniformLocation(shaderObject, "specular"), specular[0] * 0.5,
-                  specular[1] * 0.5, specular[2] * 0.5, specular[3] * 0.5);
+      glUniformC(glGetUniformLocation(shaderObject, "specular"), specular);
       glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
     }
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
@@ -493,9 +469,9 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
         !activeView.calculating_shadows) {
       GLfloat c[4];
       if (metallic) {
-        c[0] = primaryColor[0];
-        c[1] = primaryColor[1];
-        c[2] = primaryColor[2];
+        c[0] = primaryColor.f0();
+        c[1] = primaryColor.f1();
+        c[2] = primaryColor.f2();
         c[3] = reflectivity;
       } else {
         c[0] = 1.0;
@@ -867,7 +843,7 @@ bool Ball::physics(Real time) {
       double speed = velocity[0] * velocity[0] + velocity[1] * velocity[1] +
                      velocity[2] * velocity[2] * 5.;
       if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
-        GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
+        Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
         Game::current->add(
             new Splash(center, velocity, waterColor, 30 * radius / 0.3,
@@ -876,7 +852,7 @@ bool Ball::physics(Real time) {
       // splashes caused by rotation. eg "swimming"
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
       if (frandom() < speed * 0.001) {
-        GLfloat waterColor[4] = {0.4, 0.4, 0.8, 0.5};
+        Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
         Coord3d vel;
         vel[0] = -rotation[0] * radius;  // 0.3;
@@ -904,7 +880,7 @@ bool Ball::physics(Real time) {
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
     if (frandom() < (speed2 - 0.2) * 0.05) {
-      GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
+      Color acidColor(0.1, 0.5, 0.1, 0.5);
       Coord3d center(position[0], position[1], mapHeight);
       Game::current->add(new Splash(center, velocity, acidColor, speed2 * radius, radius));
     }
@@ -1224,7 +1200,7 @@ bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
 
     /* Acid splash */
     if (nacidsplash) {
-      GLfloat acidColor[4] = {0.1, 0.5, 0.1, 0.5};
+      Color acidColor(0.1, 0.5, 0.1, 0.5);
       Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
       Game::current->add(new Splash(center, velocity, acidColor,
                                     (acidSpeed / nacidsplash) * radius * 20.0, radius));
@@ -1504,9 +1480,8 @@ void Ball::generateSandDebris() {
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
   Game::current->add(d);
   d->initialSize = 0.05;
-  d->primaryColor[0] = 0.6 + 0.3 * frandom();
-  d->primaryColor[1] = 0.5 + 0.4 * frandom();
-  d->primaryColor[2] = 0.1 + 0.3 * frandom();
+  d->primaryColor =
+      Color(0.6 + 0.3 * frandom(), 0.5 + 0.4 * frandom(), 0.1 + 0.3 * frandom(), 1.f);
   d->friction = 0.0;
   d->calcRadius();
 }
@@ -1522,13 +1497,11 @@ void Ball::generateNitroDebris(Real time) {
     d->velocity[2] += 0.2;
     d->gravity = -0.1;
     d->modTimeLeft[MOD_GLASS] = -1.0;
-    d->primaryColor[0] = 0.1;
-    d->primaryColor[1] = 0.6;
-    d->primaryColor[2] = 0.1;
+    d->primaryColor = Color(0.1, 0.6, 0.1, 1.0);
     d->no_physics = true;
   }
 }
-void Ball::generateDebris(GLfloat color[4]) {
+void Ball::generateDebris(const Color &color) {
   Coord3d pos, vel;
   Real a = frandom() * 2.0 * M_PI;
   double speed =
@@ -1542,9 +1515,7 @@ void Ball::generateDebris(GLfloat color[4]) {
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
   Game::current->add(d);
   d->initialSize = 0.05;
-  d->primaryColor[0] = color[0];
-  d->primaryColor[1] = color[1];
-  d->primaryColor[2] = color[2];
+  d->primaryColor = color.toOpaque();
   d->friction = 0.0;
   d->calcRadius();
 }

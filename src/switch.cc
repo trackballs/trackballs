@@ -30,12 +30,8 @@ CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated)
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(x, y);
-  primaryColor[0] = 0.8;
-  primaryColor[1] = 0.8;
-  primaryColor[2] = 0.8;
-  secondaryColor[0] = 0.0;
-  secondaryColor[1] = 0.0;
-  secondaryColor[2] = 0.0;
+  primaryColor = Color(0.8, 0.8, 0.8, 1.0);
+  secondaryColor = Color(0., 0., 0., 1.);
   is_touched = false;
   this->on = on;
   this->off = off;
@@ -62,7 +58,7 @@ int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   GLfloat data[4 * nfacets + 7][8];
   ushort idxs[4 * nfacets + 6][3];
 
-  const GLfloat *side_color = is_on ? primaryColor : secondaryColor;
+  Color side_color = is_on ? primaryColor : secondaryColor;
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
   char *pos = (char *)data;
@@ -160,8 +156,7 @@ void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

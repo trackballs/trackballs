@@ -157,7 +157,7 @@ void Weather::draw2() {
     GLfloat *data = new GLfloat[3 * 8 * nactive];
     ushort *idxs = new ushort[3 * nactive];
 
-    GLfloat color[4] = {0.8f, 0.8f, 0.85f, 1.0f};
+    Color color(0.8, 0.8, 0.85, 1.);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     GLfloat txc[3][2] = {{0.5f, 0.f}, {0.f, 1.f}, {1.f, 1.f}};
     GLfloat size = 1.3f;

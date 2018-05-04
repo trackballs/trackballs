@@ -23,6 +23,7 @@
 #define GENERAL_H
 
 #include <libintl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <cmath>
 #define _(String) gettext(String)
@@ -86,6 +87,37 @@ class Coord3d {
   double data[3];
 };
 inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale; }
+
+class Color {
+ public:
+  Color() {
+    v[0] = 0;
+    v[1] = 0;
+    v[2] = 0;
+    v[3] = 65535;
+  }
+  Color(float fr, float fg, float fb, float fa) {
+    v[0] = 65535.f * fr;
+    v[1] = 65535.f * fg;
+    v[2] = 65535.f * fb;
+    v[3] = 65535.f * fa;
+  };
+  Color toOpaque() const {
+    Color c(*this);
+    c.v[3] = 65535;
+    return c;
+  }
+  static Color mix(float blend, const Color &col0, const Color &col1) {
+    Color c;
+    for (int i = 0; i < 4; i++) { c.v[i] = col0.v[i] * (1. - blend) + col1.v[i] * blend; }
+    return c;
+  }
+  float f0() const { return v[0] / 65535.f; }
+  float f1() const { return v[1] / 65535.f; }
+  float f2() const { return v[2] / 65535.f; }
+  float f3() const { return v[3] / 65535.f; }
+  uint16_t v[4];
+};
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846264

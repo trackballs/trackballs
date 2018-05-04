@@ -55,7 +55,7 @@ void tickMouse(Real td);
 void drawMousePointer();
 void drawMouse(int x, int y, int w, int h);
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
-                        const GLfloat color[4], const GLfloat normal[3]);
+                        const Color &color, const GLfloat normal[3]);
 void configureObjectAttributes();
 inline uint32_t packNormal(const GLfloat n[3]) {
   uint32_t d = (512 + n[2] * 511.f);
@@ -70,7 +70,7 @@ inline uint32_t packNormal(const GLfloat n[3]) {
 }
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, GLfloat const color[4]);
+                       Matrix3d rotation, GLfloat radius, int detail, const Color &color);
 
 /* updateUniforms when uniforms (i.e, ViewParameters) change */
 void updateUniforms();
@@ -187,5 +187,10 @@ inline Coord3d crossProduct(const Coord3d &A, const Coord3d &B) {
 /* <- A . B */
 inline double dotProduct(const Coord3d &A, const Coord3d &B) {
   return A[0] * B[0] + A[1] * B[1] + A[2] * B[2];
+}
+
+/* Inlined helper function */
+inline void glUniformC(GLint l, const Color &c) {
+  glUniform4f(l, c.f0(), c.f1(), c.f2(), c.f3());
 }
 #endif

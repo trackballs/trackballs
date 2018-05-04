@@ -44,6 +44,8 @@
 
 #include "animated.h"
 
+class Cell;
+
 /** This class is an ABSTRACT class from which specific balls
     (player/opponents/babies) are inherited */
 class Ball : public Animated {
@@ -100,11 +102,10 @@ class Ball : public Animated {
 
   static GLfloat dizzyTexCoords[4];
 
-  int locateContactPoints(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*,
-                          double*);
+  int locateContactPoints(Map*, Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, double*);
   int locateWallBounces(class Map*, Coord3d*);
   void generateSandDebris();
-  void generateDebris(GLfloat color[4]);
+  void generateDebris(const Color& color);
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);

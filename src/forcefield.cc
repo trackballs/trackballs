@@ -28,12 +28,8 @@ ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
   direction = dir;
   height = h;
   allow = a;
-  primaryColor[0] = 0.3;
-  primaryColor[1] = 1.0;
-  primaryColor[2] = 0.3;
-  secondaryColor[0] = 1.0;
-  secondaryColor[1] = 1.0;
-  secondaryColor[2] = 1.0;
+  primaryColor = Color(0.3, 1.0, 0.3, 1.0);
+  secondaryColor = Color(1.0, 1.0, 1.0, 1.0);
   bounceFactor = 2.5;
   boundingBox[0][0] = -abs(dir[0]);
   boundingBox[0][1] = -abs(dir[1]);
@@ -53,9 +49,9 @@ int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   GLfloat edge = std::min(std::abs(len), std::abs((GLfloat)height));
   edge = std::min(edge / 5, 0.03f);
 
-  GLfloat color[4] = {primaryColor[0], primaryColor[1], primaryColor[2],
-                      0.4f + 0.2f * (GLfloat)frandom()};
-  GLfloat rimco[4] = {secondaryColor[0], secondaryColor[1], secondaryColor[2], 0.6};
+  Color color(primaryColor.f0(), primaryColor.f1(), primaryColor.f2(),
+              0.4f + 0.2f * (GLfloat)frandom());
+  Color rimco(secondaryColor.f0(), secondaryColor.f1(), secondaryColor.f2(), 0.6);
 
   GLfloat xycoords[12][2] = {{edge, edge},       {edge, (GLfloat)height - edge},
                              {len - edge, edge}, {len - edge, (GLfloat)height - edge},
@@ -63,16 +59,15 @@ int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
                              {len - edge, edge}, {len - edge, (GLfloat)height - edge},
                              {0., 0.},           {0., (GLfloat)height},
                              {len, 0.},          {len, (GLfloat)height}};
-  GLfloat *colors[12] = {color, color, color, color, rimco, rimco,
-                         rimco, rimco, rimco, rimco, rimco, rimco};
 
   GLfloat data[12 * 8];
   char *pos = (char *)data;
   for (int i = 0; i < 12; i++) {
     GLfloat flat[3] = {0., 0., 0.};
-    pos += packObjectVertex(
-        pos, position[0] + xycoords[i][0] * ndir[0], position[1] + xycoords[i][0] * ndir[1],
-        position[2] + xycoords[i][0] * ndir[2] + xycoords[i][1], 0., 0., colors[i], flat);
+    pos += packObjectVertex(pos, position[0] + xycoords[i][0] * ndir[0],
+                            position[1] + xycoords[i][0] * ndir[1],
+                            position[2] + xycoords[i][0] * ndir[2] + xycoords[i][1], 0., 0.,
+                            i < 4 ? color : rimco, flat);
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

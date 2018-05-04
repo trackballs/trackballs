@@ -28,11 +28,8 @@
 Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated) {
   position = pos;
 
-  specularColor[0] = specularColor[1] = specularColor[2] = 1.0;
-  primaryColor[0] = 0.7;
-  primaryColor[1] = 0.7;
-  primaryColor[2] = 0.9;
-  primaryColor[3] = 0.7;
+  specularColor = Color(1., 1., 1., 1.);
+  primaryColor = Color(0.7, 0.7, 0.9, 0.7);
   fade = 1.0;
   taken = 0;
 }
@@ -41,9 +38,8 @@ int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   if (fade <= 0.) { return 0; }
   allocateBuffers(1, idxbufs, databufs);
 
-  GLfloat color[4];
-  for (int i = 0; i < 4; i++) color[i] = primaryColor[i];
-  color[3] *= fade;
+  Color color = primaryColor;
+  color.v[3] *= fade;
 
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
@@ -81,8 +77,7 @@ void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObjectShadow);
   } else {
     setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), specularColor[0],
-                specularColor[1], specularColor[2], specularColor[3]);
+    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);

@@ -72,7 +72,7 @@ class Animated : public GameHook {
   /** Lower/higher coordinate of boundingbox relative to position */
   Coord3d boundingBox[2];
 
-  GLfloat primaryColor[4], secondaryColor[4], specularColor[4];
+  Color primaryColor, secondaryColor, specularColor;
   GLuint texture;
 
   /** Number of points the player is awarded when this object dies */
