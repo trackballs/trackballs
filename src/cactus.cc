@@ -73,10 +73,9 @@ void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   char *pos = (char *)data;
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
-      GLfloat angle = 2 * i * M_PI / nsides;
-      GLfloat loc[3] = {radii[h] * radius * std::cos(angle),
-                        radii[h] * radius * std::sin(angle), heights[h]};
-      GLfloat normal[3] = {norm[h][0] * std::cos(angle), norm[h][0] * std::sin(angle),
+      GLfloat loc[3] = {radii[h] * radius * (GLfloat)cos6[i],
+                        radii[h] * radius * (GLfloat)sin6[i], heights[h]};
+      GLfloat normal[3] = {norm[h][0] * (GLfloat)cos6[i], norm[h][0] * (GLfloat)sin6[i],
                            norm[h][1]};
       pos += packObjectVertex(pos, position[0] + loc[0], position[1] + loc[1],
                               position[2] + loc[2], 0., 0., color, normal);
@@ -110,11 +109,12 @@ void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
       GLfloat angle = 2 * i * M_PI / nsides + M_PI / nsides;
-      GLfloat end[3] = {spike_rad[h] * radius * std::cos(angle),
-                        spike_rad[h] * radius * std::sin(angle), spike_height[h]};
+      GLfloat end[3] = {spike_rad[h] * radius * (GLfloat)cos12[2 * i + 1],
+                        spike_rad[h] * radius * (GLfloat)sin12[2 * i + 1], spike_height[h]};
       GLfloat dhs[3][2] = {{0, spikewid}, {-spikewid, -spikewid}, {spikewid, -spikewid}};
       for (int k = 0; k < 3; k++) {
-        GLfloat central[3] = {-std::sin(angle) * dhs[k][0], std::cos(angle) * dhs[k][0],
+        GLfloat central[3] = {-(GLfloat)sin12[2 * i + 1] * dhs[k][0],
+                              (GLfloat)cos12[2 * i + 1] * dhs[k][0],
                               dhs[k][1] + spike_height[h]};
         pos += packObjectVertex(pos, position[0] + central[0], position[1] + central[1],
                                 position[2] + central[2], 0., 0., spkco, flat);

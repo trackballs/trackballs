@@ -82,7 +82,7 @@ void SideSpike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   Matrix3d rotmtx;
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
-  generateSpikeVBO(data, idxs, nfacets, rotmtx, pos, primaryColor, secondaryColor, 0.7);
+  generateSpikeVBO(data, idxs, rotmtx, pos, primaryColor, secondaryColor, 0.7);
 
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);

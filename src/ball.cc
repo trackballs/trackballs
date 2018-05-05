@@ -267,31 +267,31 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     ushort idxs[40][3];
     char *pos = (char *)data;
     for (int i = 0; i < 10; i++) {
-      GLfloat a0 = (i / 10.0) * 2. * M_PI, a1 = ((i + 1) / 10.0) * 2. * M_PI;
+      int i0 = i, i1 = (i + 1) % 10;
       const Color &ringcolor = i % 2 ? stripeA : stripeB;
 
       GLfloat ir = radius * 1.0f, mr = radius * 1.2f, lr = radius * 1.4f, h = radius * 0.2f;
 
-      GLfloat inormal0[3] = {-std::sin(a0), -std::cos(a0), 0.f};
-      GLfloat inormal1[3] = {-std::sin(a1), -std::cos(a1), 0.f};
-      GLfloat onormal0[3] = {std::sin(a0), std::cos(a0), 0.f};
-      GLfloat onormal1[3] = {std::sin(a1), std::cos(a1), 0.f};
+      GLfloat inormal0[3] = {(GLfloat)-sin10[i0], (GLfloat)-cos10[i0], 0.f};
+      GLfloat inormal1[3] = {(GLfloat)-sin10[i1], (GLfloat)-cos10[i1], 0.f};
+      GLfloat onormal0[3] = {(GLfloat)sin10[i0], (GLfloat)cos10[i0], 0.f};
+      GLfloat onormal1[3] = {(GLfloat)sin10[i1], (GLfloat)cos10[i1], 0.f};
       GLfloat unormal[3] = {0.f, 0.f, 1.f};
 
-      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * ir, loc[1] + std::cos(a0) * ir,
-                              loc[2], 0., 0., ringcolor, inormal0);
-      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * ir, loc[1] + std::cos(a1) * ir,
-                              loc[2], 0., 0., ringcolor, inormal1);
+      pos += packObjectVertex(pos, loc[0] + sin10[i0] * ir, loc[1] + cos10[i0] * ir, loc[2],
+                              0., 0., ringcolor, inormal0);
+      pos += packObjectVertex(pos, loc[0] + sin10[i1] * ir, loc[1] + cos10[i1] * ir, loc[2],
+                              0., 0., ringcolor, inormal1);
 
-      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * mr, loc[1] + std::cos(a0) * mr,
+      pos += packObjectVertex(pos, loc[0] + sin10[i0] * mr, loc[1] + cos10[i0] * mr,
                               loc[2] + h, 0., 0., ringcolor, unormal);
-      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * mr, loc[1] + std::cos(a1) * mr,
+      pos += packObjectVertex(pos, loc[0] + sin10[i1] * mr, loc[1] + cos10[i1] * mr,
                               loc[2] + h, 0., 0., ringcolor, unormal);
 
-      pos += packObjectVertex(pos, loc[0] + std::sin(a0) * lr, loc[1] + std::cos(a0) * lr,
-                              loc[2], 0., 0., ringcolor, onormal0);
-      pos += packObjectVertex(pos, loc[0] + std::sin(a1) * lr, loc[1] + std::cos(a1) * lr,
-                              loc[2], 0., 0., ringcolor, onormal1);
+      pos += packObjectVertex(pos, loc[0] + sin10[i0] * lr, loc[1] + cos10[i0] * lr, loc[2],
+                              0., 0., ringcolor, onormal0);
+      pos += packObjectVertex(pos, loc[0] + sin10[i1] * lr, loc[1] + cos10[i1] * lr, loc[2],
+                              0., 0., ringcolor, onormal1);
 
       ushort pts[4][3] = {{1, 0, 3}, {0, 2, 3}, {2, 5, 3}, {2, 4, 5}};
       for (int k = 0; k < 12; k++) { idxs[4 * i + k / 3][k % 3] = pts[k / 3][k % 3] + 6 * i; }

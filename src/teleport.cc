@@ -26,6 +26,8 @@
 #include "player.h"
 
 #define NFACETS 14
+#define sinN sin14
+#define cosN cos14
 
 Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
     : Animated(Role_OtherAnimated, 2) {
@@ -62,44 +64,40 @@ void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     // Draw torus
     char *pos = (char *)data;
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
       GLfloat nnormal[3] = {0.f, 1.f, 0.f};
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
-                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                              primaryColor, nnormal);
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
-                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                              primaryColor, nnormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] + width,
+                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
+                              nnormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] + width,
+                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
+                              nnormal);
     }
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
       GLfloat snormal[3] = {0.f, -1.f, 0.f};
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
-                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                              primaryColor, snormal);
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
-                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                              primaryColor, snormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] - width,
+                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
+                              snormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] - width,
+                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
+                              snormal);
     }
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
-      GLfloat inormal[3] = {-std::sin(angle), -std::cos(angle), 0.f};
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] - width,
-                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                              primaryColor, inormal);
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * irad, position[1] + width,
-                              position[2] + std::cos(angle) * irad + cent_height, 0., 0.,
-                              primaryColor, inormal);
+      GLfloat inormal[3] = {(GLfloat)-sinN[i], (GLfloat)-cosN[i], 0.f};
+      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] - width,
+                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
+                              inormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] + width,
+                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
+                              inormal);
     }
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
-      GLfloat onormal[3] = {std::sin(angle), std::cos(angle), 0.f};
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] - width,
-                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                              primaryColor, onormal);
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * orad, position[1] + width,
-                              position[2] + std::cos(angle) * orad + cent_height, 0., 0.,
-                              primaryColor, onormal);
+      GLfloat onormal[3] = {(GLfloat)sinN[i], (GLfloat)cosN[i], 0.f};
+      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] - width,
+                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
+                              onormal);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] + width,
+                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
+                              onormal);
     }
 
     for (int k = 0; k < 4; k++) {
@@ -122,11 +120,10 @@ void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     // Draw base
     Color white(1., 1., 1., 1.);
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
-      GLfloat inormal[3] = {std::cos(angle), std::sin(angle), 0.4f};
-      pos += packObjectVertex(pos, position[0] + radius * std::cos(angle),
-                              position[1] + radius * std::sin(angle), position[2] + 0.1f, 0.,
-                              0., white, inormal);
+      GLfloat inormal[3] = {(GLfloat)cosN[i], (GLfloat)sinN[i], 0.4f};
+      pos +=
+          packObjectVertex(pos, position[0] + radius * cosN[i], position[1] + radius * sinN[i],
+                           position[2] + 0.1f, 0., 0., white, inormal);
     }
     GLfloat vnormal[3] = {0.f, 0.f, 1.f};
     pos += packObjectVertex(pos, position[0], position[1], position[2] + 0.3, 0., 0., white,
@@ -156,11 +153,8 @@ void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     pos += packObjectVertex(pos, position[0], position[1], position[2] + cent_height, 0., 0.,
                             color, flat);
     for (int i = 0; i < NFACETS; i++) {
-      GLfloat angle = 2 * i * M_PI / NFACETS;
-
-      pos += packObjectVertex(pos, position[0] + std::sin(angle) * rad, position[1],
-                              position[2] + std::cos(angle) * rad + cent_height, 0., 0., color,
-                              flat);
+      pos += packObjectVertex(pos, position[0] + sinN[i] * rad, position[1],
+                              position[2] + cosN[i] * rad + cent_height, 0., 0., color, flat);
       idxs[i][0] = 0;
       idxs[i][1] = i + 1;
       idxs[i][2] = (i + 1) % NFACETS + 1;

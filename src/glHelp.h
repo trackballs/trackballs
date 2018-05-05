@@ -144,6 +144,16 @@ int powerOfTwo(int input);
 bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double z2,
                   const Matrix4d model_times_proj);
 
+/* Cache small polygon coordinates */
+extern const double sin6[6];
+extern const double sin10[10];
+extern const double sin12[12];
+extern const double sin14[14];
+extern const double cos6[6];
+extern const double cos10[10];
+extern const double cos12[12];
+extern const double cos14[14];
+
 void Require2DMode();
 void Enter2DMode();
 void Leave2DMode();

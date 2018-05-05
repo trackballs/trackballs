@@ -53,7 +53,7 @@ void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   identityMatrix(frommtx);
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
-  generateSpikeVBO(data, idxs, nfacets, rotmtx, position, primaryColor, secondaryColor, 2.0);
+  generateSpikeVBO(data, idxs, rotmtx, position, primaryColor, secondaryColor, 2.0);
 
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
@@ -151,8 +151,9 @@ void Spike::tick(Real t) {
   }
 }
 
-void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rotmtx,
+void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Matrix3d rotmtx,
                       const Coord3d &position, Color sidec, Color tipc, GLfloat length) {
+  const int nfacets = 6;
   char *pos = (char *)data;
 
   double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
@@ -163,34 +164,34 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], int nfacets, Matrix3d rot
     GLfloat *color = NULL;
 
     int step = i / nfacets;
-    double angle = (i % nfacets) * 2. * M_PI / nfacets;
-    local[0] = 0.1 * std::sin(angle);
-    local[1] = 0.1 * std::cos(angle);
+    int j = i % nfacets;
+    local[0] = 0.1 * sin6[j];
+    local[1] = 0.1 * cos6[j];
     if (step == 0) {
       is_tip = true;
       local[2] = 0.;
-      normal[0] = d2 * std::sin(angle);
-      normal[1] = d2 * std::cos(angle);
+      normal[0] = d2 * sin6[j];
+      normal[1] = d2 * cos6[j];
       normal[2] = d1;
     } else if (step == 1) {
       is_tip = false;
       local[2] = 0;
-      normal[0] = std::sin(angle);
-      normal[1] = std::cos(angle);
+      normal[0] = sin6[j];
+      normal[1] = cos6[j];
       normal[2] = 0.;
     } else if (step == 2) {
       is_tip = false;
       local[2] = -length;
-      normal[0] = std::sin(angle);
-      normal[1] = std::cos(angle);
+      normal[0] = sin6[j];
+      normal[1] = cos6[j];
       normal[2] = 0.;
     } else {
       is_tip = true;
       local[0] = 0.;
       local[1] = 0.;
       local[2] = 0.3;
-      normal[0] = d2 * std::sin(angle + M_PI / nfacets);
-      normal[1] = d2 * std::cos(angle + M_PI / nfacets);
+      normal[0] = d2 * sin12[2 * j + 1];
+      normal[1] = d2 * cos12[2 * j + 1];
       normal[2] = d1;
     }
     Coord3d tlocal = useMatrix(rotmtx, local);
