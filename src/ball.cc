@@ -771,13 +771,18 @@ bool Ball::physics(Real time) {
   }
 
   /* Compute terrain interaction fractions */
-  double sand_frac = 0., acid_frac = 0., ice_frac = 0., track_frac = 0.;
+  int sand_count = 0, acid_count = 0, ice_count = 0, track_count = 0;
   for (int i = 0; i < nhits; i++) {
-    if (cells[i]->flags & CELL_ACID) acid_frac += 1. / nhits;
-    if (cells[i]->flags & CELL_SAND) sand_frac += 1. / nhits;
-    if (cells[i]->flags & CELL_ICE) ice_frac += 1. / nhits;
-    if (cells[i]->flags & CELL_TRACK) track_frac += 1. / nhits;
+    if (cells[i]->flags & CELL_SAND) sand_count++;
+    if (cells[i]->flags & CELL_ACID) acid_count++;
+    if (cells[i]->flags & CELL_ICE) ice_count++;
+    if (cells[i]->flags & CELL_TRACK) track_count++;
   }
+  double inh = nhits > 0 ? 1. / nhits : 0.;
+  double sand_frac = sand_count * inh;
+  double acid_frac = acid_count * inh;
+  double ice_frac = ice_count * inh;
+  double track_frac = track_count * inh;
 
   /* Execute possible planned jump */
   if (nextJumpStrength > 0.) {
@@ -952,12 +957,15 @@ bool Ball::physics(Real time) {
   else if (!inTheAir) {
     if (inPipe) {
     } else {
-      effective_friction *= std::pow(2.0, acid_frac);
-      effective_friction *= std::pow(0.1, ice_frac);
+      double slowdown = 0.;
+      slowdown += std::log(2.0) * acid_frac;
+      slowdown += std::log(0.1) * ice_frac;
       // sand+track is 20x boost, not 10x
-      effective_friction *= std::pow(10.0, sand_frac);
-      effective_friction *= std::pow(4.0, track_frac);
-      effective_friction *= std::pow(0.5, sand_frac * track_frac);
+      slowdown += std::log(10.0) * sand_frac;
+      slowdown += std::log(4.0) * track_frac;
+      slowdown += std::log(0.5) * sand_frac * track_frac;
+
+      effective_friction *= std::exp(slowdown);
     }
     if (modTimeLeft[MOD_SPIKE]) effective_friction *= 1.5;
     if (modTimeLeft[MOD_SPEED]) effective_friction *= 0.5;
