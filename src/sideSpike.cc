@@ -158,8 +158,9 @@ void SideSpike::tick(Real t) {
   double od = 0., aod;  // lateral distance to the spike
   int ol = 0;           // true if possible bounce
 
-  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  for (int i = 0; i < balls.size(); i++) {
+  Animated **balls;
+  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
 
     switch (side) {

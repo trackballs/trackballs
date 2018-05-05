@@ -250,6 +250,7 @@ void Game::tick(Real t) {
 
     /* Update intersection information */
     balls->clear();
+    balls->reserve(hooks[Role_Ball].size() + hooks[Role_Player].size());
     for (int j = Role_Ball; j <= Role_Player; j++) {
       int nb = hooks[j].size();
       for (int k = 0; k < nb; k++) { balls->add((Animated *)hooks[j][k]); }

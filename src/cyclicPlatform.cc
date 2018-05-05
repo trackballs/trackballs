@@ -72,9 +72,9 @@ void CyclicPlatform::tick(Real dt) {
     double lower[3] = {(double)x1, (double)y1, oldHeight - 1.0};
     double upper[3] = {(double)x2, (double)y2, oldHeight + 0.1};
 
-    const std::vector<Animated *> &balls =
-        Game::current->balls->bboxOverlapsWith(lower, upper);
-    for (int i = 0; i < balls.size(); i++) {
+    Animated **balls;
+    int nballs = Game::current->balls->bboxOverlapsWith(lower, upper, &balls);
+    for (int i = 0; i < nballs; i++) {
       Ball *ball = (Ball *)balls[i];
       if (ball->no_physics) continue;
 

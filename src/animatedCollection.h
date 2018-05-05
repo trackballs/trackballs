@@ -23,25 +23,26 @@
 
 #include "animated.h"
 
-#include <vector>
-
 class AnimatedCollection {
  public:
   AnimatedCollection();
   ~AnimatedCollection();
   void add(Animated*);
+  void reserve(int N);
   void clear();
 
   void recalculateBboxMap();
-  std::vector<Animated*> bboxOverlapsWith(const Animated*) const;
-  std::vector<Animated*> bboxOverlapsWith(const double lower[3], const double upper[3]) const;
+  size_t bboxOverlapsWith(const Animated*, Animated*** ret) const;
+  size_t bboxOverlapsWith(const double lower[3], const double upper[3], Animated*** ret) const;
 
  private:
-  std::vector<Animated*> store;
   void* map;
   void* alloc;
   void** retlist;
   int ntot;
+  int nreserved;
+  int* rect_indices;
+  void* input;
 };
 
 #endif /* ANIMATED_COLLECTION_H */

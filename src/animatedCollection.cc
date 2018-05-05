@@ -61,6 +61,10 @@ class SingleCycleAllocator {
     delete[] data;
     delete[] istack;
   }
+  void reset() {
+    index = 0;
+    stackdex = 0;
+  }
   void* allocate(size_t bytes) {
     char* ret = &data[index];
     index += bytes;
@@ -84,6 +88,8 @@ class SingleCycleAllocator {
     return r;
   }
   void stackPop() { stackdex -= istack[stackdex - 1] + 1; }
+  size_t maxStackSize() const { return stacklen; }
+  size_t maxSize() const { return maxlen; }
 
  private:
   char* data;
@@ -777,20 +783,6 @@ int OverlapTree<D>::rightEndsRightOf(Real lbound, void** acc, Real low[D],
   return nfound;
 }
 
-AnimatedCollection::AnimatedCollection()
-    : store(), map(NULL), alloc(NULL), retlist(NULL), ntot(0) {}
-
-AnimatedCollection::~AnimatedCollection() {
-  if (alloc) delete (SingleCycleAllocator*)alloc;
-  if (retlist) delete[] retlist;
-}
-
-void AnimatedCollection::add(Animated* a) { store.push_back(a); }
-
-void AnimatedCollection::clear() { store.clear(); }
-
-static struct Rectangle<3>* staticinput = NULL;
-
 static struct Rectangle<3> rectFromAnim(const Animated* a) {
   struct Rectangle<3> r;
   r.tag = (void*)a;
@@ -843,60 +835,99 @@ reverseAxisOrder(const struct Rectangle<3>& s) {
   return r;
 }
 
-void AnimatedCollection::recalculateBboxMap() {
-  if (alloc) {
-    delete (SingleCycleAllocator*)alloc;
-    alloc = NULL;
-    map = NULL;
-  }
+AnimatedCollection::AnimatedCollection()
+    : map(NULL),
+      alloc(NULL),
+      retlist(NULL),
+      ntot(0),
+      nreserved(0),
+      rect_indices(NULL),
+      input(NULL) {}
 
-  ntot = store.size();
+AnimatedCollection::~AnimatedCollection() {
+  if (alloc) delete (SingleCycleAllocator*)alloc;
+  if (retlist) delete[] retlist;
+  if (rect_indices) delete[] rect_indices;
+  if (input) delete[](struct Rectangle<3>*) input;
+}
+
+void AnimatedCollection::add(Animated* a) {
+  struct Rectangle<3> r = rectFromAnim(a);
+  r = reverseAxisOrder(r);
+  if (ntot >= nreserved) { reserve(std::max(2 * ntot, 16)); }
+  ((struct Rectangle<3>*)input)[ntot] = r;
+  ntot++;
+}
+
+void AnimatedCollection::reserve(int N) {
+  if (N <= nreserved) return;
+  nreserved = N;
+
+  struct Rectangle<3>* ninput = new struct Rectangle<3>[nreserved];
+  int* nrect_indices = new int[nreserved];
+  for (int i = 0; i < nreserved; i++) { nrect_indices[i] = i; }
+  for (int i = 0; i < ntot; i++) { ninput[i] = ((struct Rectangle<3>*)input)[i]; }
+
+  if (input) delete[](struct Rectangle<3>*) input;
+  if (rect_indices) delete[] rect_indices;
+  if (retlist) delete[] retlist;
+  input = (void*)ninput;
+  rect_indices = nrect_indices;
+  retlist = new void*[nreserved];
+}
+
+void AnimatedCollection::clear() {
+  ntot = 0;
+  nreserved = 0;
+  if (input) delete[](struct Rectangle<3>*) input;
+  if (rect_indices) delete[] rect_indices;
+  if (retlist) delete[] retlist;
+  retlist = NULL;
+  input = NULL;
+  rect_indices = NULL;
+}
+
+void AnimatedCollection::recalculateBboxMap() {
   if (ntot == 0) {
     map = NULL;
     return;
   }
 
-  struct Rectangle<3>* input = new struct Rectangle<3>[ntot];
-  int* rect_indices = new int[ntot];
-  for (int i = 0; i < store.size(); i++) {
-    struct Rectangle<3> r = rectFromAnim(store[i]);
-    r = reverseAxisOrder(r);
-    input[i] = r;
-    rect_indices[i] = i;
-  }
-  if (SANITY_CHECK) {
-    if (staticinput) delete[] staticinput;
-    staticinput = new struct Rectangle<3>[ntot];
-    memcpy(staticinput, input, sizeof(struct Rectangle<3>) * ntot);
-  }
-
   /* For < 200 entities, maxmem < 5MB, and in practice ~200Kb is used */
   size_t maxmem = DFoldRectangleTree<3>::maxMemoryUse(ntot);
   size_t nstack = (ntot + 1) * (sizeof(int) * 3 + sizeof(Real) * 2);
-  alloc = new SingleCycleAllocator(maxmem, nstack);
+
+  /* Reset memory */
+  if (alloc) {
+    size_t am = ((SingleCycleAllocator*)alloc)->maxSize();
+    size_t ns = ((SingleCycleAllocator*)alloc)->maxStackSize();
+    if (maxmem > am || am > 2 * maxmem || nstack > ns || ns > 2 * nstack) {
+      delete (SingleCycleAllocator*)alloc;
+      alloc = new SingleCycleAllocator(3 * maxmem / 2, 3 * nstack / 2);
+    } else {
+      ((SingleCycleAllocator*)alloc)->reset();
+    }
+  } else {
+    alloc = new SingleCycleAllocator(3 * maxmem / 2, 3 * nstack / 2);
+  }
+
+  /* Build map */
   map = ((SingleCycleAllocator*)alloc)->allocate(sizeof(DFoldRectangleTree<3>));
-  new (map) DFoldRectangleTree<3>(input, rect_indices, ntot, (SingleCycleAllocator*)alloc);
+  new (map) DFoldRectangleTree<3>((struct Rectangle<3>*)input, rect_indices, ntot,
+                                  (SingleCycleAllocator*)alloc);
   size_t usage = ((SingleCycleAllocator*)alloc)->used();
   (void)usage;
-  delete[] input;
-  delete[] rect_indices;
-
-  if (retlist) {
-    delete[] retlist;
-    retlist = NULL;
-  }
-  retlist = new void*[ntot];
 }
 
-std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const Animated* a) const {
+size_t AnimatedCollection::bboxOverlapsWith(const Animated* a, Animated*** ret) const {
   struct Rectangle<3> r = rectFromAnim(a);
-  return bboxOverlapsWith(r.lower, r.upper);
+  return bboxOverlapsWith(r.lower, r.upper, ret);
 }
-std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3],
-                                                            const double upper[3]) const {
+size_t AnimatedCollection::bboxOverlapsWith(const double lower[3], const double upper[3],
+                                            Animated*** ret) const {
   if (!map) {
     /* Either map has not been created or there are no rectangles */
-    return std::vector<Animated*>();
+    return 0;
   }
   DFoldRectangleTree<3>* dmap = (DFoldRectangleTree<3>*)map;
   struct Rectangle<3> r = rectFromBounds(lower, upper);
@@ -904,8 +935,6 @@ std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3
 
   int nfound = dmap->intersect(retlist, r.lower, r.upper);
 
-  std::vector<Animated*> ret(nfound, NULL);
-  for (int i = 0; i < nfound; i++) { ret[i] = (Animated*)retlist[i]; }
   if (SANITY_CHECK) {
     /* Sanity check via O(n^2) algorithm */
 
@@ -913,7 +942,7 @@ std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3
     std::set<Animated*> coll;
     int nco = 0;
     for (int l = 0; l < ntot; l++) {
-      struct Rectangle<3> s = staticinput[l];
+      struct Rectangle<3> s = ((struct Rectangle<3>*)input)[l];
 
       int nover = 0;
       for (int i = 0; i < 3; i++) {
@@ -922,7 +951,7 @@ std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3
       if (nover == 3) {
         coll.insert((Animated*)s.tag);
         for (int k = 0; k < nfound; k++) {
-          if (ret[k] == (Animated*)s.tag) {
+          if (retlist[k] == (Animated*)s.tag) {
             nco++;
             break;
           }
@@ -931,15 +960,15 @@ std::vector<Animated*> AnimatedCollection::bboxOverlapsWith(const double lower[3
     }
 
     static int psu = 0;
-    if (coll.size() != nco || coll.size() != ret.size() || ret.size() != nfound) {
-      warning("Interval tree %d error %d -> %d (ideal %d (%d present)), %d prior passed", ntot,
-              nfound, ret.size(), coll.size(), nco, psu);
+    if (coll.size() != nco || coll.size() != nfound) {
+      warning("Interval tree %d error %d (ideal %d (%d present)), %d prior passed", ntot,
+              nfound, coll.size(), nco, psu);
       psu = 0;
     } else {
       psu++;
     }
-    return std::vector<Animated*>(coll.begin(), coll.end());
   }
 
-  return ret;
+  *ret = (Animated**)retlist;
+  return nfound;
 }

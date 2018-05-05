@@ -111,8 +111,9 @@ void Spike::tick(Real t) {
   }
   position[2] = z;
 
-  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  for (int i = 0; i < balls.size(); i++) {
+  Animated **balls;
+  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
 
     if (ball->position[0] > x - 1 && ball->position[0] < x + 1 && ball->position[1] > y - 1 &&

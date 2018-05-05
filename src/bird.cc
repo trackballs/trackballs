@@ -138,8 +138,9 @@ void Bird::tick(Real t) {
     position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
 
   // check for collisions with balls
-  const std::vector<Animated *> &balls = Game::current->balls->bboxOverlapsWith(this);
-  for (int i = 0; i < balls.size(); i++) {
+  Animated **balls;
+  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
     if (ball->no_physics) continue;
 
