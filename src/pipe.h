@@ -30,9 +30,9 @@ class Pipe : public Animated {
  public:
   Pipe(const Coord3d& from, const Coord3d& to, Real radius);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void generateBuffers(const GLuint*, const GLuint*, bool) const;
+  virtual void drawBuffers1(const GLuint*, const GLuint*) const;
+  virtual void drawBuffers2(const GLuint*, const GLuint*) const;
 
   virtual void tick(Real t);
 
@@ -42,7 +42,7 @@ class Pipe : public Animated {
   Real windForward, windBackward;
 
  private:
-  void drawTrunk(GLuint* idxbufs, GLuint* databufs) const;
+  void drawTrunk(const GLuint* idxbufs, const GLuint* databufs) const;
 };
 
 #endif

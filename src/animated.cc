@@ -25,59 +25,61 @@
 #include "map.h"
 #include "scoreSign.h"
 
-Animated::Animated(int role) : GameHook(role) {
+Animated::Animated(int role, int maxVBOpairs) : GameHook(role), nVBOs(maxVBOpairs) {
   primaryColor = Color(0.8, 0.8, 0.8, 1.);
   secondaryColor = Color(0.3, 0.3, 0.3, 1.);
   specularColor = Color(0., 0., 0., 1.);
 
   texture = 0;
-  // Don't call any inherited version of the computeBoundBox yet to avoid problems
-  // with uninitialized variables.
-  Animated::computeBoundingBox();
+
+  boundingBox[0][0] = -1.0;
+  boundingBox[0][1] = -1.0;
+  boundingBox[0][2] = -1.0;
+  boundingBox[1][0] = +1.0;
+  boundingBox[1][1] = +1.0;
+  boundingBox[1][2] = +1.0;
 
   scoreOnDeath = 0;
   timeOnDeath = 0;
   flags = 0;
-  onScreen = 0;
+
+  onScreen = true;
+  drawChanged = true;
 
   idxVBOs = NULL;
   dataVBOs = NULL;
   lastFrameNumber = -1;
-  nVBOs = 0;
 }
 Animated::~Animated() {
-  if (nVBOs > 0) {
+  if (idxVBOs) {
     glDeleteBuffers(nVBOs, idxVBOs);
-    glDeleteBuffers(nVBOs, dataVBOs);
     delete[] idxVBOs;
+    idxVBOs = NULL;
+  }
+  if (dataVBOs) {
+    glDeleteBuffers(nVBOs, dataVBOs);
     delete[] dataVBOs;
-    nVBOs = 0;
+    dataVBOs = NULL;
   }
 }
-void Animated::has_moved() {
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
+void Animated::setupVBOs() {
+  if (!idxVBOs) {
+    idxVBOs = new GLuint[nVBOs];
+    glGenBuffers(nVBOs, idxVBOs);
+    drawChanged = true;
+  }
+  if (!dataVBOs) {
+    dataVBOs = new GLuint[nVBOs];
+    glGenBuffers(nVBOs, dataVBOs);
+    drawChanged = true;
+  }
 }
-
-void Animated::allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs) {
-  idxbufs = new GLuint[N];
-  databufs = new GLuint[N];
-  glGenBuffers(N, idxbufs);
-  glGenBuffers(N, databufs);
-}
-
 void Animated::draw() {
   if (theFrameNumber != lastFrameNumber) {
     lastFrameNumber = theFrameNumber;
-    if (nVBOs > 0) {
-      glDeleteBuffers(nVBOs, idxVBOs);
-      glDeleteBuffers(nVBOs, dataVBOs);
-      delete[] idxVBOs;
-      delete[] dataVBOs;
-      nVBOs = 0;
-      idxVBOs = NULL;
-      dataVBOs = NULL;
-    }
-    nVBOs = generateBuffers(idxVBOs, dataVBOs);
+    setupVBOs();
+    generateBuffers(idxVBOs, dataVBOs, drawChanged);
+    drawChanged = false;
   }
   drawBuffers1(idxVBOs, dataVBOs);
   /* For debug */
@@ -86,16 +88,9 @@ void Animated::draw() {
 void Animated::draw2() {
   if (theFrameNumber != lastFrameNumber) {
     lastFrameNumber = theFrameNumber;
-    if (nVBOs > 0) {
-      glDeleteBuffers(nVBOs, idxVBOs);
-      glDeleteBuffers(nVBOs, dataVBOs);
-      delete[] idxVBOs;
-      delete[] dataVBOs;
-      nVBOs = 0;
-      idxVBOs = NULL;
-      dataVBOs = NULL;
-    }
-    nVBOs = generateBuffers(idxVBOs, dataVBOs);
+    setupVBOs();
+    generateBuffers(idxVBOs, dataVBOs, drawChanged);
+    drawChanged = false;
   }
   drawBuffers2(idxVBOs, dataVBOs);
 }
@@ -141,15 +136,6 @@ void Animated::drawBoundingBox() const {
   /* Cleanup buffers */
   glDeleteBuffers(1, &idxbuf);
   glDeleteBuffers(1, &databuf);
-}
-void Animated::computeBoundingBox() {
-  /* Use a default size 2x2x2 boundingbox around object */
-  boundingBox[0][0] = -1.0;
-  boundingBox[0][1] = -1.0;
-  boundingBox[0][2] = -1.0;
-  boundingBox[1][0] = +1.0;
-  boundingBox[1][1] = +1.0;
-  boundingBox[1][2] = +1.0;
 }
 
 void Animated::tick(Real dt) { GameHook::tick(dt); }

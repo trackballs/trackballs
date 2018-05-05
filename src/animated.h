@@ -34,26 +34,23 @@
 
 class Animated : public GameHook {
  public:
-  explicit Animated(int role);
+  explicit Animated(int role, int maxVBOpairs);
 
   virtual ~Animated();
   /** Setup drawing pass of object.*/
 
-  /** new[] and glGenBuffer the index and data buffers */
-  static void allocateBuffers(int N, GLuint*& idxbufs, GLuint*& databufs);
   /** Generate all buffers possibly used in this tick */
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const = 0;
+  virtual void generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
+                               bool mustUpdate) const = 0;
   /** First drawing pass of object. Render opaque buffers. */
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const = 0;
+  virtual void drawBuffers1(const GLuint* idxbufs, const GLuint* databufs) const = 0;
   /** Draws the second pass of object. Render alpha buffers if needed. */
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const = 0;
+  virtual void drawBuffers2(const GLuint* idxbufs, const GLuint* databufs) const = 0;
 
   /* Object drawing passes */
   void draw();
   void draw2();
   void drawBoundingBox() const;
-  /** Recomputes the bounding box of the object. Needed after changes in size */
-  virtual void computeBoundingBox();
 
   virtual void tick(Real dt);
   virtual void die(int how);
@@ -61,12 +58,6 @@ class Animated : public GameHook {
   /** General purpose field. Semantics defined by children */
   int flags;
 
-  /** Tries to make the current position reasonable. Eg. set
-      z-position to height of map */
-  virtual void has_moved();
-
-  /** Computed by game::draw if the object appears roughly on the screen or not. */
-  bool onScreen;
   /** Center position of object */
   Coord3d position;
   /** Lower/higher coordinate of boundingbox relative to position */
@@ -80,11 +71,19 @@ class Animated : public GameHook {
   /** Time modification player is awarded when this object dies */
   double timeOnDeath;
 
+  /** Computed by game::draw if the object appears roughly on the screen or not. */
+  bool onScreen;
+  /** Set by guile interface if object parameters have been altered; used to
+   *  update otherwise static objects */
+  bool drawChanged;
+
  private:
+  void setupVBOs();
+
   int lastFrameNumber;
   GLuint* idxVBOs;
   GLuint* dataVBOs;
-  GLuint nVBOs;
+  const GLuint nVBOs;
 };
 
 #endif

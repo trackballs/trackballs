@@ -26,7 +26,7 @@
 #include "player.h"
 #include "sound.h"
 
-CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated) {
+CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated, 1) {
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(x, y);
@@ -46,9 +46,8 @@ void CSwitch::releaseCallbacks() {
   off = NULL;
 }
 
-int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
-
+void CSwitch::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                              bool mustUpdate) const {
   const int nfacets = 6;
   GLfloat lever_length = 0.3f;
   GLfloat lever_end = 0.03f;
@@ -143,11 +142,9 @@ int CSwitch::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void CSwitch::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -167,7 +164,7 @@ void CSwitch::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDrawElements(GL_TRIANGLES, (4 * nfacets + 6) * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void CSwitch::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void CSwitch::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
 void CSwitch::tick(Real /*t*/) {
   Coord3d v = position - Game::current->player1->position;
@@ -179,9 +176,11 @@ void CSwitch::tick(Real /*t*/) {
       if (is_on) {
         is_on = false;
         Game::current->queueCall(off);
+        drawChanged = true;
       } else {
         is_on = true;
         Game::current->queueCall(on);
+        drawChanged = true;
       }
       playEffect(SFX_SWITCH);
     }

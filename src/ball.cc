@@ -47,7 +47,7 @@ void Ball::init() {
   dizzyTexCoords[3] = 1.f;
 }
 
-Ball::Ball(int role) : Animated(role) {
+Ball::Ball(int role) : Animated(role, 7) {
   sink = 0.0;
 
   ballResolution = BALL_LORES;
@@ -87,12 +87,9 @@ Ball::~Ball() {
   setReflectivity(0.0, 0);  // This effectivly deallocates all environment maps */
 }
 
-int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  if (!is_on) return 0;
-
-  /* We generate the maximum number of buffers, even if they aren't used */
-  int N = 7;
-  allocateBuffers(N, idxbufs, databufs);
+void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                           bool /*mustUpdate*/) const {
+  if (!is_on) return;
 
   Color color = primaryColor.toOpaque();
   if (0) {
@@ -387,11 +384,9 @@ int Ball::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[6]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
   }
-
-  return N;
 }
 
-void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
 
@@ -556,7 +551,7 @@ void Ball::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   }
 }
 
-void Ball::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
   if (activeView.calculating_shadows) return;

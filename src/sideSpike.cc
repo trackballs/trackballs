@@ -30,7 +30,7 @@
 #include "spike.h"
 
 SideSpike::SideSpike(const Coord3d &position, Real speed, Real phase, int side)
-    : Animated(Role_OtherAnimated) {
+    : Animated(Role_OtherAnimated, 1) {
   this->position = position;
   this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;
@@ -50,9 +50,8 @@ SideSpike::SideSpike(const Coord3d &position, Real speed, Real phase, int side)
   specularColor = Color(0.1, 0.1, 0.1, 1.0);
 }
 
-int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
-
+void SideSpike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                                bool /*mustUpdate*/) const {
   const int nfacets = 6;
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
@@ -90,11 +89,9 @@ int SideSpike::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void SideSpike::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -114,7 +111,7 @@ void SideSpike::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
 }
-void SideSpike::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void SideSpike::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
 void SideSpike::tick(Real t) {
   double dist, h;

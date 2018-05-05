@@ -24,7 +24,7 @@
 #include "settings.h"
 
 Splash::Splash(Coord3d center, Coord3d velocity, Color color, double strength, double radius)
-    : Animated(Role_OtherAnimated) {
+    : Animated(Role_OtherAnimated, 1) {
   timeLeft = 3.0;
   nDroplets = (int)strength;
   if (nDroplets > 32) nDroplets = 32;
@@ -39,10 +39,9 @@ Splash::Splash(Coord3d center, Coord3d velocity, Color color, double strength, d
   }
 }
 
-int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const {
-  if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return 0;
-
-  allocateBuffers(1, idxbufs, databufs);
+void Splash::generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
+                             bool /*mustUpdate*/) const {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
 
   GLfloat* data = new GLfloat[3 * nDroplets];
   ushort* idxs = new ushort[nDroplets];
@@ -59,13 +58,11 @@ int Splash::generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, nDroplets * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
-
-  return 1;
 }
 
-void Splash::drawBuffers1(GLuint* /*idxbufs*/, GLuint* /*databufs*/) const {}
+void Splash::drawBuffers1(const GLuint* /*idxbufs*/, const GLuint* /*databufs*/) const {}
 
-void Splash::drawBuffers2(GLuint* idxbufs, GLuint* databufs) const {
+void Splash::drawBuffers2(const GLuint* idxbufs, const GLuint* databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
   if (activeView.calculating_shadows) return;
 

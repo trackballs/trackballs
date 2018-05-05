@@ -24,7 +24,7 @@
 #include "settings.h"
 
 Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double strength)
-    : Animated(Role_OtherAnimated),
+    : Animated(Role_OtherAnimated, 1),
       randomSpeed(randomSpeed),
       radius(radius),
       strength(strength) {
@@ -40,9 +40,9 @@ Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double
   memset(creationTime, 0, sizeof(creationTime));
 }
 
-int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return 0;
-  allocateBuffers(1, idxbufs, databufs);
+void Fountain::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                               bool /*mustUpdate*/) const {
+  if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
 
   int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;
   if (fps < 5) skip *= 2;
@@ -86,13 +86,11 @@ int Fountain::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, npoints * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
-
-  return 1;
 }
 
-void Fountain::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void Fountain::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
-void Fountain::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Fountain::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
   if (activeView.calculating_shadows) return;
 

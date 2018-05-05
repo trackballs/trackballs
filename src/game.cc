@@ -98,13 +98,6 @@ Game::~Game() {
 
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }
-
-  for (int i = 0; i < Role_MaxTypes; i++) {
-    if (i == Role_Player) continue;
-    int n = hooks[i].size();
-    for (int k = 0; k < n; k++) { delete hooks[i][k]; }
-    hooks[i].clear();
-  }
 }
 
 void Game::loadLevel(const char *name) {
@@ -213,12 +206,6 @@ void Game::queueCall(SCM fun, SCM argA, SCM argB) {
 }
 
 void Game::clearLevel() {
-  if (balls) {
-    delete balls;
-    balls = NULL;
-  }
-  balls = new AnimatedCollection();
-
   if (weather) weather->clear();
   clearMusicPreferences();
 
@@ -232,8 +219,9 @@ void Game::clearLevel() {
     int n = hooks[i].size();
     for (int k = 0; k < n; k++) {
       hooks[i][k]->remove();
-      delete hooks[i][k];
+      hooks[i][k]->releaseCallbacks();
     }
+    for (int k = 0; k < n; k++) { delete hooks[i][k]; }
     hooks[i].clear();
   }
 }

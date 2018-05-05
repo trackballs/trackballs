@@ -27,9 +27,9 @@ class Diamond : public Animated {
  public:
   Diamond(const Coord3d& position);
 
-  virtual int generateBuffers(GLuint*& idxbufs, GLuint*& databufs) const;
-  virtual void drawBuffers1(GLuint* idxbufs, GLuint* databufs) const;
-  virtual void drawBuffers2(GLuint* idxbufs, GLuint* databufs) const;
+  virtual void generateBuffers(const GLuint*, const GLuint*, bool) const;
+  virtual void drawBuffers1(const GLuint*, const GLuint*) const;
+  virtual void drawBuffers2(const GLuint*, const GLuint*) const;
 
   void tick(Real t);
   virtual void onGet();

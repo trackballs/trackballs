@@ -23,7 +23,7 @@
 #include "game.h"
 
 Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
-    : Animated(Role_Pipe), from(f), to(t), radius(r) {
+    : Animated(Role_Pipe, 1), from(f), to(t), radius(r) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   position = 0.5 * (from + to);
   primaryColor = Color(0.6, 0.6, 0.6, 1.0);
@@ -37,8 +37,10 @@ Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
   }
 }
 
-int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
+void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                           bool mustUpdate) const {
+  if (!mustUpdate) return;
+
   Coord3d up(0., 0., 0.);
   Coord3d dir = to - from;
   dir = dir / length(dir);
@@ -84,18 +86,16 @@ int Pipe::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void Pipe::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void Pipe::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   if (primaryColor.v[3] >= 65535) drawTrunk(idxbufs, databufs);
 }
-void Pipe::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Pipe::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
   if (primaryColor.v[3] < 65535) drawTrunk(idxbufs, databufs);
 }
-void Pipe::drawTrunk(GLuint *idxbufs, GLuint *databufs) const {
+void Pipe::drawTrunk(const GLuint *idxbufs, const GLuint *databufs) const {
   // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
   if (primaryColor.v[3] < 65535) {

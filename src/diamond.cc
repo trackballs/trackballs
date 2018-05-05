@@ -25,7 +25,7 @@
 #include "sign.h"
 #include "sound.h"
 
-Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated) {
+Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated, 1) {
   position = pos;
 
   specularColor = Color(1., 1., 1., 1.);
@@ -34,9 +34,9 @@ Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated) {
   taken = 0;
 }
 
-int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  if (fade <= 0.) { return 0; }
-  allocateBuffers(1, idxbufs, databufs);
+void Diamond::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                              bool /*mustUpdate*/) const {
+  if (fade <= 0.) return;
 
   Color color = primaryColor;
   color.v[3] *= fade;
@@ -61,13 +61,11 @@ int Diamond::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void Diamond::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void Diamond::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
-void Diamond::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Diamond::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (fade <= 0.) { return; }
 
   glEnable(GL_BLEND);

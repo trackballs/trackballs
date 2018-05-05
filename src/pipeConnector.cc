@@ -23,7 +23,7 @@
 #include "game.h"
 
 PipeConnector::PipeConnector(const Coord3d &pos, Real r)
-    : Animated(Role_PipeConnector), radius(r) {
+    : Animated(Role_PipeConnector, 1), radius(r) {
   position = pos;
   primaryColor = Color(0.6, 0.6, 0.6, 1.0);
 
@@ -35,8 +35,9 @@ PipeConnector::PipeConnector(const Coord3d &pos, Real r)
   boundingBox[1][2] = radius;
 }
 
-int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
+void PipeConnector::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                                    bool mustUpdate) const {
+  if (!mustUpdate) return;
 
   int ntries = 0;
   int nverts = 0;
@@ -55,17 +56,15 @@ int PipeConnector::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
   delete[] data;
   delete[] idxs;
-
-  return 1;
 }
-void PipeConnector::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void PipeConnector::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   if (primaryColor.v[3] >= 65535) drawMe(idxbufs, databufs);
 }
-void PipeConnector::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void PipeConnector::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
   if (primaryColor.v[3] < 65535) drawMe(idxbufs, databufs);
 }
-void PipeConnector::drawMe(GLuint *idxbufs, GLuint *databufs) const {
+void PipeConnector::drawMe(const GLuint *idxbufs, const GLuint *databufs) const {
   if (primaryColor.v[3] < 65535) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);

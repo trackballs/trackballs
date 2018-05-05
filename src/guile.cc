@@ -676,10 +676,8 @@ SCM_DEFINE(set_position, "set-position", 3, 1, 0, (SCM obj, SCM x, SCM y, SCM z)
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->position[0] = scm_to_double(x) + DX;
   anim->position[1] = scm_to_double(y) + DY;
-  if (scm_is_real(z))
-    anim->position[2] = scm_to_double(z);
-  else
-    anim->has_moved();
+  if (scm_is_real(z)) anim->position[2] = scm_to_double(z);
+  anim->drawChanged = true;
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -733,7 +731,10 @@ SCM_DEFINE(set_modtime, "set-modtime", 3, 0, 0, (SCM s_obj, SCM s_mod, SCM s_tim
   double time = scm_to_double(s_time);
   Animated *anim = (Animated *)SCM_CDR(s_obj);
   Ball *ball = dynamic_cast<Ball *>(anim);
-  if (ball) ball->modTimeLeft[mod] = time;
+  if (ball) {
+    ball->modTimeLeft[mod] = time;
+    ball->drawChanged = true;
+  }
   return s_obj;
 }
 #undef FUNC_NAME
@@ -785,6 +786,7 @@ SCM_DEFINE(set_primary_color, "set-primary-color", 4, 1, 0,
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->primaryColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
                              scm_is_real(a) ? scm_to_double(a) : 1.0);
+  anim->drawChanged = true;
   return obj;
 }
 #undef FUNC_NAME
@@ -802,6 +804,7 @@ SCM_DEFINE(set_secondary_color, "set-secondary-color", 4, 1, 0,
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->secondaryColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
                                scm_is_real(a) ? scm_to_double(a) : 1.0);
+  anim->drawChanged = true;
   return obj;
 }
 #undef FUNC_NAME
@@ -819,7 +822,8 @@ SCM_DEFINE(set_specular_color, "set-specular-color", 4, 1, 0,
   Animated *anim = (Animated *)SCM_CDR(obj);
   anim->specularColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
                               scm_is_real(a) ? scm_to_double(a) : 1.0);
-  return SCM_UNSPECIFIED;
+  anim->drawChanged = true;
+  return obj;
 }
 #undef FUNC_NAME
 
@@ -837,6 +841,7 @@ SCM_DEFINE(set_flag, "set-flag", 3, 0, 0, (SCM anim, SCM flag, SCM state),
     a->flags = a->flags & (~iflag);
   else
     a->flags = a->flags | iflag;
+  a->drawChanged = true;
   return anim;
 }
 #undef FUNC_NAME
@@ -888,6 +893,7 @@ SCM_DEFINE(set_texture, "set-texture", 2, 0, 0, (SCM obj, SCM tname),
     if (strcmp(name, textureNames[i]) == 0) {
       Animated *anim = (Animated *)SCM_CDR(obj);
       anim->texture = i;
+      anim->drawChanged = true;
       return obj;
     }
   return SCM_BOOL(false);
@@ -1022,6 +1028,8 @@ SCM_DEFINE(set_onoff, "set-onoff", 2, 0, 0, (SCM obj, SCM state),
   SCM_ASSERT(scm_is_bool(state), state, SCM_ARG2, FUNC_NAME);
   GameHook *h = (GameHook *)SCM_CDR(obj);
   h->is_on = scm_is_true(state);
+  Animated *a = dynamic_cast<Animated *>(h);
+  if (a) { a->drawChanged = true; }
   return obj;
 }
 #undef FUNC_NAME

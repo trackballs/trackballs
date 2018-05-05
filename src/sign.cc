@@ -28,7 +28,7 @@
 #define SIGN_SCALE 0.007
 
 Sign::Sign(const char *string, Real l, Real s, Real r, const Coord3d &pos)
-    : Animated(Role_OtherAnimated) {
+    : Animated(Role_OtherAnimated, 1) {
   position = pos;
   if (l <= 0.0) l = 1e10;
   life = l;
@@ -70,9 +70,8 @@ void Sign::mkTexture(const char *string) {
   boundingBox[1][2] = SIGN_SCALE * scale * height;
 }
 
-int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
-
+void Sign::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                           bool /*mustUpdate*/) const {
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   GLfloat data[8 * 8];
@@ -108,13 +107,11 @@ int Sign::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
   ushort idxs[4][3] = {{0, 1, 2}, {1, 3, 2}, {4, 5, 6}, {5, 7, 6}};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void Sign::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void Sign::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
-void Sign::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Sign::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (activeView.calculating_shadows) return;
 
   // Keep the depth function on but trivial so as to record depth values

@@ -28,7 +28,7 @@
 #define NFACETS 14
 
 Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
-    : Animated(Role_OtherAnimated) {
+    : Animated(Role_OtherAnimated, 2) {
   this->x = x;
   this->y = y;
   this->dx = dx;
@@ -48,11 +48,10 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
   boundingBox[1][2] = 2 * radius + 0.5;
 }
 
-int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(2, idxbufs, databufs);
-
+void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                               bool mustUpdate) const {
   GLfloat cent_height = 0.5f;
-  {
+  if (mustUpdate) {
     GLfloat data[(9 * NFACETS + 1) * 8];
     ushort idxs[9 * NFACETS][3];
 
@@ -172,11 +171,9 @@ int Teleport::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, NFACETS * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
   }
-
-  return 2;
 }
 
-void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void Teleport::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -196,7 +193,7 @@ void Teleport::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDrawElements(GL_TRIANGLES, 3 * 9 * NFACETS, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Teleport::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void Teleport::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (activeView.calculating_shadows) return;
 
   glDisable(GL_CULL_FACE);

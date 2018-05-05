@@ -27,7 +27,7 @@
 #include "map.h"
 #include "sound.h"
 
-Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
+Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated, 1) {
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]);
@@ -48,9 +48,8 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated) {
   timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
 
-int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  allocateBuffers(1, idxbufs, databufs);
-
+void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                             bool /*mustUpdate*/) const {
   GLfloat radius = killed_time * base_radius;
 
   const int nsides = 6;
@@ -146,11 +145,9 @@ int Cactus::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void Cactus::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -170,7 +167,7 @@ void Cactus::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Cactus::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void Cactus::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

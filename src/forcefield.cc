@@ -23,7 +23,7 @@
 #include "game.h"
 
 ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
-    : Animated(Role_Forcefield) {
+    : Animated(Role_Forcefield, 1) {
   position = pos;
   direction = dir;
   height = h;
@@ -38,9 +38,9 @@ ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
   boundingBox[1][1] = +abs(dir[1]);
   boundingBox[1][2] = +abs(dir[2]) + h;
 }
-int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  if (!is_on) return 0;
-  allocateBuffers(1, idxbufs, databufs);
+void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                                 bool /*mustUpdate*/) const {
+  if (!is_on) return;
 
   Coord3d ndir = direction;
   GLfloat len = length(ndir);
@@ -77,13 +77,11 @@ int ForceField::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
                         {5, 7, 11}, {7, 10, 11}, {7, 6, 10}, {6, 8, 10}, {6, 4, 8}};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void ForceField::drawBuffers1(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void ForceField::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
 
-void ForceField::drawBuffers2(GLuint *idxbufs, GLuint *databufs) const {
+void ForceField::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   if (!is_on) return;
   if (activeView.calculating_shadows) return;
 

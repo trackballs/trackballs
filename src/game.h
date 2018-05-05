@@ -39,7 +39,6 @@ class Map;
 class Player;
 class Weather;
 class EditMode;
-class GameHook;
 class Gamer;
 
 class Game {

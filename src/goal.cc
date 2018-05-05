@@ -29,11 +29,8 @@ Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.
   this->rotate = rotate;
   primaryColor = Color(0.9, 0.8, 0.3, 1.0);
   specularColor = Color(0.95, 0.9, 0.65, 1.0);
-
-  /* goal is a flag, hence already registered */
 }
 void Goal::onGet() {
-  // TODO. Make sure player is entering the goal from the right direction
   if (!Game::current->player1->hasWon) {
     strncpy(Game::current->nextLevel, nextLevel, sizeof(Game::current->nextLevel));
     if (Game::current->map->isBonus)
@@ -43,9 +40,9 @@ void Goal::onGet() {
   }
 }
 
-int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
-  if (!visible) return 0;
-  allocateBuffers(1, idxbufs, databufs);
+void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                           bool mustUpdate) const {
+  if (!mustUpdate || !visible) return;
 
   const int nfacets = 11;
   GLfloat inner_arc[2 + nfacets][2];
@@ -133,11 +130,9 @@ int Goal::generateBuffers(GLuint *&idxbufs, GLuint *&databufs) const {
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-
-  return 1;
 }
 
-void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
+void Goal::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   if (!visible) return;
 
   const int nfacets = 11;
@@ -161,4 +156,4 @@ void Goal::drawBuffers1(GLuint *idxbufs, GLuint *databufs) const {
   glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Goal::drawBuffers2(GLuint * /*idxbufs*/, GLuint * /*databufs*/) const {}
+void Goal::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}

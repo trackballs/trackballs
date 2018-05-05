@@ -43,8 +43,6 @@ void ScoreSign::init(int points, int type) {
   } else if (type == SCORESIGN_TIME) {
     primaryColor = Color(0.8, 0.8, 0.2, 1.0);
   }
-
-  /* Note ScoreSign is a Sign, hence already registered */
 }
 
 void ScoreSign::tick(Real t) {
