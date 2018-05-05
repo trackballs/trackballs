@@ -51,15 +51,7 @@ void GameHook::registerHook(GameHookEvent event, SCM hook) {
 void GameHook::triggerHook(GameHookEvent event, SCM object) {
   if (event < 0 || event >= GameHookEvent_MaxHooks) return;
 
-  if (hooks[event]) {
-    SCM subject;
-    Animated *a = dynamic_cast<Animated *>(this);
-    if (a)
-      subject = smobAnimated_make(a);
-    else
-      subject = smobGameHook_make(this);
-    Game::current->queueCall(hooks[event], subject, object ? object : SCM_BOOL_F);
-  }
+  if (hooks[event]) { Game::current->queueCall(hooks[event], this, object); }
 }
 
 SCM GameHook::getHook(GameHookEvent event) {

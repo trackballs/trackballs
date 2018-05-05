@@ -183,25 +183,23 @@ void Game::add(GameHook *hook) { newHooks.push_back(hook); }
 void Game::queueCall(SCM fun) {
   QueuedCall q;
   q.fun = fun;
-  q.argA = NULL;
-  q.argB = NULL;
+  q.type = 0;
   queuedCalls.push_back(q);
 }
-void Game::queueCall(SCM fun, SCM argA) {
-  scm_gc_protect_object(argA);
+void Game::queueCall(SCM fun, double val) {
   QueuedCall q;
   q.fun = fun;
-  q.argA = argA;
-  q.argB = NULL;
+  q.val = val;
+  q.type = 1;
   queuedCalls.push_back(q);
 }
-void Game::queueCall(SCM fun, SCM argA, SCM argB) {
-  scm_gc_protect_object(argA);
-  scm_gc_protect_object(argB);
+void Game::queueCall(SCM fun, GameHook *subject, SCM object) {
+  if (object) { scm_gc_unprotect_object(object); }
   QueuedCall q;
   q.fun = fun;
-  q.argA = argA;
-  q.argB = argB;
+  q.type = 2;
+  q.subject = subject;
+  q.object = object;
   queuedCalls.push_back(q);
 }
 
@@ -261,15 +259,20 @@ void Game::tick(Real t) {
     for (int j = 0; j < queuedCalls.size(); j++) {
       QueuedCall call = queuedCalls[j];
       /* the functions are owned by GameHooks; arguments by Game */
-      if (!call.argA) {
+      if (call.type == 0) {
         scm_catch_call_0(call.fun);
-      } else if (!call.argB) {
-        scm_catch_call_1(call.fun, call.argA);
-        scm_gc_unprotect_object(call.argA);
-      } else {
-        scm_catch_call_2(call.fun, call.argA, call.argB);
-        scm_gc_unprotect_object(call.argA);
-        scm_gc_unprotect_object(call.argB);
+      } else if (call.type == 1) {
+        scm_catch_call_1(call.fun, scm_from_double(call.val));
+      } else if (call.type == 2) {
+        SCM sub;
+        Animated *a = dynamic_cast<Animated *>(call.subject);
+        if (a)
+          sub = smobAnimated_make(a);
+        else
+          sub = smobGameHook_make(call.subject);
+
+        scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
+        if (call.object) { scm_gc_unprotect_object(call.object); }
       }
     }
     queuedCalls.clear();

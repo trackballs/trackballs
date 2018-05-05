@@ -54,8 +54,8 @@ class Game {
 
   void add(GameHook *);
   void queueCall(SCM fun);
-  void queueCall(SCM fun, SCM argA);
-  void queueCall(SCM fun, SCM argA, SCM argB);
+  void queueCall(SCM fun, double val);
+  void queueCall(SCM fun, GameHook *subject, SCM object);
   void loadLevel(const char *level);
   void clearLevel();
 
@@ -90,8 +90,14 @@ class Game {
  private:
   typedef struct {
     SCM fun;
-    SCM argA;
-    SCM argB;
+    union {
+      double val;
+      struct {
+        GameHook *subject;
+        SCM object;
+      };
+    };
+    int type;
   } QueuedCall;
   std::vector<QueuedCall> queuedCalls;
   std::vector<GameHook *> newHooks;

@@ -69,7 +69,7 @@ void Animator::tick(Real td) {
   }
   if (position >= length && repeat & ANIMATOR_1_WRAP) { position = position - length; }
 
-  Game::current->queueCall(fun, scm_from_double(getValue()));
+  Game::current->queueCall(fun, getValue());
 
   if (position <= 0 && repeat & ANIMATOR_0_REMOVE) {
     remove();
