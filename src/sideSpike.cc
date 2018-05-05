@@ -56,33 +56,34 @@ void SideSpike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
 
-  Matrix4d frommtx;
-  identityMatrix(frommtx);
+  Matrix3d rotmtx1 = {{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
+  Matrix3d rotmtx2 = {{0, 0, -1}, {0, 1, 0}, {1, 0, 0}};
+  Matrix3d rotmtx3 = {{1, 0, 0}, {0, 0, 1}, {0, -1, 0}};
+  Matrix3d rotmtx4 = {{1, 0, 0}, {0, 0, -1}, {0, 1, 0}};
+
+  Matrix3d *rot;
 
   Coord3d pos(position[0], position[1], position[2] + 0.25);
   switch (side) {
   case 1:
-    rotateY(M_PI / 2, frommtx);
+    rot = &rotmtx1;
     pos[0] += -0.5 + offset;
     break;
   case 2:
-    rotateY(-M_PI / 2, frommtx);
+    rot = &rotmtx2;
     pos[0] += 0.5 - offset;
     break;
   case 3:
-    rotateX(M_PI / 2, frommtx);
+    rot = &rotmtx3;
     pos[1] += -0.5 + offset;
     break;
   case 4:
-    rotateX(-M_PI / 2, frommtx);
+    rot = &rotmtx4;
     pos[1] += 0.5 - offset;
     break;
   }
 
-  Matrix3d rotmtx;
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
-  generateSpikeVBO(data, idxs, rotmtx, pos, primaryColor, secondaryColor, 0.7);
+  generateSpikeVBO(data, idxs, *rot, pos, primaryColor, secondaryColor, 0.7);
 
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);

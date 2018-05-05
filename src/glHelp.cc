@@ -509,7 +509,12 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat con
   int ntriangles = 2 * radial_count * (nrows - 2);
   for (int i = 0; i < 3 * ntriangles; i++) { idxs[i] = first_index + sphere_idxs[detail][i]; }
 
-  // Copy and transform vertices
+  /* cast to float early */
+  GLfloat rot[3][3];
+  for (int i = 0; i < 3; i++)
+    for (int j = 0; j < 3; j++) rot[i][j] = rotation[i][j];
+
+  /* Copy and transform vertices */
   char *pos = (char *)data;
   GLfloat *pts = sphere_points[detail];
   GLfloat *txs = sphere_texcos[detail];
@@ -519,7 +524,7 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat con
 
     GLfloat off[3] = {0.f, 0.f, 0.f};
     for (int j = 0; j < 3; j++)
-      for (int k = 0; k < 3; k++) off[j] += rotation[j][k] * loc[k];
+      for (int k = 0; k < 3; k++) off[j] += rot[j][k] * loc[k];
     pos += packObjectVertex(pos, position[0] + radius * off[0], position[1] + radius * off[1],
                             position[2] + radius * off[2], txc[0], txc[1], color, off);
   }

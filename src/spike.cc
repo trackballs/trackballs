@@ -48,11 +48,7 @@ void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
 
-  Matrix3d rotmtx;
-  Matrix4d frommtx;
-  identityMatrix(frommtx);
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++) rotmtx[i][j] = frommtx[i][j];
+  Matrix3d rotmtx = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
   generateSpikeVBO(data, idxs, rotmtx, position, primaryColor, secondaryColor, 2.0);
 
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

@@ -41,8 +41,8 @@ typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned long ulong;
 typedef double Real;
-typedef double Matrix4d[4][4];
-typedef double Matrix3d[3][3];
+typedef Real Matrix4d[4][4];
+typedef Real Matrix3d[3][3];
 typedef int ICoord2d[2];
 
 // Simple vector type to make geometry code readable
@@ -84,7 +84,7 @@ class Coord3d {
   }
 
  private:
-  double data[3];
+  Real data[3];
 };
 inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale; }
 
