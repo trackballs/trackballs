@@ -87,7 +87,7 @@ install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs-128x128.png DESTINATI
 
 #todo: set executable setgid to games RX, and highscores to games RW
 add_custom_command(OUTPUT highScores
-                   COMMAND echo "0" | gzip -c > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
+                   COMMAND echo "0" | gzip -cn > ${CMAKE_CURRENT_BINARY_DIR}/highScores)
 add_custom_target(highscores ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/highScores)
 if ("${TRACKBALLS_HIGHSCORES_DIR}" STREQUAL "")
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/highScores DESTINATION ${TRACKBALLS_SHARE})
