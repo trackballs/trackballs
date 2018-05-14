@@ -25,10 +25,12 @@
 #define WEATHER_RAIN 1
 
 #include "general.h"
+#include "glHelp.h"
 
 class Weather {
  public:
   Weather();
+  ~Weather();
 
   void clear();
   void draw2();
@@ -38,10 +40,10 @@ class Weather {
 
  private:
   typedef struct sParticle {
-    double position[3];
-    double velocity[3];
-    double size;
-    double corners[3][3]; /* For snow */
+    GLfloat position[3];
+    GLfloat velocity[3];
+    GLfloat size;
+    GLfloat corners[3][3]; /* For snow */
   } Particle;
   Particle particles[3000];
   int next, nextSnowDrift;
@@ -49,6 +51,7 @@ class Weather {
 
   int kind;
   double strength;
+  GLuint bufs[2];
 };
 
 #endif

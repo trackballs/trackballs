@@ -31,6 +31,12 @@ Weather::Weather() {
   if (Settings::settings->gfx_details >= 5) max_weather_particles = 3000;
   kind = WEATHER_SNOW;
   clear();
+
+  bufs[0] = (GLuint)-1;
+  bufs[1] = (GLuint)-1;
+}
+Weather::~Weather() {
+  if (bufs[0] == bufs[1]) { glDeleteBuffers(2, bufs); }
 }
 
 void Weather::tick(Real td) {
@@ -91,6 +97,16 @@ void Weather::draw2() {
   if (strength == -1.0) return;
   if (activeView.calculating_shadows) return;
 
+  if (bufs[0] == bufs[1]) {
+    glGenBuffers(2, bufs);
+    /* Create a fixed linear index */
+    ushort *idxs = new ushort[3 * 3000];
+    for (int i = 0; i < 3 * 3000; i++) { idxs[i] = i; }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 3000 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    delete[] idxs;
+  }
+
   if (kind == WEATHER_RAIN) {
     /** Draw RAIN particles **/
     glEnable(GL_BLEND);
@@ -98,7 +114,7 @@ void Weather::draw2() {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    double h = Game::current->player1->position[2] - 6.0;
+    GLfloat h = Game::current->player1->position[2] - 6.0;
     int nactive = 0;
     for (int i = 0; i < max_weather_particles; i++) {
       if (particles[i].position[2] < h) continue;
@@ -106,7 +122,6 @@ void Weather::draw2() {
     }
 
     GLfloat *data = new GLfloat[2 * 3 * nactive];
-    ushort *idxs = new ushort[2 * nactive];
     int j = 0;
     for (int i = 0; i < max_weather_particles; i++) {
       const Particle &p = particles[i];
@@ -117,37 +132,28 @@ void Weather::draw2() {
       data[6 * j + 3] = p.position[0];
       data[6 * j + 4] = p.position[1];
       data[6 * j + 5] = p.position[2];
-      idxs[2 * j] = 2 * j;
-      idxs[2 * j + 1] = 2 * j + 1;
       j++;
     }
+
+    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, 2 * 3 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    delete[] data;
 
     // Transfer data
     setActiveProgramAndUniforms(shaderLine);
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
 
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
-    glBufferData(GL_ARRAY_BUFFER, 2 * 3 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 2 * nactive * sizeof(ushort), idxs, GL_STATIC_DRAW);
-    delete[] data;
-    delete[] idxs;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
     glDrawElements(GL_LINES, (2 * nactive), GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   } else if (kind == WEATHER_SNOW) {
     /** Draw SNOW particles **/
     glDisable(GL_CULL_FACE);
     glEnable(GL_BLEND);
 
     int nactive = 0;
-    double h = Game::current->player1->position[2] - 5.0;
+    GLfloat h = Game::current->player1->position[2] - 5.0;
     for (int i = 0; i < max_weather_particles; i++) {
       // Note that < and >= or not opposite for nan
       if (particles[i].position[2] < h) continue;
@@ -155,14 +161,12 @@ void Weather::draw2() {
     }
 
     GLfloat *data = new GLfloat[3 * 8 * nactive];
-    ushort *idxs = new ushort[3 * nactive];
 
     Color color(0.8, 0.8, 0.85, 1.);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     GLfloat txc[3][2] = {{0.5f, 0.f}, {0.f, 1.f}, {1.f, 1.f}};
     GLfloat size = 1.3f;
 
-    int j = 0;
     char *pos = (char *)data;
     for (int i = 0; i < max_weather_particles; i++) {
       const Particle &p = particles[i];
@@ -172,33 +176,24 @@ void Weather::draw2() {
                                 p.position[1] + p.corners[k][1] * size,
                                 p.position[2] + p.corners[k][2] * size, txc[k][0], txc[k][1],
                                 color, flat);
-        idxs[3 * j + k] = 3 * j + k;
       }
-      j++;
     }
 
     // Transfer data
+    glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    delete[] data;
+
     setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
     glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("glitter.png")]);
 
-    GLuint databuf, idxbuf;
-    glGenBuffers(1, &databuf);
-    glGenBuffers(1, &idxbuf);
-    glBindBuffer(GL_ARRAY_BUFFER, databuf);
-    glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * nactive * sizeof(ushort), idxs, GL_STATIC_DRAW);
-    delete[] data;
-    delete[] idxs;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
 
     configureObjectAttributes();
     glDrawElements(GL_TRIANGLES, 3 * nactive, GL_UNSIGNED_SHORT, (void *)0);
-
-    glDeleteBuffers(1, &databuf);
-    glDeleteBuffers(1, &idxbuf);
   }
 }
 
