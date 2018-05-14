@@ -60,8 +60,8 @@ class Cell {
   void load(class Map *map, gzFile gp, int version);
 
   Cell();
-  Coord3d getNormal(int vertex) const;
-  Coord3d getWaterNormal(int vertex) const;
+  void getNormals(Coord3d normals[5]) const;
+  void getWaterNormals(Coord3d normals[5]) const;
   Real getHeight(Real x, Real y) const;
   Real getWaterHeight(Real x, Real y) const;
   inline int isWaterVisible() const {
@@ -69,7 +69,15 @@ class Cell {
            heights[2] < waterHeights[2] || heights[3] < waterHeights[3] ||
            heights[4] < waterHeights[4];
   }
+  /*
+   * (0,1) NW---NE (1,1) = (x,y)
+   *       | \ / |
+   *       |  C  | C=(0.5,0.5)
+   *       | / \ |
+   * (0,0) SW---SE (1,0)
+   */
   static const int NORTH = 1, SOUTH = 0, EAST = 2, WEST = 0, CENTER = 4;
+  static const int SW = SOUTH + WEST, NW = NORTH + WEST, SE = SOUTH + EAST, NE = NORTH + EAST;
 };
 
 class Chunk {

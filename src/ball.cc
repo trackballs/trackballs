@@ -1063,10 +1063,10 @@ int Ball::locateContactPoints(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *
       Coord3d offset = position - centerpoint;
 
       Coord3d local_corners[4] = {
-          Coord3d(-0.5, -0.5, c.heights[Cell::SOUTH + Cell::WEST] - ch),
-          Coord3d(0.5, -0.5, c.heights[Cell::SOUTH + Cell::EAST] - ch),
-          Coord3d(0.5, 0.5, c.heights[Cell::NORTH + Cell::EAST] - ch),
-          Coord3d(-0.5, 0.5, c.heights[Cell::NORTH + Cell::WEST] - ch),
+          Coord3d(-0.5, -0.5, c.heights[Cell::SW] - ch),
+          Coord3d(0.5, -0.5, c.heights[Cell::SE] - ch),
+          Coord3d(0.5, 0.5, c.heights[Cell::NE] - ch),
+          Coord3d(-0.5, 0.5, c.heights[Cell::NW] - ch),
       };
 
       for (int i0 = 0; i0 < 4; i0++) {

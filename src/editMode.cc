@@ -1005,31 +1005,27 @@ void EditMode::doCellAction(int code, int direction) {
   case editModeFeatures: {
     switch (currentFeature) {
     case FEATURE_SPIKE:
-      map->cell(x, y).heights[Cell::SOUTH + Cell::WEST] += shift ? -raise : raise;
-      map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += shift ? -raise : raise;
-      map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += shift ? -raise : raise;
-      map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] += shift ? -raise : raise;
+      map->cell(x, y).heights[Cell::SW] += shift ? -raise : raise;
+      map->cell(x - 1, y).heights[Cell::SE] += shift ? -raise : raise;
+      map->cell(x, y - 1).heights[Cell::NW] += shift ? -raise : raise;
+      map->cell(x - 1, y - 1).heights[Cell::NE] += shift ? -raise : raise;
       map->markCellsUpdated(x - 1, y - 1, x, y, false);
       break;
     case FEATURE_SMALL_HILL:
       map->cell(x, y).heights[Cell::CENTER] += (shift ? -raise : raise) * 1.2;
       for (i = 0; i < 4; i++) map->cell(x, y).heights[i] += (shift ? -raise : raise) * 1.0;
-      map->cell(x, y + 1).heights[Cell::SOUTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x, y + 1).heights[Cell::SOUTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x, y - 1).heights[Cell::NORTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x, y - 1).heights[Cell::NORTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x + 1, y).heights[Cell::SOUTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x + 1, y).heights[Cell::NORTH + Cell::WEST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x - 1, y).heights[Cell::SOUTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x - 1, y).heights[Cell::NORTH + Cell::EAST] += (shift ? -raise : raise) * 1.0;
-      map->cell(x + 1, y + 1).heights[Cell::SOUTH + Cell::WEST] +=
-          (shift ? -raise : raise) * 1.0;
-      map->cell(x - 1, y + 1).heights[Cell::SOUTH + Cell::EAST] +=
-          (shift ? -raise : raise) * 1.0;
-      map->cell(x + 1, y - 1).heights[Cell::NORTH + Cell::WEST] +=
-          (shift ? -raise : raise) * 1.0;
-      map->cell(x - 1, y - 1).heights[Cell::NORTH + Cell::EAST] +=
-          (shift ? -raise : raise) * 1.0;
+      map->cell(x, y + 1).heights[Cell::SE] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y + 1).heights[Cell::SW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y - 1).heights[Cell::NE] += (shift ? -raise : raise) * 1.0;
+      map->cell(x, y - 1).heights[Cell::NW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y).heights[Cell::SW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y).heights[Cell::NW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y).heights[Cell::SE] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y).heights[Cell::NE] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y + 1).heights[Cell::SW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y + 1).heights[Cell::SE] += (shift ? -raise : raise) * 1.0;
+      map->cell(x + 1, y - 1).heights[Cell::NW] += (shift ? -raise : raise) * 1.0;
+      map->cell(x - 1, y - 1).heights[Cell::NE] += (shift ? -raise : raise) * 1.0;
       map->cell(x + 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
       map->cell(x - 1, y + 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
       map->cell(x + 1, y - 1).heights[Cell::CENTER] += (shift ? -raise : raise) * 0.25;
@@ -1153,21 +1149,21 @@ void EditMode::makeHill(int radius) {
                  sin(1. * M_PI * (my + radius + 0.5) / diameter) * (shift ? -raise : raise) *
                  10.)) *
           .1;
-      map->cell(x + mx, y + my).heights[Cell::NORTH + Cell::EAST] +=
+      map->cell(x + mx, y + my).heights[Cell::NE] +=
           ((int)(sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
                  sin(1. * M_PI * (my + radius + 1.0) / diameter) * (shift ? -raise : raise) *
                  10.)) *
           .1;
-      map->cell(x + mx, y + my).heights[Cell::NORTH + Cell::WEST] +=
+      map->cell(x + mx, y + my).heights[Cell::NW] +=
           ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
                  sin(1. * M_PI * (my + radius + 1.0) / diameter) * (shift ? -raise : raise) *
                  10.)) *
           .1;
-      map->cell(x + mx, y + my).heights[Cell::SOUTH + Cell::EAST] +=
+      map->cell(x + mx, y + my).heights[Cell::SE] +=
           ((int)(sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
                  sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
           .1;
-      map->cell(x + mx, y + my).heights[Cell::SOUTH + Cell::WEST] +=
+      map->cell(x + mx, y + my).heights[Cell::SW] +=
           ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
                  sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
           .1;

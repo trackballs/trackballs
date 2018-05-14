@@ -57,163 +57,51 @@ Cell::Cell() {
   displayListDirty = false;
 }
 
-/* Returns the normal for a point on the edge of the cell */
-Coord3d Cell::getNormal(int vertex) const {
-  Coord3d v1;
-  Coord3d v2;
-  Coord3d normal;
+static void calcNormals(const float heights[5], Coord3d normals[5]) {
+  Coord3d spines[4] = {
+      Coord3d(-0.5, -0.5, heights[Cell::SW] - heights[Cell::CENTER]),
+      Coord3d(0.5, -0.5, heights[Cell::SE] - heights[Cell::CENTER]),
+      Coord3d(0.5, 0.5, heights[Cell::NE] - heights[Cell::CENTER]),
+      Coord3d(-0.5, 0.5, heights[Cell::NW] - heights[Cell::CENTER]),
+  };
 
-  switch (vertex) {
-  case SOUTH + WEST:
-    v1[0] = 1.0;
-    v1[1] = 0.0;
-    v1[2] = heights[SOUTH + EAST] - heights[SOUTH + WEST];
-    v2[0] = 0.5;
-    v2[1] = 0.5;
-    v2[2] = heights[CENTER] - heights[SOUTH + WEST];
-    break;
-  case SOUTH + EAST:
-    v1[0] = 0.0;
-    v1[1] = 1.0;
-    v1[2] = heights[NORTH + EAST] - heights[SOUTH + EAST];
-    v2[0] = -.5;
-    v2[1] = 0.5;
-    v2[2] = heights[CENTER] - heights[SOUTH + EAST];
-    break;
-  case NORTH + EAST:
-    v1[0] = -1.0;
-    v1[1] = 0.0;
-    v1[2] = heights[NORTH + WEST] - heights[NORTH + EAST];
-    v2[0] = -0.5;
-    v2[1] = -0.5;
-    v2[2] = heights[CENTER] - heights[NORTH + EAST];
-    break;
-  case NORTH + WEST:
-    v1[0] = 0.0;
-    v1[1] = -1.0;
-    v1[2] = heights[SOUTH + WEST] - heights[NORTH + WEST];
-    v2[0] = 0.5;
-    v2[1] = -0.5;
-    v2[2] = heights[CENTER] - heights[NORTH + WEST];
-    break;
-  case CENTER:
-    normal = getNormal(SOUTH + WEST) + getNormal(SOUTH + EAST) + getNormal(NORTH + WEST) +
-             getNormal(NORTH + EAST);
-    return normal / length(normal);
+  Coord3d faceNormals[4];
+  for (int i = 0; i < 4; i++) {
+    faceNormals[i] = crossProduct(spines[i], spines[(i + 1) % 4]);
+    faceNormals[i] = faceNormals[i] / length(faceNormals[i]);
   }
-  normal = crossProduct(v1, v2);
-  return normal / length(normal);
+  for (int i = 0; i < 5; i++) { normals[i] = Coord3d(); }
+  for (int i = 0; i < 4; i++) {
+    normals[i] = normals[i] + faceNormals[i];
+    normals[i] = normals[i] + faceNormals[(i + 3) % 4];
+    normals[4] = normals[4] + faceNormals[i];
+  }
+  for (int i = 0; i < 5; i++) { normals[i] = normals[i] / length(normals[i]); }
 }
-/* Works on water heights */
-Coord3d Cell::getWaterNormal(int vertex) const {
-  Coord3d v1;
-  Coord3d v2;
-  Coord3d normal;
 
-  switch (vertex) {
-  case SOUTH + WEST:
-    v1[0] = 1.0;
-    v1[1] = 0.0;
-    v1[2] = waterHeights[SOUTH + EAST] - waterHeights[SOUTH + WEST];
-    v2[0] = 0.5;
-    v2[1] = 0.5;
-    v2[2] = waterHeights[CENTER] - waterHeights[SOUTH + WEST];
-    break;
-  case SOUTH + EAST:
-    v1[0] = 0.0;
-    v1[1] = 1.0;
-    v1[2] = waterHeights[NORTH + EAST] - waterHeights[SOUTH + EAST];
-    v2[0] = -.5;
-    v2[1] = 0.5;
-    v2[2] = waterHeights[CENTER] - waterHeights[SOUTH + EAST];
-    break;
-  case NORTH + EAST:
-    v1[0] = -1.0;
-    v1[1] = 0.0;
-    v1[2] = waterHeights[NORTH + WEST] - waterHeights[NORTH + EAST];
-    v2[0] = -0.5;
-    v2[1] = -0.5;
-    v2[2] = waterHeights[CENTER] - waterHeights[NORTH + EAST];
-    break;
-  case NORTH + WEST:
-    v1[0] = 0.0;
-    v1[1] = -1.0;
-    v1[2] = waterHeights[SOUTH + WEST] - waterHeights[NORTH + WEST];
-    v2[0] = 0.5;
-    v2[1] = -0.5;
-    v2[2] = waterHeights[CENTER] - waterHeights[NORTH + WEST];
-    break;
-  case CENTER:
-    normal = getWaterNormal(SOUTH + WEST) + getWaterNormal(SOUTH + EAST) +
-             getWaterNormal(NORTH + WEST) + getWaterNormal(NORTH + EAST);
-    return normal / length(normal);
-  }
-  normal = crossProduct(v1, v2);
-  return normal / length(normal);
+/* Returns the average normal at a vertex of the cell */
+void Cell::getNormals(Coord3d normals[5]) const { calcNormals(heights, normals); }
+/* Works on water heights */
+void Cell::getWaterNormals(Coord3d normals[5]) const { calcNormals(waterHeights, normals); }
+
+static Real calcHeight(const float heights[5], Real x, Real y) {
+  x = x - 0.5f;
+  y = y - 0.5f;
+
+  Real rp = std::abs(x + y);
+  Real rm = std::abs(x - y);
+  Real ph = y > -x ? heights[Cell::NE] : heights[Cell::SW];
+  Real mh = y > x ? heights[Cell::NW] : heights[Cell::SE];
+  Real ch = heights[Cell::CENTER];
+
+  return ch * (1 - rp - rm) + ph * rp + mh * rm;
 }
 
 /* Gives the height of the cell in a specified (floatingpoint) position */
-Real Cell::getHeight(Real x, Real y) const {
-  if (x < 0. || x > 1. || y < 0. || y > 1.) {
-    warning("Require x,y in [0,1], got %f %f", x, y);
-  }
-  Real h1, h2, h3, c;
-
-  c = heights[CENTER];
-  if (y <= x)
-    if (y <= 1 - x) { /* SOUTH */
-      h1 = heights[SOUTH + WEST];
-      h2 = heights[SOUTH + EAST];
-      h3 = (h1 + h2) / 2;
-      return h1 + (h2 - h1) * x + (c - h3) * 2 * y;
-    } else { /* EAST */
-      h1 = heights[SOUTH + EAST];
-      h2 = heights[NORTH + EAST];
-      h3 = (h1 + h2) / 2;
-      return h1 + (h2 - h1) * y + (c - h3) * 2 * (1 - x);
-    }
-  else if (y <= 1 - x) { /* WEST */
-    h1 = heights[NORTH + WEST];
-    h2 = heights[SOUTH + WEST];
-    h3 = (h1 + h2) / 2;
-    return h1 + (h2 - h1) * (1 - y) + (c - h3) * 2 * x;
-  } else { /* NORTH */
-    h1 = heights[NORTH + EAST];
-    h2 = heights[NORTH + WEST];
-    h3 = (h1 + h2) / 2;
-    return h1 + (h2 - h1) * (1 - x) + (c - h3) * 2 * (1 - y);
-  }
-}
+Real Cell::getHeight(Real x, Real y) const { return calcHeight(heights, x, y); }
 
 /* Works for water */
-Real Cell::getWaterHeight(Real x, Real y) const {
-  Real h1, h2, h3, c;
-
-  c = waterHeights[CENTER];
-  if (y <= x)
-    if (y <= 1 - x) { /* SOUTH */
-      h1 = waterHeights[SOUTH + WEST];
-      h2 = waterHeights[SOUTH + EAST];
-      h3 = (h1 + h2) / 2;
-      return h1 + (h2 - h1) * x + (c - h3) * 2 * y;
-    } else { /* EAST */
-      h1 = waterHeights[SOUTH + EAST];
-      h2 = waterHeights[NORTH + EAST];
-      h3 = (h1 + h2) / 2;
-      return h1 + (h2 - h1) * y + (c - h3) * 2 * (1 - x);
-    }
-  else if (y <= 1 - x) { /* WEST */
-    h1 = waterHeights[NORTH + WEST];
-    h2 = waterHeights[SOUTH + WEST];
-    h3 = (h1 + h2) / 2;
-    return h1 + (h2 - h1) * (1 - y) + (c - h3) * 2 * x;
-  } else { /* NORTH */
-    h1 = waterHeights[NORTH + EAST];
-    h2 = waterHeights[NORTH + WEST];
-    h3 = (h1 + h2) / 2;
-    return h1 + (h2 - h1) * (1 - x) + (c - h3) * 2 * (1 - y);
-  }
-}
+Real Cell::getWaterHeight(Real x, Real y) const { return calcHeight(waterHeights, x, y); }
 
 Chunk::Chunk() {
   is_active = false;
@@ -656,11 +544,7 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         for (size_t i = 0; i < 15; i++) { fcnormal[i / 3][i % 3] = 0.f; }
       } else {
         Coord3d cnormal[5];
-        cnormal[0] = c.getNormal(0);
-        cnormal[1] = c.getNormal(1);
-        cnormal[2] = c.getNormal(2);
-        cnormal[3] = c.getNormal(3);
-        cnormal[4] = c.getNormal(4);
+        c.getNormals(cnormal);
         for (size_t i = 0; i < 15; i++) {
           fcnormal[i / 3][i % 3] = (float)cnormal[i / 3][i % 3];
         }
@@ -674,18 +558,14 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       GLfloat ty = (((y % texscale) + texscale) % texscale) * irs;
       if (tx >= 1.) tx = 0.;
       if (ty >= 1.) ty = 0.;
-      packCell(&tdat[k], x, y, c.heights[Cell::SOUTH + Cell::WEST],
-               c.colors[Cell::SOUTH + Cell::WEST], tx, ty, txno, c.velocity[0] * irs,
-               c.velocity[1] * irs, fcnormal[Cell::SOUTH + Cell::WEST]);
-      packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
-               c.colors[Cell::SOUTH + Cell::EAST], tx + irs, ty, txno, c.velocity[0] * irs,
-               c.velocity[1] * irs, fcnormal[Cell::SOUTH + Cell::EAST]);
-      packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NORTH + Cell::EAST],
-               c.colors[Cell::NORTH + Cell::EAST], tx + irs, ty + irs, txno,
-               c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NORTH + Cell::EAST]);
-      packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NORTH + Cell::WEST],
-               c.colors[Cell::NORTH + Cell::WEST], tx, ty + irs, txno, c.velocity[0] * irs,
-               c.velocity[1] * irs, fcnormal[Cell::NORTH + Cell::WEST]);
+      packCell(&tdat[k], x, y, c.heights[Cell::SW], c.colors[Cell::SW], tx, ty, txno,
+               c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::SW]);
+      packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SE], c.colors[Cell::SE], tx + irs, ty,
+               txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::SE]);
+      packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NE], c.colors[Cell::NE], tx + irs,
+               ty + irs, txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NE]);
+      packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NW], c.colors[Cell::NW], tx, ty + irs,
+               txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NW]);
       packCell(&tdat[k + 32], x + 0.5f, y + 0.5f, c.heights[Cell::CENTER],
                c.colors[Cell::CENTER], tx + irs / 2, ty + irs / 2, txno, c.velocity[0] * irs,
                c.velocity[1] * irs, fcnormal[Cell::CENTER]);
@@ -698,51 +578,41 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int p = j * 8 * 8;
       const Cell& ns = cell(x, y - 1);
       const float nv[2] = {0.f, 0.f};
-      int nsover =
-          cmp(c.heights[Cell::SOUTH + Cell::WEST], ns.heights[Cell::NORTH + Cell::WEST]) +
-              cmp(c.heights[Cell::SOUTH + Cell::EAST], ns.heights[Cell::NORTH + Cell::EAST]) >
-          0;
-      packCell(&wdat[p], x, y, c.heights[Cell::SOUTH + Cell::WEST],
-               c.wallColors[Cell::SOUTH + Cell::WEST], 0.5f, 0.5f, 0, nv[0], nv[1],
-               nsover ? snormal : nnormal);
-      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NORTH + Cell::WEST],
-               ns.wallColors[Cell::NORTH + Cell::WEST], 0.5f, 0.5f, 0, nv[0], nv[1],
-               nsover ? snormal : nnormal);
-      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SOUTH + Cell::EAST],
-               c.wallColors[Cell::SOUTH + Cell::EAST], 0.5f, 0.5f, 0, nv[0], nv[1],
-               nsover ? snormal : nnormal);
-      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NORTH + Cell::EAST],
-               ns.wallColors[Cell::NORTH + Cell::EAST], 0.5f, 0.5f, 0, nv[0], nv[1],
-               nsover ? snormal : nnormal);
+      int nsover = cmp(c.heights[Cell::SW], ns.heights[Cell::NW]) +
+                       cmp(c.heights[Cell::SE], ns.heights[Cell::NE]) >
+                   0;
+      packCell(&wdat[p], x, y, c.heights[Cell::SW], c.wallColors[Cell::SW], 0.5f, 0.5f, 0,
+               nv[0], nv[1], nsover ? snormal : nnormal);
+      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NW], ns.wallColors[Cell::NW], 0.5f, 0.5f,
+               0, nv[0], nv[1], nsover ? snormal : nnormal);
+      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SE], c.wallColors[Cell::SE], 0.5f,
+               0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
+      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NE], ns.wallColors[Cell::NE], 0.5f,
+               0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
 
       const Cell& ne = cell(x - 1, y);
-      int ewover =
-          cmp(c.heights[Cell::WEST + Cell::SOUTH], ne.heights[Cell::EAST + Cell::SOUTH]) +
-              cmp(c.heights[Cell::WEST + Cell::NORTH], ne.heights[Cell::EAST + Cell::NORTH]) >
-          0;
-      packCell(&wdat[p + 32], x, y, c.heights[Cell::WEST + Cell::SOUTH],
-               c.wallColors[Cell::WEST + Cell::SOUTH], 0.5f, 0.5f, 0, nv[0], nv[1],
-               ewover ? enormal : wnormal);
-      packCell(&wdat[p + 40], x, y, ne.heights[Cell::EAST + Cell::SOUTH],
-               ne.wallColors[Cell::EAST + Cell::SOUTH], 0.5f, 0.5f, 0, nv[0], nv[1],
-               ewover ? enormal : wnormal);
-      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::WEST + Cell::NORTH],
-               c.wallColors[Cell::WEST + Cell::NORTH], 0.5f, 0.5f, 0, nv[0], nv[1],
-               ewover ? enormal : wnormal);
-      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::EAST + Cell::NORTH],
-               ne.wallColors[Cell::EAST + Cell::NORTH], 0.5f, 0.5f, 0, nv[0], nv[1],
-               ewover ? enormal : wnormal);
+      int ewover = cmp(c.heights[Cell::SW], ne.heights[Cell::SE]) +
+                       cmp(c.heights[Cell::NW], ne.heights[Cell::NE]) >
+                   0;
+      packCell(&wdat[p + 32], x, y, c.heights[Cell::SW], c.wallColors[Cell::SW], 0.5f, 0.5f, 0,
+               nv[0], nv[1], ewover ? enormal : wnormal);
+      packCell(&wdat[p + 40], x, y, ne.heights[Cell::SE], ne.wallColors[Cell::SE], 0.5f, 0.5f,
+               0, nv[0], nv[1], ewover ? enormal : wnormal);
+      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::NW], c.wallColors[Cell::NW], 0.5f,
+               0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
+      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::NE], ne.wallColors[Cell::NE], 0.5f,
+               0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
 
       // Render the quads, overlapping triangles if twisted
       const ushort quadmap[6] = {0, 1, 2, 1, 3, 2};
       const ushort utriang[6] = {0, 1, 3, 0, 3, 2};
       const ushort dtriang[6] = {0, 1, 2, 1, 2, 3};
       const ushort* sel;
-      if (cmp(c.heights[Cell::SOUTH + Cell::WEST], ns.heights[Cell::NORTH + Cell::WEST]) *
-              cmp(c.heights[Cell::SOUTH + Cell::EAST], ns.heights[Cell::NORTH + Cell::EAST]) >=
+      if (cmp(c.heights[Cell::SW], ns.heights[Cell::NW]) *
+              cmp(c.heights[Cell::SE], ns.heights[Cell::NE]) >=
           0) {
         sel = quadmap;
-      } else if (c.heights[Cell::SOUTH + Cell::WEST] < ns.heights[Cell::NORTH + Cell::WEST]) {
+      } else if (c.heights[Cell::SW] < ns.heights[Cell::NW]) {
         sel = utriang;
       } else {
         sel = dtriang;
@@ -752,10 +622,10 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       const ushort aquadmap[6] = {0, 2, 1, 2, 3, 1};
       const ushort autriang[6] = {0, 2, 1, 2, 3, 1};
       const ushort adtriang[6] = {0, 3, 1, 2, 3, 0};
-      if (cmp(c.heights[Cell::WEST + Cell::SOUTH], ne.heights[Cell::EAST + Cell::SOUTH]) +
-          cmp(c.heights[Cell::WEST + Cell::NORTH], ne.heights[Cell::EAST + Cell::NORTH])) {
+      if (cmp(c.heights[Cell::SW], ne.heights[Cell::SE]) +
+          cmp(c.heights[Cell::NW], ne.heights[Cell::NE])) {
         sel = aquadmap;
-      } else if (c.heights[Cell::WEST + Cell::SOUTH] > ne.heights[Cell::EAST + Cell::SOUTH]) {
+      } else if (c.heights[Cell::SW] > ne.heights[Cell::SE]) {
         sel = autriang;
       } else {
         sel = adtriang;
@@ -766,16 +636,16 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int s = j * 12;
       ldat[s++] = float(x);
       ldat[s++] = float(y);
-      ldat[s++] = c.heights[Cell::SOUTH + Cell::WEST];
+      ldat[s++] = c.heights[Cell::SW];
       ldat[s++] = float(x + 1);
       ldat[s++] = float(y);
-      ldat[s++] = c.heights[Cell::SOUTH + Cell::EAST];
+      ldat[s++] = c.heights[Cell::SE];
       ldat[s++] = float(x + 1);
       ldat[s++] = float(y + 1);
-      ldat[s++] = c.heights[Cell::NORTH + Cell::EAST];
+      ldat[s++] = c.heights[Cell::NE];
       ldat[s++] = float(x);
       ldat[s++] = float(y + 1);
-      ldat[s++] = c.heights[Cell::NORTH + Cell::WEST];
+      ldat[s++] = c.heights[Cell::NW];
 
       int t = j * 8;
       // We disable lines by doubling indices
@@ -792,25 +662,21 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int wvis = c.isWaterVisible();
       if (wvis) {
         Coord3d onormal[5];
-        onormal[0] = c.getWaterNormal(0);
-        onormal[1] = c.getWaterNormal(1);
-        onormal[2] = c.getWaterNormal(2);
-        onormal[3] = c.getWaterNormal(3);
-        onormal[4] = c.getWaterNormal(4);
+        c.getWaterNormals(onormal);
         float fonormal[5][3];
         for (size_t i = 0; i < 15; i++) {
           fonormal[i / 3][i % 3] = (float)onormal[i / 3][i % 3];
         }
 
         int u = j * 8 * 5;
-        packWaterCell(&fdat[u], x, y, c.waterHeights[Cell::SOUTH + Cell::WEST], c.velocity,
-                      0.0f, 0.0f, fonormal[Cell::SOUTH + Cell::WEST]);
-        packWaterCell(&fdat[u + 8], x + 1, y, c.waterHeights[Cell::SOUTH + Cell::EAST],
-                      c.velocity, 1.0f, 0.0f, fonormal[Cell::SOUTH + Cell::EAST]);
-        packWaterCell(&fdat[u + 16], x + 1, y + 1, c.waterHeights[Cell::NORTH + Cell::EAST],
-                      c.velocity, 1.0f, 1.0f, fonormal[Cell::NORTH + Cell::EAST]);
-        packWaterCell(&fdat[u + 24], x, y + 1, c.waterHeights[Cell::NORTH + Cell::WEST],
-                      c.velocity, 0.0f, 1.0f, fonormal[Cell::NORTH + Cell::WEST]);
+        packWaterCell(&fdat[u], x, y, c.waterHeights[Cell::SW], c.velocity, 0.0f, 0.0f,
+                      fonormal[Cell::SW]);
+        packWaterCell(&fdat[u + 8], x + 1, y, c.waterHeights[Cell::SE], c.velocity, 1.0f, 0.0f,
+                      fonormal[Cell::SE]);
+        packWaterCell(&fdat[u + 16], x + 1, y + 1, c.waterHeights[Cell::NE], c.velocity, 1.0f,
+                      1.0f, fonormal[Cell::NE]);
+        packWaterCell(&fdat[u + 24], x, y + 1, c.waterHeights[Cell::NW], c.velocity, 0.0f,
+                      1.0f, fonormal[Cell::NW]);
         packWaterCell(&fdat[u + 32], x + 0.5f, y + 0.5f, c.waterHeights[Cell::CENTER],
                       c.velocity, 0.5f, 0.5f, fonormal[Cell::CENTER]);
 
@@ -976,22 +842,22 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   for (int x = std::min(x1, x2); x <= std::max(x1, x2); ++x) {
     for (int y = std::min(y1, y2); y <= std::max(y1, y2); ++y) {
       Cell& center = cell(x, y);
-      packObjectVertex(&data[j * 8 * 8], x + edge, y + edge,
-                       center.heights[Cell::SOUTH + Cell::WEST], 0., 0., color, flat);
-      packObjectVertex(&data[j * 8 * 8 + 8], x + 1 - edge, y + edge,
-                       center.heights[Cell::SOUTH + Cell::EAST], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8], x + edge, y + edge, center.heights[Cell::SW], 0., 0.,
+                       color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 8], x + 1 - edge, y + edge, center.heights[Cell::SE],
+                       0., 0., color, flat);
       packObjectVertex(&data[j * 8 * 8 + 16], x + 1 - edge, y + 1 - edge,
-                       center.heights[Cell::NORTH + Cell::EAST], 0., 0., color, flat);
-      packObjectVertex(&data[j * 8 * 8 + 24], x + edge, y + 1 - edge,
-                       center.heights[Cell::NORTH + Cell::WEST], 0., 0., color, flat);
-      packObjectVertex(&data[j * 8 * 8 + 32], x - edge, y - edge,
-                       center.heights[Cell::SOUTH + Cell::WEST], 0., 0., color, flat);
-      packObjectVertex(&data[j * 8 * 8 + 40], x + 1 + edge, y - edge,
-                       center.heights[Cell::SOUTH + Cell::EAST], 0., 0., color, flat);
+                       center.heights[Cell::NE], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 24], x + edge, y + 1 - edge, center.heights[Cell::NW],
+                       0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 32], x - edge, y - edge, center.heights[Cell::SW], 0.,
+                       0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 40], x + 1 + edge, y - edge, center.heights[Cell::SE],
+                       0., 0., color, flat);
       packObjectVertex(&data[j * 8 * 8 + 48], x + 1 + edge, y + 1 + edge,
-                       center.heights[Cell::NORTH + Cell::EAST], 0., 0., color, flat);
-      packObjectVertex(&data[j * 8 * 8 + 56], x - edge, y + 1 + edge,
-                       center.heights[Cell::NORTH + Cell::WEST], 0., 0., color, flat);
+                       center.heights[Cell::NE], 0., 0., color, flat);
+      packObjectVertex(&data[j * 8 * 8 + 56], x - edge, y + 1 + edge, center.heights[Cell::NW],
+                       0., 0., color, flat);
 
       uint local_triangles[8][3] = {{4, 5, 0}, {0, 5, 1}, {6, 1, 5}, {1, 6, 2},
                                     {7, 2, 6}, {2, 7, 3}, {4, 3, 7}, {3, 4, 0}};
@@ -1046,8 +912,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
       yh = std::max(y1, y2);
   for (int x = xl; x <= xh; x++) {
     Cell& c = cell(x, yl);
-    Coord3d lx((double)x, (double)yl, c.heights[Cell::SOUTH + Cell::WEST]);
-    Coord3d ly((double)x + 1, (double)yl, c.heights[Cell::SOUTH + Cell::EAST]);
+    Coord3d lx((double)x, (double)yl, c.heights[Cell::SW]);
+    Coord3d ly((double)x + 1, (double)yl, c.heights[Cell::SE]);
     rp[k] = lx;
     k++;
     rp[k] = ly;
@@ -1055,8 +921,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   }
   for (int y = yl; y <= yh; y++) {
     Cell& c = cell(xh, y);
-    Coord3d lx((double)xh + 1, (double)y, c.heights[Cell::SOUTH + Cell::EAST]);
-    Coord3d ly((double)xh + 1, (double)y + 1, c.heights[Cell::NORTH + Cell::EAST]);
+    Coord3d lx((double)xh + 1, (double)y, c.heights[Cell::SE]);
+    Coord3d ly((double)xh + 1, (double)y + 1, c.heights[Cell::NE]);
     rp[k] = lx;
     k++;
     rp[k] = ly;
@@ -1064,8 +930,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   }
   for (int x = xh; x >= xl; x--) {
     Cell& c = cell(x, yh);
-    Coord3d lx((double)x + 1, (double)yh + 1, c.heights[Cell::NORTH + Cell::EAST]);
-    Coord3d ly((double)x, (double)yh + 1, c.heights[Cell::NORTH + Cell::WEST]);
+    Coord3d lx((double)x + 1, (double)yh + 1, c.heights[Cell::NE]);
+    Coord3d ly((double)x, (double)yh + 1, c.heights[Cell::NW]);
     rp[k] = lx;
     k++;
     rp[k] = ly;
@@ -1073,8 +939,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   }
   for (int y = yh; y >= yl; y--) {
     Cell& c = cell(xl, y);
-    Coord3d lx((double)xl, (double)y + 1, c.heights[Cell::NORTH + Cell::WEST]);
-    Coord3d ly((double)xl, (double)y, c.heights[Cell::NORTH + Cell::EAST]);
+    Coord3d lx((double)xl, (double)y + 1, c.heights[Cell::NW]);
+    Coord3d ly((double)xl, (double)y, c.heights[Cell::NE]);
     rp[k] = lx;
     k++;
     rp[k] = ly;
