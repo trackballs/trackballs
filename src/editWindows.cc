@@ -373,11 +373,9 @@ void EQuitWindow::mouseDown(int /*state*/, int /*x*/, int /*y*/) {
 
 void EQuitWindow::yes() {
   remove();
-  if (MenuMode::menuMode) { /* TODO. Clear the editor clipboard here */
-    Settings::settings->doSpecialLevel = 0;
-    GameMode::activate(MenuMode::menuMode);
-  } else
-    exit(0);
+  EditMode::editMode->closeMap();
+  Settings::settings->doSpecialLevel = 0;
+  GameMode::activate(MenuMode::init());
 }
 
 void EQuitWindow::no() { remove(); }

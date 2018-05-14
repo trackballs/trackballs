@@ -52,7 +52,13 @@ MenuMode *MenuMode::menuMode = NULL;
 
 #define NUM_SLIDES 10
 
-void MenuMode::init() { menuMode = new MenuMode(); }
+MenuMode *MenuMode::init() {
+  if (!menuMode) menuMode = new MenuMode();
+  return menuMode;
+}
+void MenuMode::cleanup() {
+  if (menuMode) delete menuMode;
+}
 MenuMode::MenuMode() {
   offset = 0.0;
   slides[0] = 0, slides[1] = 0;
@@ -133,19 +139,19 @@ void MenuMode::doSelection() {
     exit(0);
     break;
   case MENU_NEWGAME:
-    GameMode::activate(SetupMode::setupMode);
+    GameMode::activate(SetupMode::init());
     break;
   case MENU_HOF:
-    GameMode::activate(HallOfFameMode::hallOfFameMode);
+    GameMode::activate(HallOfFameMode::init());
     break;
   case MENU_SETTINGS:
-    GameMode::activate(SettingsMode::settingsMode);
+    GameMode::activate(SettingsMode::init());
     break;
   case MENU_HELP:
-    GameMode::activate(HelpMode::helpMode);
+    GameMode::activate(HelpMode::init());
     break;
   case MENU_EDITOR:
-    GameMode::activate(EditMode::editMode);
+    GameMode::activate(EditMode::init());
     break;
   }
 }

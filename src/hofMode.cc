@@ -34,25 +34,32 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_surface.h>
 
-HallOfFameMode *HallOfFameMode::hallOfFameMode;
-SDL_Surface *HallOfFameMode::background;
+HallOfFameMode *HallOfFameMode::hallOfFameMode = NULL;
 
 #define CODE_LEVELSET 1
 #define CODE_RETURN 2
 
-void HallOfFameMode::init() {
-  if (low_memory)
-    background = NULL;
-  else {
-    background = loadImage("displayHighscoreBackground.jpg");
-  }
-  hallOfFameMode = new HallOfFameMode();
+HallOfFameMode *HallOfFameMode::init() {
+  if (!hallOfFameMode) hallOfFameMode = new HallOfFameMode();
+  return hallOfFameMode;
+}
+void HallOfFameMode::cleanup() {
+  if (hallOfFameMode) delete hallOfFameMode;
 }
 HallOfFameMode::HallOfFameMode() {
   levelSet = 0;
   timeLeft = 0.;
   isExiting = 0;
+  if (low_memory)
+    background = NULL;
+  else {
+    background = loadImage("displayHighscoreBackground.jpg");
+  }
 }
+HallOfFameMode::~HallOfFameMode() {
+  if (background) delete background;
+}
+
 void HallOfFameMode::activated() {
   if (!background) { background = loadImage("displayHighscoreBackground.jpg"); }
 
@@ -93,7 +100,7 @@ void HallOfFameMode::display() {
   addText_Right(CODE_LEVELSET, fontSize, y - dy * 2, settings->levelSets[levelSet].name,
                 screenWidth - border);
 
-  HighScore *highscore = HighScore::highScore;
+  HighScore *highscore = HighScore::init();
 
   for (int i = 0; i < 10; i++) {
     const char *name = highscore->dummy_player[levelSet][i]
@@ -118,14 +125,14 @@ void HallOfFameMode::key(int key) {
   if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
     mouseDown(shift ? 3 : 1, -1, -1);
-  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
 void HallOfFameMode::idle(Real td) {
   if (isExiting)
     timeLeft = fmax(0.0, timeLeft - td);
   else
     timeLeft = fmin(1.0, timeLeft + td);
-  if (timeLeft <= 0.0) MenuMode::activate(MenuMode::menuMode);
+  if (timeLeft <= 0.0) GameMode::activate(MenuMode::init());
   tickMouse(td);
 }
 void HallOfFameMode::mouseDown(int state, int /*mouseX*/, int /*mouseY*/) {

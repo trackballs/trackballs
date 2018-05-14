@@ -33,26 +33,31 @@
 #include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_surface.h>
 
-HelpMode *HelpMode::helpMode;
-SDL_Surface *HelpMode::background;
+static HelpMode *helpMode = NULL;
 
 #define CODE_BACK 1
 #define CODE_MOREHELP 2
 
-void HelpMode::init() {
-  if (low_memory)
-    background = NULL;
-  else {
-    background = loadImage("helpBackground.jpg");
-  }
-
-  helpMode = new HelpMode();
+HelpMode *HelpMode::init() {
+  if (!helpMode) helpMode = new HelpMode();
+  return helpMode;
+}
+void HelpMode::cleanup() {
+  if (helpMode) delete helpMode;
 }
 HelpMode::HelpMode() {
   timeLeft = 0.;
   isExiting = 0;
   page = 0;
   helpGame = NULL;
+  if (low_memory)
+    background = NULL;
+  else {
+    background = loadImage("helpBackground.jpg");
+  }
+}
+HelpMode::~HelpMode() {
+  if (background) SDL_FreeSurface(background);
 }
 void HelpMode::activated() {
   if (!background) { background = loadImage("helpBackground.jpg"); }
@@ -296,7 +301,7 @@ void HelpMode::key(int key) {
   if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
     mouseDown(shift ? 3 : 1, -1, -1);
-  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
 void HelpMode::idle(Real td) {
   helpGame->tick(td);
@@ -306,7 +311,7 @@ void HelpMode::idle(Real td) {
     timeLeft -= td;
   else
     timeLeft = fmin(1.0, timeLeft + td);
-  if (timeLeft < 0.0) MenuMode::activate(MenuMode::menuMode);
+  if (timeLeft < 0.0) GameMode::activate(MenuMode::init());
 }
 void HelpMode::mouseDown(int button, int /*x*/, int /*y*/) {
   int selected = getSelectedArea();

@@ -269,7 +269,6 @@ int testDir() {
 }
 
 void innerMain(void * /*closure*/, int argc, char **argv) {
-  int is_running = 1;
   int editMode = 0, touchMode = 0;
   int audio = SDL_INIT_AUDIO;
   SDL_Event event;
@@ -368,7 +367,8 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       repair_joystick = 1;
       break;
     default:
-      abort();
+      print_usage(stderr);
+      exit(1);
     }
   } while (next_option != -1);
 
@@ -435,32 +435,16 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     map->save(mapname, (int)map->startPosition[0], (int)map->startPosition[1]);
     exit(0);
   } else if (editMode) {
-    EditMode::init();
     Font::init();
-    GameMode::activate(EditMode::editMode);
+    GameMode::activate(EditMode::init());
   } else {
     Font::init();
-    MenuMode::init();
-
-    /* Initialize modes */
-    MainMode::init();
-    HighScore::init();
-    EditMode::init();
-    EnterHighScoreMode::init();
-    HallOfFameMode::init();
-    SettingsMode::init();
-    SetupMode::init();
-    CalibrateJoystickMode::init();
-    HelpMode::init();
-
-    /* Initialize game structures */
-    Ball::init();
 
     /* Activate initial mode */
     if (Settings::settings->doSpecialLevel) {
-      GameMode::activate(SetupMode::setupMode);
+      GameMode::activate(SetupMode::init());
     } else {
-      GameMode::activate(MenuMode::menuMode);
+      GameMode::activate(MenuMode::init());
     }
     volumeChanged();
   }
@@ -489,6 +473,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   srand(seed);
   int keyUpReceived = 1;
 
+  bool is_running = true;
   while (is_running) {
     theFrameNumber++;
 
@@ -531,7 +516,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
-        is_running = 0;
+        is_running = false;
         break;
       case SDL_MOUSEBUTTONDOWN:
         if (GameMode::current) GameMode::current->mouseDown(e->button, e->x, e->y);
@@ -577,9 +562,9 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
           if (editMode) {
             ((EditMode *)GameMode::current)->askQuit();
           } else if ((GameMode::current && GameMode::current == MenuMode::menuMode))
-            is_running = 0;
+            is_running = false;
           else {
-            GameMode::activate(MenuMode::menuMode);
+            GameMode::activate(MenuMode::init());
             /* Flush all events that occured while switching screen
              resolution */
             while (SDL_PollEvent(&event)) {}
@@ -610,10 +595,21 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
 
   Settings::settings->closeJoystick();
   Settings::settings->save();
-  if (GameMode::current) delete (GameMode::current);
 
-  /* TODO. Delete all gamemodes, including the editor */
+  /* Delete all game modes */
+  CalibrateJoystickMode::cleanup();
+  EditMode::cleanup();
+  EnterHighScoreMode::cleanup();
+  HallOfFameMode::cleanup();
+  HelpMode::cleanup();
+  MainMode::cleanup();
+  MenuMode::cleanup();
+  SettingsMode::cleanup();
+  SetupMode::cleanup();
+
+  HighScore::cleanup();
   glHelpCleanup();
+
   SDL_Quit();
 }
 

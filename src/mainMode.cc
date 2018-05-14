@@ -54,7 +54,13 @@ static const int debug_shadowmap = 0;
 
 MainMode *MainMode::mainMode = NULL;
 
-void MainMode::init() { mainMode = new MainMode(); }
+MainMode *MainMode::init() {
+  if (!mainMode) mainMode = new MainMode();
+  return mainMode;
+}
+void MainMode::cleanup() {
+  if (mainMode) delete mainMode;
+}
 MainMode::MainMode() {
   flash = 0;
   zAngle = 0.;
@@ -396,11 +402,11 @@ void MainMode::key(int key) {
     }
     break;
   case statusGameOver: {
-    if (key == ' ' || key == 'n') GameMode::activate(EnterHighScoreMode::enterHighScoreMode);
+    if (key == ' ' || key == 'n') GameMode::activate(EnterHighScoreMode::init());
   } break;
   case statusVictory:
     if (key == ' ') {
-      GameMode::activate(EnterHighScoreMode::enterHighScoreMode);
+      GameMode::activate(EnterHighScoreMode::init());
       Game::current->gamer->playerLose();
     }
     break;

@@ -37,10 +37,12 @@ class ESubWindow;
 class EditMode : public GameMode {
  public:
   EditMode();
-  ~EditMode();
+  virtual ~EditMode();
 
-  static void init();
+  static EditMode *init();
+  static void cleanup();
   static void loadStrings();
+  static EditMode *editMode;
 
   void loadMap(char *mapname);
   void closeMap();
@@ -73,8 +75,6 @@ class EditMode : public GameMode {
   char levelname[256];
   char pathname[256];
   double time;
-
-  static EditMode *editMode;
 
  protected:
  private:

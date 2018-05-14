@@ -30,9 +30,9 @@
 #include <zlib.h>
 #include <cstdlib>
 
-char highScorePath[256];
+static char highScorePath[256];
+static HighScore* highScore = NULL;
 
-HighScore* HighScore::highScore;
 HighScore::HighScore() {
   for (int levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
     for (int i = 0; i < 10; i++) {
@@ -118,7 +118,13 @@ HighScore::HighScore() {
   }
   scm_close_input_port(ip);
 }
-void HighScore::init() { highScore = new HighScore(); }
+HighScore* HighScore::init() {
+  if (!highScore) highScore = new HighScore();
+  return highScore;
+}
+void HighScore::cleanup() {
+  if (highScore) delete highScore;
+}
 int HighScore::isHighScore(int score) {
   if (Game::current->currentLevelSet < 0) return 0;
   return score > points[Game::current->currentLevelSet][9];

@@ -161,7 +161,7 @@ int selectedMenu = -1;
 
 const int viewPoints[4][2] = {{1, 1}, {1, -1}, {-1, -1}, {-1, 1}};
 
-EditMode* EditMode::editMode;
+EditMode* EditMode::editMode = NULL;
 
 void EditMode::loadStrings() {
   char* cMenuNames_i18n[N_SUBMENUS] = {
@@ -208,11 +208,15 @@ void EditMode::loadStrings() {
   memcpy(hillNames, hillNames_i18n, sizeof(hillNames));
 }
 
-void EditMode::init() {
-  loadStrings();
-
-  /* Create the editmode object */
-  new EditMode();
+EditMode* EditMode::init() {
+  if (!editMode) {
+    loadStrings();
+    editMode = new EditMode;
+  }
+  return editMode;
+}
+void EditMode::cleanup() {
+  if (editMode) delete editMode;
 }
 
 EditMode::EditMode() {
@@ -1279,11 +1283,9 @@ void EditMode::askNew() {
 }
 
 void EditMode::testLevel() {
-  if (SetupMode::setupMode) {
-    snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel), "%s",
-             levelname);
-    Settings::settings->doSpecialLevel = 1;
-    saveMap();
-    GameMode::activate(SetupMode::setupMode);
-  }
+  snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel), "%s",
+           levelname);
+  Settings::settings->doSpecialLevel = 1;
+  saveMap();
+  GameMode::activate(SetupMode::init());
 }

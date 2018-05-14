@@ -33,18 +33,26 @@
 #include <SDL2/SDL_surface.h>
 #include <string.h>
 
-EnterHighScoreMode *EnterHighScoreMode::enterHighScoreMode;
-SDL_Surface *EnterHighScoreMode::background;
+static EnterHighScoreMode* enterHighScoreMode = NULL;
 
-void EnterHighScoreMode::init() {
-  enterHighScoreMode = new EnterHighScoreMode();
+EnterHighScoreMode* EnterHighScoreMode::init() {
+  if (!enterHighScoreMode) enterHighScoreMode = new EnterHighScoreMode();
+  return enterHighScoreMode;
+}
+void EnterHighScoreMode::cleanup() {
+  if (enterHighScoreMode) delete enterHighScoreMode;
+}
+EnterHighScoreMode::EnterHighScoreMode() {
+  memset(name, 0, sizeof(name));
   if (low_memory)
     background = NULL;
   else {
     background = loadImage("setupBackground.jpg");
   }
 }
-EnterHighScoreMode::EnterHighScoreMode() { memset(name, 0, sizeof(name)); }
+EnterHighScoreMode::~EnterHighScoreMode() {
+  if (background) SDL_FreeSurface(background);
+}
 void EnterHighScoreMode::display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -76,8 +84,8 @@ void EnterHighScoreMode::key(int key) {
     return;
   }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER) {
-    HighScore::highScore->addHighScore(Game::current->player1->score, name);
-    GameMode::activate(MenuMode::menuMode);
+    HighScore::init()->addHighScore(Game::current->player1->score, name);
+    GameMode::activate(MenuMode::init());
     return;
   }
   if (len == 19) /* TODO. Beep */
@@ -90,11 +98,11 @@ void EnterHighScoreMode::key(int key) {
   }
 }
 void EnterHighScoreMode::activated() {
-  if (!background) { background = loadImage("enterHighscoreBackground.jpg"); }
+  if (!background) { background = loadImage("setupBackground.jpg"); }
 
   snprintf(name, sizeof(name), "%s", Game::current->gamer->name);
-  if (!HighScore::highScore->isHighScore(Game::current->player1->score))
-    GameMode::activate(MenuMode::menuMode);
+  if (!HighScore::init()->isHighScore(Game::current->player1->score))
+    GameMode::activate(MenuMode::init());
 
   GLfloat texcoord[4];
   texture = LoadTexture(background, texcoord);

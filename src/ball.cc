@@ -36,17 +36,6 @@
 
 #define MAX_CONTACT_POINTS 24
 
-GLfloat Ball::dizzyTexCoords[4] = {0.f, 0.f, 1.f, 1.f};
-extern GLuint hiresSphere;
-
-void Ball::init() {
-  loadTexture("dizzy.png");
-  dizzyTexCoords[0] = 0.f;
-  dizzyTexCoords[1] = 0.f;
-  dizzyTexCoords[2] = 1.f;
-  dizzyTexCoords[3] = 1.f;
-}
-
 Ball::Ball(int role) : Animated(role, 7) {
   sink = 0.0;
 
@@ -364,11 +353,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                                {+0.6f * frad, 1.5f * frad, -0.1f * frad},
                                {+0.6f * frad, 1.5f * frad, 1.1f * frad},
                                {-0.6f * frad, 1.5f * frad, 1.1f * frad}};
-      GLfloat txco[4][2] = {
-          {dizzyTexCoords[0], dizzyTexCoords[1] + dizzyTexCoords[3]},
-          {dizzyTexCoords[0] + dizzyTexCoords[2], dizzyTexCoords[1] + dizzyTexCoords[3]},
-          {dizzyTexCoords[0] + dizzyTexCoords[2], dizzyTexCoords[1]},
-          {dizzyTexCoords[0], dizzyTexCoords[1]}};
+      GLfloat txco[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f}};
       for (int k = 0; k < 4; k++) {
         pos += packObjectVertex(
             pos, loc[0] - std::sin(angle) * corners[k][0] + std::cos(angle) * corners[k][1],
@@ -1062,9 +1047,8 @@ static int closestPointOnTriangle(const Coord3d &tricor0, const Coord3d &tricor1
   warning("cPoT impossible case happened");
   return -1;
 }
-int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpts,
-                              Coord3d *normals, ICoord2d *cellco, double *dhs,
-                              double *min_height_above_ground) {
+int Ball::locateContactPoints(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
+                              ICoord2d *cellco, double *dhs, double *min_height_above_ground) {
   int nhits = 0;
   /* Construct a list of triangular facets the ball could interact with,
    * and locate their closest interaction points. */
@@ -1120,7 +1104,7 @@ int Ball::locateContactPoints(class Map *map, class Cell **cells, Coord3d *hitpt
   }
   return nhits;
 }
-bool Ball::handleGround(class Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
+bool Ball::handleGround(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normals,
                         ICoord2d *cellco, double *dhs, int nhits, Real time) {
   /* If there are no points of contact, done */
   if (nhits == 0) return true;
@@ -1293,7 +1277,7 @@ static double sign(double v) {
   if (v < 0.) return -1.;
   return 0.;
 }
-int Ball::locateWallBounces(class Map *map, Coord3d *wall_normals) {
+int Ball::locateWallBounces(Map *map, Coord3d *wall_normals) {
   /* individual bounce back for each wall segment intersecting the rim of
    * the ball */
   int xmin = std::floor(position[0] - radius), xmax = std::floor(position[0] + radius);

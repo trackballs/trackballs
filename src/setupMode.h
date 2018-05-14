@@ -27,6 +27,7 @@
 class SetupMode : public GameMode {
  public:
   SetupMode();
+  virtual ~SetupMode();
   void display();
   void activated();
   void deactivated();
@@ -34,8 +35,8 @@ class SetupMode : public GameMode {
   void idle(Real td);
   void mouseDown(int state, int x, int y);
 
-  static void init();
-  static SetupMode *setupMode;
+  static SetupMode *init();
+  static void cleanup();
 
  private:
   void start();
@@ -43,7 +44,7 @@ class SetupMode : public GameMode {
 
   class Gamer *gamer;
   int levelSet, level, name;
-  static SDL_Surface *background;
+  SDL_Surface *background;
   double t;
 
   GLuint texture;

@@ -27,17 +27,18 @@
 class EnterHighScoreMode : public GameMode {
  public:
   EnterHighScoreMode();
+  virtual ~EnterHighScoreMode();
   void display();
   void key(int);
   void activated();
   void deactivated();
 
-  static void init();
-  static EnterHighScoreMode *enterHighScoreMode;
+  static EnterHighScoreMode *init();
+  static void cleanup();
 
  private:
   char name[20];
-  static SDL_Surface *background;
+  SDL_Surface *background;
   GLuint texture;
   GLfloat texMinX, texMinY;
   GLfloat texMaxX, texMaxY;

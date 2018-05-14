@@ -1063,6 +1063,7 @@ void glHelpInit() {
   loadTexture("texture4.png");
   loadTexture("wings.png");
   loadTexture("mousePointer.png");
+  loadTexture("dizzy.png");
 
   sparkle2D = new Sparkle2D();
 

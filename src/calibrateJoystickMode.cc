@@ -29,11 +29,17 @@
 #include <SDL2/SDL_joystick.h>
 #include <SDL2/SDL_keycode.h>
 
-CalibrateJoystickMode *CalibrateJoystickMode::calibrateJoystickMode;
+static CalibrateJoystickMode *calibrateJoystickMode = NULL;
 
 CalibrateJoystickMode::CalibrateJoystickMode() { stage = 0; }
 
-void CalibrateJoystickMode::init() { calibrateJoystickMode = new CalibrateJoystickMode(); }
+CalibrateJoystickMode *CalibrateJoystickMode::init() {
+  if (!calibrateJoystickMode) calibrateJoystickMode = new CalibrateJoystickMode();
+  return calibrateJoystickMode;
+}
+void CalibrateJoystickMode::cleanup() {
+  if (calibrateJoystickMode) delete calibrateJoystickMode;
+}
 
 void CalibrateJoystickMode::activated() {
   stage = 0;
@@ -80,7 +86,7 @@ void CalibrateJoystickMode::nextStage() {
   stage++;
   if (stage > 4) {
     /* TODO - change settings */
-    GameMode::activate(SettingsMode::settingsMode);
+    GameMode::activate(SettingsMode::init());
   }
 }
 
@@ -144,6 +150,6 @@ void CalibrateJoystickMode::display() {
 }
 
 void CalibrateJoystickMode::key(int key) {
-  if (key == SDLK_ESCAPE) GameMode::activate(SettingsMode::settingsMode);
+  if (key == SDLK_ESCAPE) GameMode::activate(SettingsMode::init());
   if (key == ' ') nextStage();
 }

@@ -34,8 +34,9 @@ class MenuMode : public GameMode {
   void deactivated();
   void mouseDown(int state, int x, int y);
 
-  static void init();
-  static MenuMode *menuMode;
+  static MenuMode* init();
+  static void cleanup();
+  static MenuMode* menuMode;
 
  private:
   void doSelection();

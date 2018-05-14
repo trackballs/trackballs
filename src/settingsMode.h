@@ -33,8 +33,8 @@ class SettingsMode : public GameMode {
   void idle(Real);
   void mouseDown(int state, int x, int y);
 
-  static void init();
-  static SettingsMode *settingsMode;
+  static SettingsMode *init();
+  static void cleanup();
 
  private:
   enum eSubScreen {

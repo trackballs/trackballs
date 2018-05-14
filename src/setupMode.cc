@@ -48,28 +48,33 @@
 #define CODE_START 5
 #define CODE_COLOR 6
 
-SetupMode *SetupMode::setupMode = NULL;
-SDL_Surface *SetupMode::background;
-
 Color colors[5] = {Color(1.0, 0.2, 0.2, 1.0), Color(0.2, 1.0, 0.2, 1.0),
                    Color(0.5, 0.5, 1.0, 1.0), Color(1.0, 1.0, 0.2, 1.0),
                    Color(1.0, 1.0, 1.0, 1.0)};
 
-void SetupMode::init() {
-  if (low_memory)
-    background = NULL;
-  else {
-    background = loadImage("setupBackground.jpg");
-  }
-
-  setupMode = new SetupMode();
+static SetupMode *setupMode = NULL;
+SetupMode *SetupMode::init() {
+  if (!setupMode) setupMode = new SetupMode();
+  return setupMode;
 }
+void SetupMode::cleanup() {
+  if (setupMode) delete setupMode;
+}
+
 SetupMode::SetupMode() : GameMode() {
   gamer = new Gamer();
   levelSet = level = 0;
   screenshot = 0;
   t = 0.;
   name = 0;
+  if (low_memory)
+    background = NULL;
+  else {
+    background = loadImage("setupBackground.jpg");
+  }
+}
+SetupMode::~SetupMode() {
+  if (background) SDL_FreeSurface(background);
 }
 void SetupMode::display() {
   Settings *settings = Settings::settings;
@@ -283,7 +288,7 @@ void SetupMode::key(int key) {
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER ||
       (key == SDLK_SPACE && selected != CODE_NAME))
     mouseDown(shift ? 3 : 1, -1, -1);
-  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 
   if (selected == CODE_NAME) {
     if (key == SDLK_BACKSPACE) {
@@ -350,9 +355,9 @@ void SetupMode::start() {
   } else {
     Game::current = new Game(gamer->levels[levelSet][level].fileName, gamer);
     Game::current->currentLevelSet = levelSet;
-    HallOfFameMode::hallOfFameMode->levelSet = levelSet;
+    if (HallOfFameMode::hallOfFameMode) HallOfFameMode::hallOfFameMode->levelSet = levelSet;
   }
-  GameMode::activate(MainMode::mainMode);
+  GameMode::activate(MainMode::init());
 }
 
 void SetupMode::mouseDown(int button, int x, int y) {

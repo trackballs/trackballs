@@ -27,6 +27,7 @@
 class HallOfFameMode : public GameMode {
  public:
   HallOfFameMode();
+  virtual ~HallOfFameMode();
   void display();
   void activated();
   void deactivated();
@@ -34,14 +35,16 @@ class HallOfFameMode : public GameMode {
   void idle(Real);
   void mouseDown(int state, int x, int y);
 
-  static void init();
+  static HallOfFameMode *init();
+  static void cleanup();
   static HallOfFameMode *hallOfFameMode;
+
   int levelSet;
 
  private:
   double timeLeft;
   int isExiting;
-  static SDL_Surface *background;
+  SDL_Surface *background;
 
   GLuint texture;
   GLfloat texCoord[4];

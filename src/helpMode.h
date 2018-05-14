@@ -28,6 +28,7 @@
 class HelpMode : public GameMode {
  public:
   HelpMode();
+  virtual ~HelpMode();
   void display();
   void activated();
   void deactivated();
@@ -35,13 +36,13 @@ class HelpMode : public GameMode {
   void idle(Real);
   void mouseDown(int button, int x, int y);
 
-  static void init();
-  static HelpMode *helpMode;
+  static HelpMode *init();
+  static void cleanup();
 
  private:
   double timeLeft;
   int isExiting, page;
-  static SDL_Surface *background;
+  SDL_Surface *background;
 
   Game *helpGame;
 

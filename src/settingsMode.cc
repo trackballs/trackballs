@@ -31,14 +31,20 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-SettingsMode *SettingsMode::settingsMode;
+static SettingsMode *settingsMode = NULL;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
 extern double timeDilationFactor;
 extern void changeScreenResolution();
 
-void SettingsMode::init() { settingsMode = new SettingsMode(); }
+SettingsMode *SettingsMode::init() {
+  if (!settingsMode) settingsMode = new SettingsMode();
+  return settingsMode;
+}
+void SettingsMode::cleanup() {
+  if (settingsMode) delete settingsMode;
+}
 SettingsMode::SettingsMode() {
   resolution = 0;
   colorDepth = 0;
@@ -262,7 +268,7 @@ void SettingsMode::key(int key) {
   if (key == SDLK_TAB) { moveKeyboardFocus(shift); }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_SPACE)
     mouseDown(shift ? 3 : 1, -1, -1);
-  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::menuMode);
+  if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
 void SettingsMode::idle(Real td) {
   tickMouse(td);
@@ -294,7 +300,7 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     subscreen = (SettingsMode::eSubScreen)mymod(subscreen + (up ? 1 : -1), NUM_SUBSCREENS);
     break;
   case MENU_RETURN:
-    GameMode::activate(MenuMode::menuMode);
+    GameMode::activate(MenuMode::init());
     break;
 
   case MENU_RESOLUTION:
@@ -378,9 +384,7 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
   case MENU_JOYSTICK:
     settings->joystickIndex =
         mymod(settings->joystickIndex + (up ? 1 : -1), SDL_NumJoysticks() + 1);
-    if (settings->joystickIndex > 0) {
-      GameMode::activate(CalibrateJoystickMode::calibrateJoystickMode);
-    }
+    if (settings->joystickIndex > 0) { GameMode::activate(CalibrateJoystickMode::init()); }
     break;
 
   case MENU_MUSIC_VOLUME:

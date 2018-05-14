@@ -33,8 +33,8 @@ class CalibrateJoystickMode : public GameMode {
   void mouseDown(int state, int x, int y);
   void key(int);
 
-  static void init();
-  static CalibrateJoystickMode *calibrateJoystickMode;
+  static CalibrateJoystickMode *init();
+  static void cleanup();
 
  private:
   void nextStage();

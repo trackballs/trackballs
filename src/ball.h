@@ -67,8 +67,6 @@ class Ball : public Animated {
   void drive(Real xacc, Real yacc);
   void queueJump(Real strength);
 
-  static void init();
-
   Coord3d velocity;
   bool inTheAir, inPipe;
   float modTimeLeft[NUM_MODS], modTimePhaseIn[NUM_MODS];
@@ -100,17 +98,14 @@ class Ball : public Animated {
   double reflectivity;
   int metallic, dontReflectSelf;
 
-  static GLfloat dizzyTexCoords[4];
-
   int locateContactPoints(Map*, Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, double*);
-  int locateWallBounces(class Map*, Coord3d*);
+  int locateWallBounces(Map*, Coord3d*);
   void generateSandDebris();
   void generateDebris(const Color& color);
   void handleBallCollisions();
   void handleForcefieldCollisions();
   void handlePipes(Real time);
-  bool handleGround(class Map*, class Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, int,
-                    Real);
+  bool handleGround(Map*, Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, int, Real);
   bool handleWalls(Coord3d*, int);
 };
 

@@ -27,7 +27,7 @@
 class MainMode : public GameMode {
  public:
   MainMode();
-  ~MainMode();
+  virtual ~MainMode();
 
   void display();
   void key(int);
@@ -52,7 +52,8 @@ class MainMode : public GameMode {
   void renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const;
   Real flash;
 
-  static void init();
+  static MainMode *init();
+  static void cleanup();
   static MainMode *mainMode;
 
   double zAngle, wantedZAngle, xyAngle, wantedXYAngle;
