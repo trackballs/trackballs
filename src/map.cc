@@ -887,7 +887,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
 
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
@@ -1014,7 +1014,7 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
 
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
@@ -1076,7 +1076,7 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 2 * 3 * nfacets, GL_UNSIGNED_SHORT, (void*)0);

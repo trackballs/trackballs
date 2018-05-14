@@ -17,7 +17,7 @@ uniform vec3 light_specular;
 uniform vec3 light_ambient;
 uniform vec3 global_ambient;
 uniform vec3 sun_direction;
-uniform float day_mode;
+uniform int day_mode;
 uniform float quadratic_attenuation;
 
 uniform sampler2DArray arrtex;
@@ -90,31 +90,27 @@ void main(void) {
   vec4 texcolor = fcolor * texture(arrtex, vec3(texco.xy, clamped));
 
   // Lighting model, not tuned very much
-
-  vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
-
-  float shadowFactor;
-  if (day_mode > 0) {
-    shadowFactor = 0.5 + 0.5 * cascadeShadow();
-  } else {
-    shadowFactor = 0.5 + 0.5 * cubeShadow();
-  }
-
-  float light_distance = length(light_pos - cpos);
-  float strength = 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   vec3 L;
+  float source_strength;
   if (day_mode < 0) {
+    vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
+    float light_distance = length(light_pos - cpos);
     L = normalize(light_pos - cpos);
+    source_strength = 0.5 + 0.5 * cubeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.5;
+    source_strength *= 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   } else {
-    L = normalize(-vec4(model_matrix * vec4(sun_direction, 0)).xyz);
+    L = normalize(-mat3(model_matrix) * sun_direction);
+    source_strength = 0.5 + 0.5 * cascadeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.5;
   }
+
   vec3 E = normalize(-cpos);
   vec3 R = normalize(-reflect(L, normal));
-  vec3 Iambient = texcolor.xyz * strength * light_ambient;
-  vec3 Idiffuse = texcolor.xyz * strength * light_diffuse * max(dot(normal, L), 0.0);
-  Idiffuse = clamp(Idiffuse, 0.0, 1.0);
-  vec3 surfcolor = light_ambient + Iambient + Idiffuse;
-  surfcolor = shadowFactor * clamp(surfcolor, 0.0, 1.0);
+  vec3 Iambient = texcolor.xyz * light_ambient;
+  vec3 Idiffuse = texcolor.xyz * light_diffuse * max(dot(normal, L), 0.0);
+  vec3 surfcolor = light_ambient + Iambient + source_strength * Idiffuse;
+  surfcolor = clamp(surfcolor, 0.0, 1.0);
 
   float dist;
   if (fog_active == 0) {

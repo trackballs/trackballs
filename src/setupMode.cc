@@ -170,7 +170,7 @@ void SetupMode::display() {
   setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.3f, 0.3f, 0.3f, 0.3f);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 20.f);
-  glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), 1.);
+  glUniform1i(glGetUniformLocation(shaderObject, "ignore_shadow"), 1);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
   GLuint databuf, idxbuf;

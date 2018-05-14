@@ -15,7 +15,7 @@ uniform vec3 light_diffuse;
 uniform vec3 light_specular;
 uniform vec3 light_ambient;
 uniform vec3 global_ambient;
-uniform float day_mode;
+uniform int day_mode;
 uniform float quadratic_attenuation;
 
 uniform sampler2D wtex;
@@ -25,6 +25,7 @@ uniform sampler2D shadow_cascade1;
 uniform sampler2D shadow_cascade2;
 uniform mat4 cascade_proj[3];
 uniform mat4 cascade_model[3];
+uniform vec3 sun_direction;
 
 varying vec2 texco;
 varying vec3 cpos;
@@ -76,23 +77,26 @@ void main(void) {
   vec4 texcolor = fcolor * texture2D(wtex, texco);
 
   // Lighting model, not tuned very much
-  float shadowFactor;
-  if (day_mode > 0) {
-    shadowFactor = 0.5 + 0.5 * cascadeShadow();
+  vec3 L;
+  float source_strength;
+  if (day_mode == 0) {
+    vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
+    float light_distance = length(light_pos - cpos);
+    L = normalize(light_pos - cpos);
+    source_strength = 0.5 + 0.5 * cubeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.5;
+    source_strength *= 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   } else {
-    shadowFactor = 0.5 + 0.5 * cubeShadow();
+    L = normalize(-mat3(model_matrix) * sun_direction);
+    source_strength = 0.5 + 0.5 * cascadeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.5;
   }
-  vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
-  float light_distance = length(light_pos - cpos);
-  float strength = 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
-  vec3 L = normalize(light_pos - cpos);
   vec3 E = normalize(-cpos);
   vec3 R = normalize(-reflect(L, normal));
-  vec3 Iambient = texcolor.xyz * strength * light_ambient;
-  vec3 Idiffuse = texcolor.xyz * strength * light_diffuse * max(dot(normal, L), 0.0);
-  Idiffuse = clamp(Idiffuse, 0.0, 1.0);
-  vec3 surfcolor = light_ambient + Iambient + Idiffuse;
-  surfcolor = shadowFactor * clamp(surfcolor, 0.0, 1.0);
+  vec3 Iambient = texcolor.xyz * light_ambient;
+  vec3 Idiffuse = texcolor.xyz * light_diffuse * max(dot(normal, L), 0.0);
+  vec3 surfcolor = light_ambient + Iambient + source_strength * Idiffuse;
+  surfcolor = clamp(surfcolor, 0.0, 1.0);
 
   float dist;
   if (fog_active == 0) {

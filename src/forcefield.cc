@@ -91,7 +91,7 @@ void ForceField::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) con
   setActiveProgramAndUniforms(shaderObject);
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);

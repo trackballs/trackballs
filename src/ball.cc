@@ -552,6 +552,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
+    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[4]);
@@ -566,7 +567,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[5]);
@@ -582,7 +583,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     setActiveProgramAndUniforms(shaderObject);
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), -1.);
+    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("dizzy.png")]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[6]);

@@ -361,8 +361,8 @@ void setActiveProgramAndUniforms(GLuint shader) {
   if (shader == shaderObject) {
     /* frequently changed unique variables */
     glUseProgram(shader);
-    glUniform1f(glGetUniformLocation(shader, "use_lighting"), 1.);
-    glUniform1f(glGetUniformLocation(shader, "ignore_shadow"), -1.);
+    glUniform1i(glGetUniformLocation(shader, "use_lighting"), 1);
+    glUniform1i(glGetUniformLocation(shader, "ignore_shadow"), 0);
   }
   if (activeView.calculating_shadows &&
       !(shader == shaderObjectShadow || shader == shaderTileShadow)) {
@@ -397,8 +397,8 @@ void setActiveProgramAndUniforms(GLuint shader) {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
     if (shader == shaderObject) {
-      glUniform1f(glGetUniformLocation(shaderObject, "use_lighting"), 1.);
-      glUniform1f(glGetUniformLocation(shaderObject, "ignore_shadow"), -1.);
+      glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 1);
+      glUniform1i(glGetUniformLocation(shaderObject, "ignore_shadow"), 0);
       glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
     }
   } else if (shader == shaderReflection) {
@@ -594,7 +594,7 @@ void setViewUniforms(GLuint shader) {
                 activeView.global_ambient[1], activeView.global_ambient[2]);
     glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
                 activeView.sun_direction[1], activeView.sun_direction[2]);
-    glUniform1f(glGetUniformLocation(shader, "day_mode"), activeView.day_mode ? 1. : -1.);
+    glUniform1i(glGetUniformLocation(shader, "day_mode"), activeView.day_mode);
     glUniform1f(glGetUniformLocation(shader, "quadratic_attenuation"),
                 activeView.quadratic_attenuation);
 
