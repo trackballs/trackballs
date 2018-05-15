@@ -40,9 +40,6 @@
 
 #define ENVIRONMENT_TEXTURE_SIZE 512
 
-Coord3d sunPosition(-20, -40, 40);
-Coord3d moonPosition(0, 0, 2);
-
 const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
           MainMode::statusInGame = 2;
 const int MainMode::statusRestartPlayer = 3, MainMode::statusNextLevel = 4,
@@ -81,8 +78,10 @@ MainMode::MainMode() {
 MainMode::~MainMode() {}
 
 void MainMode::display() {
-  Map *map = Game::current ? Game::current->map : NULL;
-  Player *player1 = Game::current ? Game::current->player1 : NULL;
+  if (!Game::current) { return; }
+
+  Map *map = Game::current->map;
+  Player *player1 = Game::current->player1;
 
   if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
@@ -116,8 +115,8 @@ void MainMode::display() {
 
   /* lighting must be set before we render the shadow map */
   /* Shadow map rendering returns active modelview/projection to orig state */
-  setupLighting();
-  if (Game::current && Game::current->isNight) {
+  setupLighting(Game::current->isNight);
+  if (Game::current->isNight) {
     activeView.day_mode = false;
     if (Settings::settings->doShadows) {
       renderShadowMap(camFocus, map, Game::current);
@@ -695,7 +694,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
                    : focus[2] + 2.0,
                up[0], up[1], up[2], activeView.modelview);
 
-  setupLighting();
+  setupLighting(Game::current->isNight);
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
@@ -746,9 +745,10 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   Settings::settings->gfx_details = gfx_details;
 }
 
-void MainMode::setupLighting() const {
+void MainMode::setupLighting(bool isNight) {
+  const Coord3d moonPosition(0., 0., 2.);
   GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
-  if (Game::current && Game::current->isNight) {
+  if (isNight && Game::current && Game::current->player1) {
     GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
     GLfloat lightPosition2[3] = {
         (GLfloat)(Game::current->player1->position[0] + moonPosition[0]),
@@ -761,15 +761,10 @@ void MainMode::setupLighting() const {
     assign(black, activeView.light_ambient);
     activeView.quadratic_attenuation = 0.25;
   } else {
-    GLfloat sunLight[3] = {0.8, 0.8, 0.8};
+    GLfloat sunLight[3] = {0.75, 0.75, 0.75};
     GLfloat ambient[3] = {0.2, 0.2, 0.2};
-    GLfloat lightPosition[3] = {
-        (GLfloat)(Game::current->player1->position[0] + sunPosition[0]),
-        (GLfloat)(Game::current->player1->position[1] + sunPosition[1]),
-        (GLfloat)(Game::current->player1->position[2] + sunPosition[2])};
     assign(sunLight, activeView.light_diffuse);
     assign(sunLight, activeView.light_specular);
-    assign(lightPosition, activeView.light_position);
     assign(black, activeView.global_ambient);
     assign(ambient, activeView.light_ambient);
     activeView.quadratic_attenuation = 0.;

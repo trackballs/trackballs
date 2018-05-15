@@ -48,7 +48,7 @@ class MainMode : public GameMode {
   void levelComplete();
   void bonusLevelComplete();
 
-  void setupLighting() const;
+  static void setupLighting(bool isNight);
   void renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const;
   Real flash;
 

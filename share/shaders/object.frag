@@ -101,8 +101,8 @@ void main(void) {
     source_strength *= 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   } else {
     L = normalize(-mat3(model_matrix) * sun_direction);
-    source_strength = 0.5 + 0.5 * cascadeShadow();
-    if (dot(normal, L) < 0) source_strength = 0.5;
+    source_strength = 0.35 + 0.75 * cascadeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.35;
     if (ignore_shadow == 1) source_strength = 1.0;
   }
 

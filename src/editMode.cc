@@ -26,6 +26,7 @@
 #include "editWindows.h"
 #include "game.h"
 #include "guile.h"
+#include "mainMode.h"
 #include "map.h"
 #include "menusystem.h"
 #include "settings.h"
@@ -370,17 +371,7 @@ void EditMode::display() {
 
   /* configure lighting */
   activeView.fog_enabled = 0;
-  activeView.quadratic_attenuation = 0.;
-
-  GLfloat lightPosition[3] = {(GLfloat)x - 60.f, (GLfloat)y - 40.f, (GLfloat)h + 100.f};
-  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
-  GLfloat ambient[3] = {0.2, 0.2, 0.2};
-  GLfloat black[3] = {0., 0., 0.};
-  assign(black, activeView.global_ambient);
-  assign(ambient, activeView.light_ambient);
-  assign(lightDiffuse, activeView.light_diffuse);
-  assign(lightDiffuse, activeView.light_specular);
-  assign(lightPosition, activeView.light_position);
+  MainMode::setupLighting(false);
 
   /* Setup matrixes for the camera perspective */
   perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,

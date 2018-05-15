@@ -92,7 +92,7 @@ void main(void) {
   // Lighting model, not tuned very much
   vec3 L;
   float source_strength;
-  if (day_mode < 0) {
+  if (day_mode == 0) {
     vec3 light_pos = vec4(model_matrix * vec4(light_position, 1.)).xyz;
     float light_distance = length(light_pos - cpos);
     L = normalize(light_pos - cpos);
@@ -101,8 +101,8 @@ void main(void) {
     source_strength *= 1.0 / (1. + quadratic_attenuation * light_distance * light_distance);
   } else {
     L = normalize(-mat3(model_matrix) * sun_direction);
-    source_strength = 0.5 + 0.5 * cascadeShadow();
-    if (dot(normal, L) < 0) source_strength = 0.5;
+    source_strength = 0.35 + 0.75 * cascadeShadow();
+    if (dot(normal, L) < 0) source_strength = 0.35;
   }
 
   vec3 E = normalize(-cpos);
