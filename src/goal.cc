@@ -41,7 +41,7 @@ void Goal::onGet() {
 }
 
 void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool mustUpdate) const {
+                           const GLuint *vaolist, bool mustUpdate) const {
   if (!mustUpdate || !visible) return;
 
   const int nfacets = 11;
@@ -92,7 +92,6 @@ void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     int inner;
     if (curved) {
       delta = k % 2 ? width : -width;
-      ;
       inner = ((k / 2) % 2);
     } else {
       delta = ((k / 2) % 2) ? width : -width;
@@ -125,14 +124,15 @@ void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     }
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Goal::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Goal::drawBuffers1(const GLuint *vaolist) const {
   if (!visible) return;
 
   const int nfacets = 11;
@@ -150,10 +150,8 @@ void Goal::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * 8 * (nfacets + 1), GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Goal::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Goal::drawBuffers2(const GLuint * /*vaolist*/) const {}

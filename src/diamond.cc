@@ -35,7 +35,7 @@ Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated, 1) {
 }
 
 void Diamond::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                              bool /*mustUpdate*/) const {
+                              const GLuint *vaolist, bool /*mustUpdate*/) const {
   if (fade <= 0.) return;
 
   Color color = primaryColor;
@@ -56,16 +56,17 @@ void Diamond::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   ushort idxs[12][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 6}, {0, 6, 1},
                         {7, 2, 1}, {7, 3, 2}, {7, 4, 3}, {7, 5, 4}, {7, 6, 5}, {7, 1, 6}};
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Diamond::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Diamond::drawBuffers1(const GLuint * /*vaolist*/) const {}
 
-void Diamond::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Diamond::drawBuffers2(const GLuint *vaolist) const {
   if (fade <= 0.) { return; }
 
   glEnable(GL_BLEND);
@@ -80,9 +81,7 @@ void Diamond::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const 
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void *)0);
 }
 

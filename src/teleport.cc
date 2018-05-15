@@ -51,7 +51,7 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
 }
 
 void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                               bool mustUpdate) const {
+                               const GLuint *vaolist, bool mustUpdate) const {
   GLfloat cent_height = 0.5f;
   if (mustUpdate) {
     GLfloat data[(9 * NFACETS + 1) * 8];
@@ -135,11 +135,12 @@ void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       idxs[8 * NFACETS + i][2] = 8 * NFACETS + (i + 1) % NFACETS;
     }
 
+    glBindVertexArray(vaolist[0]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
   {
     Color color = secondaryColor;
@@ -160,14 +161,16 @@ void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       idxs[i][2] = (i + 1) % NFACETS + 1;
     }
 
+    glBindVertexArray(vaolist[1]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
     glBufferData(GL_ARRAY_BUFFER, (NFACETS + 1) * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, NFACETS * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
 }
 
-void Teleport::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Teleport::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -181,13 +184,11 @@ void Teleport::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * 9 * NFACETS, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Teleport::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Teleport::drawBuffers2(const GLuint *vaolist) const {
   if (activeView.calculating_shadows) return;
 
   glDisable(GL_CULL_FACE);
@@ -199,9 +200,7 @@ void Teleport::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const
   glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[1]);
   glDrawElements(GL_TRIANGLES, NFACETS * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 

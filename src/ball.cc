@@ -77,7 +77,7 @@ Ball::~Ball() {
 }
 
 void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool /*mustUpdate*/) const {
+                           const GLuint *vaolist, bool /*mustUpdate*/) const {
   if (!is_on) return;
 
   Color color = primaryColor.toOpaque();
@@ -137,10 +137,12 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     }
     placeObjectSphere(data, idxs, 0, loc, rotation, radius, detail, color);
 
+    glBindVertexArray(vaolist[0]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
     glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[0]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
     delete[] data;
     delete[] idxs;
   }
@@ -207,10 +209,12 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       idxs[3 * i + 2][2] = 4 * i + 3;
     }
 
+    glBindVertexArray(vaolist[1]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
 
   if (modTimeLeft[MOD_SPEED]) {
@@ -241,10 +245,13 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       idxs[2 * i + 1] = 2 * i + 1;
     }
 
+    glBindVertexArray(vaolist[2]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[2]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[2]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[2]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glEnableVertexAttribArray(0);
   }
 
   // Handle modifiers
@@ -285,10 +292,12 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       ushort pts[4][3] = {{1, 0, 3}, {0, 2, 3}, {2, 5, 3}, {2, 4, 5}};
       for (int k = 0; k < 12; k++) { idxs[4 * i + k / 3][k % 3] = pts[k / 3][k % 3] + 6 * i; }
     }
+    glBindVertexArray(vaolist[3]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[3]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[3]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
 
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
@@ -303,10 +312,12 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
     placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
 
+    glBindVertexArray(vaolist[4]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[4]);
     glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
     delete[] data;
     delete[] idxs;
   }
@@ -335,10 +346,12 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       idxs[i / 3][i % 3] = i;
     }
 
+    glBindVertexArray(vaolist[5]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[5]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[5]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
 
   if (modTimeLeft[MOD_DIZZY]) {
@@ -364,14 +377,16 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 
     ushort idxs[6][3] = {{0, 1, 2}, {0, 3, 2}, {4, 5, 6}, {4, 7, 6}, {8, 9, 10}, {8, 11, 10}};
 
+    glBindVertexArray(vaolist[6]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[6]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (idxbufs)[6]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
   }
 }
 
-void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Ball::drawBuffers1(const GLuint *vaolist) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
 
@@ -431,9 +446,6 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
       glUniformC(glGetUniformLocation(shaderObject, "specular"), specular);
       glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
     }
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
     } else if (texture == 0) {
@@ -441,8 +453,8 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
     } else {
       glBindTexture(GL_TEXTURE_2D, textures[texture]);
     }
-    configureObjectAttributes();
 
+    glBindVertexArray(vaolist[0]);
     glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 
     if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture &&
@@ -470,9 +482,7 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
       glActiveTexture(GL_TEXTURE0 + 0);
       glBindTexture(GL_TEXTURE_2D, environmentTexture);
 
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-      glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-      configureObjectAttributes();
+      glBindVertexArray(vaolist[0]);
       glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
     }
   }
@@ -491,9 +501,7 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
     }
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[1]);
-    configureObjectAttributes();
+    glBindVertexArray(vaolist[1]);
     glDrawElements(GL_TRIANGLES, 20 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
   }
 
@@ -508,9 +516,7 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
 
     const int nlines = 8;
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[2]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[2]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glBindVertexArray(vaolist[2]);
     glDrawElements(GL_LINES, 2 * nlines, GL_UNSIGNED_SHORT, (void *)0);
   }
 
@@ -529,14 +535,12 @@ void Ball::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
     }
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[3]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[3]);
-    configureObjectAttributes();
+    glBindVertexArray(vaolist[3]);
     glDrawElements(GL_TRIANGLES, 40 * 3, GL_UNSIGNED_SHORT, (void *)0);
   }
 }
 
-void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Ball::drawBuffers2(const GLuint *vaolist) const {
   if (!is_on) return;
   if (dontReflectSelf) return;
   if (activeView.calculating_shadows) return;
@@ -555,9 +559,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[4]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[4]);
-    configureObjectAttributes();
+    glBindVertexArray(vaolist[4]);
     glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
   }
   if (modTimeLeft[MOD_JUMP]) {
@@ -570,9 +572,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[5]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[5]);
-    configureObjectAttributes();
+    glBindVertexArray(vaolist[5]);
     glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, (void *)0);
   }
 
@@ -586,9 +586,7 @@ void Ball::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
     glBindTexture(GL_TEXTURE_2D, textures[loadTexture("dizzy.png")]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[6]);
-    glBindBuffer(GL_ARRAY_BUFFER, databufs[6]);
-    configureObjectAttributes();
+    glBindVertexArray(vaolist[6]);
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, (void *)0);
   }
 }

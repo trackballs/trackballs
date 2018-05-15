@@ -40,7 +40,7 @@ Splash::Splash(Coord3d center, Coord3d velocity, Color color, double strength, d
 }
 
 void Splash::generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
-                             bool /*mustUpdate*/) const {
+                             const GLuint* vaolist, bool /*mustUpdate*/) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
 
   GLfloat* data = new GLfloat[3 * nDroplets];
@@ -52,17 +52,20 @@ void Splash::generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
     idxs[i] = i;
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 3 * nDroplets * sizeof(GLfloat), data, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, nDroplets * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glEnableVertexAttribArray(0);
   delete[] data;
   delete[] idxs;
 }
 
-void Splash::drawBuffers1(const GLuint* /*idxbufs*/, const GLuint* /*databufs*/) const {}
+void Splash::drawBuffers1(const GLuint* /*vaolist*/) const {}
 
-void Splash::drawBuffers2(const GLuint* idxbufs, const GLuint* databufs) const {
+void Splash::drawBuffers2(const GLuint* vaolist) const {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
   if (activeView.calculating_shadows) return;
 
@@ -72,9 +75,7 @@ void Splash::drawBuffers2(const GLuint* idxbufs, const GLuint* databufs) const {
   setActiveProgramAndUniforms(shaderLine);
   glUniformC(glGetUniformLocation(shaderLine, "line_color"), primaryColor);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_POINTS, nDroplets, GL_UNSIGNED_SHORT, (void*)0);
 }
 

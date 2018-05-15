@@ -52,6 +52,7 @@ class Weather {
   int kind;
   double strength;
   GLuint bufs[2];
+  GLuint vao;
 };
 
 #endif

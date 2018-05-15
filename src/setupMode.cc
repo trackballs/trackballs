@@ -113,6 +113,8 @@ void SetupMode::display() {
   /* Draw the player ball */
   /*                      */
 
+  warnForGLerrors("start of setup ball");
+
   Matrix4d persp_trans = {{1.f, 0.f, 0.f, 0.f},
                           {0.f, 1.f, 0.f, 0.f},
                           {0.f, 0.f, 1.f, 0.f},
@@ -173,10 +175,14 @@ void SetupMode::display() {
   glUniform1i(glGetUniformLocation(shaderObject, "ignore_shadow"), 1);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
-  GLuint databuf, idxbuf;
+  warnForGLerrors("trans");
+
+  GLuint databuf, idxbuf, vao;
   glGenBuffers(1, &databuf);
   glGenBuffers(1, &idxbuf);
+  glGenVertexArrays(1, &vao);
 
+  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
@@ -187,9 +193,12 @@ void SetupMode::display() {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 
+  glBindVertexArray(0);
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
+  glDeleteVertexArrays(1, &vao);
 
+  warnForGLerrors("end of setup ball");
   Enter2DMode();
 
   char str[256];

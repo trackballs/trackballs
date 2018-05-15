@@ -32,11 +32,15 @@ Weather::Weather() {
   kind = WEATHER_SNOW;
   clear();
 
-  bufs[0] = (GLuint)-1;
-  bufs[1] = (GLuint)-1;
+  bufs[0] = 0;
+  bufs[1] = 0;
+  vao = 0;
 }
 Weather::~Weather() {
-  if (bufs[0] == bufs[1]) { glDeleteBuffers(2, bufs); }
+  if (bufs[0] == bufs[1]) {
+    glDeleteBuffers(2, bufs);
+    glDeleteVertexArrays(1, &vao);
+  }
 }
 
 void Weather::tick(Real td) {
@@ -99,6 +103,7 @@ void Weather::draw2() {
 
   if (bufs[0] == bufs[1]) {
     glGenBuffers(2, bufs);
+    glGenVertexArrays(1, &vao);
     /* Create a fixed linear index */
     ushort *idxs = new ushort[3 * 3000];
     for (int i = 0; i < 3 * 3000; i++) { idxs[i] = i; }
@@ -135,6 +140,7 @@ void Weather::draw2() {
       j++;
     }
 
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
     glBufferData(GL_ARRAY_BUFFER, 2 * 3 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     delete[] data;
@@ -144,8 +150,8 @@ void Weather::draw2() {
     glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
+    glEnableVertexAttribArray(0);
     glDrawElements(GL_LINES, (2 * nactive), GL_UNSIGNED_SHORT, (void *)0);
   } else if (kind == WEATHER_SNOW) {
     /** Draw SNOW particles **/
@@ -180,6 +186,7 @@ void Weather::draw2() {
     }
 
     // Transfer data
+    glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, bufs[0]);
     glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     delete[] data;

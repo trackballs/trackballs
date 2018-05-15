@@ -28,9 +28,9 @@ class Teleport : public Animated {
  public:
   Teleport(Real x, Real y, Real dx, Real dy, Real radius);
 
-  virtual void generateBuffers(const GLuint*, const GLuint*, bool) const;
-  virtual void drawBuffers1(const GLuint*, const GLuint*) const;
-  virtual void drawBuffers2(const GLuint*, const GLuint*) const;
+  virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
+  virtual void drawBuffers1(const GLuint*) const;
+  virtual void drawBuffers2(const GLuint*) const;
 
   void tick(Real t);
 

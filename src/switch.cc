@@ -47,7 +47,7 @@ void CSwitch::releaseCallbacks() {
 }
 
 void CSwitch::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                              bool mustUpdate) const {
+                              const GLuint *vaolist, bool mustUpdate) const {
   const int nfacets = 6;
   GLfloat lever_length = 0.3f;
   GLfloat lever_end = 0.03f;
@@ -137,14 +137,15 @@ void CSwitch::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     idxs[istart + i][2] = local[i][2] + vstart;
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void CSwitch::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void CSwitch::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -158,13 +159,11 @@ void CSwitch::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const 
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, (4 * nfacets + 6) * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void CSwitch::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void CSwitch::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
 void CSwitch::tick(Real /*t*/) {
   Coord3d v = position - Game::current->player1->position;

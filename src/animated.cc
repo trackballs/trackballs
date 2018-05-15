@@ -25,7 +25,7 @@
 #include "map.h"
 #include "scoreSign.h"
 
-Animated::Animated(int role, int maxVBOpairs) : GameHook(role), nVBOs(maxVBOpairs) {
+Animated::Animated(int role, int maxVBOpairsOrVAOs) : GameHook(role), nVOs(maxVBOpairsOrVAOs) {
   primaryColor = Color(0.8, 0.8, 0.8, 1.);
   secondaryColor = Color(0.3, 0.3, 0.3, 1.);
   specularColor = Color(0., 0., 0., 1.);
@@ -46,31 +46,24 @@ Animated::Animated(int role, int maxVBOpairs) : GameHook(role), nVBOs(maxVBOpair
   onScreen = true;
   drawChanged = true;
 
-  idxVBOs = NULL;
-  dataVBOs = NULL;
+  glidxs = NULL;
   lastFrameNumber = -1;
 }
 Animated::~Animated() {
-  if (idxVBOs) {
-    glDeleteBuffers(nVBOs, idxVBOs);
-    delete[] idxVBOs;
-    idxVBOs = NULL;
-  }
-  if (dataVBOs) {
-    glDeleteBuffers(nVBOs, dataVBOs);
-    delete[] dataVBOs;
-    dataVBOs = NULL;
+  if (glidxs) {
+    glDeleteBuffers(nVOs, &glidxs[nVOs * 0]);
+    glDeleteBuffers(nVOs, &glidxs[nVOs * 1]);
+    glDeleteVertexArrays(nVOs, &glidxs[nVOs * 2]);
+    delete[] glidxs;
+    glidxs = NULL;
   }
 }
 void Animated::setupVBOs() {
-  if (!idxVBOs) {
-    idxVBOs = new GLuint[nVBOs];
-    glGenBuffers(nVBOs, idxVBOs);
-    drawChanged = true;
-  }
-  if (!dataVBOs) {
-    dataVBOs = new GLuint[nVBOs];
-    glGenBuffers(nVBOs, dataVBOs);
+  if (!glidxs) {
+    glidxs = new GLuint[nVOs * 3];
+    glGenBuffers(nVOs, &glidxs[nVOs * 0]);
+    glGenBuffers(nVOs, &glidxs[nVOs * 1]);
+    glGenVertexArrays(nVOs, &glidxs[nVOs * 2]);
     drawChanged = true;
   }
 }
@@ -78,10 +71,10 @@ void Animated::draw() {
   if (theFrameNumber != lastFrameNumber) {
     lastFrameNumber = theFrameNumber;
     setupVBOs();
-    generateBuffers(idxVBOs, dataVBOs, drawChanged);
+    generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
     drawChanged = false;
   }
-  drawBuffers1(idxVBOs, dataVBOs);
+  drawBuffers1(&glidxs[nVOs * 2]);
   /* For debug */
   if (0) drawBoundingBox();
 }
@@ -89,10 +82,10 @@ void Animated::draw2() {
   if (theFrameNumber != lastFrameNumber) {
     lastFrameNumber = theFrameNumber;
     setupVBOs();
-    generateBuffers(idxVBOs, dataVBOs, drawChanged);
+    generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
     drawChanged = false;
   }
-  drawBuffers2(idxVBOs, dataVBOs);
+  drawBuffers2(&glidxs[nVOs * 2]);
 }
 void Animated::drawBoundingBox() const {
   if (activeView.calculating_shadows) return;
@@ -129,6 +122,7 @@ void Animated::drawBoundingBox() const {
 
   setActiveProgramAndUniforms(shaderLine);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+  glEnableVertexAttribArray(0);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
   glBindBuffer(GL_ARRAY_BUFFER, databuf);

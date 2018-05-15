@@ -39,7 +39,7 @@ ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
   boundingBox[1][2] = +abs(dir[2]) + h;
 }
 void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                                 bool /*mustUpdate*/) const {
+                                 const GLuint *vaolist, bool /*mustUpdate*/) const {
   if (!is_on) return;
 
   Coord3d ndir = direction;
@@ -70,6 +70,7 @@ void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                             i < 4 ? color : rimco, flat);
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 12 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
@@ -77,11 +78,12 @@ void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                         {5, 7, 11}, {7, 10, 11}, {7, 6, 10}, {6, 8, 10}, {6, 4, 8}};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 10 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void ForceField::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void ForceField::drawBuffers1(const GLuint * /*vaolist*/) const {}
 
-void ForceField::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void ForceField::drawBuffers2(const GLuint *vaolist) const {
   if (!is_on) return;
   if (activeView.calculating_shadows) return;
 
@@ -94,9 +96,7 @@ void ForceField::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) con
   glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 10 * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 

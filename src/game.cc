@@ -351,7 +351,6 @@ void Game::draw() {
       if (anim->onScreen) anim->draw2();
     }
   }
-
   if (weather) weather->draw2();
 
   warnForGLerrors("Game drawing");

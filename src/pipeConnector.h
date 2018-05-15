@@ -27,16 +27,16 @@ class PipeConnector : public Animated {
  public:
   PipeConnector(const Coord3d& pos, Real radius);
 
-  virtual void generateBuffers(const GLuint*, const GLuint*, bool) const;
-  virtual void drawBuffers1(const GLuint*, const GLuint*) const;
-  virtual void drawBuffers2(const GLuint*, const GLuint*) const;
+  virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
+  virtual void drawBuffers1(const GLuint*) const;
+  virtual void drawBuffers2(const GLuint*) const;
 
   void tick(Real t);
 
   const Real radius;
 
  private:
-  void drawMe(const GLuint* idxbufs, const GLuint* databufs) const;
+  void drawMe(const GLuint* vaolist) const;
 };
 
 #endif

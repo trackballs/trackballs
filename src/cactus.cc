@@ -49,7 +49,7 @@ Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated, 1) {
 }
 
 void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                             bool /*mustUpdate*/) const {
+                             const GLuint *vaolist, bool /*mustUpdate*/) const {
   GLfloat radius = killed_time * base_radius;
 
   const int nsides = 6;
@@ -140,14 +140,15 @@ void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     vbase += 4;
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Cactus::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Cactus::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
@@ -161,13 +162,11 @@ void Cactus::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Cactus::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Cactus::drawBuffers2(const GLuint * /*idxbufs*/) const {}
 
 void Cactus::tick(Real t) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

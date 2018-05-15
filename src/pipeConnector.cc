@@ -36,7 +36,7 @@ PipeConnector::PipeConnector(const Coord3d &pos, Real r)
 }
 
 void PipeConnector::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                                    bool mustUpdate) const {
+                                    const GLuint *vaolist, bool mustUpdate) const {
   if (!mustUpdate) return;
 
   int ntries = 0;
@@ -50,21 +50,23 @@ void PipeConnector::generateBuffers(const GLuint *idxbufs, const GLuint *databuf
 
   placeObjectSphere(data, idxs, 0, pos, identity, radius, detail, primaryColor);
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, nverts * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, ntries * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
   delete[] data;
   delete[] idxs;
 }
-void PipeConnector::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
-  if (primaryColor.v[3] >= 65535) drawMe(idxbufs, databufs);
+void PipeConnector::drawBuffers1(const GLuint *vaolist) const {
+  if (primaryColor.v[3] >= 65535) drawMe(vaolist);
 }
-void PipeConnector::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void PipeConnector::drawBuffers2(const GLuint *vaolist) const {
   if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
-  if (primaryColor.v[3] < 65535) drawMe(idxbufs, databufs);
+  if (primaryColor.v[3] < 65535) drawMe(vaolist);
 }
-void PipeConnector::drawMe(const GLuint *idxbufs, const GLuint *databufs) const {
+void PipeConnector::drawMe(const GLuint *vaolist) const {
   if (primaryColor.v[3] < 65535) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
@@ -87,9 +89,7 @@ void PipeConnector::drawMe(const GLuint *idxbufs, const GLuint *databufs) const 
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 }
 void PipeConnector::tick(Real t) {}

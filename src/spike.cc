@@ -43,7 +43,7 @@ Spike::Spike(const Coord3d &position, Real speed, Real phase)
 }
 
 void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                            bool /*mustUpdate*/) const {
+                            const GLuint *vaolist, bool /*mustUpdate*/) const {
   const int nfacets = 6;
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
@@ -51,14 +51,15 @@ void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   Matrix3d rotmtx = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
   generateSpikeVBO(data, idxs, rotmtx, position, primaryColor, secondaryColor, 2.0);
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Spike::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Spike::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
@@ -73,12 +74,10 @@ void Spike::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
 }
-void Spike::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Spike::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
 void Spike::tick(Real t) {
   double dist, dx, dy, speed, h;

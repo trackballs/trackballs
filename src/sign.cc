@@ -71,7 +71,7 @@ void Sign::mkTexture(const char *string) {
 }
 
 void Sign::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool /*mustUpdate*/) const {
+                           const GLuint *vaolist, bool /*mustUpdate*/) const {
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   GLfloat data[8 * 8];
@@ -101,17 +101,18 @@ void Sign::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
                           texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
   ushort idxs[4][3] = {{0, 1, 2}, {1, 3, 2}, {4, 5, 6}, {5, 7, 6}};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Sign::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Sign::drawBuffers1(const GLuint * /*vaolist*/) const {}
 
-void Sign::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Sign::drawBuffers2(const GLuint *vaolist) const {
   if (activeView.calculating_shadows) return;
 
   // Keep the depth function on but trivial so as to record depth values
@@ -126,9 +127,7 @@ void Sign::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
   glBindTexture(GL_TEXTURE_2D, textimg);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void *)0);
 
   glDepthFunc(GL_LEQUAL);

@@ -122,6 +122,10 @@ Chunk::~Chunk() {
     glDeleteBuffers(2, &flui_vbo[0]);
     glDeleteBuffers(2, &wall_vbo[0]);
     glDeleteBuffers(2, &line_vbo[0]);
+    glDeleteVertexArrays(1, &tile_vao);
+    glDeleteVertexArrays(1, &flui_vao);
+    glDeleteVertexArrays(1, &wall_vao);
+    glDeleteVertexArrays(1, &line_vao);
   }
 }
 
@@ -271,7 +275,7 @@ Map::~Map() {
   glDeleteTextures(1, &texture_Array);
 }
 
-static void configureCellAttributes(int water) {
+static void configureCellAttributes(bool water) {
   // Position
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void*)0);
   // Color
@@ -350,7 +354,11 @@ void Map::draw(int stage, int cx, int cy) {
           glDeleteBuffers(2, &cur->flui_vbo[0]);
           glDeleteBuffers(2, &cur->wall_vbo[0]);
           glDeleteBuffers(2, &cur->line_vbo[0]);
-          cur->is_active = 0;
+          glDeleteVertexArrays(1, &cur->tile_vao);
+          glDeleteVertexArrays(1, &cur->flui_vao);
+          glDeleteVertexArrays(1, &cur->wall_vao);
+          glDeleteVertexArrays(1, &cur->line_vao);
+          cur->is_active = false;
         }
       }
     }
@@ -375,17 +383,13 @@ void Map::draw(int stage, int cx, int cy) {
   // Run through ye olde draw loop
   // WALLS
   for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->wall_vbo[0]);
-    configureCellAttributes(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->wall_vbo[1]);
+    glBindVertexArray(drawlist[i]->wall_vao);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
   // TOPS
   for (int i = 0; i < nchunks; i++) {
-    glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->tile_vbo[0]);
-    configureCellAttributes(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->tile_vbo[1]);
+    glBindVertexArray(drawlist[i]->tile_vao);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
   }
 
@@ -398,9 +402,7 @@ void Map::draw(int stage, int cx, int cy) {
 
     // Water
     for (int i = 0; i < nchunks; i++) {
-      glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->flui_vbo[0]);
-      configureCellAttributes(1);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->flui_vbo[1]);
+      glBindVertexArray(drawlist[i]->flui_vao);
       glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
     }
   }
@@ -413,10 +415,7 @@ void Map::draw(int stage, int cx, int cy) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glLineWidth(2.0f);
     for (int i = 0; i < nchunks; i++) {
-      glBindBuffer(GL_ARRAY_BUFFER, drawlist[i]->line_vbo[0]);
-      glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-      glEnableVertexAttribArray(0);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawlist[i]->line_vbo[1]);
+      glBindVertexArray(drawlist[i]->line_vao);
       glDrawElements(GL_LINES, CHUNKSIZE * CHUNKSIZE * 8, GL_UNSIGNED_SHORT, (void*)0);
     }
     glDisable(GL_LINE_SMOOTH);
@@ -477,15 +476,19 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   ushort* fidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
 
   // Create data if not already there
-  int first_time = 0;
+  bool first_time = false;
   if (!chunk->is_active) {
     glGenBuffers(2, &chunk->tile_vbo[0]);
     glGenBuffers(2, &chunk->wall_vbo[0]);
     glGenBuffers(2, &chunk->line_vbo[0]);
     glGenBuffers(2, &chunk->flui_vbo[0]);
-    first_time = 1;
+    glGenVertexArrays(1, &chunk->tile_vao);
+    glGenVertexArrays(1, &chunk->wall_vao);
+    glGenVertexArrays(1, &chunk->line_vao);
+    glGenVertexArrays(1, &chunk->flui_vao);
+    first_time = true;
   }
-  chunk->is_active = 1;
+  chunk->is_active = true;
 
   // Update exact chunk bounds as well, and mark all first-timers as
   // updated
@@ -700,33 +703,42 @@ void Map::fillChunkVBO(Chunk* chunk) const {
 
       if (first_time) {
         // Tiles
+        glBindVertexArray(chunk->tile_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_data_size, tdat,
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size, tidx,
                      GL_DYNAMIC_DRAW);
+        configureCellAttributes(false);
         // Walls
+        glBindVertexArray(chunk->wall_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_data_size, wdat,
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_index_size, widx,
                      GL_DYNAMIC_DRAW);
+        configureCellAttributes(false);
         // Lines
+        glBindVertexArray(chunk->line_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * line_data_size, ldat,
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->line_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * line_index_size, lidx,
                      GL_DYNAMIC_DRAW);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glEnableVertexAttribArray(0);
         // Water
+        glBindVertexArray(chunk->flui_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->flui_vbo[0]);
         glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * flui_data_size, fdat,
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * flui_index_size, fidx,
                      GL_DYNAMIC_DRAW);
+        configureCellAttributes(true);
       } else {
         // Tiles
         glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
@@ -791,7 +803,7 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   // Update view parameters
   chunk->minHeight = minz;
   chunk->maxHeight = maxz;
-  chunk->is_updated = 0;
+  chunk->is_updated = false;
 }
 
 void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
@@ -807,7 +819,7 @@ void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
   for (int xp = xmin - xmin % CHUNKSIZE; xp <= xmax - xmax % CHUNKSIZE; xp += CHUNKSIZE) {
     for (int yp = ymin - ymin % CHUNKSIZE; yp <= ymax - ymax % CHUNKSIZE; yp += CHUNKSIZE) {
       Chunk* z = chunk(xp, yp);
-      z->is_updated = 1;
+      z->is_updated = true;
       for (int x = std::max(xmin, xp); x <= std::min(xmax, xp + CHUNKSIZE - 1); x++) {
         for (int y = std::max(ymin, yp); y <= std::min(ymax, yp + CHUNKSIZE - 1); y++) {
           Cell& c = cells[x + width * y];
@@ -868,10 +880,12 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
     }
   }
 
-  GLuint databuf, idxbuf;
+  GLuint databuf, idxbuf, vao;
   glGenBuffers(1, &databuf);
   glGenBuffers(1, &idxbuf);
+  glGenVertexArrays(1, &vao);
 
+  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glBufferData(GL_ARRAY_BUFFER, 8 * 8 * ncells * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
@@ -894,8 +908,10 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 8 * 3 * ncells, GL_UNSIGNED_INT, (void*)0);
 
+  glBindVertexArray(0);
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
+  glDeleteVertexArrays(1, &vao);
 
   glEnable(GL_DEPTH_TEST);
 }
@@ -995,10 +1011,12 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   delete[] ringPoints;
 
   // Transfer data
-  GLuint databuf, idxbuf;
+  GLuint databuf, idxbuf, vao;
   glGenBuffers(1, &databuf);
   glGenBuffers(1, &idxbuf);
+  glGenVertexArrays(1, &vao);
 
+  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glBufferData(GL_ARRAY_BUFFER, 8 * 2 * nontrivial * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
@@ -1021,8 +1039,10 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 2 * 3 * npts, GL_UNSIGNED_SHORT, (void*)0);
 
+  glBindVertexArray(0);
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
+  glDeleteVertexArrays(1, &vao);
 }
 
 void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
@@ -1057,10 +1077,12 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   }
 
   // Transfer data
-  GLuint databuf, idxbuf;
+  GLuint databuf, idxbuf, vao;
   glGenBuffers(1, &databuf);
   glGenBuffers(1, &idxbuf);
+  glGenVertexArrays(1, &vao);
 
+  glBindVertexArray(vao);
   glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glBufferData(GL_ARRAY_BUFFER, 8 * 2 * nfacets * sizeof(GLfloat), data, GL_STATIC_DRAW);
 
@@ -1081,8 +1103,10 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 2 * 3 * nfacets, GL_UNSIGNED_SHORT, (void*)0);
 
+  glBindVertexArray(0);
   glDeleteBuffers(1, &databuf);
   glDeleteBuffers(1, &idxbuf);
+  glDeleteVertexArrays(1, &vao);
 }
 
 Chunk* Map::chunk(int cx, int cy) const {

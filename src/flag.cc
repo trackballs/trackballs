@@ -39,7 +39,7 @@ Flag::Flag(Real x, Real y, int points, int visible, Real radius)
 }
 
 void Flag::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool /*mustUpdate*/) const {
+                           const GLuint *vaolist, bool /*mustUpdate*/) const {
   if (!visible) return;
 
   GLfloat data[14 * 8];
@@ -80,14 +80,15 @@ void Flag::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                             0., 0., color, fnorm);
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 14 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Flag::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
+void Flag::drawBuffers1(const GLuint *vaolist) const {
   if (!visible) return;
 
   glDisable(GL_CULL_FACE);
@@ -102,13 +103,11 @@ void Flag::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Flag::drawBuffers2(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Flag::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
 void Flag::tick(Real /*t*/) {
   position[2] = Game::current->map->getHeight(position[0], position[1]);

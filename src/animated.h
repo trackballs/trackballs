@@ -34,18 +34,18 @@
 
 class Animated : public GameHook {
  public:
-  explicit Animated(int role, int maxVBOpairs);
+  explicit Animated(int role, int maxVBOpairsOrVAOs);
 
   virtual ~Animated();
   /** Setup drawing pass of object.*/
 
   /** Generate all buffers possibly used in this tick */
   virtual void generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
-                               bool mustUpdate) const = 0;
+                               const GLuint* vaolist, bool mustUpdate) const = 0;
   /** First drawing pass of object. Render opaque buffers. */
-  virtual void drawBuffers1(const GLuint* idxbufs, const GLuint* databufs) const = 0;
+  virtual void drawBuffers1(const GLuint* vaolist) const = 0;
   /** Draws the second pass of object. Render alpha buffers if needed. */
-  virtual void drawBuffers2(const GLuint* idxbufs, const GLuint* databufs) const = 0;
+  virtual void drawBuffers2(const GLuint* vaolist) const = 0;
 
   /* Object drawing passes */
   void draw();
@@ -81,9 +81,8 @@ class Animated : public GameHook {
   void setupVBOs();
 
   int lastFrameNumber;
-  GLuint* idxVBOs;
-  GLuint* dataVBOs;
-  const GLuint nVBOs;
+  GLuint* glidxs;
+  const GLuint nVOs;
 };
 
 #endif

@@ -55,7 +55,7 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
 }
 
 void Bird::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool /*mustUpdate*/) const {
+                           const GLuint *vaolist, bool /*mustUpdate*/) const {
   if (hide > 0.) return;
 
   Color color = primaryColor.toOpaque();
@@ -86,17 +86,19 @@ void Bird::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   pos += packObjectVertex(pos, position[0] + loc[3][0], position[1] + loc[3][1],
                           position[2] + dz, 0., 1., color, flat);
 
+  ushort idxs[2][3] = {{0, 1, 2}, {0, 3, 1}};
+
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, 4 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-
-  ushort idxs[2][3] = {{0, 1, 2}, {0, 3, 1}};
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Bird::drawBuffers1(const GLuint * /*idxbufs*/, const GLuint * /*databufs*/) const {}
+void Bird::drawBuffers1(const GLuint * /*vaolist*/) const {}
 
-void Bird::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Bird::drawBuffers2(const GLuint *vaolist) const {
   if (hide > 0.) return;
 
   glDisable(GL_CULL_FACE);
@@ -111,9 +113,7 @@ void Bird::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
   }
   glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
 }
 

@@ -38,7 +38,7 @@ Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
 }
 
 void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           bool mustUpdate) const {
+                           const GLuint *vaolist, bool mustUpdate) const {
   if (!mustUpdate) return;
 
   Coord3d up(0., 0., 0.);
@@ -81,21 +81,22 @@ void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     idxs[2 * i + 1][2] = 2 * j + 1;
   }
 
+  glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
   glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+  configureObjectAttributes();
 }
 
-void Pipe::drawBuffers1(const GLuint *idxbufs, const GLuint *databufs) const {
-  if (primaryColor.v[3] >= 65535) drawTrunk(idxbufs, databufs);
+void Pipe::drawBuffers1(const GLuint *vaolist) const {
+  if (primaryColor.v[3] >= 65535) drawTrunk(vaolist);
 }
-void Pipe::drawBuffers2(const GLuint *idxbufs, const GLuint *databufs) const {
+void Pipe::drawBuffers2(const GLuint *vaolist) const {
   if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
-  if (primaryColor.v[3] < 65535) drawTrunk(idxbufs, databufs);
+  if (primaryColor.v[3] < 65535) drawTrunk(vaolist);
 }
-void Pipe::drawTrunk(const GLuint *idxbufs, const GLuint *databufs) const {
+void Pipe::drawTrunk(const GLuint *vaolist) const {
   // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
   if (primaryColor.v[3] < 65535) {
@@ -114,9 +115,7 @@ void Pipe::drawTrunk(const GLuint *idxbufs, const GLuint *databufs) const {
 
   int nfacets = 24;
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  configureObjectAttributes();
+  glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
 }
 void Pipe::tick(Real /*t*/) {}
