@@ -107,6 +107,7 @@ void Weather::draw2() {
     /* Create a fixed linear index */
     ushort *idxs = new ushort[3 * 3000];
     for (int i = 0; i < 3 * 3000; i++) { idxs[i] = i; }
+    glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * 3000 * sizeof(ushort), idxs, GL_STATIC_DRAW);
     delete[] idxs;

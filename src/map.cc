@@ -421,6 +421,8 @@ void Map::draw(int stage, int cx, int cy) {
     glDisable(GL_LINE_SMOOTH);
   }
 
+  // Don't keep any VAOs bound/overwritable
+  glBindVertexArray(0);
   warnForGLerrors(stage ? "Map drawing 1" : "Map drawing 0");
 }
 
@@ -740,6 +742,9 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                      GL_DYNAMIC_DRAW);
         configureCellAttributes(true);
       } else {
+        // chunk VAOs will automatically use their previously bound VBOs
+        glBindVertexArray(0);
+
         // Tiles
         glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
         glBufferSubData(GL_ARRAY_BUFFER, jstart * tile_data_size,

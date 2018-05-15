@@ -91,9 +91,11 @@ void Animated::drawBoundingBox() const {
   if (activeView.calculating_shadows) return;
 
   /* Create and fill buffers */
-  GLuint idxbuf, databuf;
+  GLuint idxbuf, databuf, vao;
   glGenBuffers(1, &idxbuf);
   glGenBuffers(1, &databuf);
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
 
   GLfloat data[8][3];
   ushort idxs[12][2];
@@ -124,12 +126,12 @@ void Animated::drawBoundingBox() const {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
   glEnableVertexAttribArray(0);
 
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbuf);
-  glBindBuffer(GL_ARRAY_BUFFER, databuf);
   glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, (void*)0);
   /* Cleanup buffers */
+  glBindVertexArray(0);
   glDeleteBuffers(1, &idxbuf);
   glDeleteBuffers(1, &databuf);
+  glDeleteVertexArrays(1, &vao);
 }
 
 void Animated::tick(Real dt) { GameHook::tick(dt); }
