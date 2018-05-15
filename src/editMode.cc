@@ -25,7 +25,6 @@
 #include "editMode_codes.h"
 #include "editWindows.h"
 #include "game.h"
-#include "guile.h"
 #include "mainMode.h"
 #include "map.h"
 #include "menusystem.h"
@@ -840,20 +839,7 @@ void EditMode::doCommand(int command) {
   case VIEW_LOAD_ENTITIES: {
     /* reset entities and state */
     if (game) delete game;
-    game = new Game(map);
-
-    /* load scripts */
-    char scmname[512];
-    snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
-    scmname[511] = '\0';
-    loadScript(scmname);
-    snprintf(scmname, 511, "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
-    scmname[511] = '\0';
-    if (!fileExists(scmname)) {
-      snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
-    }
-    scmname[511] = '\0';
-    loadScript(scmname);
+    game = new Game(map, levelname);
   } break;
 
   default:

@@ -74,7 +74,7 @@ Game::Game(const char *name, Gamer *g) {
   player1->lives = 4 - Settings::settings->difficulty;
 }
 
-Game::Game(Map *editmap) {
+Game::Game(Map *editmap, const char *levelname) {
   balls = new AnimatedCollection();
   localPlayers = 0;
   player1 = NULL;
@@ -86,6 +86,24 @@ Game::Game(Map *editmap) {
   setDefaults();
 
   current = this;
+
+  /* load scripts */
+  char scmname[512];
+  snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
+  scmname[511] = '\0';
+  loadScript(scmname);
+  snprintf(scmname, 511, "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
+  scmname[511] = '\0';
+  if (!fileExists(scmname)) {
+    snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
+  }
+  scmname[511] = '\0';
+  loadScript(scmname);
+
+  for (int j = 0; j < newHooks.size(); j++) {
+    hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
+  }
+  newHooks.clear();
 }
 
 Game::~Game() {
@@ -93,8 +111,12 @@ Game::~Game() {
 
   delete weather;
   delete balls;
-  if (hooks[Role_Player][0] == player1) { hooks[Role_Player].clear(); }
-  delete player1;
+  if (player1) {
+    if (hooks[Role_Player].size() && hooks[Role_Player][0] == player1) {
+      hooks[Role_Player].clear();
+    }
+    delete player1;
+  }
 
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }

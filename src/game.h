@@ -44,7 +44,7 @@ class Gamer;
 class Game {
  public:
   Game(const char *, Gamer *gamer);
-  explicit Game(Map *editmap);
+  Game(Map *editmap, const char *levelname);
   virtual ~Game();
 
   void tick(Real);
