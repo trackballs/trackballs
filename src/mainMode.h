@@ -63,16 +63,22 @@ class MainMode : public GameMode {
 
  protected:
  private:
-  int gameStatus;
   double statusCount;
   double time;
   double pause_time;
   int go_to_pause;
 
-  static const int statusBeforeGame, statusGameOver, statusInGame;
-  static const int statusRestartPlayer, statusNextLevel, statusVictory;
-  static const int statusLevelComplete, statusBonusLevelComplete;
-  static const int statusPaused;
+  enum {
+    statusBeforeGame,
+    statusGameOver,
+    statusInGame,
+    statusRestartPlayer,
+    statusNextLevel,
+    statusVictory,
+    statusLevelComplete,
+    statusBonusLevelComplete,
+    statusPaused
+  } gameStatus;
 
   char *mapname;
 };

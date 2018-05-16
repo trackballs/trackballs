@@ -40,13 +40,6 @@
 
 #define ENVIRONMENT_TEXTURE_SIZE 512
 
-const int MainMode::statusBeforeGame = 0, MainMode::statusGameOver = 1,
-          MainMode::statusInGame = 2;
-const int MainMode::statusRestartPlayer = 3, MainMode::statusNextLevel = 4,
-          MainMode::statusVictory = 5;
-const int MainMode::statusLevelComplete = 6, MainMode::statusBonusLevelComplete = 7;
-const int MainMode::statusPaused = 8;
-
 static const int debug_shadowmap = 0;
 
 MainMode *MainMode::mainMode = NULL;
@@ -66,7 +59,7 @@ MainMode::MainMode() {
   wantedXYAngle = 0.;
   camFocus = Coord3d();
   camDelta = Coord3d();
-  gameStatus = 0;
+  gameStatus = statusBeforeGame;
   statusCount = 0.;
   time = 0.;
   this->go_to_pause = 0;
