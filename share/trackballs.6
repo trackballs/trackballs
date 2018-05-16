@@ -3,29 +3,50 @@
 .SH "NAME"
 Trackballs \- marble game similar to the classic arcade game 'Marble Madness'
 .SH "SYNOPSIS"
-.LP
-\fBtrackballs\fP[\fB\-w\fP, \fB\-m\fP] [\fB\-e\fP, \fB\-l\fP<level>] [\fB\-r\fP<width>] [\fB-s\fP<sensitivity>] ...
+.B trackballs\fP [\fB\-w\fP] [\fB\-m\fP] [\fB\-y\fP] [\fB\-f\fP] [\fB\-e\fP \fB\-l\fP<level> \fB\-t\fP<level>] [\fB\-r\fP<width>] [\fB-s\fP<sensitivity>] ...
 
-  \fB\-h  \-\-help\fP             Display this usage information.
-  \fB\-l  \-\-level\fP            Start from level.
-  \fB\-w  \-\-windowed\fP         Run in window (Default is fullscreen)
-  \fB\-m  \-\-mute\fP             Mute sound.
-  \fB\-r  \-\-resolution\fP       Set resolution to 640, 800 or 1024
-  \fB\-s  \-\-sensitivity\fP      Mouse sensitivity, default 1.0
-  \fB\-f  \-\-fps\fP              Displays framerate
-  \fB\-v  \-\-version\fP          Indicate the current version number
-  \fB\-t  \-\-touch\fP            Updates a map to the latest format
-  \fB\-y  \-\-low-memory\fP       Attempt to conserve memory usage
-  \fB\-9  \-\-debug-joystick\fP   Debug joystick status
-  \fB\-j  \-\-repair-joystick\fP  Correct for bad joysticks
-  
 .SH "DESCRIPTION"
-.LP
+
 Trackballs is a simple game inspired by the classic Atari 1980's arcade game 'Marble Madness' (later released by Electronic Arts for the Amiga and other platforms).
 
 By steering a marble ball through a labyrinth filled with sharp objects, pools of acid and other obstacles the player collects points. When the ball passes through the goal it continues to the next, more difficult track \- unless the time runs out.
 
 It should be noted that this game is _not_ intended to be a replica of Marble Madness but rather merely inspired by it. For instance the game uses 3D graphics even though the original game had no real use for it. Also the game is fully programmable with a scripting extension (Guile), and includes a level editor with which to easily create new levels.
+
+.SH "OPTIONS"
+.TP
+.BI \-h\ \fR,\ \fB\-\-help
+Display usage information.
+.TP
+.BI \-l\ \fR,\ \fB\-\-level
+Start from level.
+.TP
+.BI \-w\ \fR,\ \fB\-\-windowed
+Run in window (Default is fullscreen)
+.TP
+.BI \-m\ \fR,\ \fB\-\-mute
+ Mute sound.
+.TP
+.BI \-y\ \fR,\ \fB\-\-low-memory
+Attempt to conserve memory usage
+.TP
+.BI \-s\ \fR,\ \fB\-\-sensitivity
+Mouse sensitivity, default 1.0
+.TP
+.BI \-f\ \fR,\ \fB\-\-fps
+Displays framerate
+.TP
+.BI \-v\ \fR,\ \fB\-\-version
+Indicate the current version number
+.TP
+.BI \-9\ \fR,\ \fB\-\-debug\-joystick
+Debug joystick status
+.TP
+.BI \-j\ \fR,\ \fB\-\-repair\-joystick
+Correct for bad joysticks
+.TP
+.BI \-t\ \fR,\ \fB\-\-touch
+Updates a map to the latest format
 
 .SH "ENVIRONMENT"
 .LP
@@ -60,9 +81,9 @@ To run this program the standard way type:
 .LP
     trackballs
 .LP
-Alternatively you edit a level using this command:
+To disable audio and start in windowed mode
 .LP
-    trackballs \-e steep
+    trackballs \-m -w
 .LP
 Alternatively you can test a level with:
 .LP
