@@ -22,7 +22,7 @@
 (add-flag 201 175 25 #t 0.1) 
 
 (define sw-1 (switch 199 177 (lambda()(set-onoff ff-1 #t)) (lambda()(set-onoff ff-1 #f))))
-(define ff-1 (forcefield 201.4 198 0.0 0.0 2.0 0.0 0.8 *ff-bounce*))
+(define ff-1 (forcefield 201.4 198 0.0 0.0 2.0 0.0 1.0 *ff-bounce*))
 (set-primary-color ff-1 0.2 0.2 1.0)
 
 (define spike-speed 0.2)
@@ -38,7 +38,7 @@
 (add-spike 206 199.1 spike-speed -2.00)
 
 (define sw-2 (switch 214 200 (lambda()(set-onoff ff-2 #t)) (lambda()(set-onoff ff-2 #f))))
-(define ff-2 (forcefield 196.6 198 0.0 0.0 2.0 0.0 0.8 *ff-bounce*))
+(define ff-2 (forcefield 196.6 198 0.0 0.0 2.0 0.0 1.0 *ff-bounce*))
 (set-primary-color ff-2 0.2 0.2 1.0)
 
 (add-flag 193 204 25 #t 0.1) 
@@ -47,7 +47,7 @@
 (add-flag 193 202 25 #t 0.1) 
 
 (define sw-3 (switch 192 203 (lambda()(set-onoff ff-3 #t)) (lambda()(set-onoff ff-3 #f))))
-(define ff-3 (forcefield 198 201.4 0.0 2.0 0.0 0.0 0.8 *ff-bounce*))
+(define ff-3 (forcefield 198 201.4 0.0 2.0 0.0 0.0 1.0 *ff-bounce*))
 (set-primary-color ff-3 1.0 1.0 0.2)
 
 

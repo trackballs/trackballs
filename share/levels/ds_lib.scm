@@ -4,7 +4,7 @@
 
 (restart-time 0)
 
-(define speed 
+(define flag-timer-speed 
   (cond ((eq? (difficulty) *easy*) 0.1)
         ((eq? (difficulty) *normal*) 0.2)
         ((eq? (difficulty) *hard*) 0.3)))
@@ -35,7 +35,7 @@
                #f)
               (cur #f)
               (else
-                (list-set! marked loc (animator 1.0 0.1 speed 0.0 1.0 *animator-remove*
+                (list-set! marked loc (animator 1.0 0.1 flag-timer-speed 0.0 1.0 *animator-remove*
                     (lambda (j)
                       (cond ((> j 0.7)
                               (set-cell-colors cx cy cx cy *cell-center* 1 0 0 1)

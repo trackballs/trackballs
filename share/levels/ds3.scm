@@ -47,15 +47,15 @@
 (add-modpill 239 213 *mod-small* 10 2)
 (add-modpill 239 208 *mod-small* 5 2)
 
-(cond ((eq? (difficulty) *easy*)
+(cond ((= (difficulty) *easy*)
         (add-respawning 239.5 207
           (lambda (x y)
             (set-modtime (new-mr-black x y) *mod-spike* -1.))))
-      ((eq? (difficulty) *normal*)
+      ((= (difficulty) *normal*)
         (add-respawning 239.5 207
           (lambda (x y)
             (set-modtime (set-modtime (new-mr-black x y) *mod-spike* -1.) *mod-large* -1))))
-      ((eq? (difficulty) *hard*)
+      ((= (difficulty) *hard*)
         (add-respawning 238.5 207
           (lambda (x y)
             (set-acceleration (set-primary-color (set-modtime (new-mr-black x y) *mod-spike* -1.) 1. 0. 1. 1.0) 10)))))
@@ -70,27 +70,35 @@
 (add-bird 239 171 239 187 0.4 1.5)
 (add-bird 237 171 237 187 0.4 1.5)
 
+(define speed
+  (cond ((= (difficulty) *easy*) 0.3)
+        ((= (difficulty) *normal*) 0.6)
+        ((= (difficulty) *hard*) 1.0)))
 
 ;; x y speed phase
-(add-sidespike 241 200 0.3 0.5 2)
-(add-sidespike 237 200 0.3 0.5 1)
-(add-spike 241 195 0.3 0.1)
-(add-spike 240 195 0.3 0.2)
-(add-spike 239 195 0.3 0.3)
-(add-spike 238 195 0.3 0.4)
-(add-spike 237 195 0.3 0.5)
+(add-sidespike 241 200 (* 0.3 speed) 0.5 2)
+(add-sidespike 237 200 (* 0.3 speed) 0.5 1)
+(add-spike 241 195 (* 0.3 speed) 0.1)
+(add-spike 240 195 (* 0.3 speed) 0.2)
+(add-spike 239 195 (* 0.3 speed) 0.3)
+(add-spike 238 195 (* 0.3 speed) 0.4)
+(add-spike 237 195 (* 0.3 speed) 0.5)
 
-(add-spike 239.5 187 2.0 0.5)
-(add-spike 239 187 2.0 0.5)
-(add-spike 238.5 187 2.0 0.5)
+(if (= (difficulty) *hard*)
+  (begin
+    (add-spike 239.5 187 (* 2.0 speed) 0.5)
+    (add-spike 239 187 (* 2.0 speed) 0.5)
+    (add-spike 238.5 187 (* 2.0 speed) 0.5)))
 
-(add-sidespike 241 186 0.6 0.0 2)
-(add-sidespike 237 186 0.6 0.0 1)
-(add-sidespike 241 185 0.6 0.5 2)
-(add-sidespike 237 185 0.6 0.5 1)
+(if (not (= (difficulty) *easy*))
+  (begin
+    (add-sidespike 241 186 (* 0.6 speed) 0.0 2)
+    (add-sidespike 237 186 (* 0.6 speed) 0.0 1)
+    (add-sidespike 241 185 (* 0.6 speed) 0.5 2)
+    (add-sidespike 237 185 (* 0.6 speed) 0.5 1)))
 
-(add-spike 240 174 1.0 0.5)
-(add-spike 238 174 1.0 0.5)
+(add-spike 240 174 (* 1.0 speed) 0.5)
+(add-spike 238 174 (* 1.0 speed) 0.5)
 
 (add-flag 251 167 50 #t 0.1)
 (add-flag 250 167 50 #t 0.1)
