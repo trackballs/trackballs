@@ -196,7 +196,7 @@ void Weather::draw2() {
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("glitter.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureGlitter);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
 

@@ -160,7 +160,7 @@ void Cactus::drawBuffers1(const GLuint *vaolist) const {
     glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
   }
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);

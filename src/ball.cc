@@ -447,9 +447,9 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
     }
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
-      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("track.png")]);
+      glBindTexture(GL_TEXTURE_2D, textureTrack);
     } else if (texture == 0) {
-      glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+      glBindTexture(GL_TEXTURE_2D, textureBlank);
     } else {
       glBindTexture(GL_TEXTURE_2D, textures[texture]);
     }
@@ -499,7 +499,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
       glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     }
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[1]);
     glDrawElements(GL_TRIANGLES, 20 * 3 * 3, GL_UNSIGNED_SHORT, (void *)0);
@@ -533,7 +533,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
       glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
     }
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[3]);
     glDrawElements(GL_TRIANGLES, 40 * 3, GL_UNSIGNED_SHORT, (void *)0);
@@ -557,7 +557,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[4]);
     glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
@@ -570,7 +570,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[5]);
     glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_SHORT, (void *)0);
@@ -584,7 +584,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
     glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
-    glBindTexture(GL_TEXTURE_2D, textures[loadTexture("dizzy.png")]);
+    glBindTexture(GL_TEXTURE_2D, textureDizzy);
 
     glBindVertexArray(vaolist[6]);
     glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, (void *)0);

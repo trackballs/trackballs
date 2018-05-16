@@ -161,13 +161,14 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord);
 
 // preloads texture from file (if not already loaded); returns texture array position
 int loadTexture(const char *name);
-int resetTextures();  // Reloads all textures
 /* Loads image from SHARE_DIR/image/ */
 SDL_Surface *loadImage(const char *imagename);
 
 extern GLuint textures[256];
 extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
+extern GLuint textureBlank, textureGlitter, textureMousePointer, textureDizzy, textureWings,
+    textureTrack;  // immediate texture lookup
 extern GLuint shaderWater, shaderTile, shaderTileShadow, shaderLine, shaderUI, shaderObject,
     shaderObjectShadow, shaderReflection;
 

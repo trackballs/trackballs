@@ -94,7 +94,7 @@ void ForceField::drawBuffers2(const GLuint *vaolist) const {
   glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
   glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
   glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 10 * 3, GL_UNSIGNED_SHORT, (void *)0);

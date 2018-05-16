@@ -79,7 +79,7 @@ void Diamond::drawBuffers2(const GLuint *vaolist) const {
     glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);
   }
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, (void *)0);

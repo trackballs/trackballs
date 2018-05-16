@@ -111,7 +111,7 @@ void Bird::drawBuffers2(const GLuint *vaolist) const {
     glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
   }
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("wings.png")]);
+  glBindTexture(GL_TEXTURE_2D, textureWings);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);

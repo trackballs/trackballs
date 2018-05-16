@@ -111,7 +111,7 @@ void Pipe::drawTrunk(const GLuint *vaolist) const {
     glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
     glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
   }
-  glBindTexture(GL_TEXTURE_2D, textures[loadTexture("blank.png")]);
+  glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   int nfacets = 24;
 

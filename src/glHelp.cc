@@ -46,6 +46,12 @@ GLuint shaderObject = 0;
 GLuint shaderObjectShadow = 0;
 GLuint shaderReflection = 0;
 static GLuint defaultVao = 0;
+GLuint textureBlank = 0;
+GLuint textureGlitter = 0;
+GLuint textureMousePointer = 0;
+GLuint textureDizzy = 0;
+GLuint textureWings = 0;
+GLuint textureTrack = 0;
 
 TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
@@ -270,7 +276,7 @@ void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLf
 void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat col[4][4],
                 GLuint tex) {
   Require2DMode();
-  if (tex == 0) { tex = textures[loadTexture("blank.png")]; }
+  if (tex == 0) { tex = textureBlank; }
 
   const GLfloat data[32] = {
       ver[0][0], ver[0][1], col[0][0], col[0][1], col[0][2], col[0][3], txc[0][0], txc[0][1],
@@ -326,7 +332,7 @@ void drawMouse(int x, int y, int w, int h) {
   GLfloat texco[4][2] = {{0., 0.}, {0., 1.}, {1., 0.}, {1., 1.}};
 
   GLfloat vco[4][2] = {{x - dx, y - dy}, {x - dy, y + dx}, {x + dy, y - dx}, {x + dx, y + dy}};
-  draw2DQuad(vco, texco, colors, textures[loadTexture("mousePointer.png")]);
+  draw2DQuad(vco, texco, colors, textureMousePointer);
 }
 
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
@@ -976,10 +982,6 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
     It is safe to load the same texture multiple times since the results are cached
 */
 int loadTexture(const char *name) {
-  GLfloat texCoord[4];
-  char str[256];
-  SDL_Surface *surface;
-
   /* Check in cache if texture already loaded */
   for (int i = 0; i < numTextures; i++)
     if (strcmp(textureNames[i], name) == 0) return i;
@@ -990,8 +992,9 @@ int loadTexture(const char *name) {
     return 0;
   }
 
+  char str[256];
   snprintf(str, sizeof(str), "%s/images/%s", effectiveShareDir, name);
-  surface = IMG_Load(str);
+  SDL_Surface *surface = IMG_Load(str);
   if (!surface) {
     warning("Failed to load texture %s", str);
     // Override texture name... (to avoid carrying on outdated tex names)
@@ -1001,8 +1004,8 @@ int loadTexture(const char *name) {
     return -1;
   } else {
     textureNames[numTextures] = strdup(name);
-    textures[numTextures] = LoadTexture(surface, texCoord);  // linear filter was: font != NULL
-    /*printf("loaded texture[%d]=%d\n",numTextures,textures[numTextures]);*/
+    GLfloat texCoord[4];
+    textures[numTextures] = LoadTexture(surface, texCoord);
     numTextures++;
     SDL_FreeSurface(surface);
   }
@@ -1020,23 +1023,25 @@ void glHelpInit() {
   ingameFont = TTF_OpenFont(str, 30);
   if (!ingameFont) { error("failed to load font %s", str); }
 
+  // The VAO need only be there :-)
+  glGenVertexArrays(1, &defaultVao);
+
   /* Note: all textures must be powers of 2 since we ignore texcoords */
   loadTexture("ice.png");
   loadTexture("acid.png");
   loadTexture("sand.png");
-  loadTexture("track.png");
+  textureTrack = textures[loadTexture("track.png")];
   loadTexture("texture.png");
   loadTexture("texture2.png");
   loadTexture("texture3.png");
   loadTexture("texture4.png");
-  loadTexture("wings.png");
-  loadTexture("mousePointer.png");
-  loadTexture("dizzy.png");
+  textureWings = textures[loadTexture("wings.png")];
+  textureMousePointer = textures[loadTexture("mousePointer.png")];
+  textureGlitter = textures[loadTexture("glitter.png")];
+  textureDizzy = textures[loadTexture("dizzy.png")];
+  textureBlank = textures[loadTexture("blank.png")];
 
   sparkle2D = new Sparkle2D();
-
-  // The VAO need only be there :-)
-  glGenVertexArrays(1, &defaultVao);
 
   // Errors handled within loadProgram
   shaderTile = loadProgram("basic.vert", "basic.frag");
@@ -1236,27 +1241,6 @@ void warnForGLerrors(const char *where_am_i) {
 }
 
 #define FRAME 50
-
-int resetTextures() {
-  GLfloat texCoord[4];
-  char str[256];
-  SDL_Surface *surface;
-
-  for (int i = 0; i < numTextures; i++) {
-    if (textureNames[i] == NULL) continue;
-    snprintf(str, sizeof(str), "%s/images/%s", effectiveShareDir, textureNames[i]);
-    surface = IMG_Load(str);
-    if (!surface) {
-      warning("Failed to load texture %s", str);
-      return 0;  // error (a valid texture entry)
-    } else {
-      glDeleteTextures(1, &textures[i]);
-      textures[i] = LoadTexture(surface, texCoord);
-      SDL_FreeSurface(surface);
-    }
-  }
-  return 1;
-}
 
 /* Calculates and displays current framerate */
 void displayFrameRate() {

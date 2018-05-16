@@ -81,77 +81,6 @@ void changeScreenResolution() {
   int full = Settings::settings->is_windowed == 0;
   int fixed = Settings::settings->resolution >= 0;
 
-  if (window == NULL) {
-    char buffer[1024];
-    snprintf(buffer, sizeof(buffer), "/%s/ V%s", PACKAGE, VERSION);
-
-    if (Settings::settings->colorDepth == 16) {
-      SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-      SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-      SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-    } else {
-      SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-      SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-      SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    }
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-
-    /* Version 3.3 is required for UNSIGNED_INT_2_10_10_10_REV packing method
-     * for the VertexAttribPointer function; the 3.2 spec does not permit it */
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    /* Uncomment to apply basic antialiasing.
-     * SDL can't recover from failure to obtain this if asked for */
-    //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-
-    // Start at default size; will be adjusted
-    int windowHeight, windowWidth;
-    Uint32 flags = SDL_WINDOW_OPENGL;
-    if (fixed) {
-      windowWidth = screenResolutions[Settings::settings->resolution][0];
-      windowHeight = screenResolutions[Settings::settings->resolution][1];
-      if (full) { flags |= SDL_WINDOW_FULLSCREEN; }
-    } else {
-      if (full) {
-        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-      } else {
-        flags |= SDL_WINDOW_RESIZABLE;
-      }
-
-      SDL_Rect disprect;
-      if (!SDL_GetDisplayBounds(0, &disprect)) {
-        windowWidth = disprect.w / 2;
-        windowHeight = disprect.h / 2;
-      } else {
-        windowWidth = 800;
-        windowHeight = 600;
-      }
-    }
-    not_yet_windowed = full;
-
-    window = SDL_CreateWindow(buffer, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              windowWidth, windowHeight, flags);
-
-    if (window == NULL) {
-      warning("Could not create window: %s", SDL_GetError());
-      return;
-    }
-
-    mainContext = SDL_GL_CreateContext(window);
-
-    char str[256];
-    snprintf(str, sizeof(str), "%s/icons/trackballs-128x128.png", effectiveShareDir);
-    SDL_Surface *wmIcon = IMG_Load(str);
-    if (wmIcon) {
-      SDL_SetWindowIcon(window, wmIcon);
-      SDL_FreeSurface(wmIcon);
-    }
-  }
-
   if (fixed) {
     SDL_SetWindowSize(window, screenResolutions[Settings::settings->resolution][0],
                       screenResolutions[Settings::settings->resolution][1]);
@@ -205,8 +134,82 @@ void changeScreenResolution() {
 
   /* Adjust for size change in editmode */
   if (EditMode::editMode) { EditMode::editMode->resizeWindows(); }
+}
 
-  resetTextures();
+static void createWindow() {
+  int full = Settings::settings->is_windowed == 0;
+  int fixed = Settings::settings->resolution >= 0;
+
+  char buffer[1024];
+  snprintf(buffer, sizeof(buffer), "/%s/ V%s", PACKAGE, VERSION);
+
+  if (Settings::settings->colorDepth == 16) {
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+  } else {
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+  }
+  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
+  /* Version 3.3 is required for UNSIGNED_INT_2_10_10_10_REV packing method
+   * for the VertexAttribPointer function; the 3.2 spec does not permit it */
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+  /* Uncomment to apply basic antialiasing.
+   * SDL can't recover from failure to obtain this if asked for */
+  //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+  //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+
+  // Start at default size; will be adjusted
+  int windowHeight, windowWidth;
+  Uint32 flags = SDL_WINDOW_OPENGL;
+  if (fixed) {
+    windowWidth = screenResolutions[Settings::settings->resolution][0];
+    windowHeight = screenResolutions[Settings::settings->resolution][1];
+    if (full) { flags |= SDL_WINDOW_FULLSCREEN; }
+  } else {
+    if (full) {
+      flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    } else {
+      flags |= SDL_WINDOW_RESIZABLE;
+    }
+
+    SDL_Rect disprect;
+    if (!SDL_GetDisplayBounds(0, &disprect)) {
+      windowWidth = disprect.w / 2;
+      windowHeight = disprect.h / 2;
+    } else {
+      windowWidth = 800;
+      windowHeight = 600;
+    }
+  }
+  not_yet_windowed = full;
+
+  window = SDL_CreateWindow(buffer, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                            windowWidth, windowHeight, flags);
+
+  if (window == NULL) {
+    warning("Could not create window: %s", SDL_GetError());
+    return;
+  }
+
+  mainContext = SDL_GL_CreateContext(window);
+
+  char str[256];
+  snprintf(str, sizeof(str), "%s/icons/trackballs-128x128.png", effectiveShareDir);
+  SDL_Surface *wmIcon = IMG_Load(str);
+  if (wmIcon) {
+    SDL_SetWindowIcon(window, wmIcon);
+    SDL_FreeSurface(wmIcon);
+  }
+
+  changeScreenResolution();
 }
 
 static void print_usage(FILE *stream) {
@@ -384,7 +387,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   }
   atexit(SDL_Quit);
 
-  changeScreenResolution();
+  createWindow();
   if (!screen) {
     error("Could not initialize screen resolution (message: '%s')", SDL_GetError());
   }

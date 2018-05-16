@@ -152,7 +152,6 @@ int Sparkle2D::add(float pos[2]) {
  * draw existing glitters
  */
 void Sparkle2D::draw() {
-  GLuint tex = textures[loadTexture("glitter.png")];
   Sparkle *skl = sparkle_first;
   while (skl != NULL) {
     float age = skl->age;
@@ -171,7 +170,7 @@ void Sparkle2D::draw() {
       float *pos = skl->pos;
 
       draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
-                      clr[2], clr[3] * alpha, tex);
+                      clr[2], clr[3] * alpha, textureGlitter);
     }
     skl = skl->next;
   }
