@@ -153,13 +153,8 @@ void Cactus::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
 
   int nsides = 6;
-  if (activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderObjectShadow);
-  } else {
-    setActiveProgramAndUniforms(shaderObject);
-    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
-  }
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(specularColor, 15.f / 128.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

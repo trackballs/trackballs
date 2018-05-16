@@ -111,13 +111,12 @@ void MainMode::display() {
                  camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2],
                  activeView.modelview);
   }
-  updateUniforms();
+  markViewChanged();
 
   /* lighting must be set before we render the shadow map */
   /* Shadow map rendering returns active modelview/projection to orig state */
   setupLighting(Game::current->isNight);
   if (Game::current->isNight) {
-    activeView.day_mode = false;
     if (Settings::settings->doShadows) {
       renderShadowMap(camFocus, map, Game::current);
       renderDummyShadowCascade();
@@ -732,7 +731,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, reflFBO);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  updateUniforms();
+  markViewChanged();
   Map *map = Game::current ? Game::current->map : NULL;
 
   map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
@@ -757,16 +756,14 @@ void MainMode::setupLighting(bool isNight) {
     assign(lightDiffuse2, activeView.light_diffuse);
     assign(lightDiffuse2, activeView.light_specular);
     assign(lightPosition2, activeView.light_position);
-    assign(black, activeView.global_ambient);
     assign(black, activeView.light_ambient);
-    activeView.quadratic_attenuation = 0.25;
+    activeView.day_mode = false;
   } else {
-    GLfloat sunLight[3] = {0.75, 0.75, 0.75};
+    GLfloat sunLight[3] = {0.8, 0.8, 0.8};
     GLfloat ambient[3] = {0.2, 0.2, 0.2};
     assign(sunLight, activeView.light_diffuse);
     assign(sunLight, activeView.light_specular);
-    assign(black, activeView.global_ambient);
     assign(ambient, activeView.light_ambient);
-    activeView.quadratic_attenuation = 0.;
+    activeView.day_mode = true;
   }
 }

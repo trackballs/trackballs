@@ -72,8 +72,8 @@ void Splash::drawBuffers2(const GLuint* vaolist) const {
   glEnable(GL_BLEND);
 
   glPointSize(1.5 * screenWidth / 600.);
-  setActiveProgramAndUniforms(shaderLine);
-  glUniformC(glGetUniformLocation(shaderLine, "line_color"), primaryColor);
+  setActiveProgramAndUniforms(Shader_Line);
+  glUniformC(uniformLocations.line_color, primaryColor);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_POINTS, nDroplets, GL_UNSIGNED_SHORT, (void*)0);

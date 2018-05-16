@@ -23,6 +23,7 @@
 #include "font.h"
 #include "game.h"
 #include "gamer.h"
+#include "mainMode.h"
 #include "map.h"
 #include "menuMode.h"
 #include "menusystem.h"
@@ -128,16 +129,7 @@ void HelpMode::display() {
     activeView.fog_end = 26.0 - 4.0 * helpGame->fogThickness;
   } else
     activeView.fog_enabled = 0;
-  GLfloat sunLight[3] = {0.8, 0.8, 0.8};
-  GLfloat ambient[3] = {0.2, 0.2, 0.2};
-  GLfloat black[3] = {0.2, 0.2, 0.2};
-  GLfloat lightPosition[3] = {-100., -100., 150.};
-  assign(sunLight, activeView.light_diffuse);
-  assign(sunLight, activeView.light_specular);
-  assign(lightPosition, activeView.light_position);
-  assign(black, activeView.global_ambient);
-  assign(ambient, activeView.light_ambient);
-  activeView.quadratic_attenuation = 0.;
+  MainMode::setupLighting(false);
 
   /* Render two views of the level map */
   perspectiveMatrix(25, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
@@ -151,8 +143,7 @@ void HelpMode::display() {
   Coord3d cameraTo2(5. + step * page, 5. + step, -8.);
   lookAtMatrix(cameraFrom1[0], cameraFrom1[1], cameraFrom1[2], cameraTo1[0], cameraTo1[1],
                cameraTo1[2], 0.0, 0.0, 1.0, activeView.modelview);
-  activeView.day_mode = true;
-  updateUniforms();
+  markViewChanged();
   if (Settings::settings->doShadows) {
     renderShadowCascade(cameraTo1, helpGame->map, helpGame);
   } else {
@@ -169,7 +160,7 @@ void HelpMode::display() {
   lookAtMatrix(cameraFrom2[0], cameraFrom2[1], cameraFrom2[2], cameraTo2[0], cameraTo2[1],
                cameraTo2[2], 0.0, 0.0, 1.0, activeView.modelview);
 
-  updateUniforms();
+  markViewChanged();
   if (Settings::settings->doShadows) {
     renderShadowCascade(cameraTo1, helpGame->map, helpGame);
   } else {

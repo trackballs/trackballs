@@ -15,13 +15,10 @@ varying vec3 cpos;
 
 void main(void) {
   // Lines are simple!
-  float dist;
-  if (fog_active == 0) {
-    // Fog not active, skip
-    dist = 0.;
-  } else {
-    // Apply linear fog as in original
-    dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
+  vec3 lcolor = line_color.xyz;
+  if (fog_active == 1) {
+    float dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
+    lcolor = mix(lcolor, fog_color, dist);
   }
-  gl_FragColor = vec4(mix(line_color.xyz, fog_color, dist), line_color.w);
+  gl_FragColor = vec4(lcolor, line_color.w);
 }

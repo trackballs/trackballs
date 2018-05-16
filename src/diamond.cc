@@ -72,13 +72,8 @@ void Diamond::drawBuffers2(const GLuint *vaolist) const {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  if (activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderObjectShadow);
-  } else {
-    setActiveProgramAndUniforms(shaderObject);
-    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 100.f);
-  }
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(specularColor, 100.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

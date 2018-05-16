@@ -36,15 +36,19 @@
 float fps = 50.0;
 int screenWidth = 640, screenHeight = 480;
 ViewParameters activeView;
+UniformLocations uniformLocations;
 
-GLuint shaderWater = 0;
-GLuint shaderTile = 0;
-GLuint shaderTileShadow = 0;
-GLuint shaderLine = 0;
-GLuint shaderUI = 0;
-GLuint shaderObject = 0;
-GLuint shaderObjectShadow = 0;
-GLuint shaderReflection = 0;
+static GLuint shaderWaterDay = 0;
+static GLuint shaderWaterNight = 0;
+static GLuint shaderTileDay = 0;
+static GLuint shaderTileNight = 0;
+static GLuint shaderTileShadow = 0;
+static GLuint shaderLine = 0;
+static GLuint shaderUI = 0;
+static GLuint shaderObjectDay = 0;
+static GLuint shaderObjectNight = 0;
+static GLuint shaderObjectShadow = 0;
+static GLuint shaderReflection = 0;
 static GLuint defaultVao = 0;
 GLuint textureBlank = 0;
 GLuint textureGlitter = 0;
@@ -364,112 +368,160 @@ void configureObjectAttributes() {
 
 static GLuint lastProgram = 0;
 
-void updateUniforms() { lastProgram = 0; }
+void markViewChanged() { lastProgram = 0; }
 
-static void setViewUniforms(GLuint shader) {
-  GLfloat lproj[16], lmodel[16];
+void setActiveProgramAndUniforms(Shader_Type type) {
+  GLuint shader = 0;
+  switch (type) {
+  case Shader_Line:
+    shader = shaderLine;
+    break;
+  case Shader_Object:
+    if (activeView.calculating_shadows) {
+      shader = shaderObjectShadow;
+    } else {
+      if (activeView.day_mode) {
+        shader = shaderObjectDay;
+      } else {
+        shader = shaderObjectNight;
+      }
+    }
+    break;
+  case Shader_Tile:
+    if (activeView.calculating_shadows) {
+      shader = shaderTileShadow;
+    } else {
+      if (activeView.day_mode) {
+        shader = shaderTileDay;
+      } else {
+        shader = shaderTileNight;
+      }
+    }
+    break;
+  case Shader_Water:
+    if (activeView.day_mode) {
+      shader = shaderWaterDay;
+    } else {
+      shader = shaderWaterNight;
+    }
+    break;
+  case Shader_Reflection:
+    shader = shaderReflection;
+    break;
+  }
+
+  if (shader == lastProgram) return;
+  glUseProgram(shader);
+  lastProgram = shader;
+
+  /* Set universal uniforms */
+  Matrix4d mvp;
+  matrixMult(activeView.modelview, activeView.projection, mvp);
+  GLfloat lmvp[16], lmodel[16];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
-      lproj[4 * i + j] = activeView.projection[i][j];
+      lmvp[4 * i + j] = mvp[i][j];
       lmodel[4 * i + j] = activeView.modelview[i][j];
     }
   }
-
-  glUniformMatrix4fv(glGetUniformLocation(shader, "proj_matrix"), 1, GL_FALSE,
-                     (GLfloat *)lproj);
+  glUniformMatrix4fv(glGetUniformLocation(shader, "mvp_matrix"), 1, GL_FALSE, (GLfloat *)lmvp);
   glUniformMatrix4fv(glGetUniformLocation(shader, "model_matrix"), 1, GL_FALSE,
                      (GLfloat *)lmodel);
-  if (!(shader == shaderTileShadow || shader == shaderObjectShadow)) {
+
+  switch (type) {
+  case Shader_Tile:
+    uniformLocations.render_stage = glGetUniformLocation(shader, "render_stage");
+    uniformLocations.arrtex = glGetUniformLocation(shader, "arrtex");
+    uniformLocations.gameTime = glGetUniformLocation(shader, "gameTime");
+    break;
+  case Shader_Water:
+    uniformLocations.wtex = glGetUniformLocation(shader, "wtex");
+    uniformLocations.gameTime = glGetUniformLocation(shader, "gameTime");
+    break;
+  case Shader_Object:
+    uniformLocations.render_stage = glGetUniformLocation(shader, "render_stage");
+    uniformLocations.specular_color = glGetUniformLocation(shader, "specular");
+    uniformLocations.shininess = glGetUniformLocation(shader, "shininess");
+    uniformLocations.use_lighting = glGetUniformLocation(shader, "use_lighting");
+    uniformLocations.ignore_shadow = glGetUniformLocation(shader, "ignore_shadow");
+    break;
+  case Shader_Reflection:
+    uniformLocations.refl_color = glGetUniformLocation(shader, "refl_color");
+    uniformLocations.tex = glGetUniformLocation(shader, "tex");
+    break;
+  case Shader_Line:
+    uniformLocations.line_color = glGetUniformLocation(shader, "line_color");
+    break;
+  }
+  if (!activeView.calculating_shadows) {
+    /* Fog applies to all display shaders */
     glUniform1i(glGetUniformLocation(shader, "fog_active"), activeView.fog_enabled);
     glUniform3f(glGetUniformLocation(shader, "fog_color"), activeView.fog_color[0],
                 activeView.fog_color[1], activeView.fog_color[2]);
     glUniform1f(glGetUniformLocation(shader, "fog_start"), activeView.fog_start);
     glUniform1f(glGetUniformLocation(shader, "fog_end"), activeView.fog_end);
 
-    glUniform3f(glGetUniformLocation(shader, "light_position"), activeView.light_position[0],
-                activeView.light_position[1], activeView.light_position[2]);
-    glUniform3f(glGetUniformLocation(shader, "light_ambient"), activeView.light_ambient[0],
-                activeView.light_ambient[1], activeView.light_ambient[2]);
-    glUniform3f(glGetUniformLocation(shader, "light_diffuse"), activeView.light_diffuse[0],
-                activeView.light_diffuse[1], activeView.light_diffuse[2]);
-    glUniform3f(glGetUniformLocation(shader, "light_specular"), activeView.light_specular[0],
-                activeView.light_specular[1], activeView.light_specular[2]);
-    glUniform3f(glGetUniformLocation(shader, "global_ambient"), activeView.global_ambient[0],
-                activeView.global_ambient[1], activeView.global_ambient[2]);
-    glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
-                activeView.sun_direction[1], activeView.sun_direction[2]);
-    glUniform1i(glGetUniformLocation(shader, "day_mode"), activeView.day_mode);
-    glUniform1f(glGetUniformLocation(shader, "quadratic_attenuation"),
-                activeView.quadratic_attenuation);
+    if (type == Shader_Object || type == Shader_Water || type == Shader_Tile) {
+      glUniform3f(glGetUniformLocation(shader, "light_ambient"), activeView.light_ambient[0],
+                  activeView.light_ambient[1], activeView.light_ambient[2]);
+      glUniform3f(glGetUniformLocation(shader, "light_diffuse"), activeView.light_diffuse[0],
+                  activeView.light_diffuse[1], activeView.light_diffuse[2]);
+      if (type == Shader_Object) {
+        glUniform3f(glGetUniformLocation(shader, "light_specular"),
+                    activeView.light_specular[0], activeView.light_specular[1],
+                    activeView.light_specular[2]);
+      }
 
-    /* the shadow map is always the second texture sampling unit */
-    glUniform1i(glGetUniformLocation(shader, "shadow_map"), 1);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+      if (activeView.day_mode) {
+        glUniform1i(glGetUniformLocation(shader, "shadow_cascade0"), 2);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
+        glUniform1i(glGetUniformLocation(shader, "shadow_cascade1"), 3);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[1]);
+        glUniform1i(glGetUniformLocation(shader, "shadow_cascade2"), 4);
+        glActiveTexture(GL_TEXTURE4);
+        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[2]);
 
-    glUniform1i(glGetUniformLocation(shader, "shadow_cascade0"), 2);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
-
-    glUniform1i(glGetUniformLocation(shader, "shadow_cascade1"), 3);
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[1]);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glUniform1i(glGetUniformLocation(shader, "shadow_cascade2"), 4);
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[2]);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    const int N = 3;
-    GLfloat cscproj[N * 16], cscmodel[N * 16];
-    for (int i = 0; i < N; i++) {
-      for (int j = 0; j < 4; j++) {
-        for (int k = 0; k < 4; k++) {
-          cscproj[16 * i + 4 * j + k] = activeView.cascade_proj[i][j][k];
-          cscmodel[16 * i + 4 * j + k] = activeView.cascade_model[i][j][k];
+        const int N = 3;
+        GLfloat cscmvp[N * 16], cscmodel[N * 16];
+        for (int i = 0; i < N; i++) {
+          Matrix4d cmvp;
+          matrixMult(activeView.cascade_model[i], activeView.cascade_proj[i], cmvp);
+          for (int j = 0; j < 4; j++) {
+            for (int k = 0; k < 4; k++) {
+              cscmvp[16 * i + 4 * j + k] = cmvp[j][k];
+              cscmodel[16 * i + 4 * j + k] = activeView.cascade_model[i][j][k];
+            }
+          }
         }
+        glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_mvp"), 3, GL_FALSE,
+                           (GLfloat *)cscmvp);
+        glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_model"), 3, GL_FALSE,
+                           (GLfloat *)cscmodel);
+
+        glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
+                    activeView.sun_direction[1], activeView.sun_direction[2]);
+      } else {
+        glUniform1i(glGetUniformLocation(shader, "shadow_map"), 1);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+
+        glUniform3f(glGetUniformLocation(shader, "light_position"),
+                    activeView.light_position[0], activeView.light_position[1],
+                    activeView.light_position[2]);
       }
     }
-
-    glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_proj"), 3, GL_FALSE,
-                       (GLfloat *)cscproj);
-    glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_model"), 3, GL_FALSE,
-                       (GLfloat *)cscmodel);
+    if (type != Shader_Line) { glActiveTexture(GL_TEXTURE0 + 0); }
   }
-  glActiveTexture(GL_TEXTURE0);
 }
-
-void setActiveProgramAndUniforms(GLuint shader) {
-  if (shader == shaderObject && shader == lastProgram) {
-    /* frequently changed unique variables */
-    glUniform1i(glGetUniformLocation(shader, "use_lighting"), 1);
-    glUniform1i(glGetUniformLocation(shader, "ignore_shadow"), 0);
+void setObjectUniforms(Color c, float shininess, Object_Lighting lighting) {
+  if (lastProgram == shaderObjectDay || lastProgram == shaderObjectNight) {
+    glUniformC(uniformLocations.specular_color, c);
+    glUniform1f(uniformLocations.shininess, shininess);
+    glUniform1i(uniformLocations.ignore_shadow, lighting == Lighting_Regular);
+    glUniform1i(uniformLocations.use_lighting, lighting != Lighting_None);
   }
-  if (activeView.calculating_shadows &&
-      !(shader == shaderObjectShadow || shader == shaderTileShadow)) {
-    warning("Non-shadow shader invoked during shadow pass");
-  }
-
-  if (shader == lastProgram) { return; }
-  lastProgram = shader;
-  if (shader == 0) { return; }
-  glUseProgram(shader);
-  if (shader == shaderObject) {
-    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 1);
-    glUniform1i(glGetUniformLocation(shaderObject, "ignore_shadow"), 0);
-    glUniform1i(glGetUniformLocation(shaderObject, "tex"), 0);
-  }
-  setViewUniforms(shader);
-  glActiveTexture(GL_TEXTURE0 + 0);
 }
 
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail) {
@@ -701,7 +753,7 @@ void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
                  activeView.light_position[1] + norv[loop][1],
                  activeView.light_position[2] + norv[loop][2], upv[loop][0], upv[loop][1],
                  upv[loop][2], activeView.modelview);
-    updateUniforms();
+    markViewChanged();
     // Render (todo: 50% alpha clip)
     if (mp) mp->draw(0, focus[0], focus[1]);
     if (gm) gm->draw();
@@ -714,7 +766,7 @@ void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
   activeView.calculating_shadows = false;
   assign(origMV, activeView.modelview);
   assign(origProj, activeView.projection);
-  updateUniforms();
+  markViewChanged();
 }
 
 void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
@@ -834,7 +886,7 @@ void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     assign(activeView.cascade_model[loop], activeView.modelview);
     assign(activeView.cascade_proj[loop], activeView.projection);
-    updateUniforms();
+    markViewChanged();
     if (mp) mp->draw(0, focus[0], focus[1]);
     if (gm) gm->draw();
   }
@@ -846,7 +898,7 @@ void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
   assign(origMV, activeView.modelview);
   assign(origProj, activeView.projection);
   activeView.calculating_shadows = false;
-  updateUniforms();
+  markViewChanged();
 }
 
 /* generates a snapshot of the screen */
@@ -1032,12 +1084,15 @@ void glHelpInit() {
   sparkle2D = new Sparkle2D();
 
   // Errors handled within loadProgram
-  shaderTile = loadProgram("basic.vert", "basic.frag");
+  shaderTileDay = loadProgram("basic.vert", "basic_day.frag");
+  shaderTileNight = loadProgram("basic.vert", "basic_night.frag");
   shaderTileShadow = loadProgram("basic.vert", "basic_shadow.frag");
   shaderLine = loadProgram("line.vert", "line.frag");
-  shaderWater = loadProgram("water.vert", "water.frag");
+  shaderWaterDay = loadProgram("water.vert", "water_day.frag");
+  shaderWaterNight = loadProgram("water.vert", "water_night.frag");
   shaderUI = loadProgram("ui.vert", "ui.frag");
-  shaderObject = loadProgram("object.vert", "object.frag");
+  shaderObjectDay = loadProgram("object.vert", "object_day.frag");
+  shaderObjectNight = loadProgram("object.vert", "object_night.frag");
   shaderObjectShadow = loadProgram("object.vert", "object_shadow.frag");
   shaderReflection = loadProgram("reflection.vert", "reflection.frag");
 
@@ -1068,10 +1123,6 @@ void glHelpInit() {
   activeView.light_specular[0] = 0.5f;
   activeView.light_specular[1] = 0.5f;
   activeView.light_specular[2] = 0.5f;
-  activeView.global_ambient[0] = 0.f;
-  activeView.global_ambient[1] = 0.f;
-  activeView.global_ambient[2] = 0.f;
-  activeView.quadratic_attenuation = 0.f;
   activeView.sun_direction[0] = 6 / 11.;
   activeView.sun_direction[1] = 34 / 121.;
   activeView.sun_direction[2] = -93 / 121.;
@@ -1112,21 +1163,27 @@ void glHelpInit() {
   warnForGLerrors("postGLinit");
 }
 void glHelpCleanup() {
-  if (shaderTile) glDeleteProgram(shaderTile);
+  if (shaderTileDay) glDeleteProgram(shaderTileDay);
+  if (shaderTileNight) glDeleteProgram(shaderTileNight);
   if (shaderTileShadow) glDeleteProgram(shaderTileShadow);
   if (shaderLine) glDeleteProgram(shaderLine);
-  if (shaderWater) glDeleteProgram(shaderWater);
+  if (shaderWaterDay) glDeleteProgram(shaderWaterDay);
+  if (shaderWaterNight) glDeleteProgram(shaderWaterNight);
   if (shaderUI) glDeleteProgram(shaderUI);
-  if (shaderObject) glDeleteProgram(shaderObject);
+  if (shaderObjectDay) glDeleteProgram(shaderObjectDay);
+  if (shaderObjectNight) glDeleteProgram(shaderObjectNight);
   if (shaderObjectShadow) glDeleteProgram(shaderObjectShadow);
   if (shaderReflection) glDeleteProgram(shaderReflection);
   if (defaultVao) glDeleteVertexArrays(1, &defaultVao);
   shaderLine = 0;
-  shaderTile = 0;
+  shaderTileDay = 0;
+  shaderTileNight = 0;
   shaderTileShadow = 0;
-  shaderWater = 0;
+  shaderWaterDay = 0;
+  shaderWaterNight = 0;
   shaderUI = 0;
-  shaderObject = 0;
+  shaderObjectDay = 0;
+  shaderObjectNight = 0;
   shaderObjectShadow = 0;
   defaultVao = 0;
 

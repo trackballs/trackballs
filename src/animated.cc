@@ -122,7 +122,7 @@ void Animated::drawBoundingBox() const {
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
-  setActiveProgramAndUniforms(shaderLine);
+  setActiveProgramAndUniforms(Shader_Line);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
   glEnableVertexAttribArray(0);
 

@@ -134,7 +134,7 @@ void Game::loadLevel(const char *name) {
     /* when there is no gamer (e.g, in help) pick random value */
     player1->primaryColor = Color(frandom(), frandom(), frandom(), 1.0);
     player1->primaryColor.v[((size_t)rand()) % 3] = 1.0;
-    player1->texture = textureBlank;
+    player1->texture = loadTexture("blank.png");
   }
 
   setDefaults();

@@ -439,13 +439,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     countObjectSpherePoints(&ntries, &nverts, detail);
 
     // Draw the ball...
-    if (activeView.calculating_shadows) {
-      setActiveProgramAndUniforms(shaderObjectShadow);
-    } else {
-      setActiveProgramAndUniforms(shaderObject);
-      glUniformC(glGetUniformLocation(shaderObject, "specular"), specular);
-      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), shininess);
-    }
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(specular, shininess, Lighting_Regular);
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textureTrack);
     } else if (texture == 0) {
@@ -459,26 +454,19 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
 
     if (Settings::settings->doReflections && reflectivity > 0.0 && environmentTexture &&
         !activeView.calculating_shadows) {
-      GLfloat c[4];
+      Color c;
       if (metallic) {
-        c[0] = primaryColor.f0();
-        c[1] = primaryColor.f1();
-        c[2] = primaryColor.f2();
-        c[3] = reflectivity;
+        c = Color(primaryColor.f0(), primaryColor.f1(), primaryColor.f2(), reflectivity);
       } else {
-        c[0] = 1.0;
-        c[1] = 1.0;
-        c[2] = 1.0;
-        c[3] = reflectivity;
+        c = Color(1., 1., 1., reflectivity);
       }
 
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      setActiveProgramAndUniforms(shaderReflection);
-      glUniform4f(glGetUniformLocation(shaderReflection, "refl_color"), c[0], c[1], c[2],
-                  c[3]);
-      glUniform1i(glGetUniformLocation(shaderReflection, "tex"), 0);
+      setActiveProgramAndUniforms(Shader_Reflection);
+      glUniformC(uniformLocations.refl_color, c);
+      glUniform1i(uniformLocations.tex, 0);
       glActiveTexture(GL_TEXTURE0 + 0);
       glBindTexture(GL_TEXTURE_2D, environmentTexture);
 
@@ -492,13 +480,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glEnable(GL_CULL_FACE);
 
     // Transfer
-    if (activeView.calculating_shadows) {
-      setActiveProgramAndUniforms(shaderObjectShadow);
-    } else {
-      setActiveProgramAndUniforms(shaderObject);
-      glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
-    }
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0.1, 0.1, 0.1, 1.), 10.f, Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[1]);
@@ -511,8 +494,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    setActiveProgramAndUniforms(shaderLine);
-    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 1.0f, 1.0f, 1.0f, 0.5f);
+    setActiveProgramAndUniforms(Shader_Line);
+    glUniformC(uniformLocations.line_color, Color(1., 1., 1., 0.5));
 
     const int nlines = 8;
 
@@ -526,13 +509,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     // In case we look from below
     glDisable(GL_CULL_FACE);
 
-    if (activeView.calculating_shadows) {
-      setActiveProgramAndUniforms(shaderObjectShadow);
-    } else {
-      setActiveProgramAndUniforms(shaderObject);
-      glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.1f, 0.1f, 0.1f, 1.f);
-      glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f);
-    }
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0.1, 0.1, 0.1, 1.), 10.f, Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[3]);
@@ -553,10 +531,8 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     int nverts = 0;
     int detail = 5;
     countObjectSpherePoints(&ntries, &nverts, detail);
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0., 0., 0., 0.), 0.f, Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[4]);
@@ -566,10 +542,8 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[5]);
@@ -580,10 +554,8 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.f, 0.f, 0.f, 0.f);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.f);
-    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureDizzy);
 
     glBindVertexArray(vaolist[6]);

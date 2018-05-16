@@ -36,7 +36,7 @@ Black::Black(Real x, Real y) : Ball(Role_Ball) {
   crashTolerance = 7;
 
   /* Set color to black */
-  primaryColor = Color(0.f, 0.f, 0.2f, 1.f);
+  primaryColor = Color(0.05f, 0.05f, 0.2f, 1.f);
   specularColor = Color(0.5f, 0.5f, 0.5f, 1.f);
 
   bounceFactor = .8;

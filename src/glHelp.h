@@ -72,25 +72,56 @@ void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
                        Matrix3d rotation, GLfloat radius, int detail, const Color &color);
 
-/* updateUniforms when uniforms (i.e, ViewParameters) change */
-void updateUniforms();
-/* setActiveProgramAndUniforms switches program and uniform state */
-void setActiveProgramAndUniforms(GLuint shader);
+typedef enum {
+  Shader_Tile,
+  Shader_Object,
+  Shader_Water,
+  Shader_Line,
+  Shader_Reflection,
+} Shader_Type;
+/* call markViewChanged when activeView is changed */
+void markViewChanged();
+/* setActiveProgramAndUniforms switches program, sets view uniforms, and updates common uniform
+ * locations */
+void setActiveProgramAndUniforms(Shader_Type shader);
+/* update object shader uniforms */
+typedef enum {
+  Lighting_None,      /* No shadows, orientation independent */
+  Lighting_NoShadows, /* Orientation dependent colors, no shadows */
+  Lighting_Regular    /* Shadows and orientation dependent colors */
+} Object_Lighting;
+void setObjectUniforms(Color specular, float shininess, Object_Lighting lighting);
+/* if the currently active shader has a uniform with matching name, then this struct provides
+ * the location */
+typedef struct {
+  GLuint line_color;
+  GLuint refl_color;
+  GLuint tex;
+  GLuint render_stage;
+  GLuint gameTime;
+  GLuint arrtex;
+  GLuint wtex;
+  GLuint specular_color;
+  GLuint shininess;
+  GLuint ignore_shadow;
+  GLuint use_lighting;
+} UniformLocations;
+extern UniformLocations uniformLocations;
 
 typedef struct _viewpa {
   Matrix4d modelview;
   Matrix4d projection;
+
   int fog_enabled;
   GLfloat fog_color[3];
   GLfloat fog_start;
   GLfloat fog_end;
 
-  GLfloat light_position[3];
   GLfloat light_ambient[3];
   GLfloat light_diffuse[3];
   GLfloat light_specular[3];
-  GLfloat global_ambient[3];
-  GLfloat quadratic_attenuation;
+
+  GLfloat light_position[3];
   GLfloat sun_direction[3];
 
   bool day_mode;
@@ -169,8 +200,6 @@ extern char *textureNames[256];  // the names of preloaded textures
 extern int numTextures;
 extern GLuint textureBlank, textureGlitter, textureMousePointer, textureDizzy, textureWings,
     textureTrack;  // immediate texture lookup
-extern GLuint shaderWater, shaderTile, shaderTileShadow, shaderLine, shaderUI, shaderObject,
-    shaderObjectShadow, shaderReflection;
 
 /* Globals */
 extern float fps;

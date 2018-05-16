@@ -175,13 +175,8 @@ void Teleport::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
 
   // Transfer
-  if (activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderObjectShadow);
-  } else {
-    setActiveProgramAndUniforms(shaderObject);
-    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 15.f / 128.f);
-  }
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
@@ -194,10 +189,8 @@ void Teleport::drawBuffers2(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[1]);

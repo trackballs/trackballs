@@ -99,13 +99,8 @@ void SideSpike::drawBuffers1(const GLuint *vaolist) const {
 
   const int nfacets = 6;
 
-  if (activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderObjectShadow);
-  } else {
-    setActiveProgramAndUniforms(shaderObject);
-    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-  }
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

@@ -364,21 +364,15 @@ void Map::draw(int stage, int cx, int cy) {
     }
   }
 
-  if (activeView.calculating_shadows) {
-    // Transfer no more than required
-    setActiveProgramAndUniforms(shaderTileShadow);
-    glUniform1f(glGetUniformLocation(shaderTileShadow, "gameTime"), gameTime);
-  } else {
-    // Put into shader
-    setActiveProgramAndUniforms(shaderTile);
-    glUniform1i(glGetUniformLocation(shaderTile, "render_stage"), stage);
-    glUniform1f(glGetUniformLocation(shaderTile, "gameTime"), gameTime);
+  // Put into shader
+  setActiveProgramAndUniforms(Shader_Tile);
+  glUniform1i(uniformLocations.render_stage, stage);
+  glUniform1f(uniformLocations.gameTime, gameTime);
 
-    // Link in texture atlas :-)
-    glUniform1i(glGetUniformLocation(shaderTile, "arrtex"), 0);
-    glActiveTexture(GL_TEXTURE0 + 0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
-  }
+  // Link in texture atlas :-)
+  glUniform1i(uniformLocations.arrtex, 0);
+  glActiveTexture(GL_TEXTURE0 + 0);
+  glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
 
   // Run through ye olde draw loop
   // WALLS
@@ -394,9 +388,9 @@ void Map::draw(int stage, int cx, int cy) {
   }
 
   if (stage == 1 && !activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderWater);
-    glUniform1f(glGetUniformLocation(shaderWater, "gameTime"), gameTime);
-    glUniform1i(glGetUniformLocation(shaderWater, "wtex"), 0);
+    setActiveProgramAndUniforms(Shader_Water);
+    glUniform1f(uniformLocations.gameTime, gameTime);
+    glUniform1i(uniformLocations.wtex, 0);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, textures[tx_Water]);
 
@@ -408,8 +402,8 @@ void Map::draw(int stage, int cx, int cy) {
   }
 
   if (!activeView.calculating_shadows && !(Game::current && !Game::current->useGrid)) {
-    setActiveProgramAndUniforms(shaderLine);
-    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.f, 0.f, 0.f, 1.f);
+    setActiveProgramAndUniforms(Shader_Line);
+    glUniformC(uniformLocations.line_color, Color(0., 0., 0., 1.));
 
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -903,10 +897,8 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_BLEND);
   glDisable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1034,10 +1026,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1100,10 +1090,9 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 0.);
-  glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
+
   glBindTexture(GL_TEXTURE_2D, textureBlank);
   configureObjectAttributes();
   glDrawElements(GL_TRIANGLES, 2 * 3 * nfacets, GL_UNSIGNED_SHORT, (void*)0);

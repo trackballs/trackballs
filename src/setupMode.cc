@@ -129,18 +129,9 @@ void SetupMode::display() {
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  GLfloat lightDiffuse[3] = {0.9, 0.9, 0.9};
-  GLfloat ambient[3] = {0.2, 0.2, 0.2};
-  GLfloat black[3] = {0., 0., 0.};
-  GLfloat lightPosition[3] = {-100.0, -50.0, 150.0};
-  assign(lightPosition, activeView.light_position);
-  assign(lightDiffuse, activeView.light_diffuse);
-  assign(lightDiffuse, activeView.light_specular);
-  assign(black, activeView.global_ambient);
-  assign(ambient, activeView.light_ambient);
-  activeView.quadratic_attenuation = 0.0;
+  MainMode::setupLighting(false);
   activeView.fog_enabled = 0;
-  updateUniforms();
+  markViewChanged();
 
   if (settings->gfx_details == 5) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -169,10 +160,8 @@ void SetupMode::display() {
   placeObjectSphere(data, idxs, 0, pos, rotation, 1.0, detail, color);
 
   // Transfer
-  setActiveProgramAndUniforms(shaderObject);
-  glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0.3f, 0.3f, 0.3f, 0.3f);
-  glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 20.f);
-  glUniform1i(glGetUniformLocation(shaderObject, "ignore_shadow"), 1);
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(Color(0.3, 0.3, 0.3, 0.3), 20., Lighting_NoShadows);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
   warnForGLerrors("trans");

@@ -64,14 +64,10 @@ void main(void) {
   vec4 texcolor = refl_color * texture(tex, vec2((1 + fx2) / 2, (1 + fy2) / 2));
   vec3 surfcolor = texcolor.xyz;
 
-  float dist;
-  if (fog_active == 0) {
-    // Fog not active, skip
-    dist = 0.;
-  } else {
-    // Apply linear fog as in original
-    dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
+  if (fog_active == 1) {
+    float dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
+    surfcolor = mix(surfcolor, fog_color, dist);
   }
   // Force override alpha
-  gl_FragColor = vec4(mix(surfcolor, fog_color, dist), texcolor.w);
+  gl_FragColor = vec4(surfcolor, texcolor.w);
 }

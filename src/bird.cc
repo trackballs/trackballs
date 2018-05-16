@@ -104,13 +104,9 @@ void Bird::drawBuffers2(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
-  if (activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(shaderObjectShadow);
-  } else {
-    setActiveProgramAndUniforms(shaderObject);
-    glUniformC(glGetUniformLocation(shaderObject, "specular"), specularColor);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 10.f / 128.f);
-  }
+  setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(specularColor, 10.f / 128.f, Lighting_Regular);
+
   glBindTexture(GL_TEXTURE_2D, textureWings);
 
   glBindVertexArray(vaolist[0]);

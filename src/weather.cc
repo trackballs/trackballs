@@ -147,8 +147,8 @@ void Weather::draw2() {
     delete[] data;
 
     // Transfer data
-    setActiveProgramAndUniforms(shaderLine);
-    glUniform4f(glGetUniformLocation(shaderLine, "line_color"), 0.3, 0.3, 0.4, 0.7);
+    setActiveProgramAndUniforms(Shader_Line);
+    glUniform4f(uniformLocations.line_color, 0.3, 0.3, 0.4, 0.7);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
@@ -192,10 +192,8 @@ void Weather::draw2() {
     glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     delete[] data;
 
-    setActiveProgramAndUniforms(shaderObject);
-    glUniform4f(glGetUniformLocation(shaderObject, "specular"), 0., 0., 0., 1.);
-    glUniform1f(glGetUniformLocation(shaderObject, "shininess"), 128.f / 128.f);
-    glUniform1i(glGetUniformLocation(shaderObject, "use_lighting"), 0);
+    setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(Color(0., 0., 0., 1.), 1., Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureGlitter);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
