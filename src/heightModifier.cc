@@ -49,7 +49,9 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
   this->not3 = not3;
 }
 
-void HeightModifier::tick(Real /*t*/) {
+void HeightModifier::tick(Real t) {
+  GameHook::tick(t);
+
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;

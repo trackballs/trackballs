@@ -50,11 +50,9 @@ void Debris::calcRadius() {
   radius = realRadius;
 }
 void Debris::tick(Real t) {
+  Ball::tick(t);
   elapsedTime += t;
   calcRadius();
-  if (elapsedTime > duration)
-    remove();  // delete this;
-  else
-    Ball::tick(t);
+  if (elapsedTime > duration) remove();
 }
 void Debris::die(int /*how*/) { remove(); }

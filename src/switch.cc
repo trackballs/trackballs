@@ -160,7 +160,9 @@ void CSwitch::drawBuffers1(const GLuint *vaolist) const {
 
 void CSwitch::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
-void CSwitch::tick(Real /*t*/) {
+void CSwitch::tick(Real t) {
+  Animated::tick(t);
+
   Coord3d v = position - Game::current->player1->position;
   Player *player = Game::current->player1;
 

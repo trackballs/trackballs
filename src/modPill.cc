@@ -68,6 +68,8 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
 ModPill::~ModPill() { this->Animated::~Animated(); }
 
 void ModPill::tick(Real t) {
+  Animated::tick(t);
+
   Player *player = Game::current->player1;
   if (!is_on) {
     timeLeft -= t;

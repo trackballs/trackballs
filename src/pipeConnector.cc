@@ -87,4 +87,4 @@ void PipeConnector::drawMe(const GLuint *vaolist) const {
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
 }
-void PipeConnector::tick(Real t) {}
+void PipeConnector::tick(Real t) { Animated::tick(t); }

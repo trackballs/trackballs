@@ -98,4 +98,4 @@ void ForceField::drawBuffers2(const GLuint *vaolist) const {
   glDrawElements(GL_TRIANGLES, 10 * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void ForceField::tick(Real /*t*/) {}
+void ForceField::tick(Real t) { Animated::tick(t); }

@@ -132,6 +132,8 @@ void Sign::drawBuffers2(const GLuint *vaolist) const {
 }
 
 void Sign::tick(Real t) {
+  Animated::tick(t);
+
   life -= t;
   if (life <= 0) {
     /* time to die... */

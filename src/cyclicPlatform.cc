@@ -42,6 +42,8 @@ CyclicPlatform::CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real hi
 }
 
 void CyclicPlatform::tick(Real dt) {
+  GameHook::tick(dt);
+
   if (is_on) phase += dt / speed;
   Real t = std::fmod(phase, 10.0);
   /*

@@ -197,7 +197,9 @@ void Teleport::drawBuffers2(const GLuint *vaolist) const {
   glDrawElements(GL_TRIANGLES, NFACETS * 3, GL_UNSIGNED_SHORT, (void *)0);
 }
 
-void Teleport::tick(Real /*t*/) {
+void Teleport::tick(Real t) {
+  Animated::tick(t);
+
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   Player *p = Game::current->player1;
   Coord3d diff = position - p->position;

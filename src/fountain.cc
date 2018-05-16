@@ -116,21 +116,22 @@ void Fountain::drawBuffers2(const GLuint *vaolist) const {
 }
 
 void Fountain::tick(Real t) {
-  int i, j;
+  Animated::tick(t);
+
   int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;
 
   if (nextPoint < drawFrom) {
-    for (i = drawFrom; i < 800; i += skip) {
-      for (j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
+    for (int i = drawFrom; i < 800; i += skip) {
+      for (int j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
       velocities[i][2] -= t * 1.0;
     }
-    for (i = 0; i < nextPoint; i += skip) {
-      for (j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
+    for (int i = 0; i < nextPoint; i += skip) {
+      for (int j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
       velocities[i][2] -= t * 1.0;
     }
   } else
-    for (i = drawFrom; i < nextPoint; i += skip) {
-      for (j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
+    for (int i = drawFrom; i < nextPoint; i += skip) {
+      for (int j = 0; j < 3; j++) positions[i][j] += velocities[i][j];
       velocities[i][2] -= t * 1.0;
     }
 
@@ -158,7 +159,7 @@ void Fountain::tick(Real t) {
 
     diff = position - p->position;
     if (length(diff) < p->radius + 0.2) {
-      for (i = 0; i < 3; i++)
+      for (int i = 0; i < 3; i++)
         p->velocity[i] +=
             velocity[i] / 0.3 * strength * 0.5 * (p->radius + 0.2 - length(diff)) * t;
     }

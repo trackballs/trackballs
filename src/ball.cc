@@ -588,11 +588,9 @@ void Ball::doExpensiveComputations() {
 }
 
 void Ball::tick(Real time) {
-  if (!is_on) return;
-
-  double phase;
-
   Animated::tick(time);
+
+  if (!is_on) return;
 
   for (int i = 0; i < NUM_MODS; i++) {
     if (!modTimeLeft[i])
@@ -611,7 +609,7 @@ void Ball::tick(Real time) {
 
   radius = realRadius;
   if (modTimeLeft[MOD_LARGE]) {
-    phase = std::min(modTimePhaseIn[MOD_LARGE] / 5.0, 1.0);
+    double phase = std::min(modTimePhaseIn[MOD_LARGE] / 5.0, 1.0);
     if (modTimeLeft[MOD_LARGE] > 0)
       phase = std::min(modTimeLeft[MOD_LARGE] / 3.0, phase);
     else
@@ -619,7 +617,7 @@ void Ball::tick(Real time) {
     radius *= 1.0 + phase;
   }
   if (modTimeLeft[MOD_SMALL]) {
-    phase = std::min(modTimePhaseIn[MOD_SMALL] / 5.0, 1.0);
+    double phase = std::min(modTimePhaseIn[MOD_SMALL] / 5.0, 1.0);
     if (modTimeLeft[MOD_SMALL] > 0)
       phase = std::min(modTimeLeft[MOD_SMALL] / 3.0, phase);
     else

@@ -80,6 +80,8 @@ void Splash::drawBuffers2(const GLuint* vaolist) const {
 }
 
 void Splash::tick(Real t) {
+  Animated::tick(t);
+
   timeLeft -= t;
   if (t < 0.0) remove();
   for (int i = 0; i < nDroplets; i++) {

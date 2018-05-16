@@ -25,6 +25,8 @@
 
 Trampoline::Trampoline(int x, int y) : GameHook(Role_GameHook), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
+  GameHook::tick(t);
+
   Map* map = Game::current->map;
   Cell& c = map->cell(cx, cy);
   Real dh = std::min(0.5 * t, c.sunken - 1e-5);

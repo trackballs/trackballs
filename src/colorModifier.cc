@@ -39,7 +39,9 @@ ColorModifier::ColorModifier(int col, int x, int y, Real min, Real max, Real fre
   is_on = true;
 }
 
-void ColorModifier::tick(Real /*t*/) {
+void ColorModifier::tick(Real t) {
+  GameHook::tick(t);
+
   double tt = Game::current->gameTime;
   Cell& c = Game::current->map->cell(x, y);
   if (!is_on) return;

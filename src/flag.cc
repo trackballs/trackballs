@@ -104,7 +104,9 @@ void Flag::drawBuffers1(const GLuint *vaolist) const {
 
 void Flag::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
-void Flag::tick(Real /*t*/) {
+void Flag::tick(Real t) {
+  Animated::tick(t);
+
   position[2] = Game::current->map->getHeight(position[0], position[1]);
   Player *p = Game::current->player1;
   Coord3d diff;

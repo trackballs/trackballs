@@ -33,7 +33,9 @@ void Trigger::releaseCallbacks() {
   if (expr) scm_gc_unprotect_object(expr);
   expr = NULL;
 }
-void Trigger::tick(Real /*t*/) {
+void Trigger::tick(Real t) {
+  GameHook::tick(t);
+
   if (!is_on) return;
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;

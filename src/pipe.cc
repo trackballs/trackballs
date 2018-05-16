@@ -113,4 +113,4 @@ void Pipe::drawTrunk(const GLuint *vaolist) const {
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
 }
-void Pipe::tick(Real /*t*/) {}
+void Pipe::tick(Real t) { Animated::tick(t); }

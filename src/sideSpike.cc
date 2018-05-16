@@ -109,13 +109,13 @@ void SideSpike::drawBuffers1(const GLuint *vaolist) const {
 void SideSpike::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
 void SideSpike::tick(Real t) {
-  double dist, h;
+  Animated::tick(t);
 
   if (is_on) phase += t * this->speed;
 
   double z = position[2];
   while (phase > 1.0) phase -= 1.0;
-  h = -0.3;
+  double h = -0.3;
   if (phase < 0.4) {
     /* spike is low */
     z = h;  //
@@ -134,8 +134,9 @@ void SideSpike::tick(Real t) {
 
   // play a 'rising' sound if the ball is in the round
   Player *player = Game::current->player1;
-  dist = sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
-              (position[1] - player->position[1]) * (position[1] - player->position[1]));
+  double dist =
+      sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
+           (position[1] - player->position[1]) * (position[1] - player->position[1]));
   if ((dist < 9.) && (!soundDone) && (phase >= 0.4) && (phase < 0.5)) {
     if (dist < 6.)
       playEffect(SFX_SPIKE, 0.66);
@@ -205,8 +206,8 @@ void SideSpike::tick(Real t) {
         ol = 1;
       break;
     }
-    dist = sqrt((sx - ball->position[0]) * (sx - ball->position[0]) +
-                (sy - ball->position[1]) * (sy - ball->position[1]));
+    double dist = sqrt((sx - ball->position[0]) * (sx - ball->position[0]) +
+                       (sy - ball->position[1]) * (sy - ball->position[1]));
 
     // too far
     if (dist > ball->radius + 1. + 0.3) continue;

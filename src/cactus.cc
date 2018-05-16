@@ -164,6 +164,8 @@ void Cactus::drawBuffers1(const GLuint *vaolist) const {
 void Cactus::drawBuffers2(const GLuint * /*idxbufs*/) const {}
 
 void Cactus::tick(Real t) {
+  Animated::tick(t);
+
   position[2] = Game::current->map->getHeight(position[0], position[1]);
 
   if (killed) {

@@ -75,13 +75,14 @@ void Spike::drawBuffers1(const GLuint *vaolist) const {
 void Spike::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
 void Spike::tick(Real t) {
-  double dist, dx, dy, speed, h;
+  Animated::tick(t);
+
   int is_sinking = 0;
 
   double x = position[0], y = position[1], z = position[2];
   if (is_on) phase += t * this->speed;
   while (phase > 1.0) phase -= 1.0;
-  h = Game::current->map->getHeight(x, y) - 0.3;
+  double h = Game::current->map->getHeight(x, y) - 0.3;
   if (phase < 0.4) {
     /* spike is low */
     z = h;  //
@@ -106,9 +107,9 @@ void Spike::tick(Real t) {
 
     if (ball->position[0] > x - 1 && ball->position[0] < x + 1 && ball->position[1] > y - 1 &&
         ball->position[1] < y + 1) {
-      dx = ball->position[0] - x;
-      dy = ball->position[1] - y;
-      dist = sqrt(dx * dx + dy * dy);
+      double dx = ball->position[0] - x;
+      double dy = ball->position[1] - y;
+      double dist = sqrt(dx * dx + dy * dy);
 
       if (dist < 0.1 + ball->radius) {
         h = ball->position[2] + dist;
@@ -130,8 +131,9 @@ void Spike::tick(Real t) {
 
   // play a 'rising' sound if the ball is in the round
   Player *player = Game::current->player1;
-  dist = sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
-              (position[1] - player->position[1]) * (position[1] - player->position[1]));
+  double dist =
+      sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
+           (position[1] - player->position[1]) * (position[1] - player->position[1]));
   if ((dist < 9.) && (!soundDone) && (phase >= 0.4) && (phase < 0.5)) {
     if (dist < 6.)
       playEffect(SFX_SPIKE, 0.66);

@@ -43,7 +43,9 @@ void SmartTrigger::releaseCallbacks() {
   entering = NULL;
   leaving = NULL;
 }
-void SmartTrigger::tick(Real /*t*/) {
+void SmartTrigger::tick(Real t) {
+  GameHook::tick(t);
+
   if (!is_on) return;
   Player *ply = Game::current->player1;
   double dx = ply->position[0] - x;

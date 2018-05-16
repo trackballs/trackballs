@@ -81,6 +81,8 @@ void Diamond::drawBuffers2(const GLuint *vaolist) const {
 }
 
 void Diamond::tick(Real t) {
+  Animated::tick(t);
+
   Coord3d v0;
   if (fade <= 0.0) return;
   v0 = Game::current->player1->position - position;
