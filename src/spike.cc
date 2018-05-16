@@ -117,10 +117,10 @@ void Spike::tick(Real t) {
           /* Bounce against it */
           dx /= dist;
           dy /= dist;
-          speed = dx * ball->velocity[0] + dy * ball->velocity[1];
-          if (speed < 0) {
-            ball->velocity[0] -= 2 * speed * dx;
-            ball->velocity[1] -= 2 * speed * dy;
+          double bounce_speed = dx * ball->velocity[0] + dy * ball->velocity[1];
+          if (bounce_speed < 0) {
+            ball->velocity[0] -= 2 * bounce_speed * dx;
+            ball->velocity[1] -= 2 * bounce_speed * dy;
           }
         } else if (h < 0.4 + z)
           /* Die */
