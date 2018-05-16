@@ -94,5 +94,5 @@ void main(void) {
     surfcolor = mix(surfcolor, fog_color, dist);
   }
   // Keep original alpha
-  gl_FragColor = vec4(surfcolor, fcolor.w);
+  gl_FragColor = vec4(surfcolor, texcolor.w);
 }
