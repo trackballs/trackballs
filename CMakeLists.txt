@@ -40,7 +40,7 @@ setordefault(TRACKBALLS_SHARE "${TRACKBALLS_SHARE_DIR}" ${CMAKE_INSTALL_PREFIX}/
 
 # Set defines
 add_definitions(-DPACKAGE="trackballs")
-add_definitions(-DVERSION="1.3.0")
+add_definitions(-DVERSION="1.3.1")
 add_definitions(-DLOCALEDIR="${TRACKBALLS_LOCALE}")
 add_definitions(-DHAVE_CONFIG_H)
 add_definitions(-DSHARE_DIR="${TRACKBALLS_SHARE}")
