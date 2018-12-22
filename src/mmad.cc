@@ -434,8 +434,9 @@ static void *mainLoop(void *data) {
           } else {
             SDL_ShowCursor(SDL_DISABLE);
           }
-        } else
+        } else if (GameMode::current) {
           GameMode::current->keyUp(event.key.keysym.sym);
+        }
         break;
       case SDL_KEYDOWN:
 

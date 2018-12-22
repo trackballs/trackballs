@@ -83,7 +83,7 @@ void Splash::tick(Real t) {
   Animated::tick(t);
 
   timeLeft -= t;
-  if (t < 0.0) remove();
+  if (timeLeft < 0.0) remove();
   for (int i = 0; i < nDroplets; i++) {
     for (int j = 0; j < 3; j++) positions[i][j] += velocities[i][j] * t;
     velocities[i][2] -= t * 2.0;
