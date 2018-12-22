@@ -63,6 +63,7 @@ class Settings {
   int vsynced;
   int shadowTexsize;
   int sandboxAvailable;
+  int storeReplay;
 
   void setLocale();
   int hasJoystick();

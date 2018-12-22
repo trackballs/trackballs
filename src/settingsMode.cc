@@ -79,8 +79,6 @@ void SettingsMode::deactivated() {
   }
 }
 void SettingsMode::display() {
-  int menucount;
-
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT);  // | GL_DEPTH_BUFFER_BIT);
 
@@ -94,7 +92,8 @@ void SettingsMode::display() {
 
   clearSelectionAreas();
 
-  menucount = 0;
+  int menucount = 0;
+  Settings *settings = Settings::settings;
 
   if (testingResolution > 0.0) {
     if (resolution >= 0) {
@@ -134,13 +133,13 @@ void SettingsMode::display() {
 
     // Windowed
     menuItem_LeftRight(MENU_WINDOWED, menucount++, 1, _("Fullscreen"),
-                       (Settings::settings->is_windowed ? _("No") : _("Yes")));
+                       (settings->is_windowed ? _("No") : _("Yes")));
 
     menuItem_LeftRight(MENU_VSYNC, menucount++, 1, _("VSync"),
-                       (Settings::settings->vsynced ? _("Yes") : _("No")));
+                       (settings->vsynced ? _("Yes") : _("No")));
 
     // show FPS
-    switch (Settings::settings->showFPS) {
+    switch (settings->showFPS) {
     case 0:
       snprintf(str, sizeof(str), _("No"));
       break;
@@ -159,7 +158,7 @@ void SettingsMode::display() {
     menuItem_Left(MENU_SUBSCREEN, menucount++, _("Graphics"));
 
     // gfx details
-    switch (Settings::settings->gfx_details) {
+    switch (settings->gfx_details) {
     case 0:
       snprintf(str, sizeof(str), _("None"));
       break;
@@ -181,11 +180,11 @@ void SettingsMode::display() {
     }
     menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, 1, _("Details"), str);
     menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, 1, _("Reflections"),
-                       (Settings::settings->doReflections ? _("Yes") : _("No")));
+                       (settings->doReflections ? _("Yes") : _("No")));
     menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, 1, _("Shadows"),
-                       (Settings::settings->doShadows ? _("Yes") : _("No")));
-    if (Settings::settings->doShadows) {
-      snprintf(str, sizeof(str), "%d", 1 << Settings::settings->shadowTexsize);
+                       (settings->doShadows ? _("Yes") : _("No")));
+    if (settings->doShadows) {
+      snprintf(str, sizeof(str), "%d", 1 << settings->shadowTexsize);
       menuItem_LeftRight(MENU_SHADOW_TEXSIZE, menucount++, 1, _("Shadow Resolution"), str);
     }
 
@@ -197,27 +196,26 @@ void SettingsMode::display() {
 
     /* Use mouse */
     menuItem_LeftRight(MENU_USEMOUSE, menucount++, 1, _("Use mouse"),
-                       (Settings::settings->ignoreMouse ? _("No") : _("Yes")));
+                       (settings->ignoreMouse ? _("No") : _("Yes")));
 
     /* Mouse sensitivity */
-    if (!Settings::settings->ignoreMouse) {
-      snprintf(str, sizeof(str), "%1.2f", Settings::settings->mouseSensitivity);
+    if (!settings->ignoreMouse) {
+      snprintf(str, sizeof(str), "%1.2f", settings->mouseSensitivity);
       menuItem_LeftRight(MENU_SENSITIVITY, menucount++, 1, _("Sensitivity"), str);
     }
 
     /* Steering */
-    if (Settings::settings->rotateSteering == 0)
+    if (settings->rotateSteering == 0)
       snprintf(str, sizeof(str), _("normal"));
-    else if (Settings::settings->rotateSteering > 0)
-      snprintf(str, sizeof(str), _("+%d degrees"), 45 * Settings::settings->rotateSteering);
-    else if (Settings::settings->rotateSteering < 0)
-      snprintf(str, sizeof(str), _("-%d degrees"), -45 * Settings::settings->rotateSteering);
+    else if (settings->rotateSteering > 0)
+      snprintf(str, sizeof(str), _("+%d degrees"), 45 * settings->rotateSteering);
+    else if (settings->rotateSteering < 0)
+      snprintf(str, sizeof(str), _("-%d degrees"), -45 * settings->rotateSteering);
     menuItem_LeftRight(MENU_STEERING, menucount++, 1, _("Steering"), str);
 
     /* Joystick */
-    if (Settings::settings->joystickIndex)
-      snprintf(str, 255, "%s",
-               SDL_JoystickNameForIndex(Settings::settings->joystickIndex - 1));
+    if (settings->joystickIndex)
+      snprintf(str, 255, "%s", SDL_JoystickNameForIndex(settings->joystickIndex - 1));
     else if (SDL_NumJoysticks() == 0)
       snprintf(str, 255, _("no joystick found"));
     else
@@ -237,19 +235,22 @@ void SettingsMode::display() {
 
     /* Language */
     menuItem_LeftRight(MENU_LANGUAGE, menucount++, 1, _("Language"),
-                       Settings::languageNames[Settings::settings->language]);
+                       Settings::languageNames[settings->language]);
     /* Music and Sfx volumes */
-    snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->musicVolume * 100.0));
+    snprintf(str, sizeof(str), "%d%%", (int)(settings->musicVolume * 100.0));
     menuItem_LeftRight(MENU_MUSIC_VOLUME, menucount++, 1, _("Music volume"), str);
-    snprintf(str, sizeof(str), "%d%%", (int)(Settings::settings->sfxVolume * 100.0));
+    snprintf(str, sizeof(str), "%d%%", (int)(settings->sfxVolume * 100.0));
     menuItem_LeftRight(MENU_SFX_VOLUME, menucount++, 1, _("Effects volume"), str);
     menucount++;
     /* Sandbox mode present */
     menuItem_LeftRight(MENU_SANDBOX_AVAILABLE, menucount++, 1, _("Sandbox mode available"),
-                       (Settings::settings->sandboxAvailable ? _("Yes") : _("No")));
+                       (settings->sandboxAvailable ? _("Yes") : _("No")));
     /* Time compression */
     snprintf(str, sizeof(str), "%.3f", timeDilationFactor);
     menuItem_LeftRight(MENU_TIME_COMPRESSION, menucount++, 1, _("Time Compression"), str);
+
+    menuItem_LeftRight(MENU_STORE_REPLAY, menucount++, 1, _("Store best level replay"),
+                       (settings->storeReplay ? _("Yes") : _("No")));
 
     break;
   case NUM_SUBSCREENS:
@@ -342,7 +343,7 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     break;
 
   case MENU_WINDOWED:
-    Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
+    settings->is_windowed = settings->is_windowed ? 0 : 1;
     requestScreenUpdate();
     break;
   case MENU_GFX_DETAILS:
@@ -350,33 +351,31 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     settings->gfx_details = mymod((settings->gfx_details + (up ? 1 : -1)), 6);
     break;
   case MENU_DO_REFLECTIONS:
-    Settings::settings->doReflections = Settings::settings->doReflections ? 0 : 1;
+    settings->doReflections = settings->doReflections ? 0 : 1;
     break;
   case MENU_DO_SHADOWS:
-    Settings::settings->doShadows = Settings::settings->doShadows ? 0 : 1;
+    settings->doShadows = settings->doShadows ? 0 : 1;
     break;
   case MENU_SHADOW_TEXSIZE:
-    Settings::settings->shadowTexsize += (up ? 1 : -1);
-    if (Settings::settings->shadowTexsize > 12) Settings::settings->shadowTexsize = 6;
-    if (Settings::settings->shadowTexsize < 6) Settings::settings->shadowTexsize = 12;
+    settings->shadowTexsize += (up ? 1 : -1);
+    if (settings->shadowTexsize > 12) settings->shadowTexsize = 6;
+    if (settings->shadowTexsize < 6) settings->shadowTexsize = 12;
     break;
   case MENU_SHOW_FPS:
-    Settings::settings->showFPS = (Settings::settings->showFPS + 1) % 3;
+    settings->showFPS = (settings->showFPS + 1) % 3;
     break;
   case MENU_VSYNC:
-    Settings::settings->vsynced = Settings::settings->vsynced ? 0 : 1;
-    SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
+    settings->vsynced = settings->vsynced ? 0 : 1;
+    SDL_GL_SetSwapInterval(settings->vsynced ? 1 : 0);
     break;
 
   case MENU_USEMOUSE:
-    Settings::settings->ignoreMouse = Settings::settings->ignoreMouse ? 0 : 1;
+    settings->ignoreMouse = settings->ignoreMouse ? 0 : 1;
     break;
   case MENU_SENSITIVITY:
-    Settings::settings->mouseSensitivity += up ? 0.25 : -0.25;
-    if (Settings::settings->mouseSensitivity > 10.001)
-      Settings::settings->mouseSensitivity = 0.0;
-    if (Settings::settings->mouseSensitivity < 0.000)
-      Settings::settings->mouseSensitivity = 10.00;
+    settings->mouseSensitivity += up ? 0.25 : -0.25;
+    if (settings->mouseSensitivity > 10.001) settings->mouseSensitivity = 0.0;
+    if (settings->mouseSensitivity < 0.000) settings->mouseSensitivity = 10.00;
     break;
   case MENU_STEERING:
     settings->rotateSteering = mymod(settings->rotateSteering + 3 + (up ? 1 : -1), 8) - 3;
@@ -385,6 +384,9 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     settings->joystickIndex =
         mymod(settings->joystickIndex + (up ? 1 : -1), SDL_NumJoysticks() + 1);
     if (settings->joystickIndex > 0) { GameMode::activate(CalibrateJoystickMode::init()); }
+    break;
+  case MENU_STORE_REPLAY:
+    settings->storeReplay = !settings->storeReplay;
     break;
 
   case MENU_MUSIC_VOLUME:
@@ -403,13 +405,13 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     settings->setLocale();
     break;
   case MENU_SANDBOX_AVAILABLE:
-    Settings::settings->sandboxAvailable = !Settings::settings->sandboxAvailable;
+    settings->sandboxAvailable = !settings->sandboxAvailable;
     break;
   case MENU_TIME_COMPRESSION:
-    Settings::settings->timeCompression += (up ? 1 : -1);
-    if (Settings::settings->timeCompression > 12) Settings::settings->timeCompression = -12;
-    if (Settings::settings->timeCompression < -12) Settings::settings->timeCompression = 12;
-    timeDilationFactor = std::pow(2.0, Settings::settings->timeCompression / 6.0);
+    settings->timeCompression += (up ? 1 : -1);
+    if (settings->timeCompression > 12) settings->timeCompression = -12;
+    if (settings->timeCompression < -12) settings->timeCompression = 12;
+    timeDilationFactor = std::pow(2.0, settings->timeCompression / 6.0);
     break;
   }
 }

@@ -83,6 +83,7 @@ Settings::Settings() {
   shadowTexsize = 9;
   timeCompression = 0;
   sandboxAvailable = 0;
+  storeReplay = 0;
 
   memset(specialLevel, 0, sizeof(specialLevel));
   memset(levelSets, 0, sizeof(levelSets));
@@ -107,21 +108,21 @@ Settings::Settings() {
         warning("Configuration file should be a series of (key value) tuples.");
         continue;
       }
-      const int intnum = 21, realnum = 3;
+      const int intnum = 22, realnum = 3;
       const char *intkeys[intnum] = {
-          "gfx-details",      "show-fps",       "is-windowed",    "resolution",
-          "color-depth",      "joystick-index", "joy_center-x",   "joy_center-y",
-          "joy-left",         "joy-right",      "joy-up",         "joy-down",
-          "rotate-steering",  "language",       "ignore-mouse",   "do-reflections",
-          "do-shadows",       "vsync-on",       "shadow-texsize", "time-compression",
-          "sandbox-available"};
+          "gfx-details",       "show-fps",       "is-windowed",    "resolution",
+          "color-depth",       "joystick-index", "joy_center-x",   "joy_center-y",
+          "joy-left",          "joy-right",      "joy-up",         "joy-down",
+          "rotate-steering",   "language",       "ignore-mouse",   "do-reflections",
+          "do-shadows",        "vsync-on",       "shadow-texsize", "time-compression",
+          "sandbox-available", "store-replay"};
 
       int *intdests[intnum] = {
-          &gfx_details,     &showFPS,       &is_windowed,    &resolution,    &colorDepth,
-          &joystickIndex,   &joy_center[0], &joy_center[1],  &joy_left,      &joy_right,
-          &joy_up,          &joy_down,      &rotateSteering, &language,      &ignoreMouse,
-          &doReflections,   &doShadows,     &vsynced,        &shadowTexsize, &timeCompression,
-          &sandboxAvailable};
+          &gfx_details,      &showFPS,       &is_windowed,    &resolution,    &colorDepth,
+          &joystickIndex,    &joy_center[0], &joy_center[1],  &joy_left,      &joy_right,
+          &joy_up,           &joy_down,      &rotateSteering, &language,      &ignoreMouse,
+          &doReflections,    &doShadows,     &vsynced,        &shadowTexsize, &timeCompression,
+          &sandboxAvailable, &storeReplay};
       const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
       double *realdests[realnum] = {&sfxVolume, &musicVolume, &mouseSensitivity};
 
@@ -346,6 +347,7 @@ void Settings::save() {
     fprintf(fp, "(vsync-on %d)\n", vsynced);
     fprintf(fp, "(time-compression %d)\n", timeCompression);
     fprintf(fp, "(sandbox-available %d)\n", sandboxAvailable);
+    fprintf(fp, "(store-replay %d)\n", storeReplay);
     fclose(fp);
   }
 }
