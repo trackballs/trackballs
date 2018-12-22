@@ -152,17 +152,12 @@ static void changeScreenResolution() {
     }
   }
 
-  SDL_GetWindowSize(window, &screenWidth, &screenHeight);
-
   /* Use CapsLock key to determine if mouse should be hidden */
   if (SDL_GetModState() & KMOD_CAPS) {
     SDL_ShowCursor(SDL_ENABLE);
   } else {
     SDL_ShowCursor(SDL_DISABLE);
   }
-
-  /* Adjust for size change in editmode */
-  if (EditMode::editMode) { EditMode::editMode->resizeWindows(); }
 
   /* Depending on platform, this might work, or not, or fail silently */
   SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
@@ -242,6 +237,7 @@ static SDL_GLContext createWindow() {
   }
 
   changeScreenResolution();
+  SDL_GetWindowSize(window, &screenWidth, &screenHeight);
 
   return ctx;
 }
@@ -483,9 +479,19 @@ static void *mainLoop(void *data) {
 
         break;
       case SDL_WINDOWEVENT:
-        if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
-          /* Only change screen resolution if resizing is enabled */
-          if (Settings::settings->resolution < 0) { requestScreenUpdate(); }
+        if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+          if (Settings::settings->resolution >= 0) {
+            // Assume fixed resolution unconditionally
+            screenWidth = screenResolutions[Settings::settings->resolution][0];
+            screenHeight = screenResolutions[Settings::settings->resolution][1];
+          } else {
+            // Region drawn resizes with window
+            screenWidth = event.window.data1;
+            screenHeight = event.window.data2;
+          }
+
+          /* Adjust for size change in editmode */
+          if (EditMode::editMode) { EditMode::editMode->resizeWindows(); }
         }
         break;
       }
@@ -738,6 +744,7 @@ int main(int argc, char **argv) {
     printf("Touching map %s\n", mapname);
     Map *map = new Map(mapname);
     map->save(mapname, (int)map->startPosition[0], (int)map->startPosition[1]);
+    delete map;
     return EXIT_SUCCESS;
   }
 
