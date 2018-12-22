@@ -22,7 +22,7 @@
 #ifndef SPARKLE2D_H
 #define SPARKLE2D_H
 
-#include "general.h"
+#include "glHelp.h"
 
 /* structure of a sparkle */
 typedef struct _sparkle {
@@ -45,13 +45,7 @@ class Sparkle2D {
   // draw sparkles
   void draw();
   // add a new sparkle
-  int add(float px, float py, float vx, float vy, float ttl, float size, float r, float g,
-          float b, float a);
-  int add(float pos[2], float speed[2], float ttl, float size, float color[3]);
-  int add(float pos[2], float speed[2], float ttl, float size);
-  int add(float pos[2], float speed[2], float ttl);
-  int add(float pos[2], float ttl);
-  int add(float pos[2]);
+  void add(float pos[2], float speed[2], float ttl, float size, float color[4]);
   // remove all current sparkles (i.e. before changing screen)
   void clear();
   static Sparkle2D *sparkle2D;
@@ -63,6 +57,10 @@ class Sparkle2D {
   void remove_sparkle(Sparkle *sparkle);
   // list of sparkles
   Sparkle *sparkle_first;
+  int nsparkles;
+
+  GLuint idxs;
+  GLuint data;
 };
 
 #endif

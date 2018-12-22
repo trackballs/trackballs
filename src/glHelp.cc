@@ -124,10 +124,10 @@ Sparkle2D *sparkle2D = NULL;
 struct StringInfo {
   TTF_Font *font;
   char string[256];
-  SDL_Color color;
 };
-int operator<(const struct StringInfo &a, const struct StringInfo &b) {
-  return memcmp(&a, &b, sizeof(struct StringInfo)) < 0;
+static bool operator<(const struct StringInfo &a, const struct StringInfo &b) {
+  if (a.font != b.font) return a.font < b.font;
+  return strcmp(a.string, b.string) < 0;
 }
 
 struct StringCache {
@@ -141,16 +141,19 @@ static long stringTick = 0;
 static std::map<StringInfo, StringCache> strcache;
 
 static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
+  SDL_Color white = {255, 255, 255, 255};
+  SDL_Color black = {0, 0, 0, 0};
   if (outlined) {
     TTF_SetFontOutline(inf.font, 0);
-    SDL_Surface *inner = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
+
+    SDL_Surface *inner = TTF_RenderUTF8_Blended(inf.font, inf.string, white);
     if (!inner) {
       warning("Failed to render string outline '%s'", inf.string);
       return NULL;
     }
     TTF_SetFontOutline(inf.font, 2);
-    SDL_Color blkColor = {0, 0, 0, 0};
-    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, blkColor);
+
+    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, black);
     if (!outline) {
       warning("Failed to render string inside '%s'", inf.string);
       return NULL;
@@ -161,7 +164,7 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
     SDL_FreeSurface(inner);
     return outline;
   } else {
-    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, inf.color);
+    SDL_Surface *outline = TTF_RenderUTF8_Blended(inf.font, inf.string, white);
     if (!outline) {
       warning("Failed to render string '%s'", inf.string);
       return NULL;
@@ -173,10 +176,6 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
 int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
                  float blue, float alpha, bool outlined, int align, int maxwidth) {
   struct StringInfo inf;
-  inf.color.r = 255 * red;
-  inf.color.g = 255 * green;
-  inf.color.b = 255 * blue;
-  inf.color.a = 255 * alpha;
   inf.font = font;
   memset(inf.string, 0, 256);
   strncpy(inf.string, string, 255);
@@ -199,7 +198,8 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   GLfloat shrink = (maxwidth > 0 && maxwidth < cached.w) ? (maxwidth / (GLfloat)cached.w) : 1.;
   draw2DRectangle(x - shrink * align * cached.w / 2, y - shrink * cached.h / 2,
                   shrink * cached.w, shrink * cached.h, cached.texcoord[0], cached.texcoord[1],
-                  cached.texcoord[2], cached.texcoord[3], 1., 1., 1., 1., cached.texture);
+                  cached.texcoord[2], cached.texcoord[3], red, green, blue, alpha,
+                  cached.texture);
   return maxwidth > 0 ? std::min(cached.w, maxwidth) : cached.w;
 }
 
@@ -252,12 +252,13 @@ void tickMouse(Real td) {
   last_sparkle += td * (1.0 + (fabs(mouseSpeedX) + fabs(mouseSpeedY)) * 0.1);
   while (last_sparkle > 0.0) {
     last_sparkle -= 0.05;
-    sparkle2D->add(
-        (float)mouseX + 10.0 * (frandom() - 0.5), (float)mouseY + 10.0 * (frandom() - 0.5),
-        (float)mouseSpeedX / 2. + 100.0 * (frandom() - 0.5),
-        (float)mouseSpeedY / 2. - 120.0 * frandom(), (float)(1.5 + 0.5 * (frandom() - 0.5)),
-        (float)(11 + 3. * (frandom() - 0.5)), 0.8 + 0.2 * frandom(), 0.8 + 0.2 * frandom(),
-        0.5 + 0.2 * frandom(), 0.9 - 0.35 * frandom());
+    float pos[2] = {mouseX + 10.0 * (frandom() - 0.5), mouseY + 10.0 * (frandom() - 0.5)};
+    float speed[2] = {(float)mouseSpeedX / 2. + 100.0 * (frandom() - 0.5),
+                      (float)mouseSpeedY / 2. - 120.0 * frandom()};
+    float color[4] = {0.8 + 0.2 * frandom(), 0.8 + 0.2 * frandom(), 0.5 + 0.2 * frandom(),
+                      0.9 - 0.35 * frandom()};
+    sparkle2D->add(pos, speed, (float)(1.5 + 0.5 * (frandom() - 0.5)),
+                   (float)(11 + 3. * (frandom() - 0.5)), color);
   }
 }
 

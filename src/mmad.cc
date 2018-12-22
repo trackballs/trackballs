@@ -305,12 +305,6 @@ int testDir() {
   return 1;
 }
 
-struct arguments {
-  int argc;
-  char **argv;
-  int retval;
-};
-
 static void *mainLoop(void *data) {
   /* OpenGL work is now *only* performed on this thread. */
   SDL_GLContext context = (SDL_GLContext)data;
@@ -529,14 +523,6 @@ static int mainLoopWrapper(void *data) {
   return (int)(ptrdiff_t)v;
 }
 
-void *innerMain(void *arguments) {
-  int argc = ((struct arguments *)arguments)->argc;
-  char **argv = ((struct arguments *)arguments)->argv;
-  int *ret = &((struct arguments *)arguments)->retval;
-
-  return NULL;
-}
-
 static void *initSettings(void *) {
   Settings::init();
   return NULL;
@@ -661,7 +647,6 @@ int main(int argc, char **argv) {
   displayStartTime = getMonotonicTime();
   lastDisplayStartTime = displayStartTime;
   lastDisplayStartTime.tv_sec -= 1;
-  Settings::init();
   Settings *settings = Settings::settings;
   settings->doSpecialLevel = 0;
   settings->setLocale(); /* Start "correct" i18n as soon as possible */

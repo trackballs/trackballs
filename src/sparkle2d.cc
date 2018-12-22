@@ -23,27 +23,25 @@
 
 #include "glHelp.h"
 
-/*  structure for */
-
-typedef struct _glitter {
-  float pos[3];
-  float speed[3];
-  float color[4];
-  float size;
-  float age;
-  struct _glitter *next, *prev;
-} Glitter;
-
 // initialize sparkle module
 Sparkle2D::Sparkle2D() {
   // just be sure that this field is empty
   this->sparkle_first = NULL;
+  nsparkles = 0;
+
+  glGenBuffers(1, &idxs);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+  glGenBuffers(1, &data);
+  glBindBuffer(GL_ARRAY_BUFFER, data);
 }
 
 // destroy
 Sparkle2D::~Sparkle2D() {
   // remove all remaining sparkle
   clear();
+
+  glDeleteBuffers(1, &idxs);
+  glDeleteBuffers(1, &data);
 }
 
 // remove all entries
@@ -66,6 +64,7 @@ void Sparkle2D::remove_sparkle(Sparkle *sparkle) {
   else
     sparkle_first = sparkle->next;
   delete sparkle;
+  nsparkles--;
 }
 
 /*
@@ -78,36 +77,14 @@ Sparkle *Sparkle2D::create_and_insert() {
   tmp->prev = NULL;
   if (sparkle_first != NULL) { sparkle_first->prev = tmp; }
   sparkle_first = tmp;
+  nsparkles++;
   return (tmp);
 }
 
-/*
- * add a new sparkle
- */
-int Sparkle2D::add(float px, float py, float vx, float vy, float ttl, float size, float r,
-                   float g, float b, float a) {
+void Sparkle2D::add(float pos[2], float speed[2], float ttl, float size, float color[4]) {
   Sparkle *sparkle;
 
-  if ((sparkle = create_and_insert()) == NULL) return (0);
-
-  sparkle->pos[0] = px;
-  sparkle->pos[1] = py;
-  sparkle->speed[0] = vx;
-  sparkle->speed[1] = vy;
-  sparkle->color[0] = r;
-  sparkle->color[1] = g;
-  sparkle->color[2] = b;
-  sparkle->color[3] = a;
-  sparkle->size = size;
-  sparkle->ttl = ttl;
-  sparkle->age = 0.;
-
-  return (1);
-}
-int Sparkle2D::add(float pos[2], float speed[2], float ttl, float size, float color[4]) {
-  Sparkle *sparkle;
-
-  if ((sparkle = create_and_insert()) == NULL) return (0);
+  if ((sparkle = create_and_insert()) == NULL) return;
 
   sparkle->pos[0] = pos[0];
   sparkle->pos[1] = pos[1];
@@ -120,40 +97,18 @@ int Sparkle2D::add(float pos[2], float speed[2], float ttl, float size, float co
   sparkle->size = size;
   sparkle->ttl = ttl;
   sparkle->age = 0.;
-
-  return (1);
 }
-int Sparkle2D::add(float pos[2], float speed[2], float ttl, float size) {
-  float col[4] = {1., 0.9, 0.1, 0.9};
-  return add(pos, speed, ttl, size, col);
-}
-int Sparkle2D::add(float pos[2], float speed[2], float ttl) {
-  float col[4] = {1., 0.9, 0.1, 0.9};
-  return add(pos, speed, ttl, 1., col);
-}
-int Sparkle2D::add(float pos[2], float ttl) {
-  float col[4] = {1., 0.9, 0.1, 0.9};
-  float speed[2];
-
-  speed[0] = 2. * frandom() - 1.;
-  speed[1] = 2. * frandom() - 1.;
-  return add(pos, speed, ttl, 1., col);
-}
-int Sparkle2D::add(float pos[2]) {
-  float col[4] = {1., 0.9, 0.1, 0.9};
-  float speed[2];
-
-  speed[0] = 2. * frandom() - 1.;
-  speed[1] = 2. * frandom() - 1.;
-  return add(pos, speed, 0.5 + frandom() * 2., 1., col);
-}
-
 /*
  * draw existing glitters
  */
 void Sparkle2D::draw() {
+  Require2DMode();
+  GLfloat *datl = new GLfloat[nsparkles * 8 * 4];
+  ushort *idxl = new ushort[nsparkles * 6];
+
   Sparkle *skl = sparkle_first;
-  while (skl != NULL) {
+  int i = 0;
+  for (int i = 0; skl != NULL; i++, skl = skl->next) {
     float age = skl->age;
     float tmp;
     if (age < 0.1) {
@@ -161,17 +116,49 @@ void Sparkle2D::draw() {
     } else
       tmp = age / skl->ttl;
     float alpha = 1.0 - tmp;
-    float *clr = skl->color;
-
     tmp = alpha * alpha;
     float ex = tmp * skl->size * 0.8;
     float ey = tmp * skl->size * 1. + (0.02 * age);
-    float *pos = skl->pos;
 
-    draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
-                    clr[2], clr[3] * alpha, textureGlitter);
-    skl = skl->next;
+    // 2x vert, 4x color, 2x texco
+    int offsets[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
+    for (int k = 0; k < 4; k++) {
+      int base = i * 8 * 4 + k * 8;
+      datl[base + 0] = skl->pos[0] - ex + offsets[k][0] * (2 * ex);
+      datl[base + 1] = skl->pos[1] - ey + offsets[k][1] * (2 * ey);
+      datl[base + 2] = skl->color[0];
+      datl[base + 3] = skl->color[1];
+      datl[base + 4] = skl->color[2];
+      datl[base + 5] = skl->color[3] * alpha;
+      datl[base + 6] = (GLfloat)offsets[k][0];
+      datl[base + 7] = (GLfloat)offsets[k][1];
+    }
   }
+  for (int i = 0; i < nsparkles; i++) {
+    idxl[i * 6 + 0] = 4 * i + 0;
+    idxl[i * 6 + 1] = 4 * i + 1;
+    idxl[i * 6 + 2] = 4 * i + 2;
+    idxl[i * 6 + 3] = 4 * i + 1;
+    idxl[i * 6 + 4] = 4 * i + 2;
+    idxl[i * 6 + 5] = 4 * i + 3;
+  }
+
+  // Input structure: 2x Position; 4x color; 2x texture coord
+  glBindBuffer(GL_ARRAY_BUFFER, data);
+  glBufferData(GL_ARRAY_BUFFER, nsparkles * 8 * 4 * sizeof(GLfloat), datl, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, nsparkles * 6 * sizeof(ushort), idxl, GL_STATIC_DRAW);
+
+  glBindTexture(GL_TEXTURE_2D, textureGlitter);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(6 * sizeof(GLfloat)));
+  glDrawElements(GL_TRIANGLES, 6 * nsparkles, GL_UNSIGNED_SHORT, (void *)0);
+
+  delete[] datl;
+  delete[] idxl;
 }
 
 /*
