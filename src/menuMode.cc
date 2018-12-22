@@ -136,7 +136,8 @@ void MenuMode::doSelection() {
 
   switch (selection) {
   case MENU_QUIT:
-    exit(0);
+    /* activate the null mode, after which event loop exits */
+    GameMode::activate(NULL);
     break;
   case MENU_NEWGAME:
     GameMode::activate(SetupMode::init());

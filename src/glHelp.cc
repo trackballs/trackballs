@@ -107,13 +107,6 @@ const double cos14[14] = {1.0,
                           0.6234898018587336,
                           0.9009688679024191};
 
-double fake_rand[4711];
-double frand(size_t i) {
-  /* size_t is nonnegative so no inputs will crash */
-  return fake_rand[i % 4711];
-}
-double frand() { return (rand() % (1 << 30)) / ((double)(1 << 30)); }
-
 #define GLHELP_MAX_TEXTURES 256
 GLuint textures[GLHELP_MAX_TEXTURES] = {0};  // added init. to 0 (no texture)
 char *textureNames[GLHELP_MAX_TEXTURES] = {NULL};
@@ -1054,8 +1047,6 @@ int loadTexture(const char *name) {
 
 void glHelpInit() {
   warnForGLerrors("preGLinit");
-
-  for (int i = 0; i < 4711; i++) fake_rand[i] = frand();
 
   TTF_Init();
   char str[256];

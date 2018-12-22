@@ -59,10 +59,10 @@ void Black::die(int how) {
       pos[0] = position[0] + cos(a) * 0.25 * sin(b);
       pos[1] = position[1] + sin(a) * 0.25 * sin(b);
       pos[2] = position[2] + 0.25 * cos(b) + 0.5;
-      vel[0] = velocity[0] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-      vel[1] = velocity[1] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-      vel[2] = velocity[2] + 0.5 * 1 / 2048.0 * ((rand() % 2048) - 1024);
-      Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
+      vel[0] = velocity[0] + (Game::current->frandom() - 0.5);
+      vel[1] = velocity[1] + (Game::current->frandom() - 0.5);
+      vel[2] = velocity[2] + (Game::current->frandom() - 0.5);
+      Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * Game::current->frandom()));
     }
 
   remove();

@@ -19,12 +19,10 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "ball.h"
 #include "calibrateJoystickMode.h"
 #include "editMode.h"
 #include "enterHighScoreMode.h"
 #include "font.h"
-#include "forcefield.h"
 #include "game.h"
 #include "gameMode.h"
 #include "general.h"
@@ -36,8 +34,6 @@
 #include "mainMode.h"
 #include "map.h"
 #include "menuMode.h"
-#include "pipe.h"
-#include "pipeConnector.h"
 #include "settings.h"
 #include "settingsMode.h"
 #include "setupMode.h"
@@ -51,6 +47,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <queue>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN 1
@@ -59,13 +56,14 @@
 #endif
 
 /* Important globals */
-SDL_Window *window = NULL;
-SDL_Surface *screen = NULL;
-SDL_GLContext mainContext;
-const char *program_name;
+static SDL_Window *window = NULL;
+static const char *program_name;
 int debug_joystick, repair_joystick;
-int not_yet_windowed = 1;
+static int not_yet_windowed = 1;
 struct timespec displayStartTime, lastDisplayStartTime;
+static bool has_audio = true;
+static unsigned int quitEventType, updateWindowType;
+static bool startInEditMode;
 
 int theFrameNumber = 0;
 
@@ -77,7 +75,44 @@ int screenResolutions[5][2] = {{640, 480},
                                {1600, 1200}},
     nScreenResolutions = 5;
 
-void changeScreenResolution() {
+static class EventQueue {
+ public:
+  bool has_event() const {
+    bool ret;
+    SDL_LockMutex(mtx);
+    ret = evts.size() > 0;
+    SDL_UnlockMutex(mtx);
+    return ret;
+  }
+  SDL_Event get_event() {
+    SDL_Event f;
+    SDL_LockMutex(mtx);
+    f = evts.front();
+    evts.pop();
+    SDL_UnlockMutex(mtx);
+    return f;
+  }
+  void push_event(const SDL_Event &e) {
+    SDL_LockMutex(mtx);
+    evts.push(e);
+    SDL_UnlockMutex(mtx);
+  }
+
+  SDL_mutex *mtx;
+
+ private:
+  std::queue<SDL_Event> evts;
+} eventQueue;
+
+void requestScreenUpdate() {
+  /* A threadsafe indirection to ensure that the window parameters are
+   * updated on the main thread */
+  SDL_Event update_event;
+  update_event.type = updateWindowType;
+  SDL_PushEvent(&update_event);
+}
+
+static void changeScreenResolution() {
   int full = Settings::settings->is_windowed == 0;
   int fixed = Settings::settings->resolution >= 0;
 
@@ -117,12 +152,7 @@ void changeScreenResolution() {
     }
   }
 
-  screen = SDL_GetWindowSurface(window);
-
-  if (!screen) return;
-  /* Pick up what the screen actually has */
-  screenWidth = screen->w;
-  screenHeight = screen->h;
+  SDL_GetWindowSize(window, &screenWidth, &screenHeight);
 
   /* Use CapsLock key to determine if mouse should be hidden */
   if (SDL_GetModState() & KMOD_CAPS) {
@@ -130,13 +160,15 @@ void changeScreenResolution() {
   } else {
     SDL_ShowCursor(SDL_DISABLE);
   }
-  SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 
   /* Adjust for size change in editmode */
   if (EditMode::editMode) { EditMode::editMode->resizeWindows(); }
+
+  /* Depending on platform, this might work, or not, or fail silently */
+  SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 }
 
-static void createWindow() {
+static SDL_GLContext createWindow() {
   int full = Settings::settings->is_windowed == 0;
   int fixed = Settings::settings->resolution >= 0;
 
@@ -196,10 +228,10 @@ static void createWindow() {
 
   if (window == NULL) {
     warning("Could not create window: %s", SDL_GetError());
-    return;
+    return NULL;
   }
 
-  mainContext = SDL_GL_CreateContext(window);
+  SDL_GLContext ctx = SDL_GL_CreateContext(window);
 
   char str[256];
   snprintf(str, sizeof(str), "%s/icons/trackballs-128x128.png", effectiveShareDir);
@@ -210,6 +242,8 @@ static void createWindow() {
   }
 
   changeScreenResolution();
+
+  return ctx;
 }
 
 static void print_usage(FILE *stream) {
@@ -271,130 +305,17 @@ int testDir() {
   return 1;
 }
 
-void innerMain(void * /*closure*/, int argc, char **argv) {
-  int editMode = 0, touchMode = 0;
-  int audio = SDL_INIT_AUDIO;
-  SDL_Event event;
-  char *touchName = 0;
+struct arguments {
+  int argc;
+  char **argv;
+  int retval;
+};
 
-  const char *const short_options = "he:l:t:wmr:s:fqvyj";
-  const struct option long_options[] = {{"help", 0, NULL, 'h'},
-                                        {"level", 1, NULL, 'l'},
-                                        {"windowed", 0, NULL, 'w'},
-                                        {"mute", 0, NULL, 'm'},
-                                        {"resolution", 1, NULL, 'r'},
-                                        {"sensitivity", 1, NULL, 's'},
-                                        {"fps", 0, NULL, 'f'},
-                                        {"version", 0, NULL, 'v'},
-                                        {"touch", 1, NULL, 't'},
-                                        {"low-memory", 0, NULL, 'y'},
-                                        {"debug-joystick", 0, NULL, '9'},
-                                        {"repair-joystick", 0, NULL, 'j'},
-                                        {NULL, 0, NULL, 0}};
-  int next_option;
-
-  program_name = argv[0];
-
-  displayStartTime = getMonotonicTime();
-  lastDisplayStartTime = displayStartTime;
-  lastDisplayStartTime.tv_sec -= 1;
-  Settings::init();
-  Settings *settings = Settings::settings;
-  settings->doSpecialLevel = 0;
-  settings->setLocale(); /* Start "correct" i18n as soon as possible */
-  low_memory = 0;
-  debug_joystick = 0;
-  repair_joystick = 0;
-  do {
-#if defined(__SVR4) && defined(__sun)
-    next_option = getopt(argc, argv, short_options);
-#else
-    next_option = getopt_long(argc, argv, short_options, long_options, NULL);
-#endif
-
-    int i;
-    switch (next_option) {
-    case 'h':
-      print_usage(stdout);
-      exit(0);
-      break;
-    case 'l':
-      snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
-               "%s", optarg);
-      Settings::settings->doSpecialLevel = 1;
-      break;
-    case 't':
-      touchMode = 1;
-      touchName = optarg;
-      audio = 0;  // no audio
-      break;
-    case 'w':
-      settings->is_windowed = 1;
-      break;
-    case 'm':
-      audio = 0;
-      break;
-    case 'r':
-      for (i = 0; i < nScreenResolutions; i++)
-        if (screenResolutions[i][0] == atoi(optarg)) break;
-      if (i < nScreenResolutions)
-        settings->resolution = i;
-      else {
-        char estr[256];
-        snprintf(estr, 255, _("Unknown screen resolution of width %d"), i);
-        printf("%s\n", estr);
-      }
-      break;
-    case 's':
-      Settings::settings->mouseSensitivity = atof(optarg);
-      break;
-    case 'f':
-      Settings::settings->showFPS = 1;
-      break;
-    case '?':
-      print_usage(stderr);
-      exit(1);
-    case -1:
-      break;
-    case 'v':
-      printf("%s v%s\n", PACKAGE, VERSION);
-      exit(0);
-      break;
-    case 'y':
-      low_memory = 1;
-      break;
-    case '9':
-      debug_joystick = 1;
-      break;
-    case 'j':
-      repair_joystick = 1;
-      break;
-    default:
-      print_usage(stderr);
-      exit(1);
-    }
-  } while (next_option != -1);
-
-  printf("%s\n", _("Welcome to Trackballs."));
-  char str[256];
-  snprintf(str, 255, _("Using %s as gamedata directory."), effectiveShareDir);
-  printf("%s\n", str);
-
-  /* Initialize SDL */
-  if ((SDL_Init(SDL_INIT_VIDEO | audio | SDL_INIT_JOYSTICK) == -1)) {
-    error("Could not initialize libSDL. Error message: '%s'. Try '-m' if audio is at fault.",
-          SDL_GetError());
-  }
-  atexit(SDL_Quit);
-
-  createWindow();
-  if (!screen) {
-    error("Could not initialize screen resolution (message: '%s')", SDL_GetError());
-  }
-
-  if (SDL_GetModState() & KMOD_CAPS) {
-    warning("capslock is on, the mouse will be visible and not grabbed");
-  }
+static void *mainLoop(void *data) {
+  /* OpenGL work is now *only* performed on this thread. */
+  SDL_GLContext context = (SDL_GLContext)data;
+  SDL_GL_MakeCurrent(window, context);
+  SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
 
   /* initialize OpenGL setup before we draw anything */
   glHelpInit();
@@ -420,29 +341,15 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   /* Initialize all modules */
   initGuileInterface();
   generalInit();
+  Font::init();
 
-  if (audio != 0) soundInit();
+  if (has_audio) soundInit();
   Settings::settings->loadLevelSets();
 
   /* Initialize and activate the correct gameModes */
-  if (touchMode) {
-    char mapname[512];
-
-    snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
-             touchName);
-    if (!fileExists(mapname))
-      snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, touchName);
-    if (!fileExists(mapname)) snprintf(mapname, sizeof(mapname), "%s", touchName);
-    printf("Touching map %s\n", mapname);
-    Map *map = new Map(mapname);
-    map->save(mapname, (int)map->startPosition[0], (int)map->startPosition[1]);
-    exit(0);
-  } else if (editMode) {
-    Font::init();
+  if (startInEditMode) {
     GameMode::activate(EditMode::init());
   } else {
-    Font::init();
-
     /* Activate initial mode */
     if (Settings::settings->doSpecialLevel) {
       GameMode::activate(SetupMode::init());
@@ -476,8 +383,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   srand(seed);
   int keyUpReceived = 1;
 
-  bool is_running = true;
-  while (is_running) {
+  while (GameMode::current) {
     theFrameNumber++;
 
     double td = getTimeDifference(lastDisplayStartTime, displayStartTime);
@@ -503,6 +409,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       glClear(GL_COLOR_BUFFER_BIT);
     }
     warnForGLerrors("uncaught from display routine");
+    SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
     SDL_GL_SwapWindow(window);
 
     lastDisplayStartTime = displayStartTime;
@@ -515,14 +422,16 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
     /*                */
     /* Process events */
     /*                */
-    SDL_MouseButtonEvent *e = (SDL_MouseButtonEvent *)&event;
-    while (SDL_PollEvent(&event)) {
+    while (eventQueue.has_event()) {
+      SDL_Event event = eventQueue.get_event();
+
       switch (event.type) {
       case SDL_QUIT:
-        is_running = false;
+        GameMode::activate(NULL);
         break;
       case SDL_MOUSEBUTTONDOWN:
-        if (GameMode::current) GameMode::current->mouseDown(e->button, e->x, e->y);
+        if (GameMode::current)
+          GameMode::current->mouseDown(event.button.button, event.button.x, event.button.y);
         break;
       case SDL_KEYUP:
         /* Prevent repeated keys */
@@ -541,15 +450,15 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       case SDL_KEYDOWN:
 
         /* Always quit if the 'q' key is pressed */
-        if (event.key.keysym.sym == 'q' && SDL_GetModState() & KMOD_CTRL) exit(0);
+        if (event.key.keysym.sym == 'q' && SDL_GetModState() & KMOD_CTRL) {
+          GameMode::activate(NULL);
+        }
 
         /* Change between fullscreen/windowed mode if the 'f' key
            is pressed */
         else if (event.key.keysym.sym == 'f' && SDL_GetModState() & KMOD_CTRL) {
           Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
-          changeScreenResolution();
-          /* Flush all events that occured while switching screen resolution */
-          while (SDL_PollEvent(&event)) {}
+          requestScreenUpdate();
         }
 
         /* Use CapsLock key to determine if mouse should be hidden+grabbed */
@@ -562,15 +471,12 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
         }
 
         else if (event.key.keysym.sym == SDLK_ESCAPE) {
-          if (editMode) {
-            ((EditMode *)GameMode::current)->askQuit();
+          if (GameMode::current == EditMode::editMode) {
+            EditMode::editMode->askQuit();
           } else if ((GameMode::current && GameMode::current == MenuMode::menuMode))
-            is_running = false;
+            GameMode::activate(NULL);
           else {
             GameMode::activate(MenuMode::init());
-            /* Flush all events that occured while switching screen
-             resolution */
-            while (SDL_PollEvent(&event)) {}
           }
 
         } else if (GameMode::current) {
@@ -585,11 +491,7 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
       case SDL_WINDOWEVENT:
         if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
           /* Only change screen resolution if resizing is enabled */
-          if (Settings::settings->resolution < 0) {
-            changeScreenResolution();
-            /* Flush all events that occured while switching screen resolution */
-            while (SDL_PollEvent(&event)) {}
-          }
+          if (Settings::settings->resolution < 0) { requestScreenUpdate(); }
         }
         break;
       }
@@ -613,7 +515,31 @@ void innerMain(void * /*closure*/, int argc, char **argv) {
   HighScore::cleanup();
   glHelpCleanup();
 
-  SDL_Quit();
+  SDL_GL_DeleteContext(context);
+
+  SDL_Event quit_event;
+  quit_event.type = quitEventType;
+  SDL_PushEvent(&quit_event);
+
+  return (void *)EXIT_SUCCESS;
+}
+
+static int mainLoopWrapper(void *data) {
+  void *v = scm_with_guile(mainLoop, data);
+  return (int)(ptrdiff_t)v;
+}
+
+void *innerMain(void *arguments) {
+  int argc = ((struct arguments *)arguments)->argc;
+  char **argv = ((struct arguments *)arguments)->argv;
+  int *ret = &((struct arguments *)arguments)->retval;
+
+  return NULL;
+}
+
+static void *initSettings(void *) {
+  Settings::init();
+  return NULL;
 }
 
 int main(int argc, char **argv) {
@@ -703,6 +629,179 @@ int main(int argc, char **argv) {
   bindtextdomain(PACKAGE, localedir);
   textdomain(PACKAGE);
 
-  scm_boot_guile(argc, argv, innerMain, 0);
-  return 0;
+  /* Loading the settings uses Guile for parsing, but we don't need it again
+   * until e.g. loading the highscores/gamer info, which is done in the non-input
+   * thread */
+  scm_with_guile(initSettings, NULL);
+
+  startInEditMode = false;
+  bool touchMode = false;
+  int audio = SDL_INIT_AUDIO;
+  SDL_Event event;
+  char *touchName = 0;
+
+  const char *const short_options = "he:l:t:wmr:s:fqvyj";
+  const struct option long_options[] = {{"help", 0, NULL, 'h'},
+                                        {"level", 1, NULL, 'l'},
+                                        {"windowed", 0, NULL, 'w'},
+                                        {"mute", 0, NULL, 'm'},
+                                        {"resolution", 1, NULL, 'r'},
+                                        {"sensitivity", 1, NULL, 's'},
+                                        {"fps", 0, NULL, 'f'},
+                                        {"version", 0, NULL, 'v'},
+                                        {"touch", 1, NULL, 't'},
+                                        {"low-memory", 0, NULL, 'y'},
+                                        {"debug-joystick", 0, NULL, '9'},
+                                        {"repair-joystick", 0, NULL, 'j'},
+                                        {NULL, 0, NULL, 0}};
+  int next_option;
+
+  program_name = argv[0];
+
+  displayStartTime = getMonotonicTime();
+  lastDisplayStartTime = displayStartTime;
+  lastDisplayStartTime.tv_sec -= 1;
+  Settings::init();
+  Settings *settings = Settings::settings;
+  settings->doSpecialLevel = 0;
+  settings->setLocale(); /* Start "correct" i18n as soon as possible */
+  low_memory = 0;
+  debug_joystick = 0;
+  repair_joystick = 0;
+  do {
+#if defined(__SVR4) && defined(__sun)
+    next_option = getopt(argc, argv, short_options);
+#else
+    next_option = getopt_long(argc, argv, short_options, long_options, NULL);
+#endif
+
+    int i;
+    switch (next_option) {
+    case 'h':
+      print_usage(stdout);
+      return EXIT_SUCCESS;
+    case 'l':
+      snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
+               "%s", optarg);
+      Settings::settings->doSpecialLevel = 1;
+      break;
+    case 't':
+      touchMode = true;
+      touchName = optarg;
+      has_audio = false;  // no audio
+      break;
+    case 'w':
+      settings->is_windowed = 1;
+      break;
+    case 'm':
+      has_audio = false;
+      break;
+    case 'r':
+      for (i = 0; i < nScreenResolutions; i++)
+        if (screenResolutions[i][0] == atoi(optarg)) break;
+      if (i < nScreenResolutions)
+        settings->resolution = i;
+      else {
+        char estr[256];
+        snprintf(estr, 255, _("Unknown screen resolution of width %d"), i);
+        printf("%s\n", estr);
+      }
+      break;
+    case 's':
+      Settings::settings->mouseSensitivity = atof(optarg);
+      break;
+    case 'f':
+      Settings::settings->showFPS = 1;
+      break;
+    case '?':
+      print_usage(stderr);
+      return EXIT_FAILURE;
+    case -1:
+      break;
+    case 'v':
+      printf("%s v%s\n", PACKAGE, VERSION);
+      return EXIT_SUCCESS;
+    case 'y':
+      low_memory = 1;
+      break;
+    case '9':
+      debug_joystick = 1;
+      break;
+    case 'j':
+      repair_joystick = 1;
+      break;
+    default:
+      print_usage(stderr);
+      return EXIT_FAILURE;
+    }
+  } while (next_option != -1);
+
+  printf("%s\n", _("Welcome to Trackballs."));
+  char str[256];
+  snprintf(str, 255, _("Using %s as gamedata directory."), effectiveShareDir);
+  printf("%s\n", str);
+
+  if (touchMode) {
+    /* We do not need any of SDL to load and save a map */
+    char mapname[512];
+
+    snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
+             touchName);
+    if (!fileExists(mapname))
+      snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, touchName);
+    if (!fileExists(mapname)) snprintf(mapname, sizeof(mapname), "%s", touchName);
+    printf("Touching map %s\n", mapname);
+    Map *map = new Map(mapname);
+    map->save(mapname, (int)map->startPosition[0], (int)map->startPosition[1]);
+    return EXIT_SUCCESS;
+  }
+
+  /* Initialize SDL */
+  if ((SDL_Init(SDL_INIT_VIDEO | (has_audio ? SDL_INIT_AUDIO : 0) | SDL_INIT_JOYSTICK) ==
+       -1)) {
+    error("Could not initialize libSDL. Error message: '%s'. Try '-m' if audio is at fault.",
+          SDL_GetError());
+  }
+  atexit(SDL_Quit);
+
+  SDL_GLContext gl_context = createWindow();
+  if (!gl_context) {
+    error("Could not initialize screen resolution (message: '%s')", SDL_GetError());
+  }
+
+  if (SDL_GetModState() & KMOD_CAPS) {
+    warning("capslock is on, the mouse will be visible and not grabbed");
+  }
+
+  /* We move everything but initial event processing off thread so that
+   * SDL can provide semi-accurate event timestamps. */
+  Uint32 custom_events = SDL_RegisterEvents(1);
+  quitEventType = custom_events;
+  updateWindowType = custom_events + 1;
+
+  eventQueue.mtx = SDL_CreateMutex();
+  SDL_Thread *thread = SDL_CreateThread(mainLoopWrapper, "NotInputThread", gl_context);
+  while (true) {
+    SDL_Event ev;
+    int evc = SDL_WaitEvent(&ev);
+    if (evc == 0) {
+      warning("Error receiving events in SDL_WaitEvent: %s", SDL_GetError());
+      break;
+    }
+    if (ev.type == quitEventType) {
+      // Exit loop
+      break;
+    } else if (ev.type == updateWindowType) {
+      changeScreenResolution();
+    } else {
+      // Append to queue, i.e., for the main loop to handle.
+      eventQueue.push_event(ev);
+    }
+  }
+  int retval = EXIT_FAILURE;
+  SDL_WaitThread(thread, &retval);
+  SDL_DestroyMutex(eventQueue.mtx);
+
+  SDL_Quit();
+  return retval;
 }

@@ -155,23 +155,21 @@ void Sparkle2D::draw() {
   Sparkle *skl = sparkle_first;
   while (skl != NULL) {
     float age = skl->age;
-    if (age >= 0.) {
-      float tmp;
-      if (age < 0.1) {
-        tmp = 1. - age * 10.;
-      } else
-        tmp = age / skl->ttl;
-      float alpha = 1.0 - tmp;
-      float *clr = skl->color;
+    float tmp;
+    if (age < 0.1) {
+      tmp = 1. - age * 10.;
+    } else
+      tmp = age / skl->ttl;
+    float alpha = 1.0 - tmp;
+    float *clr = skl->color;
 
-      tmp = alpha * alpha;
-      float ex = tmp * skl->size * 0.8;
-      float ey = tmp * skl->size * 1. + (0.02 * age);
-      float *pos = skl->pos;
+    tmp = alpha * alpha;
+    float ex = tmp * skl->size * 0.8;
+    float ey = tmp * skl->size * 1. + (0.02 * age);
+    float *pos = skl->pos;
 
-      draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
-                      clr[2], clr[3] * alpha, textureGlitter);
-    }
+    draw2DRectangle(pos[0] - ex, pos[1] - ey, 2 * ex, 2 * ey, 0., 0., 1., 1., clr[0], clr[1],
+                    clr[2], clr[3] * alpha, textureGlitter);
     skl = skl->next;
   }
 }

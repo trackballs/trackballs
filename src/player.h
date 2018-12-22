@@ -29,12 +29,13 @@ class Player : public Ball {
   virtual ~Player();
 
   void tick(Real time);
-  void key(int k);
   void die(int);
   void newLevel();
   void setStartVariables();     /**< Setup all default variables when starting a level */
   void restart(const Coord3d&); /**< Restart the ball at given position */
+  void handleUserInput();       /**< Called by main loop when there is new data */
   void mouse(int state, int x, int y);
+
   void setHealth(Real);
   virtual bool crash(Real speed);
 
@@ -44,10 +45,11 @@ class Player : public Ball {
   int lives, timeLeft, score, hasWon;
   bool playing;
 
- private:
-  void jump();
+  void requestJump() { controlJump = true; }
 
-  int lastJoyX, lastJoyY;
+ private:
+  double controldx, controldy;
+  bool controlPrecise, controlJump;
 };
 
 #endif

@@ -40,8 +40,6 @@
 #define BALL_NORMAL 1
 #define BALL_HIRES 2
 
-#define PHYSICS_RESOLUTION 0.002
-
 #include "animated.h"
 
 class Cell;
@@ -74,6 +72,7 @@ class Ball : public Animated {
   double nextJumpStrength;
   double rotoacc[2];
   double acceleration;
+  float dizzy_r, dizzy_p;
 
   /* radius is the *effective* radius, realRadius the real one */
   Real radius, realRadius;

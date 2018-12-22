@@ -128,8 +128,6 @@ class Color {
 #endif
 
 void generalInit();
-double semiRand(int, int);
-double semiRand(int, int, int);
 double frandom();
 
 int fileExists(char *);

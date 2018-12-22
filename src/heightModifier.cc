@@ -52,12 +52,12 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
 void HeightModifier::tick(Real t) {
   GameHook::tick(t);
 
-  double tt = Game::current->gameTime;
+  localtime += t;
   Cell& c = Game::current->map->cell(x, y);
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
   int cor1 = 0, cor2 = 0, cor3 = 0;
 
-  float v = min + (max - min) * (1. + cos(phase + (tt * freq) * 2. * 3.14159)) / 2.;
+  float v = min + (max - min) * (1. + cos(phase + (localtime * freq) * 2. * 3.14159)) / 2.;
 
   if (corner == 4) {
     c.heights[4] = v;
@@ -130,6 +130,7 @@ void HeightModifier::tick(Real t) {
       c3.heights[4] = (c3.heights[0] + c3.heights[1] + c3.heights[2] + c3.heights[3]) / 4.;
   }
 
+  // todo: use a single call
   Game::current->map->markCellsUpdated(x, y, x, y, true);
   Game::current->map->markCellsUpdated(x1, y1, x1, y1, true);
   Game::current->map->markCellsUpdated(x2, y2, x2, y2, true);

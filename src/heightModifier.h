@@ -36,6 +36,7 @@ class HeightModifier : public GameHook {
   int corner, x, y;
   int avg_center;
   int not1, not2, not3;
+  Real localtime;
 };
 
 #endif

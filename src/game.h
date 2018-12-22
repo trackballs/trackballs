@@ -29,6 +29,9 @@
 #define SCORE_FLAG 5
 #define SCORE_MAX 6
 
+/* physics follows a fixed timestep, skipping frames in extreme cases  */
+#define PHYSICS_RESOLUTION 0.002
+
 #include <vector>
 #include "gameHook.h"
 #include "general.h"
@@ -47,6 +50,7 @@ class Game {
   Game(Map *editmap, const char *levelname);
   virtual ~Game();
 
+  void handleUserInput();
   void tick(Real);
   void draw();                               /* Used for normal drawing mode */
   void drawReflection(const Coord3d &focus); /* Used when drawing environmentmaps */
@@ -59,6 +63,8 @@ class Game {
   void loadLevel(const char *level);
   void clearLevel();
 
+  double frandom(); /* pseudorandom numbers for exact replay */
+
   GLfloat fogColor[4];
   int localPlayers, isNight, startTime, currentLevelSet, useGrid;
   double fogThickness, wantedFogThickness;
@@ -67,7 +73,8 @@ class Game {
 
   Player *player1;
   Map *map;
-  Real gameTime;
+  Real gameTime;  /* may be inconsistent over replays, avoid in physics */
+  long gameTicks; /* deterministic */
   Gamer *gamer;
   Weather *weather;
 
@@ -101,6 +108,8 @@ class Game {
   } QueuedCall;
   std::vector<QueuedCall> queuedCalls;
   std::vector<GameHook *> newHooks;
+
+  unsigned randSeed;
 
   void setDefaults();
 };

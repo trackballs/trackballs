@@ -44,6 +44,8 @@ Ball::Ball(int role) : Animated(role, 7) {
   rotation[0] = rotation[1] = 0.0;
   rotoacc[0] = rotoacc[1] = 0.0;
 
+  dizzy_r = dizzy_p = 0.0;
+
   primaryColor = Color(0.8, 0.8, 0.8, 1.);
   secondaryColor = Color(0.1, 0.1, 0.1, 1.);
 
@@ -229,7 +231,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       v[2] = 0.0;
       if (length(v) > 0.8) {
         v = v / length(v);
-        double z = (rand() % 1000) / 1000.0;
+        double z = frandom();
 
         data[2 * i][0] = loc[0] + std::sin(angle) * radius * v[1];
         data[2 * i][1] = loc[1] + std::sin(angle) * radius * v[1];
@@ -647,11 +649,17 @@ bool Ball::physics(Real time) {
   if (!Game::current) return true;
   Map *map = Game::current->map;
 
+  /* Every second, the dizzy direction vector changes */
+  if (Game::current->gameTicks % (int)(1. / PHYSICS_RESOLUTION) == 0) {
+    dizzy_r = std::sqrt(Game::current->frandom());
+    dizzy_p = M_PI2 * Game::current->frandom();
+  }
+
   if (modTimeLeft[MOD_DIZZY]) {
     /* We cast the address of the ball into an integer in order to get a unique random seed for
      * every ball. */
-    rotation[0] += time * 7.0 * (frand((long)Game::current->gameTime + (long)this) - 0.5);
-    rotation[1] += time * 7.0 * (frand(47 + (long)Game::current->gameTime + (long)this) - 0.5);
+    rotation[0] += time * 7.0 * dizzy_r * std::cos(dizzy_p);
+    rotation[1] += time * 7.0 * dizzy_r * std::sin(dizzy_p);
   }
 
   /* Ball self-drive */
@@ -659,15 +667,15 @@ bool Ball::physics(Real time) {
   if (modTimeLeft[MOD_SPEED]) effective_acceleration *= 1.5;
   if (modTimeLeft[MOD_DIZZY]) effective_acceleration /= 2.0;
   if (modTimeLeft[MOD_NITRO]) {
-    /* Mod-nitro induces maximal acceleration in a direction of interest */
+    /* Mod-nitro induces maximal acceleration in the direction of motion */
     effective_acceleration *= 3.0;
     double dlen = std::sqrt(rotoacc[0] * rotoacc[0] + rotoacc[1] * rotoacc[1]);
     if (dlen <= 0.) {
       double rlen = std::sqrt(rotation[0] * rotation[0] + rotation[1] * rotation[1]);
       if (rlen <= 0.) {
-        double rnd = M_PI2 * frand();
-        rotoacc[0] = std::sin(rnd);
-        rotoacc[1] = std::cos(rnd);
+        /* if stopped, pick a random direction */
+        rotoacc[0] = std::sin(dizzy_p);
+        rotoacc[1] = std::cos(dizzy_p);
       } else {
         rotoacc[0] = rotation[0] / rlen;
         rotoacc[1] = rotation[1] / rlen;
@@ -755,7 +763,7 @@ bool Ball::physics(Real time) {
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
     if (sand_frac > 0.) {
-      if (frandom() < (speed2 - 0.3) * 0.08) {
+      if (Game::current->frandom() < (speed2 - 0.3) * 0.08) {
         /* lots of friction when we crash into sand */
         double slowdown = std::pow(0.9, sand_frac);
         velocity[0] *= slowdown;
@@ -764,7 +772,8 @@ bool Ball::physics(Real time) {
         generateSandDebris();
       }
     } else if (Settings::settings->difficulty > 0 && modTimeLeft[MOD_SPIKE]) {
-      if (frandom() < (speed2 - 0.3) * 0.0007 * Settings::settings->difficulty) {
+      if (Game::current->frandom() <
+          (speed2 - 0.3) * 0.0007 * Settings::settings->difficulty) {
         velocity[0] *= 0.9;
         velocity[1] *= 0.9;
         velocity[2] *= 0.9;
@@ -796,7 +805,8 @@ bool Ball::physics(Real time) {
       // splashes caused by speed
       double speed = velocity[0] * velocity[0] + velocity[1] * velocity[1] +
                      velocity[2] * velocity[2] * 5.;
-      if (frandom() < speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
+      if (Game::current->frandom() <
+          speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
         Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
         Game::current->add(
@@ -805,7 +815,7 @@ bool Ball::physics(Real time) {
       }
       // splashes caused by rotation. eg "swimming"
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
-      if (frandom() < speed * 0.001) {
+      if (Game::current->frandom() < speed * 0.001) {
         Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
         Coord3d vel;
@@ -833,7 +843,7 @@ bool Ball::physics(Real time) {
     sink += 0.8 * time * (acid_frac + sand_frac);
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-    if (frandom() < (speed2 - 0.2) * 0.05) {
+    if (Game::current->frandom() < (speed2 - 0.2) * 0.05) {
       Color acidColor(0.1, 0.5, 0.1, 0.5);
       Coord3d center(position[0], position[1], mapHeight);
       Game::current->add(new Splash(center, velocity, acidColor, speed2 * radius, radius));
@@ -1175,7 +1185,7 @@ bool Ball::handleGround(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normal
       sandSpeed /= nsandcells;
       if (radius > 0.2)
         for (int i = 0; i < 10; i++)
-          if (frandom() < (sandSpeed - 1.0) * 0.2) generateSandDebris();
+          if (Game::current->frandom() < (sandSpeed - 1.0) * 0.2) generateSandDebris();
       if (sandSpeed > 4.0) playEffect(SFX_SAND_CRASH);
     }
 
@@ -1424,7 +1434,7 @@ void Ball::drive(Real x, Real y) {
 
 void Ball::generateSandDebris() {
   Coord3d pos, vel;
-  Real a = frandom() * 2.0 * M_PI;
+  Real a = Game::current->frandom() * 2.0 * M_PI;
   double speed =
       sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
   pos[0] = position[0] + radius * 1.7 * sin(a);
@@ -1433,11 +1443,12 @@ void Ball::generateSandDebris() {
   vel[0] = velocity[0] + 2.0 * speed * sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
+  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
   Game::current->add(d);
   d->initialSize = 0.05;
   d->primaryColor =
-      Color(0.6 + 0.3 * frandom(), 0.5 + 0.4 * frandom(), 0.1 + 0.3 * frandom(), 1.f);
+      Color(0.6 + 0.3 * Game::current->frandom(), 0.5 + 0.4 * Game::current->frandom(),
+            0.1 + 0.3 * Game::current->frandom(), 1.f);
   d->friction = 0.0;
   d->calcRadius();
 }
@@ -1445,11 +1456,11 @@ void Ball::generateNitroDebris(Real time) {
   nitroDebrisCount += time;
   while (nitroDebrisCount > 0.0) {
     nitroDebrisCount -= 0.25;
-    Debris *d = new Debris(this, position, velocity, 1.0 + frandom() * 2.0);
+    Debris *d = new Debris(this, position, velocity, 1.0 + Game::current->frandom() * 2.0);
     Game::current->add(d);
-    d->position[0] += (frandom() - 0.5) * radius;
-    d->position[1] += (frandom() - 0.5) * radius;
-    d->position[2] += frandom() * radius;
+    d->position[0] += (Game::current->frandom() - 0.5) * radius;
+    d->position[1] += (Game::current->frandom() - 0.5) * radius;
+    d->position[2] += Game::current->frandom() * radius;
     d->velocity[2] += 0.2;
     d->gravity = -0.1;
     d->modTimeLeft[MOD_GLASS] = -1.0;
@@ -1459,7 +1470,7 @@ void Ball::generateNitroDebris(Real time) {
 }
 void Ball::generateDebris(const Color &color) {
   Coord3d pos, vel;
-  Real a = frandom() * 2.0 * M_PI;
+  Real a = Game::current->frandom() * 2.0 * M_PI;
   double speed =
       sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
   pos[0] = position[0] + radius * 1.5 * sin(a);
@@ -1468,7 +1479,7 @@ void Ball::generateDebris(const Color &color) {
   vel[0] = velocity[0] + 2.0 * speed * sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * frandom());
+  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
   Game::current->add(d);
   d->initialSize = 0.05;
   d->primaryColor = color.toOpaque();

@@ -374,7 +374,8 @@ void MainMode::key(int key) {
       createSnapshot();
       break;
     }
-    player1->key(key);
+    if (key == 'k') { player1->die(DIE_OTHER); }
+    if (key == ' ') { player1->requestJump(); }
     break;
   case statusBonusLevelComplete:
   case statusNextLevel:
@@ -412,6 +413,10 @@ void MainMode::idle(Real td) {
   if (flash < 0.0) flash = 0.0;
 
   switch (gameStatus) {
+  case statusVictory:
+  case statusBonusLevelComplete:
+    /* do nothing */
+    break;
   case statusBeforeGame:
     SDL_SetRelativeMouseMode(SDL_TRUE);
     break;
@@ -450,6 +455,8 @@ void MainMode::idle(Real td) {
   case statusNextLevel:
   case statusInGame:
     SDL_SetRelativeMouseMode(SDL_TRUE);
+    Game::current->handleUserInput();
+
     if (wantedZAngle > zAngle)
       zAngle += std::min(0.4 * td, wantedZAngle - zAngle);
     else if (wantedZAngle < zAngle)
@@ -488,6 +495,7 @@ void MainMode::idle(Real td) {
     break;
   case statusRestartPlayer:
     SDL_SetRelativeMouseMode(SDL_TRUE);
+    /* continue the simulation in the background to let things settle */
     Game::current->tick(td);
     //    assign(map->startPosition,camFocus); zero(camDelta);
     break;

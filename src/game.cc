@@ -49,6 +49,7 @@ Game::Game(const char *name, Gamer *g) {
   map = NULL;
   player1 = NULL;
   gameTime = 0.0;
+  gameTicks = 0;
   nextLevel[0] = 0;
   setDefaults();
   gamer = g;
@@ -67,7 +68,6 @@ Game::Game(const char *name, Gamer *g) {
   add(player1);
 
   loadLevel(name);
-  player1->restart(Game::current->map->startPosition);
 
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
@@ -79,6 +79,7 @@ Game::Game(Map *editmap, const char *levelname) {
   localPlayers = 0;
   player1 = NULL;
   gameTime = 0.0;
+  gameTicks = 0;
   nextLevel[0] = 0;
   weather = NULL;
   map = editmap;
@@ -163,6 +164,8 @@ void Game::loadLevel(const char *name) {
   if (player1) player1->timeLeft = startTime;
 
   fogThickness = wantedFogThickness;
+
+  randSeed = 0;
 }
 
 void Game::setDefaults() {
@@ -246,15 +249,19 @@ void Game::clearLevel() {
   }
 }
 
+void Game::handleUserInput() {
+  if (player1) player1->handleUserInput();
+}
+
 void Game::tick(Real t) {
-  int steps = std::max(1, int(t / PHYSICS_RESOLUTION + 0.5));
-  double origtime = gameTime;
-  double tstep = t / steps;
+  gameTime += t;
+
+  int mult = 1;
 
   /* The game ticks run at a faster time scale so that the interaction
    * of different moving objects is realistic */
-  for (int i = 0; i < steps; i++) {
-    gameTime += tstep;
+  while (gameTicks * PHYSICS_RESOLUTION < gameTime) {
+    gameTicks += mult;
 
     /* Update intersection information */
     balls->clear();
@@ -268,7 +275,7 @@ void Game::tick(Real t) {
     /* update active entities */
     for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
       int n = hooks[j].size();
-      for (int k = 0; k < n; k++) { hooks[j][k]->tick(tstep); }
+      for (int k = 0; k < n; k++) { hooks[j][k]->tick(mult * PHYSICS_RESOLUTION); }
     }
 
     /* add new entities */
@@ -317,7 +324,6 @@ void Game::tick(Real t) {
       }
     }
   }
-  gameTime = origtime + t;
 
   /* Weather updates have no physical effect */
   if (fogThickness < wantedFogThickness)
@@ -425,4 +431,9 @@ void Game::drawReflection(const Coord3d &focus) {
       if (anim->onScreen) anim->draw2();
     }
   }
+}
+
+double Game::frandom() {
+  int v = rand_r(&randSeed) % (1 << 30);
+  return v / (double)(1 << 30);
 }

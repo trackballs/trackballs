@@ -106,7 +106,11 @@ Player::Player() : Ball(Role_Player) {
   oxygen = 1.0;
   moveBurst = 0.0;
 
-  lastJoyX = lastJoyY = 0;
+  controldx = 0.;
+  controldy = 0.;
+  controlPrecise = false;
+  controlJump = false;
+
   setReflectivity(0.4, 0);
 
   scoreOnDeath = Game::defaultScores[SCORE_PLAYER][0];
@@ -163,61 +167,8 @@ void Player::tick(Real t) {
   } else
     oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
 
-  double dx = 0., dy = 0.;
-  /* Joysticks */
-  if (Settings::settings->hasJoystick()) {
-    if (Settings::settings->joystickButton(0)) key(' ');
-
-    double joyX = Settings::settings->joystickX();
-    double joyY = Settings::settings->joystickY();
-    /* Help keep the joysticks centered if neccessary */
-    if (joyX < 0.1 && joyX > -0.1) joyX = 0.0;
-    if (joyY < 0.1 && joyY > -0.1) joyY = 0.0;
-
-    dx = ((double)joyX) * Settings::settings->mouseSensitivity;
-    dy = ((double)joyY) * Settings::settings->mouseSensitivity;
-  }
-
-  /* Give only *relative* mouse movements */
-  if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
-    double sx, sy;
-    getFilteredRelativeMouse(&sx, &sy);
-    if (sx || sy) {
-      dx = sx * Settings::settings->mouseSensitivity * 0.0005;
-      dy = sy * Settings::settings->mouseSensitivity * 0.0005;
-    }
-  }
-
-  /* Handle keyboard steering */
-  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  int shift = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
-
-  int ix = 0, iy = 0;
-  if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) iy--;
-  if (keystate[SDL_SCANCODE_DOWN] || keystate[SDL_SCANCODE_KP_2]) iy++;
-  if (keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_KP_4]) ix--;
-  if (keystate[SDL_SCANCODE_RIGHT] || keystate[SDL_SCANCODE_KP_6]) ix++;
-  if (keystate[SDL_SCANCODE_KP_7] || keystate[SDL_SCANCODE_Q]) {
-    ix--;
-    iy--;
-  }
-  if (keystate[SDL_SCANCODE_KP_9] || keystate[SDL_SCANCODE_W]) {
-    ix++;
-    iy--;
-  }
-  if (keystate[SDL_SCANCODE_KP_1] || keystate[SDL_SCANCODE_A]) {
-    ix--;
-    iy++;
-  }
-  if (keystate[SDL_SCANCODE_KP_3] || keystate[SDL_SCANCODE_S]) {
-    ix++;
-    iy++;
-  }
-  if (ix || iy) {
-    double len = std::sqrt(ix * ix + iy * iy);
-    dx = ix / len;
-    dy = iy / len;
-  }
+  double dx = controldx, dy = controldy;
+  bool precise = controlPrecise, jump = controlJump;
 
   /* rotate control as by settings->rotateArrows */
   {
@@ -248,7 +199,7 @@ void Player::tick(Real t) {
   dx = tx;
   dy = ty;
 
-  if (shift) {
+  if (precise) {
     dx *= 0.5;
     dy *= 0.5;
   }
@@ -265,23 +216,15 @@ void Player::tick(Real t) {
     friction = 1.0;
   else
     friction = 10.0;
-  Ball::tick(t);
-}
-void Player::key(int c) {
-  switch (c) {
-  case ' ':
-    jump();
-    break;
-  case 'k':
-    die(DIE_OTHER);
-    break;
+
+  if (jump) {
+    double jumpStrength =
+        Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
+    jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
+    Ball::queueJump(jumpStrength);
+    controlJump = false;
   }
-}
-void Player::jump() {
-  double jumpStrength =
-      Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
-  jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
-  Ball::queueJump(jumpStrength);
+  Ball::tick(t);
 }
 
 void Player::die(int how) {
@@ -322,10 +265,10 @@ void Player::die(int how) {
         pos[0] = position[0] + cos(a) * 0.25 * sin(b) * 2.0;
         pos[1] = position[1] + sin(a) * 0.25 * sin(b) * 2.0;
         pos[2] = position[2] + 0.25 * cos(b) + 0.5;
-        vel[0] = velocity[0] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        vel[1] = velocity[1] + (sink ? 0.1 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        vel[2] = velocity[2] + (sink ? 0.01 : 0.5) * 1 / 2048.0 * ((rand() % 2048) - 1024);
-        Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * frandom()));
+        vel[0] = velocity[0] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
+        vel[1] = velocity[1] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
+        vel[2] = velocity[2] + (sink ? 0.02 : 1.0) * (Game::current->frandom() - 0.5);
+        Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * Game::current->frandom()));
       }
     }
   }
@@ -367,6 +310,87 @@ void Player::restart(const Coord3d &pos) {
   /* reset all mods */
   /*for(i=0;i<NUM_MODS;i++)
     modTimeLeft[i] = 0.0;*/
+}
+void Player::handleUserInput() {
+  /* Priority order for input: Joystick >> Keyboard >> Mouse
+   *
+   * If any input category provides zero input, we fall back to
+   * the next category.
+   */
+  /* Mouse filtering is continuous */
+  double sx, sy;
+  if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
+    getFilteredRelativeMouse(&sx, &sy);
+  }
+  /* Do *not* handle input when not playing */
+  if (!playing) { return; }
+
+  /* Joysticks */
+  if (Settings::settings->hasJoystick()) {
+    // warning: jump should be edge-triggered
+    if (Settings::settings->joystickButton(0)) controlJump = true;
+
+    double joyX = Settings::settings->joystickX();
+    double joyY = Settings::settings->joystickY();
+    /* Help keep the joysticks centered if neccessary */
+    if (joyX < 0.1 && joyX > -0.1) joyX = 0.0;
+    if (joyY < 0.1 && joyY > -0.1) joyY = 0.0;
+
+    if (joyX != 0.0 && joyY != 0.0) {
+      controldx = ((double)joyX) * Settings::settings->mouseSensitivity;
+      controldy = ((double)joyY) * Settings::settings->mouseSensitivity;
+      controlPrecise = false;
+      return;
+    }
+  }
+
+  /* Handle keyboard steering */
+  const Uint8 *keystate = SDL_GetKeyboardState(NULL);
+  controlPrecise = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
+
+  int ix = 0, iy = 0;
+  if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) iy--;
+  if (keystate[SDL_SCANCODE_DOWN] || keystate[SDL_SCANCODE_KP_2]) iy++;
+  if (keystate[SDL_SCANCODE_LEFT] || keystate[SDL_SCANCODE_KP_4]) ix--;
+  if (keystate[SDL_SCANCODE_RIGHT] || keystate[SDL_SCANCODE_KP_6]) ix++;
+  if (keystate[SDL_SCANCODE_KP_7] || keystate[SDL_SCANCODE_Q]) {
+    ix--;
+    iy--;
+  }
+  if (keystate[SDL_SCANCODE_KP_9] || keystate[SDL_SCANCODE_W]) {
+    ix++;
+    iy--;
+  }
+  if (keystate[SDL_SCANCODE_KP_1] || keystate[SDL_SCANCODE_A]) {
+    ix--;
+    iy++;
+  }
+  if (keystate[SDL_SCANCODE_KP_3] || keystate[SDL_SCANCODE_S]) {
+    ix++;
+    iy++;
+  }
+  if (ix || iy) {
+    double len = std::sqrt(ix * ix + iy * iy);
+    controldx = ix / len;
+    controldy = iy / len;
+    return;
+  }
+
+  /* Give only *relative* mouse movements */
+  if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
+    if (sx != 0. || sy != 0.) {
+      controldx = sx * Settings::settings->mouseSensitivity * 0.0005;
+      controldy = sy * Settings::settings->mouseSensitivity * 0.0005;
+      double len = std::max(1., std::sqrt(controldx * controldx + controldy * controldy));
+      controldx /= len;
+      controldy /= len;
+      return;
+    }
+  }
+
+  /* No input from any source, do nothing */
+  controldx = 0.;
+  controldy = 0.;
 }
 void Player::mouse(int /*state*/, int /*x*/, int /*y*/) {}
 void Player::newLevel() {}

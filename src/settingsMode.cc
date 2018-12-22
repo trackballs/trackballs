@@ -36,7 +36,7 @@ static SettingsMode *settingsMode = NULL;
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
 extern double timeDilationFactor;
-extern void changeScreenResolution();
+extern void requestScreenUpdate();
 
 SettingsMode *SettingsMode::init() {
   if (!settingsMode) settingsMode = new SettingsMode();
@@ -75,7 +75,7 @@ void SettingsMode::deactivated() {
   if (settings->resolution != restoreResolution || settings->colorDepth != restoreColorDepth) {
     settings->resolution = restoreResolution;
     settings->colorDepth = restoreColorDepth;
-    changeScreenResolution();
+    requestScreenUpdate();
   }
 }
 void SettingsMode::display() {
@@ -282,7 +282,7 @@ void SettingsMode::idle(Real td) {
       Settings::settings->colorDepth = restoreColorDepth;
       resolution = restoreResolution;
       colorDepth = restoreColorDepth;
-      changeScreenResolution();
+      requestScreenUpdate();
     }
   }
 }
@@ -324,7 +324,7 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
   case MENU_APPLY_RESOLUTION:
     settings->resolution = resolution;
     settings->colorDepth = colorDepth;
-    changeScreenResolution();
+    requestScreenUpdate();
     testingResolution = 10.0;
     break;
   case MENU_RESOLUTION_OK:
@@ -338,12 +338,12 @@ void SettingsMode::mouseDown(int button, int /*x*/, int /*y*/) {
     settings->colorDepth = restoreColorDepth;
     resolution = restoreResolution;
     colorDepth = restoreColorDepth;
-    changeScreenResolution();
+    requestScreenUpdate();
     break;
 
   case MENU_WINDOWED:
     Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
-    changeScreenResolution();
+    requestScreenUpdate();
     break;
   case MENU_GFX_DETAILS:
     // Change level of graphic details */
