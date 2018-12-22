@@ -35,7 +35,6 @@ class Game;
 /* Prototypes */
 void glHelpInit();
 void glHelpCleanup();
-GLuint loadProgram(const char *fragment, const char *vertex);
 void warnForGLerrors(const char *where_am_i);
 
 /* displays a 2d text on specific screen coordinates, returning width */

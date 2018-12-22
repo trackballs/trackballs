@@ -1046,6 +1046,79 @@ int loadTexture(const char *name) {
   return (numTextures - 1);  // ok
 }
 
+char *filetobuf(const char *filename) {
+  FILE *fptr = fopen(filename, "rb");
+  if (!fptr) return NULL;
+  fseek(fptr, 0, SEEK_END);
+  long length = ftell(fptr);
+  char *buf = (char *)malloc(length + 1);
+  fseek(fptr, 0, SEEK_SET);
+  fread(buf, length, 1, fptr);
+  fclose(fptr);
+  buf[length] = 0;
+  return buf;
+}
+
+static GLuint loadShaderPart(const char *name, GLuint shader_type) {
+  char path[256];
+  const char *tdesc = NULL;
+  if (shader_type == GL_VERTEX_SHADER) {
+    tdesc = "Vertex";
+  } else if (shader_type == GL_FRAGMENT_SHADER) {
+    tdesc = "Fragment";
+  }
+
+  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, name);
+  GLchar *source = filetobuf(path);
+  if (source == NULL) { error("%s shader %s could not be read", tdesc, path); }
+  GLuint shader = glCreateShader(shader_type);
+  if (shader == 0) { error("Failed to even create shader object"); }
+  glShaderSource(shader, 1, (const GLchar **)&source, 0);
+  free(source);
+
+  glCompileShader(shader);
+  int isCompiled = 0;
+  glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+  if (isCompiled == 0) {
+    int maxLength = 0;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+    char *vertexInfoLog = (char *)malloc(maxLength);
+    glGetShaderInfoLog(shader, maxLength, &maxLength, vertexInfoLog);
+    warning("%s shader %s error (len %d): %s", name, maxLength, vertexInfoLog);
+    glDeleteShader(shader);
+    free(vertexInfoLog);
+    return 0;
+  }
+  return shader;
+}
+
+static GLuint linkShader(GLuint vertexshader, GLuint fragmentshader, const char *descr) {
+  GLuint shaderprogram = glCreateProgram();
+  glAttachShader(shaderprogram, vertexshader);
+  glAttachShader(shaderprogram, fragmentshader);
+  /* Shaders use attribs 1..k for some k */
+  glBindAttribLocation(shaderprogram, 0, "in_Position");
+  glBindAttribLocation(shaderprogram, 1, "in_Color");
+  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
+  glBindAttribLocation(shaderprogram, 3, "in_Normal");
+  glBindAttribLocation(shaderprogram, 4, "in_Velocity");
+  glLinkProgram(shaderprogram);
+  int is_linked;
+  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&is_linked);
+  glDeleteShader(vertexshader);
+  glDeleteShader(fragmentshader);
+  if (is_linked == 0) {
+    int maxLength = 0;
+    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
+    char *shaderProgramInfoLog = (char *)malloc(maxLength);
+    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
+    warning("Program (%s) link error (len %d): %s", descr, maxLength, shaderProgramInfoLog);
+    free(shaderProgramInfoLog);
+    return 0;
+  }
+  return shaderprogram;
+}
+
 void glHelpInit() {
   warnForGLerrors("preGLinit");
 
@@ -1075,18 +1148,56 @@ void glHelpInit() {
 
   sparkle2D = new Sparkle2D();
 
-  // Errors handled within loadProgram
-  shaderTileDay = loadProgram("basic.vert", "basic_day.frag");
-  shaderTileNight = loadProgram("basic.vert", "basic_night.frag");
-  shaderTileShadow = loadProgram("basic.vert", "basic_shadow.frag");
-  shaderLine = loadProgram("line.vert", "line.frag");
-  shaderWaterDay = loadProgram("water.vert", "water_day.frag");
-  shaderWaterNight = loadProgram("water.vert", "water_night.frag");
-  shaderUI = loadProgram("ui.vert", "ui.frag");
-  shaderObjectDay = loadProgram("object.vert", "object_day.frag");
-  shaderObjectNight = loadProgram("object.vert", "object_night.frag");
-  shaderObjectShadow = loadProgram("object.vert", "object_shadow.frag");
-  shaderReflection = loadProgram("reflection.vert", "reflection.frag");
+  // Errors handled in loadShaderPart and linkShader
+  GLuint vBasic = loadShaderPart("basic.vert", GL_VERTEX_SHADER);
+  GLuint vLine = loadShaderPart("line.vert", GL_VERTEX_SHADER);
+  GLuint vWater = loadShaderPart("water.vert", GL_VERTEX_SHADER);
+  GLuint vUI = loadShaderPart("ui.vert", GL_VERTEX_SHADER);
+  GLuint vObject = loadShaderPart("object.vert", GL_VERTEX_SHADER);
+  GLuint vReflection = loadShaderPart("reflection.vert", GL_VERTEX_SHADER);
+
+  GLuint fBasicDay = loadShaderPart("basic_day.frag", GL_FRAGMENT_SHADER);
+  GLuint fBasicNight = loadShaderPart("basic_night.frag", GL_FRAGMENT_SHADER);
+  GLuint fBasicShadow = loadShaderPart("basic_shadow.frag", GL_FRAGMENT_SHADER);
+  GLuint fLine = loadShaderPart("line.frag", GL_FRAGMENT_SHADER);
+  GLuint fWaterDay = loadShaderPart("water_day.frag", GL_FRAGMENT_SHADER);
+  GLuint fWaterNight = loadShaderPart("water_night.frag", GL_FRAGMENT_SHADER);
+  GLuint fUI = loadShaderPart("ui.frag", GL_FRAGMENT_SHADER);
+  GLuint fObjectDay = loadShaderPart("object_day.frag", GL_FRAGMENT_SHADER);
+  GLuint fObjectNight = loadShaderPart("object_night.frag", GL_FRAGMENT_SHADER);
+  GLuint fObjectShadow = loadShaderPart("object_shadow.frag", GL_FRAGMENT_SHADER);
+  GLuint fReflection = loadShaderPart("reflection.frag", GL_FRAGMENT_SHADER);
+
+  shaderTileDay = linkShader(vBasic, fBasicDay, "BasicDay");
+  shaderTileNight = linkShader(vBasic, fBasicNight, "BasicNight");
+  shaderTileShadow = linkShader(vBasic, fBasicShadow, "BasicShadow");
+  shaderLine = linkShader(vLine, fLine, "Line");
+  shaderWaterDay = linkShader(vWater, fWaterDay, "WaterDay");
+  shaderWaterNight = linkShader(vWater, fWaterNight, "WaterNight");
+  shaderUI = linkShader(vUI, fUI, "UI");
+  shaderObjectDay = linkShader(vObject, fObjectDay, "ObjectDay");
+  shaderObjectNight = linkShader(vObject, fObjectNight, "ObjectNight");
+  shaderObjectShadow = linkShader(vObject, fObjectShadow, "ObjectShadow");
+  shaderReflection = linkShader(vReflection, fReflection, "Reflection");
+
+  glDeleteShader(vBasic);
+  glDeleteShader(vLine);
+  glDeleteShader(vWater);
+  glDeleteShader(vUI);
+  glDeleteShader(vObject);
+  glDeleteShader(vReflection);
+
+  glDeleteShader(fBasicDay);
+  glDeleteShader(fBasicNight);
+  glDeleteShader(fBasicShadow);
+  glDeleteShader(fLine);
+  glDeleteShader(fWaterDay);
+  glDeleteShader(fWaterNight);
+  glDeleteShader(fUI);
+  glDeleteShader(fObjectDay);
+  glDeleteShader(fObjectNight);
+  glDeleteShader(fObjectShadow);
+  glDeleteShader(fReflection);
 
   // Wipe ball cache
   for (int i = 0; i < MAX_BALL_DETAIL; i++) {
@@ -1202,96 +1313,12 @@ void glHelpCleanup() {
   for (int i = 0; i < numTextures; i++) { glDeleteTextures(1, &textures[i]); }
 }
 
-char *filetobuf(const char *filename) {
-  FILE *fptr = fopen(filename, "rb");
-  if (!fptr) return NULL;
-  fseek(fptr, 0, SEEK_END);
-  long length = ftell(fptr);
-  char *buf = (char *)malloc(length + 1);
-  fseek(fptr, 0, SEEK_SET);
-  fread(buf, length, 1, fptr);
-  fclose(fptr);
-  buf[length] = 0;
-  return buf;
-}
-
-GLuint loadProgram(const char *vertname, const char *fragname) {
-  /* Read our shaders into the appropriate buffers */
-  char path[256];
-  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, vertname);
-  GLchar *vertexsource = filetobuf(path);
-  if (vertexsource == NULL) { error("Vertex shader %s could not be read", path); }
-  snprintf(path, 256, "%s/shaders/%s", effectiveShareDir, fragname);
-  GLchar *fragmentsource = filetobuf(path);
-  if (fragmentsource == NULL) { error("Fragment shader %s could not be read", path); }
-  GLuint vertexshader = glCreateShader(GL_VERTEX_SHADER);
-  int maxLength;
-  glShaderSource(vertexshader, 1, (const GLchar **)&vertexsource, 0);
-  glCompileShader(vertexshader);
-  int IsCompiled_VS, IsCompiled_FS, IsLinked;
-  glGetShaderiv(vertexshader, GL_COMPILE_STATUS, &IsCompiled_VS);
-  if (IsCompiled_VS == 0) {
-    glGetShaderiv(vertexshader, GL_INFO_LOG_LENGTH, &maxLength);
-    char *vertexInfoLog = (char *)malloc(maxLength);
-    glGetShaderInfoLog(vertexshader, maxLength, &maxLength, vertexInfoLog);
-    warning("Vertex shader %s error: %s", vertname, vertexInfoLog);
-    glDeleteShader(vertexshader);
-    free(vertexInfoLog);
-    free(vertexsource);
-    free(fragmentsource);
-    return -1;
-  }
-  GLuint fragmentshader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentshader, 1, (const GLchar **)&fragmentsource, 0);
-  glCompileShader(fragmentshader);
-  glGetShaderiv(fragmentshader, GL_COMPILE_STATUS, &IsCompiled_FS);
-  if (IsCompiled_FS == 0) {
-    glGetShaderiv(fragmentshader, GL_INFO_LOG_LENGTH, &maxLength);
-    char *fragmentInfoLog = (char *)malloc(maxLength);
-    glGetShaderInfoLog(fragmentshader, maxLength, &maxLength, fragmentInfoLog);
-    warning("Fragment shader %s error: %s", fragname, fragmentInfoLog);
-    glDeleteShader(vertexshader);
-    glDeleteShader(fragmentshader);
-    free(fragmentInfoLog);
-    free(vertexsource);
-    free(fragmentsource);
-    return -1;
-  }
-  free(vertexsource);
-  free(fragmentsource);
-  GLuint shaderprogram = glCreateProgram();
-  glAttachShader(shaderprogram, vertexshader);
-  glAttachShader(shaderprogram, fragmentshader);
-  /* Shaders use attribs 1..k for some k */
-  glBindAttribLocation(shaderprogram, 0, "in_Position");
-  glBindAttribLocation(shaderprogram, 1, "in_Color");
-  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
-  glBindAttribLocation(shaderprogram, 3, "in_Normal");
-  glBindAttribLocation(shaderprogram, 4, "in_Velocity");
-  glLinkProgram(shaderprogram);
-  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&IsLinked);
-  glDeleteShader(vertexshader);
-  glDeleteShader(fragmentshader);
-  if (IsLinked == 0) {
-    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
-    char *shaderProgramInfoLog = (char *)malloc(maxLength);
-    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
-    warning("Program (%s %s) link error: %s", vertname, fragname, shaderProgramInfoLog);
-    free(shaderProgramInfoLog);
-    return -1;
-  }
-
-  return shaderprogram;
-}
-
 void warnForGLerrors(const char *where_am_i) {
   GLenum err;
   while ((err = glGetError()) != GL_NO_ERROR) {
     warning("GL error %x at location: %s", err, where_am_i);
   }
 }
-
-#define FRAME 50
 
 /* Calculates and displays current framerate */
 void displayFrameRate() {
