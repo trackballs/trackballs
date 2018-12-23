@@ -226,7 +226,15 @@ static SDL_GLContext createWindow() {
     return NULL;
   }
 
+  /* Because windowing functions are only reliable on the main thread (e.g. X11,
+   * without special thread init code), the OpenGL context is created here. In
+   * order to use the OpenGL context on the off-thread, we call
+   * `SDL_GL_MakeCurrent` there; because GLES (for Wayland) contexts are limited
+   * to a single thread, we clear the current (thread) context; see also
+   * the SDL source code. */
   SDL_GLContext ctx = SDL_GL_CreateContext(window);
+  if (!ctx) { error("Failed to create OpenGL context: %s\n", SDL_GetError()); }
+  SDL_GL_MakeCurrent(window, NULL);
 
   char str[256];
   snprintf(str, sizeof(str), "%s/icons/trackballs-128x128.png", effectiveShareDir);
@@ -304,8 +312,14 @@ int testDir() {
 static void *mainLoop(void *data) {
   /* OpenGL work is now *only* performed on this thread. */
   SDL_GLContext context = (SDL_GLContext)data;
-  SDL_GL_MakeCurrent(window, context);
+  int r = SDL_GL_MakeCurrent(window, context);
+  if (r < 0) { error("Failed to make OpenGL context current: %s", SDL_GetError()); }
   SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
+
+  const GLubyte *gl_version = glGetString(GL_VERSION);
+  if (!gl_version) {
+    error("OpenGL context does not work (cannot even obtain GL_VERSION string)");
+  }
 
   /* initialize OpenGL setup before we draw anything */
   glHelpInit();
