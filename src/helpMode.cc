@@ -294,7 +294,7 @@ void HelpMode::key(int key) {
     mouseDown(shift ? 3 : 1, -1, -1);
   if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
-void HelpMode::idle(Real td) {
+void HelpMode::tick(Real td) {
   helpGame->tick(td);
   tickMouse(td);
 

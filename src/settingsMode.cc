@@ -35,7 +35,6 @@ static SettingsMode *settingsMode = NULL;
 
 /* Not properly abstracted, part of global stuff in mmad.cc */
 extern int screenResolutions[5][2], nScreenResolutions;
-extern double timeDilationFactor;
 extern void requestScreenUpdate();
 
 SettingsMode *SettingsMode::init() {
@@ -271,7 +270,7 @@ void SettingsMode::key(int key) {
     mouseDown(shift ? 3 : 1, -1, -1);
   if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
-void SettingsMode::idle(Real td) {
+void SettingsMode::tick(Real td) {
   tickMouse(td);
 
   /* Check against timeouts when testing a new resolution */

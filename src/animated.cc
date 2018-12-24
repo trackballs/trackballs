@@ -68,8 +68,8 @@ void Animated::setupVBOs() {
   }
 }
 void Animated::draw() {
-  if (theFrameNumber != lastFrameNumber) {
-    lastFrameNumber = theFrameNumber;
+  if (displayFrameNumber != lastFrameNumber) {
+    lastFrameNumber = displayFrameNumber;
     setupVBOs();
     generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
     drawChanged = false;
@@ -79,8 +79,8 @@ void Animated::draw() {
   if (0) drawBoundingBox();
 }
 void Animated::draw2() {
-  if (theFrameNumber != lastFrameNumber) {
-    lastFrameNumber = theFrameNumber;
+  if (displayFrameNumber != lastFrameNumber) {
+    lastFrameNumber = displayFrameNumber;
     setupVBOs();
     generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
     drawChanged = false;

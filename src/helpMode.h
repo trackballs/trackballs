@@ -33,7 +33,7 @@ class HelpMode : public GameMode {
   void activated();
   void deactivated();
   void key(int);
-  void idle(Real);
+  void tick(Real);
   void mouseDown(int button, int x, int y);
 
   static HelpMode *init();

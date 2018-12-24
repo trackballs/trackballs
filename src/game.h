@@ -43,6 +43,7 @@ class Player;
 class Weather;
 class EditMode;
 class Gamer;
+class Replay;
 
 class Game {
  public:
@@ -110,6 +111,7 @@ class Game {
   std::vector<GameHook *> newHooks;
 
   unsigned randSeed;
+  Replay *replayData;
 
   void setDefaults();
 };

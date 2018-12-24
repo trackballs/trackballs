@@ -39,7 +39,7 @@ int Font::getTextWidth(const char *text, int size, int maxwidth) {
   return w;
 }
 
-void Font::tick(Real /*t*/) { update2DStringCache(); }
+void Font::tick(Real /*t*/) { update2DStringCache(false); }
 
 int Font::drawSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
                          float a, int maxwidth) {

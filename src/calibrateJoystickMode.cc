@@ -48,7 +48,7 @@ void CalibrateJoystickMode::activated() {
 
 void CalibrateJoystickMode::deactivated() {}
 
-void CalibrateJoystickMode::idle(Real /*t*/) {
+void CalibrateJoystickMode::tick(Real /*t*/) {
   if (!Settings::settings->hasJoystick()) return;
   int pressed = SDL_JoystickGetButton(Settings::settings->joystick, 0) ||
                 SDL_JoystickGetButton(Settings::settings->joystick, 1) ||

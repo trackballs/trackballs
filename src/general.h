@@ -140,6 +140,7 @@ int pathIsLink(char *path); /** Checks if the given path points to a link */
 /* A modulus operations which handles negative results safely */
 int mymod(int v, int m);
 /* Return the current time, and calculate elapsed time in seconds */
+extern double timeDilationFactor;
 struct timespec getMonotonicTime();
 double getTimeDifference(const struct timespec &from, const struct timespec &to);
 
@@ -151,6 +152,6 @@ void warning(const char *formatstr, ...);
 extern int low_memory;  // if true, attempt to conserve memory
 extern int debug_joystick;
 extern int repair_joystick;
-extern int theFrameNumber;
+extern int displayFrameNumber;
 
 #endif /*GENERAL_H*/

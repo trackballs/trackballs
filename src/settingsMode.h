@@ -30,7 +30,7 @@ class SettingsMode : public GameMode {
   void activated();
   void deactivated();
   void key(int);
-  void idle(Real);
+  void tick(Real);
   void mouseDown(int state, int x, int y);
 
   static SettingsMode *init();

@@ -5,6 +5,7 @@ project(trackballs)
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 find_package(Guile REQUIRED)
 find_package(SDL2_and_friends REQUIRED)
+set(OpenGL_GL_PREFERENCE "LEGACY")
 find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)
 # libgc is a dependency of Guile that still needs to be provided

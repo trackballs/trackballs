@@ -157,7 +157,7 @@ void MenuMode::doSelection() {
   }
 }
 
-void MenuMode::idle(Real td) {
+void MenuMode::tick(Real td) {
   slideTime += td;
   if (slideTime > SLIDE_TOTAL) loadSlide();
 

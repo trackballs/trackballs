@@ -309,7 +309,7 @@ void SetupMode::key(int key) {
     }
   }
 }
-void SetupMode::idle(Real td) {
+void SetupMode::tick(Real td) {
   tickMouse(td);
 
   t += td;

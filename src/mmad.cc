@@ -65,7 +65,7 @@ static bool has_audio = true;
 static unsigned int quitEventType, updateWindowType;
 static bool startInEditMode;
 
-int theFrameNumber = 0;
+int displayFrameNumber = 0;
 
 char effectiveShareDir[256];
 int screenResolutions[5][2] = {{640, 480},
@@ -77,20 +77,16 @@ int screenResolutions[5][2] = {{640, 480},
 
 static class EventQueue {
  public:
-  bool has_event() const {
-    bool ret;
+  bool get_next_event_before(Uint32 max_inclusive_time, SDL_Event *evt) {
+    bool ret = false;
     SDL_LockMutex(mtx);
-    ret = evts.size() > 0;
+    if (evts.size() > 0 && evts.front().common.timestamp <= max_inclusive_time) {
+      *evt = evts.front();
+      evts.pop();
+      ret = true;
+    }
     SDL_UnlockMutex(mtx);
     return ret;
-  }
-  SDL_Event get_event() {
-    SDL_Event f;
-    SDL_LockMutex(mtx);
-    f = evts.front();
-    evts.pop();
-    SDL_UnlockMutex(mtx);
-    return f;
   }
   void push_event(const SDL_Event &e) {
     SDL_LockMutex(mtx);
@@ -387,48 +383,50 @@ static void *mainLoop(void *data) {
   srand(seed);
   int keyUpReceived = 1;
 
+  double loop_time = 0.;
+  Uint32 zero_sdl_tick = SDL_GetTicks();
   while (GameMode::current) {
-    theFrameNumber++;
+    double td = PHYSICS_RESOLUTION;
 
-    double td = getTimeDifference(lastDisplayStartTime, displayStartTime);
-    // If timing doesn't work assume 60fps
-    if (td <= 0.0) { td = 1. / 60.; }
-    // No slower than 5 fps
-    if (td > 0.2) td = 0.2;
+    double real_sdl_time = (SDL_GetTicks() - zero_sdl_tick) * 0.001;
 
-    /* update font system */
-    Font::tick(td);
+    // When game logic has caught up to real time, display
+    if (loop_time > real_sdl_time) {
+      displayFrameNumber++;
 
-    /* Update world */
-    if (GameMode::current) GameMode::current->idle(td);
+      /* Make sure music is still playing */
+      soundIdle(td);
 
-    /* Make sure music is still playing */
-    soundIdle(td);
+      /* update font system */
+      Font::tick(td);
 
-    /* Draw world */
-    glViewport(0, 0, screenWidth, screenHeight);
-    if (GameMode::current) {
-      GameMode::current->display();
-    } else {
-      glClear(GL_COLOR_BUFFER_BIT);
+      /* Draw world */
+      glViewport(0, 0, screenWidth, screenHeight);
+      if (GameMode::current) {
+        GameMode::current->display();
+      } else {
+        glClear(GL_COLOR_BUFFER_BIT);
+      }
+      warnForGLerrors("uncaught from display routine");
+      SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
+      SDL_GL_SwapWindow(window);
+
+      lastDisplayStartTime = displayStartTime;
+      displayStartTime = getMonotonicTime();
+      /* Expensive computations has to be done *after* tick+draw to keep world in good
+         synchronisation. */
+      if (GameMode::current) GameMode::current->doExpensiveComputations();
+      warnForGLerrors("uncaught from expensive computation");
     }
-    warnForGLerrors("uncaught from display routine");
-    SDL_GL_SetSwapInterval(Settings::settings->vsynced ? 1 : 0);
-    SDL_GL_SwapWindow(window);
 
-    lastDisplayStartTime = displayStartTime;
-    displayStartTime = getMonotonicTime();
-    /* Expensive computations has to be done *after* tick+draw to keep world in good
-       synchronisation. */
-    if (GameMode::current) GameMode::current->doExpensiveComputations();
-    warnForGLerrors("uncaught from expensive computation");
+    /* Perform game logic updates, and respond to events */
+    if (GameMode::current) GameMode::current->tick(td);
+    Uint32 until_tick = (Uint32)(loop_time * 1e3) + zero_sdl_tick;
 
-    /*                */
-    /* Process events */
-    /*                */
-    while (eventQueue.has_event()) {
-      SDL_Event event = eventQueue.get_event();
-
+    /* Respond to events between this logic update and the next */
+    // TODO: react to window events *immediately* -- use two queues?
+    SDL_Event event;
+    while (eventQueue.get_next_event_before(until_tick, &event)) {
       switch (event.type) {
       case SDL_QUIT:
         GameMode::activate(NULL);
@@ -511,6 +509,12 @@ static void *mainLoop(void *data) {
         break;
       }
     }
+
+    /* The loop time must reasonably-consistently track real time, and in the
+     * worst case is capped to lag ~100ms behind; otherwise, the loop time
+     * is updated in concert with the simulation time */
+    loop_time =
+        std::max(real_sdl_time - 0.100, loop_time + PHYSICS_RESOLUTION / timeDilationFactor);
   }
 
   Settings::settings->closeJoystick();

@@ -1,7 +1,7 @@
-/* calibrateJoystickMode.h
-   Used to calibrate the joystick
+/* replay.h
+   Input recording and replay utilities
 
-   Copyright (C) 2003  Mathias Broxvall
+   Copyright (C) 2018  Manuel Stoeckl
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,28 +18,33 @@
    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef CALIBRATEJOYSTICK_H
-#define CALIBRATEJOYSTICK_H
+#ifndef REPLAY_H
+#define REPLAY_H
 
-#include "gameMode.h"
+#include <vector>
 
-class CalibrateJoystickMode : public GameMode {
+struct PlayerControlFrame {
+  double dx, dy;
+  bool jump;
+  bool relaxing;  // in between restarts
+};
+
+class Replay {
  public:
-  CalibrateJoystickMode();
-  void display();
-  void activated();
-  void deactivated();
-  void tick(Real);
-  void mouseDown(int state, int x, int y);
-  void key(int);
+  Replay();
+  ~Replay();
 
-  static CalibrateJoystickMode *init();
-  static void cleanup();
+  void read(const char* level_name);
+  void save(const char* level_name);
+
+  void clear();
+  void add(struct PlayerControlFrame frame);
+
+  struct PlayerControlFrame get(int tick);
 
  private:
-  void nextStage();
-
-  int stage;
+  // todo: find something with better worst case
+  std::vector<struct PlayerControlFrame> log;
 };
 
 #endif

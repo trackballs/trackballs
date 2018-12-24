@@ -32,7 +32,7 @@ void GameMode::activate(GameMode* gm) {
 void GameMode::display() {}
 void GameMode::key(int) {}
 void GameMode::keyUp(int) { keyUpReceived = 1; }
-void GameMode::idle(Real /*td*/) {}
+void GameMode::tick(Real /*td*/) {}
 void GameMode::mouse(int /*state*/, int /*x*/, int /*y*/) {}
 void GameMode::mouseDown(int /*button*/, int /*x*/, int /*y*/) {}
 void GameMode::activated() {}

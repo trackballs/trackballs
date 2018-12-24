@@ -53,7 +53,7 @@ class EditMode : public GameMode {
 
   void display();
   void key(int);
-  void idle(Real td);
+  void tick(Real td);
   void mouseDown(int state, int x, int y);
 
   void activated();

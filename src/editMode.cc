@@ -1099,7 +1099,7 @@ void EditMode::key(int key) {
 
   return;
 }
-void EditMode::idle(Real td) {
+void EditMode::tick(Real td) {
   int x, y;
   tickMouse(td);
   Uint8 mouseState = SDL_GetMouseState(&x, &y);

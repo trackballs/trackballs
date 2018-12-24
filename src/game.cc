@@ -31,6 +31,7 @@
 #include "map.h"
 #include "pipe.h"
 #include "player.h"
+#include "replay.h"
 #include "settings.h"
 #include "sound.h"
 #include "weather.h"
@@ -72,6 +73,8 @@ Game::Game(const char *name, Gamer *g) {
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
   player1->lives = 4 - Settings::settings->difficulty;
+
+  replayData = new Replay();
 }
 
 Game::Game(Map *editmap, const char *levelname) {
@@ -105,6 +108,8 @@ Game::Game(Map *editmap, const char *levelname) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
   }
   newHooks.clear();
+
+  replayData = NULL;
 }
 
 Game::~Game() {
@@ -121,6 +126,7 @@ Game::~Game() {
 
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }
+  if (replayData) delete replayData;
 }
 
 void Game::loadLevel(const char *name) {
@@ -166,6 +172,8 @@ void Game::loadLevel(const char *name) {
   fogThickness = wantedFogThickness;
 
   randSeed = 0;
+
+  replayData->read(levelName);
 }
 
 void Game::setDefaults() {
@@ -247,80 +255,81 @@ void Game::clearLevel() {
     for (int k = 0; k < n; k++) { delete hooks[i][k]; }
     hooks[i].clear();
   }
+
+  replayData->save(levelName);
 }
 
 void Game::handleUserInput() {
-  if (player1) player1->handleUserInput();
+  if (player1) {
+    struct PlayerControlFrame pcf;
+    player1->handleUserInput();
+    replayData->add(pcf);
+  }
 }
 
 void Game::tick(Real t) {
+  // todo: decouple gameTime, replace with global 'displayTime'
   gameTime += t;
 
-  int mult = 1;
+  gameTicks += 1;
 
-  /* The game ticks run at a faster time scale so that the interaction
-   * of different moving objects is realistic */
-  while (gameTicks * PHYSICS_RESOLUTION < gameTime) {
-    gameTicks += mult;
+  /* Update intersection information */
+  balls->clear();
+  balls->reserve(hooks[Role_Ball].size() + hooks[Role_Player].size());
+  for (int j = Role_Ball; j <= Role_Player; j++) {
+    int nb = hooks[j].size();
+    for (int k = 0; k < nb; k++) { balls->add((Animated *)hooks[j][k]); }
+  }
+  balls->recalculateBboxMap();
 
-    /* Update intersection information */
-    balls->clear();
-    balls->reserve(hooks[Role_Ball].size() + hooks[Role_Player].size());
-    for (int j = Role_Ball; j <= Role_Player; j++) {
-      int nb = hooks[j].size();
-      for (int k = 0; k < nb; k++) { balls->add((Animated *)hooks[j][k]); }
+  /* update active entities */
+  for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
+    int n = hooks[j].size();
+    for (int k = 0; k < n; k++) { hooks[j][k]->tick(t); }
+  }
+
+  /* add new entities */
+  for (int j = 0; j < newHooks.size(); j++) {
+    hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
+  }
+  newHooks.clear();
+
+  /* run queued callbacks */
+  for (int j = 0; j < queuedCalls.size(); j++) {
+    QueuedCall call = queuedCalls[j];
+    /* the functions are owned by GameHooks; arguments by Game */
+    if (call.type == 0) {
+      scm_catch_call_0(call.fun);
+    } else if (call.type == 1) {
+      scm_catch_call_1(call.fun, scm_from_double(call.val));
+    } else if (call.type == 2) {
+      SCM sub;
+      Animated *a = dynamic_cast<Animated *>(call.subject);
+      if (a)
+        sub = smobAnimated_make(a);
+      else
+        sub = smobGameHook_make(call.subject);
+
+      scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
+      if (call.object) { scm_gc_unprotect_object(call.object); }
     }
-    balls->recalculateBboxMap();
+  }
+  queuedCalls.clear();
 
-    /* update active entities */
-    for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
-      int n = hooks[j].size();
-      for (int k = 0; k < n; k++) { hooks[j][k]->tick(mult * PHYSICS_RESOLUTION); }
-    }
+  /* filter out dead entities, except players */
+  for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
+    if (j == Role_Player) continue;
 
-    /* add new entities */
-    for (int j = 0; j < newHooks.size(); j++) {
-      hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
-    }
-    newHooks.clear();
-
-    /* run queued callbacks */
-    for (int j = 0; j < queuedCalls.size(); j++) {
-      QueuedCall call = queuedCalls[j];
-      /* the functions are owned by GameHooks; arguments by Game */
-      if (call.type == 0) {
-        scm_catch_call_0(call.fun);
-      } else if (call.type == 1) {
-        scm_catch_call_1(call.fun, scm_from_double(call.val));
-      } else if (call.type == 2) {
-        SCM sub;
-        Animated *a = dynamic_cast<Animated *>(call.subject);
-        if (a)
-          sub = smobAnimated_make(a);
-        else
-          sub = smobGameHook_make(call.subject);
-
-        scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
-        if (call.object) { scm_gc_unprotect_object(call.object); }
-      }
-    }
-    queuedCalls.clear();
-
-    /* filter out dead entities, except players */
-    for (int j = Role_GameHook; j < Role_MaxTypes; j++) {
-      if (j == Role_Player) continue;
-
-      int n = hooks[j].size();
-      int ndead = 0;
-      for (int k = 0; k < n; k++) {
-        if (hooks[j][k - ndead]->invalid) {
-          GameHook *hook = hooks[j][k - ndead];
-          hook->releaseCallbacks();
-          hooks[Role_Dead].push_back(hook);
-          hooks[j][k - ndead] = hooks[j][n - 1 - ndead];
-          hooks[j].pop_back();
-          ndead++;
-        }
+    int n = hooks[j].size();
+    int ndead = 0;
+    for (int k = 0; k < n; k++) {
+      if (hooks[j][k - ndead]->invalid) {
+        GameHook *hook = hooks[j][k - ndead];
+        hook->releaseCallbacks();
+        hooks[Role_Dead].push_back(hook);
+        hooks[j][k - ndead] = hooks[j][n - 1 - ndead];
+        hooks[j].pop_back();
+        ndead++;
       }
     }
   }
@@ -330,6 +339,8 @@ void Game::tick(Real t) {
     fogThickness += std::min(0.3 * t, wantedFogThickness - fogThickness);
   if (fogThickness > wantedFogThickness)
     fogThickness -= std::min(0.3 * t, fogThickness - wantedFogThickness);
+  // todo: move into a tick based on display timesteps, so draw() can
+  // remain pseudo-const
   weather->tick(t);
 }
 void Game::doExpensiveComputations() {

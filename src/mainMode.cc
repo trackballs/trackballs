@@ -66,7 +66,6 @@ MainMode::MainMode() {
   this->pause_time = 0.;
   memset(&this->cameraModelView[0], 0, 16 * sizeof(double));
   memset(&this->cameraProjection[0], 0, 16 * sizeof(double));
-  mapname = NULL;
 }
 MainMode::~MainMode() {}
 
@@ -405,7 +404,7 @@ void MainMode::key(int key) {
   }
 }
 
-void MainMode::idle(Real td) {
+void MainMode::tick(Real td) {
   Player *player1 = Game::current ? Game::current->player1 : NULL;
 
   time += td;

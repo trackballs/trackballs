@@ -31,7 +31,7 @@ class MainMode : public GameMode {
 
   void display();
   void key(int);
-  void idle(Real td);
+  void tick(Real td);
   void doExpensiveComputations();
   void mouse(int state, int x, int y);
   void mouseDown(int button, int x, int y);
@@ -79,8 +79,6 @@ class MainMode : public GameMode {
     statusBonusLevelComplete,
     statusPaused
   } gameStatus;
-
-  char *mapname;
 };
 
 #endif

@@ -29,7 +29,7 @@ class MenuMode : public GameMode {
   MenuMode();
   void display();
   void key(int);
-  void idle(Real);
+  void tick(Real);
   void activated();
   void deactivated();
   void mouseDown(int state, int x, int y);

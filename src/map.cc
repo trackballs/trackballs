@@ -343,13 +343,13 @@ void Map::draw(int stage, int cx, int cy) {
         cur->is_visible = visible;
       }
       if (cur->is_visible) {
-        cur->last_shown = theFrameNumber;
+        cur->last_shown = displayFrameNumber;
         drawlist[nchunks] = cur;
         if (update || !cur->is_active) { fillChunkVBO(drawlist[nchunks]); }
         nchunks++;
       } else {
         // Cleanup buffers for zones that have long since dropped out of view
-        if (cur->is_active && cur->last_shown < theFrameNumber - 10) {
+        if (cur->is_active && cur->last_shown < displayFrameNumber - 10) {
           glDeleteBuffers(2, &cur->tile_vbo[0]);
           glDeleteBuffers(2, &cur->flui_vbo[0]);
           glDeleteBuffers(2, &cur->wall_vbo[0]);

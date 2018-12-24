@@ -127,7 +127,7 @@ void HallOfFameMode::key(int key) {
     mouseDown(shift ? 3 : 1, -1, -1);
   if (key == SDLK_ESCAPE) GameMode::activate(MenuMode::init());
 }
-void HallOfFameMode::idle(Real td) {
+void HallOfFameMode::tick(Real td) {
   if (isExiting)
     timeLeft = fmax(0.0, timeLeft - td);
   else

@@ -40,7 +40,7 @@ void warnForGLerrors(const char *where_am_i);
 /* displays a 2d text on specific screen coordinates, returning width */
 int draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
                  float alpha, bool outlined, int align, int maxwidth = 0);
-void update2DStringCache();
+void update2DStringCache(bool force_wipe);
 /* Common interface for drawing 2d things on the screen */
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
                      GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,

@@ -60,7 +60,6 @@ GLuint textureTrack = 0;
 TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
 extern struct timespec lastDisplayStartTime;
-extern double timeDilationFactor;
 
 const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
 const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
@@ -137,7 +136,6 @@ struct StringCache {
   long tick;
 };
 
-static long stringTick = 0;
 static std::map<StringInfo, StringCache> strcache;
 
 static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
@@ -182,7 +180,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   inf.string[255] = '\0';
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
-    newentry.tick = stringTick;
+    newentry.tick = displayFrameNumber;
     SDL_Surface *surf = drawStringToSurface(inf, outlined);
     if (!surf) { return 0; }
     newentry.texture = LoadTexture(surf, newentry.texcoord);
@@ -193,7 +191,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   }
 
   struct StringCache &cached = strcache[inf];
-  cached.tick = stringTick;
+  cached.tick = displayFrameNumber;
 
   GLfloat shrink = (maxwidth > 0 && maxwidth < cached.w) ? (maxwidth / (GLfloat)cached.w) : 1.;
   draw2DRectangle(x - shrink * align * cached.w / 2, y - shrink * cached.h / 2,
@@ -203,14 +201,14 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   return maxwidth > 0 ? std::min(cached.w, maxwidth) : cached.w;
 }
 
-void update2DStringCache() {
-  stringTick++;
+void update2DStringCache(bool force_wipe) {
   int erased;
   do {
     erased = false;
+    // TODO: better asymptotics
     for (std::map<StringInfo, StringCache>::iterator i = strcache.begin(); i != strcache.end();
          ++i) {
-      if (i->second.tick < stringTick - 100) {
+      if (i->second.tick < displayFrameNumber - 100 || force_wipe) {
         glDeleteTextures(1, &i->second.texture);
         strcache.erase(i);
         erased = true;
@@ -252,11 +250,12 @@ void tickMouse(Real td) {
   last_sparkle += td * (1.0 + (fabs(mouseSpeedX) + fabs(mouseSpeedY)) * 0.1);
   while (last_sparkle > 0.0) {
     last_sparkle -= 0.05;
-    float pos[2] = {mouseX + 10.0 * (frandom() - 0.5), mouseY + 10.0 * (frandom() - 0.5)};
-    float speed[2] = {(float)mouseSpeedX / 2. + 100.0 * (frandom() - 0.5),
-                      (float)mouseSpeedY / 2. - 120.0 * frandom()};
-    float color[4] = {0.8 + 0.2 * frandom(), 0.8 + 0.2 * frandom(), 0.5 + 0.2 * frandom(),
-                      0.9 - 0.35 * frandom()};
+    float pos[2] = {(float)(mouseX + 10.0f * (frandom() - 0.5f)),
+                    (float)(mouseY + 10.0f * (frandom() - 0.5f))};
+    float speed[2] = {(float)(mouseSpeedX / 2.f + 100.0f * (frandom() - 0.5f)),
+                      (float)(mouseSpeedY / 2.f - 120.0f * frandom())};
+    float color[4] = {(float)(0.8f + 0.2f * frandom()), (float)(0.8f + 0.2f * frandom()),
+                      (float)(0.5f + 0.2f * frandom()), (float)(0.9f - 0.35f * frandom())};
     sparkle2D->add(pos, speed, (float)(1.5 + 0.5 * (frandom() - 0.5)),
                    (float)(11 + 3. * (frandom() - 0.5)), color);
   }
@@ -1299,8 +1298,7 @@ void glHelpCleanup() {
   }
 
   /* Invalidate all strings so they get cleaned up */
-  stringTick += 100000;
-  update2DStringCache();
+  update2DStringCache(true);
 
   for (std::map<int, TTF_Font *>::iterator i = menuFontLookup.begin();
        i != menuFontLookup.end(); ++i) {

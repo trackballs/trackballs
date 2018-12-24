@@ -32,7 +32,7 @@ class SetupMode : public GameMode {
   void activated();
   void deactivated();
   void key(int);
-  void idle(Real td);
+  void tick(Real td);
   void mouseDown(int state, int x, int y);
 
   static SetupMode *init();
