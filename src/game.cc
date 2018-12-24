@@ -73,8 +73,6 @@ Game::Game(const char *name, Gamer *g) {
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
   player1->lives = 4 - Settings::settings->difficulty;
-
-  replayData = new Replay();
 }
 
 Game::Game(Map *editmap, const char *levelname) {
@@ -108,8 +106,6 @@ Game::Game(Map *editmap, const char *levelname) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
   }
   newHooks.clear();
-
-  replayData = NULL;
 }
 
 Game::~Game() {
@@ -126,7 +122,6 @@ Game::~Game() {
 
   if (!edit_mode) delete map;
   if (current == this) { current = NULL; }
-  if (replayData) delete replayData;
 }
 
 void Game::loadLevel(const char *name) {
@@ -173,7 +168,7 @@ void Game::loadLevel(const char *name) {
 
   randSeed = 0;
 
-  replayData->read(levelName);
+  if (Settings::settings->storeReplay) replayStore.read(levelName);
 }
 
 void Game::setDefaults() {
@@ -256,15 +251,11 @@ void Game::clearLevel() {
     hooks[i].clear();
   }
 
-  replayData->save(levelName);
+  if (Settings::settings->storeReplay) replayStore.save(levelName);
 }
 
-void Game::handleUserInput() {
-  if (player1) {
-    struct PlayerControlFrame pcf;
-    player1->handleUserInput();
-    replayData->add(pcf);
-  }
+void Game::handleUserInput(bool active) {
+  if (player1) { player1->handleUserInput(active); }
 }
 
 void Game::tick(Real t) {

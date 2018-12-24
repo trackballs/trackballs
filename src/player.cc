@@ -25,6 +25,7 @@
 #include "game.h"
 #include "mainMode.h"
 #include "map.h"
+#include "replay.h"
 #include "settings.h"
 #include "sound.h"
 #include "splash.h"
@@ -106,10 +107,10 @@ Player::Player() : Ball(Role_Player) {
   oxygen = 1.0;
   moveBurst = 0.0;
 
-  controldx = 0.;
-  controldy = 0.;
-  controlPrecise = false;
-  controlJump = false;
+  control.dx = 0.;
+  control.dy = 0.;
+  control.jump = false;
+  control.inactive = true;
 
   setReflectivity(0.4, 0);
 
@@ -167,8 +168,10 @@ void Player::tick(Real t) {
   } else
     oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
 
-  double dx = controldx, dy = controldy;
-  bool precise = controlPrecise, jump = controlJump;
+  if (false) { control = Game::current->replayStore.get(Game::current->gameTicks); }
+  double dx = control.dx, dy = control.dy;
+  bool jump = control.jump;
+  if (Settings::settings->storeReplay) { Game::current->replayStore.add(control); }
 
   /* rotate control as by settings->rotateArrows */
   {
@@ -186,7 +189,7 @@ void Player::tick(Real t) {
     dx = tmp;
   }
 
-  /* Cap dx/dy to have total radius 1. */
+  /* Cap dx/dy to have total radius 1, in case input yields extreme input */
   double len = std::sqrt(dx * dx + dy * dy);
   if (len > 1.) {
     dx /= len;
@@ -198,11 +201,6 @@ void Player::tick(Real t) {
   double ty = -(dy + dx);
   dx = tx;
   dy = ty;
-
-  if (precise) {
-    dx *= 0.5;
-    dy *= 0.5;
-  }
 
   /* set inherent base acceleration*/
   acceleration = 3.5 - 0.25 * Settings::settings->difficulty;
@@ -222,7 +220,7 @@ void Player::tick(Real t) {
         Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
     jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
     Ball::queueJump(jumpStrength);
-    controlJump = false;
+    control.jump = false;
   }
   Ball::tick(t);
 }
@@ -311,7 +309,8 @@ void Player::restart(const Coord3d &pos) {
   /*for(i=0;i<NUM_MODS;i++)
     modTimeLeft[i] = 0.0;*/
 }
-void Player::handleUserInput() {
+void Player::handleUserInput(bool active) {
+  control.inactive = !active;
   /* Priority order for input: Joystick >> Keyboard >> Mouse
    *
    * If any input category provides zero input, we fall back to
@@ -328,7 +327,7 @@ void Player::handleUserInput() {
   /* Joysticks */
   if (Settings::settings->hasJoystick()) {
     // warning: jump should be edge-triggered
-    if (Settings::settings->joystickButton(0)) controlJump = true;
+    if (Settings::settings->joystickButton(0)) control.jump = true;
 
     double joyX = Settings::settings->joystickX();
     double joyY = Settings::settings->joystickY();
@@ -337,16 +336,15 @@ void Player::handleUserInput() {
     if (joyY < 0.1 && joyY > -0.1) joyY = 0.0;
 
     if (joyX != 0.0 && joyY != 0.0) {
-      controldx = ((double)joyX) * Settings::settings->mouseSensitivity;
-      controldy = ((double)joyY) * Settings::settings->mouseSensitivity;
-      controlPrecise = false;
+      control.dx = ((double)joyX) * Settings::settings->mouseSensitivity;
+      control.dy = ((double)joyY) * Settings::settings->mouseSensitivity;
       return;
     }
   }
 
   /* Handle keyboard steering */
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
-  controlPrecise = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
+  bool precise = SDL_GetModState() & (KMOD_LSHIFT | KMOD_RSHIFT);
 
   int ix = 0, iy = 0;
   if (keystate[SDL_SCANCODE_UP] || keystate[SDL_SCANCODE_KP_8]) iy--;
@@ -371,26 +369,34 @@ void Player::handleUserInput() {
   }
   if (ix || iy) {
     double len = std::sqrt(ix * ix + iy * iy);
-    controldx = ix / len;
-    controldy = iy / len;
+    control.dx = ix / len;
+    control.dy = iy / len;
+    if (precise) {
+      control.dx /= 2;
+      control.dy /= 2;
+    }
     return;
   }
 
   /* Give only *relative* mouse movements */
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
     if (sx != 0. || sy != 0.) {
-      controldx = sx * Settings::settings->mouseSensitivity * 0.0005;
-      controldy = sy * Settings::settings->mouseSensitivity * 0.0005;
-      double len = std::max(1., std::sqrt(controldx * controldx + controldy * controldy));
-      controldx /= len;
-      controldy /= len;
+      control.dx = sx * Settings::settings->mouseSensitivity * 0.0005;
+      control.dy = sy * Settings::settings->mouseSensitivity * 0.0005;
+      double len = std::max(1., std::sqrt(control.dx * control.dx + control.dy * control.dy));
+      control.dx /= len;
+      control.dy /= len;
+      if (precise) {
+        control.dx /= 2;
+        control.dy /= 2;
+      }
       return;
     }
   }
 
   /* No input from any source, do nothing */
-  controldx = 0.;
-  controldy = 0.;
+  control.dx = 0.;
+  control.dy = 0.;
 }
 void Player::mouse(int /*state*/, int /*x*/, int /*y*/) {}
 void Player::newLevel() {}

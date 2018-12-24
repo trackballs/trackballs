@@ -23,6 +23,12 @@
 
 #include "ball.h"
 
+struct PlayerControlFrame {
+  double dx, dy;
+  bool jump;
+  bool inactive;  // for instance, in between restarts
+};
+
 class Player : public Ball {
  public:
   Player();
@@ -31,9 +37,9 @@ class Player : public Ball {
   void tick(Real time);
   void die(int);
   void newLevel();
-  void setStartVariables();     /**< Setup all default variables when starting a level */
-  void restart(const Coord3d&); /**< Restart the ball at given position */
-  void handleUserInput();       /**< Called by main loop when there is new data */
+  void setStartVariables();          /**< Setup all default variables when starting a level */
+  void restart(const Coord3d&);      /**< Restart the ball at given position */
+  void handleUserInput(bool active); /**< Called by main loop when there is new data */
   void mouse(int state, int x, int y);
 
   void setHealth(Real);
@@ -45,11 +51,10 @@ class Player : public Ball {
   int lives, timeLeft, score, hasWon;
   bool playing;
 
-  void requestJump() { controlJump = true; }
+  void requestJump() { control.jump = true; }
 
  private:
-  double controldx, controldy;
-  bool controlPrecise, controlJump;
+  PlayerControlFrame control;
 };
 
 #endif

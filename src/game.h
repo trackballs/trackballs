@@ -36,6 +36,7 @@
 #include "gameHook.h"
 #include "general.h"
 #include "glHelp.h"
+#include "replay.h"
 
 class AnimatedCollection;
 class Map;
@@ -43,7 +44,6 @@ class Player;
 class Weather;
 class EditMode;
 class Gamer;
-class Replay;
 
 class Game {
  public:
@@ -51,7 +51,7 @@ class Game {
   Game(Map *editmap, const char *levelname);
   virtual ~Game();
 
-  void handleUserInput();
+  void handleUserInput(bool active);
   void tick(Real);
   void draw();                               /* Used for normal drawing mode */
   void drawReflection(const Coord3d &focus); /* Used when drawing environmentmaps */
@@ -90,6 +90,7 @@ class Game {
       units and triggering other events */
   static double defaultScores[SCORE_MAX][2];
 
+  Replay replayStore; /* stores player control data for replay */
  protected:
   friend class Ball;
   friend class EditMode;
@@ -111,7 +112,6 @@ class Game {
   std::vector<GameHook *> newHooks;
 
   unsigned randSeed;
-  Replay *replayData;
 
   void setDefaults();
 };

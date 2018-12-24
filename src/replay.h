@@ -21,13 +21,9 @@
 #ifndef REPLAY_H
 #define REPLAY_H
 
-#include <vector>
+#include "player.h"
 
-struct PlayerControlFrame {
-  double dx, dy;
-  bool jump;
-  bool relaxing;  // in between restarts
-};
+#include <vector>
 
 class Replay {
  public:

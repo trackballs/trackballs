@@ -454,7 +454,7 @@ void MainMode::tick(Real td) {
   case statusNextLevel:
   case statusInGame:
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    Game::current->handleUserInput();
+    Game::current->handleUserInput(gameStatus == statusInGame);
 
     if (wantedZAngle > zAngle)
       zAngle += std::min(0.4 * td, wantedZAngle - zAngle);
