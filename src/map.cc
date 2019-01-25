@@ -916,7 +916,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
 void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   Color color(0.2, kind ? 0.2 : 0.8, 0.2, 1.0);
 
-  int npts = 4 * abs(x1 - x2) + 4 * abs(y1 - y2) + 8;
+  int npts = 4 * std::abs(x1 - x2) + 4 * std::abs(y1 - y2) + 8;
   Coord3d* ringPoints = new Coord3d[npts + 2];
   Coord3d* rp = ringPoints;
   int k = 1;

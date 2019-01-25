@@ -1069,7 +1069,7 @@ SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
   SCM_ASSERT(scm_is_real(position), position, SCM_ARG2, FUNC_NAME);
   Animator *a = dynamic_cast<Animator *>((GameHook *)SCM_CDR(animator));
   SCM_ASSERT(a, animator, SCM_ARG1, FUNC_NAME);
-  a->position = fmod(scm_to_double(position), a->length);
+  a->position = std::fmod(scm_to_double(position), a->length);
   return animator;
 }
 #undef FUNC_NAME
@@ -1584,8 +1584,8 @@ SCM_DEFINE(copy_cells, "copy-cells", 9, 0, 0,
   int fx = scm_to_bool(flipx), fy = scm_to_bool(flipy), fxy = scm_to_bool(transp);
   // Load region into memory
   Map *map = Game::current->map;
-  int w = abs(ix0 - ix1) + 1;
-  int h = abs(iy0 - iy1) + 1;
+  int w = std::abs(ix0 - ix1) + 1;
+  int h = std::abs(iy0 - iy1) + 1;
   int xs = ix1 > ix0 ? 1 : -1;
   int ys = iy1 > iy0 ? 1 : -1;
   Cell *buf = new Cell[w * h];

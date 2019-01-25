@@ -56,9 +56,9 @@ void Black::die(int how) {
     for (int j = 0; j < 4; j++) {
       Real a = i / 4.0 * M_PI2;
       Real b = (j + 0.5) / 4.0 * M_PI;
-      pos[0] = position[0] + cos(a) * 0.25 * sin(b);
-      pos[1] = position[1] + sin(a) * 0.25 * sin(b);
-      pos[2] = position[2] + 0.25 * cos(b) + 0.5;
+      pos[0] = position[0] + std::cos(a) * 0.25 * std::sin(b);
+      pos[1] = position[1] + std::sin(a) * 0.25 * std::sin(b);
+      pos[2] = position[2] + 0.25 * std::cos(b) + 0.5;
       vel[0] = velocity[0] + (Game::current->frandom() - 0.5);
       vel[1] = velocity[1] + (Game::current->frandom() - 0.5);
       vel[2] = velocity[2] + (Game::current->frandom() - 0.5);

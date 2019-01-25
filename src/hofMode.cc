@@ -129,9 +129,9 @@ void HallOfFameMode::key(int key) {
 }
 void HallOfFameMode::tick(Real td) {
   if (isExiting)
-    timeLeft = fmax(0.0, timeLeft - td);
+    timeLeft = std::max(0.0, timeLeft - td);
   else
-    timeLeft = fmin(1.0, timeLeft + td);
+    timeLeft = std::min(1.0, timeLeft + td);
   if (timeLeft <= 0.0) GameMode::activate(MenuMode::init());
   tickMouse(td);
 }

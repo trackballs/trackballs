@@ -109,7 +109,7 @@ void Spike::tick(Real t) {
         ball->position[1] < y + 1) {
       double dx = ball->position[0] - x;
       double dy = ball->position[1] - y;
-      double dist = sqrt(dx * dx + dy * dy);
+      double dist = std::sqrt(dx * dx + dy * dy);
 
       if (dist < 0.1 + ball->radius) {
         h = ball->position[2] + dist;
@@ -132,8 +132,8 @@ void Spike::tick(Real t) {
   // play a 'rising' sound if the ball is in the round
   Player *player = Game::current->player1;
   double dist =
-      sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
-           (position[1] - player->position[1]) * (position[1] - player->position[1]));
+      std::sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
+                (position[1] - player->position[1]) * (position[1] - player->position[1]));
   if ((dist < 9.) && (!soundDone) && (phase >= 0.4) && (phase < 0.5)) {
     if (dist < 6.)
       playEffect(SFX_SPIKE, 0.66);
@@ -148,7 +148,7 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Matrix3d rotmtx,
   const int nfacets = 6;
   char *pos = (char *)data;
 
-  double d1 = 1 / sqrt(10.0), d2 = 3 / sqrt(10.0);
+  double d1 = 1 / std::sqrt(10.0), d2 = 3 / std::sqrt(10.0);
   for (int i = 0; i < 4 * nfacets; i++) {
     Coord3d local;
     Coord3d normal;

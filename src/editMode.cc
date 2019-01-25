@@ -1122,27 +1122,29 @@ void EditMode::makeHill(int radius) {
   for (mx = -radius; mx <= radius; mx++)
     for (my = -radius; my <= radius; my++) {
       map->cell(x + mx, y + my).heights[Cell::CENTER] +=
-          ((int)(sin(1. * M_PI * (mx + radius + 0.5) / diameter) *
-                 sin(1. * M_PI * (my + radius + 0.5) / diameter) * (shift ? -raise : raise) *
-                 10.)) *
+          ((int)(std::sin(1. * M_PI * (mx + radius + 0.5) / diameter) *
+                 std::sin(1. * M_PI * (my + radius + 0.5) / diameter) *
+                 (shift ? -raise : raise) * 10.)) *
           .1;
       map->cell(x + mx, y + my).heights[Cell::NE] +=
-          ((int)(sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
-                 sin(1. * M_PI * (my + radius + 1.0) / diameter) * (shift ? -raise : raise) *
-                 10.)) *
+          ((int)(std::sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
+                 std::sin(1. * M_PI * (my + radius + 1.0) / diameter) *
+                 (shift ? -raise : raise) * 10.)) *
           .1;
       map->cell(x + mx, y + my).heights[Cell::NW] +=
-          ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
-                 sin(1. * M_PI * (my + radius + 1.0) / diameter) * (shift ? -raise : raise) *
-                 10.)) *
+          ((int)(std::sin(1. * M_PI * (mx + radius) / diameter) *
+                 std::sin(1. * M_PI * (my + radius + 1.0) / diameter) *
+                 (shift ? -raise : raise) * 10.)) *
           .1;
       map->cell(x + mx, y + my).heights[Cell::SE] +=
-          ((int)(sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
-                 sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
+          ((int)(std::sin(1. * M_PI * (mx + radius + 1.0) / diameter) *
+                 std::sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) *
+                 10.)) *
           .1;
       map->cell(x + mx, y + my).heights[Cell::SW] +=
-          ((int)(sin(1. * M_PI * (mx + radius) / diameter) *
-                 sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) * 10.)) *
+          ((int)(std::sin(1. * M_PI * (mx + radius) / diameter) *
+                 std::sin(1. * M_PI * (my + radius) / diameter) * (shift ? -raise : raise) *
+                 10.)) *
           .1;
     }
   map->markCellsUpdated(x - radius, y - radius, x + radius, y + radius, false);
@@ -1175,13 +1177,14 @@ void EditMode::doSmooth(int radius) {
   for (mx = -radius; mx <= radius; mx++)
     for (my = -radius; my <= radius; my++) {
       Cell& c = map->cell(x + mx, y + my);
-      double s1 = sin(1. * M_PI * (mx + radius + 0.5) / diameter) *
-                  sin(1. * M_PI * (my + radius + 0.5) / diameter) * (shift ? -raise : raise);
+      double s1 = std::sin(1. * M_PI * (mx + radius + 0.5) / diameter) *
+                  std::sin(1. * M_PI * (my + radius + 0.5) / diameter) *
+                  (shift ? -raise : raise);
       c.heights[Cell::CENTER] = steps(c.heights[Cell::CENTER] * (1. - s1) + avgHeight * s1);
       for (north = 0; north < 2; north++)
         for (east = 0; east < 2; east++) {
-          double s = sin(1. * M_PI * (my + radius + 1.0 * north) / diameter) *
-                     sin(1. * M_PI * (mx + radius + 1.0 * east) / diameter) *
+          double s = std::sin(1. * M_PI * (my + radius + 1.0 * north) / diameter) *
+                     std::sin(1. * M_PI * (mx + radius + 1.0 * east) / diameter) *
                      (shift ? -raise : raise);
           c.heights[Cell::NORTH * north + Cell::EAST * east] = steps(
               c.heights[Cell::NORTH * north + Cell::EAST * east] * (1. - s) + avgHeight * s);

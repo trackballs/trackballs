@@ -301,7 +301,7 @@ void HelpMode::tick(Real td) {
   if (isExiting)
     timeLeft -= td;
   else
-    timeLeft = fmin(1.0, timeLeft + td);
+    timeLeft = std::min(1.0, timeLeft + td);
   if (timeLeft < 0.0) GameMode::activate(MenuMode::init());
 }
 void HelpMode::mouseDown(int button, int /*x*/, int /*y*/) {

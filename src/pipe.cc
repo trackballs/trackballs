@@ -32,8 +32,8 @@ Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
   windForward = 0.0;
 
   for (int i = 0; i < 3; i++) {
-    boundingBox[0][i] = fmin(from[i] - radius, to[i] - radius) - position[i];
-    boundingBox[1][i] = fmax(from[i] + radius, to[i] + radius) - position[i];
+    boundingBox[0][i] = std::min(from[i] - radius, to[i] - radius) - position[i];
+    boundingBox[1][i] = std::max(from[i] + radius, to[i] + radius) - position[i];
   }
 }
 

@@ -36,14 +36,14 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
   this->dy = dy - y;
   this->size = size;
   this->speed = speed;
-  this->lng = sqrt((double)(this->dx * this->dx + this->dy * this->dy));
+  this->lng = std::sqrt((double)(this->dx * this->dx + this->dy * this->dy));
   position[0] = x;
   position[1] = y;
   position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
   primaryColor = Color(1., 1., 1., 1.);
   secondaryColor = Color(0.6, 0.8, 0.9, 1.);
   animation = 0.0;
-  rotation = M_PI - atan2(this->dx / lng, this->dy / lng);
+  rotation = M_PI - std::atan2(this->dx / lng, this->dy / lng);
   scoreOnDeath = Game::defaultScores[SCORE_BIRD][0];
   timeOnDeath = Game::defaultScores[SCORE_BIRD][1];
   boundingBox[0][0] = -size;
@@ -116,7 +116,7 @@ void Bird::drawBuffers2(const GLuint *vaolist) const {
 void Bird::tick(Real t) {
   Animated::tick(t);
 
-  animation = fmod(animation + t / 0.8, 1.0);
+  animation = std::fmod(animation + t / 0.8, 1.0);
 
   // if hiden, just count down the time
   if (hide > 0.) {

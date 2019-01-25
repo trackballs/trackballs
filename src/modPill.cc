@@ -78,10 +78,10 @@ void ModPill::tick(Real t) {
 
   clock += t;
   if (kind == MOD_LARGE) {
-    realRadius = 0.2 * (1.0 + fmod(clock, 2.0) / 2.0);
+    realRadius = 0.2 * (1.0 + std::fmod(clock, 2.0) / 2.0);
     radius = realRadius;
   } else if (kind == MOD_SMALL) {
-    realRadius = 0.2 / (1.0 + fmod(clock, 2.0) / 2.0);
+    realRadius = 0.2 / (1.0 + std::fmod(clock, 2.0) / 2.0);
     radius = realRadius;
   }
 

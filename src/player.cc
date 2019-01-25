@@ -176,16 +176,16 @@ void Player::tick(Real t) {
   /* rotate control as by settings->rotateArrows */
   {
     double angle = Settings::settings->rotateSteering * M_PI / 4.0;
-    double tmp = dx * cos(angle) - dy * sin(angle);
-    dy = dy * cos(angle) + dx * sin(angle);
+    double tmp = dx * std::cos(angle) - dy * std::sin(angle);
+    dy = dy * std::cos(angle) + dx * std::sin(angle);
     dx = tmp;
   }
 
   /* rotate controls if the camera perspective is rotated */
   double angle = ((MainMode *)GameMode::current)->xyAngle * M_PI / 2.;
   if (angle) {
-    double tmp = dx * cos(angle) - dy * sin(angle);
-    dy = dy * cos(angle) + dx * sin(angle);
+    double tmp = dx * std::cos(angle) - dy * std::sin(angle);
+    dy = dy * std::cos(angle) + dx * std::sin(angle);
     dx = tmp;
   }
 
@@ -260,9 +260,9 @@ void Player::die(int how) {
         Real a = i / 4.0 * M_PI2;
         Real b = (j + 0.5) / 4.0 * M_PI;
         Coord3d pos, vel;
-        pos[0] = position[0] + cos(a) * 0.25 * sin(b) * 2.0;
-        pos[1] = position[1] + sin(a) * 0.25 * sin(b) * 2.0;
-        pos[2] = position[2] + 0.25 * cos(b) + 0.5;
+        pos[0] = position[0] + std::cos(a) * 0.25 * std::sin(b) * 2.0;
+        pos[1] = position[1] + std::sin(a) * 0.25 * std::sin(b) * 2.0;
+        pos[2] = position[2] + 0.25 * std::cos(b) + 0.5;
         vel[0] = velocity[0] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
         vel[1] = velocity[1] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
         vel[2] = velocity[2] + (sink ? 0.02 : 1.0) * (Game::current->frandom() - 0.5);

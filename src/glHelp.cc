@@ -319,8 +319,8 @@ void drawMousePointer() {
 }
 
 void drawMouse(int x, int y, int w, int h) {
-  GLfloat r1 = 1.0 + 0.1 * cos(mousePointerPhase * 1.8);
-  GLfloat r2 = 1.0 + 0.1 * cos(mousePointerPhase * 1.9);
+  GLfloat r1 = 1.0 + 0.1 * std::cos(mousePointerPhase * 1.8);
+  GLfloat r2 = 1.0 + 0.1 * std::cos(mousePointerPhase * 1.9);
   GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 0.35);
   GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 0.35);
 
@@ -770,7 +770,7 @@ void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
   const int N = 3;
 
   GLfloat proj_half_angle = 40 / 2 * M_PI / 180;
-  GLfloat aspect = (GLdouble)screenWidth / (GLdouble)fmax(screenHeight, 1);
+  GLfloat aspect = (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1);
 
   /* shadow step scale by factor of 4 */
   GLfloat dts[N + 1] = {0.f, 12.5f, 50.f, 200.f};

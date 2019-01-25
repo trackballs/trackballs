@@ -328,7 +328,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     GLfloat data[9][8];
     ushort idxs[3][3];
     char *pos = (char *)data;
-    GLfloat z = 1.1 + 1.0 * fmod(Game::current->gameTime, 1.0);
+    GLfloat z = 1.1 + 1.0 * std::fmod(Game::current->gameTime, 1.0);
     GLfloat frad = (GLfloat)radius;
     GLfloat corners[9][2] = {
         {frad * -.3f, frad * z},         {frad * .3f, frad * (z + .9f)},
@@ -1435,13 +1435,15 @@ void Ball::drive(Real x, Real y) {
 void Ball::generateSandDebris() {
   Coord3d pos, vel;
   Real a = Game::current->frandom() * 2.0 * M_PI;
-  double speed =
-      sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
-  pos[0] = position[0] + radius * 1.7 * sin(a);
-  pos[1] = position[1] + radius * 1.7 * cos(a);
+  double speed = std::sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] +
+                           velocity[2] * velocity[2]);
+  pos[0] = position[0] + radius * 1.7 * std::sin(a);
+  pos[1] = position[1] + radius * 1.7 * std::cos(a);
   pos[2] = position[2] - radius * .5;
-  vel[0] = velocity[0] + 2.0 * speed * sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
+  vel[0] =
+      velocity[0] + 2.0 * speed * std::sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
+  vel[1] =
+      velocity[1] + 2.0 * speed * std::cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
   Game::current->add(d);
@@ -1471,13 +1473,15 @@ void Ball::generateNitroDebris(Real time) {
 void Ball::generateDebris(const Color &color) {
   Coord3d pos, vel;
   Real a = Game::current->frandom() * 2.0 * M_PI;
-  double speed =
-      sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]);
-  pos[0] = position[0] + radius * 1.5 * sin(a);
-  pos[1] = position[1] + radius * 1.5 * cos(a);
+  double speed = std::sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] +
+                           velocity[2] * velocity[2]);
+  pos[0] = position[0] + radius * 1.5 * std::sin(a);
+  pos[1] = position[1] + radius * 1.5 * std::cos(a);
   pos[2] = position[2] - radius * .5;
-  vel[0] = velocity[0] + 2.0 * speed * sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  vel[1] = velocity[1] + 2.0 * speed * cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
+  vel[0] =
+      velocity[0] + 2.0 * speed * std::sin(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
+  vel[1] =
+      velocity[1] + 2.0 * speed * std::cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
   Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
   Game::current->add(d);
@@ -1558,11 +1562,11 @@ void Ball::handleForcefieldCollisions() {
     double ff_where = dotProduct(v, ff_normal);  // how long along ff->direction the hit is
     double ff_len = length(ff->direction);       // the xy-length of the forcefield
     if (ff_where < 0) {
-      xy_dist = sqrt(xy_dist * xy_dist + ff_where * ff_where);
+      xy_dist = std::sqrt(xy_dist * xy_dist + ff_where * ff_where);
       ff_where = 0.0;
     } else if (ff_where > ff_len) {
       double tmp = ff_where - ff_len;
-      xy_dist = sqrt(xy_dist * xy_dist + tmp * tmp);
+      xy_dist = std::sqrt(xy_dist * xy_dist + tmp * tmp);
       ff_where = ff_len;
     }
     double ff_base =
@@ -1577,7 +1581,7 @@ void Ball::handleForcefieldCollisions() {
       z_dist = position[2] - ff_base - ff->height;
       ff_where_h = ff_base + ff->height;
     }
-    double dist = sqrt(xy_dist * xy_dist + z_dist * z_dist);
+    double dist = std::sqrt(xy_dist * xy_dist + z_dist * z_dist);
     if (dist < radius) {
       // normal of forcefield
       ff_normal[0] = ff->direction[1];

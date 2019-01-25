@@ -88,20 +88,20 @@ void MainMode::display() {
 
   /* Setup matrixes for the camera perspective */
   if (gameStatus == statusBeforeGame) {
-    lookAtMatrix(map->startPosition[0] - 12 * sin(time),
-                 map->startPosition[1] - 12 * cos(time), 10.0 + map->startPosition[2],
+    lookAtMatrix(map->startPosition[0] - 12 * std::sin(time),
+                 map->startPosition[1] - 12 * std::cos(time), 10.0 + map->startPosition[2],
                  map->startPosition[0], map->startPosition[1], map->startPosition[2], 0.0, 0.0,
                  1.0, activeView.modelview);
 
   } else {
     double angle = xyAngle * M_PI / 2. + M_PI / 4.;
-    Coord3d up(sin(angle) * zAngle, cos(angle) * zAngle, 1.0 - zAngle);
+    Coord3d up(std::sin(angle) * zAngle, std::cos(angle) * zAngle, 1.0 - zAngle);
     up = up / length(up);
-    lookAtMatrix(camFocus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
-                 camFocus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
-                 10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * sin(zAngle * M_PI / 2.),
-                 camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2],
-                 activeView.modelview);
+    lookAtMatrix(
+        camFocus[0] - 10. * std::sin(angle) * std::cos(zAngle * M_PI / 2.),
+        camFocus[1] - 10. * std::cos(angle) * std::cos(zAngle * M_PI / 2.),
+        10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * std::sin(zAngle * M_PI / 2.),
+        camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2], activeView.modelview);
   }
   markViewChanged();
 
@@ -461,8 +461,12 @@ void MainMode::tick(Real td) {
     else if (wantedZAngle < zAngle)
       zAngle -= std::min(0.4 * td, zAngle - wantedZAngle);
     /* take shortest path under modulo */
-    if (abs(xyAngle + 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) { xyAngle += 4.f; }
-    if (abs(xyAngle - 4.f - wantedXYAngle) < abs(xyAngle - wantedXYAngle)) { xyAngle -= 4.f; }
+    if (std::abs(xyAngle + 4.f - wantedXYAngle) < std::abs(xyAngle - wantedXYAngle)) {
+      xyAngle += 4.f;
+    }
+    if (std::abs(xyAngle - 4.f - wantedXYAngle) < std::abs(xyAngle - wantedXYAngle)) {
+      xyAngle -= 4.f;
+    }
     if (wantedXYAngle > xyAngle)
       xyAngle += std::min(0.4 * td, wantedXYAngle - xyAngle);
     else if (wantedXYAngle < xyAngle)
@@ -683,13 +687,13 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   /* Setup openGL matrixes for the camera perspective */
   double angle = xyAngle * M_PI / 2. + M_PI / 4.;
   // TODO. Fixme. This computation is wrong when zAngle > 0.0 !!
-  Coord3d up(sin(angle) * zAngle, cos(angle) * zAngle, 1.0 - zAngle);
+  Coord3d up(std::sin(angle) * zAngle, std::cos(angle) * zAngle, 1.0 - zAngle);
   up = up / length(up);
   lookAtMatrix(focus[0], focus[1], focus[2] + 0.0,
-               focus[0] - 10. * sin(angle) * cos(zAngle * M_PI / 2.),
-               focus[1] - 10. * cos(angle) * cos(zAngle * M_PI / 2.),
+               focus[0] - 10. * std::sin(angle) * std::cos(zAngle * M_PI / 2.),
+               focus[1] - 10. * std::cos(angle) * std::cos(zAngle * M_PI / 2.),
                zAngle > 0.0
-                   ? 10.0 + focus[2] * 0.5 + (10.0 + focus[2]) * sin(zAngle * M_PI / 2.)
+                   ? 10.0 + focus[2] * 0.5 + (10.0 + focus[2]) * std::sin(zAngle * M_PI / 2.)
                    : focus[2] + 2.0,
                up[0], up[1], up[2], activeView.modelview);
 

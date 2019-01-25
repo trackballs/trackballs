@@ -31,12 +31,12 @@ ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
   primaryColor = Color(0.3, 1.0, 0.3, 1.0);
   secondaryColor = Color(1.0, 1.0, 1.0, 1.0);
   bounceFactor = 2.5;
-  boundingBox[0][0] = -abs(dir[0]);
-  boundingBox[0][1] = -abs(dir[1]);
-  boundingBox[0][2] = -abs(dir[2]) - h;
-  boundingBox[1][0] = +abs(dir[0]);
-  boundingBox[1][1] = +abs(dir[1]);
-  boundingBox[1][2] = +abs(dir[2]) + h;
+  boundingBox[0][0] = -std::abs(dir[0]);
+  boundingBox[0][1] = -std::abs(dir[1]);
+  boundingBox[0][2] = -std::abs(dir[2]) - h;
+  boundingBox[1][0] = +std::abs(dir[0]);
+  boundingBox[1][1] = +std::abs(dir[1]);
+  boundingBox[1][2] = +std::abs(dir[2]) + h;
 }
 void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                                  const GLuint *vaolist, bool /*mustUpdate*/) const {

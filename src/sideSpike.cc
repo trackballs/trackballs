@@ -135,8 +135,8 @@ void SideSpike::tick(Real t) {
   // play a 'rising' sound if the ball is in the round
   Player *player = Game::current->player1;
   double dist =
-      sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
-           (position[1] - player->position[1]) * (position[1] - player->position[1]));
+      std::sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
+                (position[1] - player->position[1]) * (position[1] - player->position[1]));
   if ((dist < 9.) && (!soundDone) && (phase >= 0.4) && (phase < 0.5)) {
     if (dist < 6.)
       playEffect(SFX_SPIKE, 0.66);
@@ -206,8 +206,8 @@ void SideSpike::tick(Real t) {
         ol = 1;
       break;
     }
-    double dist = sqrt((sx - ball->position[0]) * (sx - ball->position[0]) +
-                       (sy - ball->position[1]) * (sy - ball->position[1]));
+    double dist = std::sqrt((sx - ball->position[0]) * (sx - ball->position[0]) +
+                            (sy - ball->position[1]) * (sy - ball->position[1]));
 
     // too far
     if (dist > ball->radius + 1. + 0.3) continue;

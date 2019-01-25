@@ -57,7 +57,8 @@ void HeightModifier::tick(Real t) {
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
   int cor1 = 0, cor2 = 0, cor3 = 0;
 
-  float v = min + (max - min) * (1. + cos(phase + (localtime * freq) * 2. * 3.14159)) / 2.;
+  float v =
+      min + (max - min) * (1. + std::cos(phase + (localtime * freq) * 2. * 3.14159)) / 2.;
 
   if (corner == 4) {
     c.heights[4] = v;

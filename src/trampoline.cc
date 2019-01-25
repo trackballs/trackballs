@@ -32,7 +32,7 @@ void Trampoline::tick(Real t) {
   Real dh = std::min(0.5 * t, c.sunken - 1e-5);
   for (int i = 0; i < 5; i++) c.heights[i] += dh;
   c.sunken -= dh;
-  if (abs(c.sunken) < 2e-5 && abs(dh) < 1e-10) {
+  if (std::abs(c.sunken) < 2e-5 && std::abs(dh) < 1e-10) {
     remove();
     // Reset cell to no-trampoline-active state
     for (int i = 0; i < 5; i++) c.heights[i] += c.sunken;
