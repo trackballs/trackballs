@@ -234,20 +234,22 @@ void tickMouse(Real td) {
   int mouseX, mouseY;
   static int oldMouseX = 0, oldMouseY = 0;
   SDL_GetMouseState(&mouseX, &mouseY);
-  double mouseSpeedX = (mouseX - oldMouseX) / td;
-  double mouseSpeedY = (mouseY - oldMouseY) / td;
+  float mouseSpeedX = (mouseX - oldMouseX) / td;
+  float mouseSpeedY = (mouseY - oldMouseY) / td;
+  float mouseSpeedLen = std::sqrt(mouseSpeedX * mouseSpeedX + mouseSpeedY * mouseSpeedY);
+  if (mouseSpeedLen > 25.f) {
+    mouseSpeedX /= 25.f / mouseSpeedLen;
+    mouseSpeedY /= 25.f / mouseSpeedLen;
+    mouseSpeedLen = 25.f;
+  }
   static Real last_sparkle = 0.0;
-  if (mouseSpeedX > 20.) mouseSpeedX = 20.;
-  if (mouseSpeedY > 20.) mouseSpeedY = 20.;
-  if (mouseSpeedX < -20.) mouseSpeedX = -20.;
-  if (mouseSpeedY < -20.) mouseSpeedY = -20.;
 
   oldMouseX = mouseX;
   oldMouseY = mouseY;
 
   mousePointerPhase += td;
   sparkle2D->tick(td);
-  last_sparkle += td * (1.0 + (fabs(mouseSpeedX) + fabs(mouseSpeedY)) * 0.1);
+  last_sparkle += td * (1.0 + mouseSpeedLen * 0.1);
   while (last_sparkle > 0.0) {
     last_sparkle -= 0.05;
     float pos[2] = {(float)(mouseX + 10.0f * (frandom() - 0.5f)),
