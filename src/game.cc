@@ -128,7 +128,7 @@ void Game::loadLevel(const char *name) {
   char mapname[256];
   char scmname[256];
 
-  if (player1 && gamer) {
+  if (gamer) {
     /* level scripts might have modified our appearance. Reset them */
     player1->primaryColor = colors[gamer->color];
     player1->texture = gamer->textureNum;

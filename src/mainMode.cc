@@ -346,8 +346,6 @@ void MainMode::display() {
 void MainMode::doExpensiveComputations() { Game::current->doExpensiveComputations(); }
 
 void MainMode::key(int key) {
-  Player *player1 = Game::current ? Game::current->player1 : NULL;
-
   switch (gameStatus) {
   case statusBeforeGame:
     if (key == ' ') startGame();
@@ -373,8 +371,10 @@ void MainMode::key(int key) {
       createSnapshot();
       break;
     }
-    if (key == 'k') { player1->die(DIE_OTHER); }
-    if (key == ' ') { player1->requestJump(); }
+    if (key == 'k') { Game::current->player1->die(DIE_OTHER); }
+    if (key == ' ') { Game::current->player1->requestJump(); }
+    break;
+  case statusLevelComplete:
     break;
   case statusBonusLevelComplete:
   case statusNextLevel:
@@ -405,8 +405,6 @@ void MainMode::key(int key) {
 }
 
 void MainMode::tick(Real td) {
-  Player *player1 = Game::current ? Game::current->player1 : NULL;
-
   time += td;
   flash -= td;
   if (flash < 0.0) flash = 0.0;
@@ -475,7 +473,7 @@ void MainMode::tick(Real td) {
     Game::current->tick(td);
     for (int i = 0; i < 3; i++) {
       camDelta[i] = camDelta[i] * std::pow(1.9e-6, td) +
-                    0.25 * td * (player1->position[i] - camFocus[i]);
+                    0.25 * td * (Game::current->player1->position[i] - camFocus[i]);
       camFocus[i] += camDelta[i];
     }
     break;
@@ -547,7 +545,7 @@ void MainMode::startGame() {
 
 /* (Re)starts the current player */
 void MainMode::restartPlayer() {
-  Player *player1 = Game::current ? Game::current->player1 : NULL;
+  Player *player1 = Game::current->player1;
   player1->restart(Game::current->map->startPosition);
   camFocus[0] = Game::current->map->startPosition[0];
   camFocus[1] = Game::current->map->startPosition[1];
@@ -736,9 +734,8 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   markViewChanged();
-  Map *map = Game::current ? Game::current->map : NULL;
 
-  map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
+  Game::current->map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
   Game::current->drawReflection(focus);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

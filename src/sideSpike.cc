@@ -113,7 +113,7 @@ void SideSpike::tick(Real t) {
 
   if (is_on) phase += t * this->speed;
 
-  double z = position[2];
+  double z;
   while (phase > 1.0) phase -= 1.0;
   double h = -0.3;
   if (phase < 0.4) {

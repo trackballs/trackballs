@@ -108,7 +108,6 @@ void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat spike_rad[4] = {0.89f, 1.2f, 0.99f, 0.44f};
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
-      GLfloat angle = 2 * i * M_PI / nsides + M_PI / nsides;
       GLfloat end[3] = {spike_rad[h] * radius * (GLfloat)cos12[2 * i + 1],
                         spike_rad[h] * radius * (GLfloat)sin12[2 * i + 1], spike_height[h]};
       GLfloat dhs[3][2] = {{0, spikewid}, {-spikewid, -spikewid}, {spikewid, -spikewid}};

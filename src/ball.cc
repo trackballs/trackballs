@@ -412,7 +412,6 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
     else
       phase = 1.0;
-    double blend = phase;
     specular = Color::mix(phase, specular, Color(0.8, 0.8, 1., 1.));
     shininess = 50.0 * phase + shininess * (1.0 - phase);
     glEnable(GL_BLEND);

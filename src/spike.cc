@@ -79,10 +79,10 @@ void Spike::tick(Real t) {
 
   int is_sinking = 0;
 
-  double x = position[0], y = position[1], z = position[2];
   if (is_on) phase += t * this->speed;
   while (phase > 1.0) phase -= 1.0;
-  double h = Game::current->map->getHeight(x, y) - 0.3;
+  double h = Game::current->map->getHeight(position[0], position[1]) - 0.3;
+  double z;
   if (phase < 0.4) {
     /* spike is low */
     z = h;  //
@@ -101,6 +101,7 @@ void Spike::tick(Real t) {
   position[2] = z;
 
   Animated **balls;
+  double x = position[0], y = position[1];
   int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];

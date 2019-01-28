@@ -987,7 +987,6 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
     if (length(res) > 0) res = res / length(res);
     Coord3d anti = crossProduct(dir, res);
     GLfloat off = 1e-2;
-    kind = nontrivial % 2;
     pos += packObjectVertex(pos, cur[0] + width * res[0] + off * anti[0],
                             cur[1] + width * res[1] + off * anti[1], cur[2] + off * anti[2],
                             0., 0., color, flat);
