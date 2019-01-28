@@ -473,11 +473,11 @@ void MainMode::tick(Real td) {
       xyAngle -= std::min(0.4 * td, xyAngle - wantedXYAngle);
 
     Game::current->tick(td);
-    for (double t = td; t >= 0.0; t -= 0.01)
-      for (int i = 0; i < 3; i++) {
-        camDelta[i] = camDelta[i] * 0.9 + 0.002 * (player1->position[i] - camFocus[i]);
-        camFocus[i] += camDelta[i];
-      }
+    for (int i = 0; i < 3; i++) {
+      camDelta[i] = camDelta[i] * std::pow(1.9e-6, td) +
+                    0.25 * td * (player1->position[i] - camFocus[i]);
+      camFocus[i] += camDelta[i];
+    }
     break;
   case statusPaused:
     SDL_SetRelativeMouseMode(SDL_FALSE);
