@@ -317,7 +317,7 @@ void Player::handleUserInput(bool active) {
    * the next category.
    */
   /* Mouse filtering is continuous */
-  double sx, sy;
+  double sx = 0., sy = 0.;
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
     getFilteredRelativeMouse(&sx, &sy);
   }

@@ -126,6 +126,7 @@ void Weather::draw2() {
       if (particles[i].position[2] < h) continue;
       nactive++;
     }
+    if (nactive <= 0) { return; }
 
     GLfloat *data = new GLfloat[2 * 3 * nactive];
     int j = 0;
@@ -166,6 +167,7 @@ void Weather::draw2() {
       if (particles[i].position[2] < h) continue;
       nactive++;
     }
+    if (nactive <= 0) { return; }
 
     GLfloat *data = new GLfloat[3 * 8 * nactive];
 

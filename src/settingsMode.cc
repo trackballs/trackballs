@@ -88,6 +88,7 @@ void SettingsMode::display() {
   addText_Center(0, titleFontSize, 64, _("Game Settings"), screenWidth / 2);
 
   char str[256];
+  const char *fixstr = NULL;
 
   clearSelectionAreas();
 
@@ -140,16 +141,16 @@ void SettingsMode::display() {
     // show FPS
     switch (settings->showFPS) {
     case 0:
-      snprintf(str, sizeof(str), _("No"));
+      fixstr = _("No");
       break;
     case 1:
-      snprintf(str, sizeof(str), _("Frame rate"));
+      fixstr = _("Frame rate");
       break;
     case 2:
-      snprintf(str, sizeof(str), _("Frame time"));
+      fixstr = _("Frame time");
       break;
     }
-    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, 1, _("Show FPS"), str);
+    menuItem_LeftRight(MENU_SHOW_FPS, menucount++, 1, _("Show FPS"), fixstr);
 
     break;
 
@@ -159,25 +160,25 @@ void SettingsMode::display() {
     // gfx details
     switch (settings->gfx_details) {
     case 0:
-      snprintf(str, sizeof(str), _("None"));
+      fixstr = _("None");
       break;
     case 1:
-      snprintf(str, sizeof(str), _("Minimalistic"));
+      fixstr = _("Minimalistic");
       break;
     case 2:
-      snprintf(str, sizeof(str), _("Simple"));
+      fixstr = _("Simple");
       break;
     case 3:
-      snprintf(str, sizeof(str), _("Standard"));
+      fixstr = _("Standard");
       break;
     case 4:
-      snprintf(str, sizeof(str), _("Extra"));
+      fixstr = _("Extra");
       break;
     case 5:
-      snprintf(str, sizeof(str), _("Everything"));
+      fixstr = _("Everything");
       break;
     }
-    menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, 1, _("Details"), str);
+    menuItem_LeftRight(MENU_GFX_DETAILS, menucount++, 1, _("Details"), fixstr);
     menuItem_LeftRight(MENU_DO_REFLECTIONS, menucount++, 1, _("Reflections"),
                        (settings->doReflections ? _("Yes") : _("No")));
     menuItem_LeftRight(MENU_DO_SHADOWS, menucount++, 1, _("Shadows"),

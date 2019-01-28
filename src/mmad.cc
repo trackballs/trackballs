@@ -474,7 +474,7 @@ static void *mainLoop(void *data) {
         }
 
         else if (event.key.keysym.sym == SDLK_ESCAPE) {
-          if (GameMode::current == EditMode::editMode) {
+          if (EditMode::editMode && GameMode::current == EditMode::editMode) {
             EditMode::editMode->askQuit();
           } else if ((GameMode::current && GameMode::current == MenuMode::menuMode))
             GameMode::activate(NULL);

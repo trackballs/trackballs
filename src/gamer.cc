@@ -68,8 +68,10 @@ void Gamer::setDefaults() {
   nLevelsCompleted = 0;
   for (int i = 0; i < Settings::settings->nLevelSets; i++) {
     nKnownLevels[i] = 1;
-    strcpy(levels[i][0].name, Settings::settings->levelSets[i].startLevelName);
-    strcpy(levels[i][0].fileName, Settings::settings->levelSets[i].startLevel);
+    strncpy(levels[i][0].name, Settings::settings->levelSets[i].startLevelName,
+            sizeof(levels[i][0].name));
+    strncpy(levels[i][0].fileName, Settings::settings->levelSets[i].startLevel,
+            sizeof(levels[i][0].fileName));
   }
   textureNum = 0;
 }
