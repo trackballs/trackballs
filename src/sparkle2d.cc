@@ -29,10 +29,31 @@ Sparkle2D::Sparkle2D() {
   this->sparkle_first = NULL;
   nsparkles = 0;
 
-  glGenBuffers(1, &idxs);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
-  glGenBuffers(1, &data);
-  glBindBuffer(GL_ARRAY_BUFFER, data);
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  glGenBuffers(1, &idxs_buf);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs_buf);
+  glGenBuffers(1, &data_buf);
+  glBindBuffer(GL_ARRAY_BUFFER, data_buf);
+
+  ushort *idxs = new ushort[6 * MAX_DRAWN_SPARKLES];
+  for (int k = 0; k < MAX_DRAWN_SPARKLES; k++) {
+    idxs[k * 6 + 0] = 4 * k + 0;
+    idxs[k * 6 + 1] = 4 * k + 1;
+    idxs[k * 6 + 2] = 4 * k + 2;
+    idxs[k * 6 + 3] = 4 * k + 1;
+    idxs[k * 6 + 4] = 4 * k + 2;
+    idxs[k * 6 + 5] = 4 * k + 3;
+  }
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs_buf);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, MAX_DRAWN_SPARKLES * 6 * sizeof(ushort), idxs,
+               GL_STATIC_DRAW);
+  delete[] idxs;
+
+  glBufferData(GL_ARRAY_BUFFER, MAX_DRAWN_SPARKLES * 8 * 4 * sizeof(GLfloat), NULL,
+               GL_STREAM_DRAW);
+
+  configureUIAttributes();
 }
 
 // destroy
@@ -40,8 +61,9 @@ Sparkle2D::~Sparkle2D() {
   // remove all remaining sparkle
   clear();
 
-  glDeleteBuffers(1, &idxs);
-  glDeleteBuffers(1, &data);
+  glDeleteBuffers(1, &idxs_buf);
+  glDeleteBuffers(1, &data_buf);
+  glDeleteVertexArrays(1, &vao);
 }
 
 // remove all entries
@@ -103,12 +125,9 @@ void Sparkle2D::add(float pos[2], float speed[2], float ttl, float size, float c
  */
 void Sparkle2D::draw() {
   Require2DMode();
-  GLfloat *datl = new GLfloat[nsparkles * 8 * 4];
-  ushort *idxl = new ushort[nsparkles * 6];
-
   Sparkle *skl = sparkle_first;
-  int i = 0;
   for (int i = 0; skl != NULL; i++, skl = skl->next) {
+    if (i >= MAX_DRAWN_SPARKLES) { continue; }
     float age = skl->age;
     float tmp;
     if (age < 0.1) {
@@ -124,41 +143,24 @@ void Sparkle2D::draw() {
     int offsets[4][2] = {{0, 0}, {0, 1}, {1, 0}, {1, 1}};
     for (int k = 0; k < 4; k++) {
       int base = i * 8 * 4 + k * 8;
-      datl[base + 0] = skl->pos[0] - ex + offsets[k][0] * (2 * ex);
-      datl[base + 1] = skl->pos[1] - ey + offsets[k][1] * (2 * ey);
-      datl[base + 2] = skl->color[0];
-      datl[base + 3] = skl->color[1];
-      datl[base + 4] = skl->color[2];
-      datl[base + 5] = skl->color[3] * alpha;
-      datl[base + 6] = (GLfloat)offsets[k][0];
-      datl[base + 7] = (GLfloat)offsets[k][1];
+      data[base + 0] = skl->pos[0] - ex + offsets[k][0] * (2 * ex);
+      data[base + 1] = skl->pos[1] - ey + offsets[k][1] * (2 * ey);
+      data[base + 2] = skl->color[0];
+      data[base + 3] = skl->color[1];
+      data[base + 4] = skl->color[2];
+      data[base + 5] = skl->color[3] * alpha;
+      data[base + 6] = (GLfloat)offsets[k][0];
+      data[base + 7] = (GLfloat)offsets[k][1];
     }
   }
-  for (int i = 0; i < nsparkles; i++) {
-    idxl[i * 6 + 0] = 4 * i + 0;
-    idxl[i * 6 + 1] = 4 * i + 1;
-    idxl[i * 6 + 2] = 4 * i + 2;
-    idxl[i * 6 + 3] = 4 * i + 1;
-    idxl[i * 6 + 4] = 4 * i + 2;
-    idxl[i * 6 + 5] = 4 * i + 3;
-  }
 
-  // Input structure: 2x Position; 4x color; 2x texture coord
-  glBindBuffer(GL_ARRAY_BUFFER, data);
-  glBufferData(GL_ARRAY_BUFFER, nsparkles * 8 * 4 * sizeof(GLfloat), datl, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, nsparkles * 6 * sizeof(ushort), idxl, GL_STATIC_DRAW);
+  int ndrawn = nsparkles > MAX_DRAWN_SPARKLES ? MAX_DRAWN_SPARKLES : nsparkles;
 
+  glBindVertexArray(vao);
+  glBindBuffer(GL_ARRAY_BUFFER, data_buf);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, ndrawn * 8 * 4 * sizeof(GLfloat), data);
   glBindTexture(GL_TEXTURE_2D, textureGlitter);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                        (void *)(2 * sizeof(GLfloat)));
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                        (void *)(6 * sizeof(GLfloat)));
-  glDrawElements(GL_TRIANGLES, 6 * nsparkles, GL_UNSIGNED_SHORT, (void *)0);
-
-  delete[] datl;
-  delete[] idxl;
+  glDrawElements(GL_TRIANGLES, 6 * ndrawn, GL_UNSIGNED_SHORT, (void *)0);
 }
 
 /*

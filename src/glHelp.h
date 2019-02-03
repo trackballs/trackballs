@@ -54,6 +54,7 @@ void drawMouse(int x, int y, int w, int h);
 size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx, GLfloat ty,
                         const Color &color, const GLfloat normal[3]);
 void configureObjectAttributes();
+void configureUIAttributes();
 inline uint32_t packNormal(const GLfloat n[3]) {
   uint32_t d = (512 + n[2] * 511.f);
   uint32_t e = (512 + n[1] * 511.f);
@@ -102,6 +103,10 @@ typedef struct {
   GLuint shininess;
   GLuint ignore_shadow;
   GLuint use_lighting;
+  // For UI shader
+  GLuint ui_screen_width = 0;
+  GLuint ui_screen_height = 0;
+  GLuint ui_tex = 0;
 } UniformLocations;
 extern UniformLocations uniformLocations;
 

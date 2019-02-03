@@ -24,6 +24,9 @@
 
 #include "glHelp.h"
 
+// There are typically ~30 sparkles
+#define MAX_DRAWN_SPARKLES 64
+
 /* structure of a sparkle */
 typedef struct _sparkle {
   float pos[3];
@@ -59,8 +62,11 @@ class Sparkle2D {
   Sparkle *sparkle_first;
   int nsparkles;
 
-  GLuint idxs;
-  GLuint data;
+  GLuint vao;
+  GLuint idxs_buf;
+  GLuint data_buf;
+
+  GLfloat data[8 * 4 * MAX_DRAWN_SPARKLES];
 };
 
 #endif

@@ -49,7 +49,6 @@ static GLuint shaderObjectDay = 0;
 static GLuint shaderObjectNight = 0;
 static GLuint shaderObjectShadow = 0;
 static GLuint shaderReflection = 0;
-static GLuint defaultVao = 0;
 GLuint textureBlank = 0;
 GLuint textureGlitter = 0;
 GLuint textureMousePointer = 0;
@@ -286,30 +285,28 @@ void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat 
 
   static GLuint idxs = (GLuint)-1;
   static GLuint buf = (GLuint)-1;
+  static GLuint vao = (GLuint)-1;
   if (idxs == (GLuint)-1) {
     glGenBuffers(1, &idxs);
-    ushort idxdata[6] = {0, 1, 2, 1, 2, 3};
+    glGenBuffers(1, &buf);
+    glGenVertexArrays(1, &vao);
+
+    const ushort idxdata[6] = {0, 1, 2, 1, 2, 3};
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, buf);
+    glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), NULL, GL_STREAM_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(ushort), idxdata, GL_STATIC_DRAW);
-
-    glGenBuffers(1, &buf);
-    glBindBuffer(GL_ARRAY_BUFFER, buf);
-    glBufferData(GL_ARRAY_BUFFER, 32 * sizeof(GLfloat), data, GL_DYNAMIC_DRAW);
+    configureUIAttributes();
   } else {
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxs);
-    glBindBuffer(GL_ARRAY_BUFFER, buf);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, 32 * sizeof(GLfloat), data);
+    glBindVertexArray(vao);
   }
 
+  glBindBuffer(GL_ARRAY_BUFFER, buf);
+  glBufferSubData(GL_ARRAY_BUFFER, 0, 32 * sizeof(GLfloat), data);
+
   glBindTexture(GL_TEXTURE_2D, tex);
-
-  // Input structure: 2x Position; 4x color; 2x texture coord
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                        (void *)(2 * sizeof(GLfloat)));
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
-                        (void *)(6 * sizeof(GLfloat)));
-
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (void *)0);
 }
 
@@ -359,6 +356,17 @@ void configureObjectAttributes() {
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
   glEnableVertexAttribArray(3);
+}
+void configureUIAttributes() {
+  // To be used by `shaderUI`
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (void *)0);
+  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(2 * sizeof(GLfloat)));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                        (void *)(6 * sizeof(GLfloat)));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
 }
 
 static GLuint lastProgram = 0;
@@ -1129,9 +1137,6 @@ void glHelpInit() {
   ingameFont = TTF_OpenFont(str, 30);
   if (!ingameFont) { error("failed to load font %s", str); }
 
-  // The VAO need only be there :-)
-  glGenVertexArrays(1, &defaultVao);
-
   /* Note: all textures must be powers of 2 since we ignore texcoords */
   loadTexture("ice.png");
   loadTexture("acid.png");
@@ -1199,6 +1204,11 @@ void glHelpInit() {
   glDeleteShader(fObjectNight);
   glDeleteShader(fObjectShadow);
   glDeleteShader(fReflection);
+
+  // Load uniform locations
+  uniformLocations.ui_screen_width = glGetUniformLocation(shaderUI, "screen_width");
+  uniformLocations.ui_screen_height = glGetUniformLocation(shaderUI, "screen_height");
+  uniformLocations.ui_tex = glGetUniformLocation(shaderUI, "tex");
 
   // Wipe ball cache
   for (int i = 0; i < MAX_BALL_DETAIL; i++) {
@@ -1278,7 +1288,6 @@ void glHelpCleanup() {
   if (shaderObjectNight) glDeleteProgram(shaderObjectNight);
   if (shaderObjectShadow) glDeleteProgram(shaderObjectShadow);
   if (shaderReflection) glDeleteProgram(shaderReflection);
-  if (defaultVao) glDeleteVertexArrays(1, &defaultVao);
   shaderLine = 0;
   shaderTileDay = 0;
   shaderTileNight = 0;
@@ -1289,7 +1298,6 @@ void glHelpCleanup() {
   shaderObjectDay = 0;
   shaderObjectNight = 0;
   shaderObjectShadow = 0;
-  defaultVao = 0;
 
   if (sparkle2D) delete sparkle2D;
 
@@ -1316,7 +1324,22 @@ void glHelpCleanup() {
 void warnForGLerrors(const char *where_am_i) {
   GLenum err;
   while ((err = glGetError()) != GL_NO_ERROR) {
-    warning("GL error %x at location: %s", err, where_am_i);
+    const char *type = NULL;
+    switch (err) {
+    default:
+      break;
+    case GL_INVALID_ENUM:
+      type = "Invalid enum";
+      break;
+    case GL_INVALID_VALUE:
+      type = "Invalid value";
+      break;
+    case GL_INVALID_OPERATION:
+      type = "Invalid operation";
+      break;
+    }
+
+    warning("GL error %x (%s) at location: %s", err, type, where_am_i);
   }
 }
 
@@ -1443,7 +1466,7 @@ bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double 
   double vxh = -1e99, vyh = -1e99, vzh = -1e99;
   for (int i = 0; i < 8; i++) {
     double w[3] = {0., 0., 0.};
-    double p[3] = {i & 4 ? x1 : x2, i & 2 ? y1 : y2, i & 1 ? z1 : z2};
+    double p[3] = {(i & 4) ? x1 : x2, (i & 2) ? y1 : y2, (i & 1) ? z1 : z2};
     // Apply perspective transform with MVP matrix
     for (int k = 0; k < 3; k++)
       w[k] += mvp[0][k] * p[0] + mvp[1][k] * p[1] + mvp[2][k] * p[2] + mvp[3][k];
@@ -1465,10 +1488,10 @@ bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double 
   return true;
 }
 
-static int is_2d_mode = 0;
+static bool is_2d_mode = false;
 
 void Require2DMode() {
-  if (!is_2d_mode) { warning("Function should only be called in 2D mode"); }
+  if (!is_2d_mode) { warning("Function `Require2DMode` should only be called in 2D mode"); }
 }
 
 void Enter2DMode() {
@@ -1480,35 +1503,28 @@ void Enter2DMode() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  // Load program, bind VAO, and set up uniforms
+  // Load program and set up uniforms. VAO will by bound at point of use
   glUseProgram(shaderUI);
+  glUniform1f(uniformLocations.ui_screen_width, (GLfloat)screenWidth);
+  glUniform1f(uniformLocations.ui_screen_height, (GLfloat)screenHeight);
+  glUniform1i(uniformLocations.ui_tex, 0);
 
-  glBindVertexArray(defaultVao);
-
-  glUniform1f(glGetUniformLocation(shaderUI, "screen_width"), (GLfloat)screenWidth);
-  glUniform1f(glGetUniformLocation(shaderUI, "screen_height"), (GLfloat)screenHeight);
-
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glEnableVertexAttribArray(2);
-
-  glUniform1i(glGetUniformLocation(shaderUI, "tex"), 0);
   glActiveTexture(GL_TEXTURE0);
-
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  is_2d_mode = 1;
+  is_2d_mode = true;
 }
 
 void Leave2DMode() {
-  if (!is_2d_mode) { return; }
+  if (!is_2d_mode) {
+    warning("Function `Leave2DMode` should only be called in 2D mode");
+    return;
+  }
 
-  is_2d_mode = 0;
-
-  glBindVertexArray(0);
+  is_2d_mode = false;
 }
 
 int powerOfTwo(int input) {
