@@ -1093,7 +1093,7 @@ static GLuint loadShaderPart(const char *name, GLuint shader_type) {
     glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
     char *vertexInfoLog = (char *)malloc(maxLength);
     glGetShaderInfoLog(shader, maxLength, &maxLength, vertexInfoLog);
-    warning("%s shader %s error (len %d): %s", name, maxLength, vertexInfoLog);
+    warning("%s shader %s error (len %d): %s", tdesc, name, maxLength, vertexInfoLog);
     glDeleteShader(shader);
     free(vertexInfoLog);
     return 0;
