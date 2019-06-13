@@ -48,7 +48,7 @@ void CSwitch::releaseCallbacks() {
 
 void CSwitch::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                               const GLuint *vaolist, bool mustUpdate) const {
-  const int nfacets = 6;
+  const int nfacets = 16;
   GLfloat lever_length = 0.3f;
   GLfloat lever_end = 0.03f;
   GLfloat body_wid = 0.15f;
@@ -149,7 +149,7 @@ void CSwitch::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  const int nfacets = 6;
+  const int nfacets = 16;
   setActiveProgramAndUniforms(Shader_Object);
   setObjectUniforms(specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);

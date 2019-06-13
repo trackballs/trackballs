@@ -113,14 +113,14 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     int detail;
     switch (ballResolution) {
     case BALL_HIRES:
-      detail = 8;
+      detail = 20;
       break;
     default:
     case BALL_NORMAL:
-      detail = 6;
+      detail = 14;
       break;
     case BALL_LORES:
-      detail = 3;
+      detail = 8;
       break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
@@ -427,14 +427,14 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     int detail;
     switch (ballResolution) {
     case BALL_HIRES:
-      detail = 8;
+      detail = 20;
       break;
     default:
     case BALL_NORMAL:
-      detail = 6;
+      detail = 14;
       break;
     case BALL_LORES:
-      detail = 3;
+      detail = 8;
       break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);

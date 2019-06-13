@@ -44,7 +44,7 @@ void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                            const GLuint *vaolist, bool mustUpdate) const {
   if (!mustUpdate || !visible) return;
 
-  const int nfacets = 11;
+  const int nfacets = 22;
   GLfloat inner_arc[2 + nfacets][2];
   GLfloat outer_arc[2 + nfacets][2];
   GLfloat normals[2 + nfacets][2];
@@ -135,7 +135,7 @@ void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 void Goal::drawBuffers1(const GLuint *vaolist) const {
   if (!visible) return;
 
-  const int nfacets = 11;
+  const int nfacets = 22;
 
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
