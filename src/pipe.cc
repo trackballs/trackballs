@@ -49,7 +49,7 @@ void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   up = crossProduct(dir, right);
   if (up[2] < 0.0) up = -up;
 
-  const int nfacets = 24;
+  const int nfacets = 32;
 
   // Draw pipe
   GLfloat data[2 * nfacets][8];
@@ -108,7 +108,7 @@ void Pipe::drawTrunk(const GLuint *vaolist) const {
   setObjectUniforms(specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
-  int nfacets = 24;
+  int nfacets = 32;
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 3 * 2 * nfacets, GL_UNSIGNED_SHORT, (void *)0);
