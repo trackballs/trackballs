@@ -65,7 +65,7 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
   timeLeft = 0.;
 }
 
-ModPill::~ModPill() { this->Animated::~Animated(); }
+ModPill::~ModPill() {}
 
 void ModPill::tick(Real t) {
   Animated::tick(t);
