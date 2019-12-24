@@ -135,6 +135,8 @@ typedef struct _viewpa {
   GLuint shadowMapTexture;
   GLuint shadowMapTexsize;
   bool calculating_shadows;
+
+  bool show_flag_state;
 } ViewParameters;
 
 extern ViewParameters activeView;

@@ -87,9 +87,10 @@ class Chunk {
   int xm, ym;
   GLuint wall_vbo[2];
   GLuint tile_vbo[2];
+  GLuint flag_vbo[2];
   GLuint flui_vbo[2];
   GLuint line_vbo[2];
-  GLuint wall_vao, tile_vao, flui_vao, line_vao;
+  GLuint wall_vao, tile_vao, flag_vao, flui_vao, line_vao;
   GLfloat maxHeight, minHeight;
   bool is_active, is_visible, is_updated;
   int last_shown;
@@ -134,6 +135,7 @@ class Map {
   int tx_Ice, tx_Acid, tx_Sand, tx_Track, tx_Water, tx_1, tx_2, tx_3, tx_4;
   Coord3d startPosition;
   GLuint texture_Array;
+  GLuint flag_Array;
 
   static const int flagNone, flagFlashCenter, flagTranslucent, flagShowCross;
   static const int mapFormatVersion;

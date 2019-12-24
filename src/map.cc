@@ -119,14 +119,61 @@ Chunk::Chunk() {
 Chunk::~Chunk() {
   if (is_active) {
     glDeleteBuffers(2, &tile_vbo[0]);
+    glDeleteBuffers(2, &flag_vbo[0]);
     glDeleteBuffers(2, &flui_vbo[0]);
     glDeleteBuffers(2, &wall_vbo[0]);
     glDeleteBuffers(2, &line_vbo[0]);
     glDeleteVertexArrays(1, &tile_vao);
+    glDeleteVertexArrays(1, &flag_vao);
     glDeleteVertexArrays(1, &flui_vao);
     glDeleteVertexArrays(1, &wall_vao);
     glDeleteVertexArrays(1, &line_vao);
   }
+}
+
+static GLuint createTextureArray(const char** texs, int ntex, int size) {
+  GLuint texture_Array = 0;
+  glGenTextures(1, &texture_Array);
+  glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
+  char* data = new char[ntex * size * size * 4];
+  for (int i = 0; i < ntex; i++) {
+    /* loadImage aborts with error if any of the above textures DNE */
+    SDL_Surface* orig = loadImage(texs[i]);
+    Uint32 mask[4];
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
+    mask[0] = 0x000000FF;
+    mask[1] = 0x0000FF00;
+    mask[2] = 0x00FF0000;
+    mask[3] = 0xFF000000;
+#else
+    mask[0] = 0xFF000000;
+    mask[1] = 0x00FF0000;
+    mask[2] = 0x0000FF00;
+    mask[3] = 0x000000FF;
+#endif
+    SDL_Surface* proj = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 32, mask[0], mask[1],
+                                             mask[2], mask[3]);
+    SDL_Rect orect = {0, 0, orig->w, orig->h};
+    SDL_Rect drect = {0, 0, size, size};
+    SDL_SetSurfaceBlendMode(orig, SDL_BLENDMODE_NONE);
+    SDL_BlitScaled(orig, &orect, proj, &drect);
+    SDL_FreeSurface(orig);
+    SDL_LockSurface(proj);
+    memcpy(&data[i * size * size * 4], proj->pixels, size * size * 4);
+    SDL_UnlockSurface(proj);
+    SDL_FreeSurface(proj);
+  }
+  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, size, size, ntex, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, data);
+  delete[] data;
+
+  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
+  return texture_Array;
 }
 
 Map::Map(char* filename) {
@@ -223,56 +270,25 @@ Map::Map(char* filename) {
   chunks.clear();
 
   // Construct texture array
-  texture_Array = 0;
-  glGenTextures(1, &texture_Array);
-  glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
   const int nsubtextures = 9;
   const int size = 1 << 8;
   const char* texs[nsubtextures] = {"blank.png",    "ice.png",      "sand.png",
                                     "acid.png",     "track.png",    "texture.png",
                                     "texture2.png", "texture3.png", "texture4.png"};
-  char* data = new char[nsubtextures * size * size * 4];
-  for (int i = 0; i < nsubtextures; i++) {
-    /* loadImage aborts with error if any of the above textures DNE */
-    SDL_Surface* orig = loadImage(texs[i]);
-    Uint32 mask[4];
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN /* OpenGL RGBA masks */
-    mask[0] = 0x000000FF;
-    mask[1] = 0x0000FF00;
-    mask[2] = 0x00FF0000;
-    mask[3] = 0xFF000000;
-#else
-    mask[0] = 0xFF000000;
-    mask[1] = 0x00FF0000;
-    mask[2] = 0x0000FF00;
-    mask[3] = 0x000000FF;
-#endif
-    SDL_Surface* proj = SDL_CreateRGBSurface(SDL_SWSURFACE, size, size, 32, mask[0], mask[1],
-                                             mask[2], mask[3]);
-    SDL_Rect orect = {0, 0, orig->w, orig->h};
-    SDL_Rect drect = {0, 0, size, size};
-    SDL_SetSurfaceBlendMode(orig, SDL_BLENDMODE_NONE);
-    SDL_BlitScaled(orig, &orect, proj, &drect);
-    SDL_FreeSurface(orig);
-    SDL_LockSurface(proj);
-    memcpy(&data[i * size * size * 4], proj->pixels, size * size * 4);
-    SDL_UnlockSurface(proj);
-    SDL_FreeSurface(proj);
-  }
-  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, size, size, nsubtextures, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, data);
-  delete[] data;
+  texture_Array = createTextureArray(texs, nsubtextures, size);
 
-  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  const int nflags = 8;
+  const char* flags[nflags] = {"transparent.png",     "cell_multi.png", "cell_ice.png",
+                               "cell_sand.png",       "cell_track.png", "cell_acid.png",
+                               "cell_trampoline.png", "cell_kill.png"};
+  flag_Array = createTextureArray(flags, nflags, size);
 }
 Map::~Map() {
   delete[] cells;
   chunks.clear();
 
   glDeleteTextures(1, &texture_Array);
+  glDeleteTextures(1, &flag_Array);
 }
 
 static void configureCellAttributes(bool water) {
@@ -351,10 +367,12 @@ void Map::draw(int stage, int cx, int cy) {
         // Cleanup buffers for zones that have long since dropped out of view
         if (cur->is_active && cur->last_shown < displayFrameNumber - 10) {
           glDeleteBuffers(2, &cur->tile_vbo[0]);
+          glDeleteBuffers(2, &cur->flag_vbo[0]);
           glDeleteBuffers(2, &cur->flui_vbo[0]);
           glDeleteBuffers(2, &cur->wall_vbo[0]);
           glDeleteBuffers(2, &cur->line_vbo[0]);
           glDeleteVertexArrays(1, &cur->tile_vao);
+          glDeleteVertexArrays(1, &cur->flag_vao);
           glDeleteVertexArrays(1, &cur->flui_vao);
           glDeleteVertexArrays(1, &cur->wall_vao);
           glDeleteVertexArrays(1, &cur->line_vao);
@@ -385,6 +403,16 @@ void Map::draw(int stage, int cx, int cy) {
   for (int i = 0; i < nchunks; i++) {
     glBindVertexArray(drawlist[i]->tile_vao);
     glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+  }
+
+  if (stage == 1 && activeView.show_flag_state) {
+    glActiveTexture(GL_TEXTURE0 + 0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, flag_Array);
+
+    for (int i = 0; i < nchunks; i++) {
+      glBindVertexArray(drawlist[i]->flag_vao);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
   }
 
   if (stage == 1 && !activeView.calculating_shadows) {
@@ -464,6 +492,13 @@ static inline int cmp(float l, float r) {
 void Map::fillChunkVBO(Chunk* chunk) const {
   GLfloat* tdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
   ushort* tidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+
+  GLfloat* sdat = NULL;
+  ushort* sidx = NULL;
+  if (activeView.show_flag_state) {
+    sdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
+    sidx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
+  }
   GLfloat* wdat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
   ushort* widx = new ushort[CHUNKSIZE * CHUNKSIZE * 12];
   GLfloat* ldat = new GLfloat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
@@ -475,10 +510,12 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   bool first_time = false;
   if (!chunk->is_active) {
     glGenBuffers(2, &chunk->tile_vbo[0]);
+    glGenBuffers(2, &chunk->flag_vbo[0]);
     glGenBuffers(2, &chunk->wall_vbo[0]);
     glGenBuffers(2, &chunk->line_vbo[0]);
     glGenBuffers(2, &chunk->flui_vbo[0]);
     glGenVertexArrays(1, &chunk->tile_vao);
+    glGenVertexArrays(1, &chunk->flag_vao);
     glGenVertexArrays(1, &chunk->wall_vao);
     glGenVertexArrays(1, &chunk->line_vao);
     glGenVertexArrays(1, &chunk->flui_vao);
@@ -571,6 +608,37 @@ void Map::fillChunkVBO(Chunk* chunk) const {
 
       const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
       for (uint i = 0; i < 12; i++) { tidx[j * 12 + i] = 5 * j + topindices[i]; }
+
+      if (activeView.show_flag_state) {
+        Color white(1.f, 1.f, 1.f, 1.f);
+        float height_boost = 0.001f;
+
+        int flag_list[6] = {CELL_ICE,  CELL_SAND,       CELL_TRACK,
+                            CELL_ACID, CELL_TRAMPOLINE, CELL_KILL};
+
+        int flagno = 0;
+        int nflags = 0;
+        for (int k = 0; k < 6; k++) {
+          if (c.flags & flag_list[k]) {
+            nflags++;
+            flagno = k + 2;
+          }
+        }
+        if (nflags > 1) { flagno = 1; }
+
+        packCell(&sdat[k], x, y, c.heights[Cell::SW] + height_boost, white, 0.f, 0.f, flagno,
+                 0.f, 0.f, fcnormal[Cell::SW]);
+        packCell(&sdat[k + 8], x + 1, y, c.heights[Cell::SE] + height_boost, white, 1.f, 0.f,
+                 flagno, 0.f, 0.f, fcnormal[Cell::SE]);
+        packCell(&sdat[k + 16], x + 1, y + 1, c.heights[Cell::NE] + height_boost, white, 1.f,
+                 1.f, flagno, 0.f, 0.f, fcnormal[Cell::NE]);
+        packCell(&sdat[k + 24], x, y + 1, c.heights[Cell::NW] + height_boost, white, 0.f, 1.f,
+                 flagno, 0.f, 0.f, fcnormal[Cell::NW]);
+        packCell(&sdat[k + 32], x + 0.5f, y + 0.5f, c.heights[Cell::CENTER] + height_boost,
+                 white, 0.5f, 0.5f, flagno, 0.f, 0.f, fcnormal[Cell::CENTER]);
+
+        for (uint i = 0; i < 12; i++) { sidx[j * 12 + i] = 5 * j + topindices[i]; }
+      }
 
       // We assume that a quad suffices to render each wall
       // (otherwise, in the worst case, we'd need 6 vertices/side!
@@ -707,6 +775,18 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size, tidx,
                      GL_DYNAMIC_DRAW);
         configureCellAttributes(false);
+
+        if (activeView.show_flag_state) {
+          glBindVertexArray(chunk->flag_vao);
+          glBindBuffer(GL_ARRAY_BUFFER, chunk->flag_vbo[0]);
+          glBufferData(GL_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_data_size, sdat,
+                       GL_DYNAMIC_DRAW);
+          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flag_vbo[1]);
+          glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size, sidx,
+                       GL_DYNAMIC_DRAW);
+          configureCellAttributes(false);
+        }
+
         // Walls
         glBindVertexArray(chunk->wall_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
@@ -748,6 +828,18 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
                         (jend - jstart) * tile_index_size,
                         &tidx[jstart * tile_index_size / sizeof(ushort)]);
+
+        if (activeView.show_flag_state) {
+          glBindBuffer(GL_ARRAY_BUFFER, chunk->flag_vbo[0]);
+          glBufferSubData(GL_ARRAY_BUFFER, jstart * tile_data_size,
+                          (jend - jstart) * tile_data_size,
+                          &sdat[jstart * tile_data_size / sizeof(GLfloat)]);
+          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
+          glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
+                          (jend - jstart) * tile_index_size,
+                          &sidx[jstart * tile_index_size / sizeof(ushort)]);
+        }
+
         // Walls
         glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
         glBufferSubData(GL_ARRAY_BUFFER, jstart * wall_data_size,

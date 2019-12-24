@@ -368,6 +368,9 @@ void EditMode::display() {
   } else
     h = 0.0;
 
+  /* Show extra cell flag overlay */
+  activeView.show_flag_state = true;
+
   /* configure lighting */
   activeView.fog_enabled = 0;
   MainMode::setupLighting(false);
@@ -426,6 +429,8 @@ void EditMode::display() {
       game->draw();
     }
     map->draw(1, x, y);
+    activeView.show_flag_state = false;
+
     /* If we have a clipboard selection then display where it will be pasted */
     if (cellClipboard) {
       map->drawFootprint(x, y, x + cellClipboardWidth - 1, y + cellClipboardHeight - 1, 1);

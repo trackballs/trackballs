@@ -1242,6 +1242,7 @@ void glHelpInit() {
   activeView.sun_direction[2] = -93 / 121.;
 
   activeView.calculating_shadows = false;
+  activeView.show_flag_state = false;
 
   glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   glGenTextures(1, &activeView.shadowMapTexture);
