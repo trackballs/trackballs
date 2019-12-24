@@ -88,7 +88,7 @@ typedef enum {
   Lighting_NoShadows, /* Orientation dependent colors, no shadows */
   Lighting_Regular    /* Shadows and orientation dependent colors */
 } Object_Lighting;
-void setObjectUniforms(Color specular, float shininess, Object_Lighting lighting);
+void setObjectUniforms(Color specular, float sharpness, Object_Lighting lighting);
 /* if the currently active shader has a uniform with matching name, then this struct provides
  * the location */
 typedef struct {
@@ -100,7 +100,7 @@ typedef struct {
   GLuint arrtex;
   GLuint wtex;
   GLuint specular_color;
-  GLuint shininess;
+  GLuint sharpness;
   GLuint ignore_shadow;
   GLuint use_lighting;
   // For UI shader

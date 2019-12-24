@@ -444,7 +444,7 @@ void setActiveProgramAndUniforms(Shader_Type type) {
   case Shader_Object:
     uniformLocations.render_stage = glGetUniformLocation(shader, "render_stage");
     uniformLocations.specular_color = glGetUniformLocation(shader, "specular");
-    uniformLocations.shininess = glGetUniformLocation(shader, "shininess");
+    uniformLocations.sharpness = glGetUniformLocation(shader, "sharpness");
     uniformLocations.use_lighting = glGetUniformLocation(shader, "use_lighting");
     uniformLocations.ignore_shadow = glGetUniformLocation(shader, "ignore_shadow");
     break;
@@ -518,10 +518,10 @@ void setActiveProgramAndUniforms(Shader_Type type) {
     if (type != Shader_Line) { glActiveTexture(GL_TEXTURE0 + 0); }
   }
 }
-void setObjectUniforms(Color c, float shininess, Object_Lighting lighting) {
+void setObjectUniforms(Color c, float sharpness, Object_Lighting lighting) {
   if (lastProgram == shaderObjectDay || lastProgram == shaderObjectNight) {
     glUniformC(uniformLocations.specular_color, c);
-    glUniform1f(uniformLocations.shininess, shininess);
+    glUniform1f(uniformLocations.sharpness, sharpness);
     glUniform1i(uniformLocations.ignore_shadow, lighting == Lighting_Regular);
     glUniform1i(uniformLocations.use_lighting, lighting != Lighting_None);
   }

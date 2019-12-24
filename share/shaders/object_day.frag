@@ -8,7 +8,7 @@ precision mediump float;
 uniform mat4 model_matrix;
 // Object data
 uniform vec4 specular;
-uniform float shininess;
+uniform float sharpness;
 uniform int use_lighting;
 uniform int ignore_shadow;
 // Fog data
@@ -79,10 +79,10 @@ void main(void) {
 
     // Lighting
     vec3 E = normalize(-cpos);
-    vec3 R = normalize(-reflect(L, normal));
+    vec3 H = normalize(L + E);
     vec3 Iambient = texcolor.xyz * light_ambient;
     vec3 Idiffuse = texcolor.xyz * light_diffuse * max(dot(normal, L), 0.0);
-    vec3 Ispecular = specular.xyz * light_specular * pow(max(dot(R, E), 0.0), 0.2 * shininess);
+    vec3 Ispecular = specular.xyz * light_specular * pow(max(dot(normal, H), 0.0), sharpness);
     surfcolor = Iambient + source_strength * Idiffuse + source_strength * Ispecular;
     surfcolor = clamp(surfcolor, 0.0, 1.0);
   } else {

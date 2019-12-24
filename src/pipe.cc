@@ -27,6 +27,7 @@ Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   position = 0.5 * (from + to);
   primaryColor = Color(0.6, 0.6, 0.6, 1.0);
+  specularColor = Color(0.3, 0.3, 0.3, 1.0);
 
   windBackward = 0.0;
   windForward = 0.0;
@@ -105,7 +106,7 @@ void Pipe::drawTrunk(const GLuint *vaolist) const {
     glDisable(GL_BLEND);
   }
   setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 1., Lighting_Regular);
+  setObjectUniforms(specularColor, 10., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   int nfacets = 32;

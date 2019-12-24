@@ -393,7 +393,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
   if (dontReflectSelf) return;
 
   Color specular = specularColor.toOpaque();
-  double shininess = 20.0;
+  float sharpness = 20.0f;
 
   // Handle primary ball..
   if (modTimeLeft[MOD_GLASS]) {
@@ -403,7 +403,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     else
       phase = 1.0;
     specular = Color::mix(phase, specular, Color(1., 1., 1., 1.));
-    shininess = 50.0 * phase + shininess * (1.0 - phase);
+    sharpness = 50.0 * phase + sharpness * (1.0 - phase);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else if (modTimeLeft[MOD_FROZEN]) {
@@ -413,7 +413,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     else
       phase = 1.0;
     specular = Color::mix(phase, specular, Color(0.8, 0.8, 1., 1.));
-    shininess = 50.0 * phase + shininess * (1.0 - phase);
+    sharpness = 50.0 * phase + sharpness * (1.0 - phase);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else {
@@ -441,7 +441,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
 
     // Draw the ball...
     setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(specular, shininess, Lighting_Regular);
+    setObjectUniforms(specular, sharpness, Lighting_Regular);
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textureTrack);
     } else if (texture == 0) {
