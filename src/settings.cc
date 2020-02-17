@@ -27,10 +27,11 @@
 #include <SDL2/SDL_joystick.h>
 #include <dirent.h>
 #include <libguile.h>
-#include <locale.h>
-#include <string.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <clocale>
 #include <cstdlib>
+#include <cstring>
 
 extern double timeDilationFactor;
 

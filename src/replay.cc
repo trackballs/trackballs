@@ -22,6 +22,8 @@
 #include <sys/stat.h>
 #include <zlib.h>
 
+#include <cstring>
+
 Replay::Replay() {}
 Replay::~Replay() {}
 

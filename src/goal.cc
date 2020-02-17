@@ -24,6 +24,8 @@
 #include "map.h"
 #include "player.h"
 
+#include <cstring>
+
 Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
   strncpy(this->nextLevel, nextLevel, sizeof(this->nextLevel));
   this->rotate = rotate;

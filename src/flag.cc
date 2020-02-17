@@ -24,6 +24,8 @@
 #include "player.h"
 #include "sound.h"
 
+#include <cstring>
+
 Flag::Flag(Real x, Real y, int points, int visible, Real radius)
     : Animated(Role_OtherAnimated, 1) {
   scoreOnDeath = points;

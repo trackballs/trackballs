@@ -22,8 +22,9 @@
 
 /* For std::sort, std::nth_element */
 #include <algorithm>
-
 #include <set>
+
+#include <cstring>
 
 static int AC_DEBUG = 0;
 static int SANITY_CHECK = 0;

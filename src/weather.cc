@@ -24,6 +24,8 @@
 #include "player.h"
 #include "settings.h"
 
+#include <cstring>
+
 Weather::Weather() {
   if (Settings::settings->gfx_details <= 2) max_weather_particles = 500;
   if (Settings::settings->gfx_details == 3) max_weather_particles = 1000;

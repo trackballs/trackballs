@@ -55,6 +55,7 @@
 
 #include <zlib.h>
 #include <cstdlib>
+#include <cstring>
 
 /* Object coordinates are shifted by DX/DY relative to map coordinates in the API
  * Thus, a flag, ball, etc. placed at (222,225) will appear at (222+DX,225+DY)

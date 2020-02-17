@@ -29,6 +29,7 @@
 #include <libguile.h>
 #include <zlib.h>
 #include <cstdlib>
+#include <cstring>
 
 static char highScorePath[256];
 static HighScore* highScore = NULL;

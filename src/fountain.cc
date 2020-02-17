@@ -23,6 +23,8 @@
 #include "player.h"
 #include "settings.h"
 
+#include <cstring>
+
 Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double strength)
     : Animated(Role_OtherAnimated, 1),
       randomSpeed(randomSpeed),
