@@ -2,15 +2,18 @@
 # Note: `guile-config` ultimately calls pkg-config anyway
 # Nothing gets marked `advanced` since there aren't that many variables
 
-find_program(GUILE_SNARF NAMES guile-snarf guile-snarf2.2 guile-snarf2.0)
+find_program(GUILE_SNARF NAMES guile-snarf guile-snarf3.0 guile-snarf2.2 guile-snarf2.0)
 
 # PkgConfig is only there to provide hints
 find_package(PkgConfig)
 pkg_check_modules(PC_GUILE QUIET guile)
 if (NOT PC_GUILE_FOUND)
-  pkg_check_modules(PC_GUILE QUIET guile-2.2)
+  pkg_check_modules(PC_GUILE QUIET guile-3.0)
   if (NOT PC_GUILE_FOUND)
-    pkg_check_modules(PC_GUILE QUIET guile-2.0)
+    pkg_check_modules(PC_GUILE QUIET guile-2.2)
+    if (NOT PC_GUILE_FOUND)
+        pkg_check_modules(PC_GUILE QUIET guile-2.0)
+    endif(NOT PC_GUILE_FOUND)
   endif(NOT PC_GUILE_FOUND)
 endif(NOT PC_GUILE_FOUND)
 
@@ -19,9 +22,9 @@ set(GUILE_DEFINITIONS ${PC_GUILE_CFLAGS_OTHER})
 
 find_path(GUILE_INCLUDE_DIR libguile.h
           HINTS ${PC_GUILE_INCLUDEDIR} ${PC_GUILE_INCLUDE_DIRS}
-          PATH_SUFFIXES guile guile/2.2 guile/2.0)
+          PATH_SUFFIXES guile guile/3.0 guile/2.2 guile/2.0)
 
-find_library(GUILE_LIBRARY NAMES guile guile-2.2 guile-2.0
+find_library(GUILE_LIBRARY NAMES guile guile-3.0 guile-2.2 guile-2.0
              HINTS ${PC_GUILE_LIBDIR} ${PC_GUILE_LIBRARY_DIRS} )
 
 include(FindPackageHandleStandardArgs)
