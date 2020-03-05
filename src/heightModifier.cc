@@ -33,6 +33,7 @@ HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Rea
   this->max = max;
   this->freq = freq;
   this->phase = phase;
+  this->localtime = 0.;
   if (corner >= 10) {
     this->avg_center = 1;
     corner -= 10;
