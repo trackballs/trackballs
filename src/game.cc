@@ -168,7 +168,22 @@ void Game::loadLevel(const char *name) {
 
   randSeed = 0;
 
-  if (Settings::settings->storeReplay) replayStore.read(levelName);
+  if (Settings::settings->storeReplay) {
+    warning("Loading game, store replay is on");
+    if (Settings::settings->replay) {
+      warning("Loading game, replay is on, hence reading");
+      replayStore.read(levelName);
+      Settings::settings->sandbox = replayStore.getSettings().sandbox;
+      Settings::settings->difficulty = replayStore.getSettings().difficulty;
+      // TODO: store existing settings to a temp spot
+    } else {
+      warning("Loading game, in store mode, hence init");
+      struct GameSettings gs;
+      gs.sandbox = Settings::settings->sandbox;
+      gs.difficulty = Settings::settings->difficulty;
+      replayStore.init(gs);
+    }
+  }
 }
 
 void Game::setDefaults() {
@@ -251,7 +266,8 @@ void Game::clearLevel() {
     hooks[i].clear();
   }
 
-  if (Settings::settings->storeReplay) replayStore.save(levelName);
+  if (Settings::settings->storeReplay && !Settings::settings->replay)
+    replayStore.save(levelName);
 }
 
 void Game::handleUserInput(bool active) {

@@ -24,6 +24,8 @@
 #include "gameMode.h"
 #include "glHelp.h"
 
+class Gamer;
+
 class MainMode : public GameMode {
  public:
   MainMode();

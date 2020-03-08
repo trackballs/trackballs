@@ -70,6 +70,7 @@ void Replay::read(const char* level_name) {
   gzFile file = gzopen(log_file, "r9");
   char tmp[256];
   gzread(file, tmp, strlen(log_header_msg) + 1);
+  gzread(file, &settings, sizeof(settings));
   while (true) {
     union {
       struct PlayerControlFrame frame;
@@ -78,7 +79,7 @@ void Replay::read(const char* level_name) {
     int nbytes = gzread(file, (void*)data.buf, sizeof(struct PlayerControlFrame));
     if (nbytes != sizeof(struct PlayerControlFrame)) { break; }
     log.push_back(data.frame);
-  };
+  }
 
   gzclose(file);
 }
@@ -89,6 +90,7 @@ void Replay::save(const char* level_name) {
 
   gzFile file = gzopen(log_file, "w9");
   gzwrite(file, (void*)log_header_msg, strlen(log_header_msg) + 1);
+  gzwrite(file, &settings, sizeof(settings));
   for (int i = 0; i < log.size(); i++) {
     union {
       struct PlayerControlFrame frame;
@@ -105,6 +107,7 @@ void Replay::save(const char* level_name) {
 }
 
 void Replay::clear() { log.clear(); }
+void Replay::init(struct GameSettings s) { settings = s; }
 void Replay::add(struct PlayerControlFrame frame) { log.push_back(frame); }
 
 struct PlayerControlFrame Replay::get(int tick) {
@@ -118,4 +121,8 @@ struct PlayerControlFrame Replay::get(int tick) {
     neutral.jump = false;
     return neutral;
   }
+}
+
+struct GameSettings Replay::getSettings() {
+  return settings;
 }

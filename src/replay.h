@@ -25,6 +25,12 @@
 
 #include <vector>
 
+struct GameSettings {
+  // Store the key game state, such as level difficulty, ball modifiers, etc.
+  int difficulty;
+  int sandbox;
+};
+
 class Replay {
  public:
   Replay();
@@ -34,12 +40,15 @@ class Replay {
   void save(const char* level_name);
 
   void clear();
+  void init(struct GameSettings settings);
   void add(struct PlayerControlFrame frame);
 
   struct PlayerControlFrame get(int tick);
+  struct GameSettings getSettings();
 
  private:
   // todo: find something with better worst case
+  struct GameSettings settings;
   std::vector<struct PlayerControlFrame> log;
 };
 

@@ -168,10 +168,14 @@ void Player::tick(Real t) {
   } else
     oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
 
-  if (false) { control = Game::current->replayStore.get(Game::current->gameTicks); }
+  if (Settings::settings->replay) {
+    control = Game::current->replayStore.get(Game::current->gameTicks);
+  }
   double dx = control.dx, dy = control.dy;
   bool jump = control.jump;
-  if (Settings::settings->storeReplay) { Game::current->replayStore.add(control); }
+  if (Settings::settings->storeReplay && !Settings::settings->replay) {
+    Game::current->replayStore.add(control);
+  }
 
   /* rotate control as by settings->rotateArrows */
   {

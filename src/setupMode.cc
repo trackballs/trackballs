@@ -232,14 +232,19 @@ void SetupMode::display() {
 
   /* Difficulty */
   addText_Left(0, fontSize, row0 + rowSep * 3, _("Difficulty"), col0);
-  const char *difficulty_str =
-      (settings->sandbox
-           ? (settings->difficulty == 0
-                  ? _("Sandbox (Easy)")
-                  : (settings->difficulty == 1 ? _("Sandbox (Normal)") : _("Sandbox (Hard)")))
-           : (settings->difficulty == 0
-                  ? _("Easy")
-                  : (settings->difficulty == 1 ? _("Normal") : _("Hard"))));
+  const char *difficulty_str;
+  if (settings->replay) {
+    difficulty_str = _("Replay");
+  } else if (settings->sandbox) {
+    difficulty_str =
+        (settings->difficulty == 0
+             ? _("Sandbox (Easy)")
+             : (settings->difficulty == 1 ? _("Sandbox (Normal)") : _("Sandbox (Hard)")));
+  } else {
+    difficulty_str =
+        (settings->difficulty == 0 ? _("Easy")
+                                   : (settings->difficulty == 1 ? _("Normal") : _("Hard")));
+  }
   addText_Left(CODE_DIFFICULTY, fontSize, row0 + rowSep * 3, difficulty_str, col1,
                col1MaxExtent);
 
@@ -381,17 +386,31 @@ void SetupMode::mouseDown(int button, int x, int y) {
         gamer->textureNum = (gamer->textureNum + 1) % numTextures;
       }
       break;
-    case CODE_DIFFICULTY:
-      if (settings->sandboxAvailable) {
-        settings->difficulty =
-            mymod((settings->difficulty + 3 * settings->sandbox + (left ? 1 : -1)), 6);
-        settings->sandbox = settings->difficulty / 3;
-        settings->difficulty = settings->difficulty % 3;
+    case CODE_DIFFICULTY: {
+      int index;
+      int num_options = 3 + 3 * settings->sandboxAvailable + settings->storeReplay;
+      if (settings->storeReplay && settings->replay) {
+        index = num_options - 1;
+      } else if (settings->sandboxAvailable && settings->sandbox) {
+        index = settings->difficulty + 3;
+      } else {
+        index = settings->difficulty;
+      }
+      index = mymod(index + (left ? 1 : -1), num_options);
+      if (settings->storeReplay && index == num_options - 1) {
+        settings->difficulty = 0;
+        settings->sandbox = 0;
+        settings->replay = 1;
+      } else if (settings->sandboxAvailable) {
+        settings->sandbox = index / 3;
+        settings->difficulty = index % 3;
+        settings->replay = 0;
       } else {
         settings->sandbox = 0;
-        settings->difficulty = mymod((settings->difficulty + (left ? 1 : -1)), 3);
+        settings->difficulty = index;
+        settings->replay = 0;
       }
-      break;
+    } break;
     case CODE_START_LV:
       level = mymod((level + (left ? 1 : -1)), gamer->nKnownLevels[levelSet]);
       break;

@@ -54,16 +54,17 @@ class Settings {
   int is_windowed, resolution, colorDepth;
   int gfx_details; /* 0 - 5 */
   int showFPS;
-  int difficulty;
-  int sandbox;
+  /* Active gameplay modifiers */
+  int difficulty, sandbox, replay;
+
   int rotateSteering;
   int ignoreMouse;
   int doReflections;
   int doShadows;
   int vsynced;
   int shadowTexsize;
-  int sandboxAvailable;
-  int storeReplay;
+
+  int sandboxAvailable, storeReplay;
 
   void setLocale();
   int hasJoystick();
