@@ -172,7 +172,6 @@ void Player::tick(Real t) {
     control = Game::current->replayStore.get(Game::current->gameTicks);
   }
   double dx = control.dx, dy = control.dy;
-  bool jump = control.jump;
   if (Settings::settings->storeReplay && !Settings::settings->replay) {
     Game::current->replayStore.add(control);
   }
@@ -187,11 +186,9 @@ void Player::tick(Real t) {
 
   /* rotate controls if the camera perspective is rotated */
   double angle = ((MainMode *)GameMode::current)->xyAngle * M_PI / 2.;
-  if (angle) {
-    double tmp = dx * std::cos(angle) - dy * std::sin(angle);
-    dy = dy * std::cos(angle) + dx * std::sin(angle);
-    dx = tmp;
-  }
+  double tmp = dx * std::cos(angle) - dy * std::sin(angle);
+  dy = dy * std::cos(angle) + dx * std::sin(angle);
+  dx = tmp;
 
   /* Cap dx/dy to have total radius 1, in case input yields extreme input */
   double len = std::sqrt(dx * dx + dy * dy);
@@ -219,7 +216,7 @@ void Player::tick(Real t) {
   else
     friction = 10.0;
 
-  if (jump) {
+  if (control.jump) {
     double jumpStrength =
         Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
     jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
@@ -227,6 +224,11 @@ void Player::tick(Real t) {
     control.jump = false;
   }
   Ball::tick(t);
+
+  if (control.die) {
+    die(DIE_OTHER);
+    control.die = false;
+  }
 }
 
 void Player::die(int how) {
@@ -312,6 +314,12 @@ void Player::restart(const Coord3d &pos) {
   /* reset all mods */
   /*for(i=0;i<NUM_MODS;i++)
     modTimeLeft[i] = 0.0;*/
+}
+void Player::handleKey(int key) {
+  if (!Settings::settings->replay) {
+    if (key == 'k') { control.die = true; }
+    if (key == ' ') { control.jump = true; }
+  }
 }
 void Player::handleUserInput(bool active) {
   control.inactive = !active;

@@ -52,6 +52,7 @@ class Game {
   virtual ~Game();
 
   void handleUserInput(bool active);
+  void handleKey(int key);
   void tick(Real);
   void draw();                               /* Used for normal drawing mode */
   void drawReflection(const Coord3d &focus); /* Used when drawing environmentmaps */

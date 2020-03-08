@@ -100,6 +100,7 @@ void Replay::save(const char* level_name) {
     data.frame.dx = log[i].dx;
     data.frame.dy = log[i].dy;
     data.frame.jump = log[i].jump;
+    data.frame.die = log[i].die;
     data.frame.inactive = log[i].inactive;
     gzwrite(file, (void*)data.buf, sizeof(struct PlayerControlFrame));
   }
@@ -119,6 +120,7 @@ struct PlayerControlFrame Replay::get(int tick) {
     neutral.dx = 0.;
     neutral.dy = 0.;
     neutral.jump = false;
+    neutral.die = false;
     return neutral;
   }
 }

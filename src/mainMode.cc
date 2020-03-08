@@ -371,8 +371,7 @@ void MainMode::key(int key) {
       createSnapshot();
       break;
     }
-    if (key == 'k') { Game::current->player1->die(DIE_OTHER); }
-    if (key == ' ') { Game::current->player1->requestJump(); }
+    Game::current->player1->handleKey(key);
     break;
   case statusLevelComplete:
     break;

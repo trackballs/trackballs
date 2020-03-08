@@ -25,7 +25,8 @@
 
 struct PlayerControlFrame {
   double dx, dy;
-  bool jump;
+  bool jump;      // user requested to jump
+  bool die;       // user requested ball death
   bool inactive;  // for instance, in between restarts
 };
 
@@ -39,6 +40,7 @@ class Player : public Ball {
   void newLevel();
   void setStartVariables();          /**< Setup all default variables when starting a level */
   void restart(const Coord3d&);      /**< Restart the ball at given position */
+  void handleKey(int key);           /**< Called by main loop on keypress, only if in-game */
   void handleUserInput(bool active); /**< Called by main loop when there is new data */
   void mouse(int state, int x, int y);
 
@@ -50,8 +52,6 @@ class Player : public Ball {
   double moveBurst;
   int lives, timeLeft, score, hasWon;
   bool playing;
-
-  void requestJump() { control.jump = true; }
 
  private:
   PlayerControlFrame control;
