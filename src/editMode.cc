@@ -267,10 +267,10 @@ void EditMode::loadMap(char* name) {
   levelname[255] = '\0';
 
   /* Set the pathname under which we will save the map */
-  snprintf(pathname, sizeof(pathname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
+  snprintf(pathname, sizeof(pathname), "%s/levels/%s.map", effectiveLocalDir, name);
 
   // Default load the map from the home directory if existing (same as default pathname)
-  snprintf(mapname, sizeof(mapname), "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
+  snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveLocalDir, name);
 
   if (!fileExists(mapname))
     // Alternativly from the share directory
@@ -304,26 +304,17 @@ void EditMode::saveMap() {
   char mapname[768];
   char str[768];
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/levels", effectiveLocalDir);
   if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs is a symbolic link. Cannot save map", getenv("HOME"));
+    warning("Error, %s/levels is a symbolic link. Cannot save map", effectiveLocalDir);
     return;
   } else if (!pathIsDir(str))
     mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels", getenv("HOME"));
+  snprintf(mapname, sizeof(mapname) - 1, "%s/levels/%s.map", effectiveLocalDir, levelname);
   if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs/levels is a symbolic link. Cannot save map",
-            getenv("HOME"));
-    return;
-  } else if (!pathIsDir(str))
-    mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
-
-  snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
-           levelname);
-  if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs/levels/%s.map is a symbolic link. Cannot save map",
-            getenv("HOME"), levelname);
+    warning("Error, %s/levels/%s.map is a symbolic link. Cannot save map", effectiveLocalDir,
+            levelname);
     return;
   }
 
@@ -334,7 +325,7 @@ void EditMode::saveMap() {
   /* Check if there already exists a script file for this map */
   snprintf(str, sizeof(str), "%s/levels/%s.scm", effectiveShareDir, levelname);
   if (!pathIsFile(str)) {
-    snprintf(str, sizeof(str), "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
+    snprintf(str, sizeof(str), "%s/levels/%s.scm", effectiveLocalDir, levelname);
     if (!pathIsFile(str)) {
       /* No script file exists. Create a default one */
       if (pathIsLink(str)) {
@@ -349,8 +340,7 @@ void EditMode::saveMap() {
               _("Read the documentation for the editor and look at the examples"));
       fprintf(fp, ";;; %s\n\n", _("to learn how to customize it"));
       fprintf(fp, "(set-track-name \"%s\")\n", levelname);
-      fprintf(fp, "(set-author \"%s\")\n      ;; %s\n", getenv("USER"),
-              _("Enter your name here"));
+      fprintf(fp, "(set-author \"%s\")\n      ;; %s\n", username, _("Enter your name here"));
       fprintf(fp, "(start-time 180)\n");
       fprintf(fp, "(set-start-position 250.5 250.5)\n");
       fprintf(fp, "(add-goal 249.0 250.0 #f \"\") ;; %s\n",

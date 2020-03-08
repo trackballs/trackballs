@@ -94,7 +94,7 @@ Game::Game(Map *editmap, const char *levelname) {
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   scmname[511] = '\0';
   loadScript(scmname);
-  snprintf(scmname, 511, "%s/.trackballs/levels/%s.scm", getenv("HOME"), levelname);
+  snprintf(scmname, 511, "%s/levels/%s.scm", effectiveLocalDir, levelname);
   scmname[511] = '\0';
   if (!fileExists(scmname)) {
     snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
@@ -145,8 +145,8 @@ void Game::loadLevel(const char *name) {
    * the home directory first (eg. ~/.trackballs/levels/{name}.map)
    * It is possible to mix using a map file in the home dir and a
    * script in the share dir or viceversa */
-  snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"), name);
-  snprintf(scmname, sizeof(scmname) - 1, "%s/.trackballs/levels/%s.scm", getenv("HOME"), name);
+  snprintf(mapname, sizeof(mapname) - 1, "%s/levels/%s.map", effectiveLocalDir, name);
+  snprintf(scmname, sizeof(scmname) - 1, "%s/levels/%s.scm", effectiveLocalDir, name);
   if (!fileExists(mapname))
     snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, name);
   if (!fileExists(scmname))

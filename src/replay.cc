@@ -33,29 +33,19 @@ static const char log_header_msg[] =
 static bool getLogPath(const char* level_name, char log_file[768]) {
   char str[768];
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/logs", effectiveLocalDir);
   if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs is a symbolic link. Cannot load/save replay log",
-            getenv("HOME"));
+    warning("Error, %s//logs is a symbolic link. Cannot load/save replay log",
+            effectiveLocalDir);
     return false;
   } else if (!pathIsDir(str)) {
     mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
   }
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/logs", getenv("HOME"));
+  snprintf(log_file, 768 - 1, "%s/logs/%s.log", effectiveLocalDir, level_name);
   if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs/logs is a symbolic link. Cannot load/save replay log",
-            getenv("HOME"));
-    return false;
-  } else if (!pathIsDir(str)) {
-    mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
-  }
-
-  snprintf(log_file, 768 - 1, "%s/.trackballs/logs/%s.log", getenv("HOME"), level_name);
-  if (pathIsLink(str)) {
-    warning(
-        "Error, %s/.trackballs/logs/%s.log is a symbolic link. Cannot load/save replay log",
-        getenv("HOME"), level_name);
+    warning("Error, %s/logs/%s.log is a symbolic link. Cannot load/save replay log",
+            effectiveLocalDir, level_name);
     return false;
   }
   return true;

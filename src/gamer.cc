@@ -36,14 +36,7 @@ Gamer::Gamer() {
   memset(name, 0, sizeof(name));
   strncpy(name, _("John Doe"), sizeof(name));
   name[19] = '\0';
-  if (NULL != getenv("USER")) {
-    snprintf(name, 20, "%s", getenv("USER"));
-  }
-#ifdef WIN32
-  else {
-    if (NULL != getenv("USERNAME")) { snprintf(name, 20, "%s", getenv("USERNAME")); }
-  }
-#endif
+  if (username[0]) { snprintf(name, sizeof(name) - 1, "%s", username); }
 
   memset(levels, 0, sizeof(levels));
   for (int i = 0; i < Settings::settings->nLevelSets; i++) levels[i] = new KnownLevel[256];
@@ -103,17 +96,10 @@ void Gamer::save() {
   char str[256];
 
   Settings *settings = Settings::settings;
-
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/%s.gmr", effectiveLocalDir, name);
   if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs is a symbolic link. Cannot save settings", getenv("HOME"));
-    return;
-  }
-  if (!pathIsDir(str)) mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/%s.gmr", getenv("HOME"), name);
-  if (pathIsLink(str)) {
-    warning("Error, %s/.trackballs/%s.gmr is a symbolic link. Cannot save settings",
-            getenv("HOME"), name);
+    warning("Error, %s/%s.gmr is a symbolic link. Cannot save settings", effectiveLocalDir,
+            name);
     return;
   }
 
@@ -147,7 +133,7 @@ void Gamer::save() {
 void Gamer::update() {
   char str[256];
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/%s.gmr", getenv("HOME"), name);
+  snprintf(str, sizeof(str) - 1, "%s/%s.gmr", effectiveLocalDir, name);
   SCM ip = scm_port_from_gzip(str, 256 * 256 * 128);
   if (SCM_EOF_OBJECT_P(ip)) {
     setDefaults();
@@ -240,11 +226,8 @@ void Gamer::playerLose() {
   save();
 }
 void Gamer::reloadNames() {
-  char str[256];
-
   nNames = 0;
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
-  DIR *dir = opendir(str);
+  DIR *dir = opendir(effectiveLocalDir);
   if (dir) {
     struct dirent *dirent;
     while ((dirent = readdir(dir))) {

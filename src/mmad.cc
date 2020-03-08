@@ -57,7 +57,6 @@
 
 /* Important globals */
 static SDL_Window *window = NULL;
-static const char *program_name;
 int debug_joystick, repair_joystick;
 static int not_yet_windowed = 1;
 struct timespec displayStartTime, lastDisplayStartTime;
@@ -68,6 +67,8 @@ static bool startInEditMode;
 int displayFrameNumber = 0;
 
 char effectiveShareDir[256];
+char effectiveLocalDir[256];
+char username[256];
 int screenResolutions[5][2] = {{640, 480},
                                {800, 600},
                                {1024, 768},
@@ -246,7 +247,7 @@ static SDL_GLContext createWindow() {
   return ctx;
 }
 
-static void print_usage(FILE *stream) {
+static void print_usage(FILE *stream, const char *program_name) {
   fprintf(stream, "%s %s %s\n", _("Usage:"), program_name,
           _("[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"));
   const char *options[12][2] = {
@@ -281,7 +282,7 @@ static void print_usage(FILE *stream) {
   }
 }
 
-int testDir() {
+static int testDir() {
   if (!strlen(effectiveShareDir)) return 0;
 #ifdef WIN32
   // Really this is just done for asthetics
@@ -554,7 +555,19 @@ static void *initSettings(void *) {
 }
 
 int main(int argc, char **argv) {
-  program_name = argv[0];
+  const char *program_name = argv[0];
+
+  /* Store the username, for use as a default player/level author name */
+  const char *env_user = getenv("USER");
+  if (env_user) {
+    snprintf(username, sizeof(username) - 1, "%s", env_user);
+  }
+#ifdef WIN32
+  else {
+    const char *env_username = getenv("USERNAME");
+    if (env_username) { snprintf(name, 20, "%s", env_username); }
+  }
+#endif
 
   /*** Autmatic detection of SHARE_DIR ***/
   effectiveShareDir[0] = 0;
@@ -607,6 +620,14 @@ int main(int argc, char **argv) {
       }
     }
   }
+
+  snprintf(effectiveLocalDir, sizeof(effectiveLocalDir), "%s/.trackballs", getenv("HOME"));
+  if (pathIsLink(effectiveLocalDir)) {
+    warning("Error, %s is a symbolic link. Cannot save settings", effectiveLocalDir);
+    return EXIT_FAILURE;
+  }
+  if (!pathIsDir(effectiveLocalDir))
+    mkdir(effectiveLocalDir, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
 
   if (NULL == getenv("GUILE_LOAD_PATH")) {
     char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
@@ -688,7 +709,7 @@ int main(int argc, char **argv) {
     int i;
     switch (next_option) {
     case 'h':
-      print_usage(stdout);
+      print_usage(stdout, program_name);
       return EXIT_SUCCESS;
     case 'l':
       snprintf(Settings::settings->specialLevel, sizeof(Settings::settings->specialLevel) - 1,
@@ -724,7 +745,7 @@ int main(int argc, char **argv) {
       Settings::settings->showFPS = 1;
       break;
     case '?':
-      print_usage(stderr);
+      print_usage(stderr, program_name);
       return EXIT_FAILURE;
     case -1:
       break;
@@ -741,7 +762,7 @@ int main(int argc, char **argv) {
       repair_joystick = 1;
       break;
     default:
-      print_usage(stderr);
+      print_usage(stderr, program_name);
       return EXIT_FAILURE;
     }
   } while (next_option != -1);
@@ -755,8 +776,7 @@ int main(int argc, char **argv) {
     /* We do not need any of SDL to load and save a map */
     char mapname[512];
 
-    snprintf(mapname, sizeof(mapname) - 1, "%s/.trackballs/levels/%s.map", getenv("HOME"),
-             touchName);
+    snprintf(mapname, sizeof(mapname) - 1, "%s/levels/%s.map", effectiveLocalDir, touchName);
     if (!fileExists(mapname))
       snprintf(mapname, sizeof(mapname), "%s/levels/%s.map", effectiveShareDir, touchName);
     if (!fileExists(mapname)) snprintf(mapname, sizeof(mapname), "%s", touchName);

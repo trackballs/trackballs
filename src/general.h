@@ -33,7 +33,7 @@
 #define mkdir(a, ...) mkdir(a)
 #endif
 
-extern char effectiveShareDir[];
+extern char effectiveShareDir[], effectiveLocalDir[], username[];
 
 /*** More includes follows after typedeclarations ***/
 

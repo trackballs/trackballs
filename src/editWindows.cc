@@ -401,7 +401,7 @@ void ESaveWindow::draw() {
     addText_Center(CODE_NO, fontSize / 2, row2, _("No"), x + width - fontSize * 5);
   } else if (saveCnt == 2) {
     addText_Center(0, fontSize / 2, row1, _("Saving"), x + width / 2);
-    snprintf(str, sizeof(str), "%s/.trackballs/levels/%s", getenv("HOME"),
+    snprintf(str, sizeof(str), "%s/levels/%s", effectiveLocalDir,
              EditMode::editMode->levelname);
     // addText_Center(0,fontSize/2,row2,str,x+width/2);
     addText_Center(0, fontSize / 3, row2, str, x + width / 2);
@@ -567,7 +567,7 @@ void EOpenWindow::refreshMapList() {
   currPage = 0;
 
   /* Add all maps from the home directory */
-  snprintf(str, sizeof(str), "%s/.trackballs/levels", getenv("HOME"));
+  snprintf(str, sizeof(str), "%s/levels", effectiveLocalDir);
   dir = opendir(str);
   if (dir) {
     /* This iteratives over all files there */

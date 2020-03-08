@@ -91,7 +91,7 @@ Settings::Settings() {
 
   /* Load all settings from a scheme-syntaxed config file */
   char str[256];
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/settings", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/settings", effectiveLocalDir);
   if (access(str, R_OK) != -1) {
     SCM ip = scm_open_file(scm_from_utf8_string(str), scm_from_utf8_string("r"));
     // ^ TODO catch exception
@@ -186,15 +186,14 @@ void Settings::loadLevelSets() {
     closedir(dir);
   }
 
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/levels", effectiveLocalDir);
   dir = opendir(str);
   if (dir) {
     struct dirent *dirent;
     while ((dirent = readdir(dir))) {
       if (strlen(dirent->d_name) > 4 &&
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
-        snprintf(str, sizeof(str) - 1, "%s/.trackballs/levels/%s", getenv("HOME"),
-                 dirent->d_name);
+        snprintf(str, sizeof(str) - 1, "%s/levels/%s", effectiveLocalDir, dirent->d_name);
         loadLevelSet(str, dirent->d_name);
       }
     }
@@ -305,15 +304,7 @@ void Settings::loadLevelSet(const char *setname, const char *shortname) {
 
 void Settings::save() {
   char str[256];
-
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs", getenv("HOME"));
-  if (pathIsLink(str)) {
-    warning("%s is a symbolic link. Cannot save settings", str);
-    return;
-  }
-
-  mkdir(str, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
-  snprintf(str, sizeof(str) - 1, "%s/.trackballs/settings", getenv("HOME"));
+  snprintf(str, sizeof(str) - 1, "%s/settings", effectiveLocalDir);
   if (pathIsLink(str)) {
     warning("%s is a symbolic link. Cannot save settings", str);
     return;
