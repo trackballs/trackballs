@@ -111,6 +111,7 @@ Player::Player() : Ball(Role_Player) {
   control.dy = 0.;
   control.jump = false;
   control.inactive = true;
+  control.die = false;
 
   setReflectivity(0.4, 0);
 
