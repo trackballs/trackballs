@@ -153,6 +153,23 @@ void Game::loadLevel(const char *name) {
     snprintf(scmname, sizeof(scmname), "%s/levels/%s.scm", effectiveShareDir, name);
   snprintf(levelName, sizeof(levelName), "%s", name);
 
+  if (Settings::settings->storeReplay) {
+    if (Settings::settings->replay) {
+      warning("Reading replay");
+      replayStore.read(levelName);
+      Settings::settings->sandbox = replayStore.getSettings().sandbox;
+      Settings::settings->difficulty = replayStore.getSettings().difficulty;
+      // We do not need to store the existing settings, because they will be
+      // set by the next time the corresponding menu item changes
+    } else {
+      warning("Preparing to store replay");
+      struct GameSettings gs;
+      gs.sandbox = Settings::settings->sandbox;
+      gs.difficulty = Settings::settings->difficulty;
+      replayStore.init(gs);
+    }
+  }
+
   if (map) delete map;
   map = new Map(mapname);
   loadScript(scmname);
@@ -167,22 +184,6 @@ void Game::loadLevel(const char *name) {
   fogThickness = wantedFogThickness;
 
   randSeed = 0;
-
-  if (Settings::settings->storeReplay) {
-    if (Settings::settings->replay) {
-      warning("Reading replay");
-      replayStore.read(levelName);
-      Settings::settings->sandbox = replayStore.getSettings().sandbox;
-      Settings::settings->difficulty = replayStore.getSettings().difficulty;
-      // TODO: store existing settings to a temp spot
-    } else {
-      warning("Preparing to store replay");
-      struct GameSettings gs;
-      gs.sandbox = Settings::settings->sandbox;
-      gs.difficulty = Settings::settings->difficulty;
-      replayStore.init(gs);
-    }
-  }
 }
 
 void Game::setDefaults() {
