@@ -45,9 +45,6 @@ class GameMode {
   static void activate(GameMode *);
   static GameMode *current;
 
- protected:
-  int keyUpReceived;
-
  private:
 };
 

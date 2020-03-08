@@ -22,7 +22,7 @@
 
 GameMode* GameMode::current;
 
-GameMode::GameMode() { keyUpReceived = 1; }
+GameMode::GameMode() {}
 GameMode::~GameMode() {}
 void GameMode::activate(GameMode* gm) {
   if (current) current->deactivated();
@@ -31,7 +31,7 @@ void GameMode::activate(GameMode* gm) {
 }
 void GameMode::display() {}
 void GameMode::key(int) {}
-void GameMode::keyUp(int) { keyUpReceived = 1; }
+void GameMode::keyUp(int) {}
 void GameMode::tick(Real /*td*/) {}
 void GameMode::mouse(int /*state*/, int /*x*/, int /*y*/) {}
 void GameMode::mouseDown(int /*button*/, int /*x*/, int /*y*/) {}
