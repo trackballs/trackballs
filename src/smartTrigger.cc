@@ -24,8 +24,8 @@
 #include "guile.h"
 #include "player.h"
 
-SmartTrigger::SmartTrigger(Real x, Real y, Real radius, SCM entering, SCM leaving)
-    : GameHook(Role_GameHook),
+SmartTrigger::SmartTrigger(Game &g, Real x, Real y, Real radius, SCM entering, SCM leaving)
+    : GameHook(g, Role_GameHook),
       x(x),
       y(y),
       radius(radius),
@@ -47,14 +47,14 @@ void SmartTrigger::tick(Real t) {
   GameHook::tick(t);
 
   if (!is_on) return;
-  Player *ply = Game::current->player1;
+  Player *ply = game.player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;
   if (dx * dx + dy * dy < radius * radius) {
-    if (!wasIn && entering) Game::current->queueCall(entering);
+    if (!wasIn && entering) game.queueCall(entering);
     wasIn = true;
   } else {
-    if (wasIn && leaving) Game::current->queueCall(leaving);
+    if (wasIn && leaving) game.queueCall(leaving);
     wasIn = false;
   }
 }

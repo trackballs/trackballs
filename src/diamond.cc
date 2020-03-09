@@ -25,7 +25,7 @@
 #include "sign.h"
 #include "sound.h"
 
-Diamond::Diamond(const Coord3d &pos) : Animated(Role_OtherAnimated, 1) {
+Diamond::Diamond(Game &g, const Coord3d &pos) : Animated(g, Role_OtherAnimated, 1) {
   position = pos;
 
   specularColor = Color(1., 1., 1., 1.);
@@ -46,7 +46,7 @@ void Diamond::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat data[8 * 8];
   packObjectVertex(&data[0], position[0], position[1], position[2] - .4, 0., 0., color, flat);
   for (int i = 0; i < 6; i++) {
-    float v = i * 2.0 * M_PI / 6.0 + Game::current->gameTime;
+    float v = i * 2.0 * M_PI / 6.0 + game.gameTime;
     packObjectVertex(&data[(i + 1) * 8], position[0] + std::sin(v) * 0.25,
                      position[1] + std::cos(v) * 0.25, position[2], 0., 0., color, flat);
   }
@@ -85,8 +85,8 @@ void Diamond::tick(Real t) {
 
   Coord3d v0;
   if (fade <= 0.0) return;
-  v0 = Game::current->player1->position - position;
-  if (length(v0) < 0.3 + Game::current->player1->radius) {
+  v0 = game.player1->position - position;
+  if (length(v0) < 0.3 + game.player1->radius) {
     if (!taken) onGet();
     taken = 1;
   } else {
@@ -95,12 +95,12 @@ void Diamond::tick(Real t) {
   }
 }
 void Diamond::onGet() {
-  Game::current->map->startPosition = position;
+  game.map->startPosition = position;
   playEffect(SFX_GOT_FLAG);
   fade = -14.0;
 
   Coord3d signPos;
   signPos = position;
   signPos[2] += 1.0;
-  Game::current->add(new Sign(_("Save point"), 6.0, 1.0, 60.0, signPos));
+  game.add(new Sign(game, _("Save point"), 6.0, 1.0, 60.0, signPos));
 }

@@ -29,10 +29,10 @@
 #include "sound.h"
 #include "spike.h"
 
-SideSpike::SideSpike(const Coord3d &position, Real speed, Real phase, int side)
-    : Animated(Role_OtherAnimated, 1) {
+SideSpike::SideSpike(Game &g, const Coord3d &position, Real speed, Real phase, int side)
+    : Animated(g, Role_OtherAnimated, 1) {
   this->position = position;
-  this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
+  this->position[2] = game.map->getHeight(position[0], position[1]) + 0.0;
   this->speed = speed;
   while (phase < 0.0) phase += 1.0;
   this->phase = phase;
@@ -133,7 +133,7 @@ void SideSpike::tick(Real t) {
   offset = z;
 
   // play a 'rising' sound if the ball is in the round
-  Player *player = Game::current->player1;
+  Player *player = game.player1;
   double dist =
       std::sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
                 (position[1] - player->position[1]) * (position[1] - player->position[1]));
@@ -152,7 +152,7 @@ void SideSpike::tick(Real t) {
   int ol = 0;           // true if possible bounce
 
   Animated **balls;
-  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  int nballs = game.balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
 

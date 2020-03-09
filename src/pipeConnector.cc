@@ -22,8 +22,8 @@
 
 #include "game.h"
 
-PipeConnector::PipeConnector(const Coord3d &pos, Real r)
-    : Animated(Role_PipeConnector, 1), radius(r) {
+PipeConnector::PipeConnector(Game &g, const Coord3d &pos, Real r)
+    : Animated(g, Role_PipeConnector, 1), radius(r) {
   position = pos;
   primaryColor = Color(0.6, 0.6, 0.6, 1.0);
 

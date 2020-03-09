@@ -28,9 +28,9 @@
 
 Real timeLow = 2.0, timeRise = 3.0, timeHigh = 2.0, timeFall = 3.0;
 
-CyclicPlatform::CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real high,
+CyclicPlatform::CyclicPlatform(Game &g, int x1, int y1, int x2, int y2, Real low, Real high,
                                Real offset, Real speed)
-    : GameHook(Role_GameHook) {
+    : GameHook(g, Role_GameHook) {
   this->x1 = std::min(x1, x2);
   this->x2 = std::max(x1, x2);
   this->y1 = std::min(y1, y2);
@@ -49,7 +49,7 @@ void CyclicPlatform::tick(Real dt) {
   /*
   Real t = Game::current->gameTime + offset;
   t -= ((int)(t/cycleTime)) * cycleTime;*/
-  Map *map = Game::current->map;
+  Map *map = game.map;
   if (!map) return;
 
   Real h, oldHeight = map->cell(x1, y1).heights[0];
@@ -75,7 +75,7 @@ void CyclicPlatform::tick(Real dt) {
     double upper[3] = {(double)x2, (double)y2, oldHeight + 0.1};
 
     Animated **balls;
-    int nballs = Game::current->balls->bboxOverlapsWith(lower, upper, &balls);
+    int nballs = game.balls->bboxOverlapsWith(lower, upper, &balls);
     for (int i = 0; i < nballs; i++) {
       Ball *ball = (Ball *)balls[i];
       if (ball->no_physics) continue;

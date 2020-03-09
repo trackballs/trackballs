@@ -26,13 +26,13 @@
 #include "player.h"
 #include "sound.h"
 
-Black::Black(Real x, Real y) : Ball(Role_Ball) {
+Black::Black(Game& g, Real x, Real y) : Ball(g, Role_Ball) {
   realRadius = 0.4;
   radius = realRadius;
   ballResolution = BALL_HIRES;
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
+  position[2] = game.map->getHeight(position[0], position[1]) + radius;
   crashTolerance = 7;
 
   /* Set color to black */
@@ -59,10 +59,10 @@ void Black::die(int how) {
       pos[0] = position[0] + std::cos(a) * 0.25 * std::sin(b);
       pos[1] = position[1] + std::sin(a) * 0.25 * std::sin(b);
       pos[2] = position[2] + 0.25 * std::cos(b) + 0.5;
-      vel[0] = velocity[0] + (Game::current->frandom() - 0.5);
-      vel[1] = velocity[1] + (Game::current->frandom() - 0.5);
-      vel[2] = velocity[2] + (Game::current->frandom() - 0.5);
-      Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * Game::current->frandom()));
+      vel[0] = velocity[0] + (game.frandom() - 0.5);
+      vel[1] = velocity[1] + (game.frandom() - 0.5);
+      vel[2] = velocity[2] + (game.frandom() - 0.5);
+      game.add(new Debris(game, this, pos, vel, 2.0 + 8.0 * game.frandom()));
     }
 
   remove();
@@ -72,14 +72,14 @@ void Black::die(int how) {
     playEffect(SFX_FF_DEATH);
 }
 void Black::tick(Real t) {
-  if (Game::current->player1->playing && is_on) {
-    Coord3d v = Game::current->player1->position - position;
+  if (game.player1->playing && is_on) {
+    Coord3d v = game.player1->position - position;
     double dist = length(v);
 
-    double d = Game::current->map->getHeight(position[0] + velocity[0] * 1.0,
-                                             position[1] + velocity[1] * 1.0);
-    Cell& c2 = Game::current->map->cell((int)(position[0] + velocity[0] * 1.0),
-                                        (int)(position[1] + velocity[1] * 1.0));
+    double d =
+        game.map->getHeight(position[0] + velocity[0] * 1.0, position[1] + velocity[1] * 1.0);
+    Cell& c2 = game.map->cell((int)(position[0] + velocity[0] * 1.0),
+                              (int)(position[1] + velocity[1] * 1.0));
 
     bool expect_fall = d < position[2] - 1.0 && !modTimeLeft[MOD_FLOAT];
     bool death_cell = c2.flags & CELL_ACID || c2.flags & CELL_KILL;

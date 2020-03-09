@@ -22,8 +22,8 @@
 
 #include "game.h"
 
-ForceField::ForceField(const Coord3d &pos, const Coord3d &dir, Real h, int a)
-    : Animated(Role_Forcefield, 1) {
+ForceField::ForceField(Game &g, const Coord3d &pos, const Coord3d &dir, Real h, int a)
+    : Animated(g, Role_Forcefield, 1) {
   position = pos;
   direction = dir;
   height = h;

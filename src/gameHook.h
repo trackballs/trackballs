@@ -45,9 +45,11 @@ enum {
   Role_MaxTypes = 8
 };
 
+class Game;
+
 class GameHook {
  public:
-  explicit GameHook(int role);
+  explicit GameHook(Game& game, int role);
   virtual ~GameHook();
   virtual void tick(Real);
   virtual void doExpensiveComputations();
@@ -68,6 +70,7 @@ class GameHook {
   /** Unregisters all hooks */
   virtual void releaseCallbacks();
 
+  Game& game; /* A pointer to the game to which the hook is attached */
   int entity_role;
   bool is_on;   /* for switches, forcefields, objects with toggle state */
   bool invalid; /* if true, object is slated for cleanup */

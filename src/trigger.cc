@@ -24,8 +24,8 @@
 #include "guile.h"
 #include "player.h"
 
-Trigger::Trigger(Real x, Real y, Real radius, SCM expr)
-    : GameHook(Role_GameHook), x(x), y(y), radius(radius), expr(expr) {
+Trigger::Trigger(Game& g, Real x, Real y, Real radius, SCM expr)
+    : GameHook(g, Role_GameHook), x(x), y(y), radius(radius), expr(expr) {
   if (expr) scm_gc_protect_object(expr);
 }
 Trigger::~Trigger() { Trigger::releaseCallbacks(); }
@@ -37,8 +37,8 @@ void Trigger::tick(Real t) {
   GameHook::tick(t);
 
   if (!is_on) return;
-  Player *ply = Game::current->player1;
+  Player* ply = game.player1;
   double dx = ply->position[0] - x;
   double dy = ply->position[1] - y;
-  if (dx * dx + dy * dy < radius * radius) Game::current->queueCall(expr);
+  if (dx * dx + dy * dy < radius * radius) game.queueCall(expr);
 }

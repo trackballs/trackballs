@@ -28,8 +28,8 @@
 #include "map.h"
 #include "sound.h"
 
-Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
-    : Animated(Role_OtherAnimated, 1) {
+Bird::Bird(Game &g, Real x, Real y, Real dx, Real dy, Real size, Real speed)
+    : Animated(g, Role_OtherAnimated, 1) {
   this->x = x;
   this->y = y;
   this->dx = dx - x;
@@ -39,7 +39,7 @@ Bird::Bird(Real x, Real y, Real dx, Real dy, Real size, Real speed)
   this->lng = std::sqrt((double)(this->dx * this->dx + this->dy * this->dy));
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
+  position[2] = game.map->getHeight(position[0], position[1]) + .5;
   primaryColor = Color(1., 1., 1., 1.);
   secondaryColor = Color(0.6, 0.8, 0.9, 1.);
   animation = 0.0;
@@ -128,11 +128,11 @@ void Bird::tick(Real t) {
   position[0] += speed * t * dx / lng;
   position[1] += speed * t * dy / lng;
   if (!(flags & BIRD_CONSTANT_HEIGHT))
-    position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
+    position[2] = game.map->getHeight(position[0], position[1]) + .5;
 
   // check for collisions with balls
   Animated **balls;
-  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  int nballs = game.balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
     if (ball->no_physics) continue;
@@ -148,7 +148,7 @@ void Bird::tick(Real t) {
         // restart the bird
         position[0] = x;
         position[1] = y;
-        position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
+        position[2] = game.map->getHeight(position[0], position[1]) + .5;
         hide = 1.;
         triggerHook(GameHookEvent_Death, NULL);
         triggerHook(GameHookEvent_Spawn, NULL);
@@ -167,7 +167,7 @@ void Bird::tick(Real t) {
     // restart
     position[0] = x;
     position[1] = y;
-    position[2] = Game::current->map->getHeight(position[0], position[1]) + .5;
+    position[2] = game.map->getHeight(position[0], position[1]) + .5;
     hide = .5;  // wait .5 sec before restarting
     triggerHook(GameHookEvent_Spawn, NULL);
   }

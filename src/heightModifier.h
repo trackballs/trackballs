@@ -26,8 +26,8 @@
 
 class HeightModifier : public GameHook {
  public:
-  HeightModifier(int corner, int x, int y, Real min, Real max, Real freq, Real phase, int not1,
-                 int not2, int not3);
+  HeightModifier(Game& g, int corner, int x, int y, Real min, Real max, Real freq, Real phase,
+                 int not1, int not2, int not3);
 
   void tick(Real t);
 

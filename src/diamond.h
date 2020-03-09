@@ -25,7 +25,7 @@
 
 class Diamond : public Animated {
  public:
-  Diamond(const Coord3d& position);
+  Diamond(Game& g, const Coord3d& position);
 
   virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
   virtual void drawBuffers1(const GLuint*) const;

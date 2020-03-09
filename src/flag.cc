@@ -26,8 +26,8 @@
 
 #include <cstring>
 
-Flag::Flag(Real x, Real y, int points, int visible, Real radius)
-    : Animated(Role_OtherAnimated, 1) {
+Flag::Flag(Game &g, Real x, Real y, int points, int visible, Real radius)
+    : Animated(g, Role_OtherAnimated, 1) {
   scoreOnDeath = points;
   timeOnDeath = Game::defaultScores[SCORE_FLAG][1];
 
@@ -35,7 +35,7 @@ Flag::Flag(Real x, Real y, int points, int visible, Real radius)
   this->radius = radius;
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
+  position[2] = game.map->getHeight(position[0], position[1]);
   primaryColor = Color(0.5, 0.5, 1.0, 1.0);
   secondaryColor = Color(0.8, 0.8, 0.8, 1.0);
 }
@@ -63,7 +63,7 @@ void Flag::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   pos += packObjectVertex(pos, position[0] - ox, position[1], position[2] + 0.71, 0., 0.,
                           secondaryColor, perp);
 
-  float d1 = Game::current->gameTime * 1.0f, d2 = 3.0f, d3 = 0.5f;
+  float d1 = game.gameTime * 1.0f, d2 = 3.0f, d3 = 0.5f;
   GLfloat dx[5] = {0.0f, 0.1f * d3 * std::sin(d1 + d2 * 0.1f),
                    0.2f * d3 * std::sin(d1 + d2 * 0.2f), 0.3f * d3 * std::sin(d1 + d2 * 0.3f),
                    0.4f * d3 * std::sin(d1 + d2 * 0.4f)};
@@ -109,8 +109,8 @@ void Flag::drawBuffers2(const GLuint * /*vaolist*/) const {}
 void Flag::tick(Real t) {
   Animated::tick(t);
 
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
-  Player *p = Game::current->player1;
+  position[2] = game.map->getHeight(position[0], position[1]);
+  Player *p = game.player1;
   Coord3d diff;
 
   diff = position - p->position;

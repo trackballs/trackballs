@@ -25,7 +25,7 @@
 
 class CSwitch : public Animated {
  public:
-  CSwitch(Real x, Real y, SCM on, SCM off);
+  CSwitch(Game& g, Real x, Real y, SCM on, SCM off);
   virtual ~CSwitch();
   virtual void releaseCallbacks();
 

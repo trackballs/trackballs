@@ -25,9 +25,9 @@
 #include "general.h"
 #include "guile.h"
 
-Animator::Animator(Real length, Real position, Real direction, Real v0, Real v1, int repeat,
-                   SCM fun)
-    : GameHook(Role_GameHook),
+Animator::Animator(Game& game, Real length, Real position, Real direction, Real v0, Real v1,
+                   int repeat, SCM fun)
+    : GameHook(game, Role_GameHook),
       direction(direction),
       position(std::fmod(position, 1.0)),
       length(length),
@@ -69,7 +69,7 @@ void Animator::tick(Real td) {
   }
   if (position >= length && repeat & ANIMATOR_1_WRAP) { position = position - length; }
 
-  Game::current->queueCall(fun, getValue());
+  game.queueCall(fun, getValue());
 
   if (position <= 0 && repeat & ANIMATOR_0_REMOVE) {
     remove();

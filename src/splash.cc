@@ -23,8 +23,9 @@
 #include "game.h"
 #include "settings.h"
 
-Splash::Splash(Coord3d center, Coord3d velocity, Color color, double strength, double radius)
-    : Animated(Role_OtherAnimated, 1) {
+Splash::Splash(Game& g, Coord3d center, Coord3d velocity, Color color, double strength,
+               double radius)
+    : Animated(g, Role_OtherAnimated, 1) {
   timeLeft = 3.0;
   nDroplets = (int)strength;
   if (nDroplets > 32) nDroplets = 32;

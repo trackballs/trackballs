@@ -25,7 +25,7 @@
 
 class PipeConnector : public Animated {
  public:
-  PipeConnector(const Coord3d& pos, Real radius);
+  PipeConnector(Game& g, const Coord3d& pos, Real radius);
 
   virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
   virtual void drawBuffers1(const GLuint*) const;

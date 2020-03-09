@@ -30,8 +30,8 @@
 
 int isGoodPill[NUM_MODS] = {1, 1, 1, 0, 0, 0, 1, 1};
 
-ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
-    : Ball(Role_OtherAnimated), kind(kind), resurrecting(resurrecting), time(time) {
+ModPill::ModPill(Game &g, Real x, Real y, int kind, int time, int resurrecting)
+    : Ball(g, Role_OtherAnimated), kind(kind), resurrecting(resurrecting), time(time) {
   no_physics = true;
   realRadius = 0.2;
   radius = realRadius;
@@ -60,7 +60,7 @@ ModPill::ModPill(Real x, Real y, int kind, int time, int resurrecting)
 
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
+  position[2] = game.map->getHeight(position[0], position[1]) + radius;
 
   timeLeft = 0.;
 }
@@ -70,7 +70,7 @@ ModPill::~ModPill() {}
 void ModPill::tick(Real t) {
   Animated::tick(t);
 
-  Player *player = Game::current->player1;
+  Player *player = game.player1;
   if (!is_on) {
     timeLeft -= t;
     if (resurrecting > 0.0 && timeLeft < 0) is_on = true;
@@ -88,7 +88,7 @@ void ModPill::tick(Real t) {
   if (is_on && kind == MOD_NITRO) Ball::generateNitroDebris(t);
 
   if (is_on) {
-    position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
+    position[2] = game.map->getHeight(position[0], position[1]) + radius;
     Coord3d v = player->position - position;
     double dist = length(v);
     if (dist < radius + player->radius) {
@@ -101,7 +101,7 @@ void ModPill::tick(Real t) {
           _("Speed ball"), _("Extra jump"), _("Spikes"),   _("Glass ball"),
           _("Dizzy!"),     _("Freeze!"),    _("Floating"), _("Extra life"),
           _("Small ball"), _("Large ball"), _("Nitro")};
-      Game::current->add(new Sign(modExplanations[kind], 6.0, 1.0, 60.0, signPos));
+      game.add(new Sign(game, modExplanations[kind], 6.0, 1.0, 60.0, signPos));
 
       if (kind == MOD_EXTRA_LIFE) {
         player->lives = std::min(4, player->lives + 1);

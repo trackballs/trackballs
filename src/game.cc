@@ -65,7 +65,7 @@ Game::Game(const char *name, Gamer *g) {
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   loadScript(scmname);
 
-  player1 = new Player();
+  player1 = new Player(*this);
   add(player1);
 
   loadLevel(name);

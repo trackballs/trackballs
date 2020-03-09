@@ -24,9 +24,9 @@
 #include "game.h"
 #include "map.h"
 
-HeightModifier::HeightModifier(int corner, int x, int y, Real min, Real max, Real freq,
-                               Real phase, int not1, int not2, int not3)
-    : GameHook(Role_GameHook) {
+HeightModifier::HeightModifier(Game& g, int corner, int x, int y, Real min, Real max,
+                               Real freq, Real phase, int not1, int not2, int not3)
+    : GameHook(g, Role_GameHook) {
   this->x = x;
   this->y = y;
   this->min = min;
@@ -54,7 +54,7 @@ void HeightModifier::tick(Real t) {
   GameHook::tick(t);
 
   localtime += t;
-  Cell& c = Game::current->map->cell(x, y);
+  Cell& c = game.map->cell(x, y);
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
   int cor1 = 0, cor2 = 0, cor3 = 0;
 
@@ -113,9 +113,9 @@ void HeightModifier::tick(Real t) {
     break;
   }
 
-  Cell& c1 = Game::current->map->cell(x1, y1);
-  Cell& c2 = Game::current->map->cell(x2, y2);
-  Cell& c3 = Game::current->map->cell(x3, y3);
+  Cell& c1 = game.map->cell(x1, y1);
+  Cell& c2 = game.map->cell(x2, y2);
+  Cell& c3 = game.map->cell(x3, y3);
 
   c.heights[corner] = v;
   if ((cor1 != not1) && (cor1 != not2) && (cor1 != not3)) c1.heights[cor1] = v;
@@ -133,8 +133,8 @@ void HeightModifier::tick(Real t) {
   }
 
   // todo: use a single call
-  Game::current->map->markCellsUpdated(x, y, x, y, true);
-  Game::current->map->markCellsUpdated(x1, y1, x1, y1, true);
-  Game::current->map->markCellsUpdated(x2, y2, x2, y2, true);
-  Game::current->map->markCellsUpdated(x3, y3, x3, y3, true);
+  game.map->markCellsUpdated(x, y, x, y, true);
+  game.map->markCellsUpdated(x1, y1, x1, y1, true);
+  game.map->markCellsUpdated(x2, y2, x2, y2, true);
+  game.map->markCellsUpdated(x3, y3, x3, y3, true);
 }

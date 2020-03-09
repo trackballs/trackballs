@@ -25,7 +25,8 @@
 #include "map.h"
 #include "scoreSign.h"
 
-Animated::Animated(int role, int maxVBOpairsOrVAOs) : GameHook(role), nVOs(maxVBOpairsOrVAOs) {
+Animated::Animated(Game& game, int role, int maxVBOpairsOrVAOs)
+    : GameHook(game, role), nVOs(maxVBOpairsOrVAOs) {
   primaryColor = Color(0.8, 0.8, 0.8, 1.);
   secondaryColor = Color(0.3, 0.3, 0.3, 1.);
   specularColor = Color(0., 0., 0., 1.);
@@ -146,10 +147,10 @@ void Animated::die(int how) {
 
   if (scoreOnDeath != 0.0) {
     pos[2] += 0.5;
-    Game::current->add(new ScoreSign((int)scoreOnDeath, pos, SCORESIGN_SCORE));
+    game.add(new ScoreSign(game, (int)scoreOnDeath, pos, SCORESIGN_SCORE));
   }
   if (timeOnDeath != 0.0) {
     pos[2] += 0.5;
-    Game::current->add(new ScoreSign((int)timeOnDeath, pos, SCORESIGN_TIME));
+    game.add(new ScoreSign(game, (int)timeOnDeath, pos, SCORESIGN_TIME));
   }
 }

@@ -28,10 +28,10 @@
 #include "player.h"
 #include "sound.h"
 
-Spike::Spike(const Coord3d &position, Real speed, Real phase)
-    : Animated(Role_OtherAnimated, 1) {
-  this->position = position;
-  this->position[2] = Game::current->map->getHeight(position[0], position[1]) + 0.0;
+Spike::Spike(Game &g, const Coord3d &pos, Real speed, Real phase)
+    : Animated(g, Role_OtherAnimated, 1) {
+  this->position = pos;
+  this->position[2] = game.map->getHeight(pos[0], pos[1]) + 0.0;
   this->speed = speed;
   while (phase < 0.0) phase += 1.0;
   this->phase = phase;
@@ -81,7 +81,7 @@ void Spike::tick(Real t) {
 
   if (is_on) phase += t * this->speed;
   while (phase > 1.0) phase -= 1.0;
-  double h = Game::current->map->getHeight(position[0], position[1]) - 0.3;
+  double h = game.map->getHeight(position[0], position[1]) - 0.3;
   double z;
   if (phase < 0.4) {
     /* spike is low */
@@ -102,7 +102,7 @@ void Spike::tick(Real t) {
 
   Animated **balls;
   double x = position[0], y = position[1];
-  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  int nballs = game.balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
 
@@ -131,7 +131,7 @@ void Spike::tick(Real t) {
   }
 
   // play a 'rising' sound if the ball is in the round
-  Player *player = Game::current->player1;
+  Player *player = game.player1;
   double dist =
       std::sqrt((position[0] - player->position[0]) * (position[0] - player->position[0]) +
                 (position[1] - player->position[1]) * (position[1] - player->position[1]));

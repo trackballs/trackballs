@@ -25,7 +25,7 @@
 #include "game.h"
 #include "guile.h"
 
-GameHook::GameHook(int role) {
+GameHook::GameHook(Game &g, int role) : game(g) {
   invalid = false;
   is_on = true;
   entity_role = role;
@@ -51,7 +51,7 @@ void GameHook::registerHook(GameHookEvent event, SCM hook) {
 void GameHook::triggerHook(GameHookEvent event, SCM object) {
   if (event < 0 || event >= GameHookEvent_MaxHooks) return;
 
-  if (hooks[event]) { Game::current->queueCall(hooks[event], this, object); }
+  if (hooks[event]) { game.queueCall(hooks[event], this, object); }
 }
 
 SCM GameHook::getHook(GameHookEvent event) {

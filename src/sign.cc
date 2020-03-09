@@ -27,17 +27,17 @@
 
 #define SIGN_SCALE 0.007
 
-Sign::Sign(const char *string, Real l, Real s, Real r, const Coord3d &pos)
-    : Animated(Role_OtherAnimated, 1) {
+Sign::Sign(Game &g, const char *string, Real l, Real s, Real r, const Coord3d &pos)
+    : Animated(g, Role_OtherAnimated, 1) {
   position = pos;
   if (l <= 0.0) l = 1e10;
   life = l;
   scale = s;
   rotation = r;
   tot_rot = 0.0;
-  if (Game::current->isNight) {
+  if (game.isNight) {
     primaryColor = Color(1., 1., 1., 1.);
-  } else if (Game::current->fogThickness) {
+  } else if (game.fogThickness) {
     primaryColor = Color(0., 0., 0., 1.);
   } else {
     primaryColor = Color(1., 1., 1., 1.);

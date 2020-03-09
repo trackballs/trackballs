@@ -26,16 +26,17 @@
 
 #include <cstring>
 
-Goal::Goal(Real x, Real y, int rotate, char *nextLevel) : Flag(x, y, 1000, 1, 0.2) {
+Goal::Goal(Game &g, Real x, Real y, int rotate, char *nextLevel)
+    : Flag(g, x, y, 1000, 1, 0.2) {
   strncpy(this->nextLevel, nextLevel, sizeof(this->nextLevel));
   this->rotate = rotate;
   primaryColor = Color(0.9, 0.8, 0.3, 1.0);
   specularColor = Color(0.95, 0.9, 0.65, 1.0);
 }
 void Goal::onGet() {
-  if (!Game::current->player1->hasWon) {
-    strncpy(Game::current->nextLevel, nextLevel, sizeof(Game::current->nextLevel));
-    if (Game::current->map->isBonus)
+  if (!game.player1->hasWon) {
+    strncpy(game.nextLevel, nextLevel, sizeof(game.nextLevel));
+    if (game.map->isBonus)
       MainMode::mainMode->bonusLevelComplete();
     else
       MainMode::mainMode->levelComplete();

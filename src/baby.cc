@@ -25,14 +25,14 @@
 #include "map.h"
 #include "sound.h"
 
-Baby::Baby(Real x, Real y) : Black(x, y) {
+Baby::Baby(Game& g, Real x, Real y) : Black(g, x, y) {
   acceleration = 1.0;
   ballResolution = BALL_LORES;
   realRadius = 0.1;
   radius = realRadius;
   crashTolerance = 3;
   horizon = 3.0;
-  position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
+  position[2] = game.map->getHeight(position[0], position[1]) + radius;
   modTimeLeft[MOD_DIZZY] = -1.0;
   likesPlayer = -1;
   scoreOnDeath = Game::defaultScores[SCORE_BABY][0];

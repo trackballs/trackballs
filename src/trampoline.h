@@ -25,7 +25,7 @@
 
 class Trampoline : public GameHook {
  public:
-  Trampoline(int x, int y);
+  Trampoline(Game& g, int x, int y);
   virtual void tick(Real);
 
  private:

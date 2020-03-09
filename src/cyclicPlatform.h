@@ -30,7 +30,8 @@ class CyclicPlatform : public GameHook {
      Total cycle time timeLow+timeRise+timeHigh+timeFall
      offset is the cycle offset from timeZero
   */
-  CyclicPlatform(int x1, int y1, int x2, int y2, Real low, Real high, Real offset, Real speed);
+  CyclicPlatform(Game& g, int x1, int y1, int x2, int y2, Real low, Real high, Real offset,
+                 Real speed);
   void tick(Real);
 
   Real speed;

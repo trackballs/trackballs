@@ -32,7 +32,7 @@ struct PlayerControlFrame {
 
 class Player : public Ball {
  public:
-  Player();
+  Player(Game& g);
   virtual ~Player();
 
   void tick(Real time);

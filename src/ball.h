@@ -48,7 +48,7 @@ class Cell;
     (player/opponents/babies) are inherited */
 class Ball : public Animated {
  public:
-  explicit Ball(int role);
+  explicit Ball(Game& g, int role);
   virtual ~Ball();
   bool physics(Real time);
 

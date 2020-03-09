@@ -26,7 +26,7 @@
 
 class SideSpike : public Animated {
  public:
-  SideSpike(const Coord3d& position, Real speed, Real phase, int side);
+  SideSpike(Game& g, const Coord3d& position, Real speed, Real phase, int side);
 
   virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
   virtual void drawBuffers1(const GLuint*) const;

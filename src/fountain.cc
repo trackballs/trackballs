@@ -25,8 +25,9 @@
 
 #include <cstring>
 
-Fountain::Fountain(const Coord3d &pos, double randomSpeed, double radius, double strength)
-    : Animated(Role_OtherAnimated, 1),
+Fountain::Fountain(Game &g, const Coord3d &pos, double randomSpeed, double radius,
+                   double strength)
+    : Animated(g, Role_OtherAnimated, 1),
       randomSpeed(randomSpeed),
       radius(radius),
       strength(strength) {
@@ -137,7 +138,7 @@ void Fountain::tick(Real t) {
       velocities[i][2] -= t * 1.0;
     }
 
-  Real timeNow = Game::current->gameTime;
+  Real timeNow = game.gameTime;
   createPoint += t * strength;
   while (createPoint > 0.0) {
     createPoint -= 1.0;
@@ -156,7 +157,7 @@ void Fountain::tick(Real t) {
   if (strength > 0.) {
     // position[2] = Game::current->map->getHeight(position[0],position[1]);   //MB. No thanks,
     // let's keep the old position it messes with some maps otherwise
-    Player *p = Game::current->player1;
+    Player *p = game.player1;
     Coord3d diff;
 
     diff = position - p->position;
@@ -167,7 +168,7 @@ void Fountain::tick(Real t) {
     }
   }
 
-  while (creationTime[drawFrom] < Game::current->gameTime - 1.5) {
+  while (creationTime[drawFrom] < game.gameTime - 1.5) {
     if (drawFrom == nextPoint) break;
     drawFrom = (drawFrom + 1) % 800;
   }

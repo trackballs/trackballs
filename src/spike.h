@@ -26,7 +26,7 @@
 
 class Spike : public Animated {
  public:
-  Spike(const Coord3d& position, Real speed, Real phase);
+  Spike(Game& g, const Coord3d& position, Real speed, Real phase);
 
   virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
   virtual void drawBuffers1(const GLuint*) const;

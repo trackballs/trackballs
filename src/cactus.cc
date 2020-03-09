@@ -27,10 +27,10 @@
 #include "map.h"
 #include "sound.h"
 
-Cactus::Cactus(Real x, Real y, Real radius) : Animated(Role_OtherAnimated, 1) {
+Cactus::Cactus(Game &g, Real x, Real y, Real radius) : Animated(g, Role_OtherAnimated, 1) {
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
+  position[2] = game.map->getHeight(position[0], position[1]);
   primaryColor = Color(0.3, 1., 0.4, 1.);
   secondaryColor = Color(0., 0., 0., 1.);
   this->killed = false;
@@ -165,7 +165,7 @@ void Cactus::drawBuffers2(const GLuint * /*idxbufs*/) const {}
 void Cactus::tick(Real t) {
   Animated::tick(t);
 
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
+  position[2] = game.map->getHeight(position[0], position[1]);
 
   if (killed) {
     killed_time -= t;
@@ -175,7 +175,7 @@ void Cactus::tick(Real t) {
 
   // do I parse all the balls (incl. Mr Black) or just the player ?
   Animated **balls;
-  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  int nballs = game.balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
     if (ball->no_physics) continue;

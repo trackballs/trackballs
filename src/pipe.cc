@@ -22,8 +22,8 @@
 
 #include "game.h"
 
-Pipe::Pipe(const Coord3d &f, const Coord3d &t, Real r)
-    : Animated(Role_Pipe, 1), from(f), to(t), radius(r) {
+Pipe::Pipe(Game &g, const Coord3d &f, const Coord3d &t, Real r)
+    : Animated(g, Role_Pipe, 1), from(f), to(t), radius(r) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   position = 0.5 * (from + to);
   primaryColor = Color(0.6, 0.6, 0.6, 1.0);

@@ -26,7 +26,7 @@
 
 class ColorModifier : public GameHook {
  public:
-  ColorModifier(int col, int x, int y, Real min, Real max, Real freq, Real phase);
+  ColorModifier(Game& g, int col, int x, int y, Real min, Real max, Real freq, Real phase);
 
   void tick(Real t);
 

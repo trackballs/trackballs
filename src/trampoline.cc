@@ -23,11 +23,11 @@
 #include "game.h"
 #include "map.h"
 
-Trampoline::Trampoline(int x, int y) : GameHook(Role_GameHook), cx(x), cy(y) {}
+Trampoline::Trampoline(Game& g, int x, int y) : GameHook(g, Role_GameHook), cx(x), cy(y) {}
 void Trampoline::tick(Real t) {
   GameHook::tick(t);
 
-  Map* map = Game::current->map;
+  Map* map = game.map;
   Cell& c = map->cell(cx, cy);
   Real dh = std::min(0.5 * t, c.sunken - 1e-5);
   for (int i = 0; i < 5; i++) c.heights[i] += dh;

@@ -25,7 +25,7 @@
 
 class Sign : public Animated {
  public:
-  Sign(const char* text, Real life, Real scale, Real rotation, const Coord3d& pos);
+  Sign(Game& g, const char* text, Real life, Real scale, Real rotation, const Coord3d& pos);
   virtual ~Sign();
   void mkTexture(const char*);
 

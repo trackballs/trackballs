@@ -26,10 +26,11 @@
 #include "player.h"
 #include "sound.h"
 
-CSwitch::CSwitch(Real x, Real y, SCM on, SCM off) : Animated(Role_OtherAnimated, 1) {
+CSwitch::CSwitch(Game &g, Real x, Real y, SCM on, SCM off)
+    : Animated(g, Role_OtherAnimated, 1) {
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(x, y);
+  position[2] = game.map->getHeight(x, y);
   primaryColor = Color(0.8, 0.8, 0.8, 1.0);
   secondaryColor = Color(0., 0., 0., 1.);
   is_touched = false;
@@ -163,19 +164,19 @@ void CSwitch::drawBuffers2(const GLuint * /*vaolist*/) const {}
 void CSwitch::tick(Real t) {
   Animated::tick(t);
 
-  Coord3d v = position - Game::current->player1->position;
-  Player *player = Game::current->player1;
+  Coord3d v = position - game.player1->position;
+  Player *player = game.player1;
 
   double dist = length(v);
   if (dist < player->radius + 0.3) {
     if (!is_touched) {
       if (is_on) {
         is_on = false;
-        Game::current->queueCall(off);
+        game.queueCall(off);
         drawChanged = true;
       } else {
         is_on = true;
-        Game::current->queueCall(on);
+        game.queueCall(on);
         drawChanged = true;
       }
       playEffect(SFX_SWITCH);

@@ -26,7 +26,7 @@
 
 class Black : public Ball {
  public:
-  Black(Real x, Real y);
+  Black(Game& g, Real x, Real y);
   ~Black();
   virtual void die(int);
   virtual void tick(Real);

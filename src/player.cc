@@ -33,7 +33,7 @@
 #include <SDL2/SDL_keyboard.h>
 #include <SDL2/SDL_mouse.h>
 
-static Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
+static Uint32 getFilteredRelativeMouse(double now, double *xrate, double *yrate) {
   /* Finite impulse response filter to smooth mouse input */
   const int N = 1000;
   const double T = 0.2;
@@ -48,8 +48,6 @@ static Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
     }
     first = false;
   }
-
-  double now = Game::current->gameTime;
 
   int mouseX, mouseY;
   Uint32 mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY);
@@ -84,7 +82,7 @@ static Uint32 getFilteredRelativeMouse(double *xrate, double *yrate) {
   return mouseState;
 }
 
-Player::Player() : Ball(Role_Player) {
+Player::Player(Game &g) : Ball(g, Role_Player) {
   inTheAir = false;
   inPipe = false;
   lives = 3;
@@ -126,10 +124,9 @@ void Player::tick(Real t) {
   /* Never let us drop below 0 points, it just looks silly */
   if (score < 0) score = 0;
 
-  if (!Game::current) return;
   if (!playing) return;
 
-  Map *map = Game::current->map;
+  Map *map = game.map;
   health += t * 0.4;
   if (health > 1.0) health = 1.0;
 
@@ -163,18 +160,15 @@ void Player::tick(Real t) {
   */
   if (map->getWaterHeight(position[0], position[1]) > position[2] + radius * 0.75 &&
       (!(inPipe && position[2] < map->getHeight(position[0], position[1])))) {
-    oxygen -=
-        (t / (12.0 - 2.0 * Settings::settings->difficulty)) / Game::current->oxygenFactor;
+    oxygen -= (t / (12.0 - 2.0 * Settings::settings->difficulty)) / game.oxygenFactor;
     if (oxygen <= 0.0) die(DIE_OTHER);
   } else
-    oxygen = std::min(1.0, oxygen + (t / 4.0) / Game::current->oxygenFactor);
+    oxygen = std::min(1.0, oxygen + (t / 4.0) / game.oxygenFactor);
 
-  if (Settings::settings->replay) {
-    control = Game::current->replayStore.get(Game::current->gameTicks);
-  }
+  if (Settings::settings->replay) { control = game.replayStore.get(game.gameTicks); }
   double dx = control.dx, dy = control.dy;
   if (Settings::settings->storeReplay && !Settings::settings->replay) {
-    Game::current->replayStore.add(control);
+    game.replayStore.add(control);
   }
 
   /* rotate control as by settings->rotateArrows */
@@ -218,8 +212,7 @@ void Player::tick(Real t) {
     friction = 10.0;
 
   if (control.jump) {
-    double jumpStrength =
-        Game::current->jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
+    double jumpStrength = game.jumpFactor * (1.2 - 0.1 * Settings::settings->difficulty);
     jumpStrength *= modTimeLeft[MOD_JUMP] ? 5.0 : 3.0;
     Ball::queueJump(jumpStrength);
     control.jump = false;
@@ -233,7 +226,7 @@ void Player::tick(Real t) {
 }
 
 void Player::die(int how) {
-  Map *map = Game::current->map;
+  Map *map = game.map;
   /* immortal when not playing (i.e., at level finish) */
   if (hasWon) return;
   if (!playing) return;
@@ -242,7 +235,7 @@ void Player::die(int how) {
   /* death hooks may have altered `hasWon` and `playing` */
   if (hasWon) return;
   if (!playing) return;
-  if (Game::current->map->isBonus) {
+  if (game.map->isBonus) {
     MainMode::mainMode->bonusLevelComplete();
     return;
   }
@@ -260,7 +253,7 @@ void Player::die(int how) {
     Color acidColor(0.1, 0.8, 0.1, 0.5);
     Coord3d vel(0., 0., 1.);
     Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
-    Game::current->add(new Splash(center, vel, acidColor, 32.0, radius));
+    game.add(new Splash(game, center, vel, acidColor, 32.0, radius));
   } else {
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
@@ -270,10 +263,10 @@ void Player::die(int how) {
         pos[0] = position[0] + std::cos(a) * 0.25 * std::sin(b) * 2.0;
         pos[1] = position[1] + std::sin(a) * 0.25 * std::sin(b) * 2.0;
         pos[2] = position[2] + 0.25 * std::cos(b) + 0.5;
-        vel[0] = velocity[0] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
-        vel[1] = velocity[1] + (sink ? 0.2 : 1.0) * (Game::current->frandom() - 0.5);
-        vel[2] = velocity[2] + (sink ? 0.02 : 1.0) * (Game::current->frandom() - 0.5);
-        Game::current->add(new Debris(this, pos, vel, 2.0 + 8.0 * Game::current->frandom()));
+        vel[0] = velocity[0] + (sink ? 0.2 : 1.0) * (game.frandom() - 0.5);
+        vel[1] = velocity[1] + (sink ? 0.2 : 1.0) * (game.frandom() - 0.5);
+        vel[2] = velocity[2] + (sink ? 0.02 : 1.0) * (game.frandom() - 0.5);
+        game.add(new Debris(game, this, pos, vel, 2.0 + 8.0 * game.frandom()));
       }
     }
   }
@@ -309,7 +302,7 @@ void Player::setStartVariables() {
 void Player::restart(const Coord3d &pos) {
   setStartVariables();
   position = pos;
-  position[2] = Game::current->map->getHeight(position[0], position[1]) + radius;
+  position[2] = game.map->getHeight(position[0], position[1]) + radius;
   modTimeLeft[MOD_DIZZY] = 0.0;
 
   /* reset all mods */
@@ -332,7 +325,7 @@ void Player::handleUserInput(bool active) {
   /* Mouse filtering is continuous */
   double sx = 0., sy = 0.;
   if (!Settings::settings->ignoreMouse && !(SDL_GetModState() & KMOD_CAPS)) {
-    getFilteredRelativeMouse(&sx, &sy);
+    getFilteredRelativeMouse(game.gameTime, &sx, &sy);
   }
   /* Do *not* handle input when not playing */
   if (!playing) { return; }

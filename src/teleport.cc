@@ -29,8 +29,8 @@
 #define sinN sin14
 #define cosN cos14
 
-Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
-    : Animated(Role_OtherAnimated, 2) {
+Teleport::Teleport(Game &g, Real x, Real y, Real dx, Real dy, Real radius)
+    : Animated(g, Role_OtherAnimated, 2) {
   this->x = x;
   this->y = y;
   this->dx = dx;
@@ -38,7 +38,7 @@ Teleport::Teleport(Real x, Real y, Real dx, Real dy, Real radius)
   this->radius = radius;
   position[0] = x;
   position[1] = y;
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
+  position[2] = game.map->getHeight(position[0], position[1]);
   primaryColor = Color(0.5, 0.7, 0.6, 1.0);
   secondaryColor = Color(1.0, 0.9, 0.4, 1.0);
   is_on = true;
@@ -200,13 +200,13 @@ void Teleport::drawBuffers2(const GLuint *vaolist) const {
 void Teleport::tick(Real t) {
   Animated::tick(t);
 
-  position[2] = Game::current->map->getHeight(position[0], position[1]);
-  Player *p = Game::current->player1;
+  position[2] = game.map->getHeight(position[0], position[1]);
+  Player *p = game.player1;
   Coord3d diff = position - p->position;
   if (length(diff) < p->radius + radius) {
     p->position[0] = dx + .5;
     p->position[1] = dy + .5;
-    p->position[2] = Game::current->map->getHeight(p->position[0], p->position[1]) + p->radius;
+    p->position[2] = game.map->getHeight(p->position[0], p->position[1]) + p->radius;
     // generate a sound for the teleportation
     // playEffect(SFX_TELEPORT);
   }

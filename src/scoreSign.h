@@ -28,8 +28,7 @@
 
 class ScoreSign : public Sign {
  public:
-  ScoreSign(int points, const Coord3d& position);
-  ScoreSign(int points, const Coord3d& position, int type);
+  ScoreSign(Game& g, int points, const Coord3d& position, int type);
   void init(int points, int type);
 
   virtual void tick(Real);

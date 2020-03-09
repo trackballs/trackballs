@@ -22,13 +22,8 @@
 #include "game.h"
 #include "player.h"
 
-ScoreSign::ScoreSign(int points, const Coord3d& position)
-    : Sign("++++", 4.0, 1.0, 100.0, position) {
-  init(points, SCORESIGN_SCORE);
-}
-
-ScoreSign::ScoreSign(int points, const Coord3d& position, int type)
-    : Sign("++++", 4.0, 1.0, 100.0, position) {
+ScoreSign::ScoreSign(Game& game, int points, const Coord3d& position, int type)
+    : Sign(game, "++++", 4.0, 1.0, 100.0, position) {
   init(points, type);
 }
 
@@ -69,13 +64,13 @@ void ScoreSign::tick(Real t) {
     }
     mkTexture(str);
   }
-  if (Game::current) {
+  if (game.player1) {
     switch (type) {
     case SCORESIGN_SCORE:
-      Game::current->player1->score += p;
+      game.player1->score += p;
       break;
     case SCORESIGN_TIME:
-      Game::current->player1->timeLeft += p;
+      game.player1->timeLeft += p;
       break;
     }
   }

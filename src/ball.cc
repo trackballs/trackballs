@@ -36,7 +36,7 @@
 
 #define MAX_CONTACT_POINTS 24
 
-Ball::Ball(int role) : Animated(role, 7) {
+Ball::Ball(Game &game, int role) : Animated(game, role, 7) {
   sink = 0.0;
 
   ballResolution = BALL_LORES;
@@ -328,7 +328,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     GLfloat data[9][8];
     ushort idxs[3][3];
     char *pos = (char *)data;
-    GLfloat z = 1.1 + 1.0 * std::fmod(Game::current->gameTime, 1.0);
+    GLfloat z = 1.1 + 1.0 * std::fmod(game.gameTime, 1.0);
     GLfloat frad = (GLfloat)radius;
     GLfloat corners[9][2] = {
         {frad * -.3f, frad * z},         {frad * .3f, frad * (z + .9f)},
@@ -340,7 +340,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 
     Color color(1., 1., 1., 0.5);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
-    GLfloat spin = Game::current->gameTime * 0.15;
+    GLfloat spin = game.gameTime * 0.15;
     for (int i = 0; i < 9; i++) {
       pos += packObjectVertex(pos, loc[0] + std::cos(spin) * corners[i][0],
                               loc[1] + std::sin(spin) * corners[i][0], loc[2] + corners[i][1],
@@ -362,7 +362,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     Color color(1., 1., 1., 0.5);
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     for (int i = 0; i < 3; i++) {
-      GLfloat angle = 0.5 * M_PI * Game::current->gameTime + 2 * i * M_PI / 3;
+      GLfloat angle = 0.5 * M_PI * game.gameTime + 2 * i * M_PI / 3;
       GLfloat frad = radius;
       GLfloat corners[4][3] = {{-0.6f * frad, 1.5f * frad, -0.1f * frad},
                                {+0.6f * frad, 1.5f * frad, -0.1f * frad},
@@ -645,13 +645,12 @@ void Ball::setReflectivity(double reflectivity, int metallic) {
 }
 
 bool Ball::physics(Real time) {
-  if (!Game::current) return true;
-  Map *map = Game::current->map;
+  Map *map = game.map;
 
   /* Every second, the dizzy direction vector changes */
-  if (Game::current->gameTicks % (int)(1. / PHYSICS_RESOLUTION) == 0) {
-    dizzy_r = std::sqrt(Game::current->frandom());
-    dizzy_p = M_PI2 * Game::current->frandom();
+  if (game.gameTicks % (int)(1. / PHYSICS_RESOLUTION) == 0) {
+    dizzy_r = std::sqrt(game.frandom());
+    dizzy_p = M_PI2 * game.frandom();
   }
 
   if (modTimeLeft[MOD_DIZZY]) {
@@ -762,7 +761,7 @@ bool Ball::physics(Real time) {
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
     if (sand_frac > 0.) {
-      if (Game::current->frandom() < (speed2 - 0.3) * 0.08) {
+      if (game.frandom() < (speed2 - 0.3) * 0.08) {
         /* lots of friction when we crash into sand */
         double slowdown = std::pow(0.9, sand_frac);
         velocity[0] *= slowdown;
@@ -771,8 +770,7 @@ bool Ball::physics(Real time) {
         generateSandDebris();
       }
     } else if (Settings::settings->difficulty > 0 && modTimeLeft[MOD_SPIKE]) {
-      if (Game::current->frandom() <
-          (speed2 - 0.3) * 0.0007 * Settings::settings->difficulty) {
+      if (game.frandom() < (speed2 - 0.3) * 0.0007 * Settings::settings->difficulty) {
         velocity[0] *= 0.9;
         velocity[1] *= 0.9;
         velocity[2] *= 0.9;
@@ -804,17 +802,16 @@ bool Ball::physics(Real time) {
       // splashes caused by speed
       double speed = velocity[0] * velocity[0] + velocity[1] * velocity[1] +
                      velocity[2] * velocity[2] * 5.;
-      if (Game::current->frandom() <
+      if (game.frandom() <
           speed * 0.001 * (depth < 0.5 ? depth : 1.0 - depth) * radius / 0.3) {
         Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
-        Game::current->add(
-            new Splash(center, velocity, waterColor, 30 * radius / 0.3,
-                       radius));  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
+        game.add(new Splash(game, center, velocity, waterColor, 30 * radius / 0.3,
+                            radius));  // speed*radius*(depth<0.5?depth:1.0-depth)*2.0,radius);
       }
       // splashes caused by rotation. eg "swimming"
       speed = rotation[0] * rotation[0] + rotation[1] * rotation[1];
-      if (Game::current->frandom() < speed * 0.001) {
+      if (game.frandom() < speed * 0.001) {
         Color waterColor(0.4, 0.4, 0.8, 0.5);
         Coord3d center(position[0], position[1], waterHeight);
         Coord3d vel;
@@ -825,7 +822,7 @@ bool Ball::physics(Real time) {
         rotation[1] *= 0.9;
         velocity[0] += 0.01 * rotation[0];
         velocity[1] += 0.01 * rotation[1];
-        Game::current->add(new Splash(center, vel, waterColor, (int)speed * 0.5, radius));
+        game.add(new Splash(game, center, vel, waterColor, (int)speed * 0.5, radius));
       }
       /* cell velocity field extends to the water within the cell */
       Cell &c = map->cell((int)position[0], (int)position[1]);
@@ -842,10 +839,10 @@ bool Ball::physics(Real time) {
     sink += 0.8 * time * (acid_frac + sand_frac);
     double speed2 =
         velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2];
-    if (Game::current->frandom() < (speed2 - 0.2) * 0.05) {
+    if (game.frandom() < (speed2 - 0.2) * 0.05) {
       Color acidColor(0.1, 0.5, 0.1, 0.5);
       Coord3d center(position[0], position[1], mapHeight);
-      Game::current->add(new Splash(center, velocity, acidColor, speed2 * radius, radius));
+      game.add(new Splash(game, center, velocity, acidColor, speed2 * radius, radius));
     }
     if (modTimeLeft[MOD_GLASS]) sink = std::min(sink, 0.3);
     if (sink > radius * 2.0) {
@@ -1167,8 +1164,8 @@ bool Ball::handleGround(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normal
     if (nacidsplash) {
       Color acidColor(0.1, 0.5, 0.1, 0.5);
       Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
-      Game::current->add(new Splash(center, velocity, acidColor,
-                                    (acidSpeed / nacidsplash) * radius * 20.0, radius));
+      game.add(new Splash(game, center, velocity, acidColor,
+                          (acidSpeed / nacidsplash) * radius * 20.0, radius));
     }
 
     /* Apply bounce */
@@ -1184,7 +1181,7 @@ bool Ball::handleGround(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normal
       sandSpeed /= nsandcells;
       if (radius > 0.2)
         for (int i = 0; i < 10; i++)
-          if (Game::current->frandom() < (sandSpeed - 1.0) * 0.2) generateSandDebris();
+          if (game.frandom() < (sandSpeed - 1.0) * 0.2) generateSandDebris();
       if (sandSpeed > 4.0) playEffect(SFX_SAND_CRASH);
     }
 
@@ -1194,8 +1191,7 @@ bool Ball::handleGround(Map *map, Cell **cells, Coord3d *hitpts, Coord3d *normal
       Cell &cell = map->cell(trampcell[i][0], trampcell[i][1]);
       Real dh = 1.0 * speed * radius * radius * radius;
       for (int j = 0; j < 5; j++) cell.heights[j] -= dh;
-      if (cell.sunken <= 0.0)
-        Game::current->add(new Trampoline(trampcell[i][0], trampcell[i][1]));
+      if (cell.sunken <= 0.0) game.add(new Trampoline(game, trampcell[i][0], trampcell[i][1]));
       cell.sunken += dh;
     }
   }
@@ -1433,7 +1429,7 @@ void Ball::drive(Real x, Real y) {
 
 void Ball::generateSandDebris() {
   Coord3d pos, vel;
-  Real a = Game::current->frandom() * 2.0 * M_PI;
+  Real a = game.frandom() * 2.0 * M_PI;
   double speed = std::sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] +
                            velocity[2] * velocity[2]);
   pos[0] = position[0] + radius * 1.7 * std::sin(a);
@@ -1444,12 +1440,11 @@ void Ball::generateSandDebris() {
   vel[1] =
       velocity[1] + 2.0 * speed * std::cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
-  Game::current->add(d);
+  Debris *d = new Debris(game, NULL, pos, vel, 0.5 + 1.0 * game.frandom());
+  game.add(d);
   d->initialSize = 0.05;
-  d->primaryColor =
-      Color(0.6 + 0.3 * Game::current->frandom(), 0.5 + 0.4 * Game::current->frandom(),
-            0.1 + 0.3 * Game::current->frandom(), 1.f);
+  d->primaryColor = Color(0.6 + 0.3 * game.frandom(), 0.5 + 0.4 * game.frandom(),
+                          0.1 + 0.3 * game.frandom(), 1.f);
   d->friction = 0.0;
   d->calcRadius();
 }
@@ -1457,11 +1452,11 @@ void Ball::generateNitroDebris(Real time) {
   nitroDebrisCount += time;
   while (nitroDebrisCount > 0.0) {
     nitroDebrisCount -= 0.25;
-    Debris *d = new Debris(this, position, velocity, 1.0 + Game::current->frandom() * 2.0);
-    Game::current->add(d);
-    d->position[0] += (Game::current->frandom() - 0.5) * radius;
-    d->position[1] += (Game::current->frandom() - 0.5) * radius;
-    d->position[2] += Game::current->frandom() * radius;
+    Debris *d = new Debris(game, this, position, velocity, 1.0 + game.frandom() * 2.0);
+    game.add(d);
+    d->position[0] += (game.frandom() - 0.5) * radius;
+    d->position[1] += (game.frandom() - 0.5) * radius;
+    d->position[2] += game.frandom() * radius;
     d->velocity[2] += 0.2;
     d->gravity = -0.1;
     d->modTimeLeft[MOD_GLASS] = -1.0;
@@ -1471,7 +1466,7 @@ void Ball::generateNitroDebris(Real time) {
 }
 void Ball::generateDebris(const Color &color) {
   Coord3d pos, vel;
-  Real a = Game::current->frandom() * 2.0 * M_PI;
+  Real a = game.frandom() * 2.0 * M_PI;
   double speed = std::sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] +
                            velocity[2] * velocity[2]);
   pos[0] = position[0] + radius * 1.5 * std::sin(a);
@@ -1482,8 +1477,8 @@ void Ball::generateDebris(const Color &color) {
   vel[1] =
       velocity[1] + 2.0 * speed * std::cos(a);  // + speed * 1/2048.0 * ((rand()%2048)-1024);
   vel[2] = velocity[2];                         // + speed * 1/2048.0 * ((rand()%2048)-1024);
-  Debris *d = new Debris(NULL, pos, vel, 0.5 + 1.0 * Game::current->frandom());
-  Game::current->add(d);
+  Debris *d = new Debris(game, NULL, pos, vel, 0.5 + 1.0 * game.frandom());
+  game.add(d);
   d->initialSize = 0.05;
   d->primaryColor = color.toOpaque();
   d->friction = 0.0;
@@ -1494,7 +1489,7 @@ void Ball::handleBallCollisions() {
   if (no_physics) return;
 
   Animated **balls;
-  int nballs = Game::current->balls->bboxOverlapsWith(this, &balls);
+  int nballs = game.balls->bboxOverlapsWith(this, &balls);
   for (int i = 0; i < nballs; i++) {
     Ball *ball = (Ball *)balls[i];
     if (ball == this) continue;
@@ -1523,9 +1518,9 @@ void Ball::handleBallCollisions() {
   }
 }
 void Ball::handleForcefieldCollisions() {
-  int n = Game::current->hooks[Role_Forcefield].size();
+  int n = game.hooks[Role_Forcefield].size();
   for (int i = 0; i < n; i++) {
-    ForceField *ff = (ForceField *)Game::current->hooks[Role_Forcefield][i];
+    ForceField *ff = (ForceField *)game.hooks[Role_Forcefield][i];
     if (!ff->is_on) continue;
 
     /* Boundingbox test, continue if we cannot possibly be withing FF */
@@ -1659,9 +1654,9 @@ static void computePipeCoordinates(const Pipe *pipe, const Coord3d &position, do
 void Ball::handlePipes(Real time) {
   inPipe = false;
 
-  int n = Game::current->hooks[Role_Pipe].size();
+  int n = game.hooks[Role_Pipe].size();
   for (int i = 0; i < n; i++) {
-    Pipe *pipe = (Pipe *)Game::current->hooks[Role_Pipe][i];
+    Pipe *pipe = (Pipe *)game.hooks[Role_Pipe][i];
 
     double distance, l, pipeLength;
     Coord3d dirNorm, offset;
@@ -1671,7 +1666,7 @@ void Ball::handlePipes(Real time) {
 
   /* Then we compute the interaction with all the pipes */
   for (int i = 0; i < n; i++) {
-    Pipe *pipe = (Pipe *)Game::current->hooks[Role_Pipe][i];
+    Pipe *pipe = (Pipe *)game.hooks[Role_Pipe][i];
 
     double distance, l, pipeLength;
     Coord3d dirNorm, normal;
@@ -1729,9 +1724,9 @@ void Ball::handlePipes(Real time) {
 
   /* Check for pipeConnectors to support ball, only if we are not inside a pipe already */
   if (!inPipe) {
-    int n = Game::current->hooks[Role_PipeConnector].size();
+    int n = game.hooks[Role_PipeConnector].size();
     for (int i = 0; i < n; i++) {
-      PipeConnector *connector = (PipeConnector *)Game::current->hooks[Role_PipeConnector][i];
+      PipeConnector *connector = (PipeConnector *)game.hooks[Role_PipeConnector][i];
 
       Coord3d v0 = connector->position - position;  // ball -> connector
       double dist = length(v0);                     // Distance ball center, connector center

@@ -34,7 +34,7 @@
 
 class Animated : public GameHook {
  public:
-  explicit Animated(int role, int maxVBOpairsOrVAOs);
+  explicit Animated(Game& g, int role, int maxVBOpairsOrVAOs);
 
   virtual ~Animated();
   /** Setup drawing pass of object.*/
