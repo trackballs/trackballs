@@ -45,13 +45,12 @@ Weather::~Weather() {
   }
 }
 
-void Weather::tick(Real td) {
+void Weather::tick(Real td, Player *player) {
   static double count = 0.0;
   static double snowDrift = 0.0;
 
   if (Settings::settings->gfx_details <= 1) return;
   if (strength < 0.0) return;
-  Player *player = Game::current->player1;
 
   if (kind == WEATHER_SNOW) {
     for (count += td * 300.0 * strength; count > 0.0; count -= 1.0) {
@@ -98,7 +97,7 @@ void Weather::tick(Real td) {
   }
 }
 
-void Weather::draw2() {
+void Weather::draw2(Player *player) {
   if (Settings::settings->gfx_details <= 1) return;
   if (strength == -1.0) return;
   if (activeView.calculating_shadows) return;
@@ -122,7 +121,7 @@ void Weather::draw2() {
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
-    GLfloat h = Game::current->player1->position[2] - 6.0;
+    GLfloat h = player->position[2] - 6.0;
     int nactive = 0;
     for (int i = 0; i < max_weather_particles; i++) {
       if (particles[i].position[2] < h) continue;
@@ -163,7 +162,7 @@ void Weather::draw2() {
     glEnable(GL_BLEND);
 
     int nactive = 0;
-    GLfloat h = Game::current->player1->position[2] - 5.0;
+    GLfloat h = player->position[2] - 5.0;
     for (int i = 0; i < max_weather_particles; i++) {
       // Note that < and >= or not opposite for nan
       if (particles[i].position[2] < h) continue;

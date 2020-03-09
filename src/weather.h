@@ -27,14 +27,16 @@
 #include "general.h"
 #include "glHelp.h"
 
+class Player;
+
 class Weather {
  public:
   Weather();
   ~Weather();
 
   void clear();
-  void draw2();
-  void tick(Real t);
+  void draw2(Player *player);
+  void tick(Real t, Player *player);
   void snow(double strength);
   void rain(double strength);
 

@@ -350,7 +350,7 @@ void Game::tick(Real t) {
     fogThickness -= std::min(0.3 * t, fogThickness - wantedFogThickness);
   // todo: move into a tick based on display timesteps, so draw() can
   // remain pseudo-const
-  weather->tick(t);
+  weather->tick(t, player1);
 }
 void Game::doExpensiveComputations() {
   for (int i = 0; i < Role_MaxTypes; i++) {
@@ -399,7 +399,7 @@ void Game::draw() {
       if (anim->onScreen) anim->draw2();
     }
   }
-  if (weather) weather->draw2();
+  if (weather) weather->draw2(player1);
 
   warnForGLerrors("Game drawing");
 }
