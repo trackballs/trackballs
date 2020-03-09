@@ -163,9 +163,9 @@ void MainMode::display() {
 
   switch (gameStatus) {
   case statusBeforeGame:
-    if (map) map->draw(0, (int)map->startPosition[0], (int)map->startPosition[1]);
+    if (map) map->draw(0, map->startPosition);
     Game::current->draw();
-    if (map) map->draw(1, (int)map->startPosition[0], (int)map->startPosition[1]);
+    if (map) map->draw(1, map->startPosition);
     {
       const char *lp[3], *rp[3];
       lp[0] = _("Track:");
@@ -186,9 +186,9 @@ void MainMode::display() {
     }
     break;
   case statusGameOver:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     {
       char str[256];
@@ -197,22 +197,22 @@ void MainMode::display() {
     }
     break;
   case statusRestartPlayer:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     message(_("Oops"), _("Press spacebar to continue"));
     break;
   case statusInGame:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     break;
   case statusPaused:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
 
     Enter2DMode();
@@ -223,30 +223,30 @@ void MainMode::display() {
     Leave2DMode();
     break;
   case statusBonusLevelComplete:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     message(_("Bonus level complete"), _("Press spacebar to continue"));
     break;
   case statusLevelComplete:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     showBonus();
     break;
   case statusNextLevel:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     message(_("Level complete"), _("Press spacebar to continue"));
     break;
   case statusVictory:
-    map->draw(0, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(0, camFocus);
     Game::current->draw();
-    map->draw(1, (int)camFocus[0], (int)camFocus[1]);
+    map->draw(1, camFocus);
     showInfo();
     message(_("Congratulations"), _("You have completed the game!"));
     break;
@@ -734,7 +734,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   markViewChanged();
 
-  Game::current->map->draw(0, (int)focus[0] + 10, (int)focus[1] + 10);
+  Game::current->map->draw(0, focus);
   Game::current->drawReflection(focus);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

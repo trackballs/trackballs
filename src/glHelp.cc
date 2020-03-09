@@ -758,7 +758,7 @@ void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
                  upv[loop][2], activeView.modelview);
     markViewChanged();
     // Render (todo: 50% alpha clip)
-    if (mp) mp->draw(0, focus[0], focus[1]);
+    if (mp) mp->draw(0, focus);
     if (gm) gm->draw();
   }
 
@@ -890,7 +890,7 @@ void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm) {
     assign(activeView.cascade_model[loop], activeView.modelview);
     assign(activeView.cascade_proj[loop], activeView.projection);
     markViewChanged();
-    if (mp) mp->draw(0, focus[0], focus[1]);
+    if (mp) mp->draw(0, focus);
     if (gm) gm->draw();
   }
 

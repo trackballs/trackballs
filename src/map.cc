@@ -319,7 +319,7 @@ static void configureCellAttributes(bool water) {
 }
 
 /* Draws the map on the screen from current viewpoint */
-void Map::draw(int stage, int cx, int cy) {
+void Map::draw(int stage, const Coord3d& focus) {
   if (stage == 0) {
     glDisable(GL_BLEND);
   } else {
@@ -330,6 +330,7 @@ void Map::draw(int stage, int cx, int cy) {
   GLfloat gameTime =
       (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
 
+  int cx = (int)focus[0], cy = (int)focus[1];
   int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
   int prad = (VISRADIUS / CHUNKSIZE) + 1;
 

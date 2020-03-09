@@ -153,9 +153,10 @@ void HelpMode::display() {
 
   glViewport(11 * screenWidth / 20, 11 * screenHeight / 20, 4 * screenWidth / 10,
              4 * screenHeight / 10);
-  helpGame->map->draw(0, step / 2 + step * page, step / 2);
+  Coord3d focus_a = {step / 2 + step * page, step / 2, 2};
+  helpGame->map->draw(0, focus_a);
   helpGame->draw();
-  helpGame->map->draw(1, step / 2 + step * page, step / 2);
+  helpGame->map->draw(1, focus_a);
 
   lookAtMatrix(cameraFrom2[0], cameraFrom2[1], cameraFrom2[2], cameraTo2[0], cameraTo2[1],
                cameraTo2[2], 0.0, 0.0, 1.0, activeView.modelview);
@@ -169,9 +170,10 @@ void HelpMode::display() {
   renderDummyShadowMap();
   glViewport(11 * screenWidth / 20, 1 * screenHeight / 10, 4 * screenWidth / 10,
              4 * screenHeight / 10);
-  helpGame->map->draw(0, step / 2 + step * page, 3 * step / 2);
+  Coord3d focus_b = {step / 2 + step * page, 3 * step / 2, 2};
+  helpGame->map->draw(0, focus_b);
   helpGame->draw();
-  helpGame->map->draw(1, step / 2 + step * page, 3 * step / 2);
+  helpGame->map->draw(1, focus_b);
 
   glViewport(0, 0, screenWidth, screenHeight);
   Enter2DMode();

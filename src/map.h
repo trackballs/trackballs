@@ -109,7 +109,7 @@ class Map {
   inline Chunk *chunk(int x, int y) const;
   void markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls);
   int save(char *name, int x, int y);
-  void draw(int stage, int x, int y);
+  void draw(int stage, const Coord3d &focus);
   void fillChunkVBO(Chunk *c) const;
   void drawFootprint(int x1, int y1, int x2, int y2, int kind);
   void drawLoop(int x1, int y1, int x2, int y2, int kind);

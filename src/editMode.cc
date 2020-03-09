@@ -397,7 +397,8 @@ void EditMode::display() {
 
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
-    map->draw(0, x, y);
+    Coord3d map_focus = {(Real)x, (Real)y, map->cell(x, y).heights[Cell::CENTER]};
+    map->draw(0, map_focus);
     map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
     if (game) {
       /* Indicate start position and trigger object locations */
@@ -418,7 +419,7 @@ void EditMode::display() {
       map->drawSpotRing(map->startPosition[0], map->startPosition[1], 0.5, 0);
       game->draw();
     }
-    map->draw(1, x, y);
+    map->draw(1, map_focus);
     activeView.show_flag_state = false;
 
     /* If we have a clipboard selection then display where it will be pasted */
