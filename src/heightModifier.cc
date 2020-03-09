@@ -33,7 +33,6 @@ HeightModifier::HeightModifier(Game& g, int corner, int x, int y, Real min, Real
   this->max = max;
   this->freq = freq;
   this->phase = phase;
-  this->localtime = 0.;
   if (corner >= 10) {
     this->avg_center = 1;
     corner -= 10;
@@ -53,21 +52,24 @@ HeightModifier::HeightModifier(Game& g, int corner, int x, int y, Real min, Real
 void HeightModifier::tick(Real t) {
   GameHook::tick(t);
 
-  localtime += t;
   Cell& c = game.map->cell(x, y);
   int x1 = 0, y1 = 0, x2 = 0, y2 = 0, x3 = 0, y3 = 0;
   int cor1 = 0, cor2 = 0, cor3 = 0;
 
   float v =
-      min + (max - min) * (1. + std::cos(phase + (localtime * freq) * 2. * 3.14159)) / 2.;
+      min + (max - min) * (1. + std::cos(phase + (game.gameTime * freq) * 2. * M_PI)) / 2.;
 
   if (corner == 4) {
     c.heights[4] = v;
+    game.map->markCellsUpdated(x, y, x, y, true);
     return;
   }
 
+  int xlow, ylow;
   switch (corner) {
   case 0:
+    xlow = x - 1;
+    ylow = y - 1;
     x1 = x - 1;
     y1 = y;
     x2 = x;
@@ -79,6 +81,8 @@ void HeightModifier::tick(Real t) {
     cor3 = 3;
     break;
   case 1:
+    xlow = x - 1;
+    ylow = y;
     x1 = x;
     y1 = y + 1;
     x2 = x - 1;
@@ -90,6 +94,8 @@ void HeightModifier::tick(Real t) {
     cor3 = 2;
     break;
   case 2:
+    xlow = x;
+    ylow = y - 1;
     x1 = x + 1;
     y1 = y;
     x2 = x;
@@ -101,6 +107,8 @@ void HeightModifier::tick(Real t) {
     cor3 = 1;
     break;
   case 3:
+    xlow = x;
+    ylow = y;
     x1 = x + 1;
     y1 = y;
     x2 = x;
@@ -132,9 +140,5 @@ void HeightModifier::tick(Real t) {
       c3.heights[4] = (c3.heights[0] + c3.heights[1] + c3.heights[2] + c3.heights[3]) / 4.;
   }
 
-  // todo: use a single call
-  game.map->markCellsUpdated(x, y, x, y, true);
-  game.map->markCellsUpdated(x1, y1, x1, y1, true);
-  game.map->markCellsUpdated(x2, y2, x2, y2, true);
-  game.map->markCellsUpdated(x3, y3, x3, y3, true);
+  game.map->markCellsUpdated(xlow, ylow, xlow + 1, ylow + 1, true);
 }
