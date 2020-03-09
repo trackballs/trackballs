@@ -130,7 +130,7 @@ void SetupMode::display() {
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
-  MainMode::setupLighting(false);
+  MainMode::setupLighting(NULL, false);
   activeView.fog_enabled = 0;
   markViewChanged();
 
@@ -352,16 +352,23 @@ void SetupMode::deactivated() {
   }
 }
 void SetupMode::start() {
-  if (Game::current) delete Game::current;
+  Game *g;
   if (Settings::settings->doSpecialLevel) {
-    Game::current = new Game(Settings::settings->specialLevel, gamer);
-    Game::current->currentLevelSet = -1;
+    g = new Game(Settings::settings->specialLevel, gamer);
+    g->currentLevelSet = -1;
   } else {
-    Game::current = new Game(gamer->levels[levelSet][level].fileName, gamer);
-    Game::current->currentLevelSet = levelSet;
+    g = new Game(gamer->levels[levelSet][level].fileName, gamer);
+    g->currentLevelSet = levelSet;
     if (HallOfFameMode::hallOfFameMode) HallOfFameMode::hallOfFameMode->levelSet = levelSet;
   }
-  GameMode::activate(MainMode::init());
+
+  MainMode::init();
+  if (MainMode::mainMode->game) {
+    error("MainMode already had a game running");
+    delete MainMode::mainMode->game;
+  }
+  MainMode::mainMode->game = g;
+  GameMode::activate(MainMode::mainMode);
 }
 
 void SetupMode::mouseDown(int button, int x, int y) {

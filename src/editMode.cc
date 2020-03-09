@@ -363,7 +363,7 @@ void EditMode::display() {
 
   /* configure lighting */
   activeView.fog_enabled = 0;
-  MainMode::setupLighting(false);
+  MainMode::setupLighting(NULL, false);
 
   /* Setup matrixes for the camera perspective */
   perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
@@ -398,7 +398,7 @@ void EditMode::display() {
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
     Coord3d map_focus = {(Real)x, (Real)y, map->cell(x, y).heights[Cell::CENTER]};
-    map->draw(0, map_focus);
+    map->draw(0, map_focus, time);
     map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
     if (game) {
       /* Indicate start position and trigger object locations */
@@ -419,7 +419,7 @@ void EditMode::display() {
       map->drawSpotRing(map->startPosition[0], map->startPosition[1], 0.5, 0);
       game->draw();
     }
-    map->draw(1, map_focus);
+    map->draw(1, map_focus, time);
     activeView.show_flag_state = false;
 
     /* If we have a clipboard selection then display where it will be pasted */

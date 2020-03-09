@@ -319,16 +319,13 @@ static void configureCellAttributes(bool water) {
 }
 
 /* Draws the map on the screen from current viewpoint */
-void Map::draw(int stage, const Coord3d& focus) {
+void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
   if (stage == 0) {
     glDisable(GL_BLEND);
   } else {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
-  // Record render cycles
-  GLfloat gameTime =
-      (Game::current ? Game::current->gameTime : ((EditMode*)GameMode::current)->time);
 
   int cx = (int)focus[0], cy = (int)focus[1];
   int origx = cx - cx % CHUNKSIZE, origy = cy - cy % CHUNKSIZE;
@@ -430,7 +427,7 @@ void Map::draw(int stage, const Coord3d& focus) {
     }
   }
 
-  if (!activeView.calculating_shadows && !(Game::current && !Game::current->useGrid)) {
+  if (!activeView.calculating_shadows) {
     setActiveProgramAndUniforms(Shader_Line);
     glUniformC(uniformLocations.line_color, Color(0., 0., 0., 1.));
 

@@ -35,6 +35,9 @@ class EnterHighScoreMode : public GameMode {
 
   static EnterHighScoreMode *init();
   static void cleanup();
+  static EnterHighScoreMode *enterHighScoreMode;
+
+  int lastGameScore, lastLevelSet;
 
  private:
   char name[20];

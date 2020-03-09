@@ -45,8 +45,6 @@ double Game::defaultScores[SCORE_MAX][2];
 Game::Game(const char *name, Gamer *gamer) {
   balls = new AnimatedCollection();
 
-  current = this;
-
   map = NULL;
   player1 = NULL;
   gameTime = 0.0;
@@ -69,7 +67,7 @@ Game::Game(const char *name, Gamer *gamer) {
 
   loadLevel(name, gamer);
 
-  player1->restart(Game::current->map->startPosition);
+  player1->restart(map->startPosition);
   player1->timeLeft = startTime;
   player1->lives = 4 - Settings::settings->difficulty;
 }
@@ -85,8 +83,6 @@ Game::Game(Map *editmap, const char *levelname) {
   map = editmap;
   edit_mode = 1;
   setDefaults();
-
-  current = this;
 
   /* load scripts */
   char scmname[512];
@@ -120,7 +116,6 @@ Game::~Game() {
   }
 
   if (!edit_mode) delete map;
-  if (current == this) { current = NULL; }
 }
 
 void Game::loadLevel(const char *name, Gamer *gamer) {
@@ -171,7 +166,10 @@ void Game::loadLevel(const char *name, Gamer *gamer) {
 
   if (map) delete map;
   map = new Map(mapname);
+
+  Game::current = this;
   loadScript(scmname);
+  Game::current = NULL;
 
   for (int j = 0; j < newHooks.size(); j++) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
@@ -304,6 +302,7 @@ void Game::tick(Real t) {
   newHooks.clear();
 
   /* run queued callbacks */
+  Game::current = this;
   for (int j = 0; j < queuedCalls.size(); j++) {
     QueuedCall call = queuedCalls[j];
     /* the functions are owned by GameHooks; arguments by Game */
@@ -323,6 +322,7 @@ void Game::tick(Real t) {
       if (call.object) { scm_gc_unprotect_object(call.object); }
     }
   }
+  Game::current = NULL;
   queuedCalls.clear();
 
   /* filter out dead entities, except players */

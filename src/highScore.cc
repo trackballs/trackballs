@@ -126,12 +126,11 @@ HighScore* HighScore::init() {
 void HighScore::cleanup() {
   if (highScore) delete highScore;
 }
-int HighScore::isHighScore(int score) {
-  if (Game::current->currentLevelSet < 0) return 0;
-  return score > points[Game::current->currentLevelSet][9];
+int HighScore::isHighScore(int levelSet, int score) {
+  if (levelSet < 0) return 0;
+  return score > points[levelSet][9];
 }
-void HighScore::addHighScore(int score, char* name) {
-  int levelSet = Game::current->currentLevelSet;
+void HighScore::addHighScore(int levelSet, int score, char* name) {
   if (levelSet < 0) return;
 
   int i;

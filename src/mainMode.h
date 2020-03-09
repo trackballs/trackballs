@@ -50,13 +50,15 @@ class MainMode : public GameMode {
   void levelComplete();
   void bonusLevelComplete();
 
-  static void setupLighting(bool isNight);
+  static void setupLighting(const Game *game, bool isNight);
   void renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const;
   Real flash;
 
   static MainMode *init();
   static void cleanup();
   static MainMode *mainMode;
+
+  Game *game;
 
   double zAngle, wantedZAngle, xyAngle, wantedXYAngle;
   Coord3d camFocus, camDelta;

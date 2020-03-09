@@ -32,8 +32,8 @@ class HighScore {
   char names[256][10][25];
   int dummy_player[256][10];
 
-  int isHighScore(int points); /* returns true if this is a highscore */
-  void addHighScore(int points, char* name);
+  int isHighScore(int levelSet, int points); /* returns true if this is a highscore */
+  void addHighScore(int levelSet, int points, char* name);
 };
 
 #endif

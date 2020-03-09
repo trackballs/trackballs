@@ -62,6 +62,7 @@ MainMode::MainMode() {
   gameStatus = statusBeforeGame;
   statusCount = 0.;
   time = 0.;
+  game = NULL;
   this->go_to_pause = 0;
   this->pause_time = 0.;
   memset(&this->cameraModelView[0], 0, 16 * sizeof(double));
@@ -70,16 +71,16 @@ MainMode::MainMode() {
 MainMode::~MainMode() {}
 
 void MainMode::display() {
-  if (!Game::current) { return; }
+  if (!game) { return; }
 
-  Map *map = Game::current->map;
-  Player *player1 = Game::current->player1;
+  Map *map = game->map;
+  Player *player1 = game->player1;
 
-  if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
+  if (game->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
-    assign(Game::current->fogColor, activeView.fog_color);
-    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
-    activeView.fog_end = 26.0 - 4.0 * Game::current->fogThickness;
+    assign(game->fogColor, activeView.fog_color);
+    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * game->fogThickness);
+    activeView.fog_end = 26.0 - 4.0 * game->fogThickness;
   } else
     activeView.fog_enabled = 0;
 
@@ -107,10 +108,10 @@ void MainMode::display() {
 
   /* lighting must be set before we render the shadow map */
   /* Shadow map rendering returns active modelview/projection to orig state */
-  setupLighting(Game::current->isNight);
-  if (Game::current->isNight) {
+  setupLighting(game, game->isNight);
+  if (game->isNight) {
     if (Settings::settings->doShadows) {
-      renderShadowMap(camFocus, map, Game::current);
+      renderShadowMap(camFocus, map, game);
       renderDummyShadowCascade();
     } else {
       renderDummyShadowCascade();
@@ -119,7 +120,7 @@ void MainMode::display() {
   } else {
     activeView.day_mode = true;
     if (Settings::settings->doShadows) {
-      renderShadowCascade(camFocus, map, Game::current);
+      renderShadowCascade(camFocus, map, game);
       renderDummyShadowMap();
     } else {
       renderDummyShadowCascade();
@@ -134,9 +135,8 @@ void MainMode::display() {
   /* Primary scene rendering */
   glViewport(0, 0, screenWidth, screenHeight);
 
-  if (Game::current->fogThickness)
-    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
-                 Game::current->fogColor[2], Game::current->fogColor[3]);
+  if (game->fogThickness)
+    glClearColor(game->fogColor[0], game->fogColor[1], game->fogColor[2], game->fogColor[3]);
   else
     glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -163,20 +163,20 @@ void MainMode::display() {
 
   switch (gameStatus) {
   case statusBeforeGame:
-    if (map) map->draw(0, map->startPosition);
-    Game::current->draw();
-    if (map) map->draw(1, map->startPosition);
+    if (map) map->draw(0, map->startPosition, game->gameTime);
+    game->draw();
+    if (map) map->draw(1, map->startPosition, game->gameTime);
     {
       const char *lp[3], *rp[3];
       lp[0] = _("Track:");
-      if (strlen(Game::current->map->mapname)) {
-        rp[0] = gettext(Game::current->map->mapname);
+      if (strlen(game->map->mapname)) {
+        rp[0] = gettext(game->map->mapname);
       } else {
         rp[0] = _("Unknown track");
       }
       lp[1] = _("Author:");
-      if (strlen(Game::current->map->author)) {
-        rp[1] = Game::current->map->author;
+      if (strlen(game->map->author)) {
+        rp[1] = game->map->author;
       } else {
         rp[1] = _("Unknown author");
       }
@@ -186,9 +186,9 @@ void MainMode::display() {
     }
     break;
   case statusGameOver:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     {
       char str[256];
@@ -197,22 +197,22 @@ void MainMode::display() {
     }
     break;
   case statusRestartPlayer:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     message(_("Oops"), _("Press spacebar to continue"));
     break;
   case statusInGame:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     break;
   case statusPaused:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
 
     Enter2DMode();
@@ -223,30 +223,30 @@ void MainMode::display() {
     Leave2DMode();
     break;
   case statusBonusLevelComplete:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     message(_("Bonus level complete"), _("Press spacebar to continue"));
     break;
   case statusLevelComplete:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     showBonus();
     break;
   case statusNextLevel:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     message(_("Level complete"), _("Press spacebar to continue"));
     break;
   case statusVictory:
-    map->draw(0, camFocus);
-    Game::current->draw();
-    map->draw(1, camFocus);
+    map->draw(0, camFocus, game->gameTime);
+    game->draw();
+    map->draw(1, camFocus, game->gameTime);
     showInfo();
     message(_("Congratulations"), _("You have completed the game!"));
     break;
@@ -343,7 +343,7 @@ void MainMode::display() {
   displayFrameRate();
   Leave2DMode();
 }
-void MainMode::doExpensiveComputations() { Game::current->doExpensiveComputations(); }
+void MainMode::doExpensiveComputations() { game->doExpensiveComputations(); }
 
 void MainMode::key(int key) {
   switch (gameStatus) {
@@ -371,33 +371,41 @@ void MainMode::key(int key) {
       createSnapshot();
       break;
     }
-    Game::current->player1->handleKey(key);
+    game->player1->handleKey(key);
     break;
   case statusLevelComplete:
     break;
   case statusBonusLevelComplete:
   case statusNextLevel:
     if (key == ' ') {
-      if (!Game::current->nextLevel[0]) {
+      if (!game->nextLevel[0]) {
         gameStatus = statusVictory;
         break;
       }
       xyAngle = wantedXYAngle = zAngle = wantedZAngle = 0.0;
-      Game::current->fogThickness = Game::current->wantedFogThickness;
-      Game::current->clearLevel();
-      Game::current->loadLevel(Game::current->nextLevel, Gamer::gamer);
-      Game::current->player1->newLevel();
+      game->fogThickness = game->wantedFogThickness;
+      game->clearLevel();
+      game->loadLevel(game->nextLevel, Gamer::gamer);
+      game->player1->newLevel();
       restartPlayer();
       gameStatus = statusBeforeGame;
     }
     break;
   case statusGameOver: {
-    if (key == ' ' || key == 'n') GameMode::activate(EnterHighScoreMode::init());
+    if (key == ' ' || key == 'n') {
+      EnterHighScoreMode::init();
+      EnterHighScoreMode::enterHighScoreMode->lastGameScore = game->player1->score;
+      EnterHighScoreMode::enterHighScoreMode->lastLevelSet = game->currentLevelSet;
+      GameMode::activate(EnterHighScoreMode::init());
+    }
   } break;
   case statusVictory:
     if (key == ' ') {
+      Gamer::gamer->playerLose(game);
+      EnterHighScoreMode::init();
+      EnterHighScoreMode::enterHighScoreMode->lastGameScore = game->player1->score;
+      EnterHighScoreMode::enterHighScoreMode->lastLevelSet = game->currentLevelSet;
       GameMode::activate(EnterHighScoreMode::init());
-      Gamer::gamer->playerLose(Game::current);
     }
     break;
   }
@@ -418,13 +426,13 @@ void MainMode::tick(Real td) {
     break;
   case statusGameOver: /* rotate view? */
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    Game::current->tick(td);
+    game->tick(td);
     break;
   case statusLevelComplete: {
     SDL_SetRelativeMouseMode(SDL_TRUE);
     int old_status = (int)statusCount;
     statusCount += 0.8 * td;
-    Player *player = Game::current->player1;
+    Player *player = game->player1;
     if ((int)statusCount != old_status) {
       if ((int)statusCount <= 3) playEffect(SFX_GOT_FLAG);
       switch ((int)statusCount) {
@@ -441,7 +449,7 @@ void MainMode::tick(Real td) {
     }
     if (statusCount > 5.0) {
       playEffect(SFX_LV_COMPLETE);
-      if (Game::current->nextLevel[0])
+      if (game->nextLevel[0])
         gameStatus = statusNextLevel;
       else
         gameStatus = statusVictory;
@@ -451,7 +459,7 @@ void MainMode::tick(Real td) {
   case statusNextLevel:
   case statusInGame:
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    Game::current->handleUserInput(gameStatus == statusInGame);
+    game->handleUserInput(gameStatus == statusInGame);
 
     if (wantedZAngle > zAngle)
       zAngle += std::min(0.4 * td, wantedZAngle - zAngle);
@@ -469,10 +477,10 @@ void MainMode::tick(Real td) {
     else if (wantedXYAngle < xyAngle)
       xyAngle -= std::min(0.4 * td, xyAngle - wantedXYAngle);
 
-    Game::current->tick(td);
+    game->tick(td);
     for (int i = 0; i < 3; i++) {
       camDelta[i] = camDelta[i] * std::pow(1.9e-6, td) +
-                    0.25 * td * (Game::current->player1->position[i] - camFocus[i]);
+                    0.25 * td * (game->player1->position[i] - camFocus[i]);
       camFocus[i] += camDelta[i];
     }
     break;
@@ -496,7 +504,7 @@ void MainMode::tick(Real td) {
   case statusRestartPlayer:
     SDL_SetRelativeMouseMode(SDL_TRUE);
     /* continue the simulation in the background to let things settle */
-    Game::current->tick(td);
+    game->tick(td);
     //    assign(map->startPosition,camFocus); zero(camDelta);
     break;
   }
@@ -509,21 +517,25 @@ void MainMode::activated() {
   gameStatus = statusBeforeGame;
   SDL_SetRelativeMouseMode(SDL_TRUE);
 
-  camFocus[0] = Game::current->map->startPosition[0] - 5;
-  camFocus[1] = Game::current->map->startPosition[1] - 5;
+  camFocus[0] = game->map->startPosition[0] - 5;
+  camFocus[1] = game->map->startPosition[1] - 5;
   time = 0.0;
   flash = 0.0;
 }
-void MainMode::deactivated() { SDL_SetRelativeMouseMode(SDL_FALSE); }
+void MainMode::deactivated() {
+  delete game;
+  game = NULL;
+  SDL_SetRelativeMouseMode(SDL_FALSE);
+}
 void MainMode::playerLose() {
-  Gamer::gamer->playerLose(Game::current);
+  Gamer::gamer->playerLose(game);
   gameStatus = statusGameOver;
 }
 void MainMode::playerDie() { gameStatus = statusRestartPlayer; }
 
 /* Pass along, nothing to see here... */
 void MainMode::mouse(int state, int x, int y) {
-  if (Game::current) Game::current->player1->mouse(state, x, y);
+  if (game) game->player1->mouse(state, x, y);
 }
 void MainMode::mouseDown(int button, int /*x*/, int /*y*/) {
   if (button == SDL_BUTTON_LMASK) key(' ');
@@ -531,35 +543,35 @@ void MainMode::mouseDown(int button, int /*x*/, int /*y*/) {
 /* Starts the current game */
 void MainMode::startGame() {
   gameStatus = statusInGame;
-  Game::current->player1->hasWon = 0;
+  game->player1->hasWon = 0;
   playEffect(SFX_START);
-  Coord3d pos = Game::current->map->startPosition;
-  Gamer::gamer->levelStarted(Game::current);
+  Coord3d pos = game->map->startPosition;
+  Gamer::gamer->levelStarted(game);
 
   pos[2] += 2.0;
-  Game::current->add(new Sign(*Game::current, _("Good luck!"), 6, 1.0, 60.0, pos));
-  Game::current->player1->position[2] += 1.0;
-  Game::current->player1->triggerHook(GameHookEvent_Spawn, NULL);
+  game->add(new Sign(*game, _("Good luck!"), 6, 1.0, 60.0, pos));
+  game->player1->position[2] += 1.0;
+  game->player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 
 /* (Re)starts the current player */
 void MainMode::restartPlayer() {
-  Player *player1 = Game::current->player1;
-  player1->restart(Game::current->map->startPosition);
-  camFocus[0] = Game::current->map->startPosition[0];
-  camFocus[1] = Game::current->map->startPosition[1];
-  Gamer::gamer->levelStarted(Game::current);
+  Player *player1 = game->player1;
+  player1->restart(game->map->startPosition);
+  camFocus[0] = game->map->startPosition[0];
+  camFocus[1] = game->map->startPosition[1];
+  Gamer::gamer->levelStarted(game);
 
-  Coord3d pos = Game::current->map->startPosition;
+  Coord3d pos = game->map->startPosition;
   pos[2] += 2.0;
-  Game::current->add(new Sign(*Game::current, _("Good luck!"), 7, 1.0, 60.0, pos));
+  game->add(new Sign(*game, _("Good luck!"), 7, 1.0, 60.0, pos));
   player1->triggerHook(GameHookEvent_Spawn, NULL);
 }
 
 /* Shows various information on screen */
 void MainMode::showInfo() {
-  if (!Game::current) return;
-  Player *player = Game::current->player1;
+  if (!game) return;
+  Player *player = game->player1;
 
   /* Don't draw the panel if we have released the cursor etc. This is
      useful for screenshots. */
@@ -629,7 +641,7 @@ void MainMode::showInfo() {
   Leave2DMode();
 }
 void MainMode::levelComplete() {
-  Game::current->player1->hasWon = 1;
+  game->player1->hasWon = 1;
   gameStatus = statusLevelComplete;
   statusCount = 0.0;
 }
@@ -639,7 +651,7 @@ void MainMode::showBonus() {
   const char *left_pointers[16];
   const char *right_pointers[16];
   int difficulty = Settings::settings->difficulty;
-  Player *player = Game::current->player1;
+  Player *player = game->player1;
 
   for (int i = 0; i < 16; i++) {
     left_pointers[i] = &left[i][0];
@@ -662,8 +674,7 @@ void MainMode::showBonus() {
 }
 void MainMode::bonusLevelComplete() {
   gameStatus = statusBonusLevelComplete;
-  strncpy(Game::current->nextLevel, Game::current->returnLevel,
-          sizeof(Game::current->nextLevel));
+  strncpy(game->nextLevel, game->returnLevel, sizeof(game->nextLevel));
 }
 
 void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) const {
@@ -671,11 +682,11 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   int gfx_details = Settings::settings->gfx_details;
   Settings::settings->gfx_details = GFX_DETAILS_MINIMALISTIC;
 
-  if (Game::current->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
+  if (game->fogThickness && Settings::settings->gfx_details != GFX_DETAILS_NONE) {
     activeView.fog_enabled = 1;
-    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
-    activeView.fog_end = std::max(0.0, 14.0 - 7.0 * Game::current->fogThickness);
-    assign(Game::current->fogColor, activeView.fog_color);
+    activeView.fog_start = std::max(0.0, 14.0 - 7.0 * game->fogThickness);
+    activeView.fog_end = std::max(0.0, 14.0 - 7.0 * game->fogThickness);
+    assign(game->fogColor, activeView.fog_color);
   } else
     activeView.fog_enabled = 0;
   perspectiveMatrix(140, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.01,
@@ -694,7 +705,7 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
                    : focus[2] + 2.0,
                up[0], up[1], up[2], activeView.modelview);
 
-  setupLighting(Game::current->isNight);
+  setupLighting(game, game->isNight);
 
   /* Setup how we handle textures based on gfx_details */
   if (Settings::settings->gfx_details == 5) {
@@ -724,9 +735,8 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
 
-  if (Game::current->fogThickness)
-    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
-                 Game::current->fogColor[2], Game::current->fogColor[3]);
+  if (game->fogThickness)
+    glClearColor(game->fogColor[0], game->fogColor[1], game->fogColor[2], game->fogColor[3]);
   else
     glClearColor(0.0, 0.0, 0.0, 0.0);
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, reflFBO);
@@ -734,8 +744,8 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   markViewChanged();
 
-  Game::current->map->draw(0, focus);
-  Game::current->drawReflection(focus);
+  game->map->draw(0, focus, game->gameTime);
+  game->drawReflection(focus);
 
   glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
   glDeleteFramebuffers(1, &reflFBO);
@@ -744,15 +754,14 @@ void MainMode::renderEnvironmentTexture(GLuint texture, const Coord3d &focus) co
   Settings::settings->gfx_details = gfx_details;
 }
 
-void MainMode::setupLighting(bool isNight) {
+void MainMode::setupLighting(const Game *game, bool isNight) {
   const Coord3d moonPosition(0., 0., 2.);
   GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
-  if (isNight && Game::current && Game::current->player1) {
+  if (isNight && game && game->player1) {
     GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
-    GLfloat lightPosition2[3] = {
-        (GLfloat)(Game::current->player1->position[0] + moonPosition[0]),
-        (GLfloat)(Game::current->player1->position[1] + moonPosition[1]),
-        (GLfloat)(Game::current->player1->position[2] + moonPosition[2])};
+    GLfloat lightPosition2[3] = {(GLfloat)(game->player1->position[0] + moonPosition[0]),
+                                 (GLfloat)(game->player1->position[1] + moonPosition[1]),
+                                 (GLfloat)(game->player1->position[2] + moonPosition[2])};
     assign(lightDiffuse2, activeView.light_diffuse);
     assign(lightDiffuse2, activeView.light_specular);
     assign(lightPosition2, activeView.light_position);

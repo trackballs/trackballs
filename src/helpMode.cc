@@ -129,7 +129,7 @@ void HelpMode::display() {
     activeView.fog_end = 26.0 - 4.0 * helpGame->fogThickness;
   } else
     activeView.fog_enabled = 0;
-  MainMode::setupLighting(false);
+  MainMode::setupLighting(NULL, false);
 
   /* Render two views of the level map */
   perspectiveMatrix(25, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
@@ -154,9 +154,9 @@ void HelpMode::display() {
   glViewport(11 * screenWidth / 20, 11 * screenHeight / 20, 4 * screenWidth / 10,
              4 * screenHeight / 10);
   Coord3d focus_a = {step / 2 + step * page, step / 2, 2};
-  helpGame->map->draw(0, focus_a);
+  helpGame->map->draw(0, focus_a, helpGame->gameTime);
   helpGame->draw();
-  helpGame->map->draw(1, focus_a);
+  helpGame->map->draw(1, focus_a, helpGame->gameTime);
 
   lookAtMatrix(cameraFrom2[0], cameraFrom2[1], cameraFrom2[2], cameraTo2[0], cameraTo2[1],
                cameraTo2[2], 0.0, 0.0, 1.0, activeView.modelview);
@@ -171,9 +171,9 @@ void HelpMode::display() {
   glViewport(11 * screenWidth / 20, 1 * screenHeight / 10, 4 * screenWidth / 10,
              4 * screenHeight / 10);
   Coord3d focus_b = {step / 2 + step * page, 3 * step / 2, 2};
-  helpGame->map->draw(0, focus_b);
+  helpGame->map->draw(0, focus_b, helpGame->gameTime);
   helpGame->draw();
-  helpGame->map->draw(1, focus_b);
+  helpGame->map->draw(1, focus_b, helpGame->gameTime);
 
   glViewport(0, 0, screenWidth, screenHeight);
   Enter2DMode();

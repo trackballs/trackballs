@@ -33,7 +33,7 @@
 #include <SDL2/SDL_surface.h>
 #include <string.h>
 
-static EnterHighScoreMode* enterHighScoreMode = NULL;
+EnterHighScoreMode* EnterHighScoreMode::enterHighScoreMode = NULL;
 
 EnterHighScoreMode* EnterHighScoreMode::init() {
   if (!enterHighScoreMode) enterHighScoreMode = new EnterHighScoreMode();
@@ -68,7 +68,7 @@ void EnterHighScoreMode::display() {
                  screenWidth / 2);
 
   char str[256];
-  snprintf(str, sizeof(str), _("You got %d points"), Game::current->player1->score);
+  snprintf(str, sizeof(str), _("You got %d points"), lastGameScore);
   addText_Center(0, fontSize, screenHeight / 2, str, screenWidth / 2);
 
   snprintf(str, sizeof(str), _("Enter your name: %s"), name);
@@ -84,7 +84,7 @@ void EnterHighScoreMode::key(int key) {
     return;
   }
   if (key == SDLK_RETURN || key == SDLK_KP_ENTER) {
-    HighScore::init()->addHighScore(Game::current->player1->score, name);
+    HighScore::init()->addHighScore(lastLevelSet, lastGameScore, name);
     GameMode::activate(MenuMode::init());
     return;
   }
@@ -101,7 +101,7 @@ void EnterHighScoreMode::activated() {
   if (!background) { background = loadImage("setupBackground.jpg"); }
 
   snprintf(name, sizeof(name), "%s", Gamer::gamer->name);
-  if (!HighScore::init()->isHighScore(Game::current->player1->score))
+  if (!HighScore::init()->isHighScore(lastLevelSet, lastGameScore))
     GameMode::activate(MenuMode::init());
 
   GLfloat texcoord[4];

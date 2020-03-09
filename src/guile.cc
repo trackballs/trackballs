@@ -1270,7 +1270,8 @@ SCM_DEFINE(difficulty, "difficulty", 0, 0, 0, (),
 SCM_DEFINE(use_grid, "use-grid", 1, 0, 0, (SCM v), "Turns the grid on/off")
 #define FUNC_NAME s_use_grid
 {
-  Game::current->useGrid = SCM_FALSEP(v) ? 0 : 1;
+  warning(
+      "(use-grid) is deprecated and has no effect; prefer (set-cell-flag) with *cell-nogrid*");
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
