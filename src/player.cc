@@ -180,10 +180,12 @@ void Player::tick(Real t) {
   }
 
   /* rotate controls if the camera perspective is rotated */
-  double angle = ((MainMode *)GameMode::current)->xyAngle * M_PI / 2.;
-  double tmp = dx * std::cos(angle) - dy * std::sin(angle);
-  dy = dy * std::cos(angle) + dx * std::sin(angle);
-  dx = tmp;
+  if (GameMode::current == MainMode::mainMode) {
+    double angle = MainMode::mainMode->xyAngle * M_PI / 2.;
+    double tmp = dx * std::cos(angle) - dy * std::sin(angle);
+    dy = dy * std::cos(angle) + dx * std::sin(angle);
+    dx = tmp;
+  }
 
   /* Cap dx/dy to have total radius 1, in case input yields extreme input */
   double len = std::sqrt(dx * dx + dy * dy);
