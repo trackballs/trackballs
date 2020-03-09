@@ -63,6 +63,7 @@ void SetupMode::cleanup() {
 
 SetupMode::SetupMode() : GameMode() {
   gamer = new Gamer();
+  Gamer::gamer = gamer;
   levelSet = level = 0;
   screenshot = 0;
   t = 0.;

@@ -100,7 +100,7 @@ void EnterHighScoreMode::key(int key) {
 void EnterHighScoreMode::activated() {
   if (!background) { background = loadImage("setupBackground.jpg"); }
 
-  snprintf(name, sizeof(name), "%s", Game::current->gamer->name);
+  snprintf(name, sizeof(name), "%s", Gamer::gamer->name);
   if (!HighScore::init()->isHighScore(Game::current->player1->score))
     GameMode::activate(MenuMode::init());
 

@@ -27,16 +27,19 @@ class KnownLevel {
   char fileName[64];
 };
 
+class Game;
+
 class Gamer {
  public:
   Gamer();
   ~Gamer();
-  void levelStarted();  // Called when a new level is started, adds to knownLevels
-  void save();          // Saves info to disk
-  void update();        // Reload info from disk
-  void playerLose();    // Called when game is over, updates statistics etc.
-  void setDefaults();   // Sets defaults for all values
+  void levelStarted(Game* game);  // Called when a new level is started, adds to knownLevels
+  void save();                    // Saves info to disk
+  void update();                  // Reload info from disk
+  void playerLose(Game* game);    // Called when game is over, updates statistics etc.
+  void setDefaults();             // Sets defaults for all values
   void reloadNames();
+  static Gamer* gamer;
 
   char name[20];
   int color;
@@ -46,7 +49,7 @@ class Gamer {
 
   int currentLevelSet;
   int nKnownLevels[256];
-  KnownLevel *levels[256];
+  KnownLevel* levels[256];
 };
 
 #endif

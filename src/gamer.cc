@@ -32,6 +32,8 @@
 #include <zlib.h>
 #include <cstdlib>
 
+Gamer *Gamer::gamer = NULL;
+
 Gamer::Gamer() {
   memset(name, 0, sizeof(name));
   strncpy(name, _("John Doe"), sizeof(name));
@@ -68,24 +70,23 @@ void Gamer::setDefaults() {
   }
   textureNum = 0;
 }
-void Gamer::levelStarted() {
+void Gamer::levelStarted(Game *game) {
   int i;
-  char *level = Game::current->levelName;
-  if (Game::current->currentLevelSet < 0) return;  // don't modify profile when cheating
-  if (Game::current->map->isBonus) return;  // bonus levels are not added to known levels
-  for (i = 0; i < nKnownLevels[Game::current->currentLevelSet]; i++)
-    if (strcmp(levels[Game::current->currentLevelSet][i].fileName, level) == 0) break;
-  if (i == nKnownLevels[Game::current->currentLevelSet]) {
-    strncpy(levels[Game::current->currentLevelSet][i].fileName, level, 64);
-    strncpy(levels[Game::current->currentLevelSet][i].name, Game::current->map->mapname, 64);
-    nKnownLevels[Game::current->currentLevelSet]++;
+  char *level = game->levelName;
+  if (game->currentLevelSet < 0) return;  // don't modify profile when cheating
+  if (game->map->isBonus) return;         // bonus levels are not added to known levels
+  for (i = 0; i < nKnownLevels[game->currentLevelSet]; i++)
+    if (strcmp(levels[game->currentLevelSet][i].fileName, level) == 0) break;
+  if (i == nKnownLevels[game->currentLevelSet]) {
+    strncpy(levels[game->currentLevelSet][i].fileName, level, 64);
+    strncpy(levels[game->currentLevelSet][i].name, game->map->mapname, 64);
+    nKnownLevels[game->currentLevelSet]++;
     nLevelsCompleted++;
     save();
-  } else if (strncmp(levels[Game::current->currentLevelSet][i].name,
-                     Game::current->map->mapname, 64) != 0) {
+  } else if (strncmp(levels[game->currentLevelSet][i].name, game->map->mapname, 64) != 0) {
     /* level name change, i.e. due to translation or order change. */
-    strncpy(levels[Game::current->currentLevelSet][i].fileName, level, 64);
-    strncpy(levels[Game::current->currentLevelSet][i].name, Game::current->map->mapname, 64);
+    strncpy(levels[game->currentLevelSet][i].fileName, level, 64);
+    strncpy(levels[game->currentLevelSet][i].name, game->map->mapname, 64);
     save();
   }
 }
@@ -220,9 +221,9 @@ void Gamer::update() {
   scm_close_input_port(ip);
   return;
 }
-void Gamer::playerLose() {
+void Gamer::playerLose(Game *game) {
   timesPlayed++;
-  totalScore += Game::current->player1->score;
+  totalScore += game->player1->score;
   save();
 }
 void Gamer::reloadNames() {

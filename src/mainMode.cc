@@ -385,7 +385,7 @@ void MainMode::key(int key) {
       xyAngle = wantedXYAngle = zAngle = wantedZAngle = 0.0;
       Game::current->fogThickness = Game::current->wantedFogThickness;
       Game::current->clearLevel();
-      Game::current->loadLevel(Game::current->nextLevel);
+      Game::current->loadLevel(Game::current->nextLevel, Gamer::gamer);
       Game::current->player1->newLevel();
       restartPlayer();
       gameStatus = statusBeforeGame;
@@ -397,7 +397,7 @@ void MainMode::key(int key) {
   case statusVictory:
     if (key == ' ') {
       GameMode::activate(EnterHighScoreMode::init());
-      Game::current->gamer->playerLose();
+      Gamer::gamer->playerLose(Game::current);
     }
     break;
   }
@@ -516,7 +516,7 @@ void MainMode::activated() {
 }
 void MainMode::deactivated() { SDL_SetRelativeMouseMode(SDL_FALSE); }
 void MainMode::playerLose() {
-  Game::current->gamer->playerLose();
+  Gamer::gamer->playerLose(Game::current);
   gameStatus = statusGameOver;
 }
 void MainMode::playerDie() { gameStatus = statusRestartPlayer; }
@@ -534,7 +534,7 @@ void MainMode::startGame() {
   Game::current->player1->hasWon = 0;
   playEffect(SFX_START);
   Coord3d pos = Game::current->map->startPosition;
-  Game::current->gamer->levelStarted();
+  Gamer::gamer->levelStarted(Game::current);
 
   pos[2] += 2.0;
   Game::current->add(new Sign(*Game::current, _("Good luck!"), 6, 1.0, 60.0, pos));
@@ -548,7 +548,7 @@ void MainMode::restartPlayer() {
   player1->restart(Game::current->map->startPosition);
   camFocus[0] = Game::current->map->startPosition[0];
   camFocus[1] = Game::current->map->startPosition[1];
-  Game::current->gamer->levelStarted();
+  Gamer::gamer->levelStarted(Game::current);
 
   Coord3d pos = Game::current->map->startPosition;
   pos[2] += 2.0;

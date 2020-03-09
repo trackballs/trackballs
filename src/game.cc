@@ -42,7 +42,7 @@ extern Color colors[5];
 
 double Game::defaultScores[SCORE_MAX][2];
 
-Game::Game(const char *name, Gamer *g) {
+Game::Game(const char *name, Gamer *gamer) {
   balls = new AnimatedCollection();
 
   current = this;
@@ -53,7 +53,6 @@ Game::Game(const char *name, Gamer *g) {
   gameTicks = 0;
   nextLevel[0] = 0;
   setDefaults();
-  gamer = g;
 
   localPlayers = 1;
   edit_mode = 0;
@@ -68,7 +67,7 @@ Game::Game(const char *name, Gamer *g) {
   player1 = new Player(*this);
   add(player1);
 
-  loadLevel(name);
+  loadLevel(name, gamer);
 
   player1->restart(Game::current->map->startPosition);
   player1->timeLeft = startTime;
@@ -124,7 +123,7 @@ Game::~Game() {
   if (current == this) { current = NULL; }
 }
 
-void Game::loadLevel(const char *name) {
+void Game::loadLevel(const char *name, Gamer *gamer) {
   char mapname[256];
   char scmname[256];
 

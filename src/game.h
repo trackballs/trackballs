@@ -62,7 +62,7 @@ class Game {
   void queueCall(SCM fun);
   void queueCall(SCM fun, double val);
   void queueCall(SCM fun, GameHook *subject, SCM object);
-  void loadLevel(const char *level);
+  void loadLevel(const char *level, Gamer *gamer);
   void clearLevel();
 
   double frandom(); /* pseudorandom numbers for exact replay */
@@ -77,7 +77,6 @@ class Game {
   Map *map;
   Real gameTime;  /* may be inconsistent over replays, avoid in physics */
   long gameTicks; /* deterministic */
-  Gamer *gamer;
   Weather *weather;
 
   static Game *current;
