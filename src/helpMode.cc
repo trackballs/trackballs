@@ -262,17 +262,15 @@ void HelpMode::display() {
   int fontSize = computeLineSize();
   if (s1 >= 0) {
     for (int i = s1; text[i]; i++) {
-      Font::drawSimpleText(text[i], 50,
-                           1 * screenHeight / 10 + (i - s1) * 3 * fontSize + fontSize,
-                           fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
+      drawSimpleText(text[i], 50, 1 * screenHeight / 10 + (i - s1) * 3 * fontSize + fontSize,
+                     fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
     }
   }
 
   if (s2 >= 0) {
     for (int i = s2; text[i]; i++) {
-      Font::drawSimpleText(text[i], 50,
-                           6 * screenHeight / 10 + (i - s2) * 3 * fontSize + fontSize,
-                           fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
+      drawSimpleText(text[i], 50, 6 * screenHeight / 10 + (i - s2) * 3 * fontSize + fontSize,
+                     fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
     }
   }
 

@@ -218,8 +218,8 @@ void MainMode::display() {
     Enter2DMode();
     // darken the display
     draw2DRectangle(0, 0, screenWidth, screenHeight, 0., 0., 1., 1., 0., 0., 0., pause_time);
-    Font::drawCenterSimpleText(_("Paused"), screenWidth / 2, screenHeight / 2 - 16, 16, 1.0,
-                               1.0, 1.0, 0.75);
+    drawCenterSimpleText(_("Paused"), screenWidth / 2, screenHeight / 2 - 16, 16, 1.0, 1.0,
+                         1.0, 0.75);
     Leave2DMode();
     break;
   case statusBonusLevelComplete:
@@ -263,7 +263,7 @@ void MainMode::display() {
     snprintf(str, 255, "Joy: %d, %d -> %.1f, %.1f", Settings::settings->joystickRawX(),
              Settings::settings->joystickRawY(), Settings::settings->joystickX(),
              Settings::settings->joystickY());
-    Font::drawCenterSimpleText(str, screenWidth / 2, screenHeight - 16, 8, 0.6, 0.6, 0.6, 0.6);
+    drawCenterSimpleText(str, screenWidth / 2, screenHeight - 16, 8, 0.6, 0.6, 0.6, 0.6);
   }
 
   if (debug_shadowmap) {
@@ -589,7 +589,7 @@ void MainMode::showInfo() {
     draw2DRectangle(8.f - 1.5f, 13.f + i * s - 1.5f, 144.f, 22.f, 0., 0., 1., 1., 0., 0., 0.,
                     1.);
     draw2DQuad(mvertices, notexco, mcols);
-    Font::drawSimpleText(fieldNames[i], 12, 23 + i * s, 9, 1.0, 1.0, 0.0, 1.0);
+    drawSimpleText(fieldNames[i], 12, 23 + i * s, 9, 1.0, 1.0, 0.0, 1.0);
   }
 
   // lives
@@ -602,14 +602,14 @@ void MainMode::showInfo() {
   // Score
   char str[256];
   snprintf(str, sizeof(str), "%d", player->score);
-  Font::drawRightSimpleText(str, 150, 52, 9, 0.0, 0.0, 0.0, 1.0);
+  drawRightSimpleText(str, 150, 52, 9, 0.0, 0.0, 0.0, 1.0);
 
   // Time left
   snprintf(str, sizeof(str), "%2.2d:%2.2d", player->timeLeft / 60, player->timeLeft % 60);
   if (player->timeLeft < 15 && player->timeLeft % 2)
-    Font::drawRightSimpleText(str, 150, 81, 9, 1.0, 1.0, 1.0, 1.0);
+    drawRightSimpleText(str, 150, 81, 9, 1.0, 1.0, 1.0, 1.0);
   else
-    Font::drawRightSimpleText(str, 150, 81, 9, 0.0, 0.0, 0.0, 1.0);
+    drawRightSimpleText(str, 150, 81, 9, 0.0, 0.0, 0.0, 1.0);
 
   // Health
   draw2DRectangle(8, 3, 144, 5, 0., 0., 1., 1., 0.5, 0.1, 0.1, 1.0);

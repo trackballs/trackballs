@@ -55,8 +55,8 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
   const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
                              ? menuColorSelected
                              : menuColor;
-  int width = Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2],
-                                   color[3], maxX > 0 ? maxX - leftX : 0);
+  int width = drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2],
+                             color[3], maxX > 0 ? maxX - leftX : 0);
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
   sarea->x1 = maxX > 0 ? std::min(leftX + width, maxX) : leftX + width;
@@ -70,8 +70,8 @@ void addText_Right(int code, int fontSize, int y0, const char *rightStr, int rig
   const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
                              ? menuColorSelected
                              : menuColor;
-  int width = Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1],
-                                        color[2], color[3]);
+  int width = drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1], color[2],
+                                  color[3]);
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = rightX - width;
   sarea->x1 = rightX;
@@ -85,8 +85,8 @@ void addText_Center(int code, int fontSize, int y0, const char *str, int cx) {
   const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
                              ? menuColorSelected
                              : menuColor;
-  int width = Font::drawCenterSimpleText(str, cx, y0, fontSize, color[0], color[1], color[2],
-                                         color[3]);
+  int width =
+      drawCenterSimpleText(str, cx, y0, fontSize, color[0], color[1], color[2], color[3]);
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = cx - width / 2;
   sarea->x1 = cx + width / 2;
@@ -101,9 +101,8 @@ void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int 
   const GLfloat *color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
                              ? menuColorSelected
                              : menuColor;
-  Font::drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2], color[3]);
-  Font::drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1], color[2],
-                            color[3]);
+  drawSimpleText(leftStr, leftX, y0, fontSize, color[0], color[1], color[2], color[3]);
+  drawRightSimpleText(rightStr, rightX, y0, fontSize, color[0], color[1], color[2], color[3]);
   SelectionArea *sarea = &selectionAreas[thisArea];
   sarea->x0 = leftX;
   sarea->x1 = rightX;

@@ -969,8 +969,8 @@ int createSnapshot() {
 void message(char *A, char *B) {
   int size = 16;
   int w1, w2, h1, h2, w;
-  w1 = Font::getTextWidth(A, size);
-  w2 = Font::getTextWidth(B, size);
+  w1 = getTextWidth(A, size);
+  w2 = getTextWidth(B, size);
   h1 = 32;
   h2 = 32;
 
@@ -981,10 +981,8 @@ void message(char *A, char *B) {
   Enter2DMode();
   draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
 
-  Font::drawCenterSimpleText(A, screenWidth / 2, screenHeight / 2 - size, size, 0.5, 1.0, 0.2,
-                             1.0);
-  Font::drawCenterSimpleText(B, screenWidth / 2, screenHeight / 2 + 14, size, 0.5, 1.0, 0.2,
-                             1.0);
+  drawCenterSimpleText(A, screenWidth / 2, screenHeight / 2 - size, size, 0.5, 1.0, 0.2, 1.0);
+  drawCenterSimpleText(B, screenWidth / 2, screenHeight / 2 + 14, size, 0.5, 1.0, 0.2, 1.0);
 
   Leave2DMode();
 }
@@ -1008,14 +1006,13 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
   for (int i = 0; i < nlines; i++) {
     h_now += 2 * size;
     if (left[i]) {
-      Font::drawSimpleText(left[i], screenWidth / 2 - width / 2,
-                           screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
-                           1.0);
+      drawSimpleText(left[i], screenWidth / 2 - width / 2,
+                     screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2, 1.0);
     }
     if (right[i]) {
-      Font::drawRightSimpleText(right[i], screenWidth / 2 + width / 2,
-                                screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0,
-                                0.2, 1.0);
+      drawRightSimpleText(right[i], screenWidth / 2 + width / 2,
+                          screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
+                          1.0);
     }
   }
   Leave2DMode();

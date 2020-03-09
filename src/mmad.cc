@@ -342,7 +342,6 @@ static void *mainLoop(void *data) {
   /* Initialize all modules */
   initGuileInterface();
   generalInit();
-  Font::init();
 
   if (has_audio) soundInit();
   Settings::settings->loadLevelSets();
@@ -399,7 +398,7 @@ static void *mainLoop(void *data) {
       soundIdle(td);
 
       /* update font system */
-      Font::tick(td);
+      update2DStringCache(false);
 
       /* Draw world */
       glViewport(0, 0, screenWidth, screenHeight);
