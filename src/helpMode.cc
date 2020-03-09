@@ -117,8 +117,8 @@ void HelpMode::display() {
   }
 
   if (helpGame->fogThickness)
-    glClearColor(Game::current->fogColor[0], Game::current->fogColor[1],
-                 Game::current->fogColor[2], Game::current->fogColor[3]);
+    glClearColor(helpGame->fogColor[0], helpGame->fogColor[1], helpGame->fogColor[2],
+                 helpGame->fogColor[3]);
   else
     glClearColor(0.0, 0.0, 0.0, 0.0);
 
