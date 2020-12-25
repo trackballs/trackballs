@@ -248,10 +248,10 @@ void SettingsMode::display() {
     /* Time compression */
     snprintf(str, sizeof(str), "%.3f", timeDilationFactor);
     menuItem_LeftRight(MENU_TIME_COMPRESSION, menucount++, 1, _("Time Compression"), str);
-
+#if 0
     menuItem_LeftRight(MENU_STORE_REPLAY, menucount++, 1, _("Store best level replay"),
                        (settings->storeReplay ? _("Yes") : _("No")));
-
+#endif
     break;
   case NUM_SUBSCREENS:
     // never should happen
