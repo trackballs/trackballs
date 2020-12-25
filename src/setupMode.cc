@@ -114,8 +114,6 @@ void SetupMode::display() {
   /* Draw the player ball */
   /*                      */
 
-  warnForGLerrors("start of setup ball");
-
   Matrix4d persp_trans = {{1.f, 0.f, 0.f, 0.f},
                           {0.f, 1.f, 0.f, 0.f},
                           {0.f, 0.f, 1.f, 0.f},
@@ -126,6 +124,8 @@ void SetupMode::display() {
   matrixMult(persp_tmp, persp_trans, activeView.projection);
 
   lookAtMatrix(-6.5, -6.5, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, activeView.modelview);
+
+  warnForGLerrors("start of world + lighting");
 
   glEnable(GL_CULL_FACE);
   glEnable(GL_DEPTH_TEST);
@@ -141,6 +141,8 @@ void SetupMode::display() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   }
+
+  warnForGLerrors("end of world + lighting");
 
   // Create sphere
   int ntries = 0;
