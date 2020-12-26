@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
 project(trackballs)
 
 # Required libraries
 list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 find_package(Guile REQUIRED)
-find_package(SDL2_and_friends REQUIRED)
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_mixer REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 set(OpenGL_GL_PREFERENCE "LEGACY")
 find_package(OpenGL REQUIRED)
 find_package(ZLIB REQUIRED)

@@ -14,7 +14,7 @@ find_library(GC_LIBRARY NAMES gc
              HINTS ${PC_GC_LIBDIR} ${PC_GC_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(libgc REQUIRED_VARS
+find_package_handle_standard_args(GC REQUIRED_VARS
                                   GC_LIBRARY GC_INCLUDE_DIR
                                   VERSION_VAR PC_GC_VERSION)
 

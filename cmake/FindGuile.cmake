@@ -28,7 +28,7 @@ find_library(GUILE_LIBRARY NAMES guile guile-3.0 guile-2.2 guile-2.0
              HINTS ${PC_GUILE_LIBDIR} ${PC_GUILE_LIBRARY_DIRS} )
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(libguile REQUIRED_VARS
+find_package_handle_standard_args(Guile REQUIRED_VARS
                                   GUILE_LIBRARY GUILE_INCLUDE_DIR
                                   VERSION_VAR PC_GUILE_VERSION)
 
