@@ -61,7 +61,6 @@ int debug_joystick, repair_joystick;
 static int not_yet_windowed = 1;
 struct timespec displayStartTime, lastDisplayStartTime;
 static bool has_audio = true;
-static unsigned int quitEventType, updateWindowType;
 static bool startInEditMode;
 
 int displayFrameNumber = 0;
@@ -76,40 +75,7 @@ int screenResolutions[5][2] = {{640, 480},
                                {1600, 1200}},
     nScreenResolutions = 5;
 
-static class EventQueue {
- public:
-  bool get_next_event_before(Uint32 max_inclusive_time, SDL_Event *evt) {
-    bool ret = false;
-    SDL_LockMutex(mtx);
-    if (evts.size() > 0 && evts.front().common.timestamp <= max_inclusive_time) {
-      *evt = evts.front();
-      evts.pop();
-      ret = true;
-    }
-    SDL_UnlockMutex(mtx);
-    return ret;
-  }
-  void push_event(const SDL_Event &e) {
-    SDL_LockMutex(mtx);
-    evts.push(e);
-    SDL_UnlockMutex(mtx);
-  }
-
-  SDL_mutex *mtx;
-
- private:
-  std::queue<SDL_Event> evts;
-} eventQueue;
-
-void requestScreenUpdate() {
-  /* A threadsafe indirection to ensure that the window parameters are
-   * updated on the main thread */
-  SDL_Event update_event;
-  update_event.type = updateWindowType;
-  SDL_PushEvent(&update_event);
-}
-
-static void changeScreenResolution() {
+void changeScreenResolution() {
   int full = Settings::settings->is_windowed == 0;
   int fixed = Settings::settings->resolution >= 0;
 
@@ -306,7 +272,7 @@ static int testDir() {
   return 1;
 }
 
-static void *mainLoop(void *data) {
+static void *mainLoop(void* data) {
   /* OpenGL work is now *only* performed on this thread. */
   SDL_GLContext context = (SDL_GLContext)data;
   int r = SDL_GL_MakeCurrent(window, context);
@@ -426,7 +392,7 @@ static void *mainLoop(void *data) {
     /* Respond to events between this logic update and the next */
     // TODO: react to window events *immediately* -- use two queues?
     SDL_Event event;
-    while (eventQueue.get_next_event_before(until_tick, &event)) {
+    while (SDL_PollEvent(&event)) {
       switch (event.type) {
       case SDL_QUIT:
         GameMode::activate(NULL);
@@ -461,7 +427,7 @@ static void *mainLoop(void *data) {
            is pressed */
         else if (event.key.keysym.sym == 'f' && SDL_GetModState() & KMOD_CTRL) {
           Settings::settings->is_windowed = Settings::settings->is_windowed ? 0 : 1;
-          requestScreenUpdate();
+          changeScreenResolution();
         }
 
         /* Use CapsLock key to determine if mouse should be hidden+grabbed */
@@ -536,16 +502,7 @@ static void *mainLoop(void *data) {
 
   SDL_GL_DeleteContext(context);
 
-  SDL_Event quit_event;
-  quit_event.type = quitEventType;
-  SDL_PushEvent(&quit_event);
-
   return (void *)EXIT_SUCCESS;
-}
-
-static int mainLoopWrapper(void *data) {
-  void *v = scm_with_guile(mainLoop, data);
-  return (int)(ptrdiff_t)v;
 }
 
 static void *initSettings(void *) {
@@ -803,34 +760,8 @@ int main(int argc, char **argv) {
     warning("capslock is on, the mouse will be visible and not grabbed");
   }
 
-  /* We move everything but initial event processing off thread so that
-   * SDL can provide semi-accurate event timestamps. */
-  Uint32 custom_events = SDL_RegisterEvents(1);
-  quitEventType = custom_events;
-  updateWindowType = custom_events + 1;
-
-  eventQueue.mtx = SDL_CreateMutex();
-  SDL_Thread *thread = SDL_CreateThread(mainLoopWrapper, "NotInputThread", gl_context);
-  while (true) {
-    SDL_Event ev;
-    int evc = SDL_WaitEvent(&ev);
-    if (evc == 0) {
-      warning("Error receiving events in SDL_WaitEvent: %s", SDL_GetError());
-      break;
-    }
-    if (ev.type == quitEventType) {
-      // Exit loop
-      break;
-    } else if (ev.type == updateWindowType) {
-      changeScreenResolution();
-    } else {
-      // Append to queue, i.e., for the main loop to handle.
-      eventQueue.push_event(ev);
-    }
-  }
-  int retval = EXIT_FAILURE;
-  SDL_WaitThread(thread, &retval);
-  SDL_DestroyMutex(eventQueue.mtx);
+  void *v = scm_with_guile(mainLoop, gl_context);
+  int retval = (int)(ptrdiff_t)v;
 
   SDL_Quit();
   return retval;
