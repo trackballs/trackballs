@@ -91,7 +91,7 @@ typedef enum {
 void setObjectUniforms(Color specular, float sharpness, Object_Lighting lighting);
 /* if the currently active shader has a uniform with matching name, then this struct provides
  * the location */
-typedef struct {
+struct UniformLocations {
   GLuint line_color;
   GLuint refl_color;
   GLuint tex;
@@ -107,7 +107,7 @@ typedef struct {
   GLuint ui_screen_width = 0;
   GLuint ui_screen_height = 0;
   GLuint ui_tex = 0;
-} UniformLocations;
+};
 extern UniformLocations uniformLocations;
 
 typedef struct _viewpa {
