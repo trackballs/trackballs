@@ -272,7 +272,7 @@ static int testDir() {
   return 1;
 }
 
-static void *mainLoop(void* data) {
+static void *mainLoop(void *data) {
   /* OpenGL work is now *only* performed on this thread. */
   SDL_GLContext context = (SDL_GLContext)data;
   int r = SDL_GL_MakeCurrent(window, context);
@@ -614,7 +614,14 @@ int main(int argc, char **argv) {
 #else
   snprintf(localedir, 511, "%s/locale", effectiveShareDir);
 #endif
-  bindtextdomain(PACKAGE, localedir);
+  if (bindtextdomain(PACKAGE, localedir) == NULL) {
+    warning("Failed to set text domain directory to %s", localedir);
+    return EXIT_FAILURE;
+  }
+  if (bind_textdomain_codeset(PACKAGE, "UTF-8") == NULL) {
+    warning("Failed to set text codeset to UTF-8");
+    return EXIT_FAILURE;
+  }
   textdomain(PACKAGE);
 
   /* Loading the settings uses Guile for parsing, but we don't need it again
