@@ -85,6 +85,7 @@ Settings::Settings() {
   timeCompression = 0;
   sandboxAvailable = 0;
   storeReplay = 0;
+  replay = 0;
 
   memset(specialLevel, 0, sizeof(specialLevel));
   memset(levelSets, 0, sizeof(levelSets));
