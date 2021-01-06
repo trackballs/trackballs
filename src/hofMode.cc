@@ -57,7 +57,7 @@ HallOfFameMode::HallOfFameMode() {
   }
 }
 HallOfFameMode::~HallOfFameMode() {
-  if (background) delete background;
+  if (background) SDL_FreeSurface(background);
 }
 
 void HallOfFameMode::activated() {
