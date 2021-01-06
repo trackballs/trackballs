@@ -510,9 +510,33 @@ static void *initSettings(void *) {
   return NULL;
 }
 
-int main(int argc, char **argv) {
-  const char *program_name = argv[0];
+static bool setupLocaleAndTranslations() {
+  /* Initialialize i18n with system defaults, before anything else (eg. settings) have been
+   * loaded */
+  setlocale(LC_ALL, "");
+  char localedir[512];
 
+#ifdef LOCALEDIR
+  snprintf(localedir, 511, "%s", LOCALEDIR);
+#else
+  snprintf(localedir, 511, "%s/locale", effectiveShareDir);
+#endif
+  if (bindtextdomain(PACKAGE, localedir) == NULL) {
+    warning("Failed to set text domain directory to %s", localedir);
+    return false;
+  }
+  if (bind_textdomain_codeset(PACKAGE, "UTF-8") == NULL) {
+    warning("Failed to set text codeset to UTF-8");
+    return false;
+  }
+  if (textdomain(PACKAGE) == NULL) {
+    warning("Failed to set message domain");
+    return false;
+  }
+  return true;
+}
+
+static bool setupEnvAndPaths(const char *program_name) {
   /* Store the username, for use as a default player/level author name */
   const char *env_user = getenv("USER");
   if (env_user) {
@@ -585,15 +609,16 @@ int main(int argc, char **argv) {
   if (!pathIsDir(effectiveLocalDir))
     mkdir(effectiveLocalDir, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
 
-  char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
   if (NULL == getenv("GUILE_LOAD_PATH")) {
+    static char
+        guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
     snprintf(guileLoadPath, sizeof(guileLoadPath), "GUILE_LOAD_PATH=%s", effectiveShareDir);
     putenv(guileLoadPath);
   }
 
 #ifdef WIN32
-  char homeEnv[MAX_PATH + 5];
   if (NULL == getenv("HOME")) {
+    static char homeEnv[MAX_PATH + 5];
     char homePath[MAX_PATH];
     SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, homePath);
     snprintf(homeEnv, sizeof(homeEnv), "HOME=%s", homePath);
@@ -603,26 +628,15 @@ int main(int argc, char **argv) {
     putenv(homeEnv);
   }
 #endif
+  return true;
+}
 
-  /* Initialialize i18n with system defaults, before anything else (eg. settings) have been
-   * loaded */
-  setlocale(LC_ALL, "");
-  char localedir[512];
+int main(int argc, char **argv) {
+  const char *program_name = argv[0];
 
-#ifdef LOCALEDIR
-  snprintf(localedir, 511, "%s", LOCALEDIR);
-#else
-  snprintf(localedir, 511, "%s/locale", effectiveShareDir);
-#endif
-  if (bindtextdomain(PACKAGE, localedir) == NULL) {
-    warning("Failed to set text domain directory to %s", localedir);
-    return EXIT_FAILURE;
-  }
-  if (bind_textdomain_codeset(PACKAGE, "UTF-8") == NULL) {
-    warning("Failed to set text codeset to UTF-8");
-    return EXIT_FAILURE;
-  }
-  textdomain(PACKAGE);
+  if (!setupEnvAndPaths(program_name)) { return EXIT_FAILURE; }
+
+  if (!setupLocaleAndTranslations()) { return EXIT_FAILURE; }
 
   /* Loading the settings uses Guile for parsing, but we don't need it again
    * until e.g. loading the highscores/gamer info, which is done in the non-input
@@ -650,8 +664,6 @@ int main(int argc, char **argv) {
                                         {"repair-joystick", 0, NULL, 'j'},
                                         {NULL, 0, NULL, 0}};
   int next_option;
-
-  program_name = argv[0];
 
   displayStartTime = getMonotonicTime();
   lastDisplayStartTime = displayStartTime;
