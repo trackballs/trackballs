@@ -585,16 +585,16 @@ int main(int argc, char **argv) {
   if (!pathIsDir(effectiveLocalDir))
     mkdir(effectiveLocalDir, S_IXUSR | S_IRUSR | S_IWUSR | S_IXGRP | S_IRGRP | S_IWGRP);
 
+  char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
   if (NULL == getenv("GUILE_LOAD_PATH")) {
-    char guileLoadPath[256 + 16]; /*longest effective share directory plus"GUILE_LOAD_PATH="*/
     snprintf(guileLoadPath, sizeof(guileLoadPath), "GUILE_LOAD_PATH=%s", effectiveShareDir);
     putenv(guileLoadPath);
   }
 
 #ifdef WIN32
+  char homeEnv[MAX_PATH + 5];
   if (NULL == getenv("HOME")) {
     char homePath[MAX_PATH];
-    char homeEnv[MAX_PATH + 5];
     SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, homePath);
     snprintf(homeEnv, sizeof(homeEnv), "HOME=%s", homePath);
     for (int i = strlen(homeEnv) - 1; i >= 0; i--)
