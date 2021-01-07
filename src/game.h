@@ -111,6 +111,8 @@ class Game {
   std::vector<QueuedCall> queuedCalls;
   std::vector<GameHook *> newHooks;
 
+  static void *runQueuedCalls(void *data);
+
   unsigned randSeed;
 
   void setDefaults();

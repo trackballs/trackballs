@@ -50,6 +50,80 @@ const char *Settings::languageNames[7] = {"Default", "Deutsch", "Francais", "Ita
                                           "Magyar",  "Slovak",  "Svenska"};
 int Settings::nLanguages = 7;
 
+void *Settings::load(void *data) {
+  Settings *s = (Settings *)data;
+
+  /* Load all settings from a scheme-syntaxed config file */
+  char str[256];
+  snprintf(str, sizeof(str) - 1, "%s/settings", effectiveLocalDir);
+  if (access(str, R_OK) != -1) {
+    SCM ip = scm_open_file(scm_from_utf8_string(str), scm_from_utf8_string("r"));
+    // ^ TODO catch exception
+    /* Iteratively read key-value pairs */
+    for (int i = 0; i < 1000; i++) {
+      SCM contents = scm_read(ip);
+      if (SCM_EOF_OBJECT_P(contents)) { break; }
+      if (!scm_to_bool(scm_list_p(contents)) || scm_to_int(scm_length(contents)) != 2) {
+        warning("Configuration file should be a series of (key value) tuples.");
+        continue;
+      }
+      SCM key = SCM_CAR(contents);
+      SCM value = SCM_CADR(contents);
+      if (!scm_is_symbol(key) || !SCM_NUMBERP(value)) {
+        warning("Configuration file should be a series of (key value) tuples.");
+        continue;
+      }
+      const int intnum = 22, realnum = 3;
+      const char *intkeys[intnum] = {
+          "gfx-details",       "show-fps",       "is-windowed",    "resolution",
+          "color-depth",       "joystick-index", "joy_center-x",   "joy_center-y",
+          "joy-left",          "joy-right",      "joy-up",         "joy-down",
+          "rotate-steering",   "language",       "ignore-mouse",   "do-reflections",
+          "do-shadows",        "vsync-on",       "shadow-texsize", "time-compression",
+          "sandbox-available", "store-replay"};
+
+      int *intdests[intnum] = {
+          &s->gfx_details,      &s->showFPS,       &s->is_windowed,   &s->resolution,
+          &s->colorDepth,       &s->joystickIndex, &s->joy_center[0], &s->joy_center[1],
+          &s->joy_left,         &s->joy_right,     &s->joy_up,        &s->joy_down,
+          &s->rotateSteering,   &s->language,      &s->ignoreMouse,   &s->doReflections,
+          &s->doShadows,        &s->vsynced,       &s->shadowTexsize, &s->timeCompression,
+          &s->sandboxAvailable, &s->storeReplay};
+      const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
+      double *realdests[realnum] = {&s->sfxVolume, &s->musicVolume, &s->mouseSensitivity};
+
+      int matched = 0;
+      char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
+      for (int j = 0; j < realnum; j++) {
+        if (!strcmp(realkeys[j], skey)) {
+          if (scm_is_real(value)) {
+            *realdests[j] = scm_to_double(value);
+          } else {
+            warning("Value associated with %s is not a number", skey);
+          }
+          matched = 1;
+          break;
+        }
+      }
+      for (int j = 0; j < intnum; j++) {
+        if (!strcmp(intkeys[j], skey)) {
+          if (scm_is_integer(value)) {
+            *intdests[j] = scm_to_int(value);
+          } else {
+            warning("Value associated with %s is not an integer", skey);
+          }
+          matched = 1;
+          break;
+        }
+      }
+      if (!matched) { warning("Unidentified setting: %s", skey); }
+      free(skey);
+    }
+    scm_close(ip);
+  }
+  return NULL;
+}
+
 Settings *Settings::settings;
 void Settings::init() { settings = new Settings(); }
 Settings::Settings() {
@@ -90,73 +164,8 @@ Settings::Settings() {
   memset(specialLevel, 0, sizeof(specialLevel));
   memset(levelSets, 0, sizeof(levelSets));
 
-  /* Load all settings from a scheme-syntaxed config file */
-  char str[256];
-  snprintf(str, sizeof(str) - 1, "%s/settings", effectiveLocalDir);
-  if (access(str, R_OK) != -1) {
-    SCM ip = scm_open_file(scm_from_utf8_string(str), scm_from_utf8_string("r"));
-    // ^ TODO catch exception
-    /* Iteratively read key-value pairs */
-    for (int i = 0; i < 1000; i++) {
-      SCM contents = scm_read(ip);
-      if (SCM_EOF_OBJECT_P(contents)) { break; }
-      if (!scm_to_bool(scm_list_p(contents)) || scm_to_int(scm_length(contents)) != 2) {
-        warning("Configuration file should be a series of (key value) tuples.");
-        continue;
-      }
-      SCM key = SCM_CAR(contents);
-      SCM value = SCM_CADR(contents);
-      if (!scm_is_symbol(key) || !SCM_NUMBERP(value)) {
-        warning("Configuration file should be a series of (key value) tuples.");
-        continue;
-      }
-      const int intnum = 22, realnum = 3;
-      const char *intkeys[intnum] = {
-          "gfx-details",       "show-fps",       "is-windowed",    "resolution",
-          "color-depth",       "joystick-index", "joy_center-x",   "joy_center-y",
-          "joy-left",          "joy-right",      "joy-up",         "joy-down",
-          "rotate-steering",   "language",       "ignore-mouse",   "do-reflections",
-          "do-shadows",        "vsync-on",       "shadow-texsize", "time-compression",
-          "sandbox-available", "store-replay"};
+  scm_with_guile(Settings::load, (void *)this);
 
-      int *intdests[intnum] = {
-          &gfx_details,      &showFPS,       &is_windowed,    &resolution,    &colorDepth,
-          &joystickIndex,    &joy_center[0], &joy_center[1],  &joy_left,      &joy_right,
-          &joy_up,           &joy_down,      &rotateSteering, &language,      &ignoreMouse,
-          &doReflections,    &doShadows,     &vsynced,        &shadowTexsize, &timeCompression,
-          &sandboxAvailable, &storeReplay};
-      const char *realkeys[realnum] = {"sfx-volume", "music-volume", "mouse-sensitivity"};
-      double *realdests[realnum] = {&sfxVolume, &musicVolume, &mouseSensitivity};
-
-      int matched = 0;
-      char *skey = scm_to_utf8_string(scm_symbol_to_string(key));
-      for (int j = 0; j < realnum; j++) {
-        if (!strcmp(realkeys[j], skey)) {
-          if (scm_is_real(value)) {
-            *realdests[j] = scm_to_double(value);
-          } else {
-            warning("Value associated with %s is not a number", skey);
-          }
-          matched = 1;
-          break;
-        }
-      }
-      for (int j = 0; j < intnum; j++) {
-        if (!strcmp(intkeys[j], skey)) {
-          if (scm_is_integer(value)) {
-            *intdests[j] = scm_to_int(value);
-          } else {
-            warning("Value associated with %s is not an integer", skey);
-          }
-          matched = 1;
-          break;
-        }
-      }
-      if (!matched) { warning("Unidentified setting: %s", skey); }
-      free(skey);
-    }
-    scm_close(ip);
-  }
   /* apply time compression immediately */
   timeDilationFactor = std::pow(2.0, timeCompression / 6.0);
 }

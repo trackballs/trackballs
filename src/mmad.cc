@@ -779,7 +779,7 @@ int main(int argc, char **argv) {
     warning("capslock is on, the mouse will be visible and not grabbed");
   }
 
-  void *v = scm_with_guile(mainLoop, gl_context);
+  void *v = mainLoop(gl_context);
   int retval = (int)(ptrdiff_t)v;
 
   SDL_Quit();

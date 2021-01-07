@@ -90,6 +90,7 @@ class Settings {
 
  private:
   void loadLevelSet(const char *path, const char *filename);
+  static void *load(void *);
 };
 
 #endif

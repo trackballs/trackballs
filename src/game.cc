@@ -274,6 +274,36 @@ void Game::handleKey(int key) {
   if (player1) { player1->handleKey(key); }
 }
 
+void *Game::runQueuedCalls(void *data) {
+  Game *game = (Game *)data;
+
+  Game::current = game;
+  for (int j = 0; j < game->queuedCalls.size(); j++) {
+    QueuedCall call = game->queuedCalls[j];
+    /* the functions are owned by GameHooks; arguments by Game */
+    if (call.type == 0) {
+      scm_catch_call_0(call.fun);
+    } else if (call.type == 1) {
+      scm_catch_call_1(call.fun, scm_from_double(call.val));
+    } else if (call.type == 2) {
+      SCM sub;
+      Animated *a = dynamic_cast<Animated *>(call.subject);
+      if (a)
+        sub = smobAnimated_make(a);
+      else
+        sub = smobGameHook_make(call.subject);
+
+      scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
+      if (call.object) { scm_gc_unprotect_object(call.object); }
+    }
+  }
+
+  Game::current = NULL;
+  game->queuedCalls.clear();
+
+  return NULL;
+}
+
 void Game::tick(Real t) {
   // todo: decouple gameTime, replace with global 'displayTime'
   gameTime += t;
@@ -302,28 +332,7 @@ void Game::tick(Real t) {
   newHooks.clear();
 
   /* run queued callbacks */
-  Game::current = this;
-  for (int j = 0; j < queuedCalls.size(); j++) {
-    QueuedCall call = queuedCalls[j];
-    /* the functions are owned by GameHooks; arguments by Game */
-    if (call.type == 0) {
-      scm_catch_call_0(call.fun);
-    } else if (call.type == 1) {
-      scm_catch_call_1(call.fun, scm_from_double(call.val));
-    } else if (call.type == 2) {
-      SCM sub;
-      Animated *a = dynamic_cast<Animated *>(call.subject);
-      if (a)
-        sub = smobAnimated_make(a);
-      else
-        sub = smobGameHook_make(call.subject);
-
-      scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
-      if (call.object) { scm_gc_unprotect_object(call.object); }
-    }
-  }
-  Game::current = NULL;
-  queuedCalls.clear();
+  scm_with_guile(Game::runQueuedCalls, this);
 
   /* filter out dead entities, except players */
   for (int j = Role_GameHook; j < Role_MaxTypes; j++) {

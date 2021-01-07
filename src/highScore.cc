@@ -34,6 +34,65 @@
 static char highScorePath[256];
 static HighScore* highScore = NULL;
 
+void* HighScore::load(void* data) {
+  HighScore* highscore = (HighScore*)data;
+
+  SCM ip = scm_port_from_gzip(highScorePath, 256 * 10 * 25 * 3);
+  if (SCM_EOF_OBJECT_P(ip)) { return NULL; }
+
+  SCM contents = scm_read(ip);
+  if (SCM_EOF_OBJECT_P(contents) || !scm_is_integer(contents)) {
+    scm_close_input_port(ip);
+    warning("Incorrect format for highscore file %s", highScorePath);
+    return NULL;
+  }
+  int nLevelSets = scm_to_int32(contents);
+  int levelSet;
+  for (; nLevelSets; nLevelSets--) {
+    SCM block = scm_read(ip);
+    if (SCM_EOF_OBJECT_P(block) || !scm_to_bool(scm_list_p(block)) ||
+        scm_to_int(scm_length(block)) != 11) {
+      scm_close_input_port(ip);
+      warning("Incorrect format for highscore file %s", highScorePath);
+      return NULL;
+    }
+    SCM sname = SCM_CAR(block);
+    char* name = scm_to_utf8_string(sname);
+    for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
+      if (strcmp(name, Settings::settings->levelSets[levelSet].path) == 0) break;
+    if (levelSet == Settings::settings->nLevelSets) {
+      scm_close_input_port(ip);
+      warning("Highscores contains info about unknown levelset %s", name);
+      free(name);
+      return NULL;
+    }
+    free(name);
+    for (int i = 0; i < 10; i++) {
+      SCM cell = scm_list_ref(block, scm_from_int32(i + 1));
+      if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
+          !((scm_is_string(SCM_CAR(cell)) &&
+             scm_to_int32(scm_string_length(SCM_CAR(cell))) < 25) ||
+            scm_is_false(SCM_CAR(cell))) ||
+          !scm_is_integer(SCM_CADR(cell))) {
+        scm_close_input_port(ip);
+        warning("Incorrect format for highscore file %s", highScorePath);
+        return NULL;
+      }
+      if (scm_is_false(SCM_CAR(cell))) {
+        highscore->dummy_player[levelSet][i] = 1;
+      } else {
+        char* lname = scm_to_utf8_string(SCM_CAR(cell));
+        strncpy(&highscore->names[levelSet][i][0], lname, 25);
+        free(lname);
+        highscore->points[levelSet][i] = scm_to_int32(SCM_CADR(cell));
+        highscore->dummy_player[levelSet][i] = 0;
+      }
+    }
+  }
+  scm_close_input_port(ip);
+  return NULL;
+}
+
 HighScore::HighScore() {
   for (int levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
     for (int i = 0; i < 10; i++) {
@@ -65,59 +124,8 @@ HighScore::HighScore() {
     warning("%s is a symbolic link. Cannot load highscores\n", highScorePath);
     return;
   }
-  SCM ip = scm_port_from_gzip(highScorePath, 256 * 10 * 25 * 3);
-  if (SCM_EOF_OBJECT_P(ip)) { return; }
 
-  SCM contents = scm_read(ip);
-  if (SCM_EOF_OBJECT_P(contents) || !scm_is_integer(contents)) {
-    scm_close_input_port(ip);
-    warning("Incorrect format for highscore file %s", highScorePath);
-    return;
-  }
-  int nLevelSets = scm_to_int32(contents);
-  int levelSet;
-  for (; nLevelSets; nLevelSets--) {
-    SCM block = scm_read(ip);
-    if (SCM_EOF_OBJECT_P(block) || !scm_to_bool(scm_list_p(block)) ||
-        scm_to_int(scm_length(block)) != 11) {
-      scm_close_input_port(ip);
-      warning("Incorrect format for highscore file %s", highScorePath);
-      return;
-    }
-    SCM sname = SCM_CAR(block);
-    char* name = scm_to_utf8_string(sname);
-    for (levelSet = 0; levelSet < Settings::settings->nLevelSets; levelSet++)
-      if (strcmp(name, Settings::settings->levelSets[levelSet].path) == 0) break;
-    if (levelSet == Settings::settings->nLevelSets) {
-      scm_close_input_port(ip);
-      warning("Highscores contains info about unknown levelset %s", name);
-      free(name);
-      return;
-    }
-    free(name);
-    for (int i = 0; i < 10; i++) {
-      SCM cell = scm_list_ref(block, scm_from_int32(i + 1));
-      if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
-          !((scm_is_string(SCM_CAR(cell)) &&
-             scm_to_int32(scm_string_length(SCM_CAR(cell))) < 25) ||
-            scm_is_false(SCM_CAR(cell))) ||
-          !scm_is_integer(SCM_CADR(cell))) {
-        scm_close_input_port(ip);
-        warning("Incorrect format for highscore file %s", highScorePath);
-        return;
-      }
-      if (scm_is_false(SCM_CAR(cell))) {
-        dummy_player[levelSet][i] = 1;
-      } else {
-        char* lname = scm_to_utf8_string(SCM_CAR(cell));
-        strncpy(&names[levelSet][i][0], lname, 25);
-        free(lname);
-        points[levelSet][i] = scm_to_int32(SCM_CADR(cell));
-        dummy_player[levelSet][i] = 0;
-      }
-    }
-  }
-  scm_close_input_port(ip);
+  scm_with_guile(HighScore::load, (void*)this);
 }
 HighScore* HighScore::init() {
   if (!highScore) highScore = new HighScore();

@@ -34,6 +34,9 @@ class HighScore {
 
   int isHighScore(int levelSet, int points); /* returns true if this is a highscore */
   void addHighScore(int levelSet, int points, char* name);
+
+ private:
+  static void* load(void*);
 };
 
 #endif

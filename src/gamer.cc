@@ -131,33 +131,35 @@ void Gamer::save() {
     gzclose(gp);
   }
 }
-void Gamer::update() {
+void *Gamer::doUpdate(void *data) {
+  Gamer *gamer = (Gamer *)data;
   char str[256];
 
-  snprintf(str, sizeof(str) - 1, "%s/%s.gmr", effectiveLocalDir, name);
+  snprintf(str, sizeof(str) - 1, "%s/%s.gmr", effectiveLocalDir, gamer->name);
+
   SCM ip = scm_port_from_gzip(str, 256 * 256 * 128);
   if (SCM_EOF_OBJECT_P(ip)) {
-    setDefaults();
-    return;
+    gamer->setDefaults();
+    return NULL;
   }
   for (int i = 0; i < 1000; i++) {
     SCM blob = scm_read(ip);
     if (SCM_EOF_OBJECT_P(blob)) { break; }
     if (!scm_to_bool(scm_list_p(blob)) || scm_to_int(scm_length(blob)) < 2 ||
         !scm_is_symbol(SCM_CAR(blob))) {
-      warning("Profile format error for player %s", name);
+      warning("Profile format error for player %s", gamer->name);
       break;
     }
     char *skey = scm_to_utf8_string(scm_symbol_to_string(SCM_CAR(blob)));
     if (!strcmp(skey, "levelsets")) {
       free(skey);
       if (!scm_is_integer(SCM_CADR(blob))) {
-        warning("Profile format error for player %s", name);
+        warning("Profile format error for player %s", gamer->name);
         break;
       }
       int nLevelSets = scm_to_int32(SCM_CADR(blob));
       if (scm_to_int(scm_length(blob)) != nLevelSets + 2) {
-        warning("Profile format error for player %s", name);
+        warning("Profile format error for player %s", gamer->name);
         break;
       }
 
@@ -165,7 +167,7 @@ void Gamer::update() {
         SCM block = scm_list_ref(blob, scm_from_int32(nLevelSets + 1));
         if (!scm_to_bool(scm_list_p(block)) || !scm_is_string(SCM_CAR(block)) ||
             !scm_is_integer(SCM_CADR(block)) || scm_to_int32(SCM_CADR(block)) <= 0) {
-          warning("Profile format error for player %s", name);
+          warning("Profile format error for player %s", gamer->name);
           break;
         }
         char *lsname = scm_to_utf8_string(SCM_CAR(block));
@@ -178,20 +180,20 @@ void Gamer::update() {
           break;
         }
         free(lsname);
-        nKnownLevels[levelSet] = scm_to_int32(SCM_CADR(block));
-        for (int i = 0; i < nKnownLevels[levelSet]; i++) {
+        gamer->nKnownLevels[levelSet] = scm_to_int32(SCM_CADR(block));
+        for (int i = 0; i < gamer->nKnownLevels[levelSet]; i++) {
           SCM cell = scm_list_ref(block, scm_from_int32(i + 2));
           if (!scm_to_bool(scm_list_p(cell)) || scm_to_int(scm_length(cell)) != 2 ||
               !scm_is_string(SCM_CAR(cell)) || !scm_is_string(SCM_CADR(cell)) ||
               scm_to_int32(scm_string_length(SCM_CAR(cell))) >= 64 ||
               scm_to_int32(scm_string_length(SCM_CADR(cell))) >= 64) {
-            warning("Profile format error for player %s", name);
+            warning("Profile format error for player %s", gamer->name);
             break;
           }
           char *fname = scm_to_utf8_string(SCM_CAR(cell));
           char *tname = scm_to_utf8_string(SCM_CADR(cell));
-          strncpy(&levels[levelSet][i].fileName[0], fname, 64);
-          strncpy(&levels[levelSet][i].name[0], tname, 64);
+          strncpy(&gamer->levels[levelSet][i].fileName[0], fname, 64);
+          strncpy(&gamer->levels[levelSet][i].name[0], tname, 64);
           free(fname);
           free(tname);
         }
@@ -199,15 +201,15 @@ void Gamer::update() {
     } else {
       const char *keys[7] = {"color",        "texture",    "total-score", "levels-completed",
                              "times-played", "difficulty", "sandbox"};
-      int *dests[7] = {&color,
-                       &textureNum,
-                       &totalScore,
-                       &nLevelsCompleted,
-                       &timesPlayed,
+      int *dests[7] = {&gamer->color,
+                       &gamer->textureNum,
+                       &gamer->totalScore,
+                       &gamer->nLevelsCompleted,
+                       &gamer->timesPlayed,
                        &Settings::settings->difficulty,
                        &Settings::settings->sandbox};
       if (scm_to_int(scm_length(blob)) != 2 || !scm_is_integer(SCM_CADR(blob))) {
-        warning("Profile format error for player %s", name);
+        warning("Profile format error for player %s", gamer->name);
         free(skey);
         break;
       }
@@ -219,8 +221,10 @@ void Gamer::update() {
     }
   }
   scm_close_input_port(ip);
-  return;
+
+  return NULL;
 }
+void Gamer::update() { scm_with_guile(Gamer::doUpdate, (void *)this); }
 void Gamer::playerLose(Game *game) {
   timesPlayed++;
   totalScore += game->player1->score;

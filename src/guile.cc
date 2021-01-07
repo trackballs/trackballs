@@ -121,14 +121,19 @@ static void handleError(SCM stack) {
   free(cstack);
 }
 
-void loadScript(const char *path) {
+static void *sub_loadScript(void *data) {
+  const char *path = (const char *)data;
   SCM stack = SCM_BOOL_F;
   scm_c_catch(SCM_BOOL_T, load_proc, (void *)path, error_proc, NULL, preunwind_proc, &stack);
   if (stack != SCM_BOOL_F) {
     warning("Loading script %s failed", path);
     handleError(stack);
   }
+  return NULL;
 }
+
+void loadScript(const char *path) { scm_with_guile(sub_loadScript, (void *)path); }
+
 static SCM sub_call_n(void *body_data) {
   void **data = (void **)body_data;
   SCM fun = (SCM)data[0];

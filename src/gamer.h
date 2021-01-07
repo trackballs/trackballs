@@ -50,6 +50,9 @@ class Gamer {
   int currentLevelSet;
   int nKnownLevels[256];
   KnownLevel* levels[256];
+
+ private:
+  static void* doUpdate(void*);
 };
 
 #endif
