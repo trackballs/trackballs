@@ -84,6 +84,70 @@ SCM smobGameHook_make(GameHook *h) {
 size_t smobAnimated_free(SCM /*smob*/) { return 0; }
 size_t smobGameHook_free(SCM /*smob*/) { return 0; }
 
+const char *const all_guile_variables[] = {
+    /* From guile itself, a subset of r5rs, minus files, continuations, eval */
+    "*", "+", "-", "/", "=", "<", ">", "<=", ">=", "abs", "acos", "angle", "append", "apply",
+    "asin", "assoc", "assq", "assv", "atan", "boolean?", "car", "cdr", "ceiling",
+    "ceiling-quotient", "ceiling-remainder", "ceiling/", "centered-quotient",
+    "centered-remainder", "centered/", "char->integer", "char-alphabetic?", "char-ci<=?",
+    "char-ci<?", "char-ci=?", "char-ci>=?", "char-ci>?", "char-downcase", "char-lower-case?",
+    "char-numeric?", "char-titlecase", "char-upcase", "char-upper-case?", "char-whitespace?",
+    "char<=?", "char<?", "char=?", "char>=?", "char>?", "char?", "complex?", "cons", "cos",
+    "eq?", "equal?", "eqv?", "euclidean-quotient", "euclidean-remainder", "euclidean/",
+    "even?", "exact->inexact", "exact?", "exp", "expt", "floor", "floor-quotient",
+    "floor-remainder", "floor/", "for-each", "gcd", "imag-part", "inexact->exact", "inexact?",
+    "integer->char", "integer?", "lcm", "length", "list", "list->string", "list->symbol",
+    "list->vector", "list-ref", "list-tail", "list?", "log", "magnitude", "make-polar",
+    "make-rectangular", "make-string", "make-vector", "map", "max", "member", "memq", "memv",
+    "min", "modulo", "negative?", "not", "null?", "number->string", "number?", "odd?", "pair?",
+    "positive?", "procedure?", "quotient", "rational?", "real-part", "real?", "remainder",
+    "reverse", "round", "round-quotient", "round-remainder", "round/", "set-car!", "set-cdr!",
+    "sin", "sqrt", "string", "string->list", "string->number", "string->symbol",
+    "string-append", "string-ci<?", "string-ci<=?", "string-ci=?", "string-ci>=?",
+    "string-ci>?", "string-copy", "string-fill!", "string-length", "string-ref", "string-set!",
+    "string<=?", "string<?", "string=?", "string>=?", "string>?", "string?", "substring",
+    "symbol", "symbol->string", "symbol-append", "symbol?", "tan", "truncate",
+    "truncate-quotient", "truncate-remainder", "truncate/", "values", "vector", "vector->list",
+    "vector-fill!", "vector-length", "vector-ref", "vector-set!", "vector?", "zero?",
+    /* expressions + misc */
+    "define", "lambda", "quote", "if", "cond", "else", "case", "and", "or", "let", "let*",
+    "letrec", "begin", "do", "let-syntax", "letrec-syntax", "set!", "unquote",
+    "unquote-splicing", "quasiquote",
+    /* the only permitted IO */
+    "display", "newline",
+    /* Procedures from here */
+    "_", "translate", "player", "new-mr-black", "new-baby", "add-teleport", "add-bird",
+    "add-flag", "add-colormodifier", "add-heightmodifier", "add-cactus", "add-spike",
+    "add-sidespike", "add-goal", "sign", "add-modpill", "forcefield", "switch", "pipe",
+    "pipe-connector", "diamond", "fountain", "set-position", "get-position-x",
+    "get-position-y", "get-position-z", "set-modtime", "set-acceleration", "set-horizon",
+    "set-primary-color", "set-secondary-color", "set-specular-color", "set-flag", "set-wind",
+    "set-speed", "set-texture", "set-fountain-strength", "set-fountain-velocity",
+    "score-on-death", "time-on-death", "add-cyclic-platform", "animator", "set-onoff",
+    "animator-value", "set-animator-direction", "set-animator-position", "day", "night", "fog",
+    "thick-fog", "fog-color", "set-bonus-level", "set-track-name", "set-author", "start-time",
+    "set-time", "get-time", "add-time", "set-score", "get-score", "add-score",
+    "set-start-position", "snow", "rain", "difficulty", "use-grid", "jump", "scale-oxygen",
+    "set-cell-flag", "get-cell-flag", "set-cell-velocity", "set-cell-heights",
+    "set-cell-water-heights", "set-cell-colors", "set-cell-wall-colors", "copy-cells",
+    "play-effect", "camera-angle", "camera-force-focus", "restart-time",
+    "clear-song-preferences", "force-next-song", "set-song-preference", "trigger",
+    "smart-trigger", "on-event", "get-event-callback",
+    /* Constants from here */
+    "*mod-speed*", "*mod-jump*", "*mod-spike*", "*mod-glass*", "*mod-dizzy*", "*mod-frozen*",
+    "*mod-float*", "*mod-extra-life*", "*mod-large*", "*mod-small*", "*mod-nitro*", "*easy*",
+    "*normal*", "*hard*", "*ff-nothing*", "*ff-kill1*", "*ff-bounce1*", "*ff-kill2*",
+    "*ff-bounce2*", "*ff-bounce*", "*ff-kill*", "*soft-enter*", "*soft-exit*", "*cell-ice*",
+    "*cell-acid*", "*cell-sand*", "*cell-kill*", "*cell-trampoline*", "*cell-nogrid*",
+    "*cell-track*", "*animator-0-remove*", "*animator-0-stop*", "*animator-0-bounce*",
+    "*animator-0-wrap*", "*animator-1-remove*", "*animator-1-stop*", "*animator-1-bounce*",
+    "*animator-1-wrap*", "*animator-remove*", "*animator-stop*", "*animator-bounce*",
+    "*animator-wrap*", "*cell-ne*", "*cell-nw*", "*cell-se*", "*cell-sw*", "*cell-center*",
+    "*bird-constant-height*", "*death*", "*spawn*", "*tick*", "*score-player*",
+    "*score-black*", "*score-baby*", "*score-bird*", "*score-cactus*", "*score-flag*",
+    /* terminator */
+    NULL};
+
 static SCM load_proc(void *body_data) {
   const char *scmname = (const char *)body_data;
   scm_c_primitive_load(scmname);
@@ -121,7 +185,7 @@ static void handleError(SCM stack) {
   free(cstack);
 }
 
-static void *sub_loadScript(void *data) {
+static SCM sub_loadScript_catch(void *data) {
   const char *path = (const char *)data;
   SCM stack = SCM_BOOL_F;
   scm_c_catch(SCM_BOOL_T, load_proc, (void *)path, error_proc, NULL, preunwind_proc, &stack);
@@ -129,10 +193,25 @@ static void *sub_loadScript(void *data) {
     warning("Loading script %s failed", path);
     handleError(stack);
   }
+  return SCM_UNSPECIFIED;
+}
+struct path_and_module {
+  const char *path;
+  SCM module;
+};
+static void *sub_loadScript_module(void *data) {
+  struct path_and_module *path_and_mod = (struct path_and_module *)data;
+  scm_c_call_with_current_module(path_and_mod->module, sub_loadScript_catch,
+                                 (void *)path_and_mod->path);
   return NULL;
 }
 
-void loadScript(const char *path) { scm_with_guile(sub_loadScript, (void *)path); }
+void loadScript(const char *path, SCM module) {
+  struct path_and_module path_and_mod;
+  path_and_mod.path = path;
+  path_and_mod.module = module;
+  scm_with_guile(sub_loadScript_module, (void *)&path_and_mod);
+}
 
 static SCM sub_call_n(void *body_data) {
   void **data = (void **)body_data;

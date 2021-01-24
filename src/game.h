@@ -97,6 +97,7 @@ class Game {
   std::vector<GameHook *> hooks[Role_MaxTypes];
 
  private:
+  SCM sandbox_module;
   typedef struct {
     SCM fun;
     union {
@@ -112,6 +113,7 @@ class Game {
   std::vector<GameHook *> newHooks;
 
   static void *runQueuedCalls(void *data);
+  static void *setupSandbox(void *data);
 
   unsigned randSeed;
 
