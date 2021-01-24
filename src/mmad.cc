@@ -505,11 +505,6 @@ static void *mainLoop(void *data) {
   return (void *)EXIT_SUCCESS;
 }
 
-static void *initSettings(void *) {
-  Settings::init();
-  return NULL;
-}
-
 static bool setupLocaleAndTranslations() {
   /* Initialialize i18n with system defaults, before anything else (eg. settings) have been
    * loaded */
@@ -638,10 +633,8 @@ int main(int argc, char **argv) {
 
   if (!setupLocaleAndTranslations()) { return EXIT_FAILURE; }
 
-  /* Loading the settings uses Guile for parsing, but we don't need it again
-   * until e.g. loading the highscores/gamer info, which is done in the non-input
-   * thread */
-  scm_with_guile(initSettings, NULL);
+  /* This calls scm_with_guile which initializes guile which requires env setup */
+  Settings::init();
 
   startInEditMode = false;
   bool touchMode = false;
