@@ -36,7 +36,7 @@ void setMusicPreference(char *name, int weight);
 void playNextSong();
 
 #define SFX_PLAYER_DIES "die.wav"  // 0
-#define SFX_START "start.wav"  // 1
+#define SFX_START "start.wav"      // 1
 #define SFX_GOT_LIFE "start.wav"
 #define SFX_GOT_FLAG "flag.wav"  // 2
 #define SFX_GOT_GOODPILL "goodpill.wav"
@@ -44,15 +44,15 @@ void playNextSong();
 #define SFX_GOT_SAVEPOINT "savepoint.wav"
 #define SFX_LV_COMPLETE "levelComplete.wav"  // 3
 #define SFX_TIMEOUT "timeout.wav"
-#define SFX_BLACK_DIE "blackDie.wav"  // 4
+#define SFX_BLACK_DIE "blackDie.wav"         // 4
 #define SFX_TIME_WARNING "time_warning.wav"  // 5
-#define SFX_FF_DEATH "ff_death.wav"  // 6
-#define SFX_SAND_CRASH "sandcrash.wav"  // 7
-#define SFX_SWITCH "switch.wav"  // 8
-#define SFX_CACTUS_DIE "blackDie.wav"  // 9
-#define SFX_BIRD_DIE "blackDie.wav"  // 10
-#define SFX_SPIKE "switch.wav"  // 11
-#define N_EFFECTS n_effects  // 12
+#define SFX_FF_DEATH "ff_death.wav"          // 6
+#define SFX_SAND_CRASH "sandcrash.wav"       // 7
+#define SFX_SWITCH "switch.wav"              // 8
+#define SFX_CACTUS_DIE "blackDie.wav"        // 9
+#define SFX_BIRD_DIE "blackDie.wav"          // 10
+#define SFX_SPIKE "switch.wav"               // 11
+#define N_EFFECTS n_effects                  // 12
 
 /* Needed sound effects
    SFX_CACTUS_DIE  - maybe some "squishy"
