@@ -70,7 +70,9 @@ they may be passed in via the issue system.
 
 If you have a question that needs answering, check the [FAQ](FAQ.md) first.
 
-Trackballs source code is under the [GPL v2](COPYING).
+Trackballs is provided under the [GPL v2](COPYING), or any later version,
+with one exception: some of the [music](share/music/README) uses the
+[Ethymos Free Music Licence](share/music/README).
 
 The change log for Trackballs is [NEWS.md](NEWS.md).
 
