@@ -5,14 +5,16 @@
     Yannick Perret      extra coder: 
     Samuel Listopad     windows port
     Ari Pollak          Debian packaging, security & build patches
+    Manuel Stoeckl      maintaining trackballs since 2017
 
 ### Translators
 
     English Translation    Mathias Broxvall        
     Swedish Translation    Mathias Broxvall        
     Italian Translation    Francesco Guatieri      
-    French Translation     Guillaume Bedot         
+    French Translation     Guillaume Bedot, Manuel Stoeckl
     Slovak Translation     Jozef Riha <jose1711@gmail.com>
+    German Translation     Manuel Stoeckl
 
 ### Fonts
 
@@ -34,7 +36,7 @@ project ([https://www.gnu.org/software/freefont/](https://www.gnu.org/software/f
 
 ### Images
 
-Mathias Broxvall, Dietrich Radel. All GPL'ed
+Mathias Broxvall, Dietrich Radel, Manuel Stoeckl. All GPL'ed
 
 
 ### Sound effects
