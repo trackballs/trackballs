@@ -104,9 +104,9 @@ struct UniformLocations {
   GLuint ignore_shadow;
   GLuint use_lighting;
   // For UI shader
-  GLuint ui_screen_width = 0;
-  GLuint ui_screen_height = 0;
-  GLuint ui_tex = 0;
+  GLuint ui_screen_width;
+  GLuint ui_screen_height;
+  GLuint ui_tex;
 };
 extern UniformLocations uniformLocations;
 

@@ -397,7 +397,7 @@ void EditMode::display() {
 
   /* Draw the map and the current mapcursor/selected region */
   if (map) {
-    Coord3d map_focus = {(Real)x, (Real)y, map->cell(x, y).heights[Cell::CENTER]};
+    Coord3d map_focus((Real)x, (Real)y, map->cell(x, y).heights[Cell::CENTER]);
     map->draw(0, map_focus, time);
     map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
     if (game) {
