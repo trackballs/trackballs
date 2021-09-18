@@ -42,7 +42,7 @@ extern Color colors[5];
 
 double Game::defaultScores[SCORE_MAX][2];
 
-Game::Game(const char *name, Gamer *gamer) : sandbox_module(SCM_UNDEFINED) {
+Game::Game(const char *name, Gamer *gamer) {
   balls = new AnimatedCollection();
 
   map = NULL;
@@ -60,8 +60,7 @@ Game::Game(const char *name, Gamer *gamer) : sandbox_module(SCM_UNDEFINED) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
-  scm_with_guile(setupSandbox, this);
-  loadScript(scmname, sandbox_module);
+  loadScript(scmname);
 
   player1 = new Player(*this);
   add(player1);
@@ -73,7 +72,7 @@ Game::Game(const char *name, Gamer *gamer) : sandbox_module(SCM_UNDEFINED) {
   player1->lives = 4 - Settings::settings->difficulty;
 }
 
-Game::Game(Map *editmap, const char *levelname) : sandbox_module(SCM_UNDEFINED) {
+Game::Game(Map *editmap, const char *levelname) {
   balls = new AnimatedCollection();
   localPlayers = 0;
   player1 = NULL;
@@ -86,18 +85,17 @@ Game::Game(Map *editmap, const char *levelname) : sandbox_module(SCM_UNDEFINED) 
   setDefaults();
 
   /* load scripts */
-  scm_with_guile(setupSandbox, this);
   char scmname[512];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   scmname[511] = '\0';
-  loadScript(scmname, sandbox_module);
+  loadScript(scmname);
   snprintf(scmname, 511, "%s/levels/%s.scm", effectiveLocalDir, levelname);
   scmname[511] = '\0';
   if (!fileExists(scmname)) {
     snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
   }
   scmname[511] = '\0';
-  loadScript(scmname, sandbox_module);
+  loadScript(scmname);
 
   for (int j = 0; j < newHooks.size(); j++) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
@@ -170,9 +168,7 @@ void Game::loadLevel(const char *name, Gamer *gamer) {
   map = new Map(mapname);
 
   Game::current = this;
-  /* reset sandbox */
-  scm_with_guile(setupSandbox, this);
-  loadScript(scmname, sandbox_module);
+  loadScript(scmname);
   Game::current = NULL;
 
   for (int j = 0; j < newHooks.size(); j++) {
@@ -305,22 +301,6 @@ void *Game::runQueuedCalls(void *data) {
   Game::current = NULL;
   game->queuedCalls.clear();
 
-  return NULL;
-}
-
-static void init_module(void *data) {}
-void *Game::setupSandbox(void *data) {
-  Game *game = (Game *)data;
-  if (!SCM_UNBNDP(game->sandbox_module)) { /* Clean up existing sandbox */
-  }
-
-  SCM mod = scm_c_eval_string("(define-module (trackballs module) #:pure)");
-  game->sandbox_module = mod;
-  // Redefine all the names inside the module
-  for (int i = 0; all_guile_variables[i]; i++) {
-    scm_c_module_define(game->sandbox_module, all_guile_variables[i],
-                        scm_variable_ref(scm_c_lookup(all_guile_variables[i])));
-  }
   return NULL;
 }
 
