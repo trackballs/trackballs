@@ -8,7 +8,7 @@
 find_package(PkgConfig)
 pkg_check_modules(PC_GUILE QUIET guile-3.0)
 if (PC_GUILE_FOUND)
-    find_program(GUILE_SNARF NAMES guile-snarf3.0 guile-snarf)
+    find_program(GUILE_SNARF NAMES guile-snarf3.0 guile-snarf-3.0 guile-snarf)
     find_path(GUILE_INCLUDE_DIR libguile.h
             HINTS ${PC_GUILE_INCLUDEDIR} ${PC_GUILE_INCLUDE_DIRS}
             PATH_SUFFIXES guile/3.0 guile)
@@ -19,7 +19,7 @@ endif(PC_GUILE_FOUND)
 if (NOT PC_GUILE_FOUND)
     pkg_check_modules(PC_GUILE QUIET guile-2.2)
     if (PC_GUILE_FOUND)
-        find_program(GUILE_SNARF NAMES guile-snarf2.2 guile-snarf)
+        find_program(GUILE_SNARF NAMES guile-snarf2.2 guile-snarf-2.2 guile-snarf)
         find_path(GUILE_INCLUDE_DIR libguile.h
                 HINTS ${PC_GUILE_INCLUDEDIR} ${PC_GUILE_INCLUDE_DIRS}
                 PATH_SUFFIXES guile/2.2 guile)
@@ -31,7 +31,7 @@ endif(NOT PC_GUILE_FOUND)
 if (NOT PC_GUILE_FOUND)
     pkg_check_modules(PC_GUILE QUIET guile-2.0)
     if (PC_GUILE_FOUND)
-        find_program(GUILE_SNARF NAMES guile-snarf2.0 guile-snarf)
+        find_program(GUILE_SNARF NAMES guile-snarf2.0 guile-snarf-2.0 guile-snarf)
         find_path(GUILE_INCLUDE_DIR libguile.h
                 HINTS ${PC_GUILE_INCLUDEDIR} ${PC_GUILE_INCLUDE_DIRS}
                 PATH_SUFFIXES guile/2.0 guile)
@@ -54,7 +54,9 @@ endif(NOT PC_GUILE_FOUND)
 
 if (NOT PC_GUILE_FOUND)
     find_program(GUILE_SNARF NAMES
-            guile-snarf3.0 guile-snarf2.2 guile-snarf2.0 guile-snarf)
+            guile-snarf3.0 guile-snarf-3.0
+            guile-snarf2.2 guile-snarf-2.2
+            guile-snarf2.0 guile-snarf-2.0 guile-snarf)
     find_path(GUILE_INCLUDE_DIR libguile.h
             PATH_SUFFIXES guile/3.0 guile/2.2 guile/2.0 guile)
     find_library(GUILE_LIBRARY NAMES guile-3.0 guile-2.2 guile-2.0 guile)
