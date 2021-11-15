@@ -302,7 +302,7 @@ static void *mainLoop(void *data) {
     glClear(GL_COLOR_BUFFER_BIT);
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
-                    texcoord[3], 1., 1., 1., 1., splashTexture);
+                    texcoord[3], Color(1., 1., 1., 1.), splashTexture);
     Leave2DMode();
     SDL_GL_SwapWindow(window);
   }
@@ -333,7 +333,7 @@ static void *mainLoop(void *data) {
     glClear(GL_COLOR_BUFFER_BIT);
     Enter2DMode();
     draw2DRectangle(0, 0, screenWidth, screenHeight, texcoord[0], texcoord[1], texcoord[2],
-                    texcoord[3], 1., 1., 1., 1., splashTexture);
+                    texcoord[3], Color(1., 1., 1., 1.), splashTexture);
     Leave2DMode();
     SDL_GL_SwapWindow(window);
     timeNow = getMonotonicTime();

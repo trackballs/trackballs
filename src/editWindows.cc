@@ -201,9 +201,11 @@ void EStatusWindow::draw() {
   addText_Left(CODE_EDITMODE, fontSize / 2, row4, str, col0);
 
   /* Small separator between area 1 - 2 */
-  draw2DRectangle(col1 - fontSize - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
+  draw2DRectangle(col1 - fontSize - 1, y, 2, height, 0., 0., 1., 1.,
+                  Color(SRGBColor(0.5, 0.5, 0.5, 1.0)));
   /* Small separator between area 2 - 3 */
-  draw2DRectangle(area3x - 1, y, 2, height, 0., 0., 1., 1., 0.5, 0.5, 0.5, 1.0);
+  draw2DRectangle(area3x - 1, y, 2, height, 0., 0., 1., 1.,
+                  Color(SRGBColor(0.5, 0.5, 0.5, 1.0)));
 
   /* TODO. Make the height/colour etc. text selectable areas
          with the same effect as corresponding menu choice */
@@ -256,8 +258,7 @@ void EStatusWindow::draw() {
                  col1 + fontSize * 3);
 
     draw2DRectangle(col1, row2, 2 * fontSize, row4 - row2, 0., 0., 1., 1.,
-                    EditMode::editMode->color.f0(), EditMode::editMode->color.f1(),
-                    EditMode::editMode->color.f2(), EditMode::editMode->color.f3());
+                    Color(EditMode::editMode->color));
   } else if (EditMode::editMode->currentEditMode == EDITMODE_VELOCITY) {
     Cell& cell = EditMode::editMode->map->cell(EditMode::editMode->x, EditMode::editMode->y);
     snprintf(str, 255, _("dx: %2.2f"), cell.velocity[0]);
@@ -267,10 +268,9 @@ void EStatusWindow::draw() {
   } else if (EditMode::editMode->currentEditMode == EDITMODE_NOLINES) {
     addText_Left(0, fontSize / 2, row1, _("Lines"), col1);
 
-    GLfloat line_off[4][4] = {
-        {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}};
-    GLfloat line_on[4][4] = {
-        {0., 0., 0., 1.}, {0., 0., 0., 1.}, {0., 0., 0., 1.}, {0., 0., 0., 1.}};
+    Color w(1., 1., 1., 1.), b(0., 0., 0., 1.);
+    Color line_off[4] = {w, w, w, w};
+    Color line_on[4] = {b, b, b, b};
     GLfloat txco[4][2] = {{0., 0.}, {0., 0.}, {0., 0.}, {0., 0.}};
 
     GLfloat r = 1.5;

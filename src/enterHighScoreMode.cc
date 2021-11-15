@@ -57,8 +57,8 @@ void EnterHighScoreMode::display() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   Enter2DMode();
-  draw2DRectangle(0, 0, screenWidth, screenHeight, texMinX, texMinY, texMaxX, texMaxY, 1., 1.,
-                  1., 1., texture);
+  draw2DRectangle(0, 0, screenWidth, screenHeight, texMinX, texMinY, texMaxX, texMaxY,
+                  Color(1., 1., 1., 1.), texture);
 
   int headerSize = computeHeaderSize();
   int fontSize = computeMenuSize();

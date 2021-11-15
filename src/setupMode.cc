@@ -105,8 +105,8 @@ void SetupMode::display() {
     coord[2] -= delta;
   }
   Enter2DMode();
-  draw2DRectangle(0, 0, screenWidth, screenHeight, coord[0], coord[1], coord[2], coord[3], 1.,
-                  1., 1., 1., active);
+  draw2DRectangle(0, 0, screenWidth, screenHeight, coord[0], coord[1], coord[2], coord[3],
+                  Color(1., 1., 1., 1.), active);
 
   Leave2DMode();
 
@@ -253,25 +253,25 @@ void SetupMode::display() {
 
   /* Info */
   snprintf(str, sizeof(str), _("Total games played: %d"), gamer->timesPlayed);
-  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 4, lineSize, 1.0, 1.0, 1.0,
-                 1.0);
+  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 4, lineSize,
+                 Color(1.0, 1.0, 1.0, 1.0));
   if (gamer->timesPlayed)
     snprintf(str, sizeof(str), _("Average score: %d"), gamer->totalScore / gamer->timesPlayed);
   else
     snprintf(str, sizeof(str), _("Average score: N/A"));
-  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 3, lineSize, 1.0, 1.0, 1.0,
-                 1.0);
+  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 3, lineSize,
+                 Color(1.0, 1.0, 1.0, 1.0));
   snprintf(str, sizeof(str), _("Levels completed: %d"), gamer->nLevelsCompleted);
-  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 2, lineSize, 1.0, 1.0, 1.0,
-                 1.0);
+  drawSimpleText(str, col0, screenHeight - fontSize * 2 - lineSep * 2, lineSize,
+                 Color(1.0, 1.0, 1.0, 1.0));
 
   /* Descriptive level text */
   if (!Settings::settings->doSpecialLevel) {
     for (int lineno = 0; lineno < 5; lineno++) {
       if (strlen(settings->levelSets[levelSet].description[lineno])) {
         drawSimpleText(gettext(settings->levelSets[levelSet].description[lineno]),
-                       col0 + lineSize, row0 + rowSep * 4 + lineSep * lineno, lineSize, 1.0,
-                       1.0, 1.0, 1.0, screenWidth - col0 - lineSize);
+                       col0 + lineSize, row0 + rowSep * 4 + lineSep * lineno, lineSize,
+                       Color(1.0, 1.0, 1.0, 1.0), screenWidth - col0 - lineSize);
       }
     }
   }

@@ -37,29 +37,26 @@ int getTextWidth(const char *text, int size, int maxwidth) {
   return w;
 }
 
-int drawSimpleText(const char *text, int x, int y, int sz, float r, float g, float b, float a,
-                   int maxwidth) {
+int drawSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth) {
   if (!text || (strlen(text) == 0)) return 0;
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 0, maxwidth);
+  return draw2DString(active, text, x, y, c, sz >= 10, 0, maxwidth);
 }
 
-int drawRightSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
-                        float a, int maxwidth) {
+int drawRightSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth) {
   if (!text || (strlen(text) == 0)) return 0;
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 2, maxwidth);
+  return draw2DString(active, text, x, y, c, sz >= 10, 2, maxwidth);
 }
 
-int drawCenterSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
-                         float a, int maxwidth) {
+int drawCenterSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth) {
   if (!text || (strlen(text) == 0)) return 0;
 
   int size = (int)sz;
   TTF_Font *active = menuFontForSize(size);
-  return draw2DString(active, text, x, y, r, g, b, a, sz >= 10, 1, maxwidth);
+  return draw2DString(active, text, x, y, c, sz >= 10, 1, maxwidth);
 }

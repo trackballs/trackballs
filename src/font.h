@@ -25,12 +25,9 @@
 #include "general.h"
 
 /* Return value is always the width of the rendered text */
-int drawSimpleText(const char *text, int x, int y, int sz, float r, float g, float b, float a,
-                   int maxwidth = 0);
-int drawRightSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
-                        float a, int maxwidth = 0);
-int drawCenterSimpleText(const char *text, int x, int y, int sz, float r, float g, float b,
-                         float a, int maxwidth = 0);
+int drawSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
+int drawRightSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
+int drawCenterSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
 int getTextWidth(const char *text, int sz, int maxwidth = 0);
 
 #endif

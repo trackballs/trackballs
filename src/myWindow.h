@@ -68,8 +68,8 @@ class MyWindow {
   /* Coordinates of upper left corner + width/height of window */
   int x, y, width, height;
   int isDraggable;
-  GLfloat background[4];
-  GLfloat border[4];
+  Color background;
+  Color border;
 
  private:
   MyWindow *next, **prev;

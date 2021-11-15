@@ -37,16 +37,10 @@ MyWindow::MyWindow(int x, int y, int width, int height) {
   resize(width, height);
 
   /* Default background */
-  background[0] = 0.2;
-  background[1] = 0.2;
-  background[2] = 0.5;
-  background[3] = 0.8;
+  background = Color(SRGBColor(0.2, 0.2, 0.5, 0.8));
 
   /* Default border color */
-  border[0] = 0.8;
-  border[1] = 0.8;
-  border[2] = 0.8;
-  border[3] = 1.0;
+  border = Color(SRGBColor(0.8, 0.8, 0.8, 1.0));
 }
 
 /*                               */
@@ -73,11 +67,9 @@ void MyWindow::key(int /*key*/, int /*shift*/, int /*x*/, int /*y*/) {}
 void MyWindow::tick() {}
 void MyWindow::draw() {
   // 3 overlapping rectangles: shadow, rim, face
-  draw2DRectangle(x + 1, y + 1, width + 2, height + 2, 0., 0., 1., 1., 0., 0., 0., 0.5);
-  draw2DRectangle(x - 1, y - 1, width + 2, height + 2, 0., 0., 1., 1., border[0], border[1],
-                  border[2], border[3]);
-  draw2DRectangle(x, y, width, height, 0., 0., 1., 1., background[0], background[1],
-                  background[2], background[3]);
+  draw2DRectangle(x + 1, y + 1, width + 2, height + 2, 0., 0., 1., 1., Color(0., 0., 0., 0.5));
+  draw2DRectangle(x - 1, y - 1, width + 2, height + 2, 0., 0., 1., 1., border);
+  draw2DRectangle(x, y, width, height, 0., 0., 1., 1., background);
 }
 void MyWindow::attached() {}
 void MyWindow::removed() {}

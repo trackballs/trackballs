@@ -83,7 +83,7 @@ void HallOfFameMode::display() {
   // Draw the background using the preloaded texture
   Enter2DMode();
   draw2DRectangle(0, 0, screenWidth, screenHeight, texCoord[0], texCoord[1], texCoord[2],
-                  texCoord[3], timeLeft, timeLeft, timeLeft, 1., texture);
+                  texCoord[3], Color(timeLeft, timeLeft, timeLeft, 1.), texture);
 
   int fontSize = computeMenuSize();
   int border = computeScreenBorder();
@@ -106,11 +106,9 @@ void HallOfFameMode::display() {
     const char *name = highscore->dummy_player[levelSet][i]
                            ? _("Anonymous Coward")
                            : &highscore->names[levelSet][i][0];
-    drawSimpleText(name, border, y + dy * i - fontSize, fontSize, menuColor[0], menuColor[1],
-                   menuColor[2], menuColor[3]);
+    drawSimpleText(name, border, y + dy * i - fontSize, fontSize, menuColor);
     snprintf(str, sizeof(str), _("%d points"), highscore->points[levelSet][i]);
-    drawRightSimpleText(str, screenWidth - border, y + dy * i - fontSize, fontSize,
-                        menuColor[0], menuColor[1], menuColor[2], menuColor[3]);
+    drawRightSimpleText(str, screenWidth - border, y + dy * i - fontSize, fontSize, menuColor);
   }
 
   addText_Left(CODE_RETURN, computeMenuSize(), screenHeight - 5 * computeMenuSize() / 2,

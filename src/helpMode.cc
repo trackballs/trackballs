@@ -93,7 +93,7 @@ void HelpMode::display() {
 
   Enter2DMode();
   draw2DRectangle(0, 0, screenWidth, screenHeight, bgCoord[0], bgCoord[1], bgCoord[2],
-                  bgCoord[3], 1., 1., 1., 1., bgTexture);
+                  bgCoord[3], Color(1., 1., 1., 1.), bgTexture);
   Leave2DMode();
 
   /* for shadow map */
@@ -265,14 +265,14 @@ void HelpMode::display() {
   if (s1 >= 0) {
     for (int i = s1; text[i]; i++) {
       drawSimpleText(text[i], 50, 1 * screenHeight / 10 + (i - s1) * 3 * fontSize + fontSize,
-                     fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
+                     fontSize, Color(SRGBColor(0.9, 0.9, 0.25, 1.)), screenWidth / 2 - 50);
     }
   }
 
   if (s2 >= 0) {
     for (int i = s2; text[i]; i++) {
       drawSimpleText(text[i], 50, 6 * screenHeight / 10 + (i - s2) * 3 * fontSize + fontSize,
-                     fontSize, 0.9, 0.9, 0.25, 1., screenWidth / 2 - 50);
+                     fontSize, Color(SRGBColor(0.9, 0.9, 0.25, 1.)), screenWidth / 2 - 50);
     }
   }
 

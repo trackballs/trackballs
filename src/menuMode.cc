@@ -96,8 +96,8 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   }
 
   /* Draw header */
-  draw2DRectangle(screenWidth / 2 - 512 / 2, 20, 512, 128, 0., 0., 1., 1., 1., 1., 1., 1.,
-                  textures[loadTexture("header.png")]);
+  draw2DRectangle(screenWidth / 2 - 512 / 2, 20, 512, 128, 0., 0., 1., 1.,
+                  Color(1., 1., 1., 1.), textures[loadTexture("header.png")]);
 
   clearSelectionAreas();
   int fontSize = computeMenuSize();
@@ -120,7 +120,8 @@ You steer the ball using the mouse and by pressing >spacebar< you can jump a sho
   */
 
   sprintf(str, "v%s", VERSION);
-  drawRightSimpleText(str, screenWidth - 15, screenHeight - 15, 10, 0.50, 0.50, 0.50, 0.75);
+  drawRightSimpleText(str, screenWidth - 15, screenHeight - 15, 10,
+                      Color(SRGBColor(0.50, 0.50, 0.50, 0.75)));
 
   drawMousePointer();
   displayFrameRate();
@@ -285,5 +286,5 @@ void MenuMode::drawSlide(int slide, double time, double alpha) {
   }
 
   draw2DRectangle(0, 0, screenWidth, screenHeight, viewOffsetX, viewOffsetY, viewWidth,
-                  viewHeight, 1., 1., 1., alpha, slides[slide]);
+                  viewHeight, Color(1., 1., 1., alpha), slides[slide]);
 }

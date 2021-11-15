@@ -38,15 +38,14 @@ void glHelpCleanup();
 void warnForGLerrors(const char *where_am_i);
 
 /* displays a 2d text on specific screen coordinates, returning width */
-int draw2DString(TTF_Font *, const char *, int x, int y, float red, float green, float blue,
-                 float alpha, bool outlined, int align, int maxwidth = 0);
+int draw2DString(TTF_Font *, const char *, int x, int y, Color color, bool outlined, int align,
+                 int maxwidth = 0);
 void update2DStringCache(bool force_wipe);
 /* Common interface for drawing 2d things on the screen */
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
-                     GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
-                     GLuint tex = 0);
-void draw2DQuad(const GLfloat corners[4][2], const GLfloat texture[4][2],
-                const GLfloat color[4][4], GLuint tex = 0);
+                     GLfloat tw, GLfloat th, Color color, GLuint tex = 0);
+void draw2DQuad(const GLfloat corners[4][2], const GLfloat texture[4][2], const Color color[4],
+                GLuint tex = 0);
 
 void tickMouse(Real td);
 void drawMousePointer();
@@ -210,7 +209,7 @@ extern float fps;
 extern int screenWidth, screenHeight;
 extern TTF_Font *ingameFont;
 TTF_Font *menuFontForSize(int sz);
-extern const GLfloat menuColorSelected[4], menuColor[4];
+extern const Color menuColorSelected, menuColor;
 
 /***********************************/
 /*  Inlined vector operations      */

@@ -60,8 +60,8 @@ TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
 extern struct timespec lastDisplayStartTime;
 
-const GLfloat menuColorSelected[4] = {0.86f, 0.86f, 0.86f, 1.f};
-const GLfloat menuColor[4] = {0.86f, 0.86f, 0.25f, 1.f};
+const Color menuColorSelected(SRGBColor(0.86f, 0.86f, 0.86f, 1.f));
+const Color menuColor(SRGBColor(0.86f, 0.86f, 0.25f, 1.f));
 
 const double sin6[6] = {0.0, 0.8660254037844386,  0.8660254037844386,
                         0.0, -0.8660254037844386, -0.8660254037844386};
@@ -170,8 +170,8 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
   }
 }
 
-int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, float green,
-                 float blue, float alpha, bool outlined, int align, int maxwidth) {
+int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, bool outlined,
+                 int align, int maxwidth) {
   struct StringInfo inf;
   inf.font = font;
   memset(inf.string, 0, 256);
@@ -195,8 +195,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, float red, fl
   GLfloat shrink = (maxwidth > 0 && maxwidth < cached.w) ? (maxwidth / (GLfloat)cached.w) : 1.;
   draw2DRectangle(x - shrink * align * cached.w / 2, y - shrink * cached.h / 2,
                   shrink * cached.w, shrink * cached.h, cached.texcoord[0], cached.texcoord[1],
-                  cached.texcoord[2], cached.texcoord[3], red, green, blue, alpha,
-                  cached.texture);
+                  cached.texcoord[2], cached.texcoord[3], color, cached.texture);
   return maxwidth > 0 ? std::min(cached.w, maxwidth) : cached.w;
 }
 
@@ -263,24 +262,23 @@ void tickMouse(Real td) {
 }
 
 void draw2DRectangle(GLfloat x, GLfloat y, GLfloat w, GLfloat h, GLfloat tx, GLfloat ty,
-                     GLfloat tw, GLfloat th, GLfloat r, GLfloat g, GLfloat b, GLfloat a,
-                     GLuint tex) {
+                     GLfloat tw, GLfloat th, Color color, GLuint tex) {
   GLfloat corners[4][2] = {{x, y}, {x, y + h}, {x + w, y}, {x + w, y + h}};
   GLfloat texture[4][2] = {{tx, ty}, {tx, ty + th}, {tx + tw, ty}, {tx + tw, ty + th}};
-  GLfloat colors[4][4] = {{r, g, b, a}, {r, g, b, a}, {r, g, b, a}, {r, g, b, a}};
+  Color colors[4] = {color, color, color, color};
   draw2DQuad(corners, texture, colors, tex);
 }
 
-void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const GLfloat col[4][4],
+void draw2DQuad(const GLfloat ver[4][2], const GLfloat txc[4][2], const Color c[4],
                 GLuint tex) {
   Require2DMode();
   if (tex == 0) { tex = textureBlank; }
 
   const GLfloat data[32] = {
-      ver[0][0], ver[0][1], col[0][0], col[0][1], col[0][2], col[0][3], txc[0][0], txc[0][1],
-      ver[1][0], ver[1][1], col[1][0], col[1][1], col[1][2], col[1][3], txc[1][0], txc[1][1],
-      ver[2][0], ver[2][1], col[2][0], col[2][1], col[2][2], col[2][3], txc[2][0], txc[2][1],
-      ver[3][0], ver[3][1], col[3][0], col[3][1], col[3][2], col[3][3], txc[3][0], txc[3][1],
+      ver[0][0], ver[0][1], c[0].f0(), c[0].f1(), c[0].f2(), c[0].f3(), txc[0][0], txc[0][1],
+      ver[1][0], ver[1][1], c[1].f0(), c[1].f1(), c[1].f2(), c[1].f3(), txc[1][0], txc[1][1],
+      ver[2][0], ver[2][1], c[2].f0(), c[2].f1(), c[2].f2(), c[2].f3(), txc[2][0], txc[2][1],
+      ver[3][0], ver[3][1], c[3].f0(), c[3].f1(), c[3].f2(), c[3].f3(), txc[3][0], txc[3][1],
   };
 
   static GLuint idxs = (GLuint)-1;
@@ -323,8 +321,8 @@ void drawMouse(int x, int y, int w, int h) {
   GLfloat dx = 0.707f * w * r1 * std::sin(mousePointerPhase * 0.35);
   GLfloat dy = 0.707f * h * r2 * std::cos(mousePointerPhase * 0.35);
 
-  GLfloat colors[4][4] = {
-      {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}, {1., 1., 1., 1.}};
+  Color white(1.f, 1.f, 1.f, 1.f);
+  Color colors[4] = {white, white, white, white};
   GLfloat texco[4][2] = {{0., 0.}, {0., 1.}, {1., 0.}, {1., 1.}};
 
   GLfloat vco[4][2] = {{x - dx, y - dy}, {x - dy, y + dx}, {x + dy, y - dx}, {x + dx, y + dy}};
@@ -979,10 +977,13 @@ void message(char *A, char *B) {
   int x1 = screenWidth / 2 - w / 2, x2 = screenWidth / 2 + w / 2;
   int y1 = screenHeight / 2 - h1 - 5, y2 = screenHeight / 2 + h2 + 5;
   Enter2DMode();
-  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
+  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1.,
+                  Color(SRGBColor(0.2, 0.5, 0.2, 0.5)));
 
-  drawCenterSimpleText(A, screenWidth / 2, screenHeight / 2 - size, size, 0.5, 1.0, 0.2, 1.0);
-  drawCenterSimpleText(B, screenWidth / 2, screenHeight / 2 + 14, size, 0.5, 1.0, 0.2, 1.0);
+  drawCenterSimpleText(A, screenWidth / 2, screenHeight / 2 - size, size,
+                       Color(SRGBColor(0.5, 1.0, 0.2, 1.0)));
+  drawCenterSimpleText(B, screenWidth / 2, screenHeight / 2 + 14, size,
+                       Color(SRGBColor(0.5, 1.0, 0.2, 1.0)));
 
   Leave2DMode();
 }
@@ -1000,19 +1001,21 @@ void multiMessage(int nlines, const char *left[], const char *right[]) {
       y2 = screenHeight / 2 + total_height / 2 + 30;
 
   Enter2DMode();
-  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1., 0.2, 0.5, 0.2, 0.5);
+  draw2DRectangle(x1, y1, x2 - x1, y2 - y1, 0., 0., 1., 1.,
+                  Color(SRGBColor(0.2, 0.5, 0.2, 0.5)));
 
   h_now = -size;
   for (int i = 0; i < nlines; i++) {
     h_now += 2 * size;
     if (left[i]) {
       drawSimpleText(left[i], screenWidth / 2 - width / 2,
-                     screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2, 1.0);
+                     screenHeight / 2 - total_height / 2 + h_now, size,
+                     Color(SRGBColor(0.5, 1.0, 0.2, 1.0)));
     }
     if (right[i]) {
       drawRightSimpleText(right[i], screenWidth / 2 + width / 2,
-                          screenHeight / 2 - total_height / 2 + h_now, size, 0.5, 1.0, 0.2,
-                          1.0);
+                          screenHeight / 2 - total_height / 2 + h_now, size,
+                          Color(SRGBColor(0.5, 1.0, 0.2, 1.0)));
     }
   }
   Leave2DMode();
@@ -1374,10 +1377,8 @@ void displayFrameRate() {
       snprintf(fast, sizeof(fast), "%.1f", 1e3 * td);
     }
     TTF_Font *active = menuFontForSize(10);
-    int w1 = draw2DString(active, slow, 15, screenHeight - 15, menuColor[0], menuColor[1],
-                          menuColor[2], menuColor[3], true, 0, 0);
-    draw2DString(active, fast, 15 + w1, screenHeight - 15, menuColor[0], menuColor[1],
-                 menuColor[2], menuColor[3], true, 0, 0);
+    int w1 = draw2DString(active, slow, 15, screenHeight - 15, menuColor, true, 0, 0);
+    draw2DString(active, fast, 15 + w1, screenHeight - 15, menuColor, true, 0, 0);
   }
 }
 

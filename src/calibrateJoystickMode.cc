@@ -137,8 +137,8 @@ void CalibrateJoystickMode::display() {
   addText_Center(0, linesize, screenHeight / 2 + 100 + menusize * 4 + linesize * 3, str,
                  screenWidth / 2);
 
-  draw2DRectangle(screenWidth / 2 - 85, screenHeight / 2 - 85, 170, 170, 0., 0., 1., 1., 0.3,
-                  0.3, 0.9, 1.0);
+  draw2DRectangle(screenWidth / 2 - 85, screenHeight / 2 - 85, 170, 170, 0., 0., 1., 1.,
+                  Color(SRGBColor(0.3, 0.3, 0.9, 1.0)));
 
   double jx = Settings::settings->joystickX();
   double jy = Settings::settings->joystickY();
