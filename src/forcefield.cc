@@ -28,8 +28,8 @@ ForceField::ForceField(Game &g, const Coord3d &pos, const Coord3d &dir, Real h, 
   direction = dir;
   height = h;
   allow = a;
-  primaryColor = Color(0.3, 1.0, 0.3, 1.0);
-  secondaryColor = Color(1.0, 1.0, 1.0, 1.0);
+  primaryColor = Color(SRGBColor(0.3, 1.0, 0.3, 1.0));
+  secondaryColor = Color(SRGBColor(1.0, 1.0, 1.0, 1.0));
   bounceFactor = 2.5;
   boundingBox[0][0] = -std::abs(dir[0]);
   boundingBox[0][1] = -std::abs(dir[1]);

@@ -232,7 +232,7 @@ EditMode::EditMode() {
   scale = 0.5;
   rotation = 0.0;
   raise = 0.5;
-  color = Color(0.9, 0.9, 0.9, 1.0);
+  color = SRGBColor(0.9, 0.9, 0.9, 1.0);
   doSave = 0;
   cellClipboard = NULL;
 

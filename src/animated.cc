@@ -27,9 +27,9 @@
 
 Animated::Animated(Game& game, int role, int maxVBOpairsOrVAOs)
     : GameHook(game, role), nVOs(maxVBOpairsOrVAOs) {
-  primaryColor = Color(0.8, 0.8, 0.8, 1.);
-  secondaryColor = Color(0.3, 0.3, 0.3, 1.);
-  specularColor = Color(0., 0., 0., 1.);
+  primaryColor = Color(SRGBColor(0.8, 0.8, 0.8, 1.));
+  secondaryColor = Color(SRGBColor(0.3, 0.3, 0.3, 1.));
+  specularColor = Color(SRGBColor(0., 0., 0., 1.));
 
   texture = 0;
 

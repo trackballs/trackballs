@@ -47,8 +47,8 @@ class Cell {
    * editMode::pasteRegion */
 
   float velocity[2], heights[5];
-  Color colors[5];
-  Color wallColors[4];
+  SRGBColor colors[5];
+  SRGBColor wallColors[4];
   float sunken;           // used for trampoline effect
   float waterHeights[5];  // absolute height of water in cell, values <= -100.0 is treated as
                           // no water.

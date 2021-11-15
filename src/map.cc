@@ -47,8 +47,8 @@ inline int32_t loadInt(int32_t v) { return (int32_t)SDL_SwapBE32((uint32_t)v); }
 Cell::Cell() {
   texture = -1;
   flags = 0;
-  for (int i = 0; i < 5; i++) colors[i] = Color(1., 1., 1., 1.);
-  for (int i = 0; i < 4; i++) wallColors[i] = Color(1., 1., 1., 1.);
+  for (int i = 0; i < 5; i++) colors[i] = SRGBColor(1., 1., 1., 1.);
+  for (int i = 0; i < 4; i++) wallColors[i] = SRGBColor(1., 1., 1., 1.);
   for (int i = 0; i < 5; i++) heights[i] = -8.0;
   for (int i = 0; i < 5; i++) waterHeights[i] = -20.0;
   velocity[0] = 0.;
@@ -239,9 +239,9 @@ Map::Map(char* filename) {
         for (i = 0; i < 5; i++) {
           c.heights[i] = -8.0;
           c.waterHeights[i] = -8.5;  // this is the groundwater =)
-          c.colors[i] = Color(0.9, 0.9, 0.9, 1.0);
+          c.colors[i] = SRGBColor(0.9, 0.9, 0.9, 1.0);
         }
-        for (i = 0; i < 4; i++) { c.wallColors[i] = Color(0.7, 0.2, 0.2, 1.0); }
+        for (i = 0; i < 4; i++) { c.wallColors[i] = SRGBColor(0.7, 0.2, 0.2, 1.0); }
         c.velocity[0] = 0.0;
         c.velocity[1] = 0.0;
       }
@@ -592,17 +592,19 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       GLfloat ty = (((y % texscale) + texscale) % texscale) * irs;
       if (tx >= 1.) tx = 0.;
       if (ty >= 1.) ty = 0.;
-      packCell(&tdat[k], x, y, c.heights[Cell::SW], c.colors[Cell::SW], tx, ty, txno,
+      packCell(&tdat[k], x, y, c.heights[Cell::SW], Color(c.colors[Cell::SW]), tx, ty, txno,
                c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::SW]);
-      packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SE], c.colors[Cell::SE], tx + irs, ty,
-               txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::SE]);
-      packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NE], c.colors[Cell::NE], tx + irs,
-               ty + irs, txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NE]);
-      packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NW], c.colors[Cell::NW], tx, ty + irs,
-               txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NW]);
+      packCell(&tdat[k + 8], x + 1, y, c.heights[Cell::SE], Color(c.colors[Cell::SE]),
+               tx + irs, ty, txno, c.velocity[0] * irs, c.velocity[1] * irs,
+               fcnormal[Cell::SE]);
+      packCell(&tdat[k + 16], x + 1, y + 1, c.heights[Cell::NE], Color(c.colors[Cell::NE]),
+               tx + irs, ty + irs, txno, c.velocity[0] * irs, c.velocity[1] * irs,
+               fcnormal[Cell::NE]);
+      packCell(&tdat[k + 24], x, y + 1, c.heights[Cell::NW], Color(c.colors[Cell::NW]), tx,
+               ty + irs, txno, c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::NW]);
       packCell(&tdat[k + 32], x + 0.5f, y + 0.5f, c.heights[Cell::CENTER],
-               c.colors[Cell::CENTER], tx + irs / 2, ty + irs / 2, txno, c.velocity[0] * irs,
-               c.velocity[1] * irs, fcnormal[Cell::CENTER]);
+               Color(c.colors[Cell::CENTER]), tx + irs / 2, ty + irs / 2, txno,
+               c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::CENTER]);
 
       const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
       for (uint i = 0; i < 12; i++) { tidx[j * 12 + i] = 5 * j + topindices[i]; }
@@ -646,27 +648,27 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       int nsover = cmp(c.heights[Cell::SW], ns.heights[Cell::NW]) +
                        cmp(c.heights[Cell::SE], ns.heights[Cell::NE]) >
                    0;
-      packCell(&wdat[p], x, y, c.heights[Cell::SW], c.wallColors[Cell::SW], 0.5f, 0.5f, 0,
-               nv[0], nv[1], nsover ? snormal : nnormal);
-      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NW], ns.wallColors[Cell::NW], 0.5f, 0.5f,
+      packCell(&wdat[p], x, y, c.heights[Cell::SW], Color(c.wallColors[Cell::SW]), 0.5f, 0.5f,
                0, nv[0], nv[1], nsover ? snormal : nnormal);
-      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SE], c.wallColors[Cell::SE], 0.5f,
+      packCell(&wdat[p + 8], x, y, ns.heights[Cell::NW], Color(ns.wallColors[Cell::NW]), 0.5f,
                0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
-      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NE], ns.wallColors[Cell::NE], 0.5f,
-               0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
+      packCell(&wdat[p + 16], x + 1, y, c.heights[Cell::SE], Color(c.wallColors[Cell::SE]),
+               0.5f, 0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
+      packCell(&wdat[p + 24], x + 1, y, ns.heights[Cell::NE], Color(ns.wallColors[Cell::NE]),
+               0.5f, 0.5f, 0, nv[0], nv[1], nsover ? snormal : nnormal);
 
       const Cell& ne = cell(x - 1, y);
       int ewover = cmp(c.heights[Cell::SW], ne.heights[Cell::SE]) +
                        cmp(c.heights[Cell::NW], ne.heights[Cell::NE]) >
                    0;
-      packCell(&wdat[p + 32], x, y, c.heights[Cell::SW], c.wallColors[Cell::SW], 0.5f, 0.5f, 0,
-               nv[0], nv[1], ewover ? enormal : wnormal);
-      packCell(&wdat[p + 40], x, y, ne.heights[Cell::SE], ne.wallColors[Cell::SE], 0.5f, 0.5f,
-               0, nv[0], nv[1], ewover ? enormal : wnormal);
-      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::NW], c.wallColors[Cell::NW], 0.5f,
+      packCell(&wdat[p + 32], x, y, c.heights[Cell::SW], Color(c.wallColors[Cell::SW]), 0.5f,
                0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
-      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::NE], ne.wallColors[Cell::NE], 0.5f,
+      packCell(&wdat[p + 40], x, y, ne.heights[Cell::SE], Color(ne.wallColors[Cell::SE]), 0.5f,
                0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
+      packCell(&wdat[p + 48], x, y + 1, c.heights[Cell::NW], Color(c.wallColors[Cell::NW]),
+               0.5f, 0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
+      packCell(&wdat[p + 56], x, y + 1, ne.heights[Cell::NE], Color(ne.wallColors[Cell::NE]),
+               0.5f, 0.5f, 0, nv[0], nv[1], ewover ? enormal : wnormal);
 
       // Render the quads, overlapping triangles if twisted
       const ushort quadmap[6] = {0, 1, 2, 1, 3, 2};
@@ -924,7 +926,7 @@ void Map::markCellsUpdated(int x1, int y1, int x2, int y2, bool changed_walls) {
 }
 
 void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
-  Color color(kind ? 0.5 : 0.2, 0.2, kind ? 0.2 : 0.5, 1.0);
+  Color color(SRGBColor(kind ? 0.5 : 0.2, 0.2, kind ? 0.2 : 0.5, 1.0));
 
   int ncells = (std::abs(x1 - x2) + 1) * (std::abs(y1 - y2) + 1);
   if (ncells > 2 * 256 * 256) {
@@ -1004,7 +1006,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
 }
 
 void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
-  Color color(0.2, kind ? 0.2 : 0.8, 0.2, 1.0);
+  Color color(SRGBColor(0.2, kind ? 0.2 : 0.8, 0.2, 1.0));
 
   int npts = 4 * std::abs(x1 - x2) + 4 * std::abs(y1 - y2) + 8;
   Coord3d* ringPoints = new Coord3d[npts + 2];
@@ -1132,7 +1134,7 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
 void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   int nfacets = std::max(12, (int)(10. * r));
   GLfloat width = std::min(0.5 * r, 0.05);
-  Color color(kind == 0 ? 1. : 0.5, kind == 1 ? 1. : 0.5, kind == 2 ? 1. : 0.5, 1.);
+  Color color(SRGBColor(kind == 0 ? 1. : 0.5, kind == 1 ? 1. : 0.5, kind == 2 ? 1. : 0.5, 1.));
   GLfloat flat[3] = {0., 0., 0.};
   Real height = Map::getHeight(x1, y1);
 
@@ -1323,7 +1325,7 @@ void Cell::load(Map* map, gzFile gp, int version) {
   // in older maps, this field was not initialized
   if (version < 5) texture = -1;
   if (version < 3) { /* Old maps do not have wallColors defined */
-    for (int i = 0; i < 4; i++) { wallColors[i] = Color(0.7, 0.2, 0.2, 1.0); }
+    for (int i = 0; i < 4; i++) { wallColors[i] = SRGBColor(0.7, 0.2, 0.2, 1.0); }
   } else {
     for (int i = 0; i < 4; i++) {
       if (version < 4) {

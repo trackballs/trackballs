@@ -751,8 +751,8 @@ SCM_DEFINE(set_primary_color, "set-primary-color", 4, 1, 0,
   SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->primaryColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
-                             scm_is_real(a) ? scm_to_double(a) : 1.0);
+  anim->primaryColor = Color(SRGBColor(scm_to_double(r), scm_to_double(g), scm_to_double(b),
+                                       scm_is_real(a) ? scm_to_double(a) : 1.0));
   anim->drawChanged = true;
   return obj;
 }
@@ -769,8 +769,8 @@ SCM_DEFINE(set_secondary_color, "set-secondary-color", 4, 1, 0,
   SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->secondaryColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
-                               scm_is_real(a) ? scm_to_double(a) : 1.0);
+  anim->secondaryColor = Color(SRGBColor(scm_to_double(r), scm_to_double(g), scm_to_double(b),
+                                         scm_is_real(a) ? scm_to_double(a) : 1.0));
   anim->drawChanged = true;
   return obj;
 }
@@ -787,8 +787,8 @@ SCM_DEFINE(set_specular_color, "set-specular-color", 4, 1, 0,
   SCM_ASSERT(scm_is_real(g), g, SCM_ARG3, FUNC_NAME);
   SCM_ASSERT(scm_is_real(b), b, SCM_ARG4, FUNC_NAME);
   Animated *anim = (Animated *)SCM_CDR(obj);
-  anim->specularColor = Color(scm_to_double(r), scm_to_double(g), scm_to_double(b),
-                              scm_is_real(a) ? scm_to_double(a) : 1.0);
+  anim->specularColor = Color(SRGBColor(scm_to_double(r), scm_to_double(g), scm_to_double(b),
+                                        scm_is_real(a) ? scm_to_double(a) : 1.0));
   anim->drawChanged = true;
   return obj;
 }
@@ -1089,9 +1089,9 @@ SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies co
   SCM_ASSERT(scm_is_real(r), r, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(g), g, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_real(b), b, SCM_ARG3, FUNC_NAME);
-  Game::current->fogColor[0] = scm_to_double(r);
-  Game::current->fogColor[1] = scm_to_double(g);
-  Game::current->fogColor[2] = scm_to_double(b);
+  Game::current->fogColor[0] = sRGBToLinear(scm_to_double(r));
+  Game::current->fogColor[1] = sRGBToLinear(scm_to_double(g));
+  Game::current->fogColor[2] = sRGBToLinear(scm_to_double(b));
   return SCM_UNSPECIFIED;
 }
 #undef FUNC_NAME
@@ -1477,7 +1477,7 @@ SCM_DEFINE(set_cell_colors, "set-cell-colors", 8, 1, 0,
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   GLfloat ir = scm_to_double(r), ig = scm_to_double(g), ib = scm_to_double(r);
   GLfloat ia = scm_is_real(a) ? scm_to_double(a) : 1.0;
-  Color color(ir, ig, ib, ia);
+  SRGBColor color(ir, ig, ib, ia);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);
@@ -1510,7 +1510,7 @@ SCM_DEFINE(set_cell_wall_colors, "set-cell-wall-colors", 8, 1, 0,
   int ix0 = scm_to_int(x0), iy0 = scm_to_int(y0), ix1 = scm_to_int(x1), iy1 = scm_to_int(y1);
   GLfloat ir = scm_to_double(r), ig = scm_to_double(g), ib = scm_to_double(r);
   GLfloat ia = scm_is_real(a) ? scm_to_double(a) : 1.0;
-  Color color(ir, ig, ib, ia);
+  SRGBColor color(ir, ig, ib, ia);
   for (int x = std::min(ix0, ix1); x <= std::max(ix0, ix1); x++) {
     for (int y = std::min(iy0, iy1); y <= std::max(iy0, iy1); y++) {
       Cell &c = Game::current->map->cell(x, y);

@@ -89,7 +89,7 @@ class EditMode : public GameMode {
   double scale; /* This is the increment with which we modify heights etc. or scale textures */
   double rotation; /* Only for textures */
   Real raise;
-  Color color;
+  SRGBColor color;
   int menuChoise;
   int doSave;
   int hill;

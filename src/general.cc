@@ -105,4 +105,13 @@ void warning(const char *formatstr, ...) {
   errmsg[255] = '\0';
   va_start(args, formatstr);
   vfprintf(stderr, errmsg, args);
+  va_end(args);
+}
+
+float sRGBToLinear(float v) {
+  if (v < 0.04045) {
+    return v / 12.92f;
+  } else {
+    return std::pow(((v + 0.055f) / 1.055f), 2.4f);
+  }
 }
