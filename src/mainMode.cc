@@ -763,7 +763,7 @@ void MainMode::setupLighting(const Game *game, bool isNight) {
   const Coord3d moonPosition(0., 0., 2.);
   GLfloat black[] = {0.0, 0.0, 0.0, 1.0};
   if (isNight && game && game->player1) {
-    GLfloat lightDiffuse2[3] = {0.9, 0.9, 0.9};
+    GLfloat lightDiffuse2[3] = {0.5, 0.5, 0.5};
     GLfloat lightPosition2[3] = {(GLfloat)(game->player1->position[0] + moonPosition[0]),
                                  (GLfloat)(game->player1->position[1] + moonPosition[1]),
                                  (GLfloat)(game->player1->position[2] + moonPosition[2])};
