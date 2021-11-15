@@ -1270,6 +1270,8 @@ void glHelpInit() {
 
   activeView.day_mode = true;
 
+  glEnable(GL_FRAMEBUFFER_SRGB);
+
   renderDummyShadowCascade();
   renderDummyShadowMap();
   warnForGLerrors("postGLinit");
@@ -1590,8 +1592,8 @@ GLuint LoadTexture(SDL_Surface *surface, GLfloat *texcoord) {
   GLuint texture = 0;
   glGenTextures(1, &texture);
   glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (int)(w * scale), (int)(h * scale), 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, image->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, (int)(w * scale), (int)(h * scale), 0,
+               GL_RGBA, GL_UNSIGNED_BYTE, image->pixels);
   SDL_FreeSurface(image); /* No longer needed */
 
   /* Set current sampler with these just in case */

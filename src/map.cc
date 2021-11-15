@@ -163,7 +163,7 @@ static GLuint createTextureArray(const char** texs, int ntex, int size) {
     SDL_UnlockSurface(proj);
     SDL_FreeSurface(proj);
   }
-  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA8, size, size, ntex, 0, GL_RGBA,
+  glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_SRGB8_ALPHA8, size, size, ntex, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, data);
   delete[] data;
 

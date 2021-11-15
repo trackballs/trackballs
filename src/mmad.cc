@@ -151,6 +151,8 @@ static SDL_GLContext createWindow() {
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+  SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
+
   /* Uncomment to apply basic antialiasing.
    * SDL can't recover from failure to obtain this if asked for */
   //    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
