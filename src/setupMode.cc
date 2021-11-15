@@ -48,9 +48,9 @@
 #define CODE_START 5
 #define CODE_COLOR 6
 
-Color colors[5] = {Color(1.0, 0.2, 0.2, 1.0), Color(0.2, 1.0, 0.2, 1.0),
-                   Color(0.5, 0.5, 1.0, 1.0), Color(1.0, 1.0, 0.2, 1.0),
-                   Color(1.0, 1.0, 1.0, 1.0)};
+Color colors[5] = {Color(SRGBColor(1.0, 0.2, 0.2, 1.0)), Color(SRGBColor(0.2, 1.0, 0.2, 1.0)),
+                   Color(SRGBColor(0.5, 0.5, 1.0, 1.0)), Color(SRGBColor(1.0, 1.0, 0.2, 1.0)),
+                   Color(SRGBColor(1.0, 1.0, 1.0, 1.0))};
 
 static SetupMode *setupMode = NULL;
 SetupMode *SetupMode::init() {
@@ -164,7 +164,7 @@ void SetupMode::display() {
 
   // Transfer
   setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(Color(0.3, 0.3, 0.3, 0.3), 20., Lighting_NoShadows);
+  setObjectUniforms(Color(SRGBColor(0.3, 0.3, 0.3, 0.3)), 20., Lighting_NoShadows);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
   warnForGLerrors("trans");

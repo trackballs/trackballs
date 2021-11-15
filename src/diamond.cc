@@ -29,7 +29,7 @@ Diamond::Diamond(Game &g, const Coord3d &pos) : Animated(g, Role_OtherAnimated, 
   position = pos;
 
   specularColor = Color(1., 1., 1., 1.);
-  primaryColor = Color(0.7, 0.7, 0.9, 0.7);
+  primaryColor = Color(SRGBColor(0.7, 0.7, 0.9, 0.7));
   fade = 1.0;
   taken = 0;
 }

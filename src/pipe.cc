@@ -26,8 +26,8 @@ Pipe::Pipe(Game &g, const Coord3d &f, const Coord3d &t, Real r)
     : Animated(g, Role_Pipe, 1), from(f), to(t), radius(r) {
   /* Note that the position attribute of Pipes are not used, use rather the to/from values */
   position = 0.5 * (from + to);
-  primaryColor = Color(0.6, 0.6, 0.6, 1.0);
-  specularColor = Color(0.3, 0.3, 0.3, 1.0);
+  primaryColor = Color(SRGBColor(0.6, 0.6, 0.6, 1.0));
+  specularColor = Color(SRGBColor(0.3, 0.3, 0.3, 1.0));
 
   windBackward = 0.0;
   windForward = 0.0;

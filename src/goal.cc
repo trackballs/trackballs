@@ -30,8 +30,8 @@ Goal::Goal(Game &g, Real x, Real y, int rotate, char *nextLevel)
     : Flag(g, x, y, 1000, 1, 0.2) {
   strncpy(this->nextLevel, nextLevel, sizeof(this->nextLevel));
   this->rotate = rotate;
-  primaryColor = Color(0.9, 0.8, 0.3, 1.0);
-  specularColor = Color(0.95, 0.9, 0.65, 1.0);
+  primaryColor = Color(SRGBColor(0.9, 0.8, 0.3, 1.0));
+  specularColor = Color(SRGBColor(0.95, 0.9, 0.65, 1.0));
 }
 void Goal::onGet() {
   if (!game.player1->hasWon) {

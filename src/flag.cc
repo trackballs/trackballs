@@ -36,8 +36,8 @@ Flag::Flag(Game &g, Real x, Real y, int points, int visible, Real radius)
   position[0] = x;
   position[1] = y;
   position[2] = game.map->getHeight(position[0], position[1]);
-  primaryColor = Color(0.5, 0.5, 1.0, 1.0);
-  secondaryColor = Color(0.8, 0.8, 0.8, 1.0);
+  primaryColor = Color(SRGBColor(0.5, 0.5, 1.0, 1.0));
+  secondaryColor = Color(SRGBColor(0.8, 0.8, 0.8, 1.0));
 }
 
 void Flag::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,

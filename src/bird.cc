@@ -41,7 +41,7 @@ Bird::Bird(Game &g, Real x, Real y, Real dx, Real dy, Real size, Real speed)
   position[1] = y;
   position[2] = game.map->getHeight(position[0], position[1]) + .5;
   primaryColor = Color(1., 1., 1., 1.);
-  secondaryColor = Color(0.6, 0.8, 0.9, 1.);
+  secondaryColor = Color(SRGBColor(0.6, 0.8, 0.9, 1.));
   animation = 0.0;
   rotation = M_PI - std::atan2(this->dx / lng, this->dy / lng);
   scoreOnDeath = Game::defaultScores[SCORE_BIRD][0];

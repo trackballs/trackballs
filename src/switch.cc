@@ -31,7 +31,7 @@ CSwitch::CSwitch(Game &g, Real x, Real y, SCM on, SCM off)
   position[0] = x;
   position[1] = y;
   position[2] = game.map->getHeight(x, y);
-  primaryColor = Color(0.8, 0.8, 0.8, 1.0);
+  primaryColor = Color(SRGBColor(0.8, 0.8, 0.8, 1.0));
   secondaryColor = Color(0., 0., 0., 1.);
   is_touched = false;
   this->on = on;

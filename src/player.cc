@@ -92,8 +92,8 @@ Player::Player(Game &g) : Ball(g, Role_Player) {
   ballResolution = BALL_HIRES;
 
   /* Change our color to red */
-  primaryColor = Color(1., 0.2, 0.2, 1.0);
-  specularColor = Color(0.5, 0.5, 0.5, 1.);
+  primaryColor = Color(SRGBColor(1., 0.2, 0.2, 1.0));
+  specularColor = Color(SRGBColor(0.5, 0.5, 0.5, 1.));
 
   timeLeft = 5;
   bounceFactor = .7;
@@ -252,7 +252,7 @@ void Player::die(int how) {
   health = 0.0;
 
   if (how == DIE_ACID) {
-    Color acidColor(0.1, 0.8, 0.1, 0.5);
+    Color acidColor(SRGBColor(0.1, 0.8, 0.1, 0.5));
     Coord3d vel(0., 0., 1.);
     Coord3d center(position[0], position[1], map->getHeight(position[0], position[1]));
     game.add(new Splash(game, center, vel, acidColor, 32.0, radius));

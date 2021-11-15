@@ -37,9 +37,9 @@ Spike::Spike(Game &g, const Coord3d &pos, Real speed, Real phase)
   this->phase = phase;
   this->soundDone = 0;
 
-  primaryColor = Color(0.9, 0.5, 0.4, 1.0);
-  secondaryColor = Color(0.9, 0.8, 0.5, 1.0);
-  specularColor = Color(0.1, 0.1, 0.1, 1.0);
+  primaryColor = Color(SRGBColor(0.9, 0.5, 0.4, 1.0));
+  secondaryColor = Color(SRGBColor(0.9, 0.8, 0.5, 1.0));
+  specularColor = Color(SRGBColor(0.1, 0.1, 0.1, 1.0));
 }
 
 void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,

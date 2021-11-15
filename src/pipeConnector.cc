@@ -25,7 +25,7 @@
 PipeConnector::PipeConnector(Game &g, const Coord3d &pos, Real r)
     : Animated(g, Role_PipeConnector, 1), radius(r) {
   position = pos;
-  primaryColor = Color(0.6, 0.6, 0.6, 1.0);
+  primaryColor = Color(SRGBColor(0.6, 0.6, 0.6, 1.0));
 
   boundingBox[0][0] = -radius;
   boundingBox[0][1] = -radius;

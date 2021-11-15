@@ -96,14 +96,14 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
       phase = std::min(modTimeLeft[MOD_GLASS] / 2.0, phase);
     else
       phase = 1.0;
-    color = Color::mix(phase, color, Color(0.8, 0.8, 0.8, 0.5));
+    color = Color::mix(phase, color, Color(SRGBColor(0.8, 0.8, 0.8, 0.5)));
   } else if (modTimeLeft[MOD_FROZEN]) {
     double phase = std::min(modTimePhaseIn[MOD_FROZEN] / 2.0, 1.0);
     if (modTimeLeft[MOD_FROZEN] > 0)
       phase = std::min(modTimeLeft[MOD_FROZEN] / 2.0, phase);
     else
       phase = 1.0;
-    color = Color::mix(phase, color, Color(0.4, 0.4, 0.9, 0.6));
+    color = Color::mix(phase, color, Color(SRGBColor(0.4, 0.4, 0.9, 0.6)));
   }
 
   {

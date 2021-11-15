@@ -31,7 +31,7 @@ Cactus::Cactus(Game &g, Real x, Real y, Real radius) : Animated(g, Role_OtherAni
   position[0] = x;
   position[1] = y;
   position[2] = game.map->getHeight(position[0], position[1]);
-  primaryColor = Color(0.3, 1., 0.4, 1.);
+  primaryColor = Color(SRGBColor(0.3, 1., 0.4, 1.));
   secondaryColor = Color(0., 0., 0., 1.);
   this->killed = false;
   this->killed_time = 1.;

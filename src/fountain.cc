@@ -31,7 +31,7 @@ Fountain::Fountain(Game &g, const Coord3d &pos, double randomSpeed, double radiu
       randomSpeed(randomSpeed),
       radius(radius),
       strength(strength) {
-  primaryColor = Color(0.4, 0.4, 0.8, 0.5);
+  primaryColor = Color(SRGBColor(0.4, 0.4, 0.8, 0.5));
   velocity[0] = velocity[1] = 0.0;
   velocity[2] = 0.3;
   position = pos;

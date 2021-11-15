@@ -330,9 +330,10 @@ SCM_DEFINE(add_colormodifier, "add-colormodifier", 7, 0, 0,
   SCM_ASSERT(scm_is_real(freq), freq, SCM_ARG6, FUNC_NAME);
   SCM_ASSERT(scm_is_real(phase), phase, SCM_ARG7, FUNC_NAME);
   if (!Game::current) { return SCM_UNSPECIFIED; }
-  ColorModifier *colormodifier = new ColorModifier(
-      *Game::current, scm_to_int(col), scm_to_int(x), scm_to_int(y), scm_to_double(min),
-      scm_to_double(max), scm_to_double(freq), scm_to_double(phase));
+  ColorModifier *colormodifier =
+      new ColorModifier(*Game::current, scm_to_int(col), scm_to_int(x), scm_to_int(y),
+                        sRGBToLinear(scm_to_double(min)), sRGBToLinear(scm_to_double(max)),
+                        scm_to_double(freq), scm_to_double(phase));
   Game::current->add(colormodifier);
   return smobGameHook_make(colormodifier);
 }

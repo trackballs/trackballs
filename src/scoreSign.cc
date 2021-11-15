@@ -36,7 +36,7 @@ void ScoreSign::init(int points, int type) {
 
   if (type == SCORESIGN_SCORE) {
   } else if (type == SCORESIGN_TIME) {
-    primaryColor = Color(0.8, 0.8, 0.2, 1.0);
+    primaryColor = Color(SRGBColor(0.8, 0.8, 0.2, 1.0));
   }
 }
 

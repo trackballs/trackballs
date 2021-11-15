@@ -39,8 +39,8 @@ Teleport::Teleport(Game &g, Real x, Real y, Real dx, Real dy, Real radius)
   position[0] = x;
   position[1] = y;
   position[2] = game.map->getHeight(position[0], position[1]);
-  primaryColor = Color(0.5, 0.7, 0.6, 1.0);
-  secondaryColor = Color(1.0, 0.9, 0.4, 1.0);
+  primaryColor = Color(SRGBColor(0.5, 0.7, 0.6, 1.0));
+  secondaryColor = Color(SRGBColor(1.0, 0.9, 0.4, 1.0));
   is_on = true;
   boundingBox[0][0] = -2 * radius;
   boundingBox[1][0] = 2 * radius;
