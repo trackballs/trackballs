@@ -36,8 +36,6 @@
 #include "sound.h"
 #include "weather.h"
 
-Game *Game::current = NULL;
-
 extern Color colors[5];
 
 double Game::defaultScores[SCORE_MAX][2];
@@ -60,9 +58,7 @@ Game::Game(const char *name, Gamer *gamer) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
-  Game::current = this;
-  loadScript(scmname);
-  Game::current = NULL;
+  loadScript(this, scmname);
 
   player1 = new Player(*this);
   add(player1);
@@ -87,19 +83,17 @@ Game::Game(Map *editmap, const char *levelname) {
   setDefaults();
 
   /* load scripts */
-  Game::current = this;
   char scmname[512];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   scmname[511] = '\0';
-  loadScript(scmname);
+  loadScript(this, scmname);
   snprintf(scmname, 511, "%s/levels/%s.scm", effectiveLocalDir, levelname);
   scmname[511] = '\0';
   if (!fileExists(scmname)) {
     snprintf(scmname, 511, "%s/levels/%s.scm", effectiveShareDir, levelname);
   }
   scmname[511] = '\0';
-  loadScript(scmname);
-  Game::current = NULL;
+  loadScript(this, scmname);
 
   for (int j = 0; j < newHooks.size(); j++) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
@@ -171,9 +165,7 @@ void Game::loadLevel(const char *name, Gamer *gamer) {
   if (map) delete map;
   map = new Map(mapname);
 
-  Game::current = this;
-  loadScript(scmname);
-  Game::current = NULL;
+  loadScript(this, scmname);
 
   for (int j = 0; j < newHooks.size(); j++) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
@@ -281,14 +273,13 @@ void Game::handleKey(int key) {
 void *Game::runQueuedCalls(void *data) {
   Game *game = (Game *)data;
 
-  Game::current = game;
   for (int j = 0; j < game->queuedCalls.size(); j++) {
     QueuedCall call = game->queuedCalls[j];
     /* the functions are owned by GameHooks; arguments by Game */
     if (call.type == 0) {
-      scm_catch_call_0(call.fun);
+      scm_catch_call_0(game, call.fun);
     } else if (call.type == 1) {
-      scm_catch_call_1(call.fun, scm_from_double(call.val));
+      scm_catch_call_1(game, call.fun, scm_from_double(call.val));
     } else if (call.type == 2) {
       SCM sub;
       Animated *a = dynamic_cast<Animated *>(call.subject);
@@ -297,12 +288,11 @@ void *Game::runQueuedCalls(void *data) {
       else
         sub = smobGameHook_make(call.subject);
 
-      scm_catch_call_2(call.fun, sub, call.object ? call.object : SCM_BOOL_F);
+      scm_catch_call_2(game, call.fun, sub, call.object ? call.object : SCM_BOOL_F);
       if (call.object) { scm_gc_unprotect_object(call.object); }
     }
   }
 
-  Game::current = NULL;
   game->queuedCalls.clear();
 
   return NULL;

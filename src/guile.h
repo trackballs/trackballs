@@ -23,15 +23,18 @@
 
 #include <libguile.h>
 
+class Game;
+class Animated;
+class GameHook;
 void initGuileInterface();
-SCM smobAnimated_make(class Animated* a);
-SCM smobGameHook_make(class GameHook* h);
-void loadScript(const char* path);
+SCM smobAnimated_make(Animated* a);
+SCM smobGameHook_make(GameHook* h);
+void loadScript(Game* game, const char* path);
 SCM scm_port_from_gzip(const char* highScorePath, int maxsize);
 char* ascm_format(const char* str);
-SCM scm_catch_call_n(SCM func, SCM args[], int n);
-SCM scm_catch_call_0(SCM func);
-SCM scm_catch_call_1(SCM func, SCM arg1);
-SCM scm_catch_call_2(SCM func, SCM arg1, SCM arg2);
+SCM scm_catch_call_n(Game* game, SCM func, SCM args[], int n);
+SCM scm_catch_call_0(Game* game, SCM func);
+SCM scm_catch_call_1(Game* game, SCM func, SCM arg1);
+SCM scm_catch_call_2(Game* game, SCM func, SCM arg1, SCM arg2);
 
 #endif

@@ -79,7 +79,6 @@ class Game {
   long gameTicks; /* deterministic */
   Weather *weather;
 
-  static Game *current;
   AnimatedCollection *balls;
 
   char levelName[256];
