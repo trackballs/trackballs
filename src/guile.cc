@@ -1046,6 +1046,7 @@ SCM_DEFINE(set_animator_position, "set-animator-position", 2, 0, 0,
 SCM_DEFINE(day, "day", 0, 0, 0, (), "Turns on the global light for this level.")
 #define FUNC_NAME s_day
 {
+  if (!Game::current) { return SCM_UNSPECIFIED; }
   Game::current->isNight = 0;
   Game::current->wantedFogThickness = 0;
   return SCM_UNSPECIFIED;
@@ -1055,6 +1056,7 @@ SCM_DEFINE(day, "day", 0, 0, 0, (), "Turns on the global light for this level.")
 SCM_DEFINE(night, "night", 0, 0, 0, (), "Turns off the global light for this level.")
 #define FUNC_NAME s_night
 {
+  if (!Game::current) { return SCM_UNSPECIFIED; }
   Game::current->isNight = 1;
   Game::current->wantedFogThickness = 0;
   return SCM_UNSPECIFIED;
@@ -1065,6 +1067,7 @@ SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.")
 #define FUNC_NAME s_fog
 {
   SCM_ASSERT(scm_is_real(v) || SCM_UNBNDP(v), v, SCM_ARG1, FUNC_NAME);
+  if (!Game::current) { return SCM_UNSPECIFIED; }
   if (!(scm_is_real(v) && scm_to_double(v) == 0.0)) Game::current->isNight = 0;
   if (scm_is_real(v))
     Game::current->wantedFogThickness = scm_to_double(v);
@@ -1077,6 +1080,7 @@ SCM_DEFINE(fog, "fog", 0, 1, 0, (SCM v), "Turns on a fog.")
 SCM_DEFINE(thick_fog, "thick-fog", 0, 0, 0, (), "Turns on a thick fog.")
 #define FUNC_NAME s_thick_fog
 {
+  if (!Game::current) { return SCM_UNSPECIFIED; }
   Game::current->isNight = 0;
   Game::current->wantedFogThickness = 2.0;
   return SCM_UNSPECIFIED;
@@ -1090,6 +1094,7 @@ SCM_DEFINE(fog_color, "fog-color", 3, 0, 0, (SCM r, SCM g, SCM b), "Specifies co
   SCM_ASSERT(scm_is_real(r), r, SCM_ARG1, FUNC_NAME);
   SCM_ASSERT(scm_is_real(g), g, SCM_ARG2, FUNC_NAME);
   SCM_ASSERT(scm_is_real(b), b, SCM_ARG3, FUNC_NAME);
+  if (!Game::current) { return SCM_UNSPECIFIED; }
   Game::current->fogColor[0] = sRGBToLinear(scm_to_double(r));
   Game::current->fogColor[1] = sRGBToLinear(scm_to_double(g));
   Game::current->fogColor[2] = sRGBToLinear(scm_to_double(b));
