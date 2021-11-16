@@ -60,14 +60,14 @@ void PipeConnector::generateBuffers(const GLuint *idxbufs, const GLuint *databuf
   delete[] idxs;
 }
 void PipeConnector::drawBuffers1(const GLuint *vaolist) const {
-  if (primaryColor.v[3] >= 65535) drawMe(vaolist);
+  if (primaryColor.f3() >= 1.f) drawMe(vaolist);
 }
 void PipeConnector::drawBuffers2(const GLuint *vaolist) const {
-  if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
-  if (primaryColor.v[3] < 65535) drawMe(vaolist);
+  if (activeView.calculating_shadows && primaryColor.f3() < 0.7f) return;
+  if (primaryColor.f3() < 1.f) drawMe(vaolist);
 }
 void PipeConnector::drawMe(const GLuint *vaolist) const {
-  if (primaryColor.v[3] < 65535) {
+  if (primaryColor.f3() < 1.f) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
   } else {

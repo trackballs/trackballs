@@ -91,16 +91,16 @@ void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 }
 
 void Pipe::drawBuffers1(const GLuint *vaolist) const {
-  if (primaryColor.v[3] >= 65535) drawTrunk(vaolist);
+  if (primaryColor.f3() >= 1.f) drawTrunk(vaolist);
 }
 void Pipe::drawBuffers2(const GLuint *vaolist) const {
-  if (activeView.calculating_shadows && primaryColor.v[3] < 45000) return;
-  if (primaryColor.v[3] < 65535) drawTrunk(vaolist);
+  if (activeView.calculating_shadows && primaryColor.f3() < 0.7f) return;
+  if (primaryColor.f3() < 1.f) drawTrunk(vaolist);
 }
 void Pipe::drawTrunk(const GLuint *vaolist) const {
   // Keep off unconditionally since pipe ends show both sides
   glDisable(GL_CULL_FACE);
-  if (primaryColor.v[3] < 65535) {
+  if (primaryColor.f3() < 1.f) {
     glEnable(GL_BLEND);
   } else {
     glDisable(GL_BLEND);

@@ -575,28 +575,28 @@ void EditMode::doCommand(int command) {
     break;
 
   case COLOR_RED:
-    if (color.v[0] >= 65535)
-      color.v[0] = 0;
+    if (color.w[0] >= 65535)
+      color.w[0] = 0;
     else
-      color.v[0] = std::min(65535, color.v[0] + 3277);
+      color.w[0] = std::min(65535, color.w[0] + 3277);
     break;
   case COLOR_GREEN:
-    if (color.v[1] >= 65535)
-      color.v[1] = 0;
+    if (color.w[1] >= 65535)
+      color.w[1] = 0;
     else
-      color.v[1] = std::min(65535, color.v[1] + 3277);
+      color.w[1] = std::min(65535, color.w[1] + 3277);
     break;
   case COLOR_BLUE:
-    if (color.v[2] >= 65535)
-      color.v[2] = 0;
+    if (color.w[2] >= 65535)
+      color.w[2] = 0;
     else
-      color.v[2] = std::min(65535, color.v[2] + 3277);
+      color.w[2] = std::min(65535, color.w[2] + 3277);
     break;
   case COLOR_ALPHA:
-    if (color.v[3] >= 65535)
-      color.v[3] = 0;
+    if (color.w[3] >= 65535)
+      color.w[3] = 0;
     else
-      color.v[3] = std::min(65535, color.v[3] + 3277);
+      color.w[3] = std::min(65535, color.w[3] + 3277);
     break;
 
   case FLAG_0:
@@ -664,7 +664,7 @@ void EditMode::doCommand(int command) {
                 val = map->cell(altx, alty).waterHeights[m];
                 break;
               case REPAIR_COLOR_CONT:
-                val = map->cell(altx, alty).colors[m].v[p];
+                val = map->cell(altx, alty).colors[m].w[p];
               }
               if (xLow <= altx && altx <= xHigh && yLow <= alty && alty <= yHigh) {
                 internal += val;
@@ -700,8 +700,8 @@ void EditMode::doCommand(int command) {
               c.waterHeights[k] = target;
               break;
             case REPAIR_COLOR_CONT:
-              dcent += target - c.colors[k].v[p];
-              c.colors[k].v[p] = target;
+              dcent += target - c.colors[k].w[p];
+              c.colors[k].w[p] = target;
             }
           }
           switch (command) {
@@ -713,7 +713,7 @@ void EditMode::doCommand(int command) {
             c.waterHeights[4] += dcent / 4;
             break;
           case REPAIR_COLOR_CONT:
-            c.colors[4].v[p] += dcent / 4;
+            c.colors[4].w[p] += dcent / 4;
           }
         }
     }
@@ -742,8 +742,8 @@ void EditMode::doCommand(int command) {
           break;
         case REPAIR_COLOR_CENTERS:
           for (int k = 0; k < 4; k++) {
-            c.colors[Cell::CENTER].v[k] =
-                (c.colors[0].v[k] + c.colors[1].v[k] + c.colors[2].v[k] + c.colors[3].v[k]) /
+            c.colors[Cell::CENTER].w[k] =
+                (c.colors[0].w[k] + c.colors[1].w[k] + c.colors[2].w[k] + c.colors[3].w[k]) /
                 4;
           }
           break;
@@ -767,10 +767,10 @@ void EditMode::doCommand(int command) {
           for (int m = 0; m < 4; m++) {
             float mscale = 0.05 * 65535.f;
             for (int k = 0; k < 4; k++) {
-              c.colors[k].v[m] = mscale * roundint(c.colors[k].v[m] / mscale);
+              c.colors[k].w[m] = mscale * roundint(c.colors[k].w[m] / mscale);
             }
-            c.colors[Cell::CENTER].v[m] =
-                0.25 * mscale * roundint(4. * c.colors[Cell::CENTER].v[m] / mscale);
+            c.colors[Cell::CENTER].w[m] =
+                0.25 * mscale * roundint(4. * c.colors[Cell::CENTER].w[m] / mscale);
           }
           break;
         case REPAIR_VEL_ROUND:

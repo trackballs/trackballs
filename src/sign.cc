@@ -81,7 +81,7 @@ void Sign::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat dz = SIGN_SCALE * scale * height;
 
   Color color = primaryColor.toOpaque();
-  color.v[3] = std::min(1.0, life) * 65535;
+  color.v[3] = std::min(1.0, life) * 1.f;
 
   pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
                           texcoord[0], texcoord[1], color, flat);

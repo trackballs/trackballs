@@ -51,19 +51,19 @@ void ColorModifier::tick(Real t) {
   switch (colors) {
   case 0:
     for (int i = 0; i < 5; i++) {
-      c.colors[i].v[0] = v;
-      c.colors[i].v[1] = v;
-      c.colors[i].v[2] = v;
+      c.colors[i].w[0] = v;
+      c.colors[i].w[1] = v;
+      c.colors[i].w[2] = v;
     }
     break;
   case 1:
-    for (int i = 0; i < 5; i++) c.colors[i].v[0] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].w[0] = v;
     break;
   case 2:
-    for (int i = 0; i < 5; i++) c.colors[i].v[1] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].w[1] = v;
     break;
   case 3:
-    for (int i = 0; i < 5; i++) c.colors[i].v[2] = v;
+    for (int i = 0; i < 5; i++) c.colors[i].w[2] = v;
     break;
   }
   game.map->markCellsUpdated(x, y, x, y, false);

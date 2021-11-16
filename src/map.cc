@@ -453,8 +453,8 @@ static inline void packCell(GLfloat* fout, GLfloat px, GLfloat py, GLfloat pz, C
   fout[0] = px;
   fout[1] = py;
   fout[2] = pz;
-  aout[3] = ((uint32_t)(color.v[1]) << 16) + (uint32_t)(color.v[0]);
-  aout[4] = ((uint32_t)(color.v[3]) << 16) + (uint32_t)(color.v[2]);
+  aout[3] = ((uint32_t)(65535.f * color.v[1]) << 16) + (uint32_t)(65535.f * color.v[0]);
+  aout[4] = ((uint32_t)(65535.f * color.v[3]) << 16) + (uint32_t)(65535.f * color.v[2]);
 
   uint32_t txco = ((uint32_t)(1023.f * ty) << 10) | ((uint32_t)(1023.f * tx) << 0) |
                   ((uint32_t)(1023.f * (txno / 16.f)) << 20);
@@ -1309,11 +1309,11 @@ void Cell::load(Map* map, gzFile gp, int version) {
     if (version < 4) {
       // old maps do not have an alpha channel defined
       gzread(gp, data, sizeof(int32_t) * 3);
-      for (int j = 0; j < 3; j++) colors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
-      colors[i].v[3] = 65535;
+      for (int j = 0; j < 3; j++) colors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
+      colors[i].w[3] = 65535;
     } else {
       gzread(gp, data, sizeof(int32_t) * 4);
-      for (int j = 0; j < 4; j++) colors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
+      for (int j = 0; j < 4; j++) colors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
     }
   }
 
@@ -1331,11 +1331,11 @@ void Cell::load(Map* map, gzFile gp, int version) {
       if (version < 4) {
         // old maps do not have an alpha channel defined
         gzread(gp, data, sizeof(int32_t) * 3);
-        for (int j = 0; j < 3; j++) wallColors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
-        wallColors[i].v[3] = 65535;
+        for (int j = 0; j < 3; j++) wallColors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
+        wallColors[i].w[3] = 65535;
       } else {
         gzread(gp, data, sizeof(int32_t) * 4);
-        for (int j = 0; j < 4; j++) wallColors[i].v[j] = 65535 * 0.01 * loadInt(data[j]);
+        for (int j = 0; j < 4; j++) wallColors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
       }
     }
   }

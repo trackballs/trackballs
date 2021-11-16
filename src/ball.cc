@@ -86,7 +86,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   if (0) {
     /* useful debug code */
     if (inTheAir) {
-      for (int i = 0; i < 3; i++) { color.v[i] = 65535 - color.v[i]; }
+      for (int i = 0; i < 3; i++) { color.v[i] = 1.f - color.v[i]; }
     }
   }
   GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
@@ -310,7 +310,7 @@ void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     GLfloat *data = new GLfloat[nverts * 8];
     ushort *idxs = new ushort[ntries * 3];
     Color color = primaryColor;
-    color.v[3] = 32768;
+    color.v[3] = 0.5f;
     Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
     placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
 

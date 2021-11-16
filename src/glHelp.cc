@@ -336,8 +336,8 @@ size_t packObjectVertex(void *dest, GLfloat x, GLfloat y, GLfloat z, GLfloat tx,
   fout[0] = x;
   fout[1] = y;
   fout[2] = z;
-  aout[3] = (((uint32_t)(color.v[1])) << 16) + (uint32_t)(color.v[0]);
-  aout[4] = (((uint32_t)(color.v[3])) << 16) + (uint32_t)(color.v[2]);
+  aout[3] = (((uint32_t)(65535.f * color.v[1])) << 16) + (uint32_t)(65535.f * color.v[0]);
+  aout[4] = (((uint32_t)(65535.f * color.v[3])) << 16) + (uint32_t)(65535.f * color.v[2]);
   aout[5] = (((uint32_t)(65535.f * 0.5f * ty)) << 16) + (uint32_t)(65535.f * 0.5f * tx);
   aout[6] = packNormal(normal);
   return 8 * sizeof(GLfloat);

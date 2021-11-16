@@ -91,22 +91,22 @@ inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale;
 class SRGBColor {
  public:
   SRGBColor() {
-    v[0] = 0;
-    v[1] = 0;
-    v[2] = 0;
-    v[3] = 65535;
+    w[0] = 0;
+    w[1] = 0;
+    w[2] = 0;
+    w[3] = 65535;
   }
   SRGBColor(float fr, float fg, float fb, float fa) {
-    v[0] = std::round(65535.f * fr);
-    v[1] = std::round(65535.f * fg);
-    v[2] = std::round(65535.f * fb);
-    v[3] = std::round(65535.f * fa);
+    w[0] = std::round(65535.f * fr);
+    w[1] = std::round(65535.f * fg);
+    w[2] = std::round(65535.f * fb);
+    w[3] = std::round(65535.f * fa);
   };
-  float f0() const { return v[0] / 65535.f; }
-  float f1() const { return v[1] / 65535.f; }
-  float f2() const { return v[2] / 65535.f; }
-  float f3() const { return v[3] / 65535.f; }
-  uint16_t v[4];
+  float f0() const { return w[0] / 65535.f; }
+  float f1() const { return w[1] / 65535.f; }
+  float f2() const { return w[2] / 65535.f; }
+  float f3() const { return w[3] / 65535.f; }
+  uint16_t w[4];
 };
 
 float sRGBToLinear(float v);
@@ -114,26 +114,26 @@ float sRGBToLinear(float v);
 class Color {
  public:
   Color() {
-    v[0] = 0;
-    v[1] = 0;
-    v[2] = 0;
-    v[3] = 65535;
+    v[0] = 0.f;
+    v[1] = 0.f;
+    v[2] = 0.f;
+    v[3] = 1.f;
   }
   Color(float fr, float fg, float fb, float fa) {
-    v[0] = 65535.f * fr;
-    v[1] = 65535.f * fg;
-    v[2] = 65535.f * fb;
-    v[3] = 65535.f * fa;
+    v[0] = fr;
+    v[1] = fg;
+    v[2] = fb;
+    v[3] = fa;
   };
   explicit Color(SRGBColor c) {
-    v[0] = 65535.f * sRGBToLinear(c.v[0] / 65535.f);
-    v[1] = 65535.f * sRGBToLinear(c.v[1] / 65535.f);
-    v[2] = 65535.f * sRGBToLinear(c.v[2] / 65535.f);
-    v[3] = c.v[3];
+    v[0] = sRGBToLinear(c.f0());
+    v[1] = sRGBToLinear(c.f1());
+    v[2] = sRGBToLinear(c.f2());
+    v[3] = c.f3();
   }
   Color toOpaque() const {
     Color c(*this);
-    c.v[3] = 65535;
+    c.v[3] = 1.f;
     return c;
   }
   static Color mix(float blend, const Color &col0, const Color &col1) {
@@ -141,11 +141,11 @@ class Color {
     for (int i = 0; i < 4; i++) { c.v[i] = col0.v[i] * (1. - blend) + col1.v[i] * blend; }
     return c;
   }
-  float f0() const { return v[0] / 65535.f; }
-  float f1() const { return v[1] / 65535.f; }
-  float f2() const { return v[2] / 65535.f; }
-  float f3() const { return v[3] / 65535.f; }
-  uint16_t v[4];
+  float f0() const { return v[0]; }
+  float f1() const { return v[1]; }
+  float f2() const { return v[2]; }
+  float f3() const { return v[3]; }
+  float v[4];
 };
 
 #ifndef M_PI
