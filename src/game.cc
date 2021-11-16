@@ -60,7 +60,9 @@ Game::Game(const char *name, Gamer *gamer) {
   /* Load the bootup script */
   char scmname[256];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
+  Game::current = this;
   loadScript(scmname);
+  Game::current = NULL;
 
   player1 = new Player(*this);
   add(player1);
@@ -85,6 +87,7 @@ Game::Game(Map *editmap, const char *levelname) {
   setDefaults();
 
   /* load scripts */
+  Game::current = this;
   char scmname[512];
   snprintf(scmname, sizeof(scmname), "%s/levels/boot.scm", effectiveShareDir);
   scmname[511] = '\0';
@@ -96,6 +99,7 @@ Game::Game(Map *editmap, const char *levelname) {
   }
   scmname[511] = '\0';
   loadScript(scmname);
+  Game::current = NULL;
 
   for (int j = 0; j < newHooks.size(); j++) {
     hooks[newHooks[j]->entity_role].push_back(newHooks[j]);
