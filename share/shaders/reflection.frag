@@ -65,8 +65,8 @@ void main(void) {
   vec3 surfcolor = texcolor.xyz;
 
   if (fog_active == 1) {
-    float dist = clamp(1.0 - (fog_end - length(cpos)) / (fog_end - fog_start), 0., 1.0);
-    surfcolor = mix(surfcolor, fog_color, dist);
+    float dist = clamp((length(cpos) - fog_start) / (fog_end - fog_start), 0., 1.0);
+    surfcolor = mix(surfcolor, fog_color, dist * dist);
   }
   // Force override alpha
   gl_FragColor = vec4(surfcolor, texcolor.w);
