@@ -73,7 +73,7 @@ void main(void) {
   // Blending into fog
   if (fog_active == 1) {
     float dist = clamp((length(cpos) - fog_start) / (fog_end - fog_start), 0., 1.0);
-    surfcolor = mix(surfcolor, fog_color, dist * dist);
+    surfcolor = mix(surfcolor, fog_color, dist * sqrt(dist));
   }
   // Keep original alpha
   gl_FragColor = vec4(surfcolor, texcolor.w);

@@ -18,7 +18,7 @@ void main(void) {
   vec3 lcolor = line_color.xyz;
   if (fog_active == 1) {
     float dist = clamp((length(cpos) - fog_start) / (fog_end - fog_start), 0., 1.0);
-    lcolor = mix(lcolor, fog_color, dist * dist);
+    lcolor = mix(lcolor, fog_color, dist * sqrt(dist));
   }
   gl_FragColor = vec4(lcolor, line_color.w);
 }
