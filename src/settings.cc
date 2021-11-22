@@ -169,14 +169,17 @@ Settings::Settings() {
   /* apply time compression immediately */
   timeDilationFactor = std::pow(2.0, timeCompression / 6.0);
 }
-void Settings::loadLevelSets() {
+void Settings::loadLevelSets() { scm_with_guile(Settings::doLoadLevelSets, (void *)this); }
+
+void *Settings::doLoadLevelSets(void *data) {
+  Settings *s = (Settings *)data;
   /* Load all levelsets */
   char str[512];
-  nLevelSets = 0;
+  s->nLevelSets = 0;
 
   /* ugly fix to make levelset lv.set the first level set */
   snprintf(str, sizeof(str), "%s/levels/lv.set", effectiveShareDir);
-  loadLevelSet(str, "lv.set");
+  s->loadLevelSet(str, "lv.set");
 
   snprintf(str, sizeof(str), "%s/levels", effectiveShareDir);
   DIR *dir = opendir(str);
@@ -189,7 +192,7 @@ void Settings::loadLevelSets() {
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
         if (strcmp(dirent->d_name, "lv.set")) {
           snprintf(str, sizeof(str), "%s/levels/%s", effectiveShareDir, dirent->d_name);
-          loadLevelSet(str, dirent->d_name);
+          s->loadLevelSet(str, dirent->d_name);
         }
       }
     }
@@ -204,15 +207,17 @@ void Settings::loadLevelSets() {
       if (strlen(dirent->d_name) > 4 &&
           strcmp(&dirent->d_name[strlen(dirent->d_name) - 4], ".set") == 0) {
         snprintf(str, sizeof(str) - 1, "%s/levels/%s", effectiveLocalDir, dirent->d_name);
-        loadLevelSet(str, dirent->d_name);
+        s->loadLevelSet(str, dirent->d_name);
       }
     }
     closedir(dir);
   }
 
-  if (!nLevelSets) {
+  if (!s->nLevelSets) {
     error("failed to load any levelsets, place levels in %s/levels/", effectiveShareDir);
   }
+
+  return NULL;
 }
 void Settings::loadLevelSet(const char *setname, const char *shortname) {
   const char *reqmnt =
