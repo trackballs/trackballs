@@ -30,7 +30,7 @@
 (set-cell-wall-colors 0 0 255 255 2 .9 .7 .1 .3)
 (set-cell-wall-colors 0 0 255 255 3 .9 .7 .1 .3)
 
-(add-cyclic-platform 252 247 252 247 -2.0 2.0 1.0 0.5)
+(add-cyclic-platform 252 247 252 247 -2.0 2.0 1.0 1.25)
 
 (define pipe1(pipe 240.2 252.0 2.5 243.7 252. 2.5 0.5))
 (set-primary-color pipe1 .3 .7 .9 .4)
