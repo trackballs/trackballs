@@ -352,10 +352,10 @@ void MainMode::doExpensiveComputations() { game->doExpensiveComputations(); }
 void MainMode::key(int key) {
   switch (gameStatus) {
   case statusBeforeGame:
-    if (key == ' ') startGame();
+    if (key == SDLK_SPACE || key == SDLK_RETURN) startGame();
     break;
   case statusRestartPlayer:
-    if (key == ' ') {
+    if (key == SDLK_SPACE || key == SDLK_RETURN) {
       restartPlayer();
       gameStatus = statusInGame;
     }
@@ -381,7 +381,7 @@ void MainMode::key(int key) {
     break;
   case statusBonusLevelComplete:
   case statusNextLevel:
-    if (key == ' ') {
+    if (key == SDLK_SPACE || key == SDLK_RETURN) {
       if (!game->nextLevel[0]) {
         gameStatus = statusVictory;
         break;
@@ -396,7 +396,7 @@ void MainMode::key(int key) {
     }
     break;
   case statusGameOver: {
-    if (key == ' ' || key == 'n') {
+    if (key == SDLK_SPACE || key == SDLK_RETURN || key == 'n') {
       EnterHighScoreMode::init();
       EnterHighScoreMode::enterHighScoreMode->lastGameScore = game->player1->score;
       EnterHighScoreMode::enterHighScoreMode->lastLevelSet = game->currentLevelSet;
@@ -404,7 +404,7 @@ void MainMode::key(int key) {
     }
   } break;
   case statusVictory:
-    if (key == ' ') {
+    if (key == SDLK_SPACE || key == SDLK_RETURN) {
       Gamer::gamer->playerLose(game);
       EnterHighScoreMode::init();
       EnterHighScoreMode::enterHighScoreMode->lastGameScore = game->player1->score;
@@ -542,7 +542,7 @@ void MainMode::mouse(int state, int x, int y) {
   if (game) game->player1->mouse(state, x, y);
 }
 void MainMode::mouseDown(int button, int /*x*/, int /*y*/) {
-  if (button == SDL_BUTTON_LMASK) key(' ');
+  if (button == SDL_BUTTON_LMASK) key(SDLK_SPACE);
 }
 /* Starts the current game */
 void MainMode::startGame() {
