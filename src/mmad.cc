@@ -349,7 +349,6 @@ static void *mainLoop(void *data) {
   /* Initialize random number generator */
   int seed = getMonotonicTime().tv_nsec;
   srand(seed);
-  int keyUpReceived = 1;
 
   double loop_time = 0.;
   Uint32 zero_sdl_tick = SDL_GetTicks();
@@ -404,9 +403,6 @@ static void *mainLoop(void *data) {
           GameMode::current->mouseDown(event.button.button, event.button.x, event.button.y);
         break;
       case SDL_KEYUP:
-        /* Prevent repeated keys */
-        keyUpReceived = 1;
-
         /* Use Caps lock key to determine if mouse should be hidden+grabbed */
         if (event.key.keysym.sym == SDLK_CAPSLOCK) {
           if (SDL_GetModState() & KMOD_CAPS) {
@@ -452,8 +448,7 @@ static void *mainLoop(void *data) {
 
         } else if (GameMode::current) {
           /* Prevent repeated keys */
-          if (!keyUpReceived) break;
-          keyUpReceived = 0;
+          if (event.key.repeat) { break; }
 
           GameMode::current->key(event.key.keysym.sym);
         }
