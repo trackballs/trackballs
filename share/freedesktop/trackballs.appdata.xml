@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component type="desktop">
+  <id>trackballs.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>Trackballs</name>
+  <summary>Steer a marble ball through a labyrinth</summary>
+  <description>
+    <p>
+      By steering a marble ball through a labyrinth filled with sharp objecs,
+      pools of acid, and other obstacles the player collects points. When the
+      destination is reached you continue on to the next, more difficult level
+      - unless the time runs out.
+    </p>
+    <p>Features:</p>
+    <ul>
+      <li>3D graphics</li>
+      <li>Integerated level editor</li>
+      <li>High quality soundeffects</li>
+      <li>Background music</li>
+    </ul>
+  </description>
+  <url type="homepage">https://trackballs.github.io/</url>
+  <url type="bugtracker">https://github.com/trackballs/trackballs/issues</url>
+  <url type="help">https://trackballs.github.io/docs/index.html</url>
+  <screenshots>
+    <screenshot type="default">https://trackballs.github.io/screenshots/b02.png</screenshot>
+    <screenshot>https://trackballs.github.io/screenshots/b07.png</screenshot>
+    <screenshot>https://trackballs.github.io/screenshots/b10.png</screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="1.3.3" date="2021-09-26" />
+    <release version="1.3.2" date="2020-12-26" />
+    <release version="1.3.1" date="2018-05-17" />
+    <release version="1.3.0" date="2018-03-11" />
+    <release version="1.2.4" date="2017-10-28" />
+    <release version="1.2.3" date="2017-07-25" />
+    <release version="1.2.2" date="2017-06-21" />
+    <release version="1.2.1" date="2017-06-16" />
+    <release version="1.2.0" date="2017-06-04" />
+  </releases>
+</component>
