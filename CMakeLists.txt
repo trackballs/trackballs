@@ -24,6 +24,7 @@ function(setordefault varname variable default)
   endif()
 endfunction()
 
+set(TRACKBALLS_METAINFO_DIR "" CACHE PATH "Folder to install .appdata.xml files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/metainfo")
 set(TRACKBALLS_APPL_DIR "" CACHE PATH "Folder to install .desktop files to. If empty, the default is CMAKE_INSTALL_PREFIX/share/applications")
 set(TRACKBALLS_DOC_DIR "" CACHE PATH "Folder to install documentation to. If empty, the default is CMAKE_INSTALL_PREFIX/share/doc")
 set(TRACKBALLS_BIN_DIR "" CACHE PATH "Folder to install executable files to. If empty, the default is CMAKE_INSTALL_PREFIX/bin")
@@ -34,6 +35,7 @@ set(TRACKBALLS_SHARE_DIR "" CACHE PATH "Folder to install data files to. If empt
 
 set(TRACKBALLS_HIGHSCORES_DIR "" CACHE STRING "Folder to install highscores file to. Empty means to TRACKBALLS_SHARE_DIR/. ~ will install per user")
 
+setordefault(TRACKBALLS_METAINFO_DIR "${TRACKBALLS_METAINFO_DIR}" ${CMAKE_INSTALL_PREFIX}/share/metainfo)
 setordefault(TRACKBALLS_APPL "${TRACKBALLS_APPL_DIR}" ${CMAKE_INSTALL_PREFIX}/share/applications)
 setordefault(TRACKBALLS_BIN "${TRACKBALLS_BIN_DIR}" ${CMAKE_INSTALL_PREFIX}/bin)
 setordefault(TRACKBALLS_DOC "${TRACKBALLS_DOC_DIR}" ${CMAKE_INSTALL_PREFIX}/share/doc/trackballs)
@@ -119,8 +121,10 @@ foreach(file ${icons})
 endforeach()
 install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.svg
         DESTINATION ${TRACKBALLS_ICON}/scalable/apps/)
-install(FILES ${PROJECT_SOURCE_DIR}/share/icons/trackballs.desktop
+install(FILES ${PROJECT_SOURCE_DIR}/share/freedesktop/trackballs.desktop
         DESTINATION ${TRACKBALLS_APPL})
+install(FILES ${PROJECT_SOURCE_DIR}/share/freedesktop/trackballs.appdata.xml
+        DESTINATION ${TRACKBALLS_METAINFO_DIR})
 
 # Translations!
 option(DISABLE_NLS "Disable native language support (NLS)" OFF)
