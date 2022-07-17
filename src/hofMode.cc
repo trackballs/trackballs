@@ -52,9 +52,7 @@ HallOfFameMode::HallOfFameMode() {
   isExiting = 0;
   if (low_memory)
     background = NULL;
-  else {
-    background = loadImage("displayHighscoreBackground.jpg");
-  }
+  else { background = loadImage("displayHighscoreBackground.jpg"); }
 }
 HallOfFameMode::~HallOfFameMode() {
   if (background) SDL_FreeSurface(background);

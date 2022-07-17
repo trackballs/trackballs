@@ -70,9 +70,7 @@ SetupMode::SetupMode() : GameMode() {
   name = 0;
   if (low_memory)
     background = NULL;
-  else {
-    background = loadImage("setupBackground.jpg");
-  }
+  else { background = loadImage("setupBackground.jpg"); }
 }
 SetupMode::~SetupMode() {
   if (background) SDL_FreeSurface(background);

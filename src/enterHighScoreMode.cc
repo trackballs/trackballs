@@ -46,9 +46,7 @@ EnterHighScoreMode::EnterHighScoreMode() {
   memset(name, 0, sizeof(name));
   if (low_memory)
     background = NULL;
-  else {
-    background = loadImage("setupBackground.jpg");
-  }
+  else { background = loadImage("setupBackground.jpg"); }
 }
 EnterHighScoreMode::~EnterHighScoreMode() {
   if (background) SDL_FreeSurface(background);

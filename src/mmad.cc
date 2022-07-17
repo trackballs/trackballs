@@ -442,9 +442,7 @@ static void *mainLoop(void *data) {
             EditMode::editMode->askQuit();
           } else if ((GameMode::current && GameMode::current == MenuMode::menuMode))
             GameMode::activate(NULL);
-          else {
-            GameMode::activate(MenuMode::init());
-          }
+          else { GameMode::activate(MenuMode::init()); }
 
         } else if (GameMode::current) {
           /* Prevent repeated keys */

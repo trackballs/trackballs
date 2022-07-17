@@ -53,9 +53,7 @@ HelpMode::HelpMode() {
   helpGame = NULL;
   if (low_memory)
     background = NULL;
-  else {
-    background = loadImage("helpBackground.jpg");
-  }
+  else { background = loadImage("helpBackground.jpg"); }
 }
 HelpMode::~HelpMode() {
   if (background) SDL_FreeSurface(background);

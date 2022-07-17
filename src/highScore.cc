@@ -111,9 +111,7 @@ HighScore::HighScore() {
     else if (ALT_HIGHSCORES[1] == '/')
       snprintf(highScorePath, sizeof(highScorePath), "%s%s/highScores", getenv("HOME"),
                &ALT_HIGHSCORES[1]);
-    else {
-      error("Bad ALT_HIGHSCORES compiled into game '%s'", ALT_HIGHSCORES);
-    }
+    else { error("Bad ALT_HIGHSCORES compiled into game '%s'", ALT_HIGHSCORES); }
   } else {
     snprintf(highScorePath, sizeof(highScorePath), "%s/highScores", ALT_HIGHSCORES);
   }
