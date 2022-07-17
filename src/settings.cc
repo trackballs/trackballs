@@ -39,16 +39,17 @@ extern double timeDilationFactor;
    menu. The name of languages should appear in the respective native
    language. Eg. the Swedish language is written as 'Svenska'
 */
-const char *Settings::languageCodes[7][3] = {{"", "", ""},
-                                             {"de", "de_DE", "de_DE.utf8"},
-                                             {"fr", "fr_FR", "fr_FR.utf8"},
-                                             {"it", "it_IT", "it_IT.utf8"},
-                                             {"hu", "hu_HU", "hu_HU.utf8"},
-                                             {"sk", "sk_SK", "sk_SK.utf8"},
-                                             {"sv", "sv_SE", "sv_SE.utf8"}};
-const char *Settings::languageNames[7] = {"Default", "Deutsch", "Francais", "Italiano",
-                                          "Magyar",  "Slovak",  "Svenska"};
-int Settings::nLanguages = 7;
+const char *Settings::languageCodes[8][3] = {{"", "", ""},
+                                             {"de", "de_DE", "de_DE.UTF-8"},
+                                             {"fr", "fr_FR", "fr_FR.UTF-8"},
+                                             {"it", "it_IT", "it_IT.UTF-8"},
+                                             {"hu", "hu_HU", "hu_HU.UTF-8"},
+                                             {"sk", "sk_SK", "sk_SK.UTF-8"},
+                                             {"sv", "sv_SE", "sv_SE.UTF-8"},
+                                             {"nl", "nl_NL", "nl_NL.UTF-8"}};
+const char *Settings::languageNames[8] = {"Default", "Deutsch", "Francais", "Italiano",
+                                          "Magyar",  "Slovak",  "Svenska",  "Nederlands"};
+int Settings::nLanguages = 8;
 
 void *Settings::load(void *data) {
   Settings *s = (Settings *)data;
@@ -456,9 +457,10 @@ void Settings::setLocale() {
     }
   }
 
-  /* Set the locale, trying several name options */
+  /* Set the locale, trying several name options. Prefer the last (UTF-8)
+   * version in the list. */
   char *ret = NULL;
-  for (int i = 0; i < 3; i++) {
+  for (int i = 3; i-- > 0;) {
     ret = setlocale(LC_MESSAGES, languageCodes[language][i]);
     if (ret) { break; }
   }
