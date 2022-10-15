@@ -501,6 +501,8 @@ void setActiveProgramAndUniforms(Shader_Type type) {
         glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_model"), 3, GL_FALSE,
                            (GLfloat *)cscmodel);
 
+        glUniform1i(glGetUniformLocation(shader, "shadowtex_size"), activeView.cascadeTexsize);
+
         glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
                     activeView.sun_direction[1], activeView.sun_direction[2]);
       } else {

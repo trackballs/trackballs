@@ -22,6 +22,7 @@ uniform sampler2D shadow_cascade0;
 uniform sampler2D shadow_cascade1;
 uniform sampler2D shadow_cascade2;
 uniform mat4 cascade_mvp[3];
+uniform int shadowtex_size;
 
 // From fragment shader
 varying vec3 worldpos;
@@ -33,24 +34,38 @@ varying float flatkey;
 
 float cascadeShadow() {
   vec4 pos = vec4(worldpos.x, worldpos.y, worldpos.z, 1.);
-  for (int texidx = 0; texidx < 3; texidx++) {
+  float off = 1. / shadowtex_size;
+  /* smallest layer is first */
+  int layer = 2;
+  vec4 qp;
+  vec2 shadco;
+  for (int texidx = 0; texidx < 2; texidx++) {
     mat4 mvp_matrix = cascade_mvp[texidx];
-    vec4 qp = mvp_matrix * pos;
-    vec2 shadco = qp.xy * 0.5 + 0.5;
-    if (-0.99 <= qp.x && qp.x <= 0.99 && -0.99 <= qp.y && qp.y <= 0.99) {
-      float dpth;
-      if (texidx < 0.5) {
-        dpth = 2 * texture(shadow_cascade0, shadco).r - 1;
-      } else if (texidx < 1.5) {
-        dpth = 2 * texture(shadow_cascade1, shadco).r - 1;
-      } else {
-        dpth = 2 * texture(shadow_cascade2, shadco).r - 1;
-      }
-      if (dpth < qp.z - 0.001) { return 0.0; }
-      return 1.0;
+    qp = mvp_matrix * pos;
+    shadco = qp.xy * 0.5 + 0.5;
+    layer = 0;
+    if (shadco.x > off && shadco.x < 1.0 - off && shadco.y > off && shadco.y < 1.0 - off) {
+      layer = texidx;
+      break;
     }
   }
-  return 1.0;
+  float shadow = 0.;
+  for (int dx = -1; dx <= 1; dx++) {
+    for (int dy = -1; dy <= 1; dy++) {
+      vec2 tr = vec2(dx * off, dy * off);
+      float dpth;
+      if (layer == 0) {
+        dpth = 2 * texture(shadow_cascade0, shadco + tr).r - 1;
+      } else if (layer == 1) {
+        dpth = 2 * texture(shadow_cascade1, shadco + tr).r - 1;
+      } else {
+        dpth = 2 * texture(shadow_cascade2, shadco + tr).r - 1;
+      }
+
+      shadow += (dpth < qp.z - 0.001) ? 0.0 : 1.0;
+    }
+  }
+  return shadow / 9.0;
 }
 
 void main(void) {
