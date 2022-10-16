@@ -7,7 +7,7 @@
   <summary>Steer a marble ball through a labyrinth</summary>
   <description>
     <p>
-      By steering a marble ball through a labyrinth filled with sharp objecs,
+      By steering a marble ball through a labyrinth filled with sharp objects,
       pools of acid, and other obstacles the player collects points. When the
       destination is reached you continue on to the next, more difficult level
       - unless the time runs out.
@@ -15,8 +15,8 @@
     <p>Features:</p>
     <ul>
       <li>3D graphics</li>
-      <li>Integerated level editor</li>
-      <li>High quality soundeffects</li>
+      <li>Integrated level editor</li>
+      <li>High quality sound effects</li>
       <li>Background music</li>
     </ul>
   </description>
