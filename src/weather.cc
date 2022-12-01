@@ -89,11 +89,12 @@ void Weather::tick(Real td, Player *player) {
     }
   }
 
+  GLfloat td_float = (GLfloat)td;
   for (int i = 0; i < max_weather_particles; i++) {
-    Particle *p = &particles[i];
-    p->position[0] += p->velocity[0] * td;
-    p->position[1] += p->velocity[1] * td;
-    p->position[2] += p->velocity[2] * td;
+    Particle &p = particles[i];
+    p.position[0] += p.velocity[0] * td_float;
+    p.position[1] += p.velocity[1] * td_float;
+    p.position[2] += p.velocity[2] * td_float;
   }
 }
 
