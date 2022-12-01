@@ -202,6 +202,11 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, 
 }
 
 void update2DStringCache(bool force_wipe) {
+  if (!force_wipe && strcache.size() < 100) {
+    /* Cache up to 100 strings */
+    return;
+  }
+
   int erased;
   do {
     erased = false;
@@ -1393,7 +1398,13 @@ void displayFrameRate() {
     }
     TTF_Font *active = menuFontForSize(10);
     int w1 = draw2DString(active, slow, 15, screenHeight - 15, menuColor, true, 0, 0);
-    draw2DString(active, fast, 15 + w1, screenHeight - 15, menuColor, true, 0, 0);
+    /* Write rate letter by letter; this ensures they remain in cache and avoids
+     * rerendering */
+    int pos = 15 + w1;
+    for (char *cur = fast; *cur; cur++) {
+      char letter[2] = {*cur, 0};
+      pos += draw2DString(active, letter, pos, screenHeight - 15, menuColor, true, 0, 0) - 4;
+    }
   }
 }
 
