@@ -96,6 +96,7 @@ class Chunk {
   int last_shown;
 };
 
+class ChunkStagingBuffers;
 class Map {
  public:
   explicit Map(char *mapname);
@@ -142,6 +143,7 @@ class Map {
 
  protected:
  private:
+  ChunkStagingBuffers *bufs;
   Cell *cells;
   mutable std::map<std::pair<int, int>, Chunk> chunks;
 };
