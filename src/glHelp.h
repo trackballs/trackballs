@@ -125,6 +125,7 @@ typedef struct _viewpa {
   GLfloat light_position[3];
   GLfloat sun_direction[3];
 
+  bool use_shadows;
   bool day_mode;
   GLuint cascadeTexsize;
   GLuint cascadeTexture[3];
@@ -146,8 +147,6 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
                   GLdouble centerY, GLdouble centerZ, GLdouble upX, GLdouble upY, GLdouble upZ,
                   Matrix4d out);
 
-void renderDummyShadowCascade();
-void renderDummyShadowMap();
 void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm);
 void renderShadowCascade(const Coord3d &focus, Map *mp, Game *gm);
 

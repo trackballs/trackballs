@@ -55,6 +55,8 @@ GLuint textureMousePointer = 0;
 GLuint textureDizzy = 0;
 GLuint textureWings = 0;
 GLuint textureTrack = 0;
+static GLuint dummyCascadeTexture = 0;
+static GLuint dummyCubeMapTexture = 0;
 
 TTF_Font *ingameFont;
 extern struct timespec displayStartTime;
@@ -475,14 +477,23 @@ void setActiveProgramAndUniforms(Shader_Type type) {
 
       if (activeView.day_mode) {
         glUniform1i(glGetUniformLocation(shader, "shadow_cascade0"), 2);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
         glUniform1i(glGetUniformLocation(shader, "shadow_cascade1"), 3);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[1]);
         glUniform1i(glGetUniformLocation(shader, "shadow_cascade2"), 4);
-        glActiveTexture(GL_TEXTURE4);
-        glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[2]);
+        if (activeView.use_shadows) {
+          glActiveTexture(GL_TEXTURE2);
+          glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
+          glActiveTexture(GL_TEXTURE3);
+          glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[1]);
+          glActiveTexture(GL_TEXTURE4);
+          glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[2]);
+        } else {
+          glActiveTexture(GL_TEXTURE2);
+          glBindTexture(GL_TEXTURE_2D, dummyCascadeTexture);
+          glActiveTexture(GL_TEXTURE3);
+          glBindTexture(GL_TEXTURE_2D, dummyCascadeTexture);
+          glActiveTexture(GL_TEXTURE4);
+          glBindTexture(GL_TEXTURE_2D, dummyCascadeTexture);
+        }
 
         const int N = 3;
         GLfloat cscmvp[N * 16], cscmodel[N * 16];
@@ -508,7 +519,11 @@ void setActiveProgramAndUniforms(Shader_Type type) {
       } else {
         glUniform1i(glGetUniformLocation(shader, "shadow_map"), 1);
         glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+        if (activeView.use_shadows) {
+          glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
+        } else {
+          glBindTexture(GL_TEXTURE_CUBE_MAP, dummyCubeMapTexture);
+        }
 
         glUniform3f(glGetUniformLocation(shader, "light_position"),
                     activeView.light_position[0], activeView.light_position[1],
@@ -673,29 +688,6 @@ void lookAtMatrix(GLdouble eyeX, GLdouble eyeY, GLdouble eyeZ, GLdouble centerX,
   matrixMult(trans, mat, out);
 }
 
-void renderDummyShadowMap() {
-  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
-  GLfloat buf[1] = {1.0f};
-  activeView.shadowMapTexsize = 1;
-  glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
-  for (int face = 0; face < 6; face++) {
-    glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
-                 buf);
-  }
-}
-
-void renderDummyShadowCascade() {
-  GLfloat buf[3] = {1.0f};
-  activeView.cascadeTexsize = 1;
-  for (int i = 0; i < 3; i++) {
-    glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[i]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
-                 buf);
-  }
-}
-
 void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
   Matrix4d origMV, origProj;
   assign(activeView.modelview, origMV);
@@ -714,6 +706,8 @@ void renderShadowMap(const Coord3d &focus, Map *mp, Game *gm) {
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxSize);
     GLint reqSize = 1 << Settings::settings->shadowTexsize;
     activeView.shadowMapTexsize = std::min(maxSize, reqSize);
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
     for (uint face = 0; face < 6; face++) {
       glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, activeView.shadowMapTexsize,
                    activeView.shadowMapTexsize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
@@ -1273,12 +1267,28 @@ void glHelpInit() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   }
 
+  glGenTextures(1, &dummyCubeMapTexture);
+  GLenum dirs[6] = {GL_TEXTURE_CUBE_MAP_POSITIVE_X, GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Y, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                    GL_TEXTURE_CUBE_MAP_POSITIVE_Z, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z};
+  GLfloat buf[1] = {1.0f};
+  glBindTexture(GL_TEXTURE_CUBE_MAP, dummyCubeMapTexture);
+  for (int face = 0; face < 6; face++) {
+    glTexImage2D(dirs[face], 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 buf);
+  }
+
+  glGenTextures(1, &dummyCascadeTexture);
+  glBindTexture(GL_TEXTURE_2D, dummyCascadeTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 1, 1, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+               buf);
+
+  activeView.shadowMapTexsize = 1;
+  activeView.cascadeTexsize = 1;
   activeView.day_mode = true;
 
   glEnable(GL_FRAMEBUFFER_SRGB);
 
-  renderDummyShadowCascade();
-  renderDummyShadowMap();
   warnForGLerrors("postGLinit");
 }
 void glHelpCleanup() {
@@ -1322,6 +1332,9 @@ void glHelpCleanup() {
   menuFontLookup.clear();
   TTF_CloseFont(ingameFont);
   ingameFont = 0;
+
+  glDeleteTextures(1, &dummyCascadeTexture);
+  glDeleteTextures(1, &dummyCubeMapTexture);
 
   for (int i = 0; i < numTextures; i++) { glDeleteTextures(1, &textures[i]); }
 }

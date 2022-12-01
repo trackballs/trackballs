@@ -109,23 +109,15 @@ void MainMode::display() {
   /* lighting must be set before we render the shadow map */
   /* Shadow map rendering returns active modelview/projection to orig state */
   setupLighting(game, game->isNight);
-  if (game->isNight) {
-    if (Settings::settings->doShadows) {
+  if (Settings::settings->doShadows) {
+    if (game->isNight) {
       renderShadowMap(camFocus, map, game);
-      renderDummyShadowCascade();
     } else {
-      renderDummyShadowCascade();
-      renderDummyShadowMap();
-    }
-  } else {
-    activeView.day_mode = true;
-    if (Settings::settings->doShadows) {
       renderShadowCascade(camFocus, map, game);
-      renderDummyShadowMap();
-    } else {
-      renderDummyShadowCascade();
-      renderDummyShadowMap();
     }
+    activeView.use_shadows = true;
+  } else {
+    activeView.use_shadows = false;
   }
 
   /* record modelview/projection matrices for item visibility testing */

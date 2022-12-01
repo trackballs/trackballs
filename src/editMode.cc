@@ -380,10 +380,9 @@ void EditMode::display() {
     if (Settings::settings->doShadows) {
       Coord3d focus((double)x, (double)y, map->getHeight(x, y));
       renderShadowCascade(focus, map, game);
-      renderDummyShadowMap();
+      activeView.use_shadows = true;
     } else {
-      renderDummyShadowCascade();
-      renderDummyShadowMap();
+      activeView.use_shadows = false;
     }
   }
 
@@ -402,7 +401,7 @@ void EditMode::display() {
     map->drawLoop(0, 0, map->width - 1, map->height - 1, 0);
     if (game) {
       /* Indicate start position and trigger object locations */
-      for (int i = 0; i < game->hooks[Role_GameHook].size(); i++) {
+      for (size_t i = 0; i < game->hooks[Role_GameHook].size(); i++) {
         GameHook* hook = game->hooks[Role_GameHook][i];
         if (hook->invalid) continue;
 

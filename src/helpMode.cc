@@ -144,10 +144,10 @@ void HelpMode::display() {
   markViewChanged();
   if (Settings::settings->doShadows) {
     renderShadowCascade(cameraTo1, helpGame->map, helpGame);
+    activeView.use_shadows = true;
   } else {
-    renderDummyShadowCascade();
+    activeView.use_shadows = false;
   }
-  renderDummyShadowMap();
 
   glViewport(11 * screenWidth / 20, 11 * screenHeight / 20, 4 * screenWidth / 10,
              4 * screenHeight / 10);
@@ -162,10 +162,10 @@ void HelpMode::display() {
   markViewChanged();
   if (Settings::settings->doShadows) {
     renderShadowCascade(cameraTo1, helpGame->map, helpGame);
+    activeView.use_shadows = true;
   } else {
-    renderDummyShadowCascade();
+    activeView.use_shadows = false;
   }
-  renderDummyShadowMap();
   glViewport(11 * screenWidth / 20, 1 * screenHeight / 10, 4 * screenWidth / 10,
              4 * screenHeight / 10);
   Coord3d focus_b(step / 2 + step * page, 3 * step / 2, 2);
