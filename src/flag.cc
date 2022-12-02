@@ -96,8 +96,8 @@ void Flag::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 10.f / 128.f, Lighting_Regular);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, specularColor, 10.f / 128.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

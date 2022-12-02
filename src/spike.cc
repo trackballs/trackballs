@@ -65,8 +65,8 @@ void Spike::drawBuffers1(const GLuint *vaolist) const {
 
   const int nfacets = 6;
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 1., Lighting_Regular);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

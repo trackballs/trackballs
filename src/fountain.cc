@@ -111,8 +111,8 @@ void Fountain::drawBuffers2(const GLuint *vaolist) const {
 
   glEnable(GL_BLEND);
   glPointSize(1.5 * screenWidth / 600.);
-  setActiveProgramAndUniforms(Shader_Line);
-  glUniformC(uniformLocations.line_color, primaryColor);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Line);
+  glUniformC(uloc->line_color, primaryColor);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_POINTS, npoints, GL_UNSIGNED_SHORT, (void *)0);

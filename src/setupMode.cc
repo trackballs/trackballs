@@ -161,8 +161,8 @@ void SetupMode::display() {
   placeObjectSphere(data, idxs, 0, pos, rotation, 1.0, detail, color);
 
   // Transfer
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(Color(SRGBColor(0.3, 0.3, 0.3, 0.3)), 20., Lighting_NoShadows);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, Color(SRGBColor(0.3, 0.3, 0.3, 0.3)), 20., Lighting_NoShadows);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
   warnForGLerrors("trans");

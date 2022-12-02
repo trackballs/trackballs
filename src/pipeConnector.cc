@@ -80,8 +80,8 @@ void PipeConnector::drawMe(const GLuint *vaolist) const {
   int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 1., Lighting_Regular);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

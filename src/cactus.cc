@@ -152,8 +152,8 @@ void Cactus::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
 
   int nsides = 6;
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 15.f / 128.f, Lighting_Regular);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, specularColor, 15.f / 128.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

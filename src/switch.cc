@@ -151,8 +151,8 @@ void CSwitch::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
 
   const int nfacets = 16;
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(specularColor, 0.12, Lighting_Regular);
+  const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

@@ -401,12 +401,12 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
   }
 
   // Put into shader
-  setActiveProgramAndUniforms(Shader_Tile);
-  glUniform1i(uniformLocations.render_stage, stage);
-  glUniform1f(uniformLocations.gameTime, gameTime);
+  const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Tile);
+  glUniform1i(uloc->render_stage, stage);
+  glUniform1f(uloc->gameTime, gameTime);
 
   // Link in texture atlas :-)
-  glUniform1i(uniformLocations.arrtex, 0);
+  glUniform1i(uloc->arrtex, 0);
   glActiveTexture(GL_TEXTURE0 + 0);
   glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
 
@@ -434,9 +434,9 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
   }
 
   if (stage == 1 && !activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(Shader_Water);
-    glUniform1f(uniformLocations.gameTime, gameTime);
-    glUniform1i(uniformLocations.wtex, 0);
+    uloc = setActiveProgramAndUniforms(Shader_Water);
+    glUniform1f(uloc->gameTime, gameTime);
+    glUniform1i(uloc->wtex, 0);
     glActiveTexture(GL_TEXTURE0 + 0);
     glBindTexture(GL_TEXTURE_2D, textures[tx_Water]);
 
@@ -448,8 +448,8 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
   }
 
   if (!activeView.calculating_shadows) {
-    setActiveProgramAndUniforms(Shader_Line);
-    glUniformC(uniformLocations.line_color, Color(0., 0., 0., 1.));
+    uloc = setActiveProgramAndUniforms(Shader_Line);
+    glUniformC(uloc->line_color, Color(0., 0., 0., 1.));
 
     glEnable(GL_LINE_SMOOTH);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -988,8 +988,8 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_BLEND);
   glDisable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
+  const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1116,8 +1116,8 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
+  const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1180,8 +1180,8 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(Color(0., 0., 0., 1.), 0., Lighting_None);
+  const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
+  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
   configureObjectAttributes();

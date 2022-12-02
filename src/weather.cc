@@ -150,8 +150,8 @@ void Weather::draw2(Player *player) {
     delete[] data;
 
     // Transfer data
-    setActiveProgramAndUniforms(Shader_Line);
-    glUniformC(uniformLocations.line_color, Color(SRGBColor(0.3, 0.3, 0.4, 0.7)));
+    const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Line);
+    glUniformC(uloc->line_color, Color(SRGBColor(0.3, 0.3, 0.4, 0.7)));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *)0);
@@ -196,8 +196,8 @@ void Weather::draw2(Player *player) {
     glBufferData(GL_ARRAY_BUFFER, 3 * 8 * nactive * sizeof(GLfloat), data, GL_STATIC_DRAW);
     delete[] data;
 
-    setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(Color(0., 0., 0., 1.), 1., Lighting_None);
+    const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
+    setObjectUniforms(uloc, Color(0., 0., 0., 1.), 1., Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureGlitter);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);

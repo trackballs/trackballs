@@ -82,36 +82,79 @@ typedef enum {
 } Shader_Type;
 /* call markViewChanged when activeView is changed */
 void markViewChanged();
-/* setActiveProgramAndUniforms switches program, sets view uniforms, and updates common uniform
- * locations */
-void setActiveProgramAndUniforms(Shader_Type shader);
+
+/* This struct provides the uniform locations for a program.
+ * If the program does not have a uniform, the corresponding location is
+ * filled in with '-1' */
+typedef struct {
+  /* general 3D */
+  GLint mvp_matrix;
+  GLint model_matrix;
+  /* common */
+  GLint render_stage;
+  GLint gameTime;
+
+  /* line */
+  GLint line_color;
+  /* tile */
+  GLint arrtex;
+  /* water */
+  GLint wtex;
+
+  /* object */
+  GLint specular;
+  GLint sharpness;
+  GLint ignore_shadow;
+  GLint use_lighting;
+
+  /* reflection */
+  GLint refl_color;
+
+  /* reflection, object, ui */
+  GLint tex;
+
+  /* all display */
+  GLint fog_active;
+  GLint fog_color;
+  GLint fog_start;
+  GLint fog_end;
+
+  /* object/water/tile */
+  GLint light_ambient;
+  GLint light_diffuse;
+
+  /* object */
+  GLint light_specular;
+
+  /* day */
+  GLint shadow_cascade0;
+  GLint shadow_cascade1;
+  GLint shadow_cascade2;
+  GLint cascade_mvp;
+  GLint cascade_model;
+  GLint shadowtex_size;
+  GLint sun_direction;
+
+  /* night */
+  GLint shadow_map;
+  GLint light_position;
+
+  // For UI shader
+  GLint screen_width;
+  GLint screen_height;
+} UniformLocations;
+
+/* setActiveProgramAndUniforms switches program, sets view uniforms,
+ * and returns the uniform location map for the program. */
+const UniformLocations *setActiveProgramAndUniforms(Shader_Type shader);
 /* update object shader uniforms */
 typedef enum {
   Lighting_None,      /* No shadows, orientation independent */
   Lighting_NoShadows, /* Orientation dependent colors, no shadows */
   Lighting_Regular    /* Shadows and orientation dependent colors */
 } Object_Lighting;
-void setObjectUniforms(Color specular, float sharpness, Object_Lighting lighting);
-/* if the currently active shader has a uniform with matching name, then this struct provides
- * the location */
-struct UniformLocations {
-  GLuint line_color;
-  GLuint refl_color;
-  GLuint tex;
-  GLuint render_stage;
-  GLuint gameTime;
-  GLuint arrtex;
-  GLuint wtex;
-  GLuint specular_color;
-  GLuint sharpness;
-  GLuint ignore_shadow;
-  GLuint use_lighting;
-  // For UI shader
-  GLuint ui_screen_width;
-  GLuint ui_screen_height;
-  GLuint ui_tex;
-};
-extern UniformLocations uniformLocations;
+void setObjectUniforms(const UniformLocations *locations, Color specular, float sharpness,
+                       Object_Lighting lighting);
 
 typedef struct _viewpa {
   Matrix4d modelview;

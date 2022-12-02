@@ -36,19 +36,23 @@
 float fps = 50.0;
 int screenWidth = 640, screenHeight = 480;
 ViewParameters activeView;
-UniformLocations uniformLocations;
 
-static GLuint shaderWaterDay = 0;
-static GLuint shaderWaterNight = 0;
-static GLuint shaderTileDay = 0;
-static GLuint shaderTileNight = 0;
-static GLuint shaderTileShadow = 0;
-static GLuint shaderLine = 0;
-static GLuint shaderUI = 0;
-static GLuint shaderObjectDay = 0;
-static GLuint shaderObjectNight = 0;
-static GLuint shaderObjectShadow = 0;
-static GLuint shaderReflection = 0;
+typedef struct {
+  GLuint prog;
+  UniformLocations locations;
+} GLProgram;
+
+static GLProgram shaderWaterDay = {};
+static GLProgram shaderWaterNight = {};
+static GLProgram shaderTileDay = {};
+static GLProgram shaderTileNight = {};
+static GLProgram shaderTileShadow = {};
+static GLProgram shaderLine = {};
+static GLProgram shaderUI = {};
+static GLProgram shaderObjectDay = {};
+static GLProgram shaderObjectNight = {};
+static GLProgram shaderObjectShadow = {};
+static GLProgram shaderReflection = {};
 GLuint textureBlank = 0;
 GLuint textureGlitter = 0;
 GLuint textureMousePointer = 0;
@@ -174,6 +178,7 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
 
 int prepare2DString(TTF_Font *font, const char *string, bool outlined) {
   struct StringInfo inf;
+  memset(&inf, 0, sizeof(inf));
   inf.font = font;
   snprintf(inf.string, sizeof(inf.string), "%s", string);
   if (strcache.count(inf) <= 0) {
@@ -197,6 +202,7 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, 
   prepare2DString(font, string, outlined);
 
   struct StringInfo inf;
+  memset(&inf, 0, sizeof(inf));
   inf.font = font;
   snprintf(inf.string, sizeof(inf.string), "%s", string);
   const struct StringCache cached = strcache[inf];
@@ -381,53 +387,54 @@ void configureUIAttributes() {
   glEnableVertexAttribArray(2);
 }
 
-static GLuint lastProgram = 0;
+static const GLProgram *lastProgram = NULL;
 
-void markViewChanged() { lastProgram = 0; }
+void markViewChanged() { lastProgram = NULL; }
 
-void setActiveProgramAndUniforms(Shader_Type type) {
-  GLuint shader = 0;
+const UniformLocations *setActiveProgramAndUniforms(Shader_Type type) {
+  const GLProgram *prog = NULL;
   switch (type) {
   case Shader_Line:
-    shader = shaderLine;
+    prog = &shaderLine;
     break;
   case Shader_Object:
     if (activeView.calculating_shadows) {
-      shader = shaderObjectShadow;
+      prog = &shaderObjectShadow;
     } else {
       if (activeView.day_mode) {
-        shader = shaderObjectDay;
+        prog = &shaderObjectDay;
       } else {
-        shader = shaderObjectNight;
+        prog = &shaderObjectNight;
       }
     }
     break;
   case Shader_Tile:
     if (activeView.calculating_shadows) {
-      shader = shaderTileShadow;
+      prog = &shaderTileShadow;
     } else {
       if (activeView.day_mode) {
-        shader = shaderTileDay;
+        prog = &shaderTileDay;
       } else {
-        shader = shaderTileNight;
+        prog = &shaderTileNight;
       }
     }
     break;
   case Shader_Water:
     if (activeView.day_mode) {
-      shader = shaderWaterDay;
+      prog = &shaderWaterDay;
     } else {
-      shader = shaderWaterNight;
+      prog = &shaderWaterNight;
     }
     break;
   case Shader_Reflection:
-    shader = shaderReflection;
+    prog = &shaderReflection;
     break;
   }
+  const UniformLocations *uloc = &prog->locations;
 
-  if (shader == lastProgram) return;
-  glUseProgram(shader);
-  lastProgram = shader;
+  if (prog == lastProgram) return uloc;
+  glUseProgram(prog->prog);
+  lastProgram = prog;
 
   /* Set universal uniforms */
   Matrix4d mvp;
@@ -439,58 +446,31 @@ void setActiveProgramAndUniforms(Shader_Type type) {
       lmodel[4 * i + j] = activeView.modelview[i][j];
     }
   }
-  glUniformMatrix4fv(glGetUniformLocation(shader, "mvp_matrix"), 1, GL_FALSE, (GLfloat *)lmvp);
-  glUniformMatrix4fv(glGetUniformLocation(shader, "model_matrix"), 1, GL_FALSE,
-                     (GLfloat *)lmodel);
+  glUniformMatrix4fv(uloc->mvp_matrix, 1, GL_FALSE, (GLfloat *)lmvp);
+  glUniformMatrix4fv(uloc->model_matrix, 1, GL_FALSE, (GLfloat *)lmodel);
 
-  switch (type) {
-  case Shader_Tile:
-    uniformLocations.render_stage = glGetUniformLocation(shader, "render_stage");
-    uniformLocations.arrtex = glGetUniformLocation(shader, "arrtex");
-    uniformLocations.gameTime = glGetUniformLocation(shader, "gameTime");
-    break;
-  case Shader_Water:
-    uniformLocations.wtex = glGetUniformLocation(shader, "wtex");
-    uniformLocations.gameTime = glGetUniformLocation(shader, "gameTime");
-    break;
-  case Shader_Object:
-    uniformLocations.render_stage = glGetUniformLocation(shader, "render_stage");
-    uniformLocations.specular_color = glGetUniformLocation(shader, "specular");
-    uniformLocations.sharpness = glGetUniformLocation(shader, "sharpness");
-    uniformLocations.use_lighting = glGetUniformLocation(shader, "use_lighting");
-    uniformLocations.ignore_shadow = glGetUniformLocation(shader, "ignore_shadow");
-    break;
-  case Shader_Reflection:
-    uniformLocations.refl_color = glGetUniformLocation(shader, "refl_color");
-    uniformLocations.tex = glGetUniformLocation(shader, "tex");
-    break;
-  case Shader_Line:
-    uniformLocations.line_color = glGetUniformLocation(shader, "line_color");
-    break;
-  }
   if (!activeView.calculating_shadows) {
     /* Fog applies to all display shaders */
-    glUniform1i(glGetUniformLocation(shader, "fog_active"), activeView.fog_enabled);
-    glUniform3f(glGetUniformLocation(shader, "fog_color"), activeView.fog_color[0],
-                activeView.fog_color[1], activeView.fog_color[2]);
-    glUniform1f(glGetUniformLocation(shader, "fog_start"), activeView.fog_start);
-    glUniform1f(glGetUniformLocation(shader, "fog_end"), activeView.fog_end);
+    glUniform1i(uloc->fog_active, activeView.fog_enabled);
+    glUniform3f(uloc->fog_color, activeView.fog_color[0], activeView.fog_color[1],
+                activeView.fog_color[2]);
+    glUniform1f(uloc->fog_start, activeView.fog_start);
+    glUniform1f(uloc->fog_end, activeView.fog_end);
 
     if (type == Shader_Object || type == Shader_Water || type == Shader_Tile) {
-      glUniform3f(glGetUniformLocation(shader, "light_ambient"), activeView.light_ambient[0],
+      glUniform3f(uloc->light_ambient, activeView.light_ambient[0],
                   activeView.light_ambient[1], activeView.light_ambient[2]);
-      glUniform3f(glGetUniformLocation(shader, "light_diffuse"), activeView.light_diffuse[0],
+      glUniform3f(uloc->light_diffuse, activeView.light_diffuse[0],
                   activeView.light_diffuse[1], activeView.light_diffuse[2]);
       if (type == Shader_Object) {
-        glUniform3f(glGetUniformLocation(shader, "light_specular"),
-                    activeView.light_specular[0], activeView.light_specular[1],
-                    activeView.light_specular[2]);
+        glUniform3f(uloc->light_specular, activeView.light_specular[0],
+                    activeView.light_specular[1], activeView.light_specular[2]);
       }
 
       if (activeView.day_mode) {
-        glUniform1i(glGetUniformLocation(shader, "shadow_cascade0"), 2);
-        glUniform1i(glGetUniformLocation(shader, "shadow_cascade1"), 3);
-        glUniform1i(glGetUniformLocation(shader, "shadow_cascade2"), 4);
+        glUniform1i(uloc->shadow_cascade0, 2);
+        glUniform1i(uloc->shadow_cascade1, 3);
+        glUniform1i(uloc->shadow_cascade2, 4);
         if (activeView.use_shadows) {
           glActiveTexture(GL_TEXTURE2);
           glBindTexture(GL_TEXTURE_2D, activeView.cascadeTexture[0]);
@@ -519,17 +499,15 @@ void setActiveProgramAndUniforms(Shader_Type type) {
             }
           }
         }
-        glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_mvp"), 3, GL_FALSE,
-                           (GLfloat *)cscmvp);
-        glUniformMatrix4fv(glGetUniformLocation(shader, "cascade_model"), 3, GL_FALSE,
-                           (GLfloat *)cscmodel);
+        glUniformMatrix4fv(uloc->cascade_mvp, 3, GL_FALSE, (GLfloat *)cscmvp);
+        glUniformMatrix4fv(uloc->cascade_model, 3, GL_FALSE, (GLfloat *)cscmodel);
 
-        glUniform1i(glGetUniformLocation(shader, "shadowtex_size"), activeView.cascadeTexsize);
+        glUniform1i(uloc->shadowtex_size, activeView.cascadeTexsize);
 
-        glUniform3f(glGetUniformLocation(shader, "sun_direction"), activeView.sun_direction[0],
+        glUniform3f(uloc->sun_direction, activeView.sun_direction[0],
                     activeView.sun_direction[1], activeView.sun_direction[2]);
       } else {
-        glUniform1i(glGetUniformLocation(shader, "shadow_map"), 1);
+        glUniform1i(uloc->shadow_map, 1);
         glActiveTexture(GL_TEXTURE1);
         if (activeView.use_shadows) {
           glBindTexture(GL_TEXTURE_CUBE_MAP, activeView.shadowMapTexture);
@@ -537,20 +515,26 @@ void setActiveProgramAndUniforms(Shader_Type type) {
           glBindTexture(GL_TEXTURE_CUBE_MAP, dummyCubeMapTexture);
         }
 
-        glUniform3f(glGetUniformLocation(shader, "light_position"),
-                    activeView.light_position[0], activeView.light_position[1],
-                    activeView.light_position[2]);
+        glUniform3f(uloc->light_position, activeView.light_position[0],
+                    activeView.light_position[1], activeView.light_position[2]);
       }
     }
-    if (type != Shader_Line) { glActiveTexture(GL_TEXTURE0 + 0); }
   }
+
+  /* Texture setup; this is last, because following code may bind texture */
+  if (type == Shader_Object || type == Shader_Reflection) {
+    glUniform1i(uloc->tex, 0);
+    glActiveTexture(GL_TEXTURE0 + 0);
+  }
+  return uloc;
 }
-void setObjectUniforms(Color c, float sharpness, Object_Lighting lighting) {
-  if (lastProgram == shaderObjectDay || lastProgram == shaderObjectNight) {
-    glUniformC(uniformLocations.specular_color, c);
-    glUniform1f(uniformLocations.sharpness, sharpness);
-    glUniform1i(uniformLocations.ignore_shadow, lighting == Lighting_Regular);
-    glUniform1i(uniformLocations.use_lighting, lighting != Lighting_None);
+void setObjectUniforms(const UniformLocations *uloc, Color c, float sharpness,
+                       Object_Lighting lighting) {
+  if (lastProgram == &shaderObjectDay || lastProgram == &shaderObjectNight) {
+    glUniformC(uloc->specular, c);
+    glUniform1f(uloc->sharpness, sharpness);
+    glUniform1i(uloc->ignore_shadow, lighting == Lighting_Regular);
+    glUniform1i(uloc->use_lighting, lighting != Lighting_None);
   }
 }
 
@@ -1112,31 +1096,75 @@ static GLuint loadShaderPart(const char *name, GLuint shader_type) {
   return shader;
 }
 
-static GLuint linkShader(GLuint vertexshader, GLuint fragmentshader, const char *descr) {
-  GLuint shaderprogram = glCreateProgram();
-  glAttachShader(shaderprogram, vertexshader);
-  glAttachShader(shaderprogram, fragmentshader);
+static GLint logUniformLocation(GLuint prog, const char *str) {
+  GLint loc = glGetUniformLocation(prog, str);
+  // fprintf(stderr, "prog %d, str '%s' -> %d\n", prog, str, loc);
+  return loc;
+}
+
+static GLProgram linkShader(GLuint vertexshader, GLuint fragmentshader, const char *descr) {
+  GLProgram prog = {};
+
+  prog.prog = glCreateProgram();
+  glAttachShader(prog.prog, vertexshader);
+  glAttachShader(prog.prog, fragmentshader);
   /* Shaders use attribs 1..k for some k */
-  glBindAttribLocation(shaderprogram, 0, "in_Position");
-  glBindAttribLocation(shaderprogram, 1, "in_Color");
-  glBindAttribLocation(shaderprogram, 2, "in_Texcoord");
-  glBindAttribLocation(shaderprogram, 3, "in_Normal");
-  glBindAttribLocation(shaderprogram, 4, "in_Velocity");
-  glLinkProgram(shaderprogram);
+  glBindAttribLocation(prog.prog, 0, "in_Position");
+  glBindAttribLocation(prog.prog, 1, "in_Color");
+  glBindAttribLocation(prog.prog, 2, "in_Texcoord");
+  glBindAttribLocation(prog.prog, 3, "in_Normal");
+  glBindAttribLocation(prog.prog, 4, "in_Velocity");
+  glLinkProgram(prog.prog);
   int is_linked;
-  glGetProgramiv(shaderprogram, GL_LINK_STATUS, (int *)&is_linked);
+  glGetProgramiv(prog.prog, GL_LINK_STATUS, (int *)&is_linked);
   glDeleteShader(vertexshader);
   glDeleteShader(fragmentshader);
   if (is_linked == 0) {
     int maxLength = 0;
-    glGetProgramiv(shaderprogram, GL_INFO_LOG_LENGTH, &maxLength);
+    glGetProgramiv(prog.prog, GL_INFO_LOG_LENGTH, &maxLength);
     char *shaderProgramInfoLog = (char *)malloc(maxLength);
-    glGetProgramInfoLog(shaderprogram, maxLength, &maxLength, shaderProgramInfoLog);
+    glGetProgramInfoLog(prog.prog, maxLength, &maxLength, shaderProgramInfoLog);
     warning("Program (%s) link error (len %d): %s", descr, maxLength, shaderProgramInfoLog);
     free(shaderProgramInfoLog);
-    return 0;
+    prog.prog = 0;
+    return prog;
   }
-  return shaderprogram;
+
+  /* Load all uniform locations. If the shader does not have the uniform,
+   * value will be set to -1 */
+  prog.locations.mvp_matrix = logUniformLocation(prog.prog, "mvp_matrix");
+  prog.locations.model_matrix = logUniformLocation(prog.prog, "model_matrix");
+  prog.locations.render_stage = logUniformLocation(prog.prog, "render_stage");
+  prog.locations.gameTime = logUniformLocation(prog.prog, "gameTime");
+  prog.locations.line_color = logUniformLocation(prog.prog, "line_color");
+  prog.locations.arrtex = logUniformLocation(prog.prog, "arrtex");
+  prog.locations.wtex = logUniformLocation(prog.prog, "wtex");
+  prog.locations.specular = logUniformLocation(prog.prog, "specular");
+  prog.locations.sharpness = logUniformLocation(prog.prog, "sharpness");
+  prog.locations.ignore_shadow = logUniformLocation(prog.prog, "ignore_shadow");
+  prog.locations.use_lighting = logUniformLocation(prog.prog, "use_lighting");
+  prog.locations.refl_color = logUniformLocation(prog.prog, "refl_color");
+  prog.locations.tex = logUniformLocation(prog.prog, "tex");
+  prog.locations.fog_active = logUniformLocation(prog.prog, "fog_active");
+  prog.locations.fog_color = logUniformLocation(prog.prog, "fog_color");
+  prog.locations.fog_start = logUniformLocation(prog.prog, "fog_start");
+  prog.locations.fog_end = logUniformLocation(prog.prog, "fog_end");
+  prog.locations.light_ambient = logUniformLocation(prog.prog, "light_ambient");
+  prog.locations.light_diffuse = logUniformLocation(prog.prog, "light_diffuse");
+  prog.locations.light_specular = logUniformLocation(prog.prog, "light_specular");
+  prog.locations.shadow_cascade0 = logUniformLocation(prog.prog, "shadow_cascade0");
+  prog.locations.shadow_cascade1 = logUniformLocation(prog.prog, "shadow_cascade1");
+  prog.locations.shadow_cascade2 = logUniformLocation(prog.prog, "shadow_cascade2");
+  prog.locations.cascade_mvp = logUniformLocation(prog.prog, "cascade_mvp");
+  prog.locations.cascade_model = logUniformLocation(prog.prog, "cascade_model");
+  prog.locations.shadowtex_size = logUniformLocation(prog.prog, "shadowtex_size");
+  prog.locations.sun_direction = logUniformLocation(prog.prog, "sun_direction");
+  prog.locations.shadow_map = logUniformLocation(prog.prog, "shadow_map");
+  prog.locations.light_position = logUniformLocation(prog.prog, "light_position");
+  prog.locations.screen_width = logUniformLocation(prog.prog, "screen_width");
+  prog.locations.screen_height = logUniformLocation(prog.prog, "screen_height");
+
+  return prog;
 }
 
 void glHelpInit() {
@@ -1215,11 +1243,6 @@ void glHelpInit() {
   glDeleteShader(fObjectNight);
   glDeleteShader(fObjectShadow);
   glDeleteShader(fReflection);
-
-  // Load uniform locations
-  uniformLocations.ui_screen_width = glGetUniformLocation(shaderUI, "screen_width");
-  uniformLocations.ui_screen_height = glGetUniformLocation(shaderUI, "screen_height");
-  uniformLocations.ui_tex = glGetUniformLocation(shaderUI, "tex");
 
   // Wipe ball cache
   for (int i = 0; i < MAX_BALL_DETAIL; i++) {
@@ -1307,27 +1330,27 @@ void glHelpInit() {
   warnForGLerrors("postGLinit");
 }
 void glHelpCleanup() {
-  if (shaderTileDay) glDeleteProgram(shaderTileDay);
-  if (shaderTileNight) glDeleteProgram(shaderTileNight);
-  if (shaderTileShadow) glDeleteProgram(shaderTileShadow);
-  if (shaderLine) glDeleteProgram(shaderLine);
-  if (shaderWaterDay) glDeleteProgram(shaderWaterDay);
-  if (shaderWaterNight) glDeleteProgram(shaderWaterNight);
-  if (shaderUI) glDeleteProgram(shaderUI);
-  if (shaderObjectDay) glDeleteProgram(shaderObjectDay);
-  if (shaderObjectNight) glDeleteProgram(shaderObjectNight);
-  if (shaderObjectShadow) glDeleteProgram(shaderObjectShadow);
-  if (shaderReflection) glDeleteProgram(shaderReflection);
-  shaderLine = 0;
-  shaderTileDay = 0;
-  shaderTileNight = 0;
-  shaderTileShadow = 0;
-  shaderWaterDay = 0;
-  shaderWaterNight = 0;
-  shaderUI = 0;
-  shaderObjectDay = 0;
-  shaderObjectNight = 0;
-  shaderObjectShadow = 0;
+  if (shaderTileDay.prog) glDeleteProgram(shaderTileDay.prog);
+  if (shaderTileNight.prog) glDeleteProgram(shaderTileNight.prog);
+  if (shaderTileShadow.prog) glDeleteProgram(shaderTileShadow.prog);
+  if (shaderLine.prog) glDeleteProgram(shaderLine.prog);
+  if (shaderWaterDay.prog) glDeleteProgram(shaderWaterDay.prog);
+  if (shaderWaterNight.prog) glDeleteProgram(shaderWaterNight.prog);
+  if (shaderUI.prog) glDeleteProgram(shaderUI.prog);
+  if (shaderObjectDay.prog) glDeleteProgram(shaderObjectDay.prog);
+  if (shaderObjectNight.prog) glDeleteProgram(shaderObjectNight.prog);
+  if (shaderObjectShadow.prog) glDeleteProgram(shaderObjectShadow.prog);
+  if (shaderReflection.prog) glDeleteProgram(shaderReflection.prog);
+  shaderLine.prog = 0;
+  shaderTileDay.prog = 0;
+  shaderTileNight.prog = 0;
+  shaderTileShadow.prog = 0;
+  shaderWaterDay.prog = 0;
+  shaderWaterNight.prog = 0;
+  shaderUI.prog = 0;
+  shaderObjectDay.prog = 0;
+  shaderObjectNight.prog = 0;
+  shaderObjectShadow.prog = 0;
 
   if (sparkle2D) delete sparkle2D;
 
@@ -1541,10 +1564,10 @@ void Enter2DMode() {
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   // Load program and set up uniforms. VAO will by bound at point of use
-  glUseProgram(shaderUI);
-  glUniform1f(uniformLocations.ui_screen_width, (GLfloat)screenWidth);
-  glUniform1f(uniformLocations.ui_screen_height, (GLfloat)screenHeight);
-  glUniform1i(uniformLocations.ui_tex, 0);
+  glUseProgram(shaderUI.prog);
+  glUniform1f(shaderUI.locations.screen_width, (GLfloat)screenWidth);
+  glUniform1f(shaderUI.locations.screen_height, (GLfloat)screenHeight);
+  glUniform1i(shaderUI.locations.tex, 0);
 
   glActiveTexture(GL_TEXTURE0);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
