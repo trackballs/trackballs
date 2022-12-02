@@ -72,6 +72,8 @@ char *story;
 void MenuMode::display() {
   char str[256];
 
+  /* This text used to be drawn on the main screen, possibly as a single long text
+   * scrolling leftwards */
   story =
       _("Trackballs is a game similar to the classical game Marble Madness from the 80's. \
 By steering a marble ball through a labyrinth filled with sharp spikes, \
@@ -164,12 +166,6 @@ void MenuMode::tick(Real td) {
   tickMouse(td);
   const Uint8 *keystate = SDL_GetKeyboardState(NULL);
   if (keystate[SDL_SCANCODE_SPACE] || keystate[SDL_SCANCODE_RETURN]) doSelection();
-
-  /* This controls the scrolling text */
-  offset += 150.0 * td;
-  static int stwidth = -1;
-  if (stwidth < 0) { stwidth = getTextWidth(story, 24); }
-  if (offset > stwidth + screenWidth) offset = 0;
 }
 void MenuMode::mouseDown(int /*mouseState*/, int /*x*/, int /*y*/) { doSelection(); }
 

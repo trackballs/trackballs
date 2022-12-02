@@ -37,6 +37,10 @@ void glHelpInit();
 void glHelpCleanup();
 void warnForGLerrors(const char *where_am_i);
 
+/* renders and caches a drawing of a 2d string; returns the recommended width
+ * to draw it at. */
+int prepare2DString(TTF_Font *font, const char *string, bool outlined);
+
 /* displays a 2d text on specific screen coordinates, returning width */
 int draw2DString(TTF_Font *, const char *, int x, int y, Color color, bool outlined, int align,
                  int maxwidth = 0);

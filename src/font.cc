@@ -24,19 +24,6 @@
 
 #include <SDL2/SDL_ttf.h>
 
-// returns the effective width of the text
-int getTextWidth(const char *text, int size, int maxwidth) {
-  if (!text || (strlen(text) == 0)) return (0);
-
-  int w, h;
-  TTF_Font *active = menuFontForSize(size);
-  TTF_SetFontOutline(active, 2);
-  TTF_SizeUTF8(active, text, &w, &h);
-  TTF_SetFontOutline(active, 0);
-  if (maxwidth > 0 && maxwidth < w) return maxwidth;
-  return w;
-}
-
 int drawSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth) {
   if (!text || (strlen(text) == 0)) return 0;
 

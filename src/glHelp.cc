@@ -172,13 +172,10 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
   }
 }
 
-int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, bool outlined,
-                 int align, int maxwidth) {
+int prepare2DString(TTF_Font *font, const char *string, bool outlined) {
   struct StringInfo inf;
   inf.font = font;
-  memset(inf.string, 0, 256);
-  strncpy(inf.string, string, 255);
-  inf.string[255] = '\0';
+  snprintf(inf.string, sizeof(inf.string), "%s", string);
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
     newentry.tick = displayFrameNumber;
@@ -189,10 +186,20 @@ int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, 
     newentry.h = surf->h;
     SDL_FreeSurface(surf);
     strcache[inf] = newentry;
+  } else {
+    strcache[inf].tick = displayFrameNumber;
   }
+  return strcache[inf].w;
+}
 
-  struct StringCache &cached = strcache[inf];
-  cached.tick = displayFrameNumber;
+int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, bool outlined,
+                 int align, int maxwidth) {
+  prepare2DString(font, string, outlined);
+
+  struct StringInfo inf;
+  inf.font = font;
+  snprintf(inf.string, sizeof(inf.string), "%s", string);
+  const struct StringCache cached = strcache[inf];
 
   GLfloat shrink = (maxwidth > 0 && maxwidth < cached.w) ? (maxwidth / (GLfloat)cached.w) : 1.;
   draw2DRectangle(x - shrink * align * cached.w / 2, y - shrink * cached.h / 2,
@@ -967,9 +974,12 @@ int createSnapshot() {
 /* Displays a centered semi-transparent sign with two text rows */
 void message(char *A, char *B) {
   int size = 16;
+
+  TTF_Font *font = menuFontForSize(size);
+
   int w1, w2, h1, h2, w;
-  w1 = getTextWidth(A, size);
-  w2 = getTextWidth(B, size);
+  w1 = prepare2DString(font, A, true);
+  w2 = prepare2DString(font, B, true);
   h1 = 32;
   h2 = 32;
 

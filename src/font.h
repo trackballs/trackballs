@@ -28,6 +28,5 @@
 int drawSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
 int drawRightSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
 int drawCenterSimpleText(const char *text, int x, int y, int sz, Color c, int maxwidth = 0);
-int getTextWidth(const char *text, int sz, int maxwidth = 0);
 
 #endif
