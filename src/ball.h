@@ -96,7 +96,15 @@ class Ball : public Animated {
  private:
   double reflectivity;
   int metallic, dontReflectSelf;
+
   Color bufferBallColor;
+  bool bufferSpike;
+  Color bufferSpikeColor;
+  bool bufferFloat;
+  bool bufferExtraLife;
+  Color bufferExtraLifeColor;
+  bool bufferDizzy;
+  bool bufferJump;
 
   int locateContactPoints(Map*, Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, double*);
   int locateWallBounces(Map*, Coord3d*);

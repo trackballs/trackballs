@@ -49,6 +49,15 @@ void CSwitch::releaseCallbacks() {
 
 void CSwitch::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                             const GLuint *vaolist, bool firstCall) {
+  if (!firstCall && bufferIsOn == is_on && primaryColor == bufferPrimaryColor &&
+      secondaryColor == bufferSecondaryColor) {
+    return;
+  }
+
+  bufferIsOn = is_on;
+  bufferPrimaryColor = primaryColor;
+  bufferSecondaryColor = secondaryColor;
+
   const int nfacets = 16;
   GLfloat lever_length = 0.3f;
   GLfloat lever_end = 0.03f;
@@ -66,30 +75,24 @@ void CSwitch::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   for (int i = 0; i < nfacets; i++) {
     GLfloat angle = i * M_PI / (nfacets - 1);
     GLfloat norm[3] = {std::cos(angle), 0., std::sin(angle)};
-    pos +=
-        packObjectVertex(pos, position[0] + body_wid, position[1] + body_rad * std::cos(angle),
-                         position[2] + body_rad * std::sin(angle), 0., 0., primaryColor, norm);
-    pos +=
-        packObjectVertex(pos, position[0] - body_wid, position[1] + body_rad * std::cos(angle),
-                         position[2] + body_rad * std::sin(angle), 0., 0., primaryColor, norm);
+    pos += packObjectVertex(pos, body_wid, body_rad * std::cos(angle),
+                            body_rad * std::sin(angle), 0., 0., primaryColor, norm);
+    pos += packObjectVertex(pos, -body_wid, body_rad * std::cos(angle),
+                            body_rad * std::sin(angle), 0., 0., primaryColor, norm);
   }
   // Side panels
   for (int i = 0; i < nfacets; i++) {
     GLfloat angle = i * M_PI / (nfacets - 1);
-    pos +=
-        packObjectVertex(pos, position[0] + body_wid, position[1] + body_rad * std::cos(angle),
-                         position[2] + body_rad * std::sin(angle), 0., 0., side_color, flat);
+    pos += packObjectVertex(pos, body_wid, body_rad * std::cos(angle),
+                            body_rad * std::sin(angle), 0., 0., side_color, flat);
   }
   for (int i = 0; i < nfacets; i++) {
     GLfloat angle = i * M_PI / (nfacets - 1);
-    pos +=
-        packObjectVertex(pos, position[0] - body_wid, position[1] + body_rad * std::cos(angle),
-                         position[2] + body_rad * std::sin(angle), 0., 0., side_color, flat);
+    pos += packObjectVertex(pos, -body_wid, body_rad * std::cos(angle),
+                            body_rad * std::sin(angle), 0., 0., side_color, flat);
   }
-  pos += packObjectVertex(pos, position[0] + body_wid, position[1], position[2], 0., 0.,
-                          side_color, flat);
-  pos += packObjectVertex(pos, position[0] - body_wid, position[1], position[2], 0., 0.,
-                          side_color, flat);
+  pos += packObjectVertex(pos, body_wid, 0., 0., 0., 0., side_color, flat);
+  pos += packObjectVertex(pos, -body_wid, 0., 0., 0., 0., side_color, flat);
 
   for (int i = 0; i < nfacets; i++) {
     int j = (i + 1) % nfacets;
@@ -115,20 +118,15 @@ void CSwitch::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 
   // Draw Lever
   int sgn = is_on ? 1 : -1;
-  pos +=
-      packObjectVertex(pos, position[0], position[1], position[2], 0., 0., primaryColor, flat);
-  pos += packObjectVertex(
-      pos, position[0] + lever_end * 1.4f, position[1] + sgn * (lever_length - lever_end),
-      position[2] + (lever_length + lever_end), 0., 0., primaryColor, flat);
-  pos += packObjectVertex(
-      pos, position[0] - lever_end * 1.4f, position[1] + sgn * (lever_length - lever_end),
-      position[2] + (lever_length + lever_end), 0., 0., primaryColor, flat);
-  pos += packObjectVertex(
-      pos, position[0] - lever_end * 1.4f, position[1] + sgn * (lever_length + lever_end),
-      position[2] + (lever_length - lever_end), 0., 0., primaryColor, flat);
-  pos += packObjectVertex(
-      pos, position[0] + lever_end * 1.4f, position[1] + sgn * (lever_length + lever_end),
-      position[2] + (lever_length - lever_end), 0., 0., primaryColor, flat);
+  pos += packObjectVertex(pos, 0., 0., 0., 0., 0., primaryColor, flat);
+  pos += packObjectVertex(pos, lever_end * 1.4f, sgn * (lever_length - lever_end),
+                          (lever_length + lever_end), 0., 0., primaryColor, flat);
+  pos += packObjectVertex(pos, -lever_end * 1.4f, sgn * (lever_length - lever_end),
+                          (lever_length + lever_end), 0., 0., primaryColor, flat);
+  pos += packObjectVertex(pos, -lever_end * 1.4f, sgn * (lever_length + lever_end),
+                          (lever_length - lever_end), 0., 0., primaryColor, flat);
+  pos += packObjectVertex(pos, lever_end * 1.4f, sgn * (lever_length + lever_end),
+                          (lever_length - lever_end), 0., 0., primaryColor, flat);
   int vstart = 4 * nfacets + 2;
   int istart = 4 * nfacets;
   ushort local[6][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 1}, {1, 3, 2}, {1, 4, 3}};
@@ -151,8 +149,10 @@ void CSwitch::drawBuffers1(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
 
   const int nfacets = 16;
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 0.12, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

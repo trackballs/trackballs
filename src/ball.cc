@@ -73,6 +73,12 @@ Ball::Ball(Game &game, int role) : Animated(game, role, 7) {
   reflectivity = 0.0;
   metallic = 0;
   dontReflectSelf = 0;
+
+  bufferSpike = false;
+  bufferFloat = false;
+  bufferExtraLife = false;
+  bufferDizzy = false;
+  bufferJump = false;
 }
 Ball::~Ball() {
   setReflectivity(0.0, 0);  // This effectivly deallocates all environment maps */
@@ -107,6 +113,8 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
   }
 
   if (firstCall || bufferBallColor != color) {
+    bufferBallColor = color;
+
     /* Construct VBO for main ball */
     int ntries = 0;
     int nverts = 0;
@@ -137,11 +145,12 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     configureObjectAttributes();
     delete[] data;
     delete[] idxs;
-
-    bufferBallColor = color;
   }
 
-  if (modTimeLeft[MOD_SPIKE]) {
+  if (modTimeLeft[MOD_SPIKE] && (!bufferSpike || secondaryColor != bufferSpikeColor)) {
+    bufferSpikeColor = secondaryColor;
+    bufferSpike = true;
+
     /* spikes correspond to icosahedral faces */
     const GLfloat w = (1 + std::sqrt(5)) / 2;
     double icoverts[12][3] = {
@@ -154,18 +163,8 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
         {3, 8, 9},   {4, 9, 5},  {2, 4, 11}, {6, 2, 10}, {8, 6, 7},   {9, 8, 1},
     };
 
-    GLfloat phase = std::min(modTimePhaseIn[MOD_SPIKE] / 2.0f, 1.0f);
-    if (modTimeLeft[MOD_SPIKE] > 0)
-      phase = std::min(modTimeLeft[MOD_SPIKE] / 2.0f, phase);
-    else
-      phase = 1.0;
-    GLfloat scale = radius * (0.5 + 0.5 * phase);
-
     Color sco = secondaryColor.toOpaque();
     GLfloat flat[3] = {0.f, 0.f, 0.f};
-    Matrix3d trot;
-    for (int i = 0; i < 3; i++)
-      for (int j = 0; j < 3; j++) { trot[i][j] = rotations[j][i]; }
 
     GLfloat data[20 * 4][8];
     ushort idxs[20 * 3][3];
@@ -176,16 +175,12 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
       centroid = centroid / 3.0;
 
       Coord3d spike = centroid;
-      spike = spike * 0.87 * scale;
-      Coord3d sub = useMatrix(trot, spike);
-      pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
-                              sco, flat);
+      spike = spike * 0.87;
+      pos += packObjectVertex(pos, spike[0], spike[1], spike[2], 0., 0., sco, flat);
       for (int j = 2; j >= 0; j--) {
         Coord3d edge(icoverts[icofaces[i][j]]);
-        edge = 0.3 * scale * (0.1 * centroid + 0.9 * edge);
-        sub = useMatrix(trot, edge);
-        pos += packObjectVertex(pos, loc[0] + sub[0], loc[1] + sub[1], loc[2] + sub[2], 0., 0.,
-                                sco, flat);
+        edge = 0.3 * (0.1 * centroid + 0.9 * edge);
+        pos += packObjectVertex(pos, edge[0], edge[1], edge[2], 0., 0., sco, flat);
       }
     }
 
@@ -249,7 +244,9 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
   }
 
   // Handle modifiers
-  if (modTimeLeft[MOD_FLOAT]) {
+  if (modTimeLeft[MOD_FLOAT] && !bufferFloat) {
+    bufferFloat = true;
+
     Color stripeA(SRGBColor(1., 1., 1., 1.));
     Color stripeB(SRGBColor(1., 0.2, 0.2, 1.));
 
@@ -260,7 +257,7 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
       int i0 = i, i1 = (i + 1) % 10;
       const Color &ringcolor = i % 2 ? stripeA : stripeB;
 
-      GLfloat ir = radius * 1.0f, mr = radius * 1.2f, lr = radius * 1.4f, h = radius * 0.2f;
+      GLfloat ir = 1.0f, mr = 1.2f, lr = 1.4f, h = 0.2f;
 
       GLfloat inormal0[3] = {(GLfloat)-sin10[i0], (GLfloat)-cos10[i0], 0.f};
       GLfloat inormal1[3] = {(GLfloat)-sin10[i1], (GLfloat)-cos10[i1], 0.f};
@@ -268,20 +265,20 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
       GLfloat onormal1[3] = {(GLfloat)sin10[i1], (GLfloat)cos10[i1], 0.f};
       GLfloat unormal[3] = {0.f, 0.f, 1.f};
 
-      pos += packObjectVertex(pos, loc[0] + sin10[i0] * ir, loc[1] + cos10[i0] * ir, loc[2],
-                              0., 0., ringcolor, inormal0);
-      pos += packObjectVertex(pos, loc[0] + sin10[i1] * ir, loc[1] + cos10[i1] * ir, loc[2],
-                              0., 0., ringcolor, inormal1);
+      pos += packObjectVertex(pos, sin10[i0] * ir, cos10[i0] * ir, 0., 0., 0., ringcolor,
+                              inormal0);
+      pos += packObjectVertex(pos, sin10[i1] * ir, cos10[i1] * ir, 0., 0., 0., ringcolor,
+                              inormal1);
 
-      pos += packObjectVertex(pos, loc[0] + sin10[i0] * mr, loc[1] + cos10[i0] * mr,
-                              loc[2] + h, 0., 0., ringcolor, unormal);
-      pos += packObjectVertex(pos, loc[0] + sin10[i1] * mr, loc[1] + cos10[i1] * mr,
-                              loc[2] + h, 0., 0., ringcolor, unormal);
+      pos +=
+          packObjectVertex(pos, sin10[i0] * mr, cos10[i0] * mr, h, 0., 0., ringcolor, unormal);
+      pos +=
+          packObjectVertex(pos, sin10[i1] * mr, cos10[i1] * mr, h, 0., 0., ringcolor, unormal);
 
-      pos += packObjectVertex(pos, loc[0] + sin10[i0] * lr, loc[1] + cos10[i0] * lr, loc[2],
-                              0., 0., ringcolor, onormal0);
-      pos += packObjectVertex(pos, loc[0] + sin10[i1] * lr, loc[1] + cos10[i1] * lr, loc[2],
-                              0., 0., ringcolor, onormal1);
+      pos += packObjectVertex(pos, sin10[i0] * lr, cos10[i0] * lr, 0., 0., 0., ringcolor,
+                              onormal0);
+      pos += packObjectVertex(pos, sin10[i1] * lr, cos10[i1] * lr, 0., 0., 0., ringcolor,
+                              onormal1);
 
       ushort pts[4][3] = {{1, 0, 3}, {0, 2, 3}, {2, 5, 3}, {2, 4, 5}};
       for (int k = 0; k < 12; k++) { idxs[4 * i + k / 3][k % 3] = pts[k / 3][k % 3] + 6 * i; }
@@ -294,7 +291,11 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     configureObjectAttributes();
   }
 
-  if (modTimeLeft[MOD_EXTRA_LIFE]) {
+  if (modTimeLeft[MOD_EXTRA_LIFE] &&
+      (!bufferExtraLife || bufferExtraLifeColor != primaryColor)) {
+    bufferExtraLife = true;
+    bufferExtraLifeColor = primaryColor;
+
     int ntries = 0;
     int nverts = 0;
     int detail = 5;
@@ -315,27 +316,22 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     delete[] idxs;
   }
 
-  if (modTimeLeft[MOD_JUMP]) {
+  if (modTimeLeft[MOD_JUMP] && !bufferJump) {
+    bufferJump = true;
+
     GLfloat data[9][8];
     ushort idxs[3][3];
     char *pos = (char *)data;
-    GLfloat z = 1.1 + 1.0 * std::fmod(game.gameTime, 1.0);
-    GLfloat frad = (GLfloat)radius;
+    GLfloat z = 1.1;
     GLfloat corners[9][2] = {
-        {frad * -.3f, frad * z},         {frad * .3f, frad * (z + .9f)},
-        {frad * .3f, frad * z},          {frad * .3f, frad * (z + .9f)},
-        {frad * -.3f, frad * z},         {frad * -.3f, frad * (z + .9f)},
-        {frad * -.6f, frad * (z + .9f)}, {0.f, frad * (z + 2.1f)},
-        {frad * .6f, frad * (z + .9f)},
+        {-.3f, z},         {.3f, (z + .9f)},  {.3f, z},          {.3f, (z + .9f)}, {-.3f, z},
+        {-.3f, (z + .9f)}, {-.6f, (z + .9f)}, {0.f, (z + 2.1f)}, {.6f, (z + .9f)},
     };
 
     Color color(SRGBColor(1., 1., 1., 0.5));
     GLfloat flat[3] = {0.f, 0.f, 0.f};
-    GLfloat spin = game.gameTime * 0.15;
     for (int i = 0; i < 9; i++) {
-      pos += packObjectVertex(pos, loc[0] + std::cos(spin) * corners[i][0],
-                              loc[1] + std::sin(spin) * corners[i][0], loc[2] + corners[i][1],
-                              0., 0., color, flat);
+      pos += packObjectVertex(pos, corners[i][0], 0., corners[i][1], 0., 0., color, flat);
       idxs[i / 3][i % 3] = i;
     }
 
@@ -347,24 +343,25 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     configureObjectAttributes();
   }
 
-  if (modTimeLeft[MOD_DIZZY]) {
+  if (modTimeLeft[MOD_DIZZY] && !bufferDizzy) {
+    bufferDizzy = true;
+
     GLfloat data[12][8];
     char *pos = (char *)data;
     Color color(SRGBColor(1., 1., 1., 0.5));
     GLfloat flat[3] = {0.f, 0.f, 0.f};
     for (int i = 0; i < 3; i++) {
-      GLfloat angle = 0.5 * M_PI * game.gameTime + 2 * i * M_PI / 3;
-      GLfloat frad = radius;
-      GLfloat corners[4][3] = {{-0.6f * frad, 1.5f * frad, -0.1f * frad},
-                               {+0.6f * frad, 1.5f * frad, -0.1f * frad},
-                               {+0.6f * frad, 1.5f * frad, 1.1f * frad},
-                               {-0.6f * frad, 1.5f * frad, 1.1f * frad}};
+      GLfloat angle = 2 * i * M_PI / 3;
+      GLfloat corners[4][3] = {{-0.6f, 1.5f, -0.1f},
+                               {+0.6f, 1.5f, -0.1f},
+                               {+0.6f, 1.5f, 1.1f},
+                               {-0.6f, 1.5f, 1.1f}};
       GLfloat txco[4][2] = {{0.f, 1.f}, {1.f, 1.f}, {1.f, 0.f}, {0.f, 0.f}};
       for (int k = 0; k < 4; k++) {
         pos += packObjectVertex(
-            pos, loc[0] - std::sin(angle) * corners[k][0] + std::cos(angle) * corners[k][1],
-            loc[1] + std::cos(angle) * corners[k][0] + std::sin(angle) * corners[k][1],
-            loc[2] + corners[k][2], txco[k][0], txco[k][1], color, flat);
+            pos, -std::sin(angle) * corners[k][0] + std::cos(angle) * corners[k][1],
+            +std::cos(angle) * corners[k][0] + std::sin(angle) * corners[k][1], +corners[k][2],
+            txco[k][0], txco[k][1], color, flat);
       }
     }
 
@@ -412,6 +409,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glEnable(GL_CULL_FACE);
   }
 
+  Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+
   {
     int ntries = 0;
     int nverts = 0;
@@ -429,8 +428,6 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
-
-    Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
 
     Matrix3d rotation;
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
@@ -490,9 +487,22 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glDisable(GL_BLEND);
     glEnable(GL_CULL_FACE);
 
+    GLfloat phase = std::min(modTimePhaseIn[MOD_SPIKE] / 2.0f, 1.0f);
+    if (modTimeLeft[MOD_SPIKE] > 0)
+      phase = std::min(modTimeLeft[MOD_SPIKE] / 2.0f, phase);
+    else
+      phase = 1.0;
+    GLfloat scale = radius * (0.5 + 0.5 * phase);
+
     // Transfer
+    Matrix3d rot;
+    Matrix4d transform;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) { rot[i][j] = rotations[j][i] * scale; }
+    }
+    affineMatrix(transform, rot, loc);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
+    setObjectUniforms(uloc, transform, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
                       Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -521,8 +531,14 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     // In case we look from below
     glDisable(GL_CULL_FACE);
 
+    Matrix4d transform;
+    Matrix3d scale;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) { scale[i][j] = radius * ((i == j) ? 1. : 0.); }
+    }
+    affineMatrix(transform, scale, loc);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
+    setObjectUniforms(uloc, transform, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
                       Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -536,11 +552,11 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
   if (dontReflectSelf) return;
   if (activeView.calculating_shadows) return;
 
+  Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
-
-    Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
 
     int ntries = 0;
     int nverts = 0;
@@ -560,12 +576,19 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glBindVertexArray(vaolist[4]);
     glDrawElements(GL_TRIANGLES, 3 * ntries, GL_UNSIGNED_SHORT, (void *)0);
   }
+
   if (modTimeLeft[MOD_JUMP]) {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
+    Matrix4d transform;
+    Matrix3d scale = {{radius, 0, 0}, {0, radius, 0}, {0, 0, radius}};
+    affineMatrix(transform, scale, loc);
+    rotateZ(game.gameTime * 0.15, transform);
+    transform[2][3] += radius * std::fmod(game.gameTime, 1.0);
+
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
+    setObjectUniforms(uloc, transform, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[5]);
@@ -576,8 +599,13 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
 
+    Matrix4d transform;
+    Matrix3d scale = {{radius, 0, 0}, {0, radius, 0}, {0, 0, radius}};
+    affineMatrix(transform, scale, loc);
+    rotateZ(0.5 * M_PI * game.gameTime, transform);
+
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
+    setObjectUniforms(uloc, transform, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureDizzy);
 
     glBindVertexArray(vaolist[6]);

@@ -41,7 +41,7 @@ Flag::Flag(Game &g, Real x, Real y, int points, int visible, Real radius)
 }
 
 void Flag::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
-                         bool /*firstCall*/) {
+                         bool firstCall) {
   if (!visible) return;
 
   GLfloat data[14 * 8];
@@ -54,14 +54,10 @@ void Flag::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
   GLfloat perp[3] = {-1., -1., 0.};
   char *pos = (char *)data;
   GLfloat ox = 0.03;
-  pos += packObjectVertex(pos, position[0] + ox, position[1], position[2], 0., 0.,
-                          secondaryColor, perp);
-  pos += packObjectVertex(pos, position[0] - ox, position[1], position[2], 0., 0.,
-                          secondaryColor, perp);
-  pos += packObjectVertex(pos, position[0] + ox, position[1], position[2] + 0.71, 0., 0.,
-                          secondaryColor, perp);
-  pos += packObjectVertex(pos, position[0] - ox, position[1], position[2] + 0.71, 0., 0.,
-                          secondaryColor, perp);
+  pos += packObjectVertex(pos, ox, 0., 0., 0., 0., secondaryColor, perp);
+  pos += packObjectVertex(pos, -ox, 0., 0., 0., 0., secondaryColor, perp);
+  pos += packObjectVertex(pos, +ox, 0., 0.71, 0., 0., secondaryColor, perp);
+  pos += packObjectVertex(pos, -ox, 0., 0.71, 0., 0., secondaryColor, perp);
 
   float d1 = game.gameTime * 1.0f, d2 = 3.0f, d3 = 0.5f;
   GLfloat dx[5] = {0.0f, 0.1f * d3 * std::sin(d1 + d2 * 0.1f),
@@ -76,18 +72,24 @@ void Flag::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     Coord3d normal = crossProduct(up, b);
     normal = normal / length(normal);
     GLfloat fnorm[3] = {(GLfloat)normal[0], (GLfloat)normal[1], (GLfloat)normal[2]};
-    pos += packObjectVertex(pos, position[0] + dx[i], position[1] - 0.1 * i, position[2] + 0.7,
-                            0., 0., color, fnorm);
-    pos += packObjectVertex(pos, position[0] + dx[i], position[1] - 0.1 * i, position[2] + 0.5,
-                            0., 0., color, fnorm);
+    pos += packObjectVertex(pos, dx[i], -0.1 * i, 0.7, 0., 0., color, fnorm);
+    pos += packObjectVertex(pos, dx[i], -0.1 * i, 0.5, 0., 0., color, fnorm);
   }
 
   glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  glBufferData(GL_ARRAY_BUFFER, 14 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+  if (firstCall) {
+    glBufferData(GL_ARRAY_BUFFER, 14 * 8 * sizeof(GLfloat), data, GL_DYNAMIC_DRAW);
+  } else {
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 14 * 8 * sizeof(GLfloat), data);
+  }
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * 3 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-  configureObjectAttributes();
+  if (firstCall) {
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 12 * 3 * sizeof(ushort), idxs, GL_DYNAMIC_DRAW);
+  } else {
+    glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, 12 * 3 * sizeof(ushort), idxs);
+  }
+  if (firstCall) { configureObjectAttributes(); }
 }
 
 void Flag::drawBuffers1(const GLuint *vaolist) const {
@@ -96,8 +98,10 @@ void Flag::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 10.f / 128.f, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 10.f / 128.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

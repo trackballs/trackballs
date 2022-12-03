@@ -41,6 +41,7 @@ class Sign : public Animated {
 
   GLuint textimg;
   GLfloat texcoord[4];
+  bool textureChanged;
 };
 
 #endif

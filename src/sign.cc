@@ -44,6 +44,7 @@ Sign::Sign(Game &g, const char *string, Real l, Real s, Real r, const Coord3d &p
   }
 
   textimg = 0;
+  textureChanged = true;
   mkTexture(string);
 }
 
@@ -60,6 +61,7 @@ void Sign::mkTexture(const char *string) {
   width = text->w;
   height = text->h;
   SDL_FreeSurface(text);
+  textureChanged = true;
 
   /* Note oversided bounding box since the sign rotates */
   boundingBox[0][0] = -std::sqrt(2) * SIGN_SCALE * scale * width;
@@ -71,35 +73,35 @@ void Sign::mkTexture(const char *string) {
 }
 
 void Sign::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
-                         bool /*firstCall*/) {
+                         bool firstCall) {
+  if (!(firstCall || textureChanged)) { return; }
+  textureChanged = false;
+
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   GLfloat data[8 * 8];
   char *pos = (char *)data;
-  GLfloat dx = std::cos(M_PI * (tot_rot - 45.) / 180.) * SIGN_SCALE * scale * width;
-  GLfloat dy = std::sin(M_PI * (tot_rot - 45.) / 180.) * SIGN_SCALE * scale * width;
-  GLfloat dz = SIGN_SCALE * scale * height;
+  GLfloat dx = SIGN_SCALE * width;
+  GLfloat dz = SIGN_SCALE * height;
 
   Color color = primaryColor.toOpaque();
   color.v[3] = std::min(1.0, life) * 1.f;
 
-  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
-                          texcoord[0], texcoord[1], color, flat);
-  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
-                          texcoord[0], texcoord[1] + texcoord[3], color, flat);
-  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] + dz,
-                          texcoord[0] + texcoord[2], texcoord[1], color, flat);
-  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] - dz,
-                          texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
+  pos += packObjectVertex(pos, dx, 0., dz, texcoord[0], texcoord[1], color, flat);
+  pos +=
+      packObjectVertex(pos, dx, 0., -dz, texcoord[0], texcoord[1] + texcoord[3], color, flat);
+  pos +=
+      packObjectVertex(pos, -dx, 0., +dz, texcoord[0] + texcoord[2], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, -dx, 0., -dz, texcoord[0] + texcoord[2],
+                          texcoord[1] + texcoord[3], color, flat);
 
-  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] + dz,
-                          texcoord[0], texcoord[1], color, flat);
-  pos += packObjectVertex(pos, position[0] - dx, position[1] - dy, position[2] - dz,
-                          texcoord[0], texcoord[1] + texcoord[3], color, flat);
-  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] + dz,
-                          texcoord[0] + texcoord[2], texcoord[1], color, flat);
-  pos += packObjectVertex(pos, position[0] + dx, position[1] + dy, position[2] - dz,
-                          texcoord[0] + texcoord[2], texcoord[1] + texcoord[3], color, flat);
+  pos += packObjectVertex(pos, -dx, 0., +dz, texcoord[0], texcoord[1], color, flat);
+  pos +=
+      packObjectVertex(pos, -dx, 0., -dz, texcoord[0], texcoord[1] + texcoord[3], color, flat);
+  pos +=
+      packObjectVertex(pos, +dx, 0., +dz, texcoord[0] + texcoord[2], texcoord[1], color, flat);
+  pos += packObjectVertex(pos, +dx, 0., -dz, texcoord[0] + texcoord[2],
+                          texcoord[1] + texcoord[3], color, flat);
 
   glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
@@ -121,8 +123,15 @@ void Sign::drawBuffers2(const GLuint *vaolist) const {
   glDepthFunc(GL_ALWAYS);
 
   // Transfer data
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
+  rotateZ(M_PI * (tot_rot + 45.) / 180., transform);
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) { transform[i][j] *= scale; }
+  }
+
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, transform, Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textimg);
 
   glBindVertexArray(vaolist[0]);

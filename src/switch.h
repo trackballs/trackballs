@@ -38,6 +38,10 @@ class CSwitch : public Animated {
  private:
   bool is_touched;
   SCM on, off;
+
+  bool bufferIsOn;
+  Color bufferPrimaryColor;
+  Color bufferSecondaryColor;
 };
 
 #endif
