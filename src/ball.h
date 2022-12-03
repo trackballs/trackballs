@@ -96,6 +96,7 @@ class Ball : public Animated {
  private:
   double reflectivity;
   int metallic, dontReflectSelf;
+  Color bufferBallColor;
 
   int locateContactPoints(Map*, Cell**, Coord3d*, Coord3d*, ICoord2d*, double*, double*);
   int locateWallBounces(Map*, Coord3d*);

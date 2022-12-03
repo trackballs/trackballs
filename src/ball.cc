@@ -79,8 +79,8 @@ Ball::~Ball() {
 }
 
 void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
-                         bool /*firstCall*/) {
-  if (!is_on) return;
+                         bool firstCall) {
+  if (!is_on && !firstCall) return;
 
   Color color = primaryColor.toOpaque();
   if (0) {
@@ -106,7 +106,7 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     color = Color::mix(phase, color, Color(SRGBColor(0.4, 0.4, 0.9, 0.6)));
   }
 
-  {
+  if (firstCall || bufferBallColor != color) {
     /* Construct VBO for main ball */
     int ntries = 0;
     int nverts = 0;
@@ -126,18 +126,8 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     countObjectSpherePoints(&ntries, &nverts, detail);
     GLfloat *data = new GLfloat[nverts * 8];
     ushort *idxs = new ushort[ntries * 3];
-    Matrix3d rotation;
-    if (modTimeLeft[MOD_EXTRA_LIFE]) {
-      Matrix4d ref;
-      identityMatrix(ref);
-      rotateY(M_PI / 3, ref);
-      for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++) rotation[i][j] = ref[i][j];
-    } else {
-      for (int i = 0; i < 3; i++)
-        for (int j = 0; j < 3; j++) rotation[j][i] = rotations[i][j];
-    }
-    placeObjectSphere(data, idxs, 0, loc, rotation, radius, detail, color);
+
+    placeObjectSphere(data, idxs, 0, detail, color);
 
     glBindVertexArray(vaolist[0]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
@@ -147,6 +137,8 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     configureObjectAttributes();
     delete[] data;
     delete[] idxs;
+
+    bufferBallColor = color;
   }
 
   if (modTimeLeft[MOD_SPIKE]) {
@@ -311,8 +303,7 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     ushort *idxs = new ushort[ntries * 3];
     Color color = primaryColor;
     color.v[3] = 0.5f;
-    Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
-    placeObjectSphere(data, idxs, 0, loc, identity, radius * 1.25, detail, color);
+    placeObjectSphere(data, idxs, 0, detail, color);
 
     glBindVertexArray(vaolist[4]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[4]);
@@ -439,9 +430,28 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
 
+    Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+
+    Matrix3d rotation;
+    if (modTimeLeft[MOD_EXTRA_LIFE]) {
+      Matrix4d ref;
+      identityMatrix(ref);
+      rotateY(M_PI / 3, ref);
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) rotation[i][j] = ref[i][j];
+    } else {
+      for (int i = 0; i < 3; i++)
+        for (int j = 0; j < 3; j++) rotation[j][i] = rotations[i][j];
+    }
+
     // Draw the ball...
+    Matrix4d transform;
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) { rotation[i][j] *= radius; }
+    }
+    affineMatrix(transform, rotation, loc);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, specular, sharpness, Lighting_Regular);
+    setObjectUniforms(uloc, transform, specular, sharpness, Lighting_Regular);
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textureTrack);
     } else if (texture == 0) {
@@ -466,6 +476,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       uloc = setActiveProgramAndUniforms(Shader_Reflection);
+      glUniformMatrix4(uloc->object_matrix, transform);
       glUniformC(uloc->refl_color, c);
       glActiveTexture(GL_TEXTURE0 + 0);
       glBindTexture(GL_TEXTURE_2D, environmentTexture);
@@ -529,12 +540,21 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
 
+    Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+
     int ntries = 0;
     int nverts = 0;
     int detail = 5;
     countObjectSpherePoints(&ntries, &nverts, detail);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_None);
+    Matrix3d scale = {
+        {radius * 1.25, 0., 0.},
+        {0., radius * 1.25, 0.},
+        {0., 0., radius * 1.25},
+    };
+    Matrix4d transform;
+    affineMatrix(transform, scale, loc);
+    setObjectUniforms(uloc, transform, Color(0., 0., 0., 0.), 0.f, Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[4]);

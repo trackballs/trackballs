@@ -554,11 +554,7 @@ void setObjectUniforms(const UniformLocations *uloc, const Matrix4d object_trans
     glUniform1f(uloc->sharpness, sharpness);
     glUniform1i(uloc->ignore_shadow, lighting == Lighting_Regular);
     glUniform1i(uloc->use_lighting, lighting != Lighting_None);
-    GLfloat lobject[16];
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < 4; j++) { lobject[4 * i + j] = object_transform[j][i]; }
-    }
-    glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
+    glUniformMatrix4(uloc->object_matrix, object_transform);
   }
 }
 
@@ -641,8 +637,8 @@ static void constructSphereData(int detail) {
   sphere_idxs[detail] = idxs;
 }
 
-void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, const Color &color) {
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, int detail,
+                       const Color &color) {
   if (detail < 1) {
     warning("Sphere detail level must be > 1. Drawing nothing.");
     return;
@@ -655,11 +651,6 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat con
   int ntriangles = 2 * radial_count * (nrows - 2);
   for (int i = 0; i < 3 * ntriangles; i++) { idxs[i] = first_index + sphere_idxs[detail][i]; }
 
-  /* cast to float early */
-  GLfloat rot[3][3];
-  for (int i = 0; i < 3; i++)
-    for (int j = 0; j < 3; j++) rot[i][j] = rotation[i][j];
-
   /* Copy and transform vertices */
   char *pos = (char *)data;
   GLfloat *pts = sphere_points[detail];
@@ -668,11 +659,7 @@ void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat con
     GLfloat loc[3] = {pts[3 * i], pts[3 * i + 1], pts[3 * i + 2]};
     GLfloat txc[2] = {txs[2 * i], txs[2 * i + 1]};
 
-    GLfloat off[3] = {0.f, 0.f, 0.f};
-    for (int j = 0; j < 3; j++)
-      for (int k = 0; k < 3; k++) off[j] += rot[j][k] * loc[k];
-    pos += packObjectVertex(pos, position[0] + radius * off[0], position[1] + radius * off[1],
-                            position[2] + radius * off[2], txc[0], txc[1], color, off);
+    pos += packObjectVertex(pos, loc[0], loc[1], loc[2], txc[0], txc[1], color, loc);
   }
 }
 

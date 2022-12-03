@@ -45,10 +45,8 @@ void PipeConnector::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
-  GLfloat pos[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
-  Matrix3d identity = {{1.f, 0.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}};
 
-  placeObjectSphere(data, idxs, 0, pos, identity, radius, detail, primaryColor);
+  placeObjectSphere(data, idxs, 0, detail, primaryColor);
 
   glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
@@ -80,8 +78,11 @@ void PipeConnector::drawMe(const GLuint *vaolist) const {
   int detail = 6;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
+  Matrix3d scale = {{radius, 0.f, 0.f}, {0.f, radius, 0.f}, {0.f, 0.f, radius}};
+  Matrix4d transform;
+  affineMatrix(transform, scale, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 1., Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

@@ -73,8 +73,8 @@ inline uint32_t packNormal(const GLfloat n[3]) {
   return x;
 }
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail);
-void placeObjectSphere(void *data, ushort *idxs, ushort first_index, GLfloat const position[3],
-                       Matrix3d rotation, GLfloat radius, int detail, const Color &color);
+void placeObjectSphere(void *data, ushort *idxs, ushort first_index, int detail,
+                       const Color &color);
 
 typedef enum {
   Shader_Tile,
@@ -286,5 +286,13 @@ inline double dotProduct(const Coord3d &A, const Coord3d &B) {
 /* Inlined helper function */
 inline void glUniformC(GLint l, const Color &c) {
   glUniform4f(l, c.f0(), c.f1(), c.f2(), c.f3());
+}
+
+inline void glUniformMatrix4(GLint l, const Matrix4d mtx) {
+  GLfloat lobject[16];
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) { lobject[4 * i + j] = mtx[j][i]; }
+  }
+  glUniformMatrix4fv(l, 1, GL_FALSE, (GLfloat *)lobject);
 }
 #endif

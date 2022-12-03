@@ -149,7 +149,7 @@ void SetupMode::display() {
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
-  GLfloat pos[3] = {0.f, 0.f, 0.f};
+  Coord3d pos = {0.f, 0.f, 0.f};
   Color color = colors[gamer->color];
   Matrix4d frommtx;
   identityMatrix(frommtx);
@@ -158,11 +158,13 @@ void SetupMode::display() {
   for (int i = 0; i < 3; i++)
     for (int j = 0; j < 3; j++) rotation[i][j] = frommtx[i][j];
 
-  placeObjectSphere(data, idxs, 0, pos, rotation, 1.0, detail, color);
+  placeObjectSphere(data, idxs, 0, detail, color);
 
   // Transfer
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, Color(SRGBColor(0.3, 0.3, 0.3, 0.3)), 20.,
+  Matrix4d transform;
+  affineMatrix(transform, rotation, pos);
+  setObjectUniforms(uloc, transform, Color(SRGBColor(0.3, 0.3, 0.3, 0.3)), 20.,
                     Lighting_NoShadows);
   glBindTexture(GL_TEXTURE_2D, textures[gamer->textureNum]);
 
