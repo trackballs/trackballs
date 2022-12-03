@@ -106,7 +106,7 @@ void Pipe::drawTrunk(const GLuint *vaolist) const {
     glDisable(GL_BLEND);
   }
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 10., Lighting_Regular);
+  setObjectUniforms(uloc, identity4, specularColor, 10., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   int nfacets = 32;

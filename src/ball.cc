@@ -441,7 +441,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
 
     // Draw the ball...
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, specular, sharpness, Lighting_Regular);
+    setObjectUniforms(uloc, identity4, specular, sharpness, Lighting_Regular);
     if (modTimeLeft[MOD_EXTRA_LIFE]) {
       glBindTexture(GL_TEXTURE_2D, textureTrack);
     } else if (texture == 0) {
@@ -481,7 +481,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
 
     // Transfer
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f, Lighting_Regular);
+    setObjectUniforms(uloc, identity4, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
+                      Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[1]);
@@ -510,7 +511,8 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glDisable(GL_CULL_FACE);
 
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f, Lighting_Regular);
+    setObjectUniforms(uloc, identity4, Color(SRGBColor(0.1, 0.1, 0.1, 1.)), 10.f,
+                      Lighting_Regular);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[3]);
@@ -532,7 +534,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     int detail = 5;
     countObjectSpherePoints(&ntries, &nverts, detail);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(0., 0., 0., 0.), 0.f, Lighting_None);
+    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[4]);
@@ -543,7 +545,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glDisable(GL_CULL_FACE);
 
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
+    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureBlank);
 
     glBindVertexArray(vaolist[5]);
@@ -555,7 +557,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
     glDisable(GL_CULL_FACE);
 
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
+    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 0.), 0.f, Lighting_NoShadows);
     glBindTexture(GL_TEXTURE_2D, textureDizzy);
 
     glBindVertexArray(vaolist[6]);

@@ -176,7 +176,7 @@ void Teleport::drawBuffers1(const GLuint *vaolist) const {
 
   // Transfer
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 0.12, Lighting_Regular);
+  setObjectUniforms(uloc, identity4, specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
@@ -190,7 +190,7 @@ void Teleport::drawBuffers2(const GLuint *vaolist) const {
   glEnable(GL_BLEND);
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[1]);

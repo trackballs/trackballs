@@ -989,7 +989,7 @@ void Map::drawFootprint(int x1, int y1, int x2, int y2, int kind) {
   glDisable(GL_CULL_FACE);
 
   const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1117,7 +1117,7 @@ void Map::drawLoop(int x1, int y1, int x2, int y2, int kind) {
   glEnable(GL_CULL_FACE);
 
   const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
@@ -1181,7 +1181,7 @@ void Map::drawSpotRing(Real x1, Real y1, Real r, int kind) {
   glEnable(GL_CULL_FACE);
 
   const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
   configureObjectAttributes();

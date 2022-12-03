@@ -40,6 +40,10 @@ class SideSpike : public Animated {
  private:
   int soundDone;
   Real offset;
+
+  // properties of the currently submitted buffer
+  Color bufferPrimaryColor;
+  Color bufferSecondaryColor;
 };
 
 #endif

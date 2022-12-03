@@ -73,7 +73,7 @@ void Diamond::drawBuffers2(const GLuint *vaolist) const {
   glEnable(GL_CULL_FACE);
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 50.f, Lighting_Regular);
+  setObjectUniforms(uloc, identity4, specularColor, 50.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

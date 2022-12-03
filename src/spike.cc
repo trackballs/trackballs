@@ -50,9 +50,7 @@ void Spike::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const G
     GLfloat data[(4 * nfacets) * 8];
     ushort idxs[3 * nfacets][3];
 
-    Matrix3d rotmtx = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-    Coord3d pos = {0, 0, 0};
-    generateSpikeVBO(data, idxs, rotmtx, pos, primaryColor, secondaryColor, 2.0);
+    generateSpikeVBO(data, idxs, primaryColor, secondaryColor, 2.0);
 
     glBindVertexArray(vaolist[0]);
     glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
@@ -73,29 +71,15 @@ void Spike::drawBuffers1(const GLuint *vaolist) const {
   const int nfacets = 6;
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 1., Lighting_Regular);
 
   Matrix4d offset;
-  identityMatrix(offset);
-  offset[0][3] = position[0];
-  offset[1][3] = position[1];
-  offset[2][3] = position[2];
-  GLfloat lobject[16];
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) { lobject[4 * i + j] = offset[j][i]; }
-  }
-  glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
+  affineMatrix(offset, identity3, position);
+  setObjectUniforms(uloc, offset, specularColor, 1., Lighting_Regular);
 
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
-
-  /* Reset lobject */
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) { lobject[4 * i + j] = (i == j) ? 1.f : 0.f; }
-  }
-  glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
 }
 void Spike::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
@@ -169,8 +153,8 @@ void Spike::tick(Real t) {
   }
 }
 
-void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Matrix3d rotmtx,
-                      const Coord3d &position, Color sidec, Color tipc, GLfloat length) {
+void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Color sidec, Color tipc,
+                      GLfloat length) {
   const int nfacets = 6;
   char *pos = (char *)data;
 
@@ -211,12 +195,10 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Matrix3d rotmtx,
       normal[1] = d2 * cos12[2 * j + 1];
       normal[2] = d1;
     }
-    Coord3d tlocal = useMatrix(rotmtx, local);
-    Coord3d tnormal = useMatrix(rotmtx, normal);
-    GLfloat flocal[3] = {(GLfloat)tlocal[0], (GLfloat)tlocal[1], (GLfloat)tlocal[2]};
-    GLfloat fnormal[3] = {(GLfloat)tnormal[0], (GLfloat)tnormal[1], (GLfloat)tnormal[2]};
-    pos += packObjectVertex(pos, position[0] + flocal[0], position[1] + flocal[1],
-                            position[2] + flocal[2], 0., 0., is_tip ? tipc : sidec, fnormal);
+    GLfloat flocal[3] = {(GLfloat)local[0], (GLfloat)local[1], (GLfloat)local[2]};
+    GLfloat fnormal[3] = {(GLfloat)normal[0], (GLfloat)normal[1], (GLfloat)normal[2]};
+    pos += packObjectVertex(pos, flocal[0], flocal[1], flocal[2], 0., 0.,
+                            is_tip ? tipc : sidec, fnormal);
   }
 
   for (int i = 0; i < nfacets; i++) {

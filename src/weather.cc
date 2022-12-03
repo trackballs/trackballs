@@ -197,7 +197,7 @@ void Weather::draw2(Player *player) {
     delete[] data;
 
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-    setObjectUniforms(uloc, Color(0., 0., 0., 1.), 1., Lighting_None);
+    setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 1., Lighting_None);
     glBindTexture(GL_TEXTURE_2D, textureGlitter);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufs[1]);

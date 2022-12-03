@@ -91,7 +91,7 @@ void ForceField::drawBuffers2(const GLuint *vaolist) const {
   glEnable(GL_BLEND);
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

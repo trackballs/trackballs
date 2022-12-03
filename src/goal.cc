@@ -146,7 +146,7 @@ void Goal::drawBuffers1(const GLuint *vaolist) const {
   // Draw it!
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 10.f, Lighting_Regular);
+  setObjectUniforms(uloc, identity4, specularColor, 10.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

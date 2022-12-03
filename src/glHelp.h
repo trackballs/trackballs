@@ -32,6 +32,9 @@ typedef struct SDL_Surface SDL_Surface;
 class Map;
 class Game;
 
+extern const Matrix4d identity4;
+extern const Matrix3d identity3;
+
 /* Prototypes */
 void glHelpInit();
 void glHelpCleanup();
@@ -154,8 +157,8 @@ typedef enum {
   Lighting_NoShadows, /* Orientation dependent colors, no shadows */
   Lighting_Regular    /* Shadows and orientation dependent colors */
 } Object_Lighting;
-void setObjectUniforms(const UniformLocations *locations, Color specular, float sharpness,
-                       Object_Lighting lighting);
+void setObjectUniforms(const UniformLocations *locations, const Matrix4d object_transform,
+                       Color specular, float sharpness, Object_Lighting lighting);
 
 typedef struct _viewpa {
   Matrix4d modelview;
@@ -213,6 +216,7 @@ void debugMatrix(Matrix4d);
 Coord3d useMatrix(Matrix4d, const Coord3d &);
 Coord3d useMatrix(Matrix3d, const Coord3d &);
 void identityMatrix(Matrix4d);
+void affineMatrix(Matrix4d, const Matrix3d rot, const Coord3d &pos);
 void assign(const Matrix4d, Matrix4d);
 void matrixMult(const Matrix4d, const Matrix4d, Matrix4d);
 void rotateX(double, Matrix4d);

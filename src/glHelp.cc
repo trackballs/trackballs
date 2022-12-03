@@ -69,6 +69,18 @@ extern struct timespec lastDisplayStartTime;
 const Color menuColorSelected(SRGBColor(0.86f, 0.86f, 0.86f, 1.f));
 const Color menuColor(SRGBColor(0.86f, 0.86f, 0.25f, 1.f));
 
+const Matrix4d identity4 = {
+    {1., 0., 0., 0.},
+    {0., 1., 0., 0.},
+    {0., 0., 1., 0.},
+    {0., 0., 0., 1.},
+};
+const Matrix3d identity3 = {
+    {1., 0., 0.},
+    {0., 1., 0.},
+    {0., 0., 1.},
+};
+
 const double sin6[6] = {0.0, 0.8660254037844386,  0.8660254037844386,
                         0.0, -0.8660254037844386, -0.8660254037844386};
 const double cos6[6] = {1.0, 0.5, -0.5, -1.0, -0.5, 0.5};
@@ -535,13 +547,18 @@ const UniformLocations *setActiveProgramAndUniforms(Shader_Type type) {
   }
   return uloc;
 }
-void setObjectUniforms(const UniformLocations *uloc, Color c, float sharpness,
-                       Object_Lighting lighting) {
+void setObjectUniforms(const UniformLocations *uloc, const Matrix4d object_transform, Color c,
+                       float sharpness, Object_Lighting lighting) {
   if (lastProgram == &shaderObjectDay || lastProgram == &shaderObjectNight) {
     glUniformC(uloc->specular, c);
     glUniform1f(uloc->sharpness, sharpness);
     glUniform1i(uloc->ignore_shadow, lighting == Lighting_Regular);
     glUniform1i(uloc->use_lighting, lighting != Lighting_None);
+    GLfloat lobject[16];
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) { lobject[4 * i + j] = object_transform[j][i]; }
+    }
+    glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
   }
 }
 
@@ -1501,6 +1518,29 @@ void assign(const Matrix4d A, Matrix4d C) {
 void identityMatrix(Matrix4d m) {
   for (int i = 0; i < 4; i++)
     for (int j = 0; j < 4; j++) m[i][j] = i == j ? 1.0 : 0.0;
+}
+
+void affineMatrix(Matrix4d m, const Matrix3d r, const Coord3d &p) {
+  m[0][0] = r[0][0];
+  m[0][1] = r[0][1];
+  m[0][2] = r[0][2];
+
+  m[1][0] = r[1][0];
+  m[1][1] = r[1][1];
+  m[1][2] = r[1][2];
+
+  m[2][0] = r[2][0];
+  m[2][1] = r[2][1];
+  m[2][2] = r[2][2];
+
+  m[0][3] = p[0];
+  m[1][3] = p[1];
+  m[2][3] = p[2];
+
+  m[3][0] = 0.;
+  m[3][1] = 0.;
+  m[3][2] = 0.;
+  m[3][3] = 1.;
 }
 
 void rotateX(double v, Matrix4d m) {

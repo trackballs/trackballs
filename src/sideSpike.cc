@@ -52,9 +52,31 @@ SideSpike::SideSpike(Game &g, const Coord3d &position, Real speed, Real phase, i
 
 void SideSpike::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                               const GLuint *vaolist, bool firstCall) {
+  if (firstCall || primaryColor != bufferPrimaryColor ||
+      secondaryColor != bufferSecondaryColor) {
+    const int nfacets = 6;
+    GLfloat data[(4 * nfacets) * 8];
+    ushort idxs[3 * nfacets][3];
+
+    generateSpikeVBO(data, idxs, primaryColor, secondaryColor, 0.7);
+
+    glBindVertexArray(vaolist[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
+
+    bufferPrimaryColor = primaryColor;
+    bufferSecondaryColor = secondaryColor;
+  }
+}
+
+void SideSpike::drawBuffers1(const GLuint *vaolist) const {
+  glEnable(GL_CULL_FACE);
+  glDisable(GL_BLEND);
+
   const int nfacets = 6;
-  GLfloat data[(4 * nfacets) * 8];
-  ushort idxs[3 * nfacets][3];
 
   Matrix3d rotmtx1 = {{0, 0, 1}, {0, 1, 0}, {-1, 0, 0}};
   Matrix3d rotmtx2 = {{0, 0, -1}, {0, 1, 0}, {1, 0, 0}};
@@ -83,24 +105,11 @@ void SideSpike::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     break;
   }
 
-  generateSpikeVBO(data, idxs, *rot, pos, primaryColor, secondaryColor, 0.7);
-
-  glBindVertexArray(vaolist[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-  configureObjectAttributes();
-}
-
-void SideSpike::drawBuffers1(const GLuint *vaolist) const {
-  glEnable(GL_CULL_FACE);
-  glDisable(GL_BLEND);
-
-  const int nfacets = 6;
+  Matrix4d transform;
+  affineMatrix(transform, *rot, pos);
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, specularColor, 1., Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 1., Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

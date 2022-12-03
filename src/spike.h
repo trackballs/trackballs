@@ -43,7 +43,7 @@ class Spike : public Animated {
   Color bufferSecondaryColor;
 };
 
-void generateSpikeVBO(GLfloat* data, ushort idxs[][3], Matrix3d rotmtx,
-                      const Coord3d& position, Color sidec, Color tipc, GLfloat length);
+void generateSpikeVBO(GLfloat* data, ushort idxs[][3], Color sidec, Color tipc,
+                      GLfloat length);
 
 #endif

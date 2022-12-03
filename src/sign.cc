@@ -122,7 +122,7 @@ void Sign::drawBuffers2(const GLuint *vaolist) const {
 
   // Transfer data
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textimg);
 
   glBindVertexArray(vaolist[0]);
