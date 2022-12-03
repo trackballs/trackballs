@@ -35,33 +35,36 @@ Diamond::Diamond(Game &g, const Coord3d &pos) : Animated(g, Role_OtherAnimated, 
 }
 
 void Diamond::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                            const GLuint *vaolist, bool /*firstCall*/) {
+                            const GLuint *vaolist, bool firstCall) {
   if (fade <= 0.) return;
 
   Color color = primaryColor;
   color.v[3] *= fade;
 
-  GLfloat flat[3] = {0.f, 0.f, 0.f};
+  if (firstCall || bufferColor != color) {
+    GLfloat flat[3] = {0.f, 0.f, 0.f};
 
-  GLfloat data[8 * 8];
-  packObjectVertex(&data[0], position[0], position[1], position[2] - .4, 0., 0., color, flat);
-  for (int i = 0; i < 6; i++) {
-    float v = i * 2.0 * M_PI / 6.0 + game.gameTime;
-    packObjectVertex(&data[(i + 1) * 8], position[0] + std::sin(v) * 0.25,
-                     position[1] + std::cos(v) * 0.25, position[2], 0., 0., color, flat);
+    GLfloat data[8 * 8];
+    packObjectVertex(&data[0], 0., 0., -.4, 0., 0., color, flat);
+    for (int i = 0; i < 6; i++) {
+      float v = i * 2.0 * M_PI / 6.0;
+      packObjectVertex(&data[(i + 1) * 8], std::sin(v) * 0.25, std::cos(v) * 0.25, 0., 0., 0.,
+                       color, flat);
+    }
+    packObjectVertex(&data[7 * 8], 0., 0., .4, 0., 0., color, flat);
+
+    ushort idxs[12][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 6}, {0, 6, 1},
+                          {7, 2, 1}, {7, 3, 2}, {7, 4, 3}, {7, 5, 4}, {7, 6, 5}, {7, 1, 6}};
+
+    glBindVertexArray(vaolist[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
+
+    bufferColor = color;
   }
-  packObjectVertex(&data[7 * 8], position[0], position[1], position[2] + .4, 0., 0., color,
-                   flat);
-
-  ushort idxs[12][3] = {{0, 1, 2}, {0, 2, 3}, {0, 3, 4}, {0, 4, 5}, {0, 5, 6}, {0, 6, 1},
-                        {7, 2, 1}, {7, 3, 2}, {7, 4, 3}, {7, 5, 4}, {7, 6, 5}, {7, 1, 6}};
-
-  glBindVertexArray(vaolist[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  glBufferData(GL_ARRAY_BUFFER, 8 * 8 * sizeof(GLfloat), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * sizeof(ushort), idxs, GL_STATIC_DRAW);
-  configureObjectAttributes();
 }
 
 void Diamond::drawBuffers1(const GLuint * /*vaolist*/) const {}
@@ -72,8 +75,11 @@ void Diamond::drawBuffers2(const GLuint *vaolist) const {
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
+  rotateZ(game.gameTime, transform);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 50.f, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 50.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

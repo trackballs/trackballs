@@ -37,6 +37,8 @@ class Diamond : public Animated {
  protected:
   Real fade;
   int taken;
+
+  Color bufferColor;
 };
 
 #endif
