@@ -40,8 +40,8 @@ Flag::Flag(Game &g, Real x, Real y, int points, int visible, Real radius)
   secondaryColor = Color(SRGBColor(0.8, 0.8, 0.8, 1.0));
 }
 
-void Flag::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Flag::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool /*firstCall*/) {
   if (!visible) return;
 
   GLfloat data[14 * 8];

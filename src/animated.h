@@ -39,9 +39,12 @@ class Animated : public GameHook {
   virtual ~Animated();
   /** Setup drawing pass of object.*/
 
-  /** Generate all buffers possibly used in this tick */
-  virtual void generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
-                               const GLuint* vaolist, bool mustUpdate) const = 0;
+  /** Updated all buffers possibly used in this tick. The argument
+   * `firstCall` is set only on first invocation; this is the time to
+   * create buffers; in later calls, the buffers need only be updated
+   * as object parameters change */
+  virtual void updateBuffers(const GLuint* idxbufs, const GLuint* databufs,
+                             const GLuint* vaolist, bool firstCall) = 0;
   /** First drawing pass of object. Render opaque buffers. */
   virtual void drawBuffers1(const GLuint* vaolist) const = 0;
   /** Draws the second pass of object. Render alpha buffers if needed. */

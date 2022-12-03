@@ -35,9 +35,9 @@ PipeConnector::PipeConnector(Game &g, const Coord3d &pos, Real r)
   boundingBox[1][2] = radius;
 }
 
-void PipeConnector::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                                    const GLuint *vaolist, bool mustUpdate) const {
-  if (!mustUpdate) return;
+void PipeConnector::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                                  const GLuint *vaolist, bool firstCall) {
+  if (!firstCall) return;
 
   int ntries = 0;
   int nverts = 0;

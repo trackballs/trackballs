@@ -54,8 +54,8 @@ Bird::Bird(Game &g, Real x, Real y, Real dx, Real dy, Real size, Real speed)
   boundingBox[1][2] = size;
 }
 
-void Bird::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Bird::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool /*firstCall*/) {
   if (hide > 0.) return;
 
   Color color = primaryColor.toOpaque();

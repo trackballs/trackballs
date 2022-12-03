@@ -47,8 +47,8 @@ void CSwitch::releaseCallbacks() {
   off = NULL;
 }
 
-void CSwitch::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                              const GLuint *vaolist, bool mustUpdate) const {
+void CSwitch::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                            const GLuint *vaolist, bool firstCall) {
   const int nfacets = 16;
   GLfloat lever_length = 0.3f;
   GLfloat lever_end = 0.03f;

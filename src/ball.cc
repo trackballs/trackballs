@@ -78,8 +78,8 @@ Ball::~Ball() {
   setReflectivity(0.0, 0);  // This effectivly deallocates all environment maps */
 }
 
-void Ball::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool /*firstCall*/) {
   if (!is_on) return;
 
   Color color = primaryColor.toOpaque();

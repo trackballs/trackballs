@@ -43,8 +43,8 @@ Fountain::Fountain(Game &g, const Coord3d &pos, double randomSpeed, double radiu
   memset(creationTime, 0, sizeof(creationTime));
 }
 
-void Fountain::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                               const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Fountain::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                             const GLuint *vaolist, bool /*mustUpdate*/) {
   if (Settings::settings->gfx_details <= GFX_DETAILS_MINIMALISTIC) return;
 
   int skip = Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE ? 2 : 1;

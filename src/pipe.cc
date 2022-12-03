@@ -38,9 +38,9 @@ Pipe::Pipe(Game &g, const Coord3d &f, const Coord3d &t, Real r)
   }
 }
 
-void Pipe::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool mustUpdate) const {
-  if (!mustUpdate) return;
+void Pipe::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool firstCall) {
+  if (!firstCall) return;
 
   Coord3d up(0., 0., 0.);
   Coord3d dir = to - from;

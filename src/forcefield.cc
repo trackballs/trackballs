@@ -38,8 +38,8 @@ ForceField::ForceField(Game &g, const Coord3d &pos, const Coord3d &dir, Real h, 
   boundingBox[1][1] = +std::abs(dir[1]);
   boundingBox[1][2] = +std::abs(dir[2]) + h;
 }
-void ForceField::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                                 const GLuint *vaolist, bool /*mustUpdate*/) const {
+void ForceField::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                               const GLuint *vaolist, bool /*firstCall*/) {
   if (!is_on) return;
 
   Coord3d ndir = direction;

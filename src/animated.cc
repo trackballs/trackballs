@@ -65,6 +65,7 @@ void Animated::setupVBOs() {
     glGenBuffers(nVOs, &glidxs[nVOs * 0]);
     glGenBuffers(nVOs, &glidxs[nVOs * 1]);
     glGenVertexArrays(nVOs, &glidxs[nVOs * 2]);
+    updateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], true);
     drawChanged = true;
   }
 }
@@ -72,7 +73,7 @@ void Animated::draw() {
   if (displayFrameNumber != lastFrameNumber) {
     lastFrameNumber = displayFrameNumber;
     setupVBOs();
-    generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
+    updateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], false);
     drawChanged = false;
   }
   drawBuffers1(&glidxs[nVOs * 2]);
@@ -83,7 +84,7 @@ void Animated::draw2() {
   if (displayFrameNumber != lastFrameNumber) {
     lastFrameNumber = displayFrameNumber;
     setupVBOs();
-    generateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], drawChanged);
+    updateBuffers(&glidxs[nVOs * 0], &glidxs[nVOs * 1], &glidxs[nVOs * 2], false);
     drawChanged = false;
   }
   drawBuffers2(&glidxs[nVOs * 2]);

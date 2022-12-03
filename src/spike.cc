@@ -42,21 +42,28 @@ Spike::Spike(Game &g, const Coord3d &pos, Real speed, Real phase)
   specularColor = Color(SRGBColor(0.1, 0.1, 0.1, 1.0));
 }
 
-void Spike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                            const GLuint *vaolist, bool /*mustUpdate*/) const {
-  const int nfacets = 6;
-  GLfloat data[(4 * nfacets) * 8];
-  ushort idxs[3 * nfacets][3];
+void Spike::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                          bool firstCall) {
+  if (firstCall || primaryColor != bufferPrimaryColor ||
+      secondaryColor != bufferSecondaryColor) {
+    const int nfacets = 6;
+    GLfloat data[(4 * nfacets) * 8];
+    ushort idxs[3 * nfacets][3];
 
-  Matrix3d rotmtx = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-  generateSpikeVBO(data, idxs, rotmtx, position, primaryColor, secondaryColor, 2.0);
+    Matrix3d rotmtx = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    Coord3d pos = {0, 0, 0};
+    generateSpikeVBO(data, idxs, rotmtx, pos, primaryColor, secondaryColor, 2.0);
 
-  glBindVertexArray(vaolist[0]);
-  glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
-  configureObjectAttributes();
+    glBindVertexArray(vaolist[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, idxbufs[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
+    configureObjectAttributes();
+
+    bufferPrimaryColor = primaryColor;
+    bufferSecondaryColor = secondaryColor;
+  }
 }
 
 void Spike::drawBuffers1(const GLuint *vaolist) const {
@@ -67,10 +74,28 @@ void Spike::drawBuffers1(const GLuint *vaolist) const {
 
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
   setObjectUniforms(uloc, specularColor, 1., Lighting_Regular);
+
+  Matrix4d offset;
+  identityMatrix(offset);
+  offset[0][3] = position[0];
+  offset[1][3] = position[1];
+  offset[2][3] = position[2];
+  GLfloat lobject[16];
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) { lobject[4 * i + j] = offset[j][i]; }
+  }
+  glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
+
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, (3 * 3 * nfacets), GL_UNSIGNED_SHORT, (void *)0);
+
+  /* Reset lobject */
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) { lobject[4 * i + j] = (i == j) ? 1.f : 0.f; }
+  }
+  glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
 }
 void Spike::drawBuffers2(const GLuint * /*vaolist*/) const {}
 
@@ -154,7 +179,6 @@ void generateSpikeVBO(GLfloat *data, ushort idxs[][3], Matrix3d rotmtx,
     Coord3d local;
     Coord3d normal;
     bool is_tip;
-    GLfloat *color = NULL;
 
     int step = i / nfacets;
     int j = i % nfacets;

@@ -34,8 +34,8 @@ Diamond::Diamond(Game &g, const Coord3d &pos) : Animated(g, Role_OtherAnimated, 
   taken = 0;
 }
 
-void Diamond::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                              const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Diamond::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                            const GLuint *vaolist, bool /*firstCall*/) {
   if (fade <= 0.) return;
 
   Color color = primaryColor;

@@ -33,7 +33,7 @@ class ForceField : public Animated {
   ForceField(Game& g, const Coord3d& position, const Coord3d& direction, Real height,
              int allow);
 
-  virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
+  virtual void updateBuffers(const GLuint*, const GLuint*, const GLuint*, bool);
   virtual void drawBuffers1(const GLuint*) const;
   virtual void drawBuffers2(const GLuint*) const;
 

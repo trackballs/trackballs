@@ -448,6 +448,13 @@ const UniformLocations *setActiveProgramAndUniforms(Shader_Type type) {
   }
   glUniformMatrix4fv(uloc->mvp_matrix, 1, GL_FALSE, (GLfloat *)lmvp);
   glUniformMatrix4fv(uloc->model_matrix, 1, GL_FALSE, (GLfloat *)lmodel);
+  if (type == Shader_Object) {
+    GLfloat lobject[16];
+    for (int i = 0; i < 4; i++) {
+      for (int j = 0; j < 4; j++) { lobject[4 * i + j] = (i == j) ? 1.f : 0.f; }
+    }
+    glUniformMatrix4fv(uloc->object_matrix, 1, GL_FALSE, (GLfloat *)lobject);
+  }
 
   if (!activeView.calculating_shadows) {
     /* Fog applies to all display shaders */
@@ -1163,6 +1170,7 @@ static GLProgram linkShader(GLuint vertexshader, GLuint fragmentshader, const ch
   prog.locations.light_position = logUniformLocation(prog.prog, "light_position");
   prog.locations.screen_width = logUniformLocation(prog.prog, "screen_width");
   prog.locations.screen_height = logUniformLocation(prog.prog, "screen_height");
+  prog.locations.object_matrix = logUniformLocation(prog.prog, "object_matrix");
 
   return prog;
 }

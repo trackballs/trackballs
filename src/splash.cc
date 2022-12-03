@@ -40,8 +40,8 @@ Splash::Splash(Game& g, Coord3d center, Coord3d velocity, Color color, double st
   }
 }
 
-void Splash::generateBuffers(const GLuint* idxbufs, const GLuint* databufs,
-                             const GLuint* vaolist, bool /*mustUpdate*/) const {
+void Splash::updateBuffers(const GLuint* idxbufs, const GLuint* databufs,
+                           const GLuint* vaolist, bool /*firstCall*/) {
   if (Settings::settings->gfx_details <= GFX_DETAILS_SIMPLE) return;
 
   GLfloat* data = new GLfloat[3 * nDroplets];

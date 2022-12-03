@@ -125,6 +125,7 @@ typedef struct {
 
   /* object */
   GLint light_specular;
+  GLint object_matrix;
 
   /* day */
   GLint shadow_cascade0;

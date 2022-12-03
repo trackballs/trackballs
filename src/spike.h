@@ -28,7 +28,7 @@ class Spike : public Animated {
  public:
   Spike(Game& g, const Coord3d& position, Real speed, Real phase);
 
-  virtual void generateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) const;
+  virtual void updateBuffers(const GLuint*, const GLuint*, const GLuint*, bool);
   virtual void drawBuffers1(const GLuint*) const;
   virtual void drawBuffers2(const GLuint*) const;
 
@@ -38,6 +38,9 @@ class Spike : public Animated {
 
  private:
   int soundDone;
+  // properties of the currently submitted buffer
+  Color bufferPrimaryColor;
+  Color bufferSecondaryColor;
 };
 
 void generateSpikeVBO(GLfloat* data, ushort idxs[][3], Matrix3d rotmtx,

@@ -50,10 +50,10 @@ Teleport::Teleport(Game &g, Real x, Real y, Real dx, Real dy, Real radius)
   boundingBox[1][2] = 2 * radius + 0.5;
 }
 
-void Teleport::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                               const GLuint *vaolist, bool mustUpdate) const {
+void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                             const GLuint *vaolist, bool firstCall) {
   GLfloat cent_height = 0.5f;
-  if (mustUpdate) {
+  if (firstCall) {  // todo: update if properties change
     GLfloat data[(9 * NFACETS + 1) * 8];
     ushort idxs[9 * NFACETS][3];
 

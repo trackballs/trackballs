@@ -70,8 +70,8 @@ void Sign::mkTexture(const char *string) {
   boundingBox[1][2] = SIGN_SCALE * scale * height;
 }
 
-void Sign::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Sign::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool /*firstCall*/) {
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   GLfloat data[8 * 8];

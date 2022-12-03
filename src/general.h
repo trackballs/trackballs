@@ -146,6 +146,10 @@ class Color {
   float f2() const { return v[2]; }
   float f3() const { return v[3]; }
   float v[4];
+  bool operator==(const Color &b) const {
+    return v[0] == b.v[0] && v[1] == b.v[1] && v[2] == b.v[2] && v[3] == b.v[3];
+  }
+  bool operator!=(const Color &b) const { return !(*this == b); }
 };
 
 #ifndef M_PI

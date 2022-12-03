@@ -48,8 +48,8 @@ Cactus::Cactus(Game &g, Real x, Real y, Real radius) : Animated(g, Role_OtherAni
   timeOnDeath = Game::defaultScores[SCORE_CACTUS][1];
 }
 
-void Cactus::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                             const GLuint *vaolist, bool /*mustUpdate*/) const {
+void Cactus::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                           const GLuint *vaolist, bool /*firstCall*/) {
   GLfloat radius = killed_time * base_radius;
 
   const int nsides = 6;

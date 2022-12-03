@@ -43,9 +43,9 @@ void Goal::onGet() {
   }
 }
 
-void Goal::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool mustUpdate) const {
-  if (!mustUpdate || !visible) return;
+void Goal::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
+                         bool firstCall) {
+  if (!firstCall || !visible) return;
 
   const int nfacets = 22;
   GLfloat inner_arc[2 + nfacets][2];

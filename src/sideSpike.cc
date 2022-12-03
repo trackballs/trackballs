@@ -50,8 +50,8 @@ SideSpike::SideSpike(Game &g, const Coord3d &position, Real speed, Real phase, i
   specularColor = Color(SRGBColor(0.1, 0.1, 0.1, 1.0));
 }
 
-void SideSpike::generateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                                const GLuint *vaolist, bool /*mustUpdate*/) const {
+void SideSpike::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
+                              const GLuint *vaolist, bool firstCall) {
   const int nfacets = 6;
   GLfloat data[(4 * nfacets) * 8];
   ushort idxs[3 * nfacets][3];
