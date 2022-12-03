@@ -45,7 +45,9 @@ void Goal::onGet() {
 
 void Goal::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
                          bool firstCall) {
-  if (!firstCall || !visible) return;
+  if (!visible && !firstCall) return;
+
+  if (!(firstCall || bufferColor != primaryColor)) { return; }
 
   const int nfacets = 22;
   GLfloat inner_arc[2 + nfacets][2];
@@ -83,7 +85,6 @@ void Goal::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
   ushort idxs[8 * (nfacets + 1)][3];
 
   Color color = primaryColor.toOpaque();
-  GLfloat loc[3] = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)position[2]};
   GLfloat flat[3] = {0.f, 0.f, 0.f};
 
   // Vertex trails
@@ -110,8 +111,7 @@ void Goal::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
       if (rotate) std::swap(local[0], local[1]);
       if (rotate) std::swap(cnormal[0], cnormal[1]);
       GLfloat *normal = curved ? cnormal : flat;
-      pos += packObjectVertex(pos, loc[0] + local[0], loc[1] + local[1], loc[2] + local[2],
-                              0.f, 0.f, color, normal);
+      pos += packObjectVertex(pos, local[0], local[1], local[2], 0.f, 0.f, color, normal);
     }
   }
   // Triangle strips
@@ -145,8 +145,10 @@ void Goal::drawBuffers1(const GLuint *vaolist) const {
 
   // Draw it!
 
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 10.f, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 10.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);

@@ -71,20 +71,11 @@ void Bird::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
                        {0.f, 0.f},
                        {-0.5f * (GLfloat)size * std::cos((GLfloat)angle), (GLfloat)size},
                        {0.5f * (GLfloat)size * std::cos((GLfloat)angle), (GLfloat)size}};
-  for (int i = 0; i < 4; i++) {
-    GLfloat ox = loc[i][0], oy = loc[i][1];
-    loc[i][0] = -std::cos(rotation) * ox - std::sin(rotation) * oy;
-    loc[i][1] = -std::sin(rotation) * ox + std::cos(rotation) * oy;
-  }
 
-  pos += packObjectVertex(pos, position[0] + loc[0][0], position[1] + loc[0][1], position[2],
-                          1., 1., color, flat);
-  pos += packObjectVertex(pos, position[0] + loc[1][0], position[1] + loc[1][1], position[2],
-                          1., 0., color, flat);
-  pos += packObjectVertex(pos, position[0] + loc[2][0], position[1] + loc[2][1],
-                          position[2] + dz, 0., 1., color, flat);
-  pos += packObjectVertex(pos, position[0] + loc[3][0], position[1] + loc[3][1],
-                          position[2] + dz, 0., 1., color, flat);
+  pos += packObjectVertex(pos, loc[0][0], loc[0][1], 0., 1., 1., color, flat);
+  pos += packObjectVertex(pos, loc[1][0], loc[1][1], 0., 1., 0., color, flat);
+  pos += packObjectVertex(pos, loc[2][0], loc[2][1], dz, 0., 1., color, flat);
+  pos += packObjectVertex(pos, loc[3][0], loc[3][1], dz, 0., 1., color, flat);
 
   ushort idxs[2][3] = {{0, 1, 2}, {0, 3, 1}};
 
@@ -104,8 +95,11 @@ void Bird::drawBuffers2(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
+  rotateZ(-rotation, transform);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 10.f / 128.f, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 10.f / 128.f, Lighting_Regular);
 
   glBindTexture(GL_TEXTURE_2D, textureWings);
 

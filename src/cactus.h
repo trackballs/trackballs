@@ -38,6 +38,9 @@ class Cactus : public Animated {
   Real base_radius;
   Real killed_time;
   bool killed;
+
+  Color bufferSpikeColor;
+  Color bufferStemColor;
 };
 
 #endif

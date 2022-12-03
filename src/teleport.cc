@@ -53,7 +53,9 @@ Teleport::Teleport(Game &g, Real x, Real y, Real dx, Real dy, Real radius)
 void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                              const GLuint *vaolist, bool firstCall) {
   GLfloat cent_height = 0.5f;
-  if (firstCall) {  // todo: update if properties change
+  if (firstCall || (primaryColor != bufferRingColor || radius != bufferRadius)) {
+    bufferRingColor = primaryColor;
+    bufferRadius = radius;
     GLfloat data[(9 * NFACETS + 1) * 8];
     ushort idxs[9 * NFACETS][3];
 
@@ -65,39 +67,31 @@ void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     char *pos = (char *)data;
     for (int i = 0; i < NFACETS; i++) {
       GLfloat nnormal[3] = {0.f, 1.f, 0.f};
-      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] + width,
-                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
-                              nnormal);
-      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] + width,
-                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
-                              nnormal);
+      pos += packObjectVertex(pos, sinN[i] * irad, width, cosN[i] * irad + cent_height, 0., 0.,
+                              primaryColor, nnormal);
+      pos += packObjectVertex(pos, sinN[i] * orad, width, cosN[i] * orad + cent_height, 0., 0.,
+                              primaryColor, nnormal);
     }
     for (int i = 0; i < NFACETS; i++) {
       GLfloat snormal[3] = {0.f, -1.f, 0.f};
-      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] - width,
-                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
-                              snormal);
-      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] - width,
-                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
-                              snormal);
+      pos += packObjectVertex(pos, sinN[i] * irad, -width, cosN[i] * irad + cent_height, 0.,
+                              0., primaryColor, snormal);
+      pos += packObjectVertex(pos, sinN[i] * orad, -width, cosN[i] * orad + cent_height, 0.,
+                              0., primaryColor, snormal);
     }
     for (int i = 0; i < NFACETS; i++) {
       GLfloat inormal[3] = {(GLfloat)-sinN[i], (GLfloat)-cosN[i], 0.f};
-      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] - width,
-                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
-                              inormal);
-      pos += packObjectVertex(pos, position[0] + sinN[i] * irad, position[1] + width,
-                              position[2] + cosN[i] * irad + cent_height, 0., 0., primaryColor,
-                              inormal);
+      pos += packObjectVertex(pos, sinN[i] * irad, -width, cosN[i] * irad + cent_height, 0.,
+                              0., primaryColor, inormal);
+      pos += packObjectVertex(pos, sinN[i] * irad, +width, cosN[i] * irad + cent_height, 0.,
+                              0., primaryColor, inormal);
     }
     for (int i = 0; i < NFACETS; i++) {
       GLfloat onormal[3] = {(GLfloat)sinN[i], (GLfloat)cosN[i], 0.f};
-      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] - width,
-                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
-                              onormal);
-      pos += packObjectVertex(pos, position[0] + sinN[i] * orad, position[1] + width,
-                              position[2] + cosN[i] * orad + cent_height, 0., 0., primaryColor,
-                              onormal);
+      pos += packObjectVertex(pos, sinN[i] * orad, -width, cosN[i] * orad + cent_height, 0.,
+                              0., primaryColor, onormal);
+      pos += packObjectVertex(pos, sinN[i] * orad, width, cosN[i] * orad + cent_height, 0., 0.,
+                              primaryColor, onormal);
     }
 
     for (int k = 0; k < 4; k++) {
@@ -121,13 +115,11 @@ void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     Color white(1., 1., 1., 1.);
     for (int i = 0; i < NFACETS; i++) {
       GLfloat inormal[3] = {(GLfloat)cosN[i], (GLfloat)sinN[i], 0.4f};
-      pos +=
-          packObjectVertex(pos, position[0] + radius * cosN[i], position[1] + radius * sinN[i],
-                           position[2] + 0.1f, 0., 0., white, inormal);
+      pos += packObjectVertex(pos, radius * cosN[i], radius * sinN[i], 0.1f, 0., 0., white,
+                              inormal);
     }
     GLfloat vnormal[3] = {0.f, 0.f, 1.f};
-    pos += packObjectVertex(pos, position[0], position[1], position[2] + 0.3, 0., 0., white,
-                            vnormal);
+    pos += packObjectVertex(pos, 0., 0., 0.3, 0., 0., white, vnormal);
 
     for (int i = 0; i < NFACETS; i++) {
       idxs[8 * NFACETS + i][0] = 9 * NFACETS;
@@ -142,6 +134,7 @@ void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxs), idxs, GL_STATIC_DRAW);
     configureObjectAttributes();
   }
+
   {
     Color color = secondaryColor;
     color.v[3] *= (0.4f + 0.2f * (GLfloat)frandom());
@@ -151,11 +144,10 @@ void Teleport::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
     GLfloat data[(NFACETS + 1) * 8];
     ushort idxs[NFACETS][3];
     char *pos = (char *)data;
-    pos += packObjectVertex(pos, position[0], position[1], position[2] + cent_height, 0., 0.,
-                            color, flat);
+    pos += packObjectVertex(pos, 0., 0., cent_height, 0., 0., color, flat);
     for (int i = 0; i < NFACETS; i++) {
-      pos += packObjectVertex(pos, position[0] + sinN[i] * rad, position[1],
-                              position[2] + cosN[i] * rad + cent_height, 0., 0., color, flat);
+      pos += packObjectVertex(pos, sinN[i] * rad, 0., cosN[i] * rad + cent_height, 0., 0.,
+                              color, flat);
       idxs[i][0] = 0;
       idxs[i][1] = i + 1;
       idxs[i][2] = (i + 1) % NFACETS + 1;
@@ -175,8 +167,10 @@ void Teleport::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
 
   // Transfer
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 0.12, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 0.12, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[0]);
@@ -189,8 +183,10 @@ void Teleport::drawBuffers2(const GLuint *vaolist) const {
   glDisable(GL_CULL_FACE);
   glEnable(GL_BLEND);
 
+  Matrix4d transform;
+  affineMatrix(transform, identity3, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, Color(0., 0., 0., 1.), 0., Lighting_None);
+  setObjectUniforms(uloc, transform, Color(0., 0., 0., 1.), 0., Lighting_None);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   glBindVertexArray(vaolist[1]);

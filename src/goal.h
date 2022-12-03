@@ -35,6 +35,8 @@ class Goal : public Flag {
  private:
   char nextLevel[256];
   int rotate;
+
+  Color bufferColor;
 };
 
 #endif

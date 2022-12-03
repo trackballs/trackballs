@@ -49,17 +49,22 @@ Cactus::Cactus(Game &g, Real x, Real y, Real radius) : Animated(g, Role_OtherAni
 }
 
 void Cactus::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
-                           const GLuint *vaolist, bool /*firstCall*/) {
-  GLfloat radius = killed_time * base_radius;
+                           const GLuint *vaolist, bool firstCall) {
+  if (!(firstCall || secondaryColor.toOpaque() != bufferSpikeColor ||
+        bufferStemColor != primaryColor.toOpaque())) {
+    return;
+  }
+  bufferSpikeColor = secondaryColor.toOpaque();
+  bufferStemColor = primaryColor.toOpaque();
+
+  Color color = primaryColor.toOpaque();
+  Color spkco = secondaryColor.toOpaque();
 
   const int nsides = 6;
   // Body: 4N+1 verts, 7N faces
   // Spikes: 16N verts, 12N faces
   GLfloat data[nsides * 20 + 1][8];
   ushort idxs[nsides * 19][3];
-
-  Color color = primaryColor.toOpaque();
-  Color spkco = secondaryColor.toOpaque();
 
   GLfloat radii[4] = {0.5f, 1.0f, 0.9f, 0.6f};
   GLfloat heights[5] = {0., 0.35, 0.6, 0.8, 1.0};
@@ -73,17 +78,14 @@ void Cactus::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   char *pos = (char *)data;
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
-      GLfloat loc[3] = {radii[h] * radius * (GLfloat)cos6[i],
-                        radii[h] * radius * (GLfloat)sin6[i], heights[h]};
+      GLfloat loc[3] = {radii[h] * (GLfloat)cos6[i], radii[h] * (GLfloat)sin6[i], heights[h]};
       GLfloat normal[3] = {norm[h][0] * (GLfloat)cos6[i], norm[h][0] * (GLfloat)sin6[i],
                            norm[h][1]};
-      pos += packObjectVertex(pos, position[0] + loc[0], position[1] + loc[1],
-                              position[2] + loc[2], 0., 0., color, normal);
+      pos += packObjectVertex(pos, loc[0], loc[1], loc[2], 0., 0., color, normal);
     }
   }
   GLfloat vnormal[3] = {0.f, 0.f, 1.f};
-  pos += packObjectVertex(pos, position[0], position[1], position[2] + heights[4], 0., 0.,
-                          color, vnormal);
+  pos += packObjectVertex(pos, 0., 0., heights[4], 0., 0., color, vnormal);
 
   for (int k = 0; k < 3; k++) {
     for (int i = 0; i < nsides; i++) {
@@ -108,18 +110,16 @@ void Cactus::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat spike_rad[4] = {0.89f, 1.2f, 0.99f, 0.44f};
   for (int h = 0; h < 4; h++) {
     for (int i = 0; i < nsides; i++) {
-      GLfloat end[3] = {spike_rad[h] * radius * (GLfloat)cos12[2 * i + 1],
-                        spike_rad[h] * radius * (GLfloat)sin12[2 * i + 1], spike_height[h]};
+      GLfloat end[3] = {spike_rad[h] * (GLfloat)cos12[2 * i + 1],
+                        spike_rad[h] * (GLfloat)sin12[2 * i + 1], spike_height[h]};
       GLfloat dhs[3][2] = {{0, spikewid}, {-spikewid, -spikewid}, {spikewid, -spikewid}};
       for (int k = 0; k < 3; k++) {
         GLfloat central[3] = {-(GLfloat)sin12[2 * i + 1] * dhs[k][0],
                               (GLfloat)cos12[2 * i + 1] * dhs[k][0],
                               dhs[k][1] + spike_height[h]};
-        pos += packObjectVertex(pos, position[0] + central[0], position[1] + central[1],
-                                position[2] + central[2], 0., 0., spkco, flat);
+        pos += packObjectVertex(pos, central[0], central[1], central[2], 0., 0., spkco, flat);
       }
-      pos += packObjectVertex(pos, position[0] + end[0], position[1] + end[1],
-                              position[2] + end[2], 0., 0., spkco, flat);
+      pos += packObjectVertex(pos, end[0], end[1], end[2], 0., 0., spkco, flat);
     }
   }
 
@@ -151,11 +151,19 @@ void Cactus::drawBuffers1(const GLuint *vaolist) const {
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 
-  int nsides = 6;
+  Matrix4d transform;
+  GLfloat radius = killed_time * base_radius;
+  Matrix3d scale = {
+      {radius, 0., 0.},
+      {0., radius, 0.},
+      {0., 0., 1.},
+  };
+  affineMatrix(transform, scale, position);
   const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
-  setObjectUniforms(uloc, identity4, specularColor, 15.f / 128.f, Lighting_Regular);
+  setObjectUniforms(uloc, transform, specularColor, 15.f / 128.f, Lighting_Regular);
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
+  int nsides = 6;
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 19 * nsides * 3, GL_UNSIGNED_SHORT, (void *)0);
 }

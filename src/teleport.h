@@ -37,6 +37,8 @@ class Teleport : public Animated {
  protected:
   int x, y, dx, dy;
   Real radius;
+  Color bufferRingColor;
+  Real bufferRadius;
 };
 
 #endif
