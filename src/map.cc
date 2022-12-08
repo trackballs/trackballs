@@ -116,15 +116,17 @@ Chunk::Chunk() {
 
 Chunk::~Chunk() {
   if (is_active) {
-    glDeleteBuffers(2, &tile_vbo[0]);
+    glDeleteBuffers(3, &tile_vbo[0]);
+    glDeleteBuffers(3, &wall_vbo[0]);
     glDeleteBuffers(2, &flag_vbo[0]);
     glDeleteBuffers(2, &flui_vbo[0]);
-    glDeleteBuffers(2, &wall_vbo[0]);
     glDeleteBuffers(2, &line_vbo[0]);
     glDeleteVertexArrays(1, &tile_vao);
+    glDeleteVertexArrays(1, &tile_alpha_vao);
+    glDeleteVertexArrays(1, &wall_vao);
+    glDeleteVertexArrays(1, &wall_alpha_vao);
     glDeleteVertexArrays(1, &flag_vao);
     glDeleteVertexArrays(1, &flui_vao);
-    glDeleteVertexArrays(1, &wall_vao);
     glDeleteVertexArrays(1, &line_vao);
   }
 }
@@ -178,13 +180,15 @@ class ChunkStagingBuffers {
  public:
   /* tiles */
   GLfloat tdat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
-  ushort tidx[CHUNKSIZE * CHUNKSIZE * 12];
+  ushort toidx[CHUNKSIZE * CHUNKSIZE * 12];  // opaque
+  ushort taidx[CHUNKSIZE * CHUNKSIZE * 12];  // alpha
+  /* walls */
+  GLfloat wdat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
+  ushort woidx[CHUNKSIZE * CHUNKSIZE * 12];  // opaque
+  ushort waidx[CHUNKSIZE * CHUNKSIZE * 12];  // alpha
   /* flags */
   GLfloat sdat[CHUNKSIZE * CHUNKSIZE * 5 * 8];
   ushort sidx[CHUNKSIZE * CHUNKSIZE * 12];
-  /* walls */
-  GLfloat wdat[CHUNKSIZE * CHUNKSIZE * 8 * 8];
-  ushort widx[CHUNKSIZE * CHUNKSIZE * 12];
   /* lines */
   GLfloat ldat[CHUNKSIZE * CHUNKSIZE * 4 * 3];
   ushort lidx[CHUNKSIZE * CHUNKSIZE * 8];
@@ -384,15 +388,17 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
       } else {
         // Cleanup buffers for zones that have long since dropped out of view
         if (cur->is_active && cur->last_shown < displayFrameNumber - 10) {
-          glDeleteBuffers(2, &cur->tile_vbo[0]);
+          glDeleteBuffers(3, &cur->tile_vbo[0]);
+          glDeleteBuffers(3, &cur->wall_vbo[0]);
           glDeleteBuffers(2, &cur->flag_vbo[0]);
           glDeleteBuffers(2, &cur->flui_vbo[0]);
-          glDeleteBuffers(2, &cur->wall_vbo[0]);
           glDeleteBuffers(2, &cur->line_vbo[0]);
           glDeleteVertexArrays(1, &cur->tile_vao);
+          glDeleteVertexArrays(1, &cur->tile_alpha_vao);
+          glDeleteVertexArrays(1, &cur->wall_vao);
+          glDeleteVertexArrays(1, &cur->wall_alpha_vao);
           glDeleteVertexArrays(1, &cur->flag_vao);
           glDeleteVertexArrays(1, &cur->flui_vao);
-          glDeleteVertexArrays(1, &cur->wall_vao);
           glDeleteVertexArrays(1, &cur->line_vao);
           cur->is_active = false;
         }
@@ -402,7 +408,6 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
 
   // Put into shader
   const UniformLocations* uloc = setActiveProgramAndUniforms(Shader_Tile);
-  glUniform1i(uloc->render_stage, stage);
   glUniform1f(uloc->gameTime, gameTime);
 
   // Link in texture atlas :-)
@@ -411,16 +416,30 @@ void Map::draw(int stage, const Coord3d& focus, GLfloat gameTime) {
   glBindTexture(GL_TEXTURE_2D_ARRAY, texture_Array);
 
   // Run through ye olde draw loop
-  // WALLS
-  for (int i = 0; i < nchunks; i++) {
-    glBindVertexArray(drawlist[i]->wall_vao);
-    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
-  }
+  if (stage == 0) {
+    // WALLS
+    for (int i = 0; i < nchunks; i++) {
+      glBindVertexArray(drawlist[i]->wall_vao);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
 
-  // TOPS
-  for (int i = 0; i < nchunks; i++) {
-    glBindVertexArray(drawlist[i]->tile_vao);
-    glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    // TOPS
+    for (int i = 0; i < nchunks; i++) {
+      glBindVertexArray(drawlist[i]->tile_vao);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
+  } else {  // stage == 1
+    // WALLS
+    for (int i = 0; i < nchunks; i++) {
+      glBindVertexArray(drawlist[i]->wall_alpha_vao);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
+
+    // TOPS
+    for (int i = 0; i < nchunks; i++) {
+      glBindVertexArray(drawlist[i]->tile_alpha_vao);
+      glDrawElements(GL_TRIANGLES, CHUNKSIZE * CHUNKSIZE * 12, GL_UNSIGNED_SHORT, (void*)0);
+    }
   }
 
   if (stage == 1 && activeView.show_flag_state) {
@@ -511,14 +530,16 @@ void Map::fillChunkVBO(Chunk* chunk) const {
   // Create data if not already there
   bool first_time = false;
   if (!chunk->is_active) {
-    glGenBuffers(2, &chunk->tile_vbo[0]);
+    glGenBuffers(3, &chunk->tile_vbo[0]);
+    glGenBuffers(3, &chunk->wall_vbo[0]);
     glGenBuffers(2, &chunk->flag_vbo[0]);
-    glGenBuffers(2, &chunk->wall_vbo[0]);
     glGenBuffers(2, &chunk->line_vbo[0]);
     glGenBuffers(2, &chunk->flui_vbo[0]);
     glGenVertexArrays(1, &chunk->tile_vao);
-    glGenVertexArrays(1, &chunk->flag_vao);
+    glGenVertexArrays(1, &chunk->tile_alpha_vao);
     glGenVertexArrays(1, &chunk->wall_vao);
+    glGenVertexArrays(1, &chunk->wall_alpha_vao);
+    glGenVertexArrays(1, &chunk->flag_vao);
     glGenVertexArrays(1, &chunk->line_vao);
     glGenVertexArrays(1, &chunk->flui_vao);
     first_time = true;
@@ -611,8 +632,25 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                Color(c.colors[Cell::CENTER]), tx + irs / 2, ty + irs / 2, txno,
                c.velocity[0] * irs, c.velocity[1] * irs, fcnormal[Cell::CENTER]);
 
-      const ushort topindices[12] = {0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4};
-      for (uint i = 0; i < 12; i++) { bufs->tidx[j * 12 + i] = 5 * j + topindices[i]; }
+      const ushort topindices[4][3] = {{0, 1, 4}, {1, 2, 4}, {2, 3, 4}, {3, 0, 4}};
+      for (uint f = 0; f < 4; f++) {
+        int corners[] = {Cell::SW, Cell::SE, Cell::NE, Cell::NW, Cell::CENTER};
+        bool is_opaque = c.colors[corners[topindices[f][0]]].isOpaque() &&
+                         c.colors[corners[topindices[f][1]]].isOpaque() &&
+                         c.colors[corners[topindices[f][2]]].isOpaque();
+
+        if (is_opaque) {
+          for (uint i = 0; i < 3; i++) {
+            bufs->toidx[j * 12 + 3 * f + i] = 5 * j + topindices[f][i];
+          }
+          for (uint i = 0; i < 3; i++) { bufs->taidx[j * 12 + 3 * f + i] = 0; }
+        } else {
+          for (uint i = 0; i < 3; i++) { bufs->toidx[j * 12 + 3 * f + i] = 0; }
+          for (uint i = 0; i < 3; i++) {
+            bufs->taidx[j * 12 + 3 * f + i] = 5 * j + topindices[f][i];
+          }
+        }
+      }
 
       if (activeView.show_flag_state) {
         Color white(1.f, 1.f, 1.f, 1.f);
@@ -642,8 +680,11 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         packCell(&bufs->sdat[k + 32], x + 0.5f, y + 0.5f,
                  c.heights[Cell::CENTER] + height_boost, white, 0.5f, 0.5f, flagno, 0.f, 0.f,
                  fcnormal[Cell::CENTER]);
-
-        for (uint i = 0; i < 12; i++) { bufs->sidx[j * 12 + i] = 5 * j + topindices[i]; }
+        for (uint f = 0; f < 4; f++) {
+          for (uint i = 0; i < 3; i++) {
+            bufs->sidx[j * 12 + 3 * f + i] = 5 * j + topindices[f][i];
+          }
+        }
       }
 
       // We assume that a quad suffices to render each wall
@@ -681,6 +722,9 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                ewover ? enormal : wnormal);
 
       // Render the quads, overlapping triangles if twisted
+      bool quad_opaque =
+          c.wallColors[Cell::SW].isOpaque() && ns.wallColors[Cell::NW].isOpaque() &&
+          c.wallColors[Cell::SE].isOpaque() && ns.wallColors[Cell::NE].isOpaque();
       const ushort quadmap[6] = {0, 1, 2, 1, 3, 2};
       const ushort utriang[6] = {0, 1, 3, 0, 3, 2};
       const ushort dtriang[6] = {0, 1, 2, 1, 2, 3};
@@ -694,8 +738,17 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       } else {
         sel = dtriang;
       }
-      for (uint i = 0; i < 6; i++) bufs->widx[j * 12 + i] = j * 8 + sel[i];
+      if (quad_opaque) {
+        for (uint i = 0; i < 6; i++) bufs->woidx[j * 12 + i] = j * 8 + sel[i];
+        for (uint i = 0; i < 6; i++) bufs->waidx[j * 12 + i] = 0;
+      } else {
+        for (uint i = 0; i < 6; i++) bufs->woidx[j * 12 + i] = 0;
+        for (uint i = 0; i < 6; i++) bufs->waidx[j * 12 + i] = j * 8 + sel[i];
+      }
 
+      bool aquad_opaque =
+          c.wallColors[Cell::SW].isOpaque() && ne.wallColors[Cell::NE].isOpaque() &&
+          c.wallColors[Cell::NW].isOpaque() && ne.wallColors[Cell::SE].isOpaque();
       const ushort aquadmap[6] = {0, 2, 1, 2, 3, 1};
       const ushort autriang[6] = {0, 2, 1, 2, 3, 1};
       const ushort adtriang[6] = {0, 3, 1, 2, 3, 0};
@@ -707,7 +760,13 @@ void Map::fillChunkVBO(Chunk* chunk) const {
       } else {
         sel = adtriang;
       }
-      for (uint i = 0; i < 6; i++) bufs->widx[j * 12 + 6 + i] = j * 8 + 4 + sel[i];
+      if (aquad_opaque) {
+        for (uint i = 0; i < 6; i++) bufs->woidx[j * 12 + 6 + i] = j * 8 + 4 + sel[i];
+        for (uint i = 0; i < 6; i++) bufs->waidx[j * 12 + 6 + i] = 0;
+      } else {
+        for (uint i = 0; i < 6; i++) bufs->woidx[j * 12 + 6 + i] = 0;
+        for (uint i = 0; i < 6; i++) bufs->waidx[j * 12 + 6 + i] = j * 8 + 4 + sel[i];
+      }
 
       // Line data ! (thankfully they're all black)
       int s = j * 12;
@@ -756,8 +815,11 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                       0.0f, 1.0f, fonormal[Cell::NW]);
         packWaterCell(&bufs->fdat[u + 32], x + 0.5f, y + 0.5f, c.waterHeights[Cell::CENTER],
                       c.velocity, 0.5f, 0.5f, fonormal[Cell::CENTER]);
-
-        for (uint i = 0; i < 12; i++) { bufs->fidx[j * 12 + i] = 5 * j + topindices[i]; }
+        for (uint f = 0; f < 4; f++) {
+          for (uint i = 0; i < 3; i++) {
+            bufs->fidx[j * 12 + 3 * f + i] = 5 * j + topindices[f][i];
+          }
+        }
       } else {
         // Zero tile (safer than uninitialized)
         memset(&bufs->fdat[j * 5 * 8], 0, 5 * 8 * sizeof(GLfloat));
@@ -783,7 +845,15 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size,
-                     bufs->tidx, GL_DYNAMIC_DRAW);
+                     bufs->toidx, GL_DYNAMIC_DRAW);
+        configureCellAttributes(false);
+
+        glBindVertexArray(chunk->tile_alpha_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->tile_vbo[0]);
+        // already uploaded data
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[2]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * tile_index_size,
+                     bufs->taidx, GL_DYNAMIC_DRAW);
         configureCellAttributes(false);
 
         if (activeView.show_flag_state) {
@@ -804,8 +874,17 @@ void Map::fillChunkVBO(Chunk* chunk) const {
                      GL_DYNAMIC_DRAW);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_index_size,
-                     bufs->widx, GL_DYNAMIC_DRAW);
+                     bufs->woidx, GL_DYNAMIC_DRAW);
         configureCellAttributes(false);
+
+        glBindVertexArray(chunk->wall_alpha_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, chunk->wall_vbo[0]);
+        // already uploaded data
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[2]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, CHUNKSIZE * CHUNKSIZE * wall_index_size,
+                     bufs->waidx, GL_DYNAMIC_DRAW);
+        configureCellAttributes(false);
+
         // Lines
         glBindVertexArray(chunk->line_vao);
         glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
@@ -837,14 +916,18 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
                         (jend - jstart) * tile_index_size,
-                        &bufs->tidx[jstart * tile_index_size / sizeof(ushort)]);
+                        &bufs->toidx[jstart * tile_index_size / sizeof(ushort)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[2]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
+                        (jend - jstart) * tile_index_size,
+                        &bufs->taidx[jstart * tile_index_size / sizeof(ushort)]);
 
         if (activeView.show_flag_state) {
           glBindBuffer(GL_ARRAY_BUFFER, chunk->flag_vbo[0]);
           glBufferSubData(GL_ARRAY_BUFFER, jstart * tile_data_size,
                           (jend - jstart) * tile_data_size,
                           &bufs->sdat[jstart * tile_data_size / sizeof(GLfloat)]);
-          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->tile_vbo[1]);
+          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flag_vbo[1]);
           glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * tile_index_size,
                           (jend - jstart) * tile_index_size,
                           &bufs->sidx[jstart * tile_index_size / sizeof(ushort)]);
@@ -858,7 +941,12 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[1]);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * wall_index_size,
                         (jend - jstart) * wall_index_size,
-                        &bufs->widx[jstart * wall_index_size / sizeof(ushort)]);
+                        &bufs->woidx[jstart * wall_index_size / sizeof(ushort)]);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->wall_vbo[2]);
+        glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * wall_index_size,
+                        (jend - jstart) * wall_index_size,
+                        &bufs->waidx[jstart * wall_index_size / sizeof(ushort)]);
+
         // Lines
         glBindBuffer(GL_ARRAY_BUFFER, chunk->line_vbo[0]);
         glBufferSubData(GL_ARRAY_BUFFER, jstart * line_data_size,
@@ -876,7 +964,7 @@ void Map::fillChunkVBO(Chunk* chunk) const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, chunk->flui_vbo[1]);
         glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, jstart * flui_index_size,
                         (jend - jstart) * flui_index_size,
-                        &bufs->tidx[jstart * flui_index_size / sizeof(ushort)]);
+                        &bufs->fidx[jstart * flui_index_size / sizeof(ushort)]);
       }
       jstart = -1;
     }

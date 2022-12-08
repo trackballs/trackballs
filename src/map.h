@@ -85,12 +85,12 @@ class Chunk {
   Chunk();
   ~Chunk();
   int xm, ym;
-  GLuint wall_vbo[2];
-  GLuint tile_vbo[2];
-  GLuint flag_vbo[2];
-  GLuint flui_vbo[2];
-  GLuint line_vbo[2];
-  GLuint wall_vao, tile_vao, flag_vao, flui_vao, line_vao;
+  GLuint wall_vbo[3];  // vertex data, opaque triangles, alpha triangles
+  GLuint tile_vbo[3];  // vertex data, opaque triangles, alpha triangles
+  GLuint flag_vbo[2];  // vertex data, triangle indices
+  GLuint flui_vbo[2];  // vertex data, triangle indices
+  GLuint line_vbo[2];  // vertex data, line indices
+  GLuint wall_vao, tile_vao, wall_alpha_vao, tile_alpha_vao, flag_vao, flui_vao, line_vao;
   GLfloat maxHeight, minHeight;
   bool is_active, is_visible, is_updated;
   int last_shown;

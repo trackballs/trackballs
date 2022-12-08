@@ -102,6 +102,9 @@ class SRGBColor {
     w[2] = std::round(65535.f * fb);
     w[3] = std::round(65535.f * fa);
   };
+  bool isOpaque() const {
+    return w[3] >= 64800;  // include near-opaque
+  }
   float f0() const { return w[0] / 65535.f; }
   float f1() const { return w[1] / 65535.f; }
   float f2() const { return w[2] / 65535.f; }
@@ -136,6 +139,7 @@ class Color {
     c.v[3] = 1.f;
     return c;
   }
+  bool isOpaque() const { return v[3] == 1.f; }
   static Color mix(float blend, const Color &col0, const Color &col1) {
     Color c;
     for (int i = 0; i < 4; i++) { c.v[i] = col0.v[i] * (1. - blend) + col1.v[i] * blend; }

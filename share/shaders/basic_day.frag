@@ -5,7 +5,6 @@ precision mediump float;
 #endif
 
 // Scene data
-uniform int render_stage;
 uniform mat4 model_matrix;
 // Fog data
 uniform int fog_active;
@@ -69,9 +68,6 @@ float cascadeShadow() {
 }
 
 void main(void) {
-  // Drop transparent elements in first stage only
-  if (render_stage == 0 && fcolor.w < 0.95) { discard; }
-
   // Identify normal and texture color
   vec3 normal;
   if (flatkey >= 0.) {

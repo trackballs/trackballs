@@ -94,7 +94,6 @@ typedef struct {
   GLint mvp_matrix;
   GLint model_matrix;
   /* common */
-  GLint render_stage;
   GLint gameTime;
 
   /* line */

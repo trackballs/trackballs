@@ -1145,7 +1145,6 @@ static GLProgram linkShader(GLuint vertexshader, GLuint fragmentshader, const ch
    * value will be set to -1 */
   prog.locations.mvp_matrix = logUniformLocation(prog.prog, "mvp_matrix");
   prog.locations.model_matrix = logUniformLocation(prog.prog, "model_matrix");
-  prog.locations.render_stage = logUniformLocation(prog.prog, "render_stage");
   prog.locations.gameTime = logUniformLocation(prog.prog, "gameTime");
   prog.locations.line_color = logUniformLocation(prog.prog, "line_color");
   prog.locations.arrtex = logUniformLocation(prog.prog, "arrtex");
