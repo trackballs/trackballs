@@ -145,7 +145,7 @@ void SetupMode::display() {
   // Create sphere
   int ntries = 0;
   int nverts = 0;
-  int detail = 20;
+  int detail = 4;
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];

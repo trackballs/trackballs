@@ -121,14 +121,14 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
     int detail;
     switch (ballResolution) {
     case BALL_HIRES:
-      detail = 20;
+      detail = 3;
       break;
     default:
     case BALL_NORMAL:
-      detail = 14;
+      detail = 2;
       break;
     case BALL_LORES:
-      detail = 8;
+      detail = 2;
       break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
@@ -298,7 +298,7 @@ void Ball::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
 
     int ntries = 0;
     int nverts = 0;
-    int detail = 5;
+    int detail = 3;
     countObjectSpherePoints(&ntries, &nverts, detail);
     GLfloat *data = new GLfloat[nverts * 8];
     ushort *idxs = new ushort[ntries * 3];
@@ -417,14 +417,14 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     int detail;
     switch (ballResolution) {
     case BALL_HIRES:
-      detail = 20;
+      detail = 3;
       break;
     default:
     case BALL_NORMAL:
-      detail = 14;
+      detail = 2;
       break;
     case BALL_LORES:
-      detail = 8;
+      detail = 2;
       break;
     }
     countObjectSpherePoints(&ntries, &nverts, detail);
@@ -560,7 +560,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
 
     int ntries = 0;
     int nverts = 0;
-    int detail = 5;
+    int detail = 3;
     countObjectSpherePoints(&ntries, &nverts, detail);
     const UniformLocations *uloc = setActiveProgramAndUniforms(Shader_Object);
     Matrix3d scale = {

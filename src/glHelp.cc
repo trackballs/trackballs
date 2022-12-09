@@ -128,10 +128,11 @@ GLuint textures[GLHELP_MAX_TEXTURES] = {0};  // added init. to 0 (no texture)
 char *textureNames[GLHELP_MAX_TEXTURES] = {NULL};
 int numTextures;
 
-#define MAX_BALL_DETAIL 32
-GLfloat *sphere_points[MAX_BALL_DETAIL];
-GLfloat *sphere_texcos[MAX_BALL_DETAIL];
-ushort *sphere_idxs[MAX_BALL_DETAIL];
+#define MAX_BALL_DETAIL 5
+GLfloat *sphere_xyzuv[MAX_BALL_DETAIL];
+uint16_t *sphere_idxs[MAX_BALL_DETAIL];
+int sphere_nverts[MAX_BALL_DETAIL];
+int sphere_ntris[MAX_BALL_DETAIL];
 
 static std::map<int, TTF_Font *> menuFontLookup;
 
@@ -558,106 +559,189 @@ void setObjectUniforms(const UniformLocations *uloc, const Matrix4d object_trans
   }
 }
 
+struct edge {
+  uint16_t i0;
+  uint16_t i1;
+};
+
+static bool operator<(const struct edge a, const struct edge b) {
+  return a.i0 < b.i0 || (a.i0 == b.i0 && a.i1 < b.i1);
+}
+static struct edge midpoint(uint16_t a, uint16_t b) {
+  struct edge e;
+  e.i0 = std::min(a, b);
+  e.i1 = std::max(a, b);
+  return e;
+}
+
+static void constructSphereData(int detail) {
+  if (detail == 0) {
+    /* Basic icosahedron */
+    GLfloat s = 2 * std::sqrt(2. / (std::sqrt(5) + 5));  // side length
+    GLfloat r = s / (2 * std::sin(M_PI / 5));            // radius, top down view
+    GLfloat h = 1.f - std::sqrt(s * s - r * r);          // offset from equator
+    GLfloat s10[10], c10[10];
+    for (size_t i = 0; i < 10; i++) {
+      s10[i] = std::sin(2 * M_PI * i / 10.);
+      c10[i] = std::cos(2 * M_PI * i / 10.);
+    }
+    float v1 = 1.f / 3.f;
+    float v2 = 2.f / 3.f;
+    // X Y Z U V
+    GLfloat verts[14][5] = {
+        {0., 0., 1.f, 0.5f, 0.f},               // 0 = top point
+        {r * c10[0], r * s10[0], h, 0.0f, v1},  // 1 top loop start
+        {r * c10[2], r * s10[2], h, 0.2f, v1},
+        {r * c10[4], r * s10[4], h, 0.4f, v1},
+        {r * c10[6], r * s10[6], h, 0.6f, v1},
+        {r * c10[8], r * s10[8], h, 0.8f, v1},   // 5
+        {r * c10[0], r * s10[0], h, 1.0f, v1},   // 6 = 1 top loop start
+        {r * c10[1], r * s10[1], -h, 0.1f, v2},  // 7 bot loop stat
+        {r * c10[3], r * s10[3], -h, 0.3f, v2},
+        {r * c10[5], r * s10[5], -h, 0.5f, v2},
+        {r * c10[7], r * s10[7], -h, 0.7f, v2},
+        {r * c10[9], r * s10[9], -h, 0.9f, v2},
+        {r * c10[1], r * s10[1], -h, 1.1f, v2},  // 12 = 7 bot loop start
+        {0., 0., -1.f, 0.5f, 1.f},               // 13 = bottom point
+    };
+    uint16_t faces[20][3] = {
+        {0, 1, 2},  {0, 2, 3},  {0, 3, 4},   {0, 4, 5},    {0, 5, 6},     //
+        {1, 7, 2},  {2, 7, 8},  {2, 8, 3},   {3, 8, 9},    {3, 9, 4},     //
+        {4, 9, 10}, {4, 10, 5}, {5, 10, 11}, {5, 11, 6},   {6, 11, 12},   //
+        {13, 8, 7}, {13, 9, 8}, {13, 10, 9}, {13, 11, 10}, {13, 12, 11},  //
+    };
+
+    GLfloat *vertc = new GLfloat[14 * 5];
+    ushort *idxsc = new ushort[20 * 3];
+    memcpy(idxsc, faces, sizeof(faces));
+    memcpy(vertc, verts, sizeof(verts));
+
+    sphere_xyzuv[detail] = vertc;
+    sphere_idxs[detail] = idxsc;
+
+    sphere_nverts[detail] = 14;
+    sphere_ntris[detail] = 20;
+
+  } else {
+    constructSphereData(detail - 1);
+
+    int base_nverts = sphere_nverts[detail - 1];
+    int base_ntries = sphere_ntris[detail - 1];
+    const uint16_t *base_tris = sphere_idxs[detail - 1];
+    const GLfloat *base_verts = sphere_xyzuv[detail - 1];
+
+    // map edge code to vertex position
+    std::map<struct edge, uint16_t> edges;
+    // track existing corners as 'self' edges
+    for (int i = 0; i < base_nverts; i++) {
+      struct edge e;
+      e.i0 = i;
+      e.i1 = i;
+      uint16_t dst = edges.size();
+      edges[e] = dst;
+    }
+
+    for (int i = 0; i < base_ntries; i++) {
+      const uint16_t *triangle = &base_tris[3 * i];
+      for (int j = 0; j < 3; j++) {
+        uint16_t dst = edges.size();
+        struct edge e = midpoint(triangle[j], triangle[(j + 1) % 3]);
+        if (edges.count(e) == 0) { edges[e] = dst; }
+      }
+    }
+    int nverts = edges.size();
+    int ntris = base_ntries * 4;
+    GLfloat *vertc = new GLfloat[nverts * 5];
+    ushort *idxsc = new ushort[ntris * 3];
+    for (std::pair<struct edge, uint16_t> p : edges) {
+      // vertex produced is midpoint of sources.
+      const GLfloat *p0 = &base_verts[5 * p.first.i0];
+      const GLfloat *p1 = &base_verts[5 * p.first.i1];
+      Coord3d loc((p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2, (p0[2] + p1[2]) / 2);
+      /* expand to fill unit sphere */
+      loc = loc / length(loc);
+      vertc[5 * p.second + 0] = loc[0];
+      vertc[5 * p.second + 1] = loc[1];
+      vertc[5 * p.second + 2] = loc[2];
+
+      // Because the U value of the poles are meaningless, adopt the other
+      // vertex's U values in that case. As more subdivisions are performed, this
+      // will shrink the length of the discontinuity
+      bool pole0 = p0[4] == 0.f || p0[4] == 1.f;
+      bool pole1 = p1[4] == 0.f || p1[4] == 1.f;
+      if (pole0) {
+        vertc[5 * p.second + 3] = p1[3];
+      } else if (pole1) {
+        vertc[5 * p.second + 3] = p0[3];
+      } else {
+        float base = (p0[3] + p1[3]) / 2;
+        float u = std::atan2(loc[1], loc[0]) / (2 * M_PI);
+        float shift = std::fmod((u - base) + 1.5, 1.0) - 0.5;
+        if (std::abs(shift) > 0.25) { warning("U shift failure"); }
+        vertc[5 * p.second + 3] = base + shift;
+      }
+      vertc[5 * p.second + 4] = std::acos(loc[2]) / M_PI;
+    }
+    for (int i = 0; i < base_ntries; i++) {
+      const uint16_t *triangle = &base_tris[3 * i];
+      uint16_t a = triangle[0], b = triangle[1], c = triangle[2];
+      uint16_t d = edges[midpoint(a, b)], e = edges[midpoint(b, c)], f = edges[midpoint(c, a)];
+
+      // (A,B,C) splits into (A,D,F), (D,E,F), (E,C,F), (D, B, E)
+      idxsc[12 * i + 0] = a;
+      idxsc[12 * i + 1] = d;
+      idxsc[12 * i + 2] = f;
+      idxsc[12 * i + 3] = d;
+      idxsc[12 * i + 4] = e;
+      idxsc[12 * i + 5] = f;
+      idxsc[12 * i + 6] = e;
+      idxsc[12 * i + 7] = c;
+      idxsc[12 * i + 8] = f;
+      idxsc[12 * i + 9] = d;
+      idxsc[12 * i + 10] = b;
+      idxsc[12 * i + 11] = e;
+    }
+
+    sphere_xyzuv[detail] = vertc;
+    sphere_idxs[detail] = idxsc;
+
+    sphere_nverts[detail] = nverts;
+    sphere_ntris[detail] = ntris;
+  }
+}
+
 void countObjectSpherePoints(int *ntriangles, int *nvertices, int detail) {
-  if (detail < 1) {
-    warning("Sphere detail level must be > 1");
+  if (detail < 1 || detail >= MAX_BALL_DETAIL) {
+    warning("Sphere detail level must be > 1, < %d", MAX_BALL_DETAIL);
     *ntriangles = 0.;
     *nvertices = 0.;
     return;
   }
 
-  int radial_count = 4 * detail;
-  int nrows = 2 * detail + 1;
-  *nvertices = (radial_count + 1) * (nrows - 2) + 2;
-  *ntriangles = 2 * radial_count * (nrows - 2);
-}
+  if (!sphere_xyzuv[detail]) { constructSphereData(detail); }
 
-static void constructSphereData(int detail) {
-  int radial_count = 4 * detail;
-  int nrows = 2 * detail + 1;
-  int nvertices = (radial_count + 1) * (nrows - 2) + 2;
-  int ntriangles = 2 * radial_count * (nrows - 2);
-
-  GLfloat *pts = new GLfloat[3 * nvertices];
-  GLfloat *txs = new GLfloat[2 * nvertices];
-  ushort *idxs = new ushort[3 * ntriangles];
-
-  // Construct vertices
-  int m = 0;
-  for (int z = 1; z < nrows - 1; z++) {
-    GLfloat theta = z * M_PI / (nrows - 1);
-    for (int t = 0; t <= radial_count; t++) {
-      GLfloat phi = 2 * t * M_PI / radial_count;
-      // Stagger every second row
-      if (z % 2 == 1) phi += M_PI / radial_count;
-      txs[2 * m + 0] = phi / (2 * M_PI);
-      txs[2 * m + 1] = theta / M_PI;
-      pts[3 * m + 0] = std::sin(theta) * std::cos(phi);
-      pts[3 * m + 1] = std::sin(theta) * std::sin(phi);
-      pts[3 * m + 2] = std::cos(theta);
-      m++;
-    }
-  }
-  pts[3 * m + 0] = 0;
-  pts[3 * m + 1] = 0;
-  pts[3 * m + 2] = 1.;
-  pts[3 * m + 3] = 0;
-  pts[3 * m + 4] = 0;
-  pts[3 * m + 5] = -1.;
-  txs[2 * m + 0] = 0.5;
-  txs[2 * m + 1] = 0.0;
-  txs[2 * m + 2] = 0.5;
-  txs[2 * m + 3] = 1.0;
-
-  // Triangulate end caps
-  for (int i = 0; i < radial_count; i++) {
-    idxs[6 * i + 0] = i;
-    idxs[6 * i + 1] = i + 1;
-    idxs[6 * i + 2] = (radial_count + 1) * (nrows - 2);
-    idxs[6 * i + 3] = (radial_count + 1) * (nrows - 3) + i + 1;
-    idxs[6 * i + 4] = (radial_count + 1) * (nrows - 3) + i;
-    idxs[6 * i + 5] = (radial_count + 1) * (nrows - 2) + 1;
-  }
-  // Triangulate body
-  ushort *base = &idxs[2 * 3 * radial_count];
-  for (int z = 1; z < nrows - 2; z++) {
-    for (int i = 0; i < radial_count; i++) {
-      base[6 * i + 0] = (z - 1) * (radial_count + 1) + i + 1;
-      base[6 * i + 1] = (z - 1) * (radial_count + 1) + i;
-      base[6 * i + 2] = z * (radial_count + 1) + i + 1;
-      base[6 * i + 3] = (z - 1) * (radial_count + 1) + i;
-      base[6 * i + 4] = z * (radial_count + 1) + i;
-      base[6 * i + 5] = z * (radial_count + 1) + i + 1;
-    }
-    base = &base[6 * radial_count];
-  }
-
-  sphere_points[detail] = pts;
-  sphere_texcos[detail] = txs;
-  sphere_idxs[detail] = idxs;
+  *nvertices = sphere_nverts[detail];
+  *ntriangles = sphere_ntris[detail];
 }
 
 void placeObjectSphere(void *data, ushort *idxs, ushort first_index, int detail,
                        const Color &color) {
-  if (detail < 1) {
-    warning("Sphere detail level must be > 1. Drawing nothing.");
+  if (detail < 1 || detail >= MAX_BALL_DETAIL) {
+    warning("Sphere detail level must be > 1, < %d. Drawing nothing.", MAX_BALL_DETAIL);
     return;
   }
-  if (!sphere_points[detail]) { constructSphereData(detail); }
+  if (!sphere_xyzuv[detail]) { constructSphereData(detail); }
 
-  int radial_count = 4 * detail;
-  int nrows = 2 * detail + 1;
-  int nvertices = (radial_count + 1) * (nrows - 2) + 2;
-  int ntriangles = 2 * radial_count * (nrows - 2);
+  int nvertices, ntriangles;
+  countObjectSpherePoints(&ntriangles, &nvertices, detail);
   for (int i = 0; i < 3 * ntriangles; i++) { idxs[i] = first_index + sphere_idxs[detail][i]; }
 
   /* Copy and transform vertices */
   char *pos = (char *)data;
-  GLfloat *pts = sphere_points[detail];
-  GLfloat *txs = sphere_texcos[detail];
+  GLfloat *pts = sphere_xyzuv[detail];
   for (int i = 0; i < nvertices; i++) {
-    GLfloat loc[3] = {pts[3 * i], pts[3 * i + 1], pts[3 * i + 2]};
-    GLfloat txc[2] = {txs[2 * i], txs[2 * i + 1]};
+    GLfloat loc[3] = {pts[5 * i], pts[5 * i + 1], pts[5 * i + 2]};
+    GLfloat txc[2] = {pts[5 * i + 3], pts[5 * i + 4]};
 
     pos += packObjectVertex(pos, loc[0], loc[1], loc[2], txc[0], txc[1], color, loc);
   }
@@ -1257,8 +1341,7 @@ void glHelpInit() {
 
   // Wipe ball cache
   for (int i = 0; i < MAX_BALL_DETAIL; i++) {
-    sphere_points[i] = NULL;
-    sphere_texcos[i] = NULL;
+    sphere_xyzuv[i] = NULL;
     sphere_idxs[i] = NULL;
   }
 
@@ -1366,8 +1449,7 @@ void glHelpCleanup() {
   if (sparkle2D) delete sparkle2D;
 
   for (int i = 0; i < MAX_BALL_DETAIL; i++) {
-    if (sphere_points[i]) delete[] sphere_points[i];
-    if (sphere_texcos[i]) delete[] sphere_texcos[i];
+    if (sphere_xyzuv[i]) delete[] sphere_xyzuv[i];
     if (sphere_idxs[i]) delete[] sphere_idxs[i];
   }
 

@@ -41,7 +41,7 @@ void PipeConnector::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
 
   int ntries = 0;
   int nverts = 0;
-  int detail = 6;
+  int detail = 2;
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
@@ -75,7 +75,7 @@ void PipeConnector::drawMe(const GLuint *vaolist) const {
 
   int ntries = 0;
   int nverts = 0;
-  int detail = 6;
+  int detail = 2;
   countObjectSpherePoints(&ntries, &nverts, detail);
 
   Matrix3d scale = {{radius, 0.f, 0.f}, {0.f, radius, 0.f}, {0.f, 0.f, radius}};
