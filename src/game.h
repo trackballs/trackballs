@@ -44,6 +44,7 @@ class Player;
 class Weather;
 class EditMode;
 class Gamer;
+class FlagRenderer;
 
 class Game {
  public:
@@ -109,6 +110,7 @@ class Game {
   } QueuedCall;
   std::vector<QueuedCall> queuedCalls;
   std::vector<GameHook *> newHooks;
+  FlagRenderer *flagRenderer;
 
   static void *runQueuedCalls(void *data);
 

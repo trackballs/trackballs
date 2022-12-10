@@ -34,15 +34,16 @@ typedef enum {
 } GameHookEvent;
 
 enum {
-  Role_Dead = 0,          /* collects entities for cleanup */
-  Role_GameHook = 1,      /* pure GameHooks (will not be rendered) */
-  Role_OtherAnimated = 2, /* animated: misc types */
-  Role_Ball = 3,          /* animated: all types inheriting from Ball, except */
-  Role_Player = 4,        /* animated: ... player balls */
-  Role_Pipe = 5,          /* animated: pipes */
-  Role_PipeConnector = 6, /* animated: pipe connectors */
-  Role_Forcefield = 7,    /* animated: forcefields */
-  Role_MaxTypes = 8
+  Role_Dead = 0,      /* collects entities for cleanup */
+  Role_GameHook,      /* pure GameHooks (will not be rendered) */
+  Role_OtherAnimated, /* animated: misc types */
+  Role_Ball,          /* animated: all types inheriting from Ball, except */
+  Role_Player,        /* animated: ... player balls */
+  Role_Pipe,          /* animated: pipes */
+  Role_PipeConnector, /* animated: pipe connectors */
+  Role_Forcefield,    /* animated: forcefields */
+  Role_Flag,          /* animated: flags */
+  Role_MaxTypes
 };
 
 class Game;

@@ -24,12 +24,10 @@
 #include "game.h"
 
 #include "animatedCollection.h"
-#include "ball.h"
-#include "forcefield.h"
+#include "flag.h"
 #include "gamer.h"
 #include "guile.h"
 #include "map.h"
-#include "pipe.h"
 #include "player.h"
 #include "replay.h"
 #include "settings.h"
@@ -54,6 +52,7 @@ Game::Game(const char *name, Gamer *gamer) {
   edit_mode = 0;
 
   weather = new Weather();
+  flagRenderer = new FlagRenderer();
 
   /* Load the bootup script */
   char scmname[256];
@@ -78,6 +77,7 @@ Game::Game(Map *editmap, const char *levelname) {
   gameTicks = 0;
   nextLevel[0] = 0;
   weather = NULL;
+  flagRenderer = new FlagRenderer();
   map = editmap;
   edit_mode = 1;
   setDefaults();
@@ -106,6 +106,7 @@ Game::~Game() {
 
   delete weather;
   delete balls;
+  delete flagRenderer;
   if (player1) {
     if (hooks[Role_Player].size() && hooks[Role_Player][0] == player1) {
       hooks[Role_Player].clear();
@@ -387,12 +388,14 @@ void Game::draw() {
 
   /* Draw first pass of all objects */
   for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {
+    if (i == Role_Flag) { continue; }
     int n = hooks[i].size();
     for (int j = 0; j < n; j++) {
       Animated *anim = (Animated *)hooks[i][j];
       if (anim->onScreen) anim->draw();
     }
   }
+  flagRenderer->draw(hooks[Role_Flag]);
 
   /* Draw second pass of all objects */
   for (int i = Role_OtherAnimated; i < Role_MaxTypes; i++) {

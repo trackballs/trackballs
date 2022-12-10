@@ -23,20 +23,48 @@
 
 #include "animated.h"
 
+#include <map>
+#include <vector>
+
 class Flag : public Animated {
  public:
-  Flag(Game& g, Real x, Real y, int points, int visible, Real radius);
+  Flag(Game& g, Real x, Real y, int points, int visible, Real radius, int role = Role_Flag);
 
-  virtual void updateBuffers(const GLuint*, const GLuint*, const GLuint*, bool);
-  virtual void drawBuffers1(const GLuint*) const;
-  virtual void drawBuffers2(const GLuint*) const;
+  // all of these are noops; use `FlagRenderer` instead
+  virtual void updateBuffers(const GLuint*, const GLuint*, const GLuint*, bool) {}
+  virtual void drawBuffers1(const GLuint*) const {}
+  virtual void drawBuffers2(const GLuint*) const {}
 
   void tick(Real t);
   virtual void onGet();
 
- protected:
   int visible;
+
+ protected:
   Real radius;
+};
+
+struct FlagDrawState {
+  Color poleColor;
+  Color flagColor;
+};
+
+struct FlagBuffer {
+  GLuint vao;
+  GLuint vertexBuffer;
+  Real lastTime;  // needs exact same units as gameTime
+  bool active;
+};
+
+class FlagRenderer {
+ public:
+  FlagRenderer();
+  ~FlagRenderer();
+  void draw(std::vector<GameHook*> flags);
+
+ private:
+  GLuint indexBuffer;
+  std::map<struct FlagDrawState, struct FlagBuffer> buffers;
 };
 
 #endif
