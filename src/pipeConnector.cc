@@ -37,7 +37,8 @@ PipeConnector::PipeConnector(Game &g, const Coord3d &pos, Real r)
 
 void PipeConnector::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                                   const GLuint *vaolist, bool firstCall) {
-  if (!firstCall) return;
+  if (!firstCall && primaryColor == bufferColor) { return; }
+  bufferColor = primaryColor;
 
   int ntries = 0;
   int nverts = 0;
@@ -46,7 +47,7 @@ void PipeConnector::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
 
-  placeObjectSphere(data, idxs, 0, detail, primaryColor);
+  placeObjectSphere(data, idxs, 0, detail, bufferColor);
 
   glBindVertexArray(vaolist[0]);
   glBindBuffer(GL_ARRAY_BUFFER, databufs[0]);

@@ -40,7 +40,8 @@ Pipe::Pipe(Game &g, const Coord3d &f, const Coord3d &t, Real r)
 
 void Pipe::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GLuint *vaolist,
                          bool firstCall) {
-  if (!firstCall) return;
+  if (!firstCall && primaryColor == bufferColor) { return; }
+  bufferColor = primaryColor;
 
   Coord3d up(0., 0., 0.);
   Coord3d dir = to - from;
@@ -65,12 +66,12 @@ void Pipe::updateBuffers(const GLuint *idxbufs, const GLuint *databufs, const GL
         pos, from[0] + radius * std::sin(angle) * up[0] + radius * std::cos(angle) * right[0],
         from[1] + radius * std::sin(angle) * up[1] + radius * std::cos(angle) * right[1],
         from[2] + radius * std::sin(angle) * up[2] + radius * std::cos(angle) * right[2], 0.,
-        0., primaryColor, norm);
+        0., bufferColor, norm);
     pos += packObjectVertex(
         pos, to[0] + radius * std::sin(angle) * up[0] + radius * std::cos(angle) * right[0],
         to[1] + radius * std::sin(angle) * up[1] + radius * std::cos(angle) * right[1],
         to[2] + radius * std::sin(angle) * up[2] + radius * std::cos(angle) * right[2], 0., 0.,
-        primaryColor, norm);
+        bufferColor, norm);
   }
   for (int i = 0; i < nfacets; i++) {
     int j = (i + 1) % nfacets;

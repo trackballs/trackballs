@@ -36,6 +36,7 @@ class PipeConnector : public Animated {
   const Real radius;
 
  private:
+  Color bufferColor;
   void drawMe(const GLuint* vaolist) const;
 };
 

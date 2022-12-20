@@ -42,6 +42,7 @@ class Pipe : public Animated {
   Real windForward, windBackward;
 
  private:
+  Color bufferColor;
   void drawTrunk(const GLuint* vaolist) const;
 };
 
