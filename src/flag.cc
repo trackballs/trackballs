@@ -110,11 +110,15 @@ void FlagRenderer::draw(std::vector<GameHook *> flags) {
     if (buffers.count(state)) { buffers[state].active = true; }
   }
   for (std::map<struct FlagDrawState, struct FlagBuffer>::iterator i = buffers.begin();
-       i != buffers.end(); i++) {
+       i != buffers.end();) {
     if (!i->second.active) {
       glDeleteVertexArrays(1, &i->second.vao);
       glDeleteBuffers(1, &i->second.vertexBuffer);
-      buffers.erase(i);
+      std::map<struct FlagDrawState, struct FlagBuffer>::iterator j = i;
+      i++;
+      buffers.erase(j);
+    } else {
+      i++;
     }
   }
 
