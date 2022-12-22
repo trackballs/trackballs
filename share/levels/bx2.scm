@@ -484,9 +484,9 @@
 
 ;;up to lift-off
 
-(define pipef (pipe 81 33 2.5 81 31.2 2.5 0.5))
-(pipe-connector 81 31 2.5 0.5)
-(define pipeg (pipe 81 31 2.6 81 30 9.2 0.5))
+(define pipef (pipe 81 33 2.5 81.1 31.2 2.5 0.5))
+(pipe-connector 81.1 31 2.5 0.5)
+(define pipeg (pipe 81.1 31 2.6 81.1 30 9.2 0.5))
 (set-wind pipeg 9.0 9.0)
 
 
