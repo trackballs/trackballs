@@ -47,7 +47,7 @@ void ColorModifier::tick(Real t) {
   Cell& c = game.map->cell(x, y);
   if (!is_on) return;
   float fv = min + (max - min) * (1. + std::cos(phase + (tt * freq) * 2. * M_PI)) / 2.;
-  uint16_t v = std::max(0.f, std::min(1.f, fv)) * 65535.f;
+  uint16_t v = std::max(0.f, std::min(1.f, fv)) * MAX_SRGB_VAL;
   switch (colors) {
   case 0:
     for (int i = 0; i < 5; i++) {

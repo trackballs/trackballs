@@ -1396,11 +1396,11 @@ void Cell::load(Map* map, gzFile gp, int version) {
     if (version < 4) {
       // old maps do not have an alpha channel defined
       gzread(gp, data, sizeof(int32_t) * 3);
-      for (int j = 0; j < 3; j++) colors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
-      colors[i].w[3] = 65535;
+      for (int j = 0; j < 3; j++) colors[i].w[j] = MAX_SRGB_VAL * 0.01 * loadInt(data[j]);
+      colors[i].w[3] = MAX_SRGB_VAL;
     } else {
       gzread(gp, data, sizeof(int32_t) * 4);
-      for (int j = 0; j < 4; j++) colors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
+      for (int j = 0; j < 4; j++) colors[i].w[j] = MAX_SRGB_VAL * 0.01 * loadInt(data[j]);
     }
   }
 
@@ -1418,11 +1418,13 @@ void Cell::load(Map* map, gzFile gp, int version) {
       if (version < 4) {
         // old maps do not have an alpha channel defined
         gzread(gp, data, sizeof(int32_t) * 3);
-        for (int j = 0; j < 3; j++) wallColors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
-        wallColors[i].w[3] = 65535;
+        for (int j = 0; j < 3; j++)
+          wallColors[i].w[j] = MAX_SRGB_VAL * 0.01 * loadInt(data[j]);
+        wallColors[i].w[3] = MAX_SRGB_VAL;
       } else {
         gzread(gp, data, sizeof(int32_t) * 4);
-        for (int j = 0; j < 4; j++) wallColors[i].w[j] = 65535 * 0.01 * loadInt(data[j]);
+        for (int j = 0; j < 4; j++)
+          wallColors[i].w[j] = MAX_SRGB_VAL * 0.01 * loadInt(data[j]);
       }
     }
   }

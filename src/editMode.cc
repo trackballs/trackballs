@@ -574,28 +574,28 @@ void EditMode::doCommand(int command) {
     break;
 
   case COLOR_RED:
-    if (color.w[0] >= 65535)
+    if (color.w[0] >= MAX_SRGB_VAL)
       color.w[0] = 0;
     else
-      color.w[0] = std::min(65535, color.w[0] + 3277);
+      color.w[0] = std::min(MAX_SRGB_VAL, color.w[0] + MAX_SRGB_VAL / 20);
     break;
   case COLOR_GREEN:
-    if (color.w[1] >= 65535)
+    if (color.w[1] >= MAX_SRGB_VAL)
       color.w[1] = 0;
     else
-      color.w[1] = std::min(65535, color.w[1] + 3277);
+      color.w[1] = std::min(MAX_SRGB_VAL, color.w[1] + MAX_SRGB_VAL / 20);
     break;
   case COLOR_BLUE:
-    if (color.w[2] >= 65535)
+    if (color.w[2] >= MAX_SRGB_VAL)
       color.w[2] = 0;
     else
-      color.w[2] = std::min(65535, color.w[2] + 3277);
+      color.w[2] = std::min(MAX_SRGB_VAL, color.w[2] + MAX_SRGB_VAL / 20);
     break;
   case COLOR_ALPHA:
-    if (color.w[3] >= 65535)
+    if (color.w[3] >= MAX_SRGB_VAL)
       color.w[3] = 0;
     else
-      color.w[3] = std::min(65535, color.w[3] + 3277);
+      color.w[3] = std::min(MAX_SRGB_VAL, color.w[3] + MAX_SRGB_VAL / 20);
     break;
 
   case FLAG_0:
@@ -764,7 +764,7 @@ void EditMode::doCommand(int command) {
           break;
         case REPAIR_COLOR_ROUND:
           for (int m = 0; m < 4; m++) {
-            float mscale = 0.05 * 65535.f;
+            float mscale = MAX_SRGB_VAL / 20;
             for (int k = 0; k < 4; k++) {
               c.colors[k].w[m] = mscale * roundint(c.colors[k].w[m] / mscale);
             }

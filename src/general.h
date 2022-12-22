@@ -88,27 +88,29 @@ class Coord3d {
 };
 inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale; }
 
+/* color values are on a 0-10000 scale, to cleanly represent the map colors,
+ * which are multiples of 0.01 ; the extra resolution is to allow smooth
+ * interpolation. */
+#define MAX_SRGB_VAL 10000
 class SRGBColor {
  public:
   SRGBColor() {
     w[0] = 0;
     w[1] = 0;
     w[2] = 0;
-    w[3] = 65535;
+    w[3] = MAX_SRGB_VAL;
   }
   SRGBColor(float fr, float fg, float fb, float fa) {
-    w[0] = std::round(65535.f * fr);
-    w[1] = std::round(65535.f * fg);
-    w[2] = std::round(65535.f * fb);
-    w[3] = std::round(65535.f * fa);
+    w[0] = std::round(MAX_SRGB_VAL * fr);
+    w[1] = std::round(MAX_SRGB_VAL * fg);
+    w[2] = std::round(MAX_SRGB_VAL * fb);
+    w[3] = std::round(MAX_SRGB_VAL * fa);
   };
-  bool isOpaque() const {
-    return w[3] >= 64800;  // include near-opaque
-  }
-  float f0() const { return w[0] / 65535.f; }
-  float f1() const { return w[1] / 65535.f; }
-  float f2() const { return w[2] / 65535.f; }
-  float f3() const { return w[3] / 65535.f; }
+  bool isOpaque() const { return w[3] == MAX_SRGB_VAL; }
+  float f0() const { return w[0] / (float)MAX_SRGB_VAL; }
+  float f1() const { return w[1] / (float)MAX_SRGB_VAL; }
+  float f2() const { return w[2] / (float)MAX_SRGB_VAL; }
+  float f3() const { return w[3] / (float)MAX_SRGB_VAL; }
   uint16_t w[4];
 };
 
