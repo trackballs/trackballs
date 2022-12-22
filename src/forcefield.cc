@@ -31,12 +31,14 @@ ForceField::ForceField(Game &g, const Coord3d &pos, const Coord3d &dir, Real h, 
   primaryColor = Color(SRGBColor(0.3, 1.0, 0.3, 1.0));
   secondaryColor = Color(SRGBColor(1.0, 1.0, 1.0, 1.0));
   bounceFactor = 2.5;
-  boundingBox[0][0] = -std::abs(dir[0]);
-  boundingBox[0][1] = -std::abs(dir[1]);
-  boundingBox[0][2] = -std::abs(dir[2]) - h;
-  boundingBox[1][0] = +std::abs(dir[0]);
-  boundingBox[1][1] = +std::abs(dir[1]);
-  boundingBox[1][2] = +std::abs(dir[2]) + h;
+  Coord3d end = pos + dir;
+
+  boundingBox[0][0] = std::min(pos[0], end[0]) - pos[0];
+  boundingBox[0][1] = std::min(pos[1], end[1]) - pos[1];
+  boundingBox[0][2] = std::min(pos[2], end[2]) - pos[2];
+  boundingBox[1][0] = std::max(pos[0], end[0]) - pos[0];
+  boundingBox[1][1] = std::max(pos[1], end[1]) - pos[1];
+  boundingBox[1][2] = std::max(pos[2], end[2]) - pos[2] + h;
 }
 void ForceField::updateBuffers(const GLuint *idxbufs, const GLuint *databufs,
                                const GLuint *vaolist, bool /*firstCall*/) {

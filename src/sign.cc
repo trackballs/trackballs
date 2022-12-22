@@ -63,11 +63,11 @@ void Sign::mkTexture(const char *string) {
   SDL_FreeSurface(text);
   textureChanged = true;
 
-  /* Note oversided bounding box since the sign rotates */
-  boundingBox[0][0] = -std::sqrt(2) * SIGN_SCALE * scale * width;
-  boundingBox[1][0] = +std::sqrt(2) * SIGN_SCALE * scale * width;
-  boundingBox[0][1] = -std::sqrt(2) * SIGN_SCALE * scale * width;
-  boundingBox[1][1] = +std::sqrt(2) * SIGN_SCALE * scale * width;
+  /* This bounding box contains the sign as it rotates  */
+  boundingBox[0][0] = -SIGN_SCALE * scale * width;
+  boundingBox[1][0] = +SIGN_SCALE * scale * width;
+  boundingBox[0][1] = -SIGN_SCALE * scale * width;
+  boundingBox[1][1] = +SIGN_SCALE * scale * width;
   boundingBox[0][2] = -SIGN_SCALE * scale * height;
   boundingBox[1][2] = SIGN_SCALE * scale * height;
 }

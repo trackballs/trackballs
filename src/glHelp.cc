@@ -1640,6 +1640,9 @@ bool testBboxClip(double x1, double x2, double y1, double y2, double z1, double 
   // Construct axis-aligned bounding box in window space
   double vxl = 1e99, vyl = 1e99, vzl = 1e99;
   double vxh = -1e99, vyh = -1e99, vzh = -1e99;
+  // todo: Fix this intersection test. It's possible for all corners to be
+  // outside of the field of view yet for the box itself to remain in view.
+  // this generally happens for long forcefields or pipes
   for (int i = 0; i < 8; i++) {
     double w[3] = {0., 0., 0.};
     double p[3] = {(i & 4) ? x1 : x2, (i & 2) ? y1 : y2, (i & 1) ? z1 : z2};
