@@ -90,7 +90,7 @@
 
    (lambda () (set-cell-heights 206 239 206 239 -2.1 -2.1 -2.1 -2.1)
    )
-   (lambda () (set-cell-heights 206 239 206 239 -5.1 -5.1 -5.1 -5.1))  
+   (lambda () (set-cell-heights 206 239 206 239 -5.2 -5.0 -5.1 -4.9))  
 
 )
 
@@ -98,7 +98,7 @@
 
    (lambda () (set-cell-heights 208 235 208 235 -2.8 -2.8 -2.8 -2.8)
    )
-   (lambda () (set-cell-heights 208 235 208 235 -5.8 -5.8 -5.8 -5.8))  
+   (lambda () (set-cell-heights 208 235 208 235 -5.8 -5.6 -5.9 -5.7))  
 
 )
 
@@ -108,7 +108,7 @@
 
    (lambda () (set-cell-heights 207 228 207 228 -4.2 -4.2 -4.2 -4.2)
    )
-   (lambda () (set-cell-heights 207 228 207 228 -7.2 -7.2 -7.2 -7.2))  
+   (lambda () (set-cell-heights 207 228 207 228 -7.3 -7.1 -7.2 -7.0))  
 
 )
 
@@ -117,7 +117,7 @@
 
    (lambda () (set-cell-heights 206 222 206 222 -3.7 -3.7 -3.7 -3.7)
    )
-   (lambda () (set-cell-heights 206 222 206 222 -6.7 -6.7 -6.7 -6.7))  
+   (lambda () (set-cell-heights 206 222 206 222 -6.6 -6.8 -6.5 -6.7))  
 
 )
 
@@ -126,7 +126,7 @@
 
    (lambda () (set-cell-heights 208 217 208 217 -2.6 -2.6 -2.6 -2.6)
    )
-   (lambda () (set-cell-heights 208 217 208 217 -5.6 -5.6 -5.6 -5.6))  
+   (lambda () (set-cell-heights 208 217 208 217 -5.4 -5.6 -5.5 -5.7))  
 
 )
 
@@ -135,7 +135,7 @@
 
    (lambda () (set-cell-heights 210 211 210 211 -1.6 -1.6 -1.6 -1.6)
    )
-   (lambda () (set-cell-heights 210 211 210 211 -4.6 -4.6 -4.6 -4.6))  
+   (lambda () (set-cell-heights 210 211 210 211 -4.4 -4.6 -4.5 -4.7))  
 
 )
 
