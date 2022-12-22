@@ -485,6 +485,25 @@ int cellInfo = 0;
 char* infoNames[nInfos] = {_("Cell height"), _("Cell water height"), _("Textures")};
 
 void EditMode::mouseDown(int state, int x, int y) { MyWindow::mouseDownAll(state, x, y); }
+
+static uint16_t incrementColor(uint16_t srgb, bool decrease) {
+  if (decrease) {
+    if (srgb == 0)
+      return MAX_SRGB_VAL;
+    else if (srgb <= MAX_SRGB_VAL / 20)
+      return 0;
+    else
+      return srgb - MAX_SRGB_VAL / 20;
+  } else {
+    if (srgb >= MAX_SRGB_VAL)
+      return 0;
+    else if (srgb >= MAX_SRGB_VAL - MAX_SRGB_VAL / 20)
+      return MAX_SRGB_VAL;
+    else
+      return srgb + MAX_SRGB_VAL / 20;
+  }
+}
+
 void EditMode::doCommand(int command) {
   int mouseX, mouseY;
   int mouseState;
@@ -532,6 +551,7 @@ void EditMode::doCommand(int command) {
     yLow = yHigh = y;
   }
 
+  bool not_lbutton = (mouseState & SDL_BUTTON_LMASK) ? 0 : 1;
   switch (command) {
   case EDIT_HEIGHT:
   case EDIT_COLOR:
@@ -550,47 +570,35 @@ void EditMode::doCommand(int command) {
     break;
 
   case EDIT_UPPER:
-    doCellAction(CODE_CELL_N, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_N, not_lbutton);
     break;
   case EDIT_BOTTOM:
-    doCellAction(CODE_CELL_S, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_S, not_lbutton);
     break;
   case EDIT_LEFT:
-    doCellAction(CODE_CELL_W, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_W, not_lbutton);
     break;
   case EDIT_RIGHT:
-    doCellAction(CODE_CELL_E, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_E, not_lbutton);
     break;
   case EDIT_ALL:
-    doCellAction(CODE_CELL_ALL, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_ALL, not_lbutton);
     break;
   case EDIT_CENTER:
-    doCellAction(CODE_CELL_C, mouseState & SDL_BUTTON_LMASK ? 0 : 1);
+    doCellAction(CODE_CELL_C, not_lbutton);
     break;
 
   case COLOR_RED:
-    if (color.w[0] >= MAX_SRGB_VAL)
-      color.w[0] = 0;
-    else
-      color.w[0] = std::min(MAX_SRGB_VAL, color.w[0] + MAX_SRGB_VAL / 20);
+    color.w[0] = incrementColor(color.w[0], not_lbutton);
     break;
   case COLOR_GREEN:
-    if (color.w[1] >= MAX_SRGB_VAL)
-      color.w[1] = 0;
-    else
-      color.w[1] = std::min(MAX_SRGB_VAL, color.w[1] + MAX_SRGB_VAL / 20);
+    color.w[1] = incrementColor(color.w[1], not_lbutton);
     break;
   case COLOR_BLUE:
-    if (color.w[2] >= MAX_SRGB_VAL)
-      color.w[2] = 0;
-    else
-      color.w[2] = std::min(MAX_SRGB_VAL, color.w[2] + MAX_SRGB_VAL / 20);
+    color.w[2] = incrementColor(color.w[2], not_lbutton);
     break;
   case COLOR_ALPHA:
-    if (color.w[3] >= MAX_SRGB_VAL)
-      color.w[3] = 0;
-    else
-      color.w[3] = std::min(MAX_SRGB_VAL, color.w[3] + MAX_SRGB_VAL / 20);
+    color.w[3] = incrementColor(color.w[3], not_lbutton);
     break;
 
   case FLAG_0:
