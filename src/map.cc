@@ -1351,13 +1351,13 @@ int Map::save(char* pathname, int x, int y) {
 
 void Cell::dump(gzFile gp) const {
   int32_t data[8];
-  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)std::round(heights[i] / 0.0025));
+  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)roundint(heights[i] / 0.0025));
   gzwrite(gp, data, sizeof(int32_t) * 5);
   for (int i = 0; i < 5; i++) {
-    data[0] = saveInt((int32_t)std::round(colors[i].f0() / 0.01));
-    data[1] = saveInt((int32_t)std::round(colors[i].f1() / 0.01));
-    data[2] = saveInt((int32_t)std::round(colors[i].f2() / 0.01));
-    data[3] = saveInt((int32_t)std::round(colors[i].f3() / 0.01));
+    data[0] = saveInt((int32_t)roundint(colors[i].f0() / 0.01));
+    data[1] = saveInt((int32_t)roundint(colors[i].f1() / 0.01));
+    data[2] = saveInt((int32_t)roundint(colors[i].f2() / 0.01));
+    data[3] = saveInt((int32_t)roundint(colors[i].f3() / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
   data[0] = saveInt((int32_t)flags);
@@ -1365,18 +1365,18 @@ void Cell::dump(gzFile gp) const {
   gzwrite(gp, data, sizeof(int32_t) * 2);
 
   for (int i = 0; i < 4; i++) {
-    data[0] = saveInt((int32_t)std::round(wallColors[i].f0() / 0.01));
-    data[1] = saveInt((int32_t)std::round(wallColors[i].f1() / 0.01));
-    data[2] = saveInt((int32_t)std::round(wallColors[i].f2() / 0.01));
-    data[3] = saveInt((int32_t)std::round(wallColors[i].f3() / 0.01));
+    data[0] = saveInt((int32_t)roundint(wallColors[i].f0() / 0.01));
+    data[1] = saveInt((int32_t)roundint(wallColors[i].f1() / 0.01));
+    data[2] = saveInt((int32_t)roundint(wallColors[i].f2() / 0.01));
+    data[3] = saveInt((int32_t)roundint(wallColors[i].f3() / 0.01));
     gzwrite(gp, data, sizeof(int32_t) * 4);
   }
 
-  data[0] = saveInt((int32_t)std::round(velocity[0] / 0.01));
-  data[1] = saveInt((int32_t)std::round(velocity[1] / 0.01));
+  data[0] = saveInt((int32_t)roundint(velocity[0] / 0.01));
+  data[1] = saveInt((int32_t)roundint(velocity[1] / 0.01));
   gzwrite(gp, data, sizeof(int32_t) * 2);
 
-  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)std::round(waterHeights[i] / 0.0025));
+  for (int i = 0; i < 5; i++) data[i] = saveInt((int32_t)roundint(waterHeights[i] / 0.0025));
   gzwrite(gp, data, sizeof(int32_t) * 5);
 
   for (int i = 0; i < 4; i++) {

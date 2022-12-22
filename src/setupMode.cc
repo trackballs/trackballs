@@ -149,7 +149,7 @@ void SetupMode::display() {
   countObjectSpherePoints(&ntries, &nverts, detail);
   GLfloat *data = new GLfloat[nverts * 8];
   ushort *idxs = new ushort[ntries * 3];
-  Coord3d pos = {0.f, 0.f, 0.f};
+  Coord3d pos(0.f, 0.f, 0.f);
   Color color = colors[gamer->color];
   Matrix4d frommtx;
   identityMatrix(frommtx);

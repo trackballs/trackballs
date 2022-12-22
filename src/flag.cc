@@ -73,7 +73,9 @@ FlagRenderer::FlagRenderer() {
 }
 
 FlagRenderer::~FlagRenderer() {
-  for (std::pair<struct FlagDrawState, struct FlagBuffer> v : buffers) {
+  for (std::map<struct FlagDrawState, struct FlagBuffer>::iterator i = buffers.begin();
+       i != buffers.end(); i++) {
+    std::pair<struct FlagDrawState, struct FlagBuffer> v = *i;
     glDeleteVertexArrays(1, &v.second.vao);
     glDeleteBuffers(1, &v.second.vertexBuffer);
   }
@@ -91,11 +93,13 @@ void FlagRenderer::draw(std::vector<GameHook *> flags) {
 
   // first, drop all buffers which no longer have _any_ matching flags.
   // todo: only do this once per frame
-  for (std::pair<struct FlagDrawState, struct FlagBuffer> v : buffers) {
+  for (std::map<struct FlagDrawState, struct FlagBuffer>::iterator i = buffers.begin();
+       i != buffers.end(); i++) {
+    std::pair<struct FlagDrawState, struct FlagBuffer> v = *i;
     buffers[v.first].active = false;
   }
-  for (GameHook *g : flags) {
-    Flag *f = dynamic_cast<Flag *>(g);
+  for (std::vector<GameHook *>::iterator g = flags.begin(); g != flags.end(); g++) {
+    Flag *f = dynamic_cast<Flag *>(*g);
     if (!f) {
       warning("Input array contained something that was not a flag");
       return;
@@ -120,8 +124,8 @@ void FlagRenderer::draw(std::vector<GameHook *> flags) {
   glBindTexture(GL_TEXTURE_2D, textureBlank);
 
   // then, create or update buffers in all desired configurations
-  for (GameHook *g : flags) {
-    Flag *f = (Flag *)(g);
+  for (std::vector<GameHook *>::iterator g = flags.begin(); g != flags.end(); g++) {
+    Flag *f = (Flag *)(*g);
     if (!f->visible || !f->onScreen) { continue; }
 
     struct FlagDrawState state;
@@ -183,8 +187,8 @@ void FlagRenderer::draw(std::vector<GameHook *> flags) {
   }
 
   // second, run the draw operation
-  for (GameHook *g : flags) {
-    Flag *f = (Flag *)g;
+  for (std::vector<GameHook *>::iterator g = flags.begin(); g != flags.end(); g++) {
+    Flag *f = (Flag *)(*g);
     if (!f->visible || !f->onScreen) { continue; }
 
     struct FlagDrawState state;

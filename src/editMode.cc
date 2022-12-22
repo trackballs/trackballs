@@ -484,11 +484,6 @@ typedef enum { eInfo_Height = 0, eInfo_WaterHeight, eInfo_Textures, nInfos } eCe
 int cellInfo = 0;
 char* infoNames[nInfos] = {_("Cell height"), _("Cell water height"), _("Textures")};
 
-int roundint(double f) {
-  /* std::round is C++11. */
-  return std::floor(f + 0.5);
-}
-
 void EditMode::mouseDown(int state, int x, int y) { MyWindow::mouseDownAll(state, x, y); }
 void EditMode::doCommand(int command) {
   int mouseX, mouseY;

@@ -653,7 +653,8 @@ static void constructSphereData(int detail) {
     int ntris = base_ntries * 4;
     GLfloat *vertc = new GLfloat[nverts * 5];
     ushort *idxsc = new ushort[ntris * 3];
-    for (std::pair<struct edge, uint16_t> p : edges) {
+    for (std::map<struct edge, uint16_t>::iterator i = edges.begin(); i != edges.end(); i++) {
+      std::pair<struct edge, uint16_t> p = *i;
       // vertex produced is midpoint of sources.
       const GLfloat *p0 = &base_verts[5 * p.first.i0];
       const GLfloat *p1 = &base_verts[5 * p.first.i1];

@@ -409,7 +409,7 @@ void Ball::drawBuffers1(const GLuint *vaolist) const {
     glEnable(GL_CULL_FACE);
   }
 
-  Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+  Coord3d loc((GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink));
 
   {
     int ntries = 0;
@@ -552,7 +552,7 @@ void Ball::drawBuffers2(const GLuint *vaolist) const {
   if (dontReflectSelf) return;
   if (activeView.calculating_shadows) return;
 
-  Coord3d loc = {(GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink)};
+  Coord3d loc((GLfloat)position[0], (GLfloat)position[1], (GLfloat)(position[2] - sink));
 
   if (modTimeLeft[MOD_EXTRA_LIFE]) {
     glEnable(GL_BLEND);

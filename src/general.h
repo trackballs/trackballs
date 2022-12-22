@@ -88,6 +88,11 @@ class Coord3d {
 };
 inline Coord3d operator*(double scale, const Coord3d &vec) { return vec * scale; }
 
+inline int roundint(double f) {
+  /* std::round is C++11. It has slightly different tie breaking behavior. */
+  return std::floor(f + 0.5);
+}
+
 /* color values are on a 0-10000 scale, to cleanly represent the map colors,
  * which are multiples of 0.01 ; the extra resolution is to allow smooth
  * interpolation. */
@@ -101,10 +106,10 @@ class SRGBColor {
     w[3] = MAX_SRGB_VAL;
   }
   SRGBColor(float fr, float fg, float fb, float fa) {
-    w[0] = std::round(MAX_SRGB_VAL * fr);
-    w[1] = std::round(MAX_SRGB_VAL * fg);
-    w[2] = std::round(MAX_SRGB_VAL * fb);
-    w[3] = std::round(MAX_SRGB_VAL * fa);
+    w[0] = roundint(MAX_SRGB_VAL * fr);
+    w[1] = roundint(MAX_SRGB_VAL * fg);
+    w[2] = roundint(MAX_SRGB_VAL * fb);
+    w[3] = roundint(MAX_SRGB_VAL * fa);
   };
   bool isOpaque() const { return w[3] == MAX_SRGB_VAL; }
   float f0() const { return w[0] / (float)MAX_SRGB_VAL; }
