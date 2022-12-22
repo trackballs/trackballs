@@ -117,10 +117,8 @@ void Sign::drawBuffers1(const GLuint * /*vaolist*/) const {}
 void Sign::drawBuffers2(const GLuint *vaolist) const {
   if (activeView.calculating_shadows) return;
 
-  // Keep the depth function on but trivial so as to record depth values
   glEnable(GL_BLEND);
   glEnable(GL_CULL_FACE);
-  glDepthFunc(GL_ALWAYS);
 
   // Transfer data
   Matrix4d transform;
@@ -136,8 +134,6 @@ void Sign::drawBuffers2(const GLuint *vaolist) const {
 
   glBindVertexArray(vaolist[0]);
   glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, (void *)0);
-
-  glDepthFunc(GL_LEQUAL);
 }
 
 void Sign::tick(Real t) {
