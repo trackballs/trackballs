@@ -108,7 +108,7 @@
   (set-cell-heights 122 106 130 103 -3.0 -3.0 -3.0 -3.0)
   (set-cell-heights 123 104 129 103 -2.5 -2.5 -2.5 -2.5)
   (set-cell-heights 124 103 128 103 -2.0 -2.0 -2.0 -2.0)
-  (set-primary-color (sign (_ "You have access to the complex.") 0.8 1.0 -0.1 128 124) 0.2 0.5 1.0 1.0)
+  (set-primary-color (sign (_ "You have access to the complex.") 0.8 1.0 -0.1 128 124 8.5) 0.2 0.5 1.0 1.0)
   (set-onoff blinker1 #f)
   ;(set-onoff tempsign #f)
 ))
