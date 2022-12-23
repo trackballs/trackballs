@@ -238,7 +238,7 @@
   (set-cell-heights 164 184 164 186 -0.5 -0.5 0.0 0.0)
   (set-cell-heights 165 184 165 186 0.0 0.0 0.5 0.5)
   (set-cell-heights 166 184 166 186 0.5 0.5 1.0 1.0)
-  (set-primary-color (sign "You may cross the Garden." 0.8 1.0 -0.1 159 148) 0.9 0.6 0.0 1.0)
+  (set-primary-color (sign (_ "You may cross the Garden.") 0.8 1.0 -0.1 159 148) 0.9 0.6 0.0 1.0)
   (set-onoff blinker #f)
 ))
 

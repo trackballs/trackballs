@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-03 21:38-0400\n"
+"POT-Creation-Date: 2022-12-22 19:38-0500\n"
 "PO-Revision-Date: 2022-07-12 14:38+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch\n"
@@ -17,49 +17,49 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Lokalize 22.04.2\n"
 
-#: ../src/calibrateJoystickMode.cc:105
+#: ../src/calibrateJoystickMode.cc:111
 msgid "Calibrating Joystick"
 msgstr "Joystick afstellen"
 
-#: ../src/calibrateJoystickMode.cc:111
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Center joystick"
 msgstr "Zet de joystick in de neutrale stand"
 
-#: ../src/calibrateJoystickMode.cc:111
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Move joystick left"
 msgstr "Duw de joystick naar links"
 
-#: ../src/calibrateJoystickMode.cc:111
+#: ../src/calibrateJoystickMode.cc:117
 msgid "Move joystick right"
 msgstr "Duw de joystick naar rechts"
 
-#: ../src/calibrateJoystickMode.cc:112
+#: ../src/calibrateJoystickMode.cc:118
 msgid "Move joystick up"
 msgstr "Duw de joystick omhoog"
 
-#: ../src/calibrateJoystickMode.cc:112
+#: ../src/calibrateJoystickMode.cc:118
 msgid "Move joystick down"
 msgstr "Duw de joystick omlaag"
 
-#: ../src/calibrateJoystickMode.cc:118
+#: ../src/calibrateJoystickMode.cc:124
 msgid "Press any button to continue"
 msgstr "Druk op een knop om door te gaan"
 
-#: ../src/calibrateJoystickMode.cc:120
+#: ../src/calibrateJoystickMode.cc:126
 msgid "Press escape to cancel"
 msgstr "Druk op escape om te annuleren"
 
-#: ../src/calibrateJoystickMode.cc:122
+#: ../src/calibrateJoystickMode.cc:128
 #, c-format
 msgid "now: %d %d"
 msgstr "Momenteel: %d %d"
 
-#: ../src/calibrateJoystickMode.cc:127
+#: ../src/calibrateJoystickMode.cc:133
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
 msgstr "Midden: %d %d - Links: %d - Rechts: %d - Omhoog: %d - Omlaag: %d"
 
-#: ../src/diamond.cc:116
+#: ../src/diamond.cc:111
 msgid "Save point"
 msgstr "Herstelpunt"
 
@@ -107,7 +107,7 @@ msgstr "Beeld"
 msgid "New"
 msgstr "Nieuw"
 
-#: ../src/editMode.cc:178 ../src/editWindows.cc:482
+#: ../src/editMode.cc:178 ../src/editWindows.cc:480
 msgid "Open"
 msgstr "Openen"
 
@@ -403,39 +403,39 @@ msgstr "Kleine afvlakking"
 msgid "Large smooth"
 msgstr "Grote afvlakking"
 
-#: ../src/editMode.cc:343 ../src/mainMode.cc:175
+#: ../src/editMode.cc:337 ../src/mainMode.cc:163
 msgid "Track:"
 msgstr "Parcours:"
 
-#: ../src/editMode.cc:344
+#: ../src/editMode.cc:338
 msgid "This is the default script file for this track."
 msgstr "Dit is het standaard scriptbestand van het parcours."
 
-#: ../src/editMode.cc:346
+#: ../src/editMode.cc:340
 msgid "Read the documentation for the editor and look at the examples"
 msgstr "Neem de documentatie van de bewerker door en bekijk voorbeelden"
 
-#: ../src/editMode.cc:347
+#: ../src/editMode.cc:341
 msgid "to learn how to customize it"
 msgstr "om te leren hoe je e.e.a. aanpast"
 
-#: ../src/editMode.cc:350
+#: ../src/editMode.cc:343
 msgid "Enter your name here"
 msgstr "Voer je naam in"
 
-#: ../src/editMode.cc:354
+#: ../src/editMode.cc:347
 msgid "Add the name of the next level here"
 msgstr "Voer de naam van het volgende parcours in"
 
-#: ../src/editMode.cc:497
+#: ../src/editMode.cc:485
 msgid "Cell height"
 msgstr "Celhoogte"
 
-#: ../src/editMode.cc:497
+#: ../src/editMode.cc:485
 msgid "Cell water height"
 msgstr "Watercelhoogte"
 
-#: ../src/editMode.cc:497
+#: ../src/editMode.cc:485
 msgid "Textures"
 msgstr "Texturen"
 
@@ -486,45 +486,45 @@ msgstr "Verhoging: %3.2f"
 msgid "Edit: %s"
 msgstr "Bewerken: %s"
 
-#: ../src/editWindows.cc:214
+#: ../src/editWindows.cc:216
 msgid "Heights"
 msgstr "Hoogtes"
 
-#: ../src/editWindows.cc:230
+#: ../src/editWindows.cc:232
 msgid "Water heights"
 msgstr "Waterhoogtes"
 
-#: ../src/editWindows.cc:246
+#: ../src/editWindows.cc:248
 #, c-format
 msgid "red: %2.2f"
 msgstr "rood: %2.2f"
 
-#: ../src/editWindows.cc:248
+#: ../src/editWindows.cc:250
 #, c-format
 msgid "green: %2.2f"
 msgstr "groen: %2.2f"
 
-#: ../src/editWindows.cc:251
+#: ../src/editWindows.cc:253
 #, c-format
 msgid "blue: %2.2f"
 msgstr "blauw: %2.2f"
 
-#: ../src/editWindows.cc:254
+#: ../src/editWindows.cc:256
 #, c-format
 msgid "alpha: %2.2f"
 msgstr "alfa: %2.2f"
 
-#: ../src/editWindows.cc:263
+#: ../src/editWindows.cc:264
 #, c-format
 msgid "dx: %2.2f"
 msgstr "dx: %2.2f"
 
-#: ../src/editWindows.cc:265
+#: ../src/editWindows.cc:266
 #, c-format
 msgid "dy: %2.2f"
 msgstr "dy: %2.2f"
 
-#: ../src/editWindows.cc:268
+#: ../src/editWindows.cc:269
 msgid "Lines"
 msgstr "Lijnen"
 
@@ -560,394 +560,394 @@ msgstr "grote afvlakking"
 msgid "Quit without saving?"
 msgstr "Wil je afsluiten zonder alles op te slaan?"
 
-#: ../src/editWindows.cc:363 ../src/editWindows.cc:402
-#: ../src/editWindows.cc:449 ../src/settingsMode.cc:131
-#: ../src/settingsMode.cc:134 ../src/settingsMode.cc:178
-#: ../src/settingsMode.cc:180 ../src/settingsMode.cc:194
-#: ../src/settingsMode.cc:243
+#: ../src/editWindows.cc:363 ../src/editWindows.cc:400
+#: ../src/editWindows.cc:447 ../src/settingsMode.cc:136
+#: ../src/settingsMode.cc:139 ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:185 ../src/settingsMode.cc:199
+#: ../src/settingsMode.cc:247 ../src/settingsMode.cc:253
 msgid "Yes"
 msgstr "Ja"
 
-#: ../src/editWindows.cc:364 ../src/editWindows.cc:403
-#: ../src/editWindows.cc:450 ../src/settingsMode.cc:131
-#: ../src/settingsMode.cc:134 ../src/settingsMode.cc:139
-#: ../src/settingsMode.cc:178 ../src/settingsMode.cc:180
-#: ../src/settingsMode.cc:194 ../src/settingsMode.cc:243
-#, c-format
+#: ../src/editWindows.cc:364 ../src/editWindows.cc:401
+#: ../src/editWindows.cc:448 ../src/settingsMode.cc:136
+#: ../src/settingsMode.cc:139 ../src/settingsMode.cc:144
+#: ../src/settingsMode.cc:183 ../src/settingsMode.cc:185
+#: ../src/settingsMode.cc:199 ../src/settingsMode.cc:247
+#: ../src/settingsMode.cc:253
 msgid "No"
 msgstr "Nee"
 
-#: ../src/editWindows.cc:401
+#: ../src/editWindows.cc:399
 msgid "Save map?"
 msgstr "Wil je de kaart opslaan?"
 
-#: ../src/editWindows.cc:405
+#: ../src/editWindows.cc:403
 msgid "Saving"
 msgstr "Opslaan"
 
-#: ../src/editWindows.cc:448
+#: ../src/editWindows.cc:446
 msgid "Close without saving?"
 msgstr "Wil je sluiten zonder alles op te slaan?"
 
-#: ../src/editWindows.cc:479
+#: ../src/editWindows.cc:477
 msgid "Name of map"
 msgstr "Kaartnaam"
 
-#: ../src/editWindows.cc:481 ../src/editWindows.cc:536
+#: ../src/editWindows.cc:479 ../src/editWindows.cc:534
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: ../src/editWindows.cc:527
+#: ../src/editWindows.cc:525
 msgid "Open map"
 msgstr "Kaart openen"
 
-#: ../src/editWindows.cc:534
+#: ../src/editWindows.cc:532
 #, c-format
 msgid "page %d / %d"
 msgstr "pagina %d/%d"
 
-#: ../src/enterHighScoreMode.cc:59
+#: ../src/enterHighScoreMode.cc:65
 msgid "High Score"
 msgstr "Topscore"
 
-#: ../src/enterHighScoreMode.cc:63
+#: ../src/enterHighScoreMode.cc:69
 #, c-format
 msgid "You got %d points"
 msgstr "Je hebt %d punten behaald"
 
-#: ../src/enterHighScoreMode.cc:66
+#: ../src/enterHighScoreMode.cc:72
 #, c-format
 msgid "Enter your name: %s"
 msgstr "Voer je naam in: %s"
 
-#: ../src/gamer.cc:37
+#: ../src/gamer.cc:39
 msgid "John Doe"
 msgstr "Jan Jansen"
 
-#: ../src/glHelp.cc:1265
+#: ../src/glHelp.cc:1516
 msgid "Framerate:"
 msgstr "Framesnelheid:"
 
-#: ../src/glHelp.cc:1269
+#: ../src/glHelp.cc:1520
 #, c-format
 msgid "unknown"
 msgstr "onbekend"
 
-#: ../src/glHelp.cc:1272
+#: ../src/glHelp.cc:1523
 msgid "ms/Frame:"
 msgstr "ms/frame:"
 
-#: ../src/helpMode.cc:183
+#: ../src/helpMode.cc:179
 msgid "Your marble:"
 msgstr "Je knikker:"
 
-#: ../src/helpMode.cc:184
+#: ../src/helpMode.cc:180
 msgid "Steer this with your mouse, numpad or arrows. "
 msgstr "Rol de knikker met je muis, numpad of pijltjestoetsen."
 
-#: ../src/helpMode.cc:185
+#: ../src/helpMode.cc:181
 msgid "Left mouse or spacebar is jump."
 msgstr "Springen kan met de linkermuisknop of spatiebalk."
 
-#: ../src/helpMode.cc:186
+#: ../src/helpMode.cc:182
 msgid "Shift gives top speed when using keyboard."
 msgstr "Met shift bereik je de topsnelheid."
 
-#: ../src/helpMode.cc:188
+#: ../src/helpMode.cc:184
 msgid "Mr Black:"
 msgstr "Mr. Zwart:"
 
-#: ../src/helpMode.cc:189
+#: ../src/helpMode.cc:185
 msgid "Your enemy. Defeat with Modpill - Spike."
 msgstr "Je aartsvijand. Versla hem met een stekelpil."
 
-#: ../src/helpMode.cc:191
+#: ../src/helpMode.cc:187
 msgid "Modpill Speed:"
 msgstr "Snelheidspil:"
 
-#: ../src/helpMode.cc:192
+#: ../src/helpMode.cc:188
 msgid "Makes you go faster for short period of time."
 msgstr "Versnelt je knikker gedurende korte tijd."
 
-#: ../src/helpMode.cc:194
+#: ../src/helpMode.cc:190
 msgid "Modpill Spikes:"
 msgstr "Stekelpil:"
 
-#: ../src/helpMode.cc:195
+#: ../src/helpMode.cc:191
 msgid "Weapon against Mr Black and grip for icy terrain."
 msgstr "Hét wapen tegen Mr. Zwart, maar biedt ook grip op glad terrein."
 
-#: ../src/helpMode.cc:198
+#: ../src/helpMode.cc:194
 msgid "Modpill Freeze:"
 msgstr "Vriespil:"
 
-#: ../src/helpMode.cc:199
+#: ../src/helpMode.cc:195
 msgid "This will freeze you - avoid it."
 msgstr "Deze pil bevriest je knikker, dus pas op!"
 
-#: ../src/helpMode.cc:201
+#: ../src/helpMode.cc:197
 msgid "Modpill Glass:"
 msgstr "Glaspil:"
 
-#: ../src/helpMode.cc:202
+#: ../src/helpMode.cc:198
 msgid "Protects you from acid, but makes you more fragile."
 msgstr "Beschermt je knikker tegen zuur, maar maakt hem ook fragieler."
 
-#: ../src/helpMode.cc:204
+#: ../src/helpMode.cc:200
 msgid "Modpill Nitro:"
 msgstr "Turbogaspil:"
 
-#: ../src/helpMode.cc:205
+#: ../src/helpMode.cc:201
 msgid "Move really fast. Active nitro with second button."
 msgstr "Versnelt je knikker standje turbo. Activeer met de tweede knop."
 
-#: ../src/helpMode.cc:207
+#: ../src/helpMode.cc:203
 msgid "Switch:"
 msgstr "Schakelaar:"
 
-#: ../src/helpMode.cc:208
+#: ../src/helpMode.cc:204
 msgid "Activates/deactivates some object/element in the level."
 msgstr "Activeer/Deactiveer objecten/elementen binnen het parcours."
 
-#: ../src/helpMode.cc:211
+#: ../src/helpMode.cc:207
 msgid "Moving spike:"
 msgstr "Verplaatsbare stekel:"
 
-#: ../src/helpMode.cc:212
+#: ../src/helpMode.cc:208
 msgid "Obstacle to avoid."
 msgstr "Een obstakel dat je wilt vermijden."
 
-#: ../src/helpMode.cc:214
+#: ../src/helpMode.cc:210
 msgid "Flag:"
 msgstr "Vlag:"
 
-#: ../src/helpMode.cc:215
+#: ../src/helpMode.cc:211
 msgid "Collect for bonus points."
 msgstr "Verzamel vlaggen om bonuspunten te verzamelen."
 
-#: ../src/helpMode.cc:218
+#: ../src/helpMode.cc:214
 msgid "Normal terrain:"
 msgstr "Normaal terrein:"
 
-#: ../src/helpMode.cc:219
+#: ../src/helpMode.cc:215
 msgid "Can be of any color and is safe to move on."
 msgstr "Kan elke kleur zijn en is goed begaanbaar."
 
-#: ../src/helpMode.cc:221
+#: ../src/helpMode.cc:217
 msgid "Acid terrain:"
 msgstr "Verzuurd terrein:"
 
-#: ../src/helpMode.cc:222
+#: ../src/helpMode.cc:218
 msgid "Will kill your marble unless you have a glass modpill."
 msgstr "Maakt je knikker kapot, tenzij je een glaspil hebt."
 
-#: ../src/helpMode.cc:225
+#: ../src/helpMode.cc:221
 msgid "Icy terrain:"
 msgstr "IJsterrein:"
 
-#: ../src/helpMode.cc:226
+#: ../src/helpMode.cc:222
 msgid "Slippery terrain unless you have a spikes modpill."
 msgstr "Glad terrein, tenzij je een stekelpil hebt."
 
-#: ../src/helpMode.cc:228
+#: ../src/helpMode.cc:224
 msgid "Sandy terrain:"
 msgstr "Zandterrein:"
 
-#: ../src/helpMode.cc:229
+#: ../src/helpMode.cc:225
 msgid "Soft to land on but will slow you down."
 msgstr "Zacht om op te landen; langzaam om overheen te rollen."
 
-#: ../src/helpMode.cc:232
+#: ../src/helpMode.cc:228
 msgid "Goal:"
 msgstr "Doel:"
 
-#: ../src/helpMode.cc:233
+#: ../src/helpMode.cc:229
 msgid "Will take you to the next level."
 msgstr "Stuurt je naar het volgende parcours."
 
-#: ../src/helpMode.cc:234
+#: ../src/helpMode.cc:230
 msgid "Get here before time runs out."
 msgstr "Bereik dit punt voordat de tijd om is."
 
-#: ../src/helpMode.cc:237
+#: ../src/helpMode.cc:233
 msgid "Force Field:"
 msgstr "Krachtveld:"
 
-#: ../src/helpMode.cc:238
+#: ../src/helpMode.cc:234
 msgid "You cannot pass this unless you switch it off."
 msgstr "Je kunt niet voorbij het krachtveld, tenzij je het uitschakelt."
 
-#: ../src/helpMode.cc:239
+#: ../src/helpMode.cc:235
 msgid "Some are lethal and some are one way."
 msgstr "Sommige zijn dodelijk; sommige zijn eenrichtingsverkeer."
 
-#: ../src/helpMode.cc:242
+#: ../src/helpMode.cc:238
 msgid "Cactus:"
 msgstr "Cactus:"
 
-#: ../src/helpMode.cc:243
+#: ../src/helpMode.cc:239
 msgid "Spiky plant, lethal unless you have a spikes modpill."
 msgstr "Een stekelige, dodelijke plant, tenzij je een stekelpil hebt."
 
-#: ../src/helpMode.cc:246
+#: ../src/helpMode.cc:242
 msgid "Bird:"
 msgstr "Vogel:"
 
-#: ../src/helpMode.cc:247
+#: ../src/helpMode.cc:243
 msgid "Kills balls it flies across unless they have spikes."
 msgstr "Neemt een leven af, tenzij ze stekels hebben."
 
-#: ../src/helpMode.cc:250
+#: ../src/helpMode.cc:246
 msgid "Teleport:"
 msgstr "Teleportering:"
 
-#: ../src/helpMode.cc:251
+#: ../src/helpMode.cc:247
 msgid "Will send your marble somewhere else."
 msgstr "Stuurt je knikker naar een andere locatie."
 
-#: ../src/helpMode.cc:254
+#: ../src/helpMode.cc:250
 msgid "Tunnel:"
 msgstr "Tunnel:"
 
-#: ../src/helpMode.cc:255
+#: ../src/helpMode.cc:251
 msgid "Takes you places, sometimes with great speed."
 msgstr "Stuurt je knikker naar een andere locatie, soms op hoge snelheid."
 
-#: ../src/helpMode.cc:285
+#: ../src/helpMode.cc:279
 msgid "More Help"
 msgstr "Volgende pagina"
 
-#: ../src/helpMode.cc:287 ../src/hofMode.cc:110 ../src/settingsMode.cc:254
+#: ../src/helpMode.cc:281 ../src/hofMode.cc:113 ../src/settingsMode.cc:261
 msgid "Back"
 msgstr "Terug"
 
-#: ../src/hofMode.cc:89
+#: ../src/hofMode.cc:94
 msgid "High Scores"
 msgstr "Topscores"
 
-#: ../src/hofMode.cc:92 ../src/setupMode.cc:212
+#: ../src/hofMode.cc:97 ../src/setupMode.cc:219
 msgid "Level Set"
 msgstr "Parcoursreeks"
 
-#: ../src/hofMode.cc:100
+#: ../src/hofMode.cc:105
 msgid "Anonymous Coward"
 msgstr "Anonieme lafaard"
 
-#: ../src/hofMode.cc:104
+#: ../src/hofMode.cc:108
 #, c-format
 msgid "%d points"
 msgstr "%d punten"
 
-#: ../src/mainMode.cc:179 ../src/setupMode.cc:227
+#: ../src/mainMode.cc:167 ../src/setupMode.cc:234
 msgid "Unknown track"
 msgstr "Onbekend parcours"
 
-#: ../src/mainMode.cc:181
+#: ../src/mainMode.cc:169
 msgid "Author:"
 msgstr "Maker:"
 
-#: ../src/mainMode.cc:185
+#: ../src/mainMode.cc:173
 msgid "Unknown author"
 msgstr "Onbekende maker"
 
-#: ../src/mainMode.cc:187
+#: ../src/mainMode.cc:175
 msgid "Press spacebar to begin"
 msgstr "Druk op spatiebalk om te starten"
 
-#: ../src/mainMode.cc:199 ../src/mainMode.cc:208 ../src/mainMode.cc:234
-#: ../src/mainMode.cc:248
+#: ../src/mainMode.cc:187 ../src/mainMode.cc:196 ../src/mainMode.cc:223
+#: ../src/mainMode.cc:237
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Druk op spatiebalk om het spel voort te zetten"
 
-#: ../src/mainMode.cc:200
+#: ../src/mainMode.cc:188
 msgid "Game over"
 msgstr "Spel afgelopen"
 
-#: ../src/mainMode.cc:208
+#: ../src/mainMode.cc:196
 msgid "Oops"
 msgstr "Oeps"
 
-#: ../src/mainMode.cc:225
+#: ../src/mainMode.cc:214
 msgid "Paused"
 msgstr "Onderbroken"
 
-#: ../src/mainMode.cc:234
+#: ../src/mainMode.cc:223
 msgid "Bonus level complete"
 msgstr "Je hebt het bonusparcours afgelegd"
 
-#: ../src/mainMode.cc:248
+#: ../src/mainMode.cc:237
 msgid "Level complete"
 msgstr "Je hebt het parcours afgelegd"
 
-#: ../src/mainMode.cc:255
+#: ../src/mainMode.cc:244
 msgid "Congratulations"
 msgstr "Gefeliciteerd"
 
-#: ../src/mainMode.cc:255
+#: ../src/mainMode.cc:244
 msgid "You have completed the game!"
 msgstr "Je hebt het spel volledig doorlopen!"
 
-#: ../src/mainMode.cc:535 ../src/mainMode.cc:550
+#: ../src/mainMode.cc:548 ../src/mainMode.cc:563
 msgid "Good luck!"
 msgstr "Succes!"
 
-#: ../src/mainMode.cc:573
+#: ../src/mainMode.cc:587
 msgid "Lives"
 msgstr "Levens"
 
-#: ../src/mainMode.cc:573
+#: ../src/mainMode.cc:587
 msgid "Score"
 msgstr "Score"
 
-#: ../src/mainMode.cc:573
+#: ../src/mainMode.cc:587
 msgid "Time left"
 msgstr "Rest. tijd"
 
-#: ../src/mainMode.cc:644
+#: ../src/mainMode.cc:658
 #, c-format
 msgid "Level bonuses"
 msgstr "Parcoursbonussen"
 
-#: ../src/mainMode.cc:646
+#: ../src/mainMode.cc:660
 #, c-format
 msgid "Lives left:"
 msgstr "Aantal resterende levens:"
 
-#: ../src/mainMode.cc:647
+#: ../src/mainMode.cc:661
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punten"
 
-#: ../src/mainMode.cc:648
+#: ../src/mainMode.cc:662
 #, c-format
 msgid "Time left:"
 msgstr "Rest. tijd:"
 
-#: ../src/mainMode.cc:649
+#: ../src/mainMode.cc:663
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuten = %d punten"
 
-#: ../src/mainMode.cc:651
+#: ../src/mainMode.cc:665
 #, c-format
 msgid "Difficulty:"
 msgstr "Moeilijkheidsgraad"
 
-#: ../src/mainMode.cc:653
+#: ../src/mainMode.cc:667
 msgid "easy"
 msgstr "Makkelijk"
 
-#: ../src/mainMode.cc:653 ../src/settingsMode.cc:204
+#: ../src/mainMode.cc:667 ../src/settingsMode.cc:209
 #, c-format
 msgid "normal"
 msgstr "Gemiddeld"
 
-#: ../src/mainMode.cc:653
+#: ../src/mainMode.cc:667
 msgid "hard"
 msgstr "Moeilijk"
 
-#: ../src/menuMode.cc:70
+#: ../src/menuMode.cc:78
 msgid ""
 "Trackballs is a game similar to the classical game Marble Madness from the "
 "80's. By steering a marble ball through a labyrinth filled with sharp "
@@ -957,435 +957,433 @@ msgid ""
 "out.                                               You steer the ball using "
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
-"Trackballs is een spel dat vergelijkbaar is met het klassieke spel Marble"
-" Madness uit "
-"de jaren 80. Loods je knikker door een labyrint vol scherpe stekels, zuur"
-" water en"
-"andere obstakels om punten te scoren. Als de bestemming bereikt is, dan kun "
-"je doorgaan naar het volgende, moeilijkere parcours. Maar let op de tijd!  "
-"                                                     Bestuur de knikker met"
-" je "
-"muis en spring door te drukken op de >spatiebalk< je kunt slechts een kleine"
-" sprong maken."
+"Trackballs is een spel dat vergelijkbaar is met het klassieke spel Marble "
+"Madness uit de jaren 80. Loods je knikker door een labyrint vol scherpe "
+"stekels, zuur water enandere obstakels om punten te scoren. Als de "
+"bestemming bereikt is, dan kun je doorgaan naar het volgende, moeilijkere "
+"parcours. Maar let op de "
+"tijd!                                                       Bestuur de "
+"knikker met je muis en spring door te drukken op de >spatiebalk< je kunt "
+"slechts een kleine sprong maken."
 
-#: ../src/menuMode.cc:103
+#: ../src/menuMode.cc:111
 msgid "New Game"
 msgstr "Nieuw spel"
 
-#: ../src/menuMode.cc:104
+#: ../src/menuMode.cc:112
 msgid "Quit"
 msgstr "Afsluiten"
 
-#: ../src/menuMode.cc:105
+#: ../src/menuMode.cc:113
 msgid "Settings"
 msgstr "Instellingen"
 
-#: ../src/menuMode.cc:106
+#: ../src/menuMode.cc:114
 msgid "Hall of Fame"
 msgstr "Eregalerij"
 
-#: ../src/menuMode.cc:107
+#: ../src/menuMode.cc:115
 msgid "Help"
 msgstr "Hulp"
 
-#: ../src/menuMode.cc:108
+#: ../src/menuMode.cc:116
 msgid "Map Editor"
 msgstr "Parcoursbewerker"
 
-#: ../src/mmad.cc:213
+#: ../src/mmad.cc:219
 msgid "Usage:"
 msgstr "Gebruik:"
 
-#: ../src/mmad.cc:214
+#: ../src/mmad.cc:220
 msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
 msgstr "[-w, -m] [-e, -l -t <level>] [-r <breedte>] [-s <gevoeligheid>]"
 
-#: ../src/mmad.cc:216
+#: ../src/mmad.cc:222
 msgid "Display this usage information."
 msgstr "Toon de gebruiksinformatie."
 
-#: ../src/mmad.cc:217
+#: ../src/mmad.cc:223
 msgid "Start from level."
 msgstr "Start in een bepaald level."
 
-#: ../src/mmad.cc:218
+#: ../src/mmad.cc:224
 msgid "Run in window (Default is fullscreen)"
 msgstr "Draai het spel in een venster (standaard: schermvullend)"
 
-#: ../src/mmad.cc:219
+#: ../src/mmad.cc:225
 msgid "Mute sound."
 msgstr "Demp het geluid."
 
-#: ../src/mmad.cc:220
+#: ../src/mmad.cc:226
 msgid "Set resolution to 640, 800 or 1024"
 msgstr "Stel de resolutie in op 640, 800 of 1024"
 
-#: ../src/mmad.cc:221
+#: ../src/mmad.cc:227
 msgid "Mouse sensitivity, default 1.0"
 msgstr "Muisgevoeligheid (standaard: 1.0)"
 
-#: ../src/mmad.cc:222
+#: ../src/mmad.cc:228
 msgid "Displays framerate"
 msgstr "Toon de framesnelheid"
 
-#: ../src/mmad.cc:223
+#: ../src/mmad.cc:229
 msgid "Prints current version number"
 msgstr "Toon het huidige versienummer"
 
-#: ../src/mmad.cc:224
+#: ../src/mmad.cc:230
 msgid "Updates a map to the latest format"
 msgstr "Migreer een parcours naar het nieuwste formaat"
 
-#: ../src/mmad.cc:225
+#: ../src/mmad.cc:231
 msgid "Attempt to conserve memory usage"
 msgstr "Probeer het geheugengebruik te beperken"
 
-#: ../src/mmad.cc:226
+#: ../src/mmad.cc:232
 msgid "Debug joystick status"
 msgstr "Foutopsporing omtrent joysticks"
 
-#: ../src/mmad.cc:227
+#: ../src/mmad.cc:233
 msgid "Correct for bad joysticks"
 msgstr "Correctie van slechte joysticks"
 
-#: ../src/mmad.cc:231
+#: ../src/mmad.cc:237
 msgid "Important keyboard shortcuts"
 msgstr "Belangrijke sneltoetsen"
 
-#: ../src/mmad.cc:232
+#: ../src/mmad.cc:238
 msgid "Escape"
 msgstr "Escape"
 
-#: ../src/mmad.cc:232
+#: ../src/mmad.cc:238
 msgid "Soft quit"
 msgstr "Scherm terug"
 
-#: ../src/mmad.cc:233
+#: ../src/mmad.cc:239
 msgid "CapsLock"
 msgstr "CapsLock"
 
-#: ../src/mmad.cc:233
+#: ../src/mmad.cc:239
 msgid "Unhide mouse pointer"
 msgstr "Toon/Verberg de cursor"
 
-#: ../src/mmad.cc:234
+#: ../src/mmad.cc:240
 msgid "CTRL-q"
 msgstr "CTRL+Q"
 
-#: ../src/mmad.cc:234
+#: ../src/mmad.cc:240
 msgid "Quit the game immediately"
 msgstr "Sluit het spel volledig af"
 
-#: ../src/mmad.cc:235
+#: ../src/mmad.cc:241
 msgid "CTRL-f"
 msgstr "CTRL+F"
 
-#: ../src/mmad.cc:235
+#: ../src/mmad.cc:241
 msgid "Toggle between fullscreen/windowed mode"
 msgstr "Schakel tussen venster- en schermvullende weergave"
 
-#: ../src/mmad.cc:236
+#: ../src/mmad.cc:242
 msgid "Kill the ball"
 msgstr "Neem een leven af"
 
-#: ../src/mmad.cc:342
+#: ../src/mmad.cc:700
 #, c-format
 msgid "Unknown screen resolution of width %d"
 msgstr "Onbekende schermresolutiebreedte: %d"
 
-#: ../src/mmad.cc:375
+#: ../src/mmad.cc:733
 msgid "Welcome to Trackballs."
 msgstr "Welkom in Trackballs."
 
-#: ../src/mmad.cc:377
+#: ../src/mmad.cc:735
 #, c-format
 msgid "Using %s as gamedata directory."
 msgstr "%s wordt gebruikt als spelmap."
 
-#: ../src/modPill.cc:105
+#: ../src/modPill.cc:101
 msgid "Speed ball"
 msgstr "Snelle knikker"
 
-#: ../src/modPill.cc:105
+#: ../src/modPill.cc:101
 msgid "Extra jump"
 msgstr "Extra sprong"
 
-#: ../src/modPill.cc:105
+#: ../src/modPill.cc:101
 msgid "Spikes"
 msgstr "Stekels"
 
-#: ../src/modPill.cc:105
+#: ../src/modPill.cc:101
 msgid "Glass ball"
 msgstr "Glazen knikker"
 
-#: ../src/modPill.cc:106
+#: ../src/modPill.cc:102
 msgid "Dizzy!"
 msgstr "Duizelig!"
 
-#: ../src/modPill.cc:106
+#: ../src/modPill.cc:102
 msgid "Freeze!"
 msgstr "Bevroren!"
 
-#: ../src/modPill.cc:106
+#: ../src/modPill.cc:102
 msgid "Floating"
 msgstr "Zweven"
 
-#: ../src/modPill.cc:106
+#: ../src/modPill.cc:102
 msgid "Extra life"
 msgstr "Extra leven"
 
-#: ../src/modPill.cc:107
+#: ../src/modPill.cc:103
 msgid "Small ball"
 msgstr "Kleine knikker"
 
-#: ../src/modPill.cc:107
+#: ../src/modPill.cc:103
 msgid "Large ball"
 msgstr "Grote knikker"
 
-#: ../src/modPill.cc:107
+#: ../src/modPill.cc:103
 msgid "Nitro"
 msgstr "Turbo"
 
-#: ../src/settingsMode.cc:85
+#: ../src/settingsMode.cc:88
 msgid "Game Settings"
 msgstr "Spelinstellingen"
 
-#: ../src/settingsMode.cc:95
+#: ../src/settingsMode.cc:100
 #, c-format
 msgid "Is resolution %dx%dx%d ok?"
 msgstr "Is de resolutie ‘%dx%dx%d’ juist?"
 
-#: ../src/settingsMode.cc:98
+#: ../src/settingsMode.cc:103
 #, c-format
 msgid "Is resolution Auto-%d ok?"
 msgstr "Is de automatische resolutie ‘%d’ juist?"
 
-#: ../src/settingsMode.cc:102
+#: ../src/settingsMode.cc:107
 msgid "Ok, use this resolution"
 msgstr "Resolutie gebruiken"
 
-#: ../src/settingsMode.cc:103
+#: ../src/settingsMode.cc:108
 msgid "No, revert to old resolution"
 msgstr "Oorspronkelijke resolutie herstellen"
 
-#: ../src/settingsMode.cc:105
+#: ../src/settingsMode.cc:110
 #, c-format
 msgid "Timeout in %d seconds"
 msgstr "Keuze vervalt over %d seconden"
 
-#: ../src/settingsMode.cc:117
+#: ../src/settingsMode.cc:122
 msgid "Video"
 msgstr "Video-invoer"
 
-#: ../src/settingsMode.cc:124
+#: ../src/settingsMode.cc:129
 #, c-format
 msgid "Auto-%d"
 msgstr "Automatisch: %d"
 
-#: ../src/settingsMode.cc:126
+#: ../src/settingsMode.cc:131
 msgid "Resolution"
 msgstr "Resolutie"
 
-#: ../src/settingsMode.cc:127
+#: ../src/settingsMode.cc:132
 msgid "Test this resolution"
 msgstr "Resolutie uitproberen"
 
-#: ../src/settingsMode.cc:130
+#: ../src/settingsMode.cc:135
 msgid "Fullscreen"
 msgstr "Schermvullende weergave"
 
-#: ../src/settingsMode.cc:133
+#: ../src/settingsMode.cc:138
 msgid "VSync"
 msgstr "Verticale synchronisatie"
 
-#: ../src/settingsMode.cc:142
-#, c-format
+#: ../src/settingsMode.cc:147
 msgid "Frame rate"
 msgstr "Framesnelheid"
 
-#: ../src/settingsMode.cc:145
-#, c-format
+#: ../src/settingsMode.cc:150
 msgid "Frame time"
 msgstr "Frametijd"
 
-#: ../src/settingsMode.cc:148
+#: ../src/settingsMode.cc:153
 msgid "Show FPS"
 msgstr "Aantal fps tonen"
 
-#: ../src/settingsMode.cc:153
+#: ../src/settingsMode.cc:158
 msgid "Graphics"
 msgstr "Grafisch"
 
-#: ../src/settingsMode.cc:158
-#, c-format
+#: ../src/settingsMode.cc:163
 msgid "None"
 msgstr "Geen"
 
-#: ../src/settingsMode.cc:161
-#, c-format
+#: ../src/settingsMode.cc:166
 msgid "Minimalistic"
 msgstr "Minimalistisch"
 
-#: ../src/settingsMode.cc:164
-#, c-format
+#: ../src/settingsMode.cc:169
 msgid "Simple"
 msgstr "Eenvoudig"
 
-#: ../src/settingsMode.cc:167
-#, c-format
+#: ../src/settingsMode.cc:172
 msgid "Standard"
 msgstr "Standaard"
 
-#: ../src/settingsMode.cc:170
-#, c-format
+#: ../src/settingsMode.cc:175
 msgid "Extra"
 msgstr "Extra"
 
-#: ../src/settingsMode.cc:173
-#, c-format
+#: ../src/settingsMode.cc:178
 msgid "Everything"
 msgstr "Alles"
 
-#: ../src/settingsMode.cc:176
+#: ../src/settingsMode.cc:181
 msgid "Details"
 msgstr "Details"
 
-#: ../src/settingsMode.cc:177
+#: ../src/settingsMode.cc:182
 msgid "Reflections"
 msgstr "Weerspiegelingen"
 
-#: ../src/settingsMode.cc:179
+#: ../src/settingsMode.cc:184
 msgid "Shadows"
 msgstr "Schaduwen"
 
-#: ../src/settingsMode.cc:183
+#: ../src/settingsMode.cc:188
 msgid "Shadow Resolution"
 msgstr "Shaduwresolutie"
 
-#: ../src/settingsMode.cc:190
+#: ../src/settingsMode.cc:195
 msgid "Controls"
 msgstr "Besturing"
 
-#: ../src/settingsMode.cc:193
+#: ../src/settingsMode.cc:198
 msgid "Use mouse"
 msgstr "Muis"
 
-#: ../src/settingsMode.cc:199
+#: ../src/settingsMode.cc:204
 msgid "Sensitivity"
 msgstr "Gevoeligheidsgraad"
 
-#: ../src/settingsMode.cc:206
+#: ../src/settingsMode.cc:211
 #, c-format
 msgid "+%d degrees"
 msgstr "+%d graden"
 
-#: ../src/settingsMode.cc:208
+#: ../src/settingsMode.cc:213
 #, c-format
 msgid "-%d degrees"
 msgstr "-%d graden"
 
-#: ../src/settingsMode.cc:209
+#: ../src/settingsMode.cc:214
 msgid "Steering"
 msgstr "Sturen"
 
-#: ../src/settingsMode.cc:216
+#: ../src/settingsMode.cc:220
 #, c-format
 msgid "no joystick found"
 msgstr "Er is geen joystick aangetroffen"
 
-#: ../src/settingsMode.cc:220
+#: ../src/settingsMode.cc:224
 msgid "Joystick:"
 msgstr "Joystick:"
 
-#: ../src/settingsMode.cc:230
+#: ../src/settingsMode.cc:234
 msgid "Other"
 msgstr "Overig"
 
-#: ../src/settingsMode.cc:233
+#: ../src/settingsMode.cc:237
 msgid "Language"
 msgstr "Taal"
 
-#: ../src/settingsMode.cc:237
+#: ../src/settingsMode.cc:241
 msgid "Music volume"
 msgstr "Muziekvolume"
 
-#: ../src/settingsMode.cc:239
+#: ../src/settingsMode.cc:243
 msgid "Effects volume"
 msgstr "Effectvolume"
 
-#: ../src/settingsMode.cc:242
+#: ../src/settingsMode.cc:246
 msgid "Sandbox mode available"
 msgstr "De zandbakmodus is beschikbaar"
 
-#: ../src/settingsMode.cc:246
+#: ../src/settingsMode.cc:250
 msgid "Time Compression"
 msgstr "Tijdscompressie"
 
-#: ../src/setupMode.cc:203
+#: ../src/settingsMode.cc:252
+msgid "Store best level replay"
+msgstr ""
+
+#: ../src/setupMode.cc:210
 msgid "Setup new game"
 msgstr "Nieuw spel opzetten"
 
-#: ../src/setupMode.cc:208
+#: ../src/setupMode.cc:215
 msgid "Player Name"
 msgstr "Naam van speler"
 
-#: ../src/setupMode.cc:214
+#: ../src/setupMode.cc:221
 msgid "N/A"
 msgstr "n/b"
 
-#: ../src/setupMode.cc:220
+#: ../src/setupMode.cc:227
 msgid "Level"
 msgstr "Parcours"
 
-#: ../src/setupMode.cc:231
+#: ../src/setupMode.cc:238
 msgid "Difficulty"
 msgstr "Moeilijkheidsgraad"
 
-#: ../src/setupMode.cc:235
+#: ../src/setupMode.cc:241
+msgid "Replay"
+msgstr ""
+
+#: ../src/setupMode.cc:245
 msgid "Sandbox (Easy)"
 msgstr "Zandbak (gemakkelijk)"
 
-#: ../src/setupMode.cc:236
+#: ../src/setupMode.cc:246
 msgid "Sandbox (Normal)"
 msgstr "Zandbak (gemiddeld)"
 
-#: ../src/setupMode.cc:236
+#: ../src/setupMode.cc:246
 msgid "Sandbox (Hard)"
 msgstr "Zandbak (moeilijk)"
 
-#: ../src/setupMode.cc:238
+#: ../src/setupMode.cc:249
 msgid "Easy"
 msgstr "Makkelijk"
 
-#: ../src/setupMode.cc:239
+#: ../src/setupMode.cc:250
 msgid "Normal"
 msgstr "Normaal"
 
-#: ../src/setupMode.cc:239
+#: ../src/setupMode.cc:250
 msgid "Hard"
 msgstr "Moeilijk"
 
-#: ../src/setupMode.cc:244
+#: ../src/setupMode.cc:256
 #, c-format
 msgid "Total games played: %d"
 msgstr "Totaal aantal gespeelde spellen: %d"
 
-#: ../src/setupMode.cc:248
+#: ../src/setupMode.cc:260
 #, c-format
 msgid "Average score: %d"
 msgstr "Gemiddelde score: %d"
 
-#: ../src/setupMode.cc:250
+#: ../src/setupMode.cc:262
 #, c-format
 msgid "Average score: N/A"
 msgstr "Gemiddelde score: n/b"
 
-#: ../src/setupMode.cc:253
+#: ../src/setupMode.cc:265
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Aantal afgelegde parcours: %d"
 
-#: ../src/setupMode.cc:269
+#: ../src/setupMode.cc:281
 msgid "Start Game"
 msgstr "Spel starten"
 
@@ -1405,14 +1403,14 @@ msgstr ""
 #: ../share/levels/bx.set:5
 msgid "Here you will find some interesting use of pipes and other objects."
 msgstr ""
-"Hier zie je interessante manieren omtrent het gebruik van pijpen en andere"
-" objecten."
+"Hier zie je interessante manieren omtrent het gebruik van pijpen en andere "
+"objecten."
 
 #: ../share/levels/bx.set:6
 msgid "Hint: If you have difficult entering a pipe try to jump a little."
 msgstr ""
-"Tip: als je moeite hebt om een pijp in te rollen, probeer dan een klein"
-" sprongetje te maken."
+"Tip: als je moeite hebt om een pijp in te rollen, probeer dan een klein "
+"sprongetje te maken."
 
 #: ../share/levels/castles.set:1
 msgid "Castles"
@@ -1455,7 +1453,8 @@ msgstr "Doolhof"
 #: ../share/levels/child.set:4
 msgid "This is an easy and short level for young children made by Attila"
 msgstr ""
-"Dit is een kort en eenvoudig parcours voor jonge kinderen, gemaakt door Attila"
+"Dit is een kort en eenvoudig parcours voor jonge kinderen, gemaakt door "
+"Attila"
 
 #: ../share/levels/child.set:5
 msgid "Boros. It was created for my little goddaughter."
@@ -1563,8 +1562,8 @@ msgstr ""
 #: ../share/levels/frg.set:6
 msgid "badguys and hazards. Can you finish all the nine levels?"
 msgstr ""
-"pas op gevaar wat op de loer ligt. Lukt het je om alle negen parcours af te"
-" leggen?"
+"pas op gevaar wat op de loer ligt. Lukt het je om alle negen parcours af te "
+"leggen?"
 
 #: ../share/levels/frg.set:7
 msgid "Made by: Ulrik Enstad."
@@ -1581,8 +1580,8 @@ msgstr "Brug"
 #: ../share/levels/jump.set:4
 msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
 msgstr ""
-"Deze reeks bestaat uit zéér moeilijke parcours en is gemaakt door Gerard"
-" Pudenz."
+"Deze reeks bestaat uit zéér moeilijke parcours en is gemaakt door Gerard "
+"Pudenz."
 
 #: ../share/levels/jump.set:5
 msgid "if you can't make it on the first attempt. I promise, it can"
@@ -1627,8 +1626,8 @@ msgstr "9 parcours met verschillende moeilijkheidsgraden. Er is geen"
 #: ../share/levels/lv.set:6
 msgid "central theme and is meant to show most features of the game."
 msgstr ""
-"specifiek thema en is alleen bedoeld om de functies van het spel te"
-" demonstreren."
+"specifiek thema en is alleen bedoeld om de functies van het spel te "
+"demonstreren."
 
 #: ../share/levels/lv.set:8
 msgid "By: Mathias Broxvall"
@@ -2031,6 +2030,11 @@ msgstr "Het kasteel"
 #: ../share/levels/mhm3.scm:15
 msgid "Stay on the path or else!"
 msgstr "Ga niet van het padje af!"
+
+#: ../share/levels/mhm3.scm:241
+#, fuzzy
+msgid "You may cross the Garden."
+msgstr ""
 
 #: ../share/levels/Shop1.scm:6
 msgid "Speed-pill 2 minutes: 300 points"
