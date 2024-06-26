@@ -350,15 +350,25 @@ static void *mainLoop(void *data) {
   int seed = getMonotonicTime().tv_nsec;
   srand(seed);
 
-  double loop_time = 0.;
+  double logic_time = 0.;
   Uint32 zero_sdl_tick = SDL_GetTicks();
+  double render_time = 0.;
   while (GameMode::current) {
     double td = PHYSICS_RESOLUTION;
 
-    double real_sdl_time = (SDL_GetTicks() - zero_sdl_tick) * 0.001;
+    /* When game logic has caught up to real time, display */
+    render_time = (SDL_GetTicks() - zero_sdl_tick) * 0.001;
+    /* Never process more than 100msec of updates before drawing, to ensure
+     * the window is still somewhat responsive in extreme lag scenarios. */
+    logic_time = std::max(logic_time, render_time - 0.100);
 
-    // When game logic has caught up to real time, display
-    if (loop_time > real_sdl_time) {
+    while (logic_time < render_time) {
+      logic_time += td / timeDilationFactor;
+
+      if (GameMode::current) { GameMode::current->tick(td); }
+    }
+
+    {
       displayFrameNumber++;
 
       /* Make sure music is still playing */
@@ -385,10 +395,6 @@ static void *mainLoop(void *data) {
       if (GameMode::current) GameMode::current->doExpensiveComputations();
       warnForGLerrors("uncaught from expensive computation");
     }
-
-    /* Perform game logic updates, and respond to events */
-    if (GameMode::current) GameMode::current->tick(td);
-    Uint32 until_tick = (Uint32)(loop_time * 1e3) + zero_sdl_tick;
 
     /* Respond to events between this logic update and the next */
     // TODO: react to window events *immediately* -- use two queues?
@@ -470,12 +476,6 @@ static void *mainLoop(void *data) {
         break;
       }
     }
-
-    /* The loop time must reasonably-consistently track real time, and in the
-     * worst case is capped to lag ~100ms behind; otherwise, the loop time
-     * is updated in concert with the simulation time */
-    loop_time =
-        std::max(real_sdl_time - 0.100, loop_time + PHYSICS_RESOLUTION / timeDilationFactor);
   }
 
   Settings::settings->closeJoystick();
