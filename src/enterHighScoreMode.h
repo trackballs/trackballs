@@ -28,7 +28,7 @@ class EnterHighScoreMode : public GameMode {
  public:
   EnterHighScoreMode();
   virtual ~EnterHighScoreMode();
-  void display();
+  void display() const;
   void key(int);
   void activated();
   void deactivated();

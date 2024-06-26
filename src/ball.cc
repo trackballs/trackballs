@@ -622,7 +622,9 @@ void Ball::doExpensiveComputations() {
   if (dx * dx + dy * dy > 50 * 50) { return; }
 
   Matrix4d mvp;
-  matrixMult(MainMode::mainMode->cameraModelView, MainMode::mainMode->cameraProjection, mvp);
+  Matrix4d modelview, projection;
+  MainMode::mainMode->getCamera(modelview, projection);
+  matrixMult(modelview, projection, mvp);
   int vis =
       testBboxClip(position[0] + boundingBox[0][0], position[0] + boundingBox[1][0],
                    position[1] + boundingBox[0][1], position[1] + boundingBox[1][1],

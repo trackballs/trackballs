@@ -32,7 +32,7 @@ class GameMode {
   GameMode();
   virtual ~GameMode();
 
-  virtual void display();
+  virtual void display() const;
   virtual void key(int);
   virtual void keyUp(int);
   virtual void tick(Real dt);

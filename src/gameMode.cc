@@ -29,7 +29,7 @@ void GameMode::activate(GameMode* gm) {
   current = gm;
   if (gm) gm->activated();
 }
-void GameMode::display() {}
+void GameMode::display() const {}
 void GameMode::key(int) {}
 void GameMode::keyUp(int) {}
 void GameMode::tick(Real /*td*/) {}

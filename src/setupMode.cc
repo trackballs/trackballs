@@ -75,7 +75,7 @@ SetupMode::SetupMode() : GameMode() {
 SetupMode::~SetupMode() {
   if (background) SDL_FreeSurface(background);
 }
-void SetupMode::display() {
+void SetupMode::display() const {
   Settings *settings = Settings::settings;
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

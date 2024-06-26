@@ -31,7 +31,7 @@ class MainMode : public GameMode {
   MainMode();
   virtual ~MainMode();
 
-  void display();
+  void display() const;
   void key(int);
   void tick(Real td);
   void doExpensiveComputations();
@@ -45,8 +45,8 @@ class MainMode : public GameMode {
   void playerDie();
   void startGame();
   void restartPlayer();
-  void showInfo();
-  void showBonus();
+  void showInfo() const;
+  void showBonus() const;
   void levelComplete();
   void bonusLevelComplete();
 
@@ -62,8 +62,7 @@ class MainMode : public GameMode {
 
   double zAngle, wantedZAngle, xyAngle, wantedXYAngle;
   Coord3d camFocus, camDelta;
-  Matrix4d cameraModelView;
-  Matrix4d cameraProjection;
+  void getCamera(Matrix4d modelView, Matrix4d projection) const;
 
  protected:
  private:

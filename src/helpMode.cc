@@ -81,7 +81,7 @@ void HelpMode::deactivated() {
   }
   delete helpGame;
 }
-void HelpMode::display() {
+void HelpMode::display() const {
   // Draw the background using the preloaded texture
   glClearColor(0.0, 0.0, 0.0, 0.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

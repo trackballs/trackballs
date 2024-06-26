@@ -29,7 +29,7 @@ class HelpMode : public GameMode {
  public:
   HelpMode();
   virtual ~HelpMode();
-  void display();
+  void display() const;
   void activated();
   void deactivated();
   void key(int);

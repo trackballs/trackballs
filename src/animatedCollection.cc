@@ -849,7 +849,7 @@ AnimatedCollection::~AnimatedCollection() {
   if (alloc) delete (SingleCycleAllocator*)alloc;
   if (retlist) delete[] retlist;
   if (rect_indices) delete[] rect_indices;
-  if (input) delete[](struct Rectangle<3>*) input;
+  if (input) delete[] (struct Rectangle<3>*)input;
 }
 
 void AnimatedCollection::add(Animated* a) {
@@ -869,7 +869,7 @@ void AnimatedCollection::reserve(int N) {
   for (int i = 0; i < nreserved; i++) { nrect_indices[i] = i; }
   for (int i = 0; i < ntot; i++) { ninput[i] = ((struct Rectangle<3>*)input)[i]; }
 
-  if (input) delete[](struct Rectangle<3>*) input;
+  if (input) delete[] (struct Rectangle<3>*)input;
   if (rect_indices) delete[] rect_indices;
   if (retlist) delete[] retlist;
   input = (void*)ninput;
@@ -880,7 +880,7 @@ void AnimatedCollection::reserve(int N) {
 void AnimatedCollection::clear() {
   ntot = 0;
   nreserved = 0;
-  if (input) delete[](struct Rectangle<3>*) input;
+  if (input) delete[] (struct Rectangle<3>*)input;
   if (rect_indices) delete[] rect_indices;
   if (retlist) delete[] retlist;
   retlist = NULL;

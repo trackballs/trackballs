@@ -51,7 +51,7 @@ EnterHighScoreMode::EnterHighScoreMode() {
 EnterHighScoreMode::~EnterHighScoreMode() {
   if (background) SDL_FreeSurface(background);
 }
-void EnterHighScoreMode::display() {
+void EnterHighScoreMode::display() const {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   Enter2DMode();

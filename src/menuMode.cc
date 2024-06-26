@@ -69,7 +69,7 @@ MenuMode::MenuMode() {
 
 char *story;
 
-void MenuMode::display() {
+void MenuMode::display() const {
   char str[256];
 
   /* This text used to be drawn on the main screen, possibly as a single long text
@@ -221,7 +221,7 @@ void MenuMode::loadSlide() {
   slideTime = 0.0;
 }
 
-void MenuMode::drawSlide(int slide, double time, double alpha) {
+void MenuMode::drawSlide(int slide, double time, double alpha) const {
   double slideWidth = slideMax[slide][0];
   double slideHeight = slideMax[slide][1];
   double screenAspect = screenWidth / (double)screenHeight;

@@ -28,7 +28,7 @@ class HallOfFameMode : public GameMode {
  public:
   HallOfFameMode();
   virtual ~HallOfFameMode();
-  void display();
+  void display() const;
   void activated();
   void deactivated();
   void key(int);

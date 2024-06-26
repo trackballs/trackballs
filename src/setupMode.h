@@ -28,7 +28,7 @@ class SetupMode : public GameMode {
  public:
   SetupMode();
   virtual ~SetupMode();
-  void display();
+  void display() const;
   void activated();
   void deactivated();
   void key(int);

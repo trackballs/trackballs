@@ -26,7 +26,7 @@
 class SettingsMode : public GameMode {
  public:
   SettingsMode();
-  void display();
+  void display() const;
   void activated();
   void deactivated();
   void key(int);

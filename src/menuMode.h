@@ -27,7 +27,7 @@
 class MenuMode : public GameMode {
  public:
   MenuMode();
-  void display();
+  void display() const;
   void key(int);
   void tick(Real);
   void activated();
@@ -46,7 +46,7 @@ class MenuMode : public GameMode {
   /** Moves old slide2 as new slide1 and loads a new random slide as
       slide2 */
   void loadSlide();
-  void drawSlide(int slide, double time, double alpha);
+  void drawSlide(int slide, double time, double alpha) const;
 
   /** The texture objects used for slide1/2 */
   GLuint slides[2];

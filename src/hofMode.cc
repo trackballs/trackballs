@@ -75,7 +75,7 @@ void HallOfFameMode::deactivated() {
     background = NULL;
   }
 }
-void HallOfFameMode::display() {
+void HallOfFameMode::display() const {
   char str[256];
 
   // Draw the background using the preloaded texture

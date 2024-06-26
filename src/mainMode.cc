@@ -65,12 +65,33 @@ MainMode::MainMode() {
   game = NULL;
   this->go_to_pause = 0;
   this->pause_time = 0.;
-  memset(&this->cameraModelView[0], 0, 16 * sizeof(double));
-  memset(&this->cameraProjection[0], 0, 16 * sizeof(double));
 }
 MainMode::~MainMode() {}
 
-void MainMode::display() {
+void MainMode::getCamera(Matrix4d modelView, Matrix4d projection) const {
+  Map *map = game->map;
+  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
+                    projection);
+
+  /* Setup matrixes for the camera perspective */
+  if (gameStatus == statusBeforeGame) {
+    lookAtMatrix(map->startPosition[0] - 12 * std::sin(time),
+                 map->startPosition[1] - 12 * std::cos(time), 10.0 + map->startPosition[2],
+                 map->startPosition[0], map->startPosition[1], map->startPosition[2], 0.0, 0.0,
+                 1.0, modelView);
+  } else {
+    double angle = xyAngle * M_PI / 2. + M_PI / 4.;
+    Coord3d up(std::sin(angle) * zAngle, std::cos(angle) * zAngle, 1.0 - zAngle);
+    up = up / length(up);
+    lookAtMatrix(
+        camFocus[0] - 10. * std::sin(angle) * std::cos(zAngle * M_PI / 2.),
+        camFocus[1] - 10. * std::cos(angle) * std::cos(zAngle * M_PI / 2.),
+        10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * std::sin(zAngle * M_PI / 2.),
+        camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2], modelView);
+  }
+}
+
+void MainMode::display() const {
   if (!game) { return; }
 
   Map *map = game->map;
@@ -84,26 +105,7 @@ void MainMode::display() {
   } else
     activeView.fog_enabled = 0;
 
-  perspectiveMatrix(40, (GLdouble)screenWidth / (GLdouble)std::max(screenHeight, 1), 0.1, 200,
-                    activeView.projection);
-
-  /* Setup matrixes for the camera perspective */
-  if (gameStatus == statusBeforeGame) {
-    lookAtMatrix(map->startPosition[0] - 12 * std::sin(time),
-                 map->startPosition[1] - 12 * std::cos(time), 10.0 + map->startPosition[2],
-                 map->startPosition[0], map->startPosition[1], map->startPosition[2], 0.0, 0.0,
-                 1.0, activeView.modelview);
-
-  } else {
-    double angle = xyAngle * M_PI / 2. + M_PI / 4.;
-    Coord3d up(std::sin(angle) * zAngle, std::cos(angle) * zAngle, 1.0 - zAngle);
-    up = up / length(up);
-    lookAtMatrix(
-        camFocus[0] - 10. * std::sin(angle) * std::cos(zAngle * M_PI / 2.),
-        camFocus[1] - 10. * std::cos(angle) * std::cos(zAngle * M_PI / 2.),
-        10.0 + camFocus[2] * 0.5 + (10.0 + camFocus[2]) * std::sin(zAngle * M_PI / 2.),
-        camFocus[0], camFocus[1], camFocus[2], up[0], up[1], up[2], activeView.modelview);
-  }
+  getCamera(activeView.modelview, activeView.projection);
   markViewChanged();
 
   /* lighting must be set before we render the shadow map */
@@ -119,10 +121,6 @@ void MainMode::display() {
   } else {
     activeView.use_shadows = false;
   }
-
-  /* record modelview/projection matrices for item visibility testing */
-  assign(activeView.modelview, this->cameraModelView);
-  assign(activeView.projection, this->cameraProjection);
 
   /* Primary scene rendering */
   glViewport(0, 0, screenWidth, screenHeight);
@@ -565,7 +563,7 @@ void MainMode::restartPlayer() {
 }
 
 /* Shows various information on screen */
-void MainMode::showInfo() {
+void MainMode::showInfo() const {
   if (!game) return;
   Player *player = game->player1;
 
@@ -642,7 +640,7 @@ void MainMode::levelComplete() {
   gameStatus = statusLevelComplete;
   statusCount = 0.0;
 }
-void MainMode::showBonus() {
+void MainMode::showBonus() const {
   char left[16][256];
   char right[16][256];
   const char *left_pointers[16];

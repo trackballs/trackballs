@@ -115,6 +115,4 @@ struct PlayerControlFrame Replay::get(int tick) {
   }
 }
 
-struct GameSettings Replay::getSettings() {
-  return settings;
-}
+struct GameSettings Replay::getSettings() { return settings; }
