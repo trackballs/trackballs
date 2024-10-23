@@ -804,8 +804,7 @@ static struct Rectangle<3> rectFromAnim(const Animated* a) {
   return r;
 }
 
-static struct Rectangle<3>
-rectFromBounds(const double lower[3], const double upper[3]) {
+static struct Rectangle<3> rectFromBounds(const double lower[3], const double upper[3]) {
   struct Rectangle<3> r;
   r.tag = NULL;
   for (int i = 0; i < 3; i++) {
@@ -825,8 +824,7 @@ rectFromBounds(const double lower[3], const double upper[3]) {
   return r;
 }
 
-static struct Rectangle<3>
-reverseAxisOrder(const struct Rectangle<3>& s) {
+static struct Rectangle<3> reverseAxisOrder(const struct Rectangle<3>& s) {
   struct Rectangle<3> r;
   r.tag = s.tag;
   for (int i = 0; i < 3; i++) {

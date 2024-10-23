@@ -136,7 +136,7 @@ extern const char *cKeyShortcuts[N_SUBMENUS];
 
 /* Converts between SUBMENU id's and highlight codes */
 #define CODE_FROM_MENU(x) ((x) + 1)
-#define CODE_TO_MENU(x) ((x)-1)
+#define CODE_TO_MENU(x) ((x) - 1)
 
 #define CODE_FROM_MENUENTRY(x) (x + 10)
 #define CODE_TO_MENUENTRY(x) (x - 10)

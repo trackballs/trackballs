@@ -142,7 +142,7 @@ enum {
 
 /* These are all the codes for different areas of the screen that can be selected */
 #define CODE_FROM_COMMAND(x) (10 + (x))
-#define CODE_TO_COMMAND(x) ((x)-10)
+#define CODE_TO_COMMAND(x) ((x) - 10)
 /*
 #define CODE_EDITMODE    100
 */

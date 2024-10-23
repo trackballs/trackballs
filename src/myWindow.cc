@@ -96,8 +96,7 @@ void MyWindow::raiseToFront() {
   prev = &allWindows;
   allWindows = this;
 }
-void MyWindow::lowerToBack() { /* TODO. Not yet implemented */
-}
+void MyWindow::lowerToBack() { /* TODO. Not yet implemented */ }
 void MyWindow::moveTo(int x, int y) {
   this->x = x;
   this->y = y;
