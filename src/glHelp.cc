@@ -62,7 +62,7 @@ GLuint textureTrack = 0;
 static GLuint dummyCascadeTexture = 0;
 static GLuint dummyCubeMapTexture = 0;
 
-TTF_Font *ingameFont;
+void *ingameFont;
 extern struct timespec displayStartTime;
 extern struct timespec lastDisplayStartTime;
 
@@ -189,10 +189,10 @@ static SDL_Surface *drawStringToSurface(struct StringInfo &inf, bool outlined) {
   }
 }
 
-int prepare2DString(TTF_Font *font, const char *string, bool outlined) {
+int prepare2DString(void *font, const char *string, bool outlined) {
   struct StringInfo inf;
   memset(&inf, 0, sizeof(inf));
-  inf.font = font;
+  inf.font = (TTF_Font *)font;
   snprintf(inf.string, sizeof(inf.string), "%s", string);
   if (strcache.count(inf) <= 0) {
     struct StringCache newentry;
@@ -210,13 +210,13 @@ int prepare2DString(TTF_Font *font, const char *string, bool outlined) {
   return strcache[inf].w;
 }
 
-int draw2DString(TTF_Font *font, const char *string, int x, int y, Color color, bool outlined,
+int draw2DString(void *font, const char *string, int x, int y, Color color, bool outlined,
                  int align, int maxwidth) {
   prepare2DString(font, string, outlined);
 
   struct StringInfo inf;
   memset(&inf, 0, sizeof(inf));
-  inf.font = font;
+  inf.font = (TTF_Font *)font;
   snprintf(inf.string, sizeof(inf.string), "%s", string);
   const struct StringCache cached = strcache[inf];
 
@@ -249,7 +249,7 @@ void update2DStringCache(bool force_wipe) {
   } while (erased);
 }
 
-TTF_Font *menuFontForSize(int sz) {
+void *menuFontForSize(int sz) {
   if (!menuFontLookup.count(sz)) {
     char str[256];
     snprintf(str, sizeof(str), "%s/fonts/%s", effectiveShareDir, "FreeSerifBoldItalic.ttf");
@@ -1055,7 +1055,7 @@ int createSnapshot() {
 void message(char *A, char *B) {
   int size = 16;
 
-  TTF_Font *font = menuFontForSize(size);
+  void *font = menuFontForSize(size);
 
   int w1, w2, h1, h2, w;
   w1 = prepare2DString(font, A, true);
@@ -1462,7 +1462,7 @@ void glHelpCleanup() {
     TTF_CloseFont(i->second);
   }
   menuFontLookup.clear();
-  TTF_CloseFont(ingameFont);
+  TTF_CloseFont((TTF_Font *)ingameFont);
   ingameFont = 0;
 
   glDeleteTextures(1, &dummyCascadeTexture);
@@ -1523,7 +1523,7 @@ void displayFrameRate() {
       snprintf(slow, sizeof(slow), "%s ", _("ms/Frame:"));
       snprintf(fast, sizeof(fast), "%.1f", 1e3 * td);
     }
-    TTF_Font *active = menuFontForSize(10);
+    void *active = menuFontForSize(10);
     int w1 = draw2DString(active, slow, 15, screenHeight - 15, menuColor, true, 0, 0);
     /* Write rate letter by letter; this ensures they remain in cache and avoids
      * rerendering */

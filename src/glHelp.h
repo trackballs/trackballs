@@ -27,7 +27,6 @@
 
 #include "general.h"
 
-typedef struct _TTF_Font TTF_Font;
 typedef struct SDL_Surface SDL_Surface;
 class Map;
 class Game;
@@ -42,10 +41,10 @@ void warnForGLerrors(const char *where_am_i);
 
 /* renders and caches a drawing of a 2d string; returns the recommended width
  * to draw it at. */
-int prepare2DString(TTF_Font *font, const char *string, bool outlined);
+int prepare2DString(void *font, const char *string, bool outlined);
 
 /* displays a 2d text on specific screen coordinates, returning width */
-int draw2DString(TTF_Font *, const char *, int x, int y, Color color, bool outlined, int align,
+int draw2DString(void *font, const char *, int x, int y, Color color, bool outlined, int align,
                  int maxwidth = 0);
 void update2DStringCache(bool force_wipe);
 /* Common interface for drawing 2d things on the screen */
@@ -257,8 +256,8 @@ extern GLuint textureBlank, textureGlitter, textureMousePointer, textureDizzy, t
 /* Globals */
 extern float fps;
 extern int screenWidth, screenHeight;
-extern TTF_Font *ingameFont;
-TTF_Font *menuFontForSize(int sz);
+extern void *ingameFont;
+void *menuFontForSize(int sz);
 extern const Color menuColorSelected, menuColor;
 
 /***********************************/
