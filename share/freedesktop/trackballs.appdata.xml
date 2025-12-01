@@ -4,6 +4,9 @@
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <name>Trackballs</name>
+  <developer id="io.github.trackballs">
+    <name>The Trackballs Project</name>
+  </developer>
   <summary>Steer a marble ball through a labyrinth</summary>
   <description>
     <p>
