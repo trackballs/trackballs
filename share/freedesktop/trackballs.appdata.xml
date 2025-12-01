@@ -51,4 +51,5 @@
     <release version="1.2.1" date="2017-06-16" />
     <release version="1.2.0" date="2017-06-04" />
   </releases>
+  <launchable type="desktop-id">trackballs.desktop</launchable>
 </component>
