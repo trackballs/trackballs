@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: v1.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-22 19:38-0500\n"
-"PO-Revision-Date: 2022-12-22 19:43-0500\n"
+"PO-Revision-Date: 2026-06-03 21:28+0200\n"
 "Last-Translator: Mathias <matbr@home.se>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #: ../src/calibrateJoystickMode.cc:111
 msgid "Calibrating Joystick"
@@ -48,7 +48,7 @@ msgstr "Drücken Sie eine beliebige Taste, um fortzufahren"
 
 #: ../src/calibrateJoystickMode.cc:126
 msgid "Press escape to cancel"
-msgstr "Drücke Esc, um abzubrechen"
+msgstr "Drücken Sie Esc, um abzubrechen"
 
 #: ../src/calibrateJoystickMode.cc:128
 #, c-format
@@ -79,7 +79,7 @@ msgstr "Farbe"
 
 #: ../src/editMode.cc:169
 msgid "Flags"
-msgstr "Flaggen"
+msgstr "Flags"
 
 #: ../src/editMode.cc:169
 msgid "Feature"
@@ -126,7 +126,7 @@ msgstr "Beenden"
 
 #: ../src/editMode.cc:178
 msgid "Test level"
-msgstr "Niveau ausprobieren"
+msgstr "Level testen"
 
 #: ../src/editMode.cc:179
 msgid "Edit height"
@@ -142,7 +142,7 @@ msgstr "Wasser bearbeiten"
 
 #: ../src/editMode.cc:179
 msgid "Edit velocity"
-msgstr "Geschwindigkeit bearbeiten"
+msgstr "Geschwindigkeit bearb."
 
 #: ../src/editMode.cc:179
 msgid "Edit lines"
@@ -150,7 +150,7 @@ msgstr "Linien bearbeiten"
 
 #: ../src/editMode.cc:180
 msgid "*<SPACE> Whole cell"
-msgstr "* <LEERTASTE> Ganze Zelle"
+msgstr "*<LEER> Ganze Zelle"
 
 #: ../src/editMode.cc:180
 msgid "Upper corner"
@@ -178,11 +178,11 @@ msgstr "Schrittweite erhöhen"
 
 #: ../src/editMode.cc:181
 msgid "Lower increment"
-msgstr "Schrittweite erniedrigen"
+msgstr "Schrittweite verringern"
 
 #: ../src/editMode.cc:182
 msgid "*<SHIFT> reversed"
-msgstr "*<UMSCHALT> umgekehrt"
+msgstr "*<UMSCH.> umgekehrt"
 
 #: ../src/editMode.cc:182
 msgid "*<CTRL> walls"
@@ -234,7 +234,7 @@ msgstr "Spur"
 
 #: ../src/editMode.cc:185 ../src/editMode.cc:202
 msgid "Shade flat"
-msgstr "Flache Facetten"
+msgstr "Flach schattieren"
 
 #: ../src/editMode.cc:185
 msgid "Texture"
@@ -242,7 +242,7 @@ msgstr "Textur"
 
 #: ../src/editMode.cc:185
 msgid "ch. texture"
-msgstr "änd. Textur"
+msgstr "Textur änd."
 
 #: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Spike"
@@ -286,7 +286,7 @@ msgstr "Farbenkontinuität"
 
 #: ../src/editMode.cc:188
 msgid "Cell center"
-msgstr "Höhen hobeln"
+msgstr "Zelle hobeln"
 
 #: ../src/editMode.cc:189
 msgid "Water center"
@@ -350,15 +350,15 @@ msgstr "*<UMSCHALT> x5"
 
 #: ../src/editMode.cc:193
 msgid "Set region marker"
-msgstr "Bereichsmarkierung setzen"
+msgstr "Bereichsmark. setzen"
 
 #: ../src/editMode.cc:193
 msgid "Clear marker"
-msgstr "Bereichsmarkierung löschen"
+msgstr "Bereichsmark. löschen"
 
 #: ../src/editMode.cc:193
 msgid "Copy region"
-msgstr "Bereich copieren"
+msgstr "Bereich kopieren"
 
 #: ../src/editMode.cc:194
 msgid "Paste region"
@@ -410,7 +410,7 @@ msgstr "Strecke:"
 
 #: ../src/editMode.cc:338
 msgid "This is the default script file for this track."
-msgstr "Dies ist die Standard-Skriptdatei für diese Ebene."
+msgstr "Dies ist die Standard-Skriptdatei für diese Strecke."
 
 #: ../src/editMode.cc:340
 msgid "Read the documentation for the editor and look at the examples"
@@ -418,7 +418,7 @@ msgstr "Lesen Sie die Dokumentation für den Editor und sehen Sie sich die"
 
 #: ../src/editMode.cc:341
 msgid "to learn how to customize it"
-msgstr "Beispiele an, um zu erfahren, wie Sie die Ebene anpassen können"
+msgstr "Beispiele an, um zu erfahren, wie Sie das Level anpassen können"
 
 #: ../src/editMode.cc:343
 msgid "Enter your name here"
@@ -426,7 +426,7 @@ msgstr "Namen eingeben"
 
 #: ../src/editMode.cc:347
 msgid "Add the name of the next level here"
-msgstr "Fügen Sie hier den Namen der nächsten Ebene hinzu"
+msgstr "Fügen Sie hier den Namen des nächsten Levels hinzu"
 
 #: ../src/editMode.cc:485
 msgid "Cell height"
@@ -475,12 +475,12 @@ msgstr "Eigenshaft"
 #: ../src/editWindows.cc:196
 #, c-format
 msgid "Pos: %d,%d"
-msgstr "Pos: %d,%d"
+msgstr "Pos: %d;%d"
 
 #: ../src/editWindows.cc:198
 #, c-format
 msgid "Increment: %3.2f"
-msgstr "Stufe: %3.2f"
+msgstr "Schrittweite: %3.2f"
 
 #: ../src/editWindows.cc:200
 #, c-format
@@ -559,7 +559,7 @@ msgstr "große Glättung"
 
 #: ../src/editWindows.cc:362
 msgid "Quit without saving?"
-msgstr "Beenden ohne zu speichern?"
+msgstr "Beenden, ohne zu speichern?"
 
 #: ../src/editWindows.cc:363 ../src/editWindows.cc:400
 #: ../src/editWindows.cc:447 ../src/settingsMode.cc:136
@@ -588,7 +588,7 @@ msgstr "Speichern"
 
 #: ../src/editWindows.cc:446
 msgid "Close without saving?"
-msgstr "Schließen ohne zu speichern?"
+msgstr "Schließen, ohne zu speichern?"
 
 #: ../src/editWindows.cc:477
 msgid "Name of map"
@@ -596,7 +596,7 @@ msgstr "Name der Karte"
 
 #: ../src/editWindows.cc:479 ../src/editWindows.cc:534
 msgid "Cancel"
-msgstr "Absagen"
+msgstr "Abbrechen"
 
 #: ../src/editWindows.cc:525
 msgid "Open map"
@@ -640,11 +640,11 @@ msgstr "ms/Bild:"
 
 #: ../src/helpMode.cc:179
 msgid "Your marble:"
-msgstr "Euer Ball:"
+msgstr "Ihr Ball:"
 
 #: ../src/helpMode.cc:180
 msgid "Steer this with your mouse, numpad or arrows. "
-msgstr "Steuere den Ball mit der Maus, dem Ziffernblock oder den Pfeilen. "
+msgstr "Steuern Sie den Ball mit der Maus, dem Ziffernblock oder den Pfeilen. "
 
 #: ../src/helpMode.cc:181
 msgid "Left mouse or spacebar is jump."
@@ -652,8 +652,7 @@ msgstr "Man kann mit der linken Maustaste oder der Leertaste springen."
 
 #: ../src/helpMode.cc:182
 msgid "Shift gives top speed when using keyboard."
-msgstr ""
-"Bei Verwendung der Tastatur, die Umschalttaste gibt Höchstgeschwindigkeit."
+msgstr "Mit der Umschalttaste geht es zur Höchstgeschwindigkeit."
 
 #: ../src/helpMode.cc:184
 msgid "Mr Black:"
@@ -661,11 +660,11 @@ msgstr "Herr Schwarz:"
 
 #: ../src/helpMode.cc:185
 msgid "Your enemy. Defeat with Modpill - Spike."
-msgstr "Dein Feind. Besiege mit Modpille-Stacheln."
+msgstr "Ihr Feind. Mit Stachelmodpille besiegen."
 
 #: ../src/helpMode.cc:187
 msgid "Modpill Speed:"
-msgstr "Modpille Geschwindigkeit:"
+msgstr "Modpille - Geschwindigkeit:"
 
 #: ../src/helpMode.cc:188
 msgid "Makes you go faster for short period of time."
@@ -673,31 +672,31 @@ msgstr "Macht den Ball für kurze Zeit schneller."
 
 #: ../src/helpMode.cc:190
 msgid "Modpill Spikes:"
-msgstr "Modpille Stacheln:"
+msgstr "Modpille - Stacheln:"
 
 #: ../src/helpMode.cc:191
 msgid "Weapon against Mr Black and grip for icy terrain."
-msgstr "Waffe gegen Herr Schwarz und Griff für eisiges Gelände."
+msgstr "Waffe gegen Herrn Schwarz und Reibung auf eisigem Gelände."
 
 #: ../src/helpMode.cc:194
 msgid "Modpill Freeze:"
-msgstr "Modpille Einfrieren:"
+msgstr "Modpille - Einfrieren:"
 
 #: ../src/helpMode.cc:195
 msgid "This will freeze you - avoid it."
-msgstr "Dies wird Sie einfrieren - vermeiden Sie es."
+msgstr "Dies wird Sie einfrieren - weichen Sie aus."
 
 #: ../src/helpMode.cc:197
 msgid "Modpill Glass:"
-msgstr "Modpille Glas:"
+msgstr "Modpille - Glas:"
 
 #: ../src/helpMode.cc:198
 msgid "Protects you from acid, but makes you more fragile."
-msgstr "Schützt den Ball vor Säure, aber macht es zerbrechlich."
+msgstr "Schützt den Ball vor Säure, aber macht ihn zerbrechlich."
 
 #: ../src/helpMode.cc:200
 msgid "Modpill Nitro:"
-msgstr "Modpille Nitro:"
+msgstr "Modpille - Nitro:"
 
 #: ../src/helpMode.cc:201
 msgid "Move really fast. Active nitro with second button."
@@ -709,15 +708,15 @@ msgstr "Schalter:"
 
 #: ../src/helpMode.cc:204
 msgid "Activates/deactivates some object/element in the level."
-msgstr "Aktiviert / deaktiviert ein Objekt / Element in der Ebene."
+msgstr "Aktiviert/deaktiviert ein Objekt/Element im Level."
 
 #: ../src/helpMode.cc:207
 msgid "Moving spike:"
-msgstr "Bewegliche Spitze:"
+msgstr "Beweglicher Stachel:"
 
 #: ../src/helpMode.cc:208
 msgid "Obstacle to avoid."
-msgstr "Hindernis zu vermeiden."
+msgstr "Ein Hindernis, dem es auszuweichen gilt."
 
 #: ../src/helpMode.cc:210
 msgid "Flag:"
@@ -733,11 +732,11 @@ msgstr "Normales Gelände:"
 
 #: ../src/helpMode.cc:215
 msgid "Can be of any color and is safe to move on."
-msgstr "Kann von jeder Farbe sein und darf man sicher durchqueren."
+msgstr "Kann von jeder Farbe sein; kann sicher überquert werden."
 
 #: ../src/helpMode.cc:217
 msgid "Acid terrain:"
-msgstr "Saures Gelände:"
+msgstr "Säuregelände:"
 
 #: ../src/helpMode.cc:218
 msgid "Will kill your marble unless you have a glass modpill."
@@ -749,7 +748,7 @@ msgstr "Eisiges Gelände:"
 
 #: ../src/helpMode.cc:222
 msgid "Slippery terrain unless you have a spikes modpill."
-msgstr "Rutschiges Terrain, außer Sie eine Stachelmodpille haben."
+msgstr "Rutschiges Terrain, außer wenn Sie eine Stachelmodpille haben."
 
 #: ../src/helpMode.cc:224
 msgid "Sandy terrain:"
@@ -757,7 +756,7 @@ msgstr "Sandiges Gelände:"
 
 #: ../src/helpMode.cc:225
 msgid "Soft to land on but will slow you down."
-msgstr "Weiche Landungen aber wird Sie verlangsamen."
+msgstr "Weiche Landungen, aber wird Sie verlangsamen."
 
 #: ../src/helpMode.cc:228
 msgid "Goal:"
@@ -765,11 +764,11 @@ msgstr "Ziel:"
 
 #: ../src/helpMode.cc:229
 msgid "Will take you to the next level."
-msgstr "Bringt euch zum nächsten Level."
+msgstr "Bringt Sie zum nächsten Level."
 
 #: ../src/helpMode.cc:230
 msgid "Get here before time runs out."
-msgstr "Kommen Sie her, bevor die Zeit abläuft."
+msgstr "Erreichen Sie es, bevor die Zeit abläuft."
 
 #: ../src/helpMode.cc:233
 msgid "Force Field:"
@@ -777,11 +776,11 @@ msgstr "Kraftfeld:"
 
 #: ../src/helpMode.cc:234
 msgid "You cannot pass this unless you switch it off."
-msgstr "Sie können dies nur übergehen, wenn Sie es ausschalten."
+msgstr "Sie können nur passieren, wenn Sie es ausschalten."
 
 #: ../src/helpMode.cc:235
 msgid "Some are lethal and some are one way."
-msgstr "Einige sind tödlich und einige sind einbahnig."
+msgstr "Einige sind tödlich und einige sind Einbahnstraßen."
 
 #: ../src/helpMode.cc:238
 msgid "Cactus:"
@@ -798,7 +797,7 @@ msgstr "Vogel:"
 
 #: ../src/helpMode.cc:243
 msgid "Kills balls it flies across unless they have spikes."
-msgstr "Tötet Bälle, die es durchfliegt, es sei denn, sie haben stacheln."
+msgstr "Tötet Bälle, die er durchfliegt, es sei denn, sie haben Stacheln."
 
 #: ../src/helpMode.cc:246
 msgid "Teleport:"
@@ -830,7 +829,7 @@ msgstr "Highscores"
 
 #: ../src/hofMode.cc:97 ../src/setupMode.cc:219
 msgid "Level Set"
-msgstr "Niveaumenge"
+msgstr "Levelsatz"
 
 #: ../src/hofMode.cc:105
 msgid "Anonymous Coward"
@@ -855,17 +854,17 @@ msgstr "Unbekannter Autor"
 
 #: ../src/mainMode.cc:175
 msgid "Press spacebar to begin"
-msgstr "Drücken Sie den Platz, um zu beginnen"
+msgstr "Drücken Sie Leertaste, um zu beginnen"
 
 #: ../src/mainMode.cc:187 ../src/mainMode.cc:196 ../src/mainMode.cc:223
 #: ../src/mainMode.cc:237
 #, c-format
 msgid "Press spacebar to continue"
-msgstr "Drücken Sie den Platz, um fortzufahren"
+msgstr "Drücken Sie Leertaste, um fortzufahren"
 
 #: ../src/mainMode.cc:188
 msgid "Game over"
-msgstr "Spiel ist aus"
+msgstr "Spiel vorbei"
 
 #: ../src/mainMode.cc:196
 msgid "Oops"
@@ -889,7 +888,7 @@ msgstr "Herzlichen Glückwunsch"
 
 #: ../src/mainMode.cc:244
 msgid "You have completed the game!"
-msgstr "Sie haben das Spiel beendet!"
+msgstr "Sie haben das Spiel abgeschlossen!"
 
 #: ../src/mainMode.cc:548 ../src/mainMode.cc:563
 msgid "Good luck!"
@@ -960,13 +959,13 @@ msgid ""
 "out.                                               You steer the ball using "
 "the mouse and by pressing >spacebar< you can jump a short distance."
 msgstr ""
-"Trackballs ist ein Spiel ähnlich dem klassischen Spiel Marble Madness aus "
-"den 80ern. Der Spieler sammelt Punkte, indem er eine Kugel aus Marmor durch "
-"ein Labyrinth führt, das mit scharfen Spitzen, Säulen und anderen "
-"Hindernissen gefüllt ist. Wenn der Ball das Ziel erreicht hat, geht es "
-"weiter zum nächsten, schwierigeren Level - es sei denn, die Zeit ist "
+"Trackballs ist ein Spiel ähnlich dem Spieleklassiker Marble Madness aus den "
+"80ern. Der Spieler sammelt Punkte, indem er eine Murmel durch ein Labyrinth "
+"führt, das mit scharfen Spitzen, Säulen und anderen Hindernissen gefüllt "
+"ist. Wenn der Ball das Ziel erreicht hat, geht es weiter zum nächsten, "
+"schwierigeren Level - es sei denn, die Zeit ist "
 "abgelaufen.                                               Sie steuern den "
-"Ball mit der Maus und durch Drücken von der Leertaste können Sie eine kurze "
+"Ball mit der Maus; mit Drücken der Leertaste können Sie eine kurze "
 "Strecke springen."
 
 #: ../src/menuMode.cc:111
@@ -999,7 +998,7 @@ msgstr "Verwendung:"
 
 #: ../src/mmad.cc:220
 msgid "[-w, -m] [-e, -l -t <level>] [-r <width>] [-s <sensitivity>]"
-msgstr "[-w, -m] [-e, -l -t <Ebene>] [-r <Breite>] [-s <Empfindlichkeit>]"
+msgstr "[-w, -m] [-e, -l -t <Level>] [-r <Breite>] [-s <Empfindlichkeit>]"
 
 #: ../src/mmad.cc:222
 msgid "Display this usage information."
@@ -1007,7 +1006,7 @@ msgstr "Zeige diese Verwendungsinformationen an."
 
 #: ../src/mmad.cc:223
 msgid "Start from level."
-msgstr "Beginne mit Level."
+msgstr "Ab Level anfangen."
 
 #: ../src/mmad.cc:224
 msgid "Run in window (Default is fullscreen)"
@@ -1019,7 +1018,7 @@ msgstr "Ton stummschalten."
 
 #: ../src/mmad.cc:226
 msgid "Set resolution to 640, 800 or 1024"
-msgstr "Stelle die Auflösung auf 640, 800 oder 1024 ein"
+msgstr "Auflösung auf 640, 800 oder 1024 einstellen"
 
 #: ../src/mmad.cc:227
 msgid "Mouse sensitivity, default 1.0"
@@ -1031,7 +1030,7 @@ msgstr "Zeigt die Bildrate an"
 
 #: ../src/mmad.cc:229
 msgid "Prints current version number"
-msgstr "Druckt die aktuelle Versionsnummer"
+msgstr "Gibt die aktuelle Versionsnummer aus"
 
 #: ../src/mmad.cc:230
 msgid "Updates a map to the latest format"
@@ -1075,7 +1074,7 @@ msgstr "STRG-q"
 
 #: ../src/mmad.cc:240
 msgid "Quit the game immediately"
-msgstr "Sofort beenden"
+msgstr "Spiel sofort beenden"
 
 #: ../src/mmad.cc:241
 msgid "CTRL-f"
@@ -1083,7 +1082,7 @@ msgstr "STRG-f"
 
 #: ../src/mmad.cc:241
 msgid "Toggle between fullscreen/windowed mode"
-msgstr "Zwischen Vollbildmodus und Fenstermodus wechseln"
+msgstr "Zwischen Vollbild- und Fenstermodus wechseln"
 
 #: ../src/mmad.cc:242
 msgid "Kill the ball"
@@ -1105,7 +1104,7 @@ msgstr "Mit %s als Spieldaten-Verzeichnis."
 
 #: ../src/modPill.cc:101
 msgid "Speed ball"
-msgstr "Geschwindigkeits ball"
+msgstr "Geschwindigkeitsball"
 
 #: ../src/modPill.cc:101
 msgid "Extra jump"
@@ -1133,7 +1132,7 @@ msgstr "Schwimmend"
 
 #: ../src/modPill.cc:102
 msgid "Extra life"
-msgstr "Extra Leben"
+msgstr "Extraleben"
 
 #: ../src/modPill.cc:103
 msgid "Small ball"
@@ -1149,7 +1148,7 @@ msgstr "Nitro"
 
 #: ../src/settingsMode.cc:88
 msgid "Game Settings"
-msgstr "Spielkonfiguration"
+msgstr "Spieleinstellungen"
 
 #: ../src/settingsMode.cc:100
 #, c-format
@@ -1167,12 +1166,12 @@ msgstr "Ja, verwende diese Auflösung"
 
 #: ../src/settingsMode.cc:108
 msgid "No, revert to old resolution"
-msgstr "Nein, zur alten Auslosung zurückkehren"
+msgstr "Nein, zur alten Auflösung zurückkehren"
 
 #: ../src/settingsMode.cc:110
 #, c-format
 msgid "Timeout in %d seconds"
-msgstr "Timeout in %d Sekunden"
+msgstr "Die Zeit läuft in %d Sekunden ab"
 
 #: ../src/settingsMode.cc:122
 msgid "Video"
@@ -1316,11 +1315,11 @@ msgstr "Zeitkomprimierung"
 
 #: ../src/settingsMode.cc:252
 msgid "Store best level replay"
-msgstr ""
+msgstr "Beste Levelwiederholung speichern"
 
 #: ../src/setupMode.cc:210
 msgid "Setup new game"
-msgstr "Neues Spiel aufstellen"
+msgstr "Neues Spiel aufsetzen"
 
 #: ../src/setupMode.cc:215
 msgid "Player Name"
@@ -1332,7 +1331,7 @@ msgstr "N/A"
 
 #: ../src/setupMode.cc:227
 msgid "Level"
-msgstr "Spielniveau"
+msgstr "Level"
 
 #: ../src/setupMode.cc:238
 msgid "Difficulty"
@@ -1340,7 +1339,7 @@ msgstr "Schwierigkeit"
 
 #: ../src/setupMode.cc:241
 msgid "Replay"
-msgstr ""
+msgstr "Wiederholung"
 
 #: ../src/setupMode.cc:245
 msgid "Sandbox (Easy)"
@@ -1374,12 +1373,12 @@ msgstr "Anzahl Spiele gespielt: %d"
 #: ../src/setupMode.cc:260
 #, c-format
 msgid "Average score: %d"
-msgstr "Durchschnittliche Punktzahl: %d"
+msgstr "Durchschnittspunktzahl: %d"
 
 #: ../src/setupMode.cc:262
 #, c-format
 msgid "Average score: N/A"
-msgstr "Durchschnittliche Punktzahl: nd"
+msgstr "Durchschnittspunktzahl: nd"
 
 #: ../src/setupMode.cc:265
 #, c-format
@@ -1401,7 +1400,7 @@ msgstr "Spaßkasten"
 #: ../share/levels/bx.set:4
 msgid "This is a set of three quite large levels created by Warren D. Ober."
 msgstr ""
-"Dies ist ein Satz von drei ziemlich großen Ebenen erstellt von Warren D. "
+"Dies ist ein Satz von drei ziemlich großen Leveln erstellt von Warren D. "
 "Ober. Hier finden"
 
 #: ../share/levels/bx.set:5
@@ -1413,7 +1412,7 @@ msgstr ""
 #: ../share/levels/bx.set:6
 msgid "Hint: If you have difficult entering a pipe try to jump a little."
 msgstr ""
-"Sie Schwierigkeiten haben, eine Pfeife zu betreten, versuchen Sie ein wenig "
+"Sie Schwierigkeiten haben, in ein Rohr zu gelangen, versuchen Sie, ein wenig "
 "zu springen."
 
 #: ../share/levels/castles.set:1
@@ -1454,7 +1453,7 @@ msgstr "Labyrinth"
 
 #: ../share/levels/child.set:4
 msgid "This is an easy and short level for young children made by Attila"
-msgstr "Dies ist eine einfache und kurze Ebene für junge Kinder von Attila"
+msgstr "Dies ist ein einfaches und kurzes Level für junge Kinder von Attila"
 
 #: ../share/levels/child.set:5
 msgid "Boros. It was created for my little goddaughter."
@@ -1471,11 +1470,11 @@ msgstr "Steil"
 
 #: ../share/levels/contrib.set:4
 msgid "How do you stand up in the international tribe where no level"
-msgstr "Wie stehen Sie in der internationalen Stamm, wo kein Niveau"
+msgstr "Wie schlagen Sie sich im internationalen Stamm, wo kein Level"
 
 #: ../share/levels/contrib.set:5
 msgid "is like the other? This is a collection of levels created by"
-msgstr "wie der andere ist? Dies ist eine Sammlung von Ebenen von"
+msgstr "wie das andere ist? Dies ist eine Sammlung von Leveln von"
 
 #: ../share/levels/contrib.set:6
 msgid "different people all around the world. Enjoy!"
@@ -1491,7 +1490,7 @@ msgstr "Der erste Fremde"
 
 #: ../share/levels/dn.set:4
 msgid "A strange set of levels with a strange name -"
-msgstr "Eine seltsame Reihe von Ebenen mit einem seltsamen Namen -"
+msgstr "Eine seltsame Reihe von Leveln mit einem seltsamen Namen -"
 
 #: ../share/levels/dn.set:5
 msgid "All made by Francek."
@@ -1499,7 +1498,7 @@ msgstr "Alles von Francek gemacht."
 
 #: ../share/levels/ds.set:1
 msgid "Don't stop"
-msgstr "Nicht anhalten!"
+msgstr "Nicht anhalten"
 
 #: ../share/levels/ds.set:3 ../share/levels/ds1.scm:3
 msgid "Principia"
@@ -1507,7 +1506,7 @@ msgstr "Principia"
 
 #: ../share/levels/ds.set:4
 msgid "Or stay still and see what happens!"
-msgstr "Oder bleibe und schaue was passiert!"
+msgstr "Oder bleiben Sie stehen und schauen Sie, was passiert!"
 
 #: ../share/levels/elite.set:1
 msgid "Elite"
@@ -1519,7 +1518,7 @@ msgstr "Burg"
 
 #: ../share/levels/elite.set:4
 msgid "This is a single level set consiting of a huge level made"
-msgstr "Dieses Levelset besteht aus einem riesigen Level von Dietrich Radel."
+msgstr "Dieser Levelsatz besteht aus einem riesigen Level von Dietrich Radel."
 
 #: ../share/levels/elite.set:5
 msgid "by Dietrich Radel. This classic will go down in history like"
@@ -1554,19 +1553,19 @@ msgstr "Aufwärmen"
 #: ../share/levels/frg.set:4
 msgid "Prepare for the real Marble Madness-like adventure in this game! "
 msgstr ""
-"Bereiten Sie sich auf das echte Marble Madness-ähnliche Abenteuer in diesem "
-"Spiel!"
+"Bereiten Sie sich auf das echte Abenteuer vor, das ähnlich wie Marble "
+"Madness ist!"
 
 #: ../share/levels/frg.set:5
 msgid "Race down one of the many hills, and beat the time limit and avoid"
 msgstr ""
-"Rennen Sie einen der vielen Hügel hinunter, schlagen Sie die Zeitbegrenzung, "
+"Rasen Sie einen der vielen Hügel hinunter, schlagen Sie das Zeitlimit, "
 
 #: ../share/levels/frg.set:6
 msgid "badguys and hazards. Can you finish all the nine levels?"
 msgstr ""
-"und vermeiden Sie Bösewichten und Gefahren. Können Sie alle neun Ebenen "
-"beenden?"
+"und weichen Sie Bösewichten und Gefahren aus. Können Sie alle neun Level "
+"abschließen?"
 
 #: ../share/levels/frg.set:7
 msgid "Made by: Ulrik Enstad."
@@ -1582,19 +1581,19 @@ msgstr "Brücke"
 
 #: ../share/levels/jump.set:4
 msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
-msgstr "Eine Reihe von sehr schwierigen Ebenen von Gerard Pudenz."
+msgstr "Eine Reihe von sehr schwierigen Leveln von Gerard Pudenz."
 
 #: ../share/levels/jump.set:5
 msgid "if you can't make it on the first attempt. I promise, it can"
-msgstr "Keine Sorge, wenn Sie es nicht beim ersten Versuch machen."
+msgstr "Keine Sorge: Wenn Sie es nicht beim ersten Versuch machen,"
 
 #: ../share/levels/jump.set:6
 msgid "be done eventually!"
-msgstr "Ich verspreche, es kann letztendlich gemacht werden!"
+msgstr "verspreche ich, dass es machbar ist!"
 
 #: ../share/levels/ki.set:1
 msgid "Kidz"
-msgstr "Kinder"
+msgstr "Kindär"
 
 #: ../share/levels/ki.set:3 ../share/levels/ki1.scm:7
 msgid "Right Angles"
@@ -1610,7 +1609,7 @@ msgstr "Außerdem, da ich ein Anfänger beim Level-Design bin,"
 
 #: ../share/levels/ki.set:6
 msgid "simple at first. Made by Keith Winston."
-msgstr " will ich es zuerst einfach halten. Hergestellt von Keith Winston."
+msgstr " will ich es zuerst einfach halten. Gebaut von Keith Winston."
 
 #: ../share/levels/lv.set:1
 msgid "A long way home"
@@ -1618,7 +1617,7 @@ msgstr "Der lange Weg nach Hause"
 
 #: ../share/levels/lv.set:4
 msgid "This is the original levelset for Trackballs containing"
-msgstr "Dies ist der ursprüngliche Levelsatz für Trackballs mit 9 Ebenen"
+msgstr "Dies ist der ursprüngliche Levelsatz für Trackballs mit 9 Leveln"
 
 #: ../share/levels/lv.set:5
 msgid "9 levels of varying difficulty. It does not have any"
@@ -1638,7 +1637,7 @@ msgstr "Chaotische Murmeln"
 
 #: ../share/levels/mhm.set:3 ../share/levels/mhm1.scm:4
 msgid "Spyballs"
-msgstr "Spionierende Bälle"
+msgstr "Spionbälle"
 
 #: ../share/levels/mhm.set:4
 msgid "A set of three skillfully made levels by Warren D Ober."
@@ -1658,7 +1657,7 @@ msgstr "Bewegung Einz"
 
 #: ../share/levels/motion1.set:4
 msgid "This is a single level in a level set by Warren D. Ober."
-msgstr "Dies ist eine einzelne Ebene von Warren D. Ober."
+msgstr "Dies ist ein einzelner Level von Warren D. Ober."
 
 #: ../share/levels/motion1.set:5
 msgid "Be prepared for some fast paced action here."
@@ -1674,11 +1673,11 @@ msgstr "Die Wüste"
 
 #: ../share/levels/sl.set:4
 msgid "\"Six Levels\" is, of course,"
-msgstr "\"Sechs Levels\" ist, natürlich, ein Levelset mit sechs Levels."
+msgstr "\"Sechs Levels\" ist, natürlich, ein Levelsatz mit sechs Leveln."
 
 #: ../share/levels/sl.set:5
 msgid "a level set containing six levels. Prepare to scale mountains,"
-msgstr "Bereiten Sie sich darauf vor, Berge zu skalieren, Bosse zu"
+msgstr "Bereiten Sie sich darauf vor, Berge zu erklimmen, Bosse zu"
 
 #: ../share/levels/sl.set:6
 msgid "kill bosses, roll through the world's longest pipe and"
@@ -1686,7 +1685,7 @@ msgstr "töten, durch das längste Rohr der Welt zu rollen, und vieles "
 
 #: ../share/levels/sl.set:7
 msgid "much more. Can you beat all the six levels?"
-msgstr "mehr. Können Sie alle sechs Ebenen bestehen?"
+msgstr "mehr. Können Sie alle sechs Levels bestehen?"
 
 #: ../share/levels/sl.set:8
 msgid "Made By Ulrik Enstad, ulrik.enstad@gmail.com"
@@ -1742,7 +1741,7 @@ msgstr "Der Weg über den Sand ist geöffnet."
 
 #: ../share/levels/bx3.scm:139
 msgid "You must enter the Arena."
-msgstr "Sie mussen die Arena betreten."
+msgstr "Sie müssen die Arena betreten."
 
 #: ../share/levels/bx3.scm:199 ../share/levels/bx3.scm:206
 msgid "A wall has been lowered."
@@ -1750,7 +1749,7 @@ msgstr "Eine Mauer wurde abgesenkt."
 
 #: ../share/levels/bx3.scm:213
 msgid "A roof has been raised."
-msgstr "Ein Dach wurde erhoben."
+msgstr "Ein Dach wurde angehoben."
 
 #: ../share/levels/bx3.scm:229
 msgid "Stairs are in place."
@@ -1867,7 +1866,7 @@ msgstr "Nass werden!"
 
 #: ../share/levels/dn6.scm:7
 msgid "Final and the last"
-msgstr "Das Finale und das letzte"
+msgstr "Das Finale und das Letzte"
 
 #: ../share/levels/dn6.scm:37 ../share/levels/dn6.scm:73
 msgid "Switch twice"
@@ -1903,7 +1902,7 @@ msgstr "Sommer"
 
 #: ../share/levels/fourSeasons_3.scm:29
 msgid "Remember to breathe"
-msgstr "Erinnern sie sich zu atmen"
+msgstr "Vergessen Sie das Atmen nicht"
 
 #: ../share/levels/fourSeasons_4.scm:7
 msgid "Autumn"
@@ -1935,7 +1934,7 @@ msgstr "Verkehrt herum"
 
 #: ../share/levels/frg6.scm:1
 msgid "High Nausea Rating"
-msgstr "Hohe Übelkeit"
+msgstr "Hohe Übelkeitsrate"
 
 #: ../share/levels/frg7.scm:2
 msgid "Jump'n Roll"
@@ -1955,7 +1954,7 @@ msgstr "Schachmeister"
 
 #: ../share/levels/jump2.scm:5
 msgid "Megajump"
-msgstr "Riesen Sprung"
+msgstr "Riesensprung"
 
 #: ../share/levels/jump3.scm:4
 msgid "Upstairs"
@@ -2027,7 +2026,7 @@ msgstr "Das Schloss"
 
 #: ../share/levels/mhm3.scm:15
 msgid "Stay on the path or else!"
-msgstr "Bleib auf dem Weg oder sonst!"
+msgstr "Bleiben Sie auf dem Weg, sonst ...!"
 
 #: ../share/levels/mhm3.scm:241
 msgid "You may cross the Garden."
@@ -2039,11 +2038,11 @@ msgstr "Geschwindigkeitspille 2 Minuten: 300 Punkte"
 
 #: ../share/levels/Shop1.scm:10
 msgid "Extra Life: 800 points"
-msgstr "Extra Leben: 800 Punkte"
+msgstr "Extraleben: 800 Punkte"
 
 #: ../share/levels/Shop2.scm:7
 msgid "Extra life: 800 points"
-msgstr "Extra Leben: 800 Punkte"
+msgstr "Extraleben: 800 Punkte"
 
 #: ../share/levels/Shop2.scm:11
 msgid "Giant-package half a minute: 200 points"
@@ -2063,7 +2062,7 @@ msgstr "Kein Springen!"
 
 #: ../share/levels/sl2.scm:9
 msgid "Scale the Mountain"
-msgstr "Den Berg skalieren"
+msgstr "Den Berg erklimmen"
 
 #: ../share/levels/sl2.scm:63
 msgid "Kill me!"
@@ -2071,15 +2070,15 @@ msgstr "Töte mich!"
 
 #: ../share/levels/sl3.scm:9
 msgid "The Longest Pipe in the World"
-msgstr "Die längste Röhre der Welt"
+msgstr "Das längste Rohr der Welt"
 
 #: ../share/levels/sl3.scm:123
 msgid "Smash some badguys and see what happens"
-msgstr "Zerschlage ein paar Bösewichte und sehe was passiert"
+msgstr "Erschlagen Sie ein paar Bösewichte und sehen Sie, was passiert"
 
 #: ../share/levels/sl4.scm:9
 msgid "Hurry up!"
-msgstr "Beeilen sie sich!"
+msgstr "Beeilung!"
 
 #: ../share/levels/sl5.scm:5
 msgid "The Marble Mansion"
@@ -2091,7 +2090,7 @@ msgstr "Zweimal ziehen"
 
 #: ../share/levels/sl5.scm:56
 msgid "You may check out the roof again"
-msgstr "Sie können wieder das Dach überprüfen"
+msgstr "Sie können wieder auf dem Dach nachsehen"
 
 #: ../share/levels/sl5.scm:83
 msgid "Oxygen"
