@@ -26,7 +26,8 @@ void addArea(int code, int x, int y, int w, int h);
 
 /* Primitives for creating selectable text on screen */
 void clearSelectionAreas();
-void addText_Left(int code, int fontSize, int y0, const char *str, int leftX, int maxX = 0);
+void addText_Left(int code, int fontSize, int y0, const char *str, int leftX, int maxX = 0,
+                  int selectMinX = -1, int selectMaxX = -1);
 void addText_Right(int code, int fontSize, int y0, const char *str, int rightX);
 void addText_Center(int code, int fontSize, int y0, const char *str, int cx);
 void addText_LeftRight(int code, int fontSize, int y0, const char *leftStr, int leftX,

@@ -213,7 +213,8 @@ void SetupMode::display() const {
   /* Name */
   clearSelectionAreas();
   addText_Left(0, fontSize, row0 + rowSep * 0, _("Player Name"), col0);
-  addText_Left(CODE_NAME, fontSize, row0 + rowSep * 0, gamer->name, col1, col1MaxExtent);
+  addText_Left(CODE_NAME, fontSize, row0 + rowSep * 0, gamer->name, col1, col1MaxExtent, 0,
+               screenWidth);
 
   /* Level set */
   addText_Left(0, fontSize, row0 + rowSep * 1, _("Level Set"), col0);
@@ -221,7 +222,8 @@ void SetupMode::display() const {
     addText_Left(0, fontSize, row0 + rowSep * 1, _("N/A"), col1, col1MaxExtent);
   else
     addText_Left(CODE_LEVEL_SET, fontSize, row0 + rowSep * 1,
-                 gettext(settings->levelSets[levelSet].name), col1, col1MaxExtent);
+                 gettext(settings->levelSets[levelSet].name), col1, col1MaxExtent, 0,
+                 screenWidth);
 
   /* Start level */
   addText_Left(0, fontSize, row0 + rowSep * 2, _("Level"), col0);
@@ -229,10 +231,11 @@ void SetupMode::display() const {
     addText_Left(0, fontSize, row0 + rowSep * 2, settings->specialLevel, col1, col1MaxExtent);
   else if (strlen(gamer->levels[levelSet][level].name))
     addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2,
-                 gettext(gamer->levels[levelSet][level].name), col1, col1MaxExtent);
+                 gettext(gamer->levels[levelSet][level].name), col1, col1MaxExtent, 0,
+                 screenWidth);
   else
     addText_Left(CODE_START_LV, fontSize, row0 + rowSep * 2, _("Unknown track"), col1,
-                 col1MaxExtent);
+                 col1MaxExtent, 0, screenWidth);
 
   /* Difficulty */
   addText_Left(0, fontSize, row0 + rowSep * 3, _("Difficulty"), col0);
@@ -250,7 +253,7 @@ void SetupMode::display() const {
                                    : (settings->difficulty == 1 ? _("Normal") : _("Hard")));
   }
   addText_Left(CODE_DIFFICULTY, fontSize, row0 + rowSep * 3, difficulty_str, col1,
-               col1MaxExtent);
+               col1MaxExtent, 0, screenWidth);
 
   /* Info */
   snprintf(str, sizeof(str), _("Total games played: %d"), gamer->timesPlayed);

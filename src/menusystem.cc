@@ -49,7 +49,8 @@ void addArea(int code, int x, int y, int w, int h) {
   sarea->returnCode = code;
 }
 
-void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX, int maxX) {
+void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX, int maxX,
+                  int selectMinX, int selectMaxX) {
   if (nSelectionAreas >= MAX_MENUS) { error("too many menus active"); }
   int thisArea = nSelectionAreas++;
   const Color color = ((code && getSelectedArea() == code) || (thisArea == focusArea))
@@ -57,8 +58,9 @@ void addText_Left(int code, int fontSize, int y0, const char *leftStr, int leftX
                           : menuColor;
   int width = drawSimpleText(leftStr, leftX, y0, fontSize, color, maxX > 0 ? maxX - leftX : 0);
   SelectionArea *sarea = &selectionAreas[thisArea];
-  sarea->x0 = leftX;
-  sarea->x1 = maxX > 0 ? std::min(leftX + width, maxX) : leftX + width;
+  sarea->x0 = selectMinX >= 0 ? selectMinX : leftX;
+  sarea->x1 = selectMaxX >= 0 ? selectMaxX
+                              : (maxX > 0 ? std::min(leftX + width, maxX) : leftX + width);
   sarea->y0 = y0 - fontSize;
   sarea->y1 = y0 + fontSize;
   sarea->returnCode = code;
