@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-22 19:38-0500\n"
-"PO-Revision-Date: 2022-07-12 14:38+0200\n"
+"PO-Revision-Date: 2026-06-25 10:41+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: Dutch\n"
 "Language: nl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.04.2\n"
+"X-Generator: Poedit 3.9\n"
 
 #: ../src/calibrateJoystickMode.cc:111
 msgid "Calibrating Joystick"
@@ -52,12 +52,12 @@ msgstr "Druk op escape om te annuleren"
 #: ../src/calibrateJoystickMode.cc:128
 #, c-format
 msgid "now: %d %d"
-msgstr "Momenteel: %d %d"
+msgstr "nu: %d %d"
 
 #: ../src/calibrateJoystickMode.cc:133
 #, c-format
 msgid "center: %d %d left: %d right: %d up: %d down: %d"
-msgstr "Midden: %d %d - Links: %d - Rechts: %d - Omhoog: %d - Omlaag: %d"
+msgstr "midden: %d %d links: %d rechts: %d omhoog: %d omlaag: %d"
 
 #: ../src/diamond.cc:111
 msgid "Save point"
@@ -241,7 +241,7 @@ msgstr "Textuur"
 
 #: ../src/editMode.cc:185
 msgid "ch. texture"
-msgstr "Ch. textuur"
+msgstr "kr. textuur"
 
 #: ../src/editMode.cc:186 ../src/editMode.cc:205
 msgid "Spike"
@@ -273,15 +273,15 @@ msgstr "Grote afvlakking"
 
 #: ../src/editMode.cc:188
 msgid "Cell cont."
-msgstr "Celinhoud"
+msgstr "Cel (vervolg)"
 
 #: ../src/editMode.cc:188
 msgid "Water cont."
-msgstr "Waterinhoud"
+msgstr "Water (vervolg)"
 
 #: ../src/editMode.cc:188
 msgid "Color cont."
-msgstr "Kleurinhoud"
+msgstr "Kleur (vervolg)"
 
 #: ../src/editMode.cc:188
 msgid "Cell center"
@@ -643,7 +643,8 @@ msgstr "Je knikker:"
 
 #: ../src/helpMode.cc:180
 msgid "Steer this with your mouse, numpad or arrows. "
-msgstr "Rol de knikker met je muis, numpad of pijltjestoetsen."
+msgstr ""
+"Bestuur dit met je muis, het numerieke toetsenblok of de pijltjestoetsen. "
 
 #: ../src/helpMode.cc:181
 msgid "Left mouse or spacebar is jump."
@@ -683,7 +684,7 @@ msgstr "Vriespil:"
 
 #: ../src/helpMode.cc:195
 msgid "This will freeze you - avoid it."
-msgstr "Deze pil bevriest je knikker, dus pas op!"
+msgstr "Hiervan krijg je koude rillingen – vermijd het dus."
 
 #: ../src/helpMode.cc:197
 msgid "Modpill Glass:"
@@ -932,20 +933,20 @@ msgstr "%d minuten = %d punten"
 #: ../src/mainMode.cc:665
 #, c-format
 msgid "Difficulty:"
-msgstr "Moeilijkheidsgraad"
+msgstr "Moeilijkheidsgraad:"
 
 #: ../src/mainMode.cc:667
 msgid "easy"
-msgstr "Makkelijk"
+msgstr "eenvoudig"
 
 #: ../src/mainMode.cc:667 ../src/settingsMode.cc:209
 #, c-format
 msgid "normal"
-msgstr "Gemiddeld"
+msgstr "normaal"
 
 #: ../src/mainMode.cc:667
 msgid "hard"
-msgstr "Moeilijk"
+msgstr "moeilijk"
 
 #: ../src/menuMode.cc:78
 msgid ""
@@ -1281,7 +1282,7 @@ msgstr "Sturen"
 #: ../src/settingsMode.cc:220
 #, c-format
 msgid "no joystick found"
-msgstr "Er is geen joystick aangetroffen"
+msgstr "geen joystick gevonden"
 
 #: ../src/settingsMode.cc:224
 msgid "Joystick:"
@@ -1313,7 +1314,7 @@ msgstr "Tijdscompressie"
 
 #: ../src/settingsMode.cc:252
 msgid "Store best level replay"
-msgstr ""
+msgstr "De beste herhaling opslaan"
 
 #: ../src/setupMode.cc:210
 msgid "Setup new game"
@@ -1337,7 +1338,7 @@ msgstr "Moeilijkheidsgraad"
 
 #: ../src/setupMode.cc:241
 msgid "Replay"
-msgstr ""
+msgstr "Herhaling"
 
 #: ../src/setupMode.cc:245
 msgid "Sandbox (Easy)"
@@ -1491,15 +1492,15 @@ msgstr "Eerste vreemdeling"
 
 #: ../share/levels/dn.set:4
 msgid "A strange set of levels with a strange name -"
-msgstr "Een vreemde reeks parcours met een vreemde naam,"
+msgstr "Een vreemde reeks levels met een vreemde naam -"
 
 #: ../share/levels/dn.set:5
 msgid "All made by Francek."
-msgstr "gemaakt door Francek."
+msgstr "Allemaal gemaakt door Francek."
 
 #: ../share/levels/ds.set:1
 msgid "Don't stop"
-msgstr "Niet te stoppen…"
+msgstr "Niet stoppen"
 
 #: ../share/levels/ds.set:3 ../share/levels/ds1.scm:3
 msgid "Principia"
@@ -1523,7 +1524,7 @@ msgstr "Dit is een enorm parcours, gemaakt door"
 
 #: ../share/levels/elite.set:5
 msgid "by Dietrich Radel. This classic will go down in history like"
-msgstr "Dietrich Radel. Dit wordt in de loop der tijd een klassieker,"
+msgstr "door Dietrich Radel. Deze klassieker zal de geschiedenis ingaan als"
 
 #: ../share/levels/elite.set:6
 msgid "\"War and Peace\". ;-)"
@@ -1580,12 +1581,11 @@ msgstr "Brug"
 #: ../share/levels/jump.set:4
 msgid "A set of very difficult levels by Gerard Pudenz. Don't worry"
 msgstr ""
-"Deze reeks bestaat uit zéér moeilijke parcours en is gemaakt door Gerard "
-"Pudenz."
+"Een reeks zeer moeilijke levels van Gerard Pudenz. Maak je geen zorgen"
 
 #: ../share/levels/jump.set:5
 msgid "if you can't make it on the first attempt. I promise, it can"
-msgstr "Wellicht lukt het je niet in een keer, maar geen zorgen:"
+msgstr "als het je bij de eerste poging niet lukt. Ik beloof je, het lukt wel"
 
 #: ../share/levels/jump.set:6
 msgid "be done eventually!"
@@ -1664,7 +1664,7 @@ msgstr "Dit is één parcours uit een hele reeks gemaakt door Warren D. Ober."
 
 #: ../share/levels/motion1.set:5
 msgid "Be prepared for some fast paced action here."
-msgstr "Bereid je voor op veel actie!"
+msgstr "Bereid je hier maar voor op wat razendsnelle actie."
 
 #: ../share/levels/sl.set:1
 msgid "Six Levels"
@@ -1676,7 +1676,7 @@ msgstr "Roepen in de woestijn"
 
 #: ../share/levels/sl.set:4
 msgid "\"Six Levels\" is, of course,"
-msgstr "Een zesdelige reeks bestaande uit -"
+msgstr "\"Zesdelige Reeks\" is zo natuurlijk,"
 
 #: ../share/levels/sl.set:5
 msgid "a level set containing six levels. Prepare to scale mountains,"
@@ -2032,9 +2032,8 @@ msgid "Stay on the path or else!"
 msgstr "Ga niet van het padje af!"
 
 #: ../share/levels/mhm3.scm:241
-#, fuzzy
 msgid "You may cross the Garden."
-msgstr ""
+msgstr "Je mag door de Tuin lopen."
 
 #: ../share/levels/Shop1.scm:6
 msgid "Speed-pill 2 minutes: 300 points"
