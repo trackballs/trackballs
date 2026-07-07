@@ -661,7 +661,7 @@ void MainMode::showBonus() const {
   snprintf(right[2], 255, _("%d minutes = %d points"), player->timeLeft / 60,
            (player->timeLeft / 60) * 250);
   snprintf(left[3], 255, _("Difficulty:"));
-  snprintf(right[3], 255, "%s = %d points",
+  snprintf(right[3], 255, _("%s = %d points"),
            difficulty == 0 ? _("easy") : (difficulty == 1 ? _("normal") : _("hard")),
            difficulty * 500);
 

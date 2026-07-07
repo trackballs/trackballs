@@ -219,7 +219,7 @@ void SettingsMode::display() const {
     else if (SDL_NumJoysticks() == 0)
       snprintf(str, 255, _("no joystick found"));
     else
-      snprintf(str, 255, "no joystick selected (%d found)", SDL_NumJoysticks());
+      snprintf(str, 255, _("no joystick selected (%d found)"), SDL_NumJoysticks());
 
     menuItem_Left(0, menucount++, _("Joystick:"));
     if (strlen(str) < 15)

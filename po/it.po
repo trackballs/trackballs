@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-22 19:38-0500\n"
+"POT-Creation-Date: 2026-07-07 07:51-0400\n"
 "PO-Revision-Date: 2017-06-25 20:22-0400\n"
 "Last-Translator: Francesco (ThN1saHead) Guatieri <nisacorp@ncsinfo.it>\n"
 "Language-Team: francesco\n"
@@ -409,7 +409,7 @@ msgstr "Arrotonda poco"
 msgid "Large smooth"
 msgstr "Arrotonda molto"
 
-#: ../src/editMode.cc:337 ../src/mainMode.cc:163
+#: ../src/editMode.cc:337 ../src/mainMode.cc:161
 msgid "Track:"
 msgstr "Traccia:"
 
@@ -853,7 +853,7 @@ msgstr "Indietro"
 msgid "High Scores"
 msgstr ""
 
-#: ../src/hofMode.cc:97 ../src/setupMode.cc:219
+#: ../src/hofMode.cc:97 ../src/setupMode.cc:220
 msgid "Level Set"
 msgstr "Livelloteca:"
 
@@ -866,114 +866,119 @@ msgstr ""
 msgid "%d points"
 msgstr "%d punti"
 
-#: ../src/mainMode.cc:167 ../src/setupMode.cc:234
+#: ../src/mainMode.cc:165 ../src/setupMode.cc:237
 msgid "Unknown track"
 msgstr ""
 
-#: ../src/mainMode.cc:169
+#: ../src/mainMode.cc:167
 msgid "Author:"
 msgstr "Autore:"
 
-#: ../src/mainMode.cc:173
+#: ../src/mainMode.cc:171
 msgid "Unknown author"
 msgstr ""
 
-#: ../src/mainMode.cc:175
+#: ../src/mainMode.cc:173
 msgid "Press spacebar to begin"
 msgstr "Premere spazio per iniziare"
 
-#: ../src/mainMode.cc:187 ../src/mainMode.cc:196 ../src/mainMode.cc:223
-#: ../src/mainMode.cc:237
+#: ../src/mainMode.cc:185 ../src/mainMode.cc:194 ../src/mainMode.cc:221
+#: ../src/mainMode.cc:235
 #, c-format
 msgid "Press spacebar to continue"
 msgstr "Premere spazio per continuare."
 
-#: ../src/mainMode.cc:188
+#: ../src/mainMode.cc:186
 msgid "Game over"
 msgstr "Game over"
 
-#: ../src/mainMode.cc:196
+#: ../src/mainMode.cc:194
 msgid "Oops"
 msgstr "Oops"
 
-#: ../src/mainMode.cc:214
+#: ../src/mainMode.cc:212
 msgid "Paused"
 msgstr "Pausa"
 
-#: ../src/mainMode.cc:223
+#: ../src/mainMode.cc:221
 msgid "Bonus level complete"
 msgstr "Livello bonus completato"
 
-#: ../src/mainMode.cc:237
+#: ../src/mainMode.cc:235
 msgid "Level complete"
 msgstr "Livello completato"
 
-#: ../src/mainMode.cc:244
+#: ../src/mainMode.cc:242
 msgid "Congratulations"
 msgstr "Complimenti,"
 
-#: ../src/mainMode.cc:244
+#: ../src/mainMode.cc:242
 msgid "You have completed the game!"
 msgstr "Hai terminato il gioco!"
 
-#: ../src/mainMode.cc:548 ../src/mainMode.cc:563
+#: ../src/mainMode.cc:546 ../src/mainMode.cc:561
 msgid "Good luck!"
 msgstr "Buona fortuna!"
 
-#: ../src/mainMode.cc:587
+#: ../src/mainMode.cc:585
 #, fuzzy
 msgid "Lives"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:587
+#: ../src/mainMode.cc:585
 msgid "Score"
 msgstr ""
 
-#: ../src/mainMode.cc:587
+#: ../src/mainMode.cc:585
 #, fuzzy
 msgid "Time left"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:658
+#: ../src/mainMode.cc:656
 #, c-format
 msgid "Level bonuses"
 msgstr "Bonus del livello"
 
-#: ../src/mainMode.cc:660
+#: ../src/mainMode.cc:658
 #, c-format
 msgid "Lives left:"
 msgstr "Vite rimaste:"
 
-#: ../src/mainMode.cc:661
+#: ../src/mainMode.cc:659
 #, c-format
 msgid "%d x 100 = %d points"
 msgstr "%d x 100 = %d punti"
 
-#: ../src/mainMode.cc:662
+#: ../src/mainMode.cc:660
 #, c-format
 msgid "Time left:"
 msgstr "Tempo rimanente:"
 
-#: ../src/mainMode.cc:663
+#: ../src/mainMode.cc:661
 #, c-format
 msgid "%d minutes = %d points"
 msgstr "%d minuti = %d punti"
 
-#: ../src/mainMode.cc:665
+#: ../src/mainMode.cc:663
 #, c-format
 msgid "Difficulty:"
 msgstr "Difficoltà:"
 
-#: ../src/mainMode.cc:667
+#: ../src/mainMode.cc:664
+#, c-format
+msgid "%s = %d points"
+msgstr ""
+
+#: ../src/mainMode.cc:665
 msgid "easy"
 msgstr "facile"
 
-#: ../src/mainMode.cc:667 ../src/settingsMode.cc:209
+#: ../src/mainMode.cc:665 ../src/settingsMode.cc:209
 #, c-format
 msgid "normal"
 msgstr "normale"
 
-#: ../src/mainMode.cc:667
+#: ../src/mainMode.cc:665
 msgid "hard"
 msgstr "difficile"
 
@@ -1322,6 +1327,11 @@ msgstr "Direzione"
 msgid "no joystick found"
 msgstr "Muovi joystick in basso"
 
+#: ../src/settingsMode.cc:222
+#, c-format
+msgid "no joystick selected (%d found)"
+msgstr ""
+
 #: ../src/settingsMode.cc:224
 msgid "Joystick:"
 msgstr "Joystick:"
@@ -1362,67 +1372,67 @@ msgstr "Prepara nuovo gioco."
 msgid "Player Name"
 msgstr "Nome del giocatore"
 
-#: ../src/setupMode.cc:221
+#: ../src/setupMode.cc:222
 msgid "N/A"
 msgstr "N/D"
 
-#: ../src/setupMode.cc:227
+#: ../src/setupMode.cc:229
 msgid "Level"
 msgstr "Livello"
 
-#: ../src/setupMode.cc:238
+#: ../src/setupMode.cc:241
 msgid "Difficulty"
 msgstr "Difficoltà:"
 
-#: ../src/setupMode.cc:241
+#: ../src/setupMode.cc:244
 msgid "Replay"
 msgstr ""
 
-#: ../src/setupMode.cc:245
+#: ../src/setupMode.cc:248
 msgid "Sandbox (Easy)"
 msgstr ""
 
-#: ../src/setupMode.cc:246
+#: ../src/setupMode.cc:249
 msgid "Sandbox (Normal)"
 msgstr ""
 
-#: ../src/setupMode.cc:246
+#: ../src/setupMode.cc:249
 msgid "Sandbox (Hard)"
 msgstr ""
 
-#: ../src/setupMode.cc:249
+#: ../src/setupMode.cc:252
 msgid "Easy"
 msgstr "Facile"
 
-#: ../src/setupMode.cc:250
+#: ../src/setupMode.cc:253
 msgid "Normal"
 msgstr "Normale"
 
-#: ../src/setupMode.cc:250
+#: ../src/setupMode.cc:253
 msgid "Hard"
 msgstr "Difficile"
 
-#: ../src/setupMode.cc:256
+#: ../src/setupMode.cc:259
 #, c-format
 msgid "Total games played: %d"
 msgstr "Partite giocate: %d"
 
-#: ../src/setupMode.cc:260
+#: ../src/setupMode.cc:263
 #, c-format
 msgid "Average score: %d"
 msgstr "Punteggio medio: %d"
 
-#: ../src/setupMode.cc:262
+#: ../src/setupMode.cc:265
 #, c-format
 msgid "Average score: N/A"
 msgstr "Punteggio medio: N/D"
 
-#: ../src/setupMode.cc:265
+#: ../src/setupMode.cc:268
 #, c-format
 msgid "Levels completed: %d"
 msgstr "Livelli completati: %d"
 
-#: ../src/setupMode.cc:281
+#: ../src/setupMode.cc:284
 msgid "Start Game"
 msgstr "Gioca!"
 
